@@ -1,22 +1,30 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
@@ -24,16 +32,15 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.web.Locatable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.broadleafcommerce.openadmin.server.service.type.RuleIdentifier;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
@@ -84,7 +91,11 @@ import javax.persistence.Table;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageImpl_basePage")
-public class PageImpl implements Page, AdminMainEntity {
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
+public class PageImpl implements Page, AdminMainEntity, Locatable {
 
     private static final long serialVersionUID = 1L;
     
@@ -132,45 +143,8 @@ public class PageImpl implements Page, AdminMainEntity {
     @MapKeyColumn(name = "MAP_KEY")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @BatchSize(size = 20)
+    @ClonePolicyMap
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
-
-    @ManyToOne (targetEntity = SandBoxImpl.class)
-    @JoinColumn(name="SANDBOX_ID")
-    @AdminPresentation(excluded = true)
-    protected SandBox sandbox;
-
-    @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIG_SANDBOX_ID")
-    @AdminPresentation(excluded = true)
-    protected SandBox originalSandBox;
-
-    @Column (name = "DELETED_FLAG")
-    @Index(name="PAGE_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
-    @AdminPresentation(friendlyName = "PageImpl_Deleted", order = 2, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean deletedFlag = false;
-
-    @Column (name = "ARCHIVED_FLAG")
-    @AdminPresentation(friendlyName = "PageImpl_Archived", order = 5, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="PAGE_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
-    protected Boolean archivedFlag = false;
-
-    @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName = "PageImpl_Is_Locked", 
-        group = Presentation.Group.Name.Page, groupOrder = Presentation.Group.Order.Page,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="PAGE_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
-    protected Boolean lockedFlag = false;
-
-    @Column (name = "ORIG_PAGE_ID")
-    @AdminPresentation(friendlyName = "PageImpl_Original_Page_ID", order = 6, 
-        group = Presentation.Group.Name.Page, groupOrder = Presentation.Group.Order.Page,
-        visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ORIG_PAGE_ID_INDX", columnNames={"ORIG_PAGE_ID"})
-    protected Long originalPageId;      
     
     @Column(name = "PRIORITY")
     @AdminPresentation(friendlyName = "PageImpl_Priority", order = 3, 
@@ -219,6 +193,7 @@ public class PageImpl implements Page, AdminMainEntity {
             )
         }
     )
+    @ClonePolicyMap
     Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade={CascadeType.ALL})
@@ -231,7 +206,13 @@ public class PageImpl implements Page, AdminMainEntity {
         group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM)
+    @ClonePolicyCollection
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
+
+    @Column(name = "EXCLUDE_FROM_SITE_MAP")
+    @AdminPresentation(friendlyName = "PageImpl_Exclude_From_Site_Map", order = 6,
+            group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    protected Boolean excludeFromSiteMap;
 
     @Embedded
     @AdminPresentation(excluded = true)
@@ -268,55 +249,6 @@ public class PageImpl implements Page, AdminMainEntity {
     }
 
     @Override
-    public Boolean getDeletedFlag() {
-        if (deletedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return deletedFlag;
-        }
-    }
-
-    @Override
-    public void setDeletedFlag(Boolean deletedFlag) {
-        this.deletedFlag = deletedFlag;
-    }
-
-    @Override
-    public Boolean getArchivedFlag() {
-        if (archivedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return archivedFlag;
-        }
-    }
-
-    @Override
-    public void setArchivedFlag(Boolean archivedFlag) {
-        this.archivedFlag = archivedFlag;
-    }
-
-    @Override
-    public SandBox getSandbox() {
-        return sandbox;
-    }
-
-    @Override
-    public void setSandbox(SandBox sandbox) {
-        this.sandbox = sandbox;
-    }
-
-
-    @Override
-    public Long getOriginalPageId() {
-        return originalPageId;
-    }
-
-    @Override
-    public void setOriginalPageId(Long originalPageId) {
-        this.originalPageId = originalPageId;
-    }
-
-    @Override
     public String getFullUrl() {
         return fullUrl;
     }
@@ -337,16 +269,6 @@ public class PageImpl implements Page, AdminMainEntity {
     }
 
     @Override
-    public SandBox getOriginalSandBox() {
-        return originalSandBox;
-    }
-
-    @Override
-    public void setOriginalSandBox(SandBox originalSandBox) {
-        this.originalSandBox = originalSandBox;
-    }
-
-    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
@@ -354,20 +276,6 @@ public class PageImpl implements Page, AdminMainEntity {
     @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
-    }
-
-    @Override
-    public Boolean getLockedFlag() {
-        if (lockedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return lockedFlag;
-        }
-    }
-
-    @Override
-    public void setLockedFlag(Boolean lockedFlag) {
-        this.lockedFlag = lockedFlag;
     }
     
     @Override
@@ -416,43 +324,20 @@ public class PageImpl implements Page, AdminMainEntity {
     public void setQualifyingItemCriteria(Set<PageItemCriteria> qualifyingItemCriteria) {
         this.qualifyingItemCriteria = qualifyingItemCriteria;
     }
+    
+    @Override
+    public boolean getExcludeFromSiteMap() {
+        if (this.excludeFromSiteMap == null) {
+            return false;
+        }
+        return excludeFromSiteMap;
+    }
 
     @Override
-    public Page cloneEntity() {
-        PageImpl newPage = new PageImpl();
-
-        newPage.archivedFlag = archivedFlag;
-        newPage.deletedFlag = deletedFlag;
-        newPage.pageTemplate = pageTemplate;
-        newPage.description = description;
-        newPage.sandbox = sandbox;
-        newPage.originalPageId = originalPageId;
-        newPage.offlineFlag = offlineFlag;        
-        newPage.priority = priority;
-        newPage.originalSandBox = originalSandBox;
-        newPage.fullUrl = fullUrl;
-        
-        Map<String, PageRule> ruleMap = newPage.getPageMatchRules();
-        for (String key : pageMatchRules.keySet()) {
-            PageRule newField = pageMatchRules.get(key).cloneEntity();
-            ruleMap.put(key, newField);
-        }
-
-        Set<PageItemCriteria> criteriaList = newPage.getQualifyingItemCriteria();
-        for (PageItemCriteria pageItemCriteria : qualifyingItemCriteria) {
-            PageItemCriteria newField = pageItemCriteria.cloneEntity();
-            criteriaList.add(newField);
-        }
-
-        for (PageField oldPageField: pageFields.values()) {
-            PageField newPageField = oldPageField.cloneEntity();
-            newPageField.setPage(newPage);
-            newPage.getPageFields().put(newPageField.getFieldKey(), newPageField);
-        }
-
-        return newPage;
+    public void setExcludeFromSiteMap(boolean excludeFromSiteMap) {
+        this.excludeFromSiteMap = excludeFromSiteMap;
     }
-    
+
     public static class Presentation {
         public static class Tab {
             public static class Name {
@@ -481,6 +366,11 @@ public class PageImpl implements Page, AdminMainEntity {
 
     @Override
     public String getMainEntityName() {
+        return getDescription();
+    }
+
+    @Override
+    public String getLocation() {
         return getFullUrl();
     }
 }

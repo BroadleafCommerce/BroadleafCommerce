@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Common Libraries
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
@@ -11,7 +31,13 @@
     <bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.config.domain.SystemProperty" class="org.broadleafcommerce.common.config.domain.SystemPropertyImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.i18n.domain.Translation" class="org.broadleafcommerce.common.i18n.domain.TranslationImpl" scope="prototype" />
-
+    <bean id="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" class="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO" class="org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO" scope="prototype" />
     <bean id="org.broadleafcommerce.common.media.domain.MediaDto" class="org.broadleafcommerce.common.media.domain.MediaDto" />
+    <bean id="org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration" class="org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration" class="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntry" class="org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntryImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfiguration" class="org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfigurationImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.sandbox.domain.SandBoxManagement" class="org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl" scope="prototype" />
 
 </beans>

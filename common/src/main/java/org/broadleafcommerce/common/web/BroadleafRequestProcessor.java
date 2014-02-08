@@ -1,42 +1,49 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
-import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import org.thymeleaf.TemplateEngine;
 
-import javax.annotation.Resource;
-import java.lang.reflect.Field;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 
@@ -49,6 +56,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     protected final Log LOG = LogFactory.getLog(getClass());
 
     private static String REQUEST_DTO_PARAM_NAME = BroadleafRequestFilter.REQUEST_DTO_PARAM_NAME;
+    public static String REPROCESS_PARAM_NAME = "REPROCESS_BLC_REQUEST";
 
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
@@ -70,7 +78,10 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
     @Resource(name = "blTimeZoneResolver")
     protected BroadleafTimeZoneResolver broadleafTimeZoneResolver;
-
+    
+    @Value("${thymeleaf.threadLocalCleanup.enabled}")
+    protected boolean thymeleafThreadLocalCleanupEnabled = true;
+    
     @Override
     public void process(WebRequest request) {
         Site site = siteResolver.resolveSite(request);
@@ -82,7 +93,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         if (site == null) {
             brc.setIgnoreSite(true);
         }
-        
+        brc.setAdmin(false);
+
         BroadleafRequestContext.setBroadleafRequestContext(brc);
 
         Locale locale = localeResolver.resolveLocale(request);
@@ -95,6 +107,31 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
 
         SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
+        
+        // When a user elects to switch his sandbox, we want to invalidate the current session. We'll then redirect the 
+        // user to the current URL so that the configured filters trigger again appropriately.
+        Boolean reprocessRequest = (Boolean) request.getAttribute(BroadleafRequestProcessor.REPROCESS_PARAM_NAME, WebRequest.SCOPE_REQUEST);
+        if (reprocessRequest != null && reprocessRequest) {
+            LOG.debug("Reprocessing request");
+            if (request instanceof ServletWebRequest) {
+                HttpServletRequest hsr = ((ServletWebRequest) request).getRequest();
+                
+                clearBroadleafSessionAttrs(request);
+                
+                StringBuffer url = hsr.getRequestURL();
+                if (hsr.getQueryString() != null) {
+                    url.append('?').append(hsr.getQueryString());
+                }
+                try {
+                    ((ServletWebRequest) request).getResponse().sendRedirect(url.toString());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                throw new HaltFilterChainException("Reprocess required, redirecting user");
+            }
+        }
+        
+        
         if (currentSandbox != null) {
             SandBoxContext previewSandBoxContext = new SandBoxContext();
             previewSandBoxContext.setSandBoxId(currentSandbox.getId());
@@ -105,7 +142,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         Theme theme = themeResolver.resolveTheme(request);
         brc.setLocale(locale);
         brc.setBroadleafCurrency(currency);
-        brc.setSandbox(currentSandbox);
+        brc.setSandBox(currentSandbox);
         brc.setTheme(theme);
         brc.setMessageSource(messageSource);
         brc.setTimeZone(timeZone);
@@ -120,27 +157,26 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
         ruleMap.put("locale", locale);
 
+        String adminUserId = request.getParameter(BroadleafRequestFilter.ADMIN_USER_ID_PARAM_NAME);
+        if (StringUtils.isNotBlank(adminUserId)) {
+            //TODO: Add token logic to secure the admin user id
+            brc.setAdminUserId(Long.parseLong(adminUserId));
+        }
     }
 
     @Override
     public void postProcess(WebRequest request) {
         ThreadLocalManager.remove();
-        //temporary workaround for Thymeleaf issue #18 (resolved in version 2.1)
-        //https://github.com/thymeleaf/thymeleaf-spring3/issues/18
-        try {
-            Field currentProcessLocale = TemplateEngine.class.getDeclaredField("currentProcessLocale");
-            currentProcessLocale.setAccessible(true);
-            ((ThreadLocal) currentProcessLocale.get(null)).remove();
+    }
+    
+    protected void clearBroadleafSessionAttrs(WebRequest request) {
+        request.removeAttribute(BroadleafLocaleResolverImpl.LOCALE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        request.removeAttribute(BroadleafCurrencyResolverImpl.CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        request.removeAttribute(BroadleafTimeZoneResolverImpl.TIMEZONE_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
 
-            Field currentProcessTemplateEngine = TemplateEngine.class.getDeclaredField("currentProcessTemplateEngine");
-            currentProcessTemplateEngine.setAccessible(true);
-            ((ThreadLocal) currentProcessTemplateEngine.get(null)).remove();
-
-            Field currentProcessTemplateName = TemplateEngine.class.getDeclaredField("currentProcessTemplateName");
-            currentProcessTemplateName.setAccessible(true);
-            ((ThreadLocal) currentProcessTemplateName.get(null)).remove();
-        } catch (Throwable e) {
-            LOG.warn("Unable to remove Thymeleaf threadlocal variables from request thread", e);
-        }
+        // From CustomerStateRequestProcessorImpl, using explicit String because it's out of module
+        request.removeAttribute("_blc_anonymousCustomer", WebRequest.SCOPE_GLOBAL_SESSION);
+        request.removeAttribute("_blc_anonymousCustomerId", WebRequest.SCOPE_GLOBAL_SESSION);
     }
 }

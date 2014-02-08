@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.form.component;
 
 
@@ -40,7 +43,9 @@ public class ListGridAction implements Cloneable {
     protected String displayText = "";
     protected String actionId = "";
     protected Boolean forListGridReadOnly = false;
-
+    protected String actionUrlOverride = null;
+    protected Boolean allCapable = false;
+    protected Boolean singleActionOnly = false;
     
     public ListGridAction(String actionId) {
         this.actionId = actionId;
@@ -82,9 +87,34 @@ public class ListGridAction implements Cloneable {
         setForListGridReadOnly(forListGridReadOnly);
         return this;
     }
+    
+    /**
+     * @see {@link #setActionUrlOverride(String)}
+     */
+    public ListGridAction withActionUrlOverride(String actionUrlOverride) {
+        setActionUrlOverride(actionUrlOverride);
+        return this;
+    }
+    
 
+    /**
+     * @see {@link #setAllCapable(Boolean)}
+     */
+    public ListGridAction withAllCapable(Boolean allCapable) {
+        setAllCapable(allCapable);
+        return this;
+    }
+
+    /**
+     * @see {@link #setSingleActionOnly(Boolean)}
+     */
+    public ListGridAction withSingleActionOnly(Boolean singleActionOnly) {
+        setSingleActionOnly(singleActionOnly);
+        return this;
+    }
+    
     public String getButtonClass() {
-        return buttonClass;
+        return buttonClass + (allCapable ? " all-capable" : "") + (singleActionOnly ? " single-action-only" : "");
     }
 
     public Boolean getForListGridReadOnly() {
@@ -109,12 +139,13 @@ public class ListGridAction implements Cloneable {
     public String getUrlPostfix() {
         return urlPostfix;
     }
+    
     /**
      * This means different things depending on where this action is on the list grid.
      * <ul>
      *  <li>If this is a toolbar action: this postfix will be appended onto the end of {@link ListGrid#getPath()} and 
      *  presented as a 'data-actionurl' attribute for the button</li>
-     *  <li>If this is a row action: this postfix will be presented as a 'data-urlpostfix' attribute on the button</li>
+     *  <li>This postfix will also be presented as a 'data-urlpostfix' attribute on the button</li>
      * </ul>
      * @param urlPostfix
      */
@@ -149,6 +180,25 @@ public class ListGridAction implements Cloneable {
     public void setForListGridReadOnly(Boolean forListGridReadOnly) {
         this.forListGridReadOnly = forListGridReadOnly;
     }
+    
+    /**
+     * Gets the manual override for the data-actionurl attribute on an action.
+     * 
+     * @return
+     */
+    public String getActionUrlOverride() {
+        return actionUrlOverride;
+    }
+    
+    /**
+     * This is a manual override for the data-actionurl attribute for an listgrid action. The data-actionurl attribute on a
+     * button is normally automatically computed by appending the postfix URL to the path of the list grid
+     * 
+     * @param actionUrlOverride
+     */
+    public void setActionUrlOverride(String actionUrlOverride) {
+        this.actionUrlOverride = actionUrlOverride;
+    }
 
     /**
      * Returns an Id that controllers can use to manipulate this action.   For example, if a
@@ -160,6 +210,40 @@ public class ListGridAction implements Cloneable {
     public String getActionId() {
         return actionId;
     }
+    
+    /**
+     * @return whether or not the given list grid action is capable of acting on rows even when none are selected
+     */
+    public Boolean getAllCapable() {
+        return allCapable;
+    }
+    
+    /**
+     * Sets whether or not the given list grid action is capable of acting on rows even when none are selected
+     * 
+     * @param allCapable
+     */
+    public void setAllCapable(Boolean allCapable) {
+        this.allCapable = allCapable;
+    }
+    
+    /**
+     * @return whether or not this action can be performed only on a single item, regardless of whether the list grid
+     * is multi-select capable or not.
+     */
+    public Boolean getSingleActionOnly() {
+        return singleActionOnly;
+    }
+
+    /**
+     * Sets where or not this action can only be performed on a single item. This is used to override multi-select
+     * list grids for certain actions.
+     * 
+     * @param singleActionOnly
+     */
+    public void setSingleActionOnly(Boolean singleActionOnly) {
+        this.singleActionOnly = singleActionOnly;
+    }
 
     @Override
     public ListGridAction clone() {
@@ -169,6 +253,10 @@ public class ListGridAction implements Cloneable {
         cloned.iconClass = iconClass;
         cloned.urlPostfix = urlPostfix;
         cloned.forListGridReadOnly = forListGridReadOnly;
+        cloned.allCapable = allCapable;
+        cloned.actionId = actionId;
+        cloned.actionUrlOverride = actionUrlOverride;
+        cloned.singleActionOnly = singleActionOnly;
         return cloned;
     }
 }

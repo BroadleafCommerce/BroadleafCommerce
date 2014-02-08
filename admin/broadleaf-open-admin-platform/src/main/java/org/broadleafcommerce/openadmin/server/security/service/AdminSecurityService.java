@@ -126,4 +126,12 @@ public interface AdminSecurityService {
      */
     public Object getSalt(AdminUser user, String unencodedPassword);
 
+    /**
+     * Returns a list of admin users that match the given email. This could potentially return more than one user if the
+     * admin.user.requireUniqueEmailAddress property is set to false.
+     * @param email
+     * @return
+     */
+    public List<AdminUser> readAdminUsersByEmail(String email);
+
 }

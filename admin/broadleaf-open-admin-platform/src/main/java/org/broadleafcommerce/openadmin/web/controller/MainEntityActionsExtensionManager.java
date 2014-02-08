@@ -1,56 +1,50 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.controller;
 
-import org.broadleafcommerce.openadmin.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
 
 
 /**
- * Extension manager for 
+ * Extension manager to modify the actions that are added by default when viewing a ceiling entity for a particular
+ * section (for instance, a list of Products in the 'Product' section). Assuming that the user has proper permissions,
+ * the mainActions list would have {@link DefaultMainActions#ADD}
  *
  * @author Phillip Verheyden (phillipuniverse)
+ * @see 
  */
 @Component("blMainEntityActionsExtensionManager")
-public class MainEntityActionsExtensionManager implements MainEntityActionsExtensionListener {
+public class MainEntityActionsExtensionManager extends ExtensionManager<MainEntityActionsExtensionHandler> {
 
-    @Resource(name = "blMainEntityActionsExtensionListeners")
-    protected List<MainEntityActionsExtensionListener> listeners = new ArrayList<MainEntityActionsExtensionListener>();
-    
+    /**
+     * @param _clazz
+     */
+    public MainEntityActionsExtensionManager() {
+        super(MainEntityActionsExtensionHandler.class);
+    }
+
     @Override
-    public void modifyMainActions(ClassMetadata cmd, List<EntityFormAction> mainActions) {
-        for (MainEntityActionsExtensionListener listener : listeners) {
-            listener.modifyMainActions(cmd, mainActions);
-        }
-    }
-    
-    public List<MainEntityActionsExtensionListener> getListeners() {
-        return listeners;
-    }
-
-    
-    public void setListeners(List<MainEntityActionsExtensionListener> listeners) {
-        this.listeners = listeners;
+    public boolean continueOnHandled() {
+        return true;
     }
 
 }

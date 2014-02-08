@@ -1,28 +1,38 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web.resource;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.cache.CacheStatType;
+import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.springframework.core.io.Resource;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 
 
@@ -34,7 +44,12 @@ import java.util.List;
  *
  */
 public abstract class AbstractGeneratedResourceHandler {
-    
+
+    protected static final Log LOG = LogFactory.getLog(AbstractGeneratedResourceHandler.class);
+
+    @javax.annotation.Resource(name="blStatisticsService")
+    protected StatisticsService statisticsService;
+
     protected Cache generatedResourceCache;
     
     /**
@@ -69,7 +84,11 @@ public abstract class AbstractGeneratedResourceHandler {
     public Resource getResource(String path, List<Resource> locations) {
         Element e = getGeneratedResourceCache().get(path);
         Resource r = null;
-        
+        if (e == null) {
+            statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), false);
+        } else {
+            statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), true);
+        }
         boolean shouldGenerate = false;
         if (e == null || e.getObjectValue() == null) {
             shouldGenerate = true;
@@ -88,6 +107,46 @@ public abstract class AbstractGeneratedResourceHandler {
         
         return r;
     }
+    
+    /**
+     * This method can be used to read in a resource given a path and at least one resource location
+     * 
+     * @param path
+     * @param locations
+     * @return the resource from the file system, classpath, etc, if it exists
+     */
+    protected Resource getRawResource(String path, List<Resource> locations) {
+		for (Resource location : locations) {
+			try {
+				Resource resource = location.createRelative(path);
+				if (resource.exists() && resource.isReadable()) {
+				    return resource;
+				}
+			}
+			catch (IOException ex) {
+				LOG.debug("Failed to create relative resource - trying next resource location", ex);
+			}
+		}
+		return null;
+    }
+    
+	/**
+	 * @param resource
+	 * @return the UTF-8 String represetation of the contents of the resource
+	 */
+	protected String getResourceContents(Resource resource) throws IOException {
+    	StringWriter writer = null;
+	    try {
+	        writer = new StringWriter();
+    	    IOUtils.copy(resource.getInputStream(), writer, "UTF-8");
+    	    return writer.toString();
+	    } finally {
+	        if (writer != null) {
+    	        writer.flush();
+    	        writer.close();
+	        }
+	    }
+	}
     
     protected Cache getGeneratedResourceCache() {
         if (generatedResourceCache == null) {

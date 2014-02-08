@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.util;
 
 import java.io.BufferedReader;
@@ -46,7 +49,7 @@ public class PomEvaluator {
     private static Category SLF4J = new Category("slfj", LicenseType.MIT, FrameworkType.LOGGING);
     private static Category LOG4J = new Category("log4j", LicenseType.APACHE2, FrameworkType.LOGGING);
     private static Category OTHER = new Category("Other", LicenseType.OTHER, FrameworkType.OTHER);
-    private static Category SMART_GWT = new Category("Smart GWT UI Toolkit", LicenseType.LGPL, FrameworkType.UI);    
+    private static Category YAHOO = new Category("Yahoo", LicenseType.YAHOO_YUI, FrameworkType.UI);
     
     // CODEHAUS is used by Apache and Spring Framework
     private static Category JACKSON = new Category("Codehaus Jackson Library", LicenseType.APACHE2, FrameworkType.XML, SPRING, APACHE_FOUNDATION);
@@ -91,6 +94,7 @@ public class PomEvaluator {
         knownLibraries.put("javax.mail", JAVAX);
         knownLibraries.put("javax.servlet", JAVAX);
         knownLibraries.put("javax.servlet.jsp", JAVAX);
+        knownLibraries.put("javax.validation", JAVAX);
         knownLibraries.put("jstl", JAVAX);
 
         // Logging
@@ -116,15 +120,14 @@ public class PomEvaluator {
         knownLibraries.put("org.apache.xmlbeans", APACHE_FOUNDATION);
         knownLibraries.put("taglibs", APACHE_FOUNDATION);
         knownLibraries.put("jakarta-regexp", APACHE_FOUNDATION);
+        knownLibraries.put("ant.ant", APACHE_FOUNDATION);
 
         // Google - Will retire
         knownLibraries.put("com.google.gwt", GOOGLE);
         knownLibraries.put("com.google.code.gwt-math", GOOGLE);
         knownLibraries.put("com.google.code.findbugs", GOOGLE);
         knownLibraries.put("net.sf.gwt-widget", GOOGLE);
-
-        // SmartGWT - Will retire with 3.0
-        knownLibraries.put("com.smartgwt", SMART_GWT);
+        knownLibraries.put("com.google.guava", GOOGLE);
 
         // CodeHaus - JSON / XML processing
         knownLibraries.put("org.codehaus.jackson", JACKSON);
@@ -174,6 +177,9 @@ public class PomEvaluator {
         // OWASP
         knownLibraries.put("org.owasp.antisamy", ANTISAMMY);
 
+        // OWASP
+        knownLibraries.put("com.yahoo.platform.yui", YAHOO);
+
     }
 
 
@@ -208,8 +214,9 @@ public class PomEvaluator {
                     }
 
                 } else {
-                    if (dependency.scope.equals("test") ||
-                            dependency.scope.equals("provided")) {
+
+                    if (dependency.scope != null && (dependency.scope.equals("test") ||
+                            dependency.scope.equals("provided"))) {
                         continue;
                     }
                     OTHER.dependencyList.add(dependency);
@@ -327,6 +334,7 @@ public class PomEvaluator {
         public static LicenseType ANTISAMMY_BSD = new LicenseType("ANTISAMMY_BSD", "http://opensource.org/licenses/bsd-license.php");
         public static LicenseType OTHER = new LicenseType("OTHER", "Unknown");
         public static LicenseType ECLIPSE_PUBLIC = new LicenseType("ECLIPSE PUBLIC", "http://www.eclipse.org/legal/epl-v10.html");
+        public static LicenseType YAHOO_YUI = new LicenseType("YAHOO YUI", "http://yuilibrary.com/license/");
 
         public LicenseType(String name, String url) {
             this.name = name;

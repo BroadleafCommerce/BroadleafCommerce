@@ -19,6 +19,11 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
@@ -29,11 +34,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -53,11 +53,23 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         for (AdminRole role : adminUser.getAllRoles()) {
             for (AdminPermission permission : role.getAllPermissions()) {
-                authorities.add(new SimpleGrantedAuthority(permission.getName()));
+                if(permission.isFriendly()) {
+                    for (AdminPermission childPermission : permission.getAllChildPermissions()) {
+                        authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
+                    }
+                } else {
+                    authorities.add(new SimpleGrantedAuthority(permission.getName()));
+                }
             }
         }
         for (AdminPermission permission : adminUser.getAllPermissions()) {
-            authorities.add(new SimpleGrantedAuthority(permission.getName()));
+            if(permission.isFriendly()) {
+                for (AdminPermission childPermission : permission.getAllChildPermissions()) {
+                    authorities.add(new SimpleGrantedAuthority(childPermission.getName()));
+                }
+            } else {
+                authorities.add(new SimpleGrantedAuthority(permission.getName()));
+            }
         }
         for (String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             authorities.add(new GrantedAuthorityImpl(perm));

@@ -1,34 +1,39 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionListener;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
+import org.thymeleaf.dom.Node;
 import org.thymeleaf.exceptions.TemplateProcessingException;
-import org.thymeleaf.fragment.FragmentAndTarget;
-import org.thymeleaf.fragment.WholeFragmentSpec;
 import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
-import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will include the standard head element. It will also set the
@@ -43,8 +48,21 @@ import java.util.Map;
  * </ul>
  * 
  * @author apazzolini
+ *
+ * @deprecated
+ *
+ * The entire FragmentAndTarget class has been deprecated in favor of a completely new system in Thymeleaf 2.1
+ * The referenced issue can be found at https://github.com/thymeleaf/thymeleaf/issues/205
+ *
+ * Use th:include or th:replace within the head tag and include the variables to replicate the behaviour.
+ *
+ * Examples:
+ *
+ * <head th:include="/layout/partials/head (pageTitle='My Page Title')"></head>
+ * <head th:include="/layout/partials/head (twovar=${value2},onevar=${value1})">...</head>
+ *
  */
-@Component("blHeadProcessor")
+@Deprecated
 public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
 
     @Resource(name = "blHeadProcessorExtensionManager")
@@ -66,13 +84,13 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
     }
 
     @Override
-    protected boolean getSubstituteInclusionNode(Arguments arguments, Element element) {
+    protected boolean getRemoveHostNode(final Arguments arguments, final Element element) {
         return true;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected FragmentAndTarget getFragmentAndTarget(Arguments arguments, Element element, boolean substituteInclusionNode) {
+    protected List<Node> computeFragment(final Arguments arguments, final Element element) {
         // The pageTitle attribute could be an expression that needs to be evaluated. Try to evaluate, but fall back
         // to its text value if the expression wasn't able to be processed. This will allow things like
         // pageTitle="Hello this is a string"
@@ -81,7 +99,9 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
         
         String pageTitle = element.getAttributeValue("pageTitle");
         try {
-            pageTitle = (String) StandardExpressionProcessor.processExpression(arguments, pageTitle);
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                    .parseExpression(arguments.getConfiguration(), arguments, pageTitle);
+            pageTitle = (String) expression.execute(arguments.getConfiguration(), arguments);
         } catch (TemplateProcessingException e) {
             // Do nothing.
         }
@@ -89,8 +109,13 @@ public class HeadProcessor extends AbstractFragmentHandlingElementProcessor {
         ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put("additionalCss", element.getAttributeValue("additionalCss"));
 
         extensionManager.processAttributeValues(arguments, element);
-
-        return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+        
+        //the commit at https://github.com/thymeleaf/thymeleaf/commit/b214d9b5660369c41538e023d4b8d7223ebcbc22 along with
+        //the referenced issue at https://github.com/thymeleaf/thymeleaf/issues/205
+        
+        
+//        return new FragmentAndTarget(HEAD_PARTIAL_PATH, WholeFragmentSpec.INSTANCE);
+        return new ArrayList<Node>();
     }
 
 }

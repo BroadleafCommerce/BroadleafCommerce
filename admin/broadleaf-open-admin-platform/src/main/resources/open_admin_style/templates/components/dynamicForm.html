@@ -10,7 +10,7 @@
     
         <div th:each="field : ${group.fields}" 
              th:if="${field.name}" 
-             class="field-box" 
+             th:class="${'field-box' + (field.isDirty ? ' dirty' : '')}" 
              blc_admin:component_id="${field}"
              th:classappend="${!field.isVisible}? 'hidden'">
             

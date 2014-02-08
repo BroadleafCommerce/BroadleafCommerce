@@ -1,23 +1,29 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.util.TableCreator;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -36,22 +42,24 @@ import org.broadleafcommerce.core.order.domain.NullOrderFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
-import org.broadleafcommerce.core.payment.dao.PaymentInfoDao;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
+import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.broadleafcommerce.core.pricing.service.PricingService;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
-import org.broadleafcommerce.core.workflow.SequenceProcessor;
+import org.broadleafcommerce.core.workflow.ActivityMessages;
+import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.broadleafcommerce.core.workflow.Processor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.exception.LockAcquisitionException;
@@ -71,6 +79,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+
 /**
  * @author apazzolini
  */
@@ -80,8 +89,8 @@ public class OrderServiceImpl implements OrderService {
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
     
     /* DAOs */
-    @Resource(name = "blPaymentInfoDao")
-    protected PaymentInfoDao paymentInfoDao;
+    @Resource(name = "blOrderPaymentDao")
+    protected OrderPaymentDao paymentDao;
     
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
@@ -106,8 +115,8 @@ public class OrderServiceImpl implements OrderService {
     @Resource(name = "blOfferService")
     protected OfferService offerService;
 
-    @Resource(name = "blSecurePaymentInfoService")
-    protected SecurePaymentInfoService securePaymentInfoService;
+    @Resource(name = "blSecureOrderPaymentService")
+    protected SecureOrderPaymentService securePaymentInfoService;
 
     @Resource(name = "blMergeCartService")
     protected MergeCartService mergeCartService;
@@ -117,13 +126,16 @@ public class OrderServiceImpl implements OrderService {
     
     /* Workflows */
     @Resource(name = "blAddItemWorkflow")
-    protected SequenceProcessor addItemWorkflow;
+    protected Processor addItemWorkflow;
     
+    @Resource(name = "blUpdateProductOptionsForItemWorkflow")
+    private Processor updateProductOptionsForItemWorkflow;
+
     @Resource(name = "blUpdateItemWorkflow")
-    protected SequenceProcessor updateItemWorkflow;
+    protected Processor updateItemWorkflow;
     
     @Resource(name = "blRemoveItemWorkflow")
-    protected SequenceProcessor removeItemWorkflow;
+    protected Processor removeItemWorkflow;
 
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
@@ -202,23 +214,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<PaymentInfo> findPaymentInfosForOrder(Order order) {
-        return paymentInfoDao.readPaymentInfosForOrder(order);
+    public List<OrderPayment> findPaymentsForOrder(Order order) {
+        return paymentDao.readPaymentsForOrder(order);
     }
     
     @Override
     @Transactional("blTransactionManager")
-    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo) {
+    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo) {
         payment.setOrder(order);
-        order.getPaymentInfos().add(payment);
+        order.getPayments().add(payment);
         order = persist(order);
-        int paymentIndex = order.getPaymentInfos().size() - 1;
+        int paymentIndex = order.getPayments().size() - 1;
 
         if (securePaymentInfo != null) {
             securePaymentInfoService.save(securePaymentInfo);
         }
 
-        return order.getPaymentInfos().get(paymentIndex);
+        return order.getPayments().get(paymentIndex);
     }
 
     @Override
@@ -323,6 +335,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
+        preValidateCartOperation(order);
         Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
         //TODO: give some sort of notification that adding the offer code to the order was unsuccessful
         if (!order.getAddedOfferCodes().contains(offerCode) && !addedOffers.contains(offerCode.getOffer())) {
@@ -495,6 +508,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
         Order order = findOrderById(orderId);
+        preValidateCartOperation(order);
         if (automaticallyMergeLikeItems) {
             OrderItem item = findMatchingItem(order, orderItemRequestDTO);
             if (item != null) {
@@ -510,8 +524,28 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         try {
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            CartOperationContext context = (CartOperationContext) addItemWorkflow.doActivities(cartOpRequest);
+            // We only want to price on the last addition for performance reasons and only if the user asked for it.
+            int numAdditionRequests = priceOrder ? (1 + orderItemRequestDTO.getChildOrderItems().size()) : -1;
+            int currentAddition = 1;
+
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(cartOpRequest);
+
+            List<ActivityMessageDTO> orderMessages = new ArrayList<ActivityMessageDTO>();
+            orderMessages.addAll(((ActivityMessages) context).getActivityMessages());
+            
+            if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
+                for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+                    childRequest.setParentOrderItemId(context.getSeedData().getOrderItem().getId());
+                    currentAddition++;
+
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
+                    ProcessContext<CartOperationRequest> childContext = (ProcessContext<CartOperationRequest>) addItemWorkflow.doActivities(childCartOpRequest);
+                    orderMessages.addAll(((ActivityMessages) childContext).getActivityMessages());
+                }
+            }
+            
+            context.getSeedData().getOrder().setOrderMessages(orderMessages);
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new AddToCartException("Could not add to cart", getCartOperationExceptionRootCause(e));
@@ -522,13 +556,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
+        preValidateCartOperation(findOrderById(orderId));
         if (orderItemRequestDTO.getQuantity() == 0) {
             return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
         }
         
         try {
             CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            CartOperationContext context = (CartOperationContext) updateItemWorkflow.doActivities(cartOpRequest);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateItemWorkflow.doActivities(cartOpRequest);
+            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
             throw new UpdateCartException("Could not update cart quantity", getCartOperationExceptionRootCause(e));
@@ -538,15 +574,32 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
     public Order removeItem(Long orderId, Long orderItemId, boolean priceOrder) throws RemoveFromCartException {
+        preValidateCartOperation(findOrderById(orderId));
         try {
-            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-            orderItemRequestDTO.setOrderItemId(orderItemId);
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            CartOperationContext context = (CartOperationContext) removeItemWorkflow.doActivities(cartOpRequest);
-            return context.getSeedData().getOrder();
+            OrderItem oi = orderItemService.readOrderItemById(orderItemId);
+            if (CollectionUtils.isNotEmpty(oi.getChildOrderItems())) {
+                List<Long> childrenToRemove = new ArrayList<Long>();
+                for (OrderItem childOrderItem : oi.getChildOrderItems()) {
+                    childrenToRemove.add(childOrderItem.getId());
+                }
+                for (Long childToRemove : childrenToRemove) {
+                    removeItemInternal(orderId, childToRemove, false);
+                }
+            }
+
+            return removeItemInternal(orderId, orderItemId, priceOrder);
         } catch (WorkflowException e) {
             throw new RemoveFromCartException("Could not remove from cart", getCartOperationExceptionRootCause(e));
         }
+    }
+    
+    protected Order removeItemInternal(Long orderId, Long orderItemId, boolean priceOrder) throws WorkflowException {
+        OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+        orderItemRequestDTO.setOrderItemId(orderItemId);
+        CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+        ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) removeItemWorkflow.doActivities(cartOpRequest);
+        context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+        return context.getSeedData().getOrder();
     }
 
     @Override
@@ -603,46 +656,46 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
-    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType) {
-        List<PaymentInfo> infos = new ArrayList<PaymentInfo>();
-        for (PaymentInfo paymentInfo : order.getPaymentInfos()) {
+    public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType) {
+        List<OrderPayment> infos = new ArrayList<OrderPayment>();
+        for (OrderPayment paymentInfo : order.getPayments()) {
             if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
                 infos.add(paymentInfo);
             }
         }
-        order.getPaymentInfos().removeAll(infos);
-        for (PaymentInfo paymentInfo : infos) {
+        order.getPayments().removeAll(infos);
+        for (OrderPayment paymentInfo : infos) {
             try {
                 securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
             } catch (WorkflowException e) {
                 // do nothing--this is an acceptable condition
-                LOG.debug("No secure payment is associated with the PaymentInfo", e);
+                LOG.debug("No secure payment is associated with the OrderPayment", e);
             }
-            order.getPaymentInfos().remove(paymentInfo);
-            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfo.getId());
-            paymentInfoDao.delete(paymentInfo);
+            order.getPayments().remove(paymentInfo);
+            paymentInfo = paymentDao.readPaymentById(paymentInfo.getId());
+            paymentDao.delete(paymentInfo);
         }
     }
 
     @Override
     @Transactional("blTransactionManager")
-    public void removePaymentFromOrder(Order order, PaymentInfo paymentInfo){
-        PaymentInfo paymentInfoToRemove = null;
-        for(PaymentInfo info : order.getPaymentInfos()){
-            if(info.equals(paymentInfo)){
-                paymentInfoToRemove = info;
+    public void removePaymentFromOrder(Order order, OrderPayment payment){
+        OrderPayment paymentToRemove = null;
+        for (OrderPayment info : order.getPayments()){
+            if (info.equals(payment)){
+                paymentToRemove = info;
             }
         }
-        if(paymentInfoToRemove != null){
+        if (paymentToRemove != null){
             try {
-                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfoToRemove.getReferenceNumber(), paymentInfo.getType());
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentToRemove.getReferenceNumber(), payment.getType());
             } catch (WorkflowException e) {
                 // do nothing--this is an acceptable condition
-                LOG.debug("No secure payment is associated with the PaymentInfo", e);
+                LOG.debug("No secure payment is associated with the OrderPayment", e);
             }
-            order.getPaymentInfos().remove(paymentInfoToRemove);
-            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfoToRemove.getId());
-            paymentInfoDao.delete(paymentInfo);
+            order.getPayments().remove(paymentToRemove);
+            payment = paymentDao.readPaymentById(paymentToRemove.getId());
+            paymentDao.delete(payment);
         }
     }
     
@@ -733,6 +786,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(value = "blTransactionManager", rollbackFor = { UpdateCartException.class })
+    public Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException {
+        try {
+            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateProductOptionsForItemWorkflow.doActivities(cartOpRequest);
+            context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
+            return context.getSeedData().getOrder();
+        } catch (WorkflowException e) {
+            throw new UpdateCartException("Could not product options", getCartOperationExceptionRootCause(e));
+        }
+    }
+
+    @Override
     public void printOrder(Order order, Log log) {
         if (!log.isDebugEnabled()) {
             return;
@@ -768,6 +834,17 @@ public class OrderServiceImpl implements OrderService {
             .addSeparator();
         
         log.debug(tc.toString());
+    }
+    
+    @Override
+    public void preValidateCartOperation(Order cart) {
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().preValidateCartOperation(cart, erh);
+        if (erh.getThrowable() instanceof IllegalCartOperationException) {
+            throw ((IllegalCartOperationException) erh.getThrowable());
+        } else if (erh.getThrowable() != null) {
+            throw new RuntimeException(erh.getThrowable());
+        }
     }
 
 }

@@ -1,22 +1,27 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.MapUtils;
+import org.broadleafcommerce.common.payment.PaymentType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -27,15 +32,15 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
-import javax.annotation.Resource;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will on order confirmation page, submit order
@@ -50,22 +55,22 @@ import java.util.Map;
  * </pre>
  * @author tleffert
  */
-@Component("blGoogleAnalyticsProcessor")
 public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProcessor {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
-    @Value("${googleAnalytics.webPropertyId}")
-    protected String webPropertyId;
+    protected String affiliation;
+
+    protected String getWebPropertyId() {
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics.webPropertyId");
+    }
+
+    protected String getAffiliationDefault() {
+        return BLCSystemProperty.resolveSystemProperty("googleAnalytics.affiliation");
+    }
     
-    @Value("${googleAnalytics.affiliation}")
-    protected String affiliation = "";
-    
-    /**
-     * This will force the domain to 127.0.0.1 which is useful to determine if the Google Analytics tag is sending
-     * a request to Google
-     */
+    @Value("${googleAnalytics.testLocal}")
     protected boolean testLocal = false;
 
     /**
@@ -88,7 +93,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
         if (orderNumber != null) {
             order = orderService.findOrderByOrderNumber(orderNumber);
         }
-        addToModel(arguments, "analytics", analytics(webPropertyId, order));
+        addToModel(arguments, "analytics", analytics(getWebPropertyId(), order));
     }
 
     /**
@@ -108,6 +113,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
 
         sb.append("var _gaq = _gaq || [];\n");
         sb.append("_gaq.push(['_setAccount', '" + webPropertyId + "']);");
+
         sb.append("_gaq.push(['_trackPageview']);");
         
         if (testLocal) {
@@ -118,7 +124,7 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
             Address paymentAddress = getBillingAddress(order);
             if (paymentAddress != null) {
                 sb.append("_gaq.push(['_addTrans','" + order.getOrderNumber() + "'");
-                sb.append(",'" + affiliation + "'");
+                sb.append(",'" + getAffiliation() + "'");
                 sb.append(",'" + order.getTotal() + "'");
                 sb.append(",'" + order.getTotalTax() + "'");
                 sb.append(",'" + order.getTotalShipping() + "'");
@@ -181,19 +187,11 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
     }
 
     protected Address getBillingAddress(Order order) {
-        PaymentInfo paymentInfo = null;
-        if (order.getPaymentInfos().size() > 0) {
-            paymentInfo = order.getPaymentInfos().get(0);
-        }
-
         Address address = null;
-        if (paymentInfo == null || paymentInfo.getAddress() == null) {
-            // in this case, no payment info object on the order or no billing
-            // information received due to external payment gateway
-            address = order.getFulfillmentGroups().get(0).getAddress();
-        } else {
-            // then the address must exist on the payment info
-            address = paymentInfo.getAddress();
+        for (OrderPayment payment : order.getPayments())  {
+            if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
+                address = payment.getBillingAddress();
+            }
         }
 
         return address;
@@ -208,7 +206,11 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
     }
     
     public String getAffiliation() {
-        return affiliation;
+        if (affiliation == null) {
+            return getAffiliationDefault();
+        } else {
+            return affiliation;
+        }
     }
     
     public void setAffiliation(String affiliation) {

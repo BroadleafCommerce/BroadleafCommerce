@@ -1,32 +1,38 @@
-
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 
 package org.broadleafcommerce.openadmin.web.form.component;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.util.TypedPredicate;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 
 public class ListGrid {
 
@@ -64,6 +70,10 @@ public class ListGrid {
     // The section url that maps to this particular list grid
     protected String sectionKey;
 
+    // The list of all section keys that have been traversed to arrive at this ListGrid (including the current one), in order
+    // of occurrence
+    protected List<SectionCrumb> sectionCrumbs = new ArrayList<SectionCrumb>();
+
     // If this list grid is a sublistgrid, meaning it is rendered as part of a different entity, these properties
     // help identify the parent entity.
     protected String externalEntitySectionKey;
@@ -74,6 +84,7 @@ public class ListGrid {
     public enum Type {
         MAIN,
         INLINE,
+        INLINEMULTI,
         TO_ONE,
         BASIC,
         ADORNED,
@@ -82,7 +93,7 @@ public class ListGrid {
         TRANSLATION,
         ASSET
     }
-    
+
     /* ************** */
     /* CUSTOM METHODS */
     /* ************** */
@@ -115,6 +126,54 @@ public class ListGrid {
         
         return sb.toString();
     }
+
+    public String getSectionCrumbRepresentation() {
+        StringBuilder sb = new StringBuilder();
+        if (!sectionCrumbs.isEmpty()) {
+           sb.append("?sectionCrumbs=");
+        }
+        int index = 0;
+        for (SectionCrumb section : sectionCrumbs) {
+            sb.append(section.getSectionIdentifier());
+            sb.append("--");
+            sb.append(section.getSectionId());
+            if (index < sectionCrumbs.size()-1) {
+                sb.append(",");
+            }
+            index++;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Grabs a filtered list of toolbar actions filtered by whether or not they match the same readonly state as the listgrid
+     * and are thus shown on the screen
+     */
+    @SuppressWarnings("unchecked")
+    public List<ListGridAction> getActiveToolbarActions() {
+        return (List<ListGridAction>) CollectionUtils.select(getToolbarActions(), new TypedPredicate<ListGridAction>() {
+            
+            @Override
+            public boolean eval(ListGridAction action) {
+                return action.getForListGridReadOnly().equals(getReadOnly());
+            }
+        });
+    }
+    
+    /**
+     * Grabs a filtered list of row actions filtered by whether or not they match the same readonly state as the listgrid
+     * and are thus shown on the screen
+     */
+    @SuppressWarnings("unchecked")
+    public List<ListGridAction> getActiveRowActions() {
+        return (List<ListGridAction>) CollectionUtils.select(getRowActions(), new TypedPredicate<ListGridAction>() {
+            
+            @Override
+            public boolean eval(ListGridAction action) {
+                return action.getForListGridReadOnly().equals(getReadOnly());
+            }
+        });
+    }
     
     public void addRowAction(ListGridAction action) {
         getRowActions().add(action);
@@ -122,6 +181,32 @@ public class ListGrid {
     
     public void addToolbarAction(ListGridAction action) {
         getToolbarActions().add(action);
+    }
+    
+    public void removeAllToolbarActions() {
+        getToolbarActions().clear();
+    }
+    
+    public void removeAllRowActions() {
+        getRowActions().clear();
+    }
+    
+    public ListGridAction findToolbarAction(String actionId) {
+        for (ListGridAction action : getToolbarActions()) {
+            if (action.getActionId().equals(actionId)) {
+                return action;
+            }
+        }
+        return null;
+    }
+    
+    public ListGridAction findRowAction(String actionId) {
+        for (ListGridAction action : getRowActions()) {
+            if (action.getActionId().equals(actionId)) {
+                return action;
+            }
+        }
+        return null;
     }
     
     /**
@@ -316,5 +401,16 @@ public class ListGrid {
     public void setHideIdColumn(Boolean hideIdColumn) {
         this.hideIdColumn = hideIdColumn;
     }
-    
+
+    public List<SectionCrumb> getSectionCrumbs() {
+        return sectionCrumbs;
+    }
+
+    public void setSectionCrumbs(List<SectionCrumb> sectionCrumbs) {
+        if (sectionCrumbs == null) {
+            this.sectionCrumbs.clear();
+            return;
+        }
+        this.sectionCrumbs = sectionCrumbs;
+    }
 }

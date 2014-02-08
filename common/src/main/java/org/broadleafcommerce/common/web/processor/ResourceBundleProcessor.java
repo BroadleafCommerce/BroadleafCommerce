@@ -1,33 +1,36 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.broadleafcommerce.common.web.util.ProcessorUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.NestableNode;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,15 +44,15 @@ import javax.annotation.Resource;
  * 
  * @author apazzolini
  */
-@Component("blResourceBundleProcessor")
 public class ResourceBundleProcessor extends AbstractElementProcessor {
     
     @Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
     
-    @Value("${bundle.enabled}")
-    protected boolean bundleEnabled;
-    
+    protected boolean getBundleEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled");
+    }
+
     public ResourceBundleProcessor() {
         super("bundle");
     }
@@ -69,7 +72,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             files.add(file.trim());
         }
         
-        if (bundleEnabled) {
+        if (getBundleEnabled()) {
             String versionedBundle = bundlingService.getVersionedBundleName(name);
             if (StringUtils.isBlank(versionedBundle)) {
                 BroadleafResourceHttpRequestHandler reqHandler = getRequestHandler(name, arguments);
@@ -79,8 +82,9 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
                     throw new RuntimeException(e);
                 }
             }
-            
-            String value = (String) StandardExpressionProcessor.processExpression(arguments, "@{'" + mappingPrefix + versionedBundle + "'}");
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                    .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + versionedBundle + "'}");
+            String value = (String) expression.execute(arguments.getConfiguration(), arguments);
             Element e = getElement(value);
             parent.insertAfter(element, e);
         } else {
@@ -90,7 +94,9 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             }
             for (String file : files) {
                 file = file.trim();
-                String value = (String) StandardExpressionProcessor.processExpression(arguments, "@{'" + mappingPrefix + file + "'}");
+                Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                        .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + file + "'}");
+                String value = (String) expression.execute(arguments.getConfiguration(), arguments);
                 Element e = getElement(value);
                 parent.insertBefore(element, e);
             }

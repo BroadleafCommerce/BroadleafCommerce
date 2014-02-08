@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -67,7 +70,11 @@ public class OfferAuditImpl implements OfferAudit {
     @Column(name = "ORDER_ID")
     @Index(name="OFFERAUDIT_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Long orderId;
-
+    
+    @Column(name = "OFFER_CODE_ID")
+    @Index(name="OFFERAUDIT_OFFER_CODE_INDEX", columnNames={"OFFER_CODE_ID"})
+    protected Long offerCodeId;
+    
     @Column(name = "REDEEMED_DATE")
     protected Date redeemedDate;
 
@@ -93,12 +100,12 @@ public class OfferAuditImpl implements OfferAudit {
 
     @Override
     public Long getOfferCodeId() {
-        throw new UnsupportedOperationException();
+        return offerCodeId;
     }
 
     @Override
     public void setOfferCodeId(Long offerCodeId) {
-        throw new UnsupportedOperationException();
+        this.offerCodeId = offerCodeId;
     }
 
     @Override
@@ -120,7 +127,7 @@ public class OfferAuditImpl implements OfferAudit {
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
-
+    
     @Override
     public Date getRedeemedDate() {
         return redeemedDate;
@@ -133,22 +140,13 @@ public class OfferAuditImpl implements OfferAudit {
 
     @Override
     public int hashCode() {
-        try {
-            return new HashCodeBuilder()
-                .append(customerId)
-                .append(offerId)
-                .append(getOfferCodeId())
-                .append(redeemedDate)
-                .append(orderId)
-                .build();
-        } catch (UnsupportedOperationException e) {
             return new HashCodeBuilder()
             .append(customerId)
             .append(offerId)
+            .append(offerCodeId)
             .append(redeemedDate)
             .append(orderId)
             .build();
-        }
     }
     
     @Override
@@ -156,24 +154,14 @@ public class OfferAuditImpl implements OfferAudit {
         if (o instanceof OfferAuditImpl) {
             OfferAuditImpl that = (OfferAuditImpl) o;
             
-            try {
-                return new EqualsBuilder()
-                    .append(this.id, that.id)
-                    .append(this.customerId, that.customerId)
-                    .append(this.offerId, that.offerId)
-                    .append(this.getOfferCodeId(), that.getOfferCodeId())
-                    .append(this.redeemedDate, that.redeemedDate)
-                    .append(this.orderId, that.orderId)
-                    .build();
-            } catch (UnsupportedOperationException e) {
-                return new EqualsBuilder()
+            return new EqualsBuilder()
                 .append(this.id, that.id)
                 .append(this.customerId, that.customerId)
                 .append(this.offerId, that.offerId)
+                .append(this.offerCodeId, that.offerCodeId)
                 .append(this.redeemedDate, that.redeemedDate)
                 .append(this.orderId, that.orderId)
                 .build();
-            }
         }
         
         return false;

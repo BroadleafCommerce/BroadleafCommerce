@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2009 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -94,11 +97,21 @@ public class AdminSectionImpl implements AdminSection {
     @BatchSize(size = 50)
     protected List<AdminPermission> permissions = new ArrayList<AdminPermission>();
 
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
     @Column(name = "DISPLAY_CONTROLLER", nullable=true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Controller", order=4, group = "AdminSectionImpl_Section")
     protected String displayController;
 
-    @Column(name = "USE_DEFAULT_HANDLER", nullable=false)
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
+    @Column(name = "USE_DEFAULT_HANDLER", nullable = true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Use_Default_Handler", order=5, group = "AdminSectionImpl_Section")
     protected Boolean useDefaultHandler = Boolean.TRUE;
 
@@ -170,21 +183,25 @@ public class AdminSectionImpl implements AdminSection {
         this.permissions = permissions;
     }
 
+    @Deprecated
     @Override
     public String getDisplayController() {
         return displayController;
     }
 
+    @Deprecated
     @Override
     public void setDisplayController(String displayController) {
         this.displayController = displayController;
     }
 
+    @Deprecated
     @Override
     public Boolean getUseDefaultHandler() {
         return useDefaultHandler;
     }
 
+    @Deprecated
     @Override
     public void setUseDefaultHandler(Boolean useDefaultHandler) {
         this.useDefaultHandler = useDefaultHandler;

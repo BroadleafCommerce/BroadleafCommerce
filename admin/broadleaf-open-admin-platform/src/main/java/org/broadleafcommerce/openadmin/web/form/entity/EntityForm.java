@@ -1,18 +1,21 @@
-
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 
 package org.broadleafcommerce.openadmin.web.form.entity;
@@ -22,12 +25,14 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,11 +52,13 @@ public class EntityForm {
     public static final Integer DEFAULT_TAB_ORDER = 100;
 
     protected String id;
+    protected String parentId;
     protected String idProperty = "id";
     protected String ceilingEntityClassname;
     protected String entityType;
     protected String mainEntityName;
     protected String sectionKey;
+    protected Boolean readOnly = false;
     protected Set<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
         @Override
         public int compare(Tab o1, Tab o2) {
@@ -61,6 +68,7 @@ public class EntityForm {
                     .toComparison();
         }
     });
+    protected List<SectionCrumb> sectionCrumbs = new ArrayList<SectionCrumb>();
 
     // This is used to data-bind when this entity form is submitted
     protected Map<String, Field> fields = null;
@@ -233,6 +241,17 @@ public class EntityForm {
         tabs.remove(tab);
     }
     
+    public void removeTab(String tabName) {
+        if (tabs != null) {
+            Iterator<Tab> tabIterator = tabs.iterator();
+            while (tabIterator.hasNext()) {
+                Tab currentTab = tabIterator.next();
+                if (tabName.equals(currentTab.getTitle())) {
+                    tabIterator.remove();
+                }
+            }
+        }
+    }
     public ListGrid removeListGrid(String subCollectionFieldName) {
         ListGrid lgToRemove = null;
         Tab containingTab = null;
@@ -276,7 +295,6 @@ public class EntityForm {
     }
 
     public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
-        //        System.out.println(String.format("Adding field [%s] to group [%s] to tab [%s]", field.getName(), groupName, tabName));
         groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
         groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
@@ -313,6 +331,19 @@ public class EntityForm {
         tab.getListGrids().add(listGrid);
     }
 
+    /**
+     * Uses a zero based position.   Use 0 to add to the top of the list.
+     * @param position
+     * @param action
+     */
+    public void addAction(int position, EntityFormAction action) {
+        if (actions.size() > position) {
+            actions.add(position, action);
+        } else {
+            actions.add(action);
+        }
+    }
+
     public void addAction(EntityFormAction action) {
         actions.add(action);
     }
@@ -341,28 +372,37 @@ public class EntityForm {
         getDynamicFormInfos().put(name, info);
     }
     
+    public Boolean getReadOnly() {
+        return readOnly;
+    }
+    
     public void setReadOnly() {
+        setReadOnly(true);
+    }
+
+    public void setReadOnly(boolean readOnly) {
         if (getFields() != null) {
             for (Entry<String, Field> entry : getFields().entrySet()) {
-                entry.getValue().setReadOnly(true);
+                entry.getValue().setReadOnly(readOnly);
             }
         }
         
         if (getAllListGrids() != null) {
             for (ListGrid lg : getAllListGrids()) {
-                lg.setReadOnly(true);
+                lg.setReadOnly(readOnly);
             }
         }
         
         if (getDynamicForms() != null) {
             for (Entry<String, EntityForm> entry : getDynamicForms().entrySet()) {
-                entry.getValue().setReadOnly();
+                entry.getValue().setReadOnly(readOnly);
             }
         }
         
         actions.clear();
+        this.readOnly = readOnly;
     }
-
+    
     public List<EntityFormAction> getActions() {
         List<EntityFormAction> clonedActions = new ArrayList<EntityFormAction>(actions);
         Collections.reverse(clonedActions);
@@ -380,7 +420,15 @@ public class EntityForm {
     public void setId(String id) {
         this.id = id;
     }
-    
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
     public String getIdProperty() {
         return idProperty;
     }
@@ -448,5 +496,48 @@ public class EntityForm {
     public void setActions(List<EntityFormAction> actions) {
         this.actions = actions;
     }
-    
+
+    public List<SectionCrumb> getSectionCrumbsImpl() {
+        return sectionCrumbs;
+    }
+
+    public void setSectionCrumbsImpl(List<SectionCrumb> sectionCrumbs) {
+        if (sectionCrumbs == null) {
+            this.sectionCrumbs.clear();
+            return;
+        }
+        this.sectionCrumbs = sectionCrumbs;
+    }
+
+    public void setSectionCrumbs(String crumbs) {
+        List<SectionCrumb> myCrumbs = new ArrayList<SectionCrumb>();
+        if (!StringUtils.isEmpty(crumbs)) {
+            String[] crumbParts = crumbs.split(",");
+            for (String part : crumbParts) {
+                SectionCrumb crumb = new SectionCrumb();
+                String[] crumbPieces = part.split("--");
+                crumb.setSectionIdentifier(crumbPieces[0]);
+                crumb.setSectionId(crumbPieces[1]);
+                if (!myCrumbs.contains(crumb)) {
+                    myCrumbs.add(crumb);
+                }
+            }
+        }
+        sectionCrumbs = myCrumbs;
+    }
+
+    public String getSectionCrumbs() {
+        StringBuilder sb = new StringBuilder();
+        int index = 0;
+        for (SectionCrumb section : sectionCrumbs) {
+            sb.append(section.getSectionIdentifier());
+            sb.append("--");
+            sb.append(section.getSectionId());
+            if (index < sectionCrumbs.size()-1) {
+                sb.append(",");
+            }
+            index++;
+        }
+        return sb.toString();
+    }
 }

@@ -1,28 +1,31 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.page.domain;
 
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 /**
  * Created by bpolster.
@@ -48,30 +51,6 @@ public interface Page extends Serializable {
     public Map<String, PageField> getPageFields();
 
     public void setPageFields(Map<String, PageField> pageFields);
-
-    public Boolean getDeletedFlag();
-
-    public void setDeletedFlag(Boolean deletedFlag);
-
-    public Boolean getArchivedFlag();
-
-    public void setArchivedFlag(Boolean archivedFlag);
-
-    public SandBox getSandbox();
-
-    public void setSandbox(SandBox sandbox);
-
-    public Boolean getLockedFlag();
-
-    public void setLockedFlag(Boolean lockedFlag);
-
-    public Long getOriginalPageId();
-
-    public void setOriginalPageId(Long originalPageId);
-
-    public SandBox getOriginalSandBox();
-
-    public void setOriginalSandBox(SandBox originalSandBox);
 
     public AdminAuditable getAuditable();
 
@@ -143,8 +122,20 @@ public interface Page extends Serializable {
      * @param qualifyingItemCriteria
      */
     public void setQualifyingItemCriteria(@Nullable Set<PageItemCriteria> qualifyingItemCriteria);
-    
-    
 
-    public Page cloneEntity();
+    /**
+     * Returns the excludeFromSiteMap flag.  True indicates that the page should be excluded from the site map.
+     *
+     * @return true if this page is excluded from the site map
+     */
+    @Nullable
+    public boolean getExcludeFromSiteMap();
+
+    /**
+     * Sets the excludeFromSiteMap flag.
+     * 
+     * @param excludeFromSiteMap
+     */
+    public void setExcludeFromSiteMap(boolean excludeFromSiteMap);
+
 }

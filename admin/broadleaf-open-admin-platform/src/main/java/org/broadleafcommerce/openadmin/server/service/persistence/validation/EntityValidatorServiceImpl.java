@@ -1,28 +1,35 @@
 /*
- * Copyright 2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -54,8 +61,38 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     protected ApplicationContext applicationContext;
 
     @Override
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata, 
-            boolean validateUnsubmittedProperties) {
+    public void validate(Entity submittedEntity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
+            RecordHelper recordHelper, boolean validateUnsubmittedProperties) {
+        Object idValue = null;
+        if (instance != null) {
+            String idField = (String) ((BasicPersistenceModule) recordHelper.getCompatibleModule(OperationType.BASIC)).
+                getPersistenceManager().getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name");
+            try {
+                idValue = recordHelper.getFieldManager().getFieldValue(instance, idField);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (FieldNotAvailableException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Entity entity;
+        if (idValue == null) {
+            //This is for an add, or if the instance variable is null (e.g. PageTemplateCustomPersistenceHandler)
+            entity = submittedEntity;
+        } else {
+            //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
+            entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
+            //acquire any missing properties not harvested from the instance and add to the entity. A use case for this
+            //would be the confirmation field for a password validation
+            for (Map.Entry<String, FieldMetadata> entry : propertiesMetadata.entrySet()) {
+                if (entity.findProperty(entry.getKey()) == null) {
+                    Property myProperty = submittedEntity.findProperty(entry.getKey());
+                    if (myProperty != null) {
+                        entity.addProperty(myProperty);
+                    }
+                }
+            }
+        }
         List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
         for (Entry<String, FieldMetadata> metadataEntry : propertiesMetadata.entrySet()) {
@@ -64,7 +101,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
             //Don't test this field if it was not inherited from our polymorphic type (or supertype)
             if (types.contains(metadata.getInheritedFromType())) {
                 Property property = entity.getPMap().get(metadataEntry.getKey());
-                
+
                 // This property should be set to false only in the case where we are adding a member to a collection
                 // that has type of lookup. In this case, we don't have the properties from the target in our entity,
                 // and we don't need to validate them.
@@ -88,7 +125,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                                     propertyName,
                                     propertyValue);
                             if (!result.isValid()) {
-                                entity.addValidationError(propertyName, result.getErrorMessage());
+                                submittedEntity.addValidationError(propertyName, result.getErrorMessage());
                             }
                         }
                     }
@@ -129,7 +166,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                                                                         propertyName,
                                                                         propertyValue);
                         if (!result.isValid()) {
-                            entity.addValidationError(propertyName, result.getErrorMessage());
+                            submittedEntity.addValidationError(propertyName, result.getErrorMessage());
                         }
                     }
                 }

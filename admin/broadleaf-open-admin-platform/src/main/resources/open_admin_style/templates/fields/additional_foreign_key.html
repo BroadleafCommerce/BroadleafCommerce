@@ -1,5 +1,6 @@
 <div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
     <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+    <div th:substituteby="components/fieldTooltip" />
     
     <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}">
         <option value="" th:text="#{Default_Select}" />

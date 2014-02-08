@@ -1,29 +1,32 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +34,6 @@ import java.util.Map;
 /**
  * @author Priyesh Patel
  */
-@Component("blProductOptionDisplayProcessor")
 public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefinitionElementProcessor {
 
     /**
@@ -48,7 +50,6 @@ public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefiniti
 
     protected void initServices(Arguments arguments) {
 
-
     }
 
     @Override
@@ -56,11 +57,11 @@ public class ProductOptionDisplayProcessor extends AbstractLocalVariableDefiniti
         initServices(arguments);
         HashMap<String, String> productOptionDisplayValues = new HashMap<String, String>();
         Map<String, Object> newVars = new HashMap<String, Object>();
-        if (StandardExpressionProcessor.processExpression(arguments,
-                element.getAttributeValue("orderItem")) instanceof DiscreteOrderItem) {
-
-            DiscreteOrderItem orderItem = (DiscreteOrderItem) StandardExpressionProcessor.processExpression(arguments,
-                    element.getAttributeValue("orderItem"));
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("orderItem"));
+        Object item = expression.execute(arguments.getConfiguration(), arguments);
+        if (item instanceof DiscreteOrderItem) {
+            DiscreteOrderItem orderItem = (DiscreteOrderItem) item;
 
             for (String i : orderItem.getOrderItemAttributes().keySet()) {
                 for (ProductOption option : orderItem.getProduct().getProductOptions()) {

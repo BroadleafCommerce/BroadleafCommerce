@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.collections.map.LRUMap;
@@ -28,6 +31,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
+import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItemPriceDetail;
@@ -67,13 +71,16 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     @Resource(name = "blOfferTimeZoneProcessor")
     protected OfferTimeZoneProcessor offerTimeZoneProcessor;
     
+    @Resource(name = "blOfferServiceExtensionManager")
+    protected OfferServiceExtensionManager extensionManager;
+
     protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
         if (offer.getQualifyingItemCriteria() == null || offer.getQualifyingItemCriteria().size() == 0) {
             candidates.setMatchedQualifier(true);
         } else {
             for (OfferItemCriteria criteria : offer.getQualifyingItemCriteria()) {
-                checkForItemRequirements(candidates, criteria, promotableOrderItems, true);
+                checkForItemRequirements(offer, candidates, criteria, promotableOrderItems, true);
                 if (!candidates.isMatchedQualifier()) {
                     break;
                 }
@@ -82,7 +89,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         
         if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteria() != null) {
             for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
-                checkForItemRequirements(candidates, criteria, promotableOrderItems, false);
+                checkForItemRequirements(offer, candidates, criteria, promotableOrderItems, false);
                 if (!candidates.isMatchedTarget()) {
                     break;
                 }
@@ -172,7 +179,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     }
     
-    protected void checkForItemRequirements(CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, boolean isQualifier) {
+    protected void checkForItemRequirements(Offer offer, CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, boolean isQualifier) {
         boolean matchFound = false;
         int criteriaQuantity = criteria.getQuantity();
         

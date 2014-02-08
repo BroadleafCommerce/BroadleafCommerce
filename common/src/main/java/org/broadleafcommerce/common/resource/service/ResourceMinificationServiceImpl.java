@@ -1,23 +1,27 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.resource.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +38,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-
 /**
  * @see ResourceMinificationService 
  * @author Andre Azzolini (apazzolini)
@@ -43,9 +46,10 @@ import java.io.OutputStreamWriter;
 public class ResourceMinificationServiceImpl implements ResourceMinificationService {
     protected static final Log LOG = LogFactory.getLog(ResourceMinificationServiceImpl.class);
     
-    @Value("${minify.enabled}")
-    protected boolean enabled;
-    
+    protected boolean getEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("minify.enabled");
+    }
+
     @Value("${minify.linebreak}")
     protected int linebreak;
     
@@ -63,7 +67,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     
     @Override
     public byte[] minify(String filename, byte[] bytes) {
-        if (!enabled) {
+        if (!getEnabled()) {
             return bytes;
         }
         

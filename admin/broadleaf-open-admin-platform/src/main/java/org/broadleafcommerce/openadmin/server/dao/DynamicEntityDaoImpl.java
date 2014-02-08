@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.dao;
 
 
@@ -23,7 +26,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -128,15 +130,20 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     }
     
     @Override
-    public Serializable persist(Serializable entity) {
+    public <T> T persist(T entity) {
         standardEntityManager.persist(entity);
         standardEntityManager.flush();
         return entity;
     }
-    
+
     @Override
-    public Serializable merge(Serializable entity) {
-        Serializable response = standardEntityManager.merge(entity);
+    public Object find(Class<?> entityClass, Object key) {
+        return standardEntityManager.find(entityClass, key);
+    }
+
+    @Override
+    public <T> T merge(T entity) {
+        T response = standardEntityManager.merge(entity);
         standardEntityManager.flush();
         return response;
     }
@@ -163,16 +170,10 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     
     @Override
     public void remove(Serializable entity) {
-        boolean isArchivable = Status.class.isAssignableFrom(entity.getClass());
-        if (isArchivable) {
-            ((Status) entity).setArchived('Y');
-            merge(entity);
-        } else {
-            standardEntityManager.remove(entity);
-            standardEntityManager.flush();
-        }
+        standardEntityManager.remove(entity);
+        standardEntityManager.flush();
     }
-    
+
     @Override
     public void clear() {
         standardEntityManager.clear();
@@ -1274,7 +1275,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
 
     @Override
     public FieldManager getFieldManager() {
-        return new FieldManager(entityConfiguration, this);
+        return new FieldManager(entityConfiguration, getStandardEntityManager());
     }
 
     @Override

@@ -1,23 +1,31 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Integration
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.checkout.service;
 
+import org.broadleafcommerce.common.currency.BroadleafCurrencyProvider;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.service.BroadleafCurrencyService;
 import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
@@ -36,12 +44,13 @@ import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillment
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.SecurePaymentInfoService;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl;
+import org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment;
+import org.broadleafcommerce.core.payment.service.NullPaymentGatewayType;
+import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -54,14 +63,13 @@ import org.broadleafcommerce.test.BaseTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import javax.annotation.Resource;
 
 public class CheckoutTest extends BaseTest {
-
+    
     @Resource(name="blCheckoutService")
     private CheckoutService checkoutService;
     
@@ -80,145 +88,51 @@ public class CheckoutTest extends BaseTest {
     @Resource(name = "blOrderItemService")
     private OrderItemService orderItemService;
 
-    @Resource(name = "blSecurePaymentInfoService")
-    private SecurePaymentInfoService securePaymentInfoService;
+    @Resource(name = "blSecureOrderPaymentService")
+    private SecureOrderPaymentService securePaymentInfoService;
+    
+    @Resource(name = "blCurrencyService")
+    protected BroadleafCurrencyService currencyService;
 
-    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
+    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" }, dataProvider = "USCurrency", dataProviderClass = BroadleafCurrencyProvider.class)
     @Transactional
-    public void testCheckout() throws Exception {
+    public void testCheckout(BroadleafCurrency usCurrency) throws Exception {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Order order = orderService.createNewCartForCustomer(customer);
+        usCurrency = currencyService.save(usCurrency);
+        order.setCurrency(usCurrency);
 
         Address address = buildAddress();
         FulfillmentGroup group = buildFulfillmentGroup(order, address);
         addSampleItemToOrder(order, group);
         order.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map = addPaymentToOrder(order, address);
-
+        addPaymentToOrder(order, address);
+        
         //execute pricing for this order
         orderService.save(order, true);
-        CheckoutResponse response = checkoutService.performCheckout(order, map);
-        //The DummyCreditCardModule changed the reference Number - make sure it's represented
-        for(PaymentInfo paymentInfo : response.getInfos().keySet()) {
-            assert(paymentInfo.getReferenceNumber().equals("abc123"));
-            assert(response.getInfos().get(paymentInfo).getReferenceNumber().equals("abc123"));
-        }
-
-        //confirm that the secure payment info items are not persisted
-        Referenced referenced = null;
-        try {
-            referenced = securePaymentInfoService.findSecurePaymentInfo("abc123", PaymentInfoType.CREDIT_CARD);
-        } catch (Exception e) {
-            //do nothing
-        }
-        try {
-            referenced = securePaymentInfoService.findSecurePaymentInfo("1234", PaymentInfoType.CREDIT_CARD);
-        } catch (Exception e) {
-            //do nothing
-        }
-        assert(referenced == null);
-
+        CheckoutResponse response = checkoutService.performCheckout(order);
+        
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        //Removed by Jeff to facilitate merge : assert (order.getTotalTax().equals(order.getSubTotal().add(order.getTotalShipping()).multiply(0.05D)));
-        assert (response.getPaymentResponse().getResponseItems().size() > 0);
-        //assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping())));
     }
 
-/*
-    @SuppressWarnings("serial")
-    @Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
-    @Transactional
-    public void testCustomerMaxUsesPromo() throws Exception {
-        String userName = "customer1";
-        Customer customer = customerService.readCustomerByUsername(userName);
-        Order order = cartService.createNewCartForCustomer(customer);
-        CreateOfferUtility createOfferUtility = new CreateOfferUtility(offerDao, offerCodeDao, offerService);
-
-        OfferCode code = createOfferUtility.createOfferCode("20.5 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20.5, null, null, true, true, 10);
-        Offer offer = createOfferUtility.updateOfferCodeMaxCustomerUses(code, 2l);
-
-        Address address = buildAddress();
-
-        FulfillmentGroup group = buildFulfillmentGroup(order, address);
-        addSampleItemToOrder(order, group);
-        cartService.addOfferCode(order, code, false);
-        order.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map = addPaymentToOrder(order, address);
-        CheckoutResponse response = checkoutService.performCheckout(order, map);
-        
-        assert(offerAuditDao.countUsesByCustomer(customer.getId(), offer.getId()) == 1L);
-        assert(offerService.verifyMaxCustomerUsageThreshold(customer, offer) == false);
-
-        // Now enter a 2nd order
-        Order order2 = cartService.createNewCartForCustomer(customer);        
-        cartService.addOfferCode(order2, code, true);
-        
-        Address address2 = buildAddress();
-        FulfillmentGroup group2 = buildFulfillmentGroup(order2, address2);
-        addSampleItemToOrder(order2, group2);
-        order2.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map2 = addPaymentToOrder(order2, address2);
-        CheckoutResponse response2 = checkoutService.performCheckout(order2, map2);
-        
-        assert(offerAuditDao.countUsesByCustomer(customer.getId(), offer.getId()) == 2L);
-        assert(offerService.verifyMaxCustomerUsageThreshold(customer, offer) == true);
-
-        // Now, try a 3rd use of the promo (should fail)
-        Order order3 = cartService.createNewCartForCustomer(customer);
-
-        boolean exceptionCaught = false;
-        try {
-            cartService.addOfferCode(order3, code, true);
-        } catch (OfferMaxUseExceededException e) {            
-            exceptionCaught = true;
-        }
-
-        // Add the code to the order directly and bypass the exception
-        order3.addOfferCode(code);
-        Address address3 = buildAddress();
-        FulfillmentGroup group3 = buildFulfillmentGroup(order3, address3);
-        addSampleItemToOrder(order3, group3);
-        order3.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map3 = addPaymentToOrder(order3, address3);
-
-        exceptionCaught = false;
-        try {
-            // Exception should get generated in the checkout workflow.
-            CheckoutResponse response3 = checkoutService.performCheckout(order2, map2);
-        } catch (OfferMaxUseExceededException e) {
-            exceptionCaught = true;
-        }
-        assert(exceptionCaught);
-
-        // Finally, create an order for a 2nd customer - should be no problem.
-        String userName2 = "customer2";
-        Customer customer2 = customerService.readCustomerByUsername(userName2);
-        Order order4 = cartService.createNewCartForCustomer(customer2);
-        cartService.addOfferCode(order4, code, true);
-
-        Address address4 = buildAddress();
-        FulfillmentGroup group4 = buildFulfillmentGroup(order4, address4);
-        addSampleItemToOrder(order4, group4);
-        order4.setTotalShipping(new Money(0D));
-        Map<PaymentInfo, Referenced> map4 = addPaymentToOrder(order4, address4);
-        CheckoutResponse response4 = checkoutService.performCheckout(order4, map4);
-
-        assert(offerAuditDao.countUsesByCustomer(customer2.getId(), offer.getId()) == 1L);
-        assert(offerService.verifyMaxCustomerUsageThreshold(customer2, offer) == false);
-    }
-    */
 
 
-    private Map<PaymentInfo, Referenced> addPaymentToOrder(Order order, Address address) {
-        PaymentInfo payment = new PaymentInfoImpl();
-        payment.setAddress(address);
+    private OrderPayment addPaymentToOrder(Order order, Address address) {
+        OrderPayment payment = new OrderPaymentImpl();
+        payment.setBillingAddress(address);
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
-        payment.setType(PaymentInfoType.CREDIT_CARD);
+        payment.setType(PaymentType.CREDIT_CARD);
+        payment.setPaymentGatewayType(NullPaymentGatewayType.NULL_GATEWAY);
         payment.setOrder(order);
+        PaymentTransaction tx = new PaymentTransactionImpl();
+        tx.setAmount(payment.getAmount());
+        tx.setType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
+        tx.setOrderPayment(payment);
+        payment.getTransactions().add(tx);
 
-        CreditCardPaymentInfo cc = new CreditCardPaymentInfo() {
+        CreditCardPayment cc = new CreditCardPayment() {
 
             private static final long serialVersionUID = 1L;
             private String referenceNumber = "1234";
@@ -249,6 +163,11 @@ public class CheckoutTest extends BaseTest {
             }
 
             @Override
+            public String getNameOnCard() {
+                return "Cardholder Name";
+            }
+
+            @Override
             public void setCvvCode(String cvvCode) {
                 //do nothing
             }
@@ -265,6 +184,11 @@ public class CheckoutTest extends BaseTest {
 
             @Override
             public void setId(Long id) {
+                //do nothing
+            }
+
+            @Override
+            public void setNameOnCard(String nameOnCard) {
                 //do nothing
             }
 
@@ -293,22 +217,10 @@ public class CheckoutTest extends BaseTest {
                 this.referenceNumber = referenceNumber;
             }
 
-            @Override
-            public String getNameOnCard() {
-                return "Cardholder Name";
-            }
-
-            @Override
-            public void setNameOnCard(String nameOnCard) {
-                // do nothing
-            }
-
         };
 
-        order.getPaymentInfos().add(payment);
-        Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();
-        map.put(payment, cc);
-        return map;
+        order.getPayments().add(payment);
+        return payment;
     }
 
     private void addSampleItemToOrder(Order order, FulfillmentGroup group) {

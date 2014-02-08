@@ -1,24 +1,28 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.page.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.page.dto.PageDTO;
+import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.rule.AbstractRuleProcessor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -32,7 +36,7 @@ import java.util.Map;
  *
  */
 @Service("blPageDefaultRuleProcessor")
-public class PageDefaultRuleProcessor extends AbstractPageRuleProcessor {
+public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
     private static final Log LOG = LogFactory.getLog(PageDefaultRuleProcessor.class);
 
     /**
@@ -41,7 +45,7 @@ public class PageDefaultRuleProcessor extends AbstractPageRuleProcessor {
      *
      * Also returns true if no rules are present for the passed in item.
      *
-     * @param sc - a structured content item to test
+     * @param sc - a page item to test
      * @param vars - a map of objects used by the rule MVEL expressions
      * @return the result of the rule checks
      */

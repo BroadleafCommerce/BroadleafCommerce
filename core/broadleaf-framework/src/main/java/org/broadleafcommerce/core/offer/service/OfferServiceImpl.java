@@ -1,26 +1,28 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -48,7 +50,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -210,12 +211,9 @@ public class OfferServiceImpl implements OfferService {
      * @return a List of non-expired offers
      */
     protected List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes){
-        Date now = SystemTime.asDate();
         List<OfferCode> offerCodesToRemove = new ArrayList<OfferCode>();
         for (OfferCode offerCode : offerCodes) {
-            if ((offerCode.getStartDate() != null) && (offerCode.getStartDate().after(now))){
-                offerCodesToRemove.add(offerCode);
-            } else if (offerCode.getEndDate() != null && offerCode.getEndDate().before(now)){
+            if (!offerCode.isActive()){
                 offerCodesToRemove.add(offerCode);
             }
         }

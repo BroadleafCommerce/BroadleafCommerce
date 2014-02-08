@@ -1,3 +1,4 @@
 <div class="field-label inline" th:text="#{${field.friendlyName}}" />
+<div th:substituteby="components/fieldTooltip" />
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <input type="text" class="four" th:field="*{fields['__${field.name}__'].value}" />

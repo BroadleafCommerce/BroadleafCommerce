@@ -1,4 +1,5 @@
 <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+<div th:substituteby="components/fieldTooltip" />
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 <select class="six" th:field="*{fields['__${field.name}__'].value}" 

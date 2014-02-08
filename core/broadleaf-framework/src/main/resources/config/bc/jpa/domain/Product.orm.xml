@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
@@ -29,18 +49,18 @@
     </named-query>
 
     <named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
-        <query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
-        WHERE categoryProduct.categoryProductXref.category.id = :categoryId
-        AND categoryProduct.categoryProductXref.product.defaultSku.activeStartDate &lt;= :currentDate
-        AND (categoryProduct.categoryProductXref.product.defaultSku.activeEndDate &gt; :currentDate OR categoryProduct.categoryProductXref.product.defaultSku.activeEndDate = null)
-                AND (categoryProduct.categoryProductXref.product.archiveStatus.archived IS NULL OR categoryProduct.categoryProductXref.product.archiveStatus.archived = 'N')
+        <query>SELECT categoryProduct.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
+        WHERE categoryProduct.category.id = :categoryId
+        AND categoryProduct.product.defaultSku.activeStartDate &lt;= :currentDate
+        AND (categoryProduct.product.defaultSku.activeEndDate &gt; :currentDate OR categoryProduct.product.defaultSku.activeEndDate = null)
+                AND (categoryProduct.product.archiveStatus.archived IS NULL OR categoryProduct.product.archiveStatus.archived = 'N')
         ORDER BY categoryProduct.displayOrder
         </query>
     </named-query>
     
     <named-query name="BC_READ_PRODUCTS_BY_CATEGORY" >
-        <query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
-        WHERE categoryProduct.categoryProductXref.category.id = :categoryId
+        <query>SELECT categoryProduct.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
+        WHERE categoryProduct.category.id = :categoryId
         ORDER BY categoryProduct.displayOrder
         </query>
     </named-query>

@@ -1,38 +1,43 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
+import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Responsible for setting up the site and locale used by Broadleaf Commerce components.
@@ -48,6 +53,8 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
      * Parameter/Attribute name for the current language
      */
     public static String REQUEST_DTO_PARAM_NAME = "blRequestDTO";
+
+    public static final String ADMIN_USER_ID_PARAM_NAME = "blAdminUserId";
 
     // Properties to manage URLs that will not be processed by this filter.
     private static final String BLC_ADMIN_GWT = "org.broadleafcommerce.admin";
@@ -95,6 +102,8 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         try {
             requestProcessor.process(new ServletWebRequest(request, response));
             filterChain.doFilter(request, response);
+        } catch (HaltFilterChainException e) {
+            return;
         } catch (SiteNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } finally {

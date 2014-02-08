@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 /* Utility methods provided by Broadleaf Commerce for admin */
 var BLCAdmin = (function($) {
     
@@ -12,6 +31,7 @@ var BLCAdmin = (function($) {
 	    left: 20,
 	    top: 20
 	}
+	var originalStickyBarOffset = $('.sticky-container').offset().top;
 	
 	/**
 	 * Initialize necessary font mappings for Redactor
@@ -234,6 +254,7 @@ var BLCAdmin = (function($) {
     	    
     	    $modal.find('.modal-header h3').text(header);
     	    $modal.find('.modal-body').text(message);
+    	    $modal.find('.modal-body').css('padding-bottom', '20px');
     	    
             this.showElementAsModal($modal);
     	},
@@ -416,8 +437,11 @@ var BLCAdmin = (function($) {
     		}
     	    
     		return $form;
+    	},
+    	
+    	getOriginalStickyBarOffset : function() {
+    	    return originalStickyBarOffset;
     	}
- 
 	};
 	
 })(jQuery);
@@ -492,7 +516,7 @@ $(document).ready(function() {
     }
 
     // Ensure that the breadcrumb will render behind the entity form actions
-    var $bcc = $('.breadcrumb-container');
+    var $bcc = $('.sticky-container');
     $bcc.find('ul.breadcrumbs').outerWidth($bcc.outerWidth() - $bcc.find('.entity-form-actions').outerWidth() - 30);
 });
 
@@ -504,4 +528,23 @@ $('body').on('click', '.disabled', function(e) {
 $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
     $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
+});
+
+/**
+ * Make the sticky bar (breadcrumb) lock at the top of the window when it's scrolled off the page
+ */
+$(window).on('scroll', function() {
+    var $sc = $('.sticky-container');
+    var $scp = $('.sticky-container-padding');
+       
+    if ($(window).scrollTop() < BLCAdmin.getOriginalStickyBarOffset()) {
+        $sc.removeClass('sticky-fixed');
+        $sc.width('');
+        $scp.hide();
+    } else {
+        $scp.show();
+        $sc.addClass('sticky-fixed');
+        $sc.outerWidth($('section.main').outerWidth());
+        $('.sticky-container-padding').outerHeight($sc.outerHeight());
+    }
 });

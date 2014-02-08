@@ -21,19 +21,19 @@ package org.broadleafcommerce.core.web.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.extension.ExtensionResultHolder;
-import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -48,8 +48,9 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
 
     protected static final Log LOG = LogFactory.getLog(i18nUpdateCartServiceExtensionHandler.class);
 
-    @Value("${clearCartOnLocaleSwitch}")
-    protected boolean clearCartOnLocaleSwitch = false;
+    protected boolean getClearCartOnLocaleSwitch() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("clearCartOnLocaleSwitch");
+    }
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -84,7 +85,7 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
                             "] does not match the current locale [" + brc.getLocale().getLocaleCode() + "]");
                 }
 
-                if (clearCartOnLocaleSwitch) {
+                if (getClearCartOnLocaleSwitch()) {
                     resultHolder.getContextMap().put("clearCart", Boolean.TRUE);
                 } else {
                     fixTranslations(cart);

@@ -1,7 +1,14 @@
 <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+<div th:substituteby="components/fieldTooltip" />
 <div th:substituteby="components/fieldTranslation" />
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+
 <div th:if="*{fields['__${field.name}__'].isLargeEntry}" class="twelve indented-form-value">
-    <textarea class="autosize" style="width: 100%;" th:field="*{fields['__${field.name}__'].value}"/>
+    <textarea class="autosize" style="width: 100%;" 
+        th:field="*{fields['__${field.name}__'].value}"
+        th:placeholder="${field.hint}" />
 </div>
-<input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text" class="twelve" th:required="${field.required}" th:field="*{fields['__${field.name}__'].value}" />
+<input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text" class="twelve" 
+    th:required="${field.required}" 
+    th:placeholder="${field.hint}"
+    th:field="*{fields['__${field.name}__'].value}" />

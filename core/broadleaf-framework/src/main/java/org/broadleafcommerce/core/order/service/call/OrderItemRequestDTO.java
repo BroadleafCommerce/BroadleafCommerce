@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service.call;
 
 import org.broadleafcommerce.common.money.Money;
@@ -21,7 +24,9 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.service.OrderService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +56,8 @@ public class OrderItemRequestDTO {
     private Money overrideSalePrice;
     private Money overrideRetailPrice;
     private Map<String,String> itemAttributes = new HashMap<String,String>();
+    private List<OrderItemRequestDTO> childOrderItems = new ArrayList<OrderItemRequestDTO>();
+    private Long parentOrderItemId;
     
     public OrderItemRequestDTO() {}
     
@@ -141,4 +148,21 @@ public class OrderItemRequestDTO {
     public void setOverrideRetailPrice(Money overrideRetailPrice) {
         this.overrideRetailPrice = overrideRetailPrice;
     }
+
+    public List<OrderItemRequestDTO> getChildOrderItems() {
+        return childOrderItems;
+    }
+    
+    public void setChildOrderItems(List<OrderItemRequestDTO> childOrderItems) {
+        this.childOrderItems = childOrderItems;
+    }
+
+    public Long getParentOrderItemId() {
+        return parentOrderItemId;
+    }
+
+    public void setParentOrderItemId(Long parentOrderItemId) {
+        this.parentOrderItemId = parentOrderItemId;
+    }
+    
 }

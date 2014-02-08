@@ -1,35 +1,37 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.audit;
 
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.springframework.web.context.request.RequestAttributes;
+import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
+
+import java.lang.reflect.Field;
+import java.util.Calendar;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import java.lang.reflect.Field;
-import java.util.Calendar;
 
 public class AuditableListener {
-
-    public static final String customerRequestAttributeName = "customer";
 
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
@@ -80,7 +82,7 @@ public class AuditableListener {
         try {
             BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
             if (requestContext != null && requestContext.getWebRequest() != null) {
-                Object customer = requestContext.getWebRequest().getAttribute(customerRequestAttributeName, RequestAttributes.SCOPE_REQUEST);
+                Object customer = BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer();
                 if (customer != null) {
                     Class<?> customerClass = customer.getClass();
                     Field userNameField = getSingleField(customerClass, "username");
@@ -113,4 +115,5 @@ public class AuditableListener {
             return null;
         }
     }
+    
 }

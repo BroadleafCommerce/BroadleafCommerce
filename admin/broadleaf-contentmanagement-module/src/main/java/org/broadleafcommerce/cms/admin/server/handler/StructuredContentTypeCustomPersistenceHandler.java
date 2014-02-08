@@ -1,21 +1,35 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.admin.server.handler;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,8 +42,6 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -41,31 +53,21 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
-import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
+import org.broadleafcommerce.openadmin.server.service.handler.DynamicEntityRetriever;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * Created by jfischer
  */
 @Component("blStructuredContentTypeCustomPersistenceHandler")
-public class StructuredContentTypeCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+public class StructuredContentTypeCustomPersistenceHandler extends CustomPersistenceHandlerAdapter implements DynamicEntityRetriever {
 
     private final Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
 
     @Resource(name="blStructuredContentService")
     protected StructuredContentService structuredContentService;
-
-    @Resource(name="blSandBoxService")
-    protected SandBoxService sandBoxService;
     
     @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
     protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
@@ -100,10 +102,6 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         return canHandleFetch(persistencePackage);
     }
 
-    protected SandBox getSandBox() {
-        return sandBoxService.retrieveSandboxById(SandBoxContext.getSandBoxContext().getSandBoxId());
-    }
-
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -130,7 +128,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String structuredContentId = persistencePackage.getCustomCriteria()[1];
-            Entity entity = fetchEntityBasedOnId(structuredContentId);
+            Entity entity = fetchEntityBasedOnId(structuredContentId, null);
             DynamicResultSet results = new DynamicResultSet(new Entity[]{entity}, 1);
 
             return results;
@@ -139,8 +137,20 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         }
     }
 
-    protected Entity fetchEntityBasedOnId(String structuredContentId) throws Exception {
+    @Override
+    public Entity fetchEntityBasedOnId(String structuredContentId, List<String> dirtyFields) throws Exception {
         StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
+        return fetchDynamicEntity(structuredContent, dirtyFields, true);
+    }
+
+    @Override
+    public String getFieldContainerClassName() {
+        return StructuredContent.class.getName();
+    }
+
+    @Override
+    public Entity fetchDynamicEntity(Serializable root, List<String> dirtyFields, boolean includeId) throws Exception {
+        StructuredContent structuredContent = (StructuredContent) root;
         Map<String, StructuredContentField> structuredContentFieldMap = structuredContent.getStructuredContentFields();
         Entity entity = new Entity();
         entity.setType(new String[]{StructuredContentType.class.getName()});
@@ -158,12 +168,17 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     }
                 }
                 property.setValue(value);
+                if (!CollectionUtils.isEmpty(dirtyFields) && dirtyFields.contains(property.getName())) {
+                    property.setIsDirty(true);
+                }
             }
         }
-        Property property = new Property();
-        propertiesList.add(property);
-        property.setName("id");
-        property.setValue(structuredContentId);
+        if (includeId) {
+            Property property = new Property();
+            propertiesList.add(property);
+            property.setName("id");
+            property.setValue(String.valueOf(structuredContent.getId()));
+        }
 
         entity.setProperties(propertiesList.toArray(new Property[]{}));
 
@@ -209,18 +224,28 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     templateFieldNames.add(definition.getName());
                 }
             }
+            Map<String, String> dirtyFieldsOrigVals = new HashMap<String, String>();
+            List<String> dirtyFields = new ArrayList<String>();
             Map<String, StructuredContentField> structuredContentFieldMap = structuredContent.getStructuredContentFields();
             for (Property property : persistencePackage.getEntity().getProperties()) {
                 if (templateFieldNames.contains(property.getName())) {
                     StructuredContentField structuredContentField = structuredContentFieldMap.get(property.getName());
                     if (structuredContentField != null) {
+                        boolean isDirty = (structuredContentField.getValue() == null && property.getValue() != null) ||
+                                (structuredContentField.getValue() != null && property.getValue() == null);
+                        if (!isDirty && structuredContentField.getValue() != null && property.getValue() != null &&
+                                !structuredContentField.getValue().trim().equals(property.getValue().trim())) {
+                            dirtyFields.add(property.getName());
+                            dirtyFieldsOrigVals.put(property.getName(), structuredContentField.getValue());
+                        }
                         structuredContentField.setValue(property.getValue());
                     } else {
                         structuredContentField = new StructuredContentFieldImpl();
-                        structuredContentFieldMap.put(property.getName(), structuredContentField);
                         structuredContentField.setFieldKey(property.getName());
-                        structuredContentField.setStructuredContent(structuredContent);
                         structuredContentField.setValue(property.getValue());
+                        dynamicEntityDao.persist(structuredContentField);
+                        structuredContentFieldMap.put(property.getName(), structuredContentField);
+                        dirtyFields.add(property.getName());
                     }
                 }
             }
@@ -232,13 +257,19 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             }
             if (removeItems.size() > 0) {
                 for (String removeKey : removeItems) {
-                    StructuredContentField structuredContentField = structuredContentFieldMap.remove(removeKey);
-                    structuredContentField.setStructuredContent(null);
+                    structuredContentFieldMap.remove(removeKey);
                 }
             }
-            structuredContentService.updateStructuredContent(structuredContent, getSandBox());
 
-            return fetchEntityBasedOnId(structuredContentId);
+            Collections.sort(dirtyFields);
+            Entity entity = fetchEntityBasedOnId(structuredContentId, dirtyFields);
+
+            for (Entry<String, String> entry : dirtyFieldsOrigVals.entrySet()) {
+                entity.getPMap().get(entry.getKey()).setOriginalValue(entry.getValue());
+                entity.getPMap().get(entry.getKey()).setOriginalDisplayValue(entry.getValue());
+            }
+
+            return entity;
         } catch (ValidationException e) {
             throw e;
         } catch (Exception e) {

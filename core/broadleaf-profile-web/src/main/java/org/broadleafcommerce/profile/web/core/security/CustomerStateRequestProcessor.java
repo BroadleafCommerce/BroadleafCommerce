@@ -1,24 +1,28 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Profile Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.profile.web.core.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
+import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
@@ -54,61 +58,67 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
 
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
-
+    
     protected ApplicationEventPublisher eventPublisher;
 
-    protected static String customerRequestAttributeName = "customer";
     public static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME = "_blc_anonymousCustomer";
     public static final String ANONYMOUS_CUSTOMER_ID_SESSION_ATTRIBUTE_NAME = "_blc_anonymousCustomerId";
     private static final String LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME = "_blc_lastPublishedEvent";
+    public static final String OVERRIDE_CUSTOMER_SESSION_ATTR_NAME = "_blc_overrideCustomerId";
 
     @Override
     public void process(WebRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Customer customer = null;
-        if ((authentication != null) && !(authentication instanceof AnonymousAuthenticationToken)) {
-            String userName = authentication.getName();
-            customer = (Customer) request.getAttribute(customerRequestAttributeName, WebRequest.SCOPE_REQUEST);
-            if (userName != null && (customer == null || !userName.equals(customer.getUsername()))) {
-                // can only get here if the authenticated user does not match the user in session
-                customer = customerService.readCustomerByUsername(userName);
-                if (logger.isDebugEnabled() && customer != null) {
-                    logger.debug("Customer found by username " + userName);
+
+        Long overrideId = (Long) request.getAttribute(OVERRIDE_CUSTOMER_SESSION_ATTR_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
+        if (overrideId != null) {
+            customer = customerService.readCustomerById(overrideId);
+        } else {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if ((authentication != null) && !(authentication instanceof AnonymousAuthenticationToken)) {
+                String userName = authentication.getName();
+                customer = (Customer) BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer(request);
+                if (userName != null && (customer == null || !userName.equals(customer.getUsername()))) {
+                    // can only get here if the authenticated user does not match the user in session
+                    customer = customerService.readCustomerByUsername(userName);
+                    if (logger.isDebugEnabled() && customer != null) {
+                        logger.debug("Customer found by username " + userName);
+                    }
                 }
-            }
-            if (customer != null) {
-                ApplicationEvent lastPublishedEvent = (ApplicationEvent) request.getAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, WebRequest.SCOPE_REQUEST);
-                if (authentication instanceof RememberMeAuthenticationToken) {
-                    // set transient property of customer
-                    customer.setCookied(true);
-                    boolean publishRememberMeEvent = true;
-                    if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerAuthenticatedFromCookieEvent) {
-                        CustomerAuthenticatedFromCookieEvent cookieEvent = (CustomerAuthenticatedFromCookieEvent) lastPublishedEvent;
-                        if (userName.equals(cookieEvent.getCustomer().getUsername())) {
-                            publishRememberMeEvent = false;
+                if (customer != null) {
+                    ApplicationEvent lastPublishedEvent = (ApplicationEvent) request.getAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, WebRequest.SCOPE_REQUEST);
+                    if (authentication instanceof RememberMeAuthenticationToken) {
+                        // set transient property of customer
+                        customer.setCookied(true);
+                        boolean publishRememberMeEvent = true;
+                        if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerAuthenticatedFromCookieEvent) {
+                            CustomerAuthenticatedFromCookieEvent cookieEvent = (CustomerAuthenticatedFromCookieEvent) lastPublishedEvent;
+                            if (userName.equals(cookieEvent.getCustomer().getUsername())) {
+                                publishRememberMeEvent = false;
+                            }
                         }
-                    }
-                    if (publishRememberMeEvent) {
-                        CustomerAuthenticatedFromCookieEvent cookieEvent = new CustomerAuthenticatedFromCookieEvent(customer, this.getClass().getName()); 
-                        eventPublisher.publishEvent(cookieEvent);
-                        request.setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, cookieEvent, WebRequest.SCOPE_REQUEST);
-                    }                       
-                } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
-                    customer.setLoggedIn(true);
-                    boolean publishLoggedInEvent = true;
-                    if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerLoggedInEvent) {
-                        CustomerLoggedInEvent loggedInEvent = (CustomerLoggedInEvent) lastPublishedEvent;
-                        if (userName.equals(loggedInEvent.getCustomer().getUsername())) {
-                            publishLoggedInEvent= false;
+                        if (publishRememberMeEvent) {
+                            CustomerAuthenticatedFromCookieEvent cookieEvent = new CustomerAuthenticatedFromCookieEvent(customer, this.getClass().getName()); 
+                            eventPublisher.publishEvent(cookieEvent);
+                            request.setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, cookieEvent, WebRequest.SCOPE_REQUEST);
+                        }                       
+                    } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
+                        customer.setLoggedIn(true);
+                        boolean publishLoggedInEvent = true;
+                        if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerLoggedInEvent) {
+                            CustomerLoggedInEvent loggedInEvent = (CustomerLoggedInEvent) lastPublishedEvent;
+                            if (userName.equals(loggedInEvent.getCustomer().getUsername())) {
+                                publishLoggedInEvent= false;
+                            }
                         }
+                        if (publishLoggedInEvent) {
+                            CustomerLoggedInEvent loggedInEvent = new CustomerLoggedInEvent(customer, this.getClass().getName()); 
+                            eventPublisher.publishEvent(loggedInEvent);
+                            request.setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, loggedInEvent, WebRequest.SCOPE_REQUEST);
+                        }                        
+                    } else {
+                        customer = resolveAuthenticatedCustomer(authentication);
                     }
-                    if (publishLoggedInEvent) {
-                        CustomerLoggedInEvent loggedInEvent = new CustomerLoggedInEvent(customer, this.getClass().getName()); 
-                        eventPublisher.publishEvent(loggedInEvent);
-                        request.setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, loggedInEvent, WebRequest.SCOPE_REQUEST);
-                    }                        
-                } else {
-                    customer = resolveAuthenticatedCustomer(authentication);
                 }
             }
         }
@@ -263,11 +273,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      * @see {@link CustomerState}
      */
     public static String getCustomerRequestAttributeName() {
-        return customerRequestAttributeName;
+        return BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomerRequestAttributeName();
     }
-
-    public static void setCustomerRequestAttributeName(String customerRequestAttributeName) {
-        CustomerStateRequestProcessor.customerRequestAttributeName = customerRequestAttributeName;
-    }
-
+    
 }

@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +27,14 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.PreviewStatus;
+import org.broadleafcommerce.common.persistence.Previewable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -49,9 +57,10 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OfferInfoImpl;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.BatchSize;
@@ -88,6 +97,7 @@ import javax.persistence.MapKeyClass;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, OrderPersistedEntityListener.class })
@@ -102,7 +112,11 @@ import javax.persistence.Table;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder")
-public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiable {
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
+public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiable, Previewable {
 
     private static final long serialVersionUID = 1L;
 
@@ -121,6 +135,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Embedded
     protected Auditable auditable = new Auditable();
+
+    @Embedded
+    protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "NAME")
     @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
@@ -159,15 +176,15 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = Presentation.Group.Name.General,
-            order=Presentation.FieldOrder.SUBTOTAL, fieldType=SupportedFieldType.MONEY,prominent=true,
-            groupOrder = Presentation.Group.Order.General,
-            gridOrder = 4000)
+            order=Presentation.FieldOrder.SUBTOTAL, fieldType=SupportedFieldType.MONEY,
+            groupOrder = Presentation.Group.Order.General)
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL", precision=19, scale=5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = Presentation.Group.Name.General,
-            order=Presentation.FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY,
-            groupOrder = Presentation.Group.Order.General)
+            order=Presentation.FieldOrder.TOTAL, fieldType= SupportedFieldType.MONEY, prominent=true,
+            groupOrder = Presentation.Group.Order.General,
+            gridOrder = 4000)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
@@ -224,12 +241,11 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<CandidateOrderOffer> candidateOrderOffers = new ArrayList<CandidateOrderOffer>();
 
-    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = { CascadeType.ALL },
-            orphanRemoval = true)
+    @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderImpl_Payment_Infos",
+    @AdminPresentationCollection(friendlyName="OrderImpl_Payments",
                 tab = Presentation.Tab.Name.Payment, tabOrder = Presentation.Tab.Order.Payment)
-    protected List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
+    protected List<OrderPayment> payments = new ArrayList<OrderPayment>();
 
     @ManyToMany(targetEntity=OfferInfoImpl.class)
     @JoinTable(name = "BLC_ADDITIONAL_OFFER_INFO", joinColumns = @JoinColumn(name = "BLC_ORDER_ORDER_ID",
@@ -260,6 +276,12 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(excluded = true)
     protected Locale locale;
+
+    @Column(name = "TAX_OVERRIDE")
+    protected Boolean taxOverride;
+
+    @Transient
+    protected List<ActivityMessageDTO> orderMessages;
 
     @Override
     public Long getId() {
@@ -313,32 +335,39 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public void setTotal(Money orderTotal) {
-        this.total = Money.toAmount(orderTotal);
-    }
-
-    @Override
-    public Money getRemainingTotal() {
+    public Money getTotalAfterAppliedPayments() {
         Money myTotal = getTotal();
         if (myTotal == null) {
             return null;
         }
         Money totalPayments = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
-        for (PaymentInfo pi : getPaymentInfos()) {
-            if (pi.getAmount() != null) {
-                totalPayments = totalPayments.add(pi.getAmount());
+        for (OrderPayment payment : getPayments()) {
+            if (payment.isActive() && payment.getAmount() != null) {
+                totalPayments = totalPayments.add(payment.getAmount());
             }
         }
         return myTotal.subtract(totalPayments);
     }
 
     @Override
-    public Money getCapturedTotal() {
-        Money totalCaptured = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
-        for (PaymentInfo pi : getPaymentInfos()) {
-            totalCaptured = totalCaptured.add(pi.getPaymentCapturedAmount());
+    public void setTotal(Money orderTotal) {
+        this.total = Money.toAmount(orderTotal);
+    }
+
+    @Override
+    public Boolean getPreview() {
+        if (previewable == null) {
+            previewable = new PreviewStatus();
         }
-        return totalCaptured;
+        return previewable.getPreview();
+    }
+
+    @Override
+    public void setPreview(Boolean preview) {
+        if (previewable == null) {
+            previewable = new PreviewStatus();
+        }
+        previewable.setPreview(preview);
     }
 
     @Override
@@ -448,13 +477,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public List<PaymentInfo> getPaymentInfos() {
-        return paymentInfos;
+    public List<OrderPayment> getPayments() {
+        return payments;
     }
 
     @Override
-    public void setPaymentInfos(List<PaymentInfo> paymentInfos) {
-        this.paymentInfos = paymentInfos;
+    public void setPayments(List<OrderPayment> payments) {
+        this.payments = payments;
     }
 
     @Override
@@ -646,6 +675,16 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
+    
+    @Override
+    public Boolean getTaxOverride() {
+        return taxOverride == null ? false : taxOverride;
+    }
+
+    @Override
+    public void setTaxOverride(Boolean taxOverride) {
+        this.taxOverride = taxOverride;
+    }
 
     @Override
     public int getItemCount() {
@@ -736,6 +775,19 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
+    }
+
+    @Override
+    public List<ActivityMessageDTO> getOrderMessages() {
+        if (this.orderMessages == null) {
+            this.orderMessages = new ArrayList<ActivityMessageDTO>();
+        }
+        return this.orderMessages;
+    }
+
+    @Override
+    public void setOrderMessages(List<ActivityMessageDTO> orderMessages) {
+        this.orderMessages = orderMessages;
     }
 
     public static class Presentation {

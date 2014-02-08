@@ -1,23 +1,30 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web.expression;
 
-import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This Thymeleaf variable expression class provides access to runtime configuration properties that are configured
@@ -28,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class PropertiesVariableExpression implements BroadleafVariableExpression {
     
     @Autowired
-    protected RuntimeEnvironmentPropertiesManager propMgr;
+    protected SystemPropertiesService service;
     
     @Override
     public String getName() {
@@ -36,11 +43,20 @@ public class PropertiesVariableExpression implements BroadleafVariableExpression
     }
     
     public String get(String propertyName) {
-        return propMgr.getProperty(propertyName);
+        return service.resolveSystemProperty(propertyName);
     }
 
     public int getAsInt(String propertyName) {
-        return Integer.parseInt(propMgr.getProperty(propertyName));
+        return service.resolveIntSystemProperty(propertyName);
+    }
+    
+    public boolean getForceShowIdColumns() {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+
+        boolean forceShow = service.resolveBooleanSystemProperty("listGrid.forceShowIdColumns");
+        forceShow = forceShow || "true".equals(request.getParameter("showIds"));
+        
+        return forceShow;
     }
 
 }

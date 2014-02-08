@@ -1,35 +1,36 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.structure.dao;
 
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Responsible for querying and updating {@link StructuredContent} items
  * @author bpolster
  */
 public interface StructuredContentDao {
+
     /**
      * Returns the <code>StructuredContent</code> item that matches
      * the passed in Id.
@@ -58,8 +59,6 @@ public interface StructuredContentDao {
      * @return the list of {@link StructuredContent}, an empty list of none are found
      */
     public List<StructuredContent> findAllContentItems();
-
-    public Map<String,StructuredContentField> readFieldsForStructuredContentItem(StructuredContent sc);
 
     /**
      * Persists the changes or saves a new content item.
@@ -90,7 +89,7 @@ public interface StructuredContentDao {
      * @return a list of all matching content
      * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
      */
-    public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale locale);
+    public List<StructuredContent> findActiveStructuredContentByType(StructuredContentType type, Locale locale);
 
     /**
      * Called by the <code>DisplayContentTag</code> to locate content based
@@ -103,7 +102,7 @@ public interface StructuredContentDao {
      * @return a list of all matching content
      * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
      */
-    public List<StructuredContent> findActiveStructuredContentByType(SandBox sandBox, StructuredContentType type, Locale fullLocale, Locale languageOnlyLocale);
+    public List<StructuredContent> findActiveStructuredContentByType(StructuredContentType type, Locale fullLocale, Locale languageOnlyLocale);
 
     /**
      * Pass through function for backwards compatibility to get a list of structured content.
@@ -114,7 +113,7 @@ public interface StructuredContentDao {
      * @param locale
      * @return
      */
-    public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale locale);
+    public List<StructuredContent> findActiveStructuredContentByNameAndType(StructuredContentType type, String name, Locale locale);
 
     /**
      * Called by the <code>DisplayContentTag</code> to locate content based
@@ -127,7 +126,7 @@ public interface StructuredContentDao {
      * @param languageOnlyLocale
      * @return
      */
-    public List<StructuredContent> findActiveStructuredContentByNameAndType(SandBox sandBox, StructuredContentType type, String name, Locale fullLocale, Locale languageOnlyLocale);
+    public List<StructuredContent> findActiveStructuredContentByNameAndType(StructuredContentType type, String name, Locale fullLocale, Locale languageOnlyLocale);
 
     /**
      * Pass through function for backwards compatibility to get a list of structured content.
@@ -137,7 +136,7 @@ public interface StructuredContentDao {
      * @param locale
      * @return
      */
-    public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale locale);
+    public List<StructuredContent> findActiveStructuredContentByName(String name, Locale locale);
 
     /**
      * Called by the <code>DisplayContentTag</code> to locate content based
@@ -149,7 +148,7 @@ public interface StructuredContentDao {
      * @param languageOnlyLocale
      * @return
      */
-    public List<StructuredContent> findActiveStructuredContentByName(SandBox sandBox, String name, Locale fullLocale, Locale languageOnlyLocale);
+    public List<StructuredContent> findActiveStructuredContentByName(String name, Locale fullLocale, Locale languageOnlyLocale);
 
 
     /**

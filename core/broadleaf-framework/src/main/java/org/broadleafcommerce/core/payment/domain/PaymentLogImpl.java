@@ -1,28 +1,31 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentLogEventType;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.core.payment.service.type.PaymentLogEventType;
-import org.broadleafcommerce.core.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
@@ -44,6 +47,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * @deprecated - payment logs should now be captured as raw responses in Payment Transaction line items
+ */
+@Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PAYMENT_LOG")
@@ -77,17 +84,17 @@ public class PaymentLogImpl implements PaymentLog {
     @Column(name = "ORDER_PAYMENT_ID")
     @Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnNames={"ORDER_PAYMENT_ID"})
     @AdminPresentation(excluded = true, readOnly = true)
-    protected Long paymentInfoId;
+    protected Long orderPaymentId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
     @Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
-    @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
-    @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnNames={"PAYMENT_INFO_REFERENCE_NUMBER"})
+    @Column(name = "ORDER_PAYMENT_REF_NUM")
+    @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnNames={"ORDER_PAYMENT_REFERENCE_NUMBER"})
     @AdminPresentation(friendlyName = "PaymentLogImpl_Payment_Ref_Number", order = 4, group = "PaymentLogImpl_Payment_Log", readOnly = true)
-    protected String paymentInfoReferenceNumber;
+    protected String orderPaymentReferenceNumber;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
     @Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
@@ -149,12 +156,12 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Override
     public Long getPaymentInfoId() {
-        return paymentInfoId;
+        return orderPaymentId;
     }
 
     @Override
     public void setPaymentInfoId(Long paymentInfoId) {
-        this.paymentInfoId = paymentInfoId;
+        this.orderPaymentId = paymentInfoId;
     }
 
     @Override
@@ -169,21 +176,21 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Override
     public String getPaymentInfoReferenceNumber() {
-        return paymentInfoReferenceNumber;
+        return orderPaymentReferenceNumber;
     }
 
     @Override
     public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber) {
-        this.paymentInfoReferenceNumber = paymentInfoReferenceNumber;
+        this.orderPaymentReferenceNumber = paymentInfoReferenceNumber;
     }
 
     @Override
-    public TransactionType getTransactionType() {
-        return TransactionType.getInstance(transactionType);
+    public PaymentTransactionType getTransactionType() {
+        return PaymentTransactionType.getInstance(transactionType);
     }
 
     @Override
-    public void setTransactionType(TransactionType transactionType) {
+    public void setTransactionType(PaymentTransactionType transactionType) {
         this.transactionType = transactionType.getType();
     }
 
@@ -246,8 +253,8 @@ public class PaymentLogImpl implements PaymentLog {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-        result = prime * result + ((paymentInfoId == null) ? 0 : paymentInfoId.hashCode());
-        result = prime * result + ((paymentInfoReferenceNumber == null) ? 0 : paymentInfoReferenceNumber.hashCode());
+        result = prime * result + ((orderPaymentId == null) ? 0 : orderPaymentId.hashCode());
+        result = prime * result + ((orderPaymentReferenceNumber == null) ? 0 : orderPaymentReferenceNumber.hashCode());
         result = prime * result + ((transactionTimestamp == null) ? 0 : transactionTimestamp.hashCode());
         result = prime * result + ((userName == null) ? 0 : userName.hashCode());
         return result;
@@ -277,18 +284,18 @@ public class PaymentLogImpl implements PaymentLog {
         } else if (!customer.equals(other.customer)) {
             return false;
         }
-        if (paymentInfoId == null) {
-            if (other.paymentInfoId != null) {
+        if (orderPaymentId == null) {
+            if (other.orderPaymentId != null) {
                 return false;
             }
-        } else if (!paymentInfoId.equals(other.paymentInfoId)) {
+        } else if (!orderPaymentId.equals(other.orderPaymentId)) {
             return false;
         }
-        if (paymentInfoReferenceNumber == null) {
-            if (other.paymentInfoReferenceNumber != null) {
+        if (orderPaymentReferenceNumber == null) {
+            if (other.orderPaymentReferenceNumber != null) {
                 return false;
             }
-        } else if (!paymentInfoReferenceNumber.equals(other.paymentInfoReferenceNumber)) {
+        } else if (!orderPaymentReferenceNumber.equals(other.orderPaymentReferenceNumber)) {
             return false;
         }
         if (transactionTimestamp == null) {

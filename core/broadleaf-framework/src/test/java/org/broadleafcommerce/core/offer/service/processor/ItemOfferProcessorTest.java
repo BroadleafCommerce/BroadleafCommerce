@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.broadleafcommerce.common.money.Money;
@@ -29,6 +32,7 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.OfferServiceImpl;
+import org.broadleafcommerce.core.offer.service.OfferServiceUtilitiesImpl;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
@@ -91,11 +95,16 @@ public class ItemOfferProcessorTest extends TestCase {
         multishipOptionServiceMock = EasyMock.createMock(OrderMultishipOptionService.class);
         offerTimeZoneProcessorMock = EasyMock.createMock(OfferTimeZoneProcessor.class);
 
+        OfferServiceUtilitiesImpl offerServiceUtilities = new OfferServiceUtilitiesImpl();
+        offerServiceUtilities.setOfferDao(offerDaoMock);
+        offerServiceUtilities.setPromotableItemFactory(new PromotableItemFactoryImpl());
+
         itemProcessor = new ItemOfferProcessorImpl();
         itemProcessor.setOfferDao(offerDaoMock);
         itemProcessor.setOrderItemDao(orderItemDaoMock);
         itemProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         itemProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
+        itemProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
         offerService = new OfferServiceImpl();
 
@@ -104,6 +113,7 @@ public class ItemOfferProcessorTest extends TestCase {
         orderProcessor.setPromotableItemFactory(new PromotableItemFactoryImpl());
         orderProcessor.setOfferTimeZoneProcessor(offerTimeZoneProcessorMock);
         orderProcessor.setOrderItemDao(orderItemDaoMock);
+        orderProcessor.setOfferServiceUtilities(offerServiceUtilities);
 
         offerService.setCustomerOfferDao(customerOfferDaoMock);
         offerService.setOfferCodeDao(offerCodeDaoMock);
@@ -138,7 +148,7 @@ public class ItemOfferProcessorTest extends TestCase {
 
         multishipOptionServiceMock.deleteAllOrderMultishipOptions(EasyMock.isA(Order.class));
         EasyMock.expectLastCall().anyTimes();
-        EasyMock.expect(fgServiceMock.collapseToOneFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getSameOrderAnswer()).anyTimes();
+        EasyMock.expect(fgServiceMock.collapseToOneShippableFulfillmentGroup(EasyMock.isA(Order.class), EasyMock.eq(false))).andAnswer(OfferDataItemProvider.getSameOrderAnswer()).anyTimes();
         EasyMock.expect(fgItemDaoMock.create()).andAnswer(OfferDataItemProvider.getCreateFulfillmentGroupItemAnswer()).anyTimes();
         fgItemDaoMock.delete(EasyMock.isA(FulfillmentGroupItem.class));
         EasyMock.expectLastCall().anyTimes();

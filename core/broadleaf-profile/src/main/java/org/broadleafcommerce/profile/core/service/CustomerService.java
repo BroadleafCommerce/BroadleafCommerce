@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Profile
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.profile.core.service;
 
 import org.broadleafcommerce.common.security.util.PasswordChange;
@@ -43,6 +46,13 @@ public interface CustomerService {
     public Customer readCustomerById(Long userId);
 
     public Customer createCustomer();
+
+    /**
+     * Delete the customer entity from the persistent store
+     *
+     * @param customer the customer entity to remove
+     */
+    void deleteCustomer(Customer customer);
 
     /**
      * Returns a <code>Customer</code> by first looking in the database, otherwise creating a new non-persisted <code>Customer</code>
@@ -139,12 +149,38 @@ public interface CustomerService {
     public void setSaltSource(SaltSource saltSource);
     
     /**
+     * @deprecated use {@link #getSalt(Customer, String)} instead
+     */
+    @Deprecated
+    public Object getSalt(Customer customer);
+    
+    /**
      * Gets the salt object for the current customer. By default this delegates to {@link #getSaltSource()}. If there is
      * not a {@link SaltSource} configured ({@link #getSaltSource()} returns null) then this also returns null.
      * 
      * @param customer
      * @return the salt for the current customer
      */
-    public Object getSalt(Customer customer);
+    public Object getSalt(Customer customer, String unencodedPassword);
     
+    /**
+     * Encodes the clear text parameter, using the customer as a potential Salt. Does not change the customer properties. 
+     * This method only encodes the password and returns the encoded result.
+     * @param clearText
+     * @param customer
+     * @return
+     */
+    public String encodePassword(String clearText, Customer customer);
+
+    /**
+     * Use this to determine if passwords match. Don't encode the password separately since sometimes salts 
+     * are generated randomly and stored with the password.
+     * 
+     * @param rawPassword
+     * @param encodedPassword
+     * @param customer
+     * @return
+     */
+    public boolean isPasswordValid(String rawPassword, String encodedPassword, Customer customer);
+
 }

@@ -1,21 +1,25 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 
 import java.io.Serializable;
@@ -60,7 +64,9 @@ public class PersistencePerspective implements Serializable {
 
     public void setAdditionalNonPersistentProperties(String[] additionalNonPersistentProperties) {
         this.additionalNonPersistentProperties = additionalNonPersistentProperties;
-        Arrays.sort(this.additionalNonPersistentProperties);
+        if (!ArrayUtils.isEmpty(this.additionalNonPersistentProperties)) {
+            Arrays.sort(this.additionalNonPersistentProperties);
+        }
     }
 
     public ForeignKey[] getAdditionalForeignKeys() {
@@ -69,11 +75,13 @@ public class PersistencePerspective implements Serializable {
 
     public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
         this.additionalForeignKeys = additionalForeignKeys;
-        Arrays.sort(this.additionalForeignKeys, new Comparator<ForeignKey>() {
-            public int compare(ForeignKey o1, ForeignKey o2) {
-                return o1.getManyToField().compareTo(o2.getManyToField());
-            }
-        });
+        if (!ArrayUtils.isEmpty(this.additionalForeignKeys)) {
+            Arrays.sort(this.additionalForeignKeys, new Comparator<ForeignKey>() {
+                public int compare(ForeignKey o1, ForeignKey o2) {
+                    return o1.getManyToField().compareTo(o2.getManyToField());
+                }
+            });
+        }
     }
 
     public OperationTypes getOperationTypes() {
@@ -152,7 +160,9 @@ public class PersistencePerspective implements Serializable {
     @Deprecated
     public void setExcludeFields(String[] excludeManyToOneFields) {
         this.excludeFields = excludeManyToOneFields;
-        Arrays.sort(this.excludeFields);
+        if (!ArrayUtils.isEmpty(this.excludeFields)) {
+            Arrays.sort(this.excludeFields);
+        }
     }
 
     /**
@@ -175,7 +185,9 @@ public class PersistencePerspective implements Serializable {
     @Deprecated
     public void setIncludeFields(String[] includeManyToOneFields) {
         this.includeFields = includeManyToOneFields;
-        Arrays.sort(this.includeFields);
+        if (!ArrayUtils.isEmpty(this.includeFields)) {
+            Arrays.sort(this.includeFields);
+        }
     }
 
     public String getConfigurationKey() {

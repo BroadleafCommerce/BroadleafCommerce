@@ -1,32 +1,39 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Admin Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.admin.web.controller.entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -42,6 +49,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.net.URLDecoder;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,23 +84,57 @@ public class AdminProductController extends AdminBasicEntityController {
     }
     
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id) throws Exception {
+            String id, Map<String, String> pathVars) throws Exception {
         String collectionField = "additionalSkus";
         String mainClassName = getClassNameForSection(SECTION_KEY);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
         
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withCustomCriteria(new String[] { id });
-
-        ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
-        if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
-            collectionMetadata.setCeilingType(Sku.class.getName());
+        BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
+        ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        // If the entity type isn't specified, we need to determine if there are various polymorphic types
+        // for this entity.
+        String entityType = null;
+        if (request.getParameter("entityType") != null) {
+            entityType = request.getParameter("entityType");
         }
-        
-        EntityForm entityForm = formService.createEntityForm(collectionMetadata);
-        
+        if (StringUtils.isBlank(entityType)) {
+            if (cmd.getPolymorphicEntities().getChildren().length == 0) {
+                entityType = cmd.getPolymorphicEntities().getFullyQualifiedClassname();
+            } else {
+                entityType = getDefaultEntityType();
+            }
+        } else {
+            entityType = URLDecoder.decode(entityType, "UTF-8");
+        }
+
+        if (StringUtils.isBlank(entityType)) {
+            List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
+            model.addAttribute("entityTypes", entityTypes);
+            model.addAttribute("viewType", "modal/entityTypeSelection");
+            model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
+            String requestUri = request.getRequestURI();
+            if (!request.getContextPath().equals("/") && requestUri.startsWith(request.getContextPath())) {
+                requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
+            }
+            model.addAttribute("currentUri", requestUri);
+            model.addAttribute("modalHeaderType", "addEntity");
+            setModelAttributes(model, SECTION_KEY);
+            return "modules/modalContainer";
+        } else {
+            ppr = ppr.withCeilingEntityClassname(entityType);
+        }
+
+        ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        EntityForm entityForm = formService.createEntityForm(collectionMetadata, sectionCrumbs);
+        entityForm.setCeilingEntityClassname(ppr.getCeilingEntityClassname());
+        entityForm.setEntityType(ppr.getCeilingEntityClassname());
+        formService.removeNonApplicableFields(collectionMetadata, entityForm, ppr.getCeilingEntityClassname());
+
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
 
         removeRequiredValidation(entityForm);
@@ -121,38 +164,38 @@ public class AdminProductController extends AdminBasicEntityController {
     }
     
     protected String showUpdateAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id,
-            String collectionItemId) throws Exception {
+            String id, String collectionItemId, Map<String, String> pathVars) throws Exception {
         String collectionField = "additionalSkus";
         
         // Find out metadata for the additionalSkus property
         String mainClassName = getClassNameForSection(SECTION_KEY);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName));
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
-        
-        
+
         // Find the metadata and the entity for the selected sku
-        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md)
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
                 .withCustomCriteria(new String[] { id });
-        ClassMetadata collectionMetadata = service.getClassMetadata(ppr);
+        ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
             collectionMetadata.setCeilingType(Sku.class.getName());
         }
         
-        Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true);
+        Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
         
         // Find the records for all subcollections of Sku
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity);
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, sectionCrumbs);
         
         // Build the entity form for the modal that includes the subcollections
-        EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap);
+        EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
         
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
         
         // Ensure that operations on the Sku subcollections go to the proper URL
         for (ListGrid lg : entityForm.getAllListGrids()) {
             lg.setSectionKey("org.broadleafcommerce.core.catalog.domain.Sku");
+            lg.setSectionCrumbs(sectionCrumbs);
         }
 
         removeRequiredValidation(entityForm);
@@ -175,7 +218,7 @@ public class AdminProductController extends AdminBasicEntityController {
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
-            return showUpdateAdditionalSku(request, response, model, id, collectionItemId);
+            return showUpdateAdditionalSku(request, response, model, id, collectionItemId, pathVars);
         }
         return super.showUpdateCollectionItem(request, response, model, pathVars, id, collectionField, collectionItemId);
     }
@@ -188,7 +231,7 @@ public class AdminProductController extends AdminBasicEntityController {
             @PathVariable(value="collectionField") String collectionField,
             @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
-            return showAddAdditionalSku(request, response, model, id);
+            return showAddAdditionalSku(request, response, model, id, pathVars);
         } 
         return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField, requestParams);
     }

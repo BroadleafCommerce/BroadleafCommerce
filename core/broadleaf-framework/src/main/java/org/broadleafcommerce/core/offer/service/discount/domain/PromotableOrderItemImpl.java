@@ -1,29 +1,35 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
+import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +48,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected PromotableItemFactory itemFactory;
     protected List<PromotableOrderItemPriceDetail> itemPriceDetails = new ArrayList<PromotableOrderItemPriceDetail>();
     protected boolean includeAdjustments;
+    protected Map<String, Object> extraDataMap = new HashMap<String, Object>();
 
     public PromotableOrderItemImpl(OrderItem orderItem, PromotableOrder promotableOrder, PromotableItemFactory itemFactory,
             boolean includeAdjustments) {
@@ -69,6 +76,17 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
                     PromotableOrderItemPriceDetailAdjustment poidAdj =
                             new PromotableOrderItemPriceDetailAdjustmentImpl(adjustment, poid);
                     poid.addCandidateItemPriceDetailAdjustment(poidAdj);
+                }
+
+                List<OrderItemQualifier> oiqs = poid.getPromotableOrderItem().getOrderItem().getOrderItemQualifiers();
+                if (CollectionUtils.isNotEmpty(oiqs)) {
+                    for (OrderItemQualifier oiq : oiqs) {
+                        PromotionQualifier pq = new PromotionQualifier();
+                        pq.setPromotion(oiq.getOffer());
+                        pq.setQuantity(oiq.getQuantity().intValue());
+                        pq.setFinalizedQuantity(oiq.getQuantity().intValue());
+                        poid.getPromotionQualifiers().add(pq);
+                    }
                 }
             }
         } else {
@@ -235,5 +253,10 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 
     public OrderItem getOrderItem() {
         return orderItem;
+    }
+
+    @Override
+    public Map<String, Object> getExtraDataMap() {
+        return extraDataMap;
     }
 }

@@ -1,0 +1,17 @@
+<div class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header">
+    
+        <h3 id="myModalLabel" th:inline="text">
+            An error occurred
+        </h3>
+        
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+        <span th:text="${exceptionMessage}" style="display: block; padding-bottom: 20px;" />
+        
+        <pre class="exception" th:text="${debugMessage}" th:if="${showDebugMessage}" />
+    </div>
+
+</div>

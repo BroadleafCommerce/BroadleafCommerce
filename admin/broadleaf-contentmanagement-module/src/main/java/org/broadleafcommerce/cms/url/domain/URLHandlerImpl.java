@@ -1,26 +1,29 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
-/**
- *
+ * #L%
  */
 package org.broadleafcommerce.cms.url.domain;
 
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -32,6 +35,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,7 +44,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 
 /**
@@ -50,6 +54,10 @@ import java.io.Serializable;
 @Table(name = "BLC_URL_HANDLER")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
 public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
@@ -81,50 +89,31 @@ public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity
     @AdminPresentation(friendlyName = "URLHandlerImpl_redirectType", order = 4, group = "URLHandlerImpl_friendyName", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.cms.url.type.URLRedirectType", groupOrder = 2, prominent = true)
     protected String urlRedirectType;
 
-
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#getId()
-          */
     @Override
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#setId(java.lang.Long)
-          */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#getIncomingURL()
-          */
     @Override
     public String getIncomingURL() {
         return incomingURL;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#setIncomingURL(java.lang.String)
-          */
     @Override
     public void setIncomingURL(String incomingURL) {
         this.incomingURL = incomingURL;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#getNewURL()
-          */
     @Override
     public String getNewURL() {
         return newURL;
     }
 
-    /* (non-Javadoc)
-          * @see org.broadleafcommerce.common.url.URLHandler#setNewURL(java.lang.String)
-          */
     @Override
     public void setNewURL(String newURL) {
         this.newURL = newURL;

@@ -1,37 +1,39 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 
-@Component("blProductOptionValueProcessor")
 public class ProductOptionValueProcessor extends AbstractAttrProcessor  {
 
     private static final Log LOG = LogFactory.getLog(ProductOptionValueProcessor.class);
@@ -42,8 +44,11 @@ public class ProductOptionValueProcessor extends AbstractAttrProcessor  {
     
     @Override
     protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
+        
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
+        ProductOptionValue productOptionValue = (ProductOptionValue) expression.execute(arguments.getConfiguration(), arguments);
 
-        ProductOptionValue productOptionValue = (ProductOptionValue) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue(attributeName));
         ProductOptionValueDTO dto = new ProductOptionValueDTO();
         dto.setOptionId(productOptionValue.getProductOption().getId());
         dto.setValueId(productOptionValue.getId());

@@ -1,22 +1,26 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.logging.Log;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -27,9 +31,8 @@ import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -135,24 +138,24 @@ public interface OrderService {
     public Order findOrderByOrderNumber(String orderNumber);
     
     /**
-     * Returns all PaymentInfo objects that are associated with the given order
+     * Returns all OrderPayment objects that are associated with the given order
      * 
      * @param order
-     * @return the list of all PaymentInfo objects
+     * @return the list of all OrderPayment objects
      */
-    public List<PaymentInfo> findPaymentInfosForOrder(Order order);
+    public List<OrderPayment> findPaymentsForOrder(Order order);
 
     /**
-     * Associates a given PaymentInfo with an Order. Note that it is acceptable for the 
+     * Associates a given OrderPayment with an Order and then saves the order. Note that it is acceptable for the 
      * securePaymentInfo to be null. For example, if the secure credit card details are 
      * handled by a third party, a given application may never have associated securePaymentInfos
      * 
      * @param order
      * @param payment
      * @param securePaymentInfo - null if it doesn't exist
-     * @return the persisted version of the PaymentInfo
+     * @return the persisted version of the OrderPayment
      */
-    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo);
+    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo);
     
     /**
      * Persists the given order to the database. If the priceOrder flag is set to true,
@@ -455,33 +458,46 @@ public interface OrderService {
     public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
 
     /**
-     * Deletes all the Payment Info's on the order.
+     * Deletes all the OrderPayment Info's on the order.
      *
      * @param order
      */
     public void removeAllPaymentsFromOrder(Order order);
 
     /**
-     * Deletes the Payment Info of the passed in type from the order
-     * Note that this method will also delete any associated Secure Payment Infos if necessary.
+     * Deletes the OrderPayment Info of the passed in type from the order
+     * Note that this method will also delete any associated Secure OrderPayment Infos if necessary.
      *
      * @param order
      * @param paymentInfoType
      */
-    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
+    public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType);
 
     /**
-     * Deletes the Payment Info from the order.
-     * Note that this method will also delete any associated Secure Payment Infos if necessary.
+     * Deletes the OrderPayment Info from the order.
+     * Note that this method will also delete any associated Secure OrderPayment Infos if necessary.
      *
      * @param order
      * @param paymentInfo
      */
-    public void removePaymentFromOrder(Order order, PaymentInfo paymentInfo);
+    public void removePaymentFromOrder(Order order, OrderPayment paymentInfo);
 
     public void deleteOrder(Order cart);
 
     Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
+
+    /**
+     * Since required product option can be added after the item is in the cart, we use this method 
+     * to apply product option on an existing item in the cart. No validation will happen at this time, as the validation 
+     * at checkout will take care of any missing product options. 
+     * 
+     * @param orderId
+     * @param orderItemRequestDTO
+     * @param priceOrder
+     * @return Order
+     * @throws UpdateCartException
+     */
+    Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException;
 
     /**
      * This debugging method will print out a console-suitable representation of the current state of the order, including
@@ -491,4 +507,13 @@ public interface OrderService {
      * @param log the Log to use to print a debug-level message
      */
     public void printOrder(Order order, Log log);
+
+    /**
+     * Invokes the extension handler of the same name to provide the ability for a module to throw an exception
+     * and interrupt a cart operation.
+     * 
+     * @param cart
+     */
+    public void preValidateCartOperation(Order cart);
+
 }

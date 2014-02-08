@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +31,7 @@ import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.endpoint.catalog.CatalogEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
@@ -35,14 +39,13 @@ import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.BeansException;
 
 import java.util.HashMap;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -82,8 +85,8 @@ public abstract class CartEndpoint extends BaseEndpoint {
             return wrapper;
         }
 
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
     }
 
    /**
@@ -142,20 +145,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
             try {
                 //We allow product options to be submitted via form post or via query params.  We need to take 
                 //the product options and build a map with them...
-                MultivaluedMap<String, String> multiValuedMap = uriInfo.getQueryParameters();
-                HashMap<String, String> productOptions = new HashMap<String, String>();
-
-                //Fill up a map of key values that will represent product options
-                Set<String> keySet = multiValuedMap.keySet();
-                for (String key : keySet) {
-                    if (multiValuedMap.getFirst(key) != null) {
-                        //Product options should be returned with "productOption." as a prefix. We'll look for those, and 
-                        //remove the prefix.
-                        if (key.startsWith("productOption.")) {
-                            productOptions.put(StringUtils.removeStart(key, "productOption."), multiValuedMap.getFirst(key));
-                        }
-                    }
-                }
+                HashMap<String, String> productOptions = getOptions(uriInfo);
 
                 OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
                 orderItemRequestDTO.setProductId(productId);
@@ -175,19 +165,31 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
                 return wrapper;
             } catch (PricingException e) {
-                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the order.").build());
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
             } catch (AddToCartException e) {
-                if (e.getCause() != null) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("" + e.getCause()).build());
-                }
-                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured adding the item to the cart." + e.getCause()).build());
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
             }
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+    }
+
+    protected HashMap<String, String> getOptions(UriInfo uriInfo) {
+        MultivaluedMap<String, String> multiValuedMap = uriInfo.getQueryParameters();
+        HashMap<String, String> productOptions = new HashMap<String, String>();
+
+        //Fill up a map of key values that will represent product options
+        Set<String> keySet = multiValuedMap.keySet();
+        for (String key : keySet) {
+            if (multiValuedMap.getFirst(key) != null) {
+                //Product options should be returned with "productOption." as a prefix. We'll look for those, and 
+                //remove the prefix.
+                if (key.startsWith("productOption.")) {
+                    productOptions.put(StringUtils.removeStart(key, "productOption."), multiValuedMap.getFirst(key));
+                }
+            }
+        }
+        return productOptions;
     }
 
     public OrderWrapper removeItemFromOrder(HttpServletRequest request,
@@ -205,20 +207,19 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
                 return wrapper;
             } catch (PricingException e) {
-                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                        .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
             } catch (RemoveFromCartException e) {
                 if (e.getCause() instanceof ItemNotFoundException) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
-                            .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
+                    throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode(), null, null, e.getCause())
+                            .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND, itemId);
                 } else {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
+                    throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
                 }
             }
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
 
@@ -232,38 +233,40 @@ public abstract class CartEndpoint extends BaseEndpoint {
         if (cart != null) {
             try {
                 OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+
                 orderItemRequestDTO.setOrderItemId(itemId);
                 orderItemRequestDTO.setQuantity(quantity);
+                //If we have product options set them on the DTO
+
                 Order order = orderService.updateItemQuantity(cart.getId(), orderItemRequestDTO, priceOrder);
                 order = orderService.save(order, priceOrder);
-
                 OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
                 wrapper.wrapDetails(order, request);
 
                 return wrapper;
             } catch (UpdateCartException e) {
                 if (e.getCause() instanceof ItemNotFoundException) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
-                            .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
+                    throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode(), null, null, e.getCause())
+                            .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND, itemId);
                 } else {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
+                    throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                            .addMessage(BroadleafWebServicesException.UPDATE_CART_ERROR);
                 }
             } catch (RemoveFromCartException e) {
                 if (e.getCause() instanceof ItemNotFoundException) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
-                            .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
+                    throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode(), null, null, e.getCause())
+                            .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND, itemId);
                 } else {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
+                    throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                            .addMessage(BroadleafWebServicesException.UPDATE_CART_ERROR);
                 }
             } catch (PricingException pe) {
-                throw new WebApplicationException(pe, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, pe)
+                        .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
             }
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
     }
 
     public OrderWrapper addOfferCode(HttpServletRequest request,
@@ -273,15 +276,15 @@ public abstract class CartEndpoint extends BaseEndpoint {
         Order cart = CartState.getCart();
 
         if (cart == null) {
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+            throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
         }
 
         OfferCode offerCode = offerService.lookupOfferCodeByCode(promoCode);
 
         if (offerCode == null) {
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Offer Code could not be found").build());
+            throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.PROMO_CODE_INVALID, promoCode);
         }
 
         try {
@@ -291,11 +294,11 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
             return wrapper;
         } catch (PricingException e) {
-            throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                    .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
         } catch (OfferMaxUseExceededException e) {
-            throw new WebApplicationException(e, Response.status(Response.Status.BAD_REQUEST)
-                    .type(MediaType.TEXT_PLAIN).entity("The offer (promo) code provided has exceeded its max usages: " + promoCode).build());
+            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode(), null, null, e)
+                    .addMessage(BroadleafWebServicesException.PROMO_CODE_MAX_USAGES, promoCode);
         }
 
 
@@ -306,14 +309,14 @@ public abstract class CartEndpoint extends BaseEndpoint {
             boolean priceOrder) {
         Order cart = CartState.getCart();
         if (cart == null) {
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+            throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
         }
 
         OfferCode offerCode = offerService.lookupOfferCodeByCode(promoCode);
         if (offerCode == null) {
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Offer code was invalid or could not be found.").build());
+            throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.PROMO_CODE_INVALID, promoCode);
         }
 
         try {
@@ -323,8 +326,8 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
             return wrapper;
         } catch (PricingException e) {
-            throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                    .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
         }
 
     }
@@ -335,19 +338,68 @@ public abstract class CartEndpoint extends BaseEndpoint {
         Order cart = CartState.getCart();
 
         if (cart == null) {
-            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+            throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
         }
 
         try {
             cart = orderService.removeAllOfferCodes(cart, priceOrder);
-            OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-            wrapper.wrapDetails(cart, request);
-            return wrapper;
+            return wrapCart(request, cart);
+
         } catch (PricingException e) {
-            throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                    .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
         }
         
+    }
+
+    public OrderWrapper updateProductOptions(HttpServletRequest request,
+            UriInfo uriInfo,
+            Long itemId,
+            boolean priceOrder) {
+
+        Order cart = CartState.getCart();
+
+        if (cart != null) {
+            try {
+                OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+
+                HashMap<String, String> productOptions = getOptions(uriInfo);
+                orderItemRequestDTO.setOrderItemId(itemId);
+                //If we have product options set them on the DTO
+                if (productOptions.size() > 0) {
+                    orderItemRequestDTO.setItemAttributes(productOptions);
+                }
+                Order order = orderService.updateProductOptionsForItem(cart.getId(), orderItemRequestDTO, priceOrder);
+
+                order = orderService.save(order, priceOrder);
+                return wrapCart(request, cart);
+            } catch (UpdateCartException e) {
+                if (e.getCause() instanceof ItemNotFoundException) {
+                    throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode(), null, null, e.getCause())
+                    .addMessage(BroadleafWebServicesException.CART_ITEM_NOT_FOUND, itemId);
+                } else {
+                    throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                            .addMessage(BroadleafWebServicesException.UPDATE_CART_ERROR);
+                }
+            } catch (PricingException pe) {
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, pe)
+                        .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
+            }
+        }
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+    }
+
+    protected OrderWrapper wrapCart(HttpServletRequest request, Order cart) {
+
+        try {
+            OrderWrapper orderWrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+            orderWrapper.wrapDetails(cart, request);
+            return orderWrapper;
+        } catch (BeansException e) {
+            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e);
+        }
+
     }
 }

@@ -1,23 +1,30 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 
@@ -47,9 +54,15 @@ public class Field {
     protected Boolean isTranslatable;
     protected Boolean isMainEntityLink;
     protected Boolean isFilterSortDisabled;
+    protected Boolean isResizeDisabled;
     protected Boolean isDerived;
     protected Boolean isLargeEntry;
-    
+    protected Boolean isDirty;
+    protected String hint;
+    protected String tooltip;
+    protected String help;
+    protected Map<String, Object> attributes = new HashMap<String, Object>();
+
     /* ************ */
     /* WITH METHODS */
     /* ************ */
@@ -148,6 +161,26 @@ public class Field {
         setLargeEntry(isLargeEntry);
         return this;
     }
+    
+    public Field withHint(String hint) {
+        setHint(hint);
+        return this;
+    }
+
+    public Field withHelp(String help) {
+        setHelp(help);
+        return this;
+    }
+
+    public Field withTooltip(String tooltip) {
+        setTooltip(tooltip);
+        return this;
+    }
+    
+    public Field withAttribute(String key, Object value) {
+        getAttributes().put(key, value);
+        return this;
+    }
 
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
@@ -207,6 +240,14 @@ public class Field {
     
     public Boolean getFilterSortDisabled() {
         return isFilterSortDisabled == null ? false : isFilterSortDisabled;
+    }
+    
+    public Boolean getResizeDisabled() {
+        return isResizeDisabled == null ? false : isResizeDisabled;
+    }
+    
+    public Object getAttribute(String key) {
+        return getAttributes().get(key);
     }
     
     /* ************************** */
@@ -332,6 +373,10 @@ public class Field {
     public void setFilterSortDisabled(Boolean isFilterSortDisabled) {
         this.isFilterSortDisabled = isFilterSortDisabled;
     }
+
+    public void setResizeDisabled(Boolean isResizeDisabled) {
+        this.isResizeDisabled = isResizeDisabled;
+    }
     
     public Boolean getIsDerived() {
         return isDerived == null ? false : isDerived;
@@ -349,4 +394,44 @@ public class Field {
         this.isLargeEntry = isLargeEntry;
     }
 
+    public Boolean getIsDirty() {
+        return isDirty == null ? false : isDirty;
+    }
+
+    public void setDirty(Boolean isDirty) {
+        this.isDirty = isDirty;
+    }
+
+    public String getHint() {
+        return StringUtils.isBlank(hint) ? null : hint;
+    }
+    
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+    
+    public String getTooltip() {
+        return StringUtils.isBlank(tooltip) ? null : tooltip;
+    }
+    
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+    }
+    
+    public String getHelp() {
+        return StringUtils.isBlank(help) ? null : help;
+    }
+    
+    public void setHelp(String help) {
+        this.help = help;
+    }
+    
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+    
 }

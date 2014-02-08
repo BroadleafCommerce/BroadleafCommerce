@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service.workflow.add;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -30,13 +33,13 @@ import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequest
 import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
+import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-public class AddOrderItemActivity extends BaseActivity<CartOperationContext> {
+public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -48,7 +51,7 @@ public class AddOrderItemActivity extends BaseActivity<CartOperationContext> {
     protected CatalogService catalogService;
 
     @Override
-    public CartOperationContext execute(CartOperationContext context) throws Exception {
+    public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 
@@ -106,15 +109,18 @@ public class AddOrderItemActivity extends BaseActivity<CartOperationContext> {
             bundleItemRequest.setOrder(order);
             bundleItemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
             bundleItemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
-            item = orderItemService.createBundleOrderItem(bundleItemRequest);
+            item = orderItemService.createBundleOrderItem(bundleItemRequest, false);
         }
         
-        item = orderItemService.saveOrderItem(item);
-        order.getOrderItems().add(item);
-        order = orderService.save(order, false);
+        OrderItem parent = null;
+        if (orderItemRequestDTO.getParentOrderItemId() != null) {
+            parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
+            item.setParentOrderItem(parent);
+        }
         
-        request.setOrder(order);
-        request.setAddedOrderItem(item);
+        order.getOrderItems().add(item);
+
+        request.setOrderItem(item);
         return context;
     }
 

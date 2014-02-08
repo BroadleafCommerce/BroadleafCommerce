@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web;
 
 
@@ -81,7 +84,7 @@ public class BroadleafRequestContext {
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     protected WebRequest webRequest;
-    protected SandBox sandbox;
+    protected SandBox sandBox;
     protected Locale locale;
     protected TimeZone timeZone;
     protected BroadleafCurrency broadleafCurrency;
@@ -94,7 +97,11 @@ public class BroadleafRequestContext {
     protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
     protected MessageSource messageSource;
     protected RequestDTO requestDTO;
-    
+    protected Boolean isAdmin = false;
+    protected Long adminUserId;
+
+    protected Boolean internalIgnoreFilters = false;
+
     /**
      * Gets the current request on the context
      * @return
@@ -171,18 +178,29 @@ public class BroadleafRequestContext {
         this.site = site;
     }
 
-    public SandBox getSandbox() {
-        return sandbox;
+    public SandBox getSandBox() {
+        return sandBox;
     }
 
-    public void setSandbox(SandBox sandbox) {
-        this.sandbox = sandbox;
+    public Long getSandBoxId() {
+        if (sandBox != null) {
+            return sandBox.getId();
+        }
+        return null;
+    }
+
+    public boolean isProductionSandBox() {
+        return sandBox == null || SandBoxType.PRODUCTION == sandBox.getSandBoxType();
+    }
+
+    public void setSandBox(SandBox sandBox) {
+        this.sandBox = sandBox;
     }
 
     public Locale getLocale() {
         return locale;
     }
-    
+
     /**
      * Returns the java.util.Locale constructed from the org.broadleafcommerce.common.locale.domain.Locale.
      * @return
@@ -272,10 +290,6 @@ public class BroadleafRequestContext {
         }
         return secure;
     }
-    
-    public boolean isProductionSandbox() {
-        return (sandbox == null || SandBoxType.PRODUCTION.equals(sandbox.getSandBoxType()));
-    }
 
     public Theme getTheme() {
         return theme;
@@ -344,5 +358,35 @@ public class BroadleafRequestContext {
 
     public void setRequestDTO(RequestDTO requestDTO) {
         this.requestDTO = requestDTO;
+    }
+
+    public Boolean getAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
+
+    public Long getAdminUserId() {
+        return adminUserId;
+    }
+
+    public void setAdminUserId(Long adminUserId) {
+        this.adminUserId = adminUserId;
+    }
+
+    /**
+     * Intended for internal use only
+     */
+    public Boolean getInternalIgnoreFilters() {
+        return internalIgnoreFilters;
+    }
+
+    /**
+     * Intended for internal use only
+     */
+    public void setInternalIgnoreFilters(Boolean internalIgnoreFilters) {
+        this.internalIgnoreFilters = internalIgnoreFilters;
     }
 }

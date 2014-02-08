@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -22,17 +25,18 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.ListIterator;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.List;
+import java.util.ListIterator;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -45,7 +49,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blCustomerDao")
     protected CustomerDao customerDao;
-    
+
     @Resource(name = "blOrderDaoExtensionManager")
     protected OrderDaoExtensionManager extensionManager;
 
@@ -66,6 +70,17 @@ public class OrderDaoImpl implements OrderDao {
         if (!em.contains(salesOrder)) {
             salesOrder = readOrderById(salesOrder.getId());
         }
+
+        //need to null out the reference to the Order for all the OrderPayments
+        //as they are not deleted but Archived.
+        for (OrderPayment payment : salesOrder.getPayments()) {
+            payment.setOrder(null);
+            payment.setArchived('Y');
+            for (PaymentTransaction transaction : payment.getTransactions()) {
+                transaction.setArchived('Y');
+            }
+        }
+
         em.remove(salesOrder);
     }
 
@@ -110,7 +125,11 @@ public class OrderDaoImpl implements OrderDao {
         if (customer.getUsername() == null) {
             customer.setUsername(String.valueOf(customer.getId()));
             if (customerDao.readCustomerById(customer.getId()) != null) {
-                throw new IllegalArgumentException("Attempting to save a customer with an id (" + customer.getId() + ") that already exists in the database. This can occur when legacy customers have been migrated to Broadleaf customers, but the batchStart setting has not been declared for id generation. In such a case, the defaultBatchStart property of IdGenerationDaoImpl (spring id of blIdGenerationDao) should be set to the appropriate start value.");
+                throw new IllegalArgumentException("Attempting to save a customer with an id (" + customer.getId() + ") " +
+                        "that already exists in the database. This can occur when legacy customers have been migrated to " +
+                        "Broadleaf customers, but the batchStart setting has not been declared for id generation. In " +
+                        "such a case, the defaultBatchStart property of IdGenerationDaoImpl (spring id of " +
+                        "blIdGenerationDao) should be set to the appropriate start value.");
             }
             customer = customerDao.save(customer);
         }
@@ -128,6 +147,11 @@ public class OrderDaoImpl implements OrderDao {
         }
         
         order = save(order);
+
+        if (extensionManager != null) {
+            extensionManager.getProxy().processPostSaveNewCart(customer, order);
+        }
+
         return order;
     }
 
@@ -194,4 +218,5 @@ public class OrderDaoImpl implements OrderDao {
         }
         return order;
     }
+
 }

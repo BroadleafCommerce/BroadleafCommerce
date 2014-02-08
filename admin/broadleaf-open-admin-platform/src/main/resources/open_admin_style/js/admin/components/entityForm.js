@@ -1,9 +1,28 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 $(document).ready(function() {
     
 	var $tabs = $('dl.tabs.entity-form');
 	if ($tabs.length > 0) {
 	    var $lastTab = $tabs.find('dd:last');
-	    if ($lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
+	    if ($lastTab.length && $lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
             $tabs.mCustomScrollbar({
                 theme: 'dark',
                 autoHideScrollbar: true,
@@ -23,8 +42,13 @@ $(document).ready(function() {
 	});
 	
 	$('body').on('click', 'button.submit-button', function(event) {
+        $('body').click(); // Defocus any current elements in case they need to act prior to form submission
 	    var $form = BLCAdmin.getForm($(this));
 	    $form.submit();
+
+	    $(this).hide();
+	    $(this).closest('.entity-form-actions').find('img.ajax-loader').show();
+
 		event.preventDefault();
 	});
 	
@@ -64,6 +88,8 @@ $(document).ready(function() {
     			    }
     			}
     			BLCAdmin.initializeFields($('.modal .modal-body .tabs-content'));
+        	    BLCAdmin.currentModal().find('.submit-button').show();
+        	    BLCAdmin.currentModal().find('img.ajax-loader').hide();
     	    });
         }
 		return false;

@@ -1,26 +1,31 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.cart;
 
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
+import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
@@ -62,6 +67,10 @@ public class BroadleafCartController extends AbstractCartController {
      * @throws PricingException
      */
     public String cart(HttpServletRequest request, HttpServletResponse response, Model model) throws PricingException {
+        Order cart = CartState.getCart();
+        if (cart != null && !(cart instanceof NullOrderImpl)) {
+            model.addAttribute("paymentRequestDTO", dtoTranslationService.translateOrder(CartState.getCart()));
+        }
         return getCartView();
     }
     
@@ -292,5 +301,13 @@ public class BroadleafCartController extends AbstractCartController {
     public String getCartPageRedirect() {
         return cartPageRedirect;
     }
+    
+    public Map<String, String> handleIllegalCartOpException(IllegalCartOperationException ex) {
+        Map<String, String> returnMap = new HashMap<String, String>();
+        returnMap.put("error", "illegalCartOperation");
+        returnMap.put("exception", BLCMessageUtils.getMessage(ex.getType()));
+        return returnMap;
+    }
+    
 
 }

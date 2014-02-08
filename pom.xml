@@ -10,7 +10,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>3.0.8-GA</version>
+    <version>3.1.0-GA</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -54,6 +54,7 @@
         <spring.version>3.2.2.RELEASE</spring.version>
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
         <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
+        <thymeleaf.version>2.1.2.RELEASE</thymeleaf.version>
         <project.uri>${user.dir}</project.uri>
     </properties>
     <scm>
@@ -127,7 +128,49 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-              </plugin>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <verbose>false</verbose>
+                    <addSvnKeyWords>false</addSvnKeyWords>
+                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                    <organizationName>Broadleaf Commerce</organizationName>
+                    <inceptionYear>2009</inceptionYear>
+                    <licenseName>blc_apache</licenseName>
+                    <licenseResolver>file:${project.uri}/licenses</licenseResolver>
+                    <excludes>
+                        <exclude>**/*.sql</exclude>
+                        <exclude>**/*.html</exclude>
+                        <exclude>**/*font-awesome*</exclude>
+                        <exclude>**/*jquery*</exclude>
+                        <exclude>**/*modernizr*</exclude>
+                        <exclude>**/*responsive-tables*</exclude>
+                        <exclude>**/spectrum.css</exclude>
+                        <exclude>**/spectrum.js</exclude>
+                        <exclude>**/redactor.js</exclude>   
+                        <exclude>**/sitemap/**/*.xml</exclude>                       
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                            <goal>update-project-license</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <roots>
+                                <root>src/main</root>
+                                <root>src/test</root>
+                            </roots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <modules>
@@ -265,6 +308,14 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>org.broadleafcommerce</groupId>
+                <artifactId>broadleaf-common</artifactId>
+                <version>${project.version}</version>
+                <classifier>tests</classifier>
+                <type>jar</type>
+                <scope>test</scope>
+            </dependency>
 
             <!-- Hibernate Libraries -->
             <dependency>
@@ -276,20 +327,20 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-envers</artifactId>
-                <version>4.1.10.Final</version>
+                <version>4.1.11.Final</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>4.1.10.Final</version>
+                <version>4.1.11.Final</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
-                <version>4.1.10.Final</version>
+                <version>4.1.11.Final</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -306,7 +357,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-ehcache</artifactId>
-                <version>4.1.10.Final</version>
+                <version>4.1.11.Final</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
@@ -377,7 +428,7 @@
                 <version>2.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
-            </dependency>            
+            </dependency>
             <dependency>
                 <groupId>commons-dbcp</groupId>
                 <artifactId>commons-dbcp</artifactId>
@@ -500,14 +551,28 @@
             <dependency>
                 <groupId>com.sun.jersey</groupId>
                 <artifactId>jersey-json</artifactId>
-                <version>1.11</version>
+                <version>1.17.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
                 <artifactId>jersey-spring</artifactId>
-                <version>1.11</version>
+                <version>1.17.1</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>1.17.1</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-core</artifactId>
+                <version>1.17.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -555,14 +620,14 @@
             <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf</artifactId>
-                <version>2.0.18</version>
+                <version>${thymeleaf.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.thymeleaf</groupId>
                 <artifactId>thymeleaf-spring3</artifactId>
-                <version>2.0.18</version>
+                <version>${thymeleaf.version}</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -578,7 +643,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>3.8.1</version>
+                <version>4.11</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -661,9 +726,9 @@
 
             <!--Scheduling Libraries -->
             <dependency>
-                <groupId>org.opensymphony.quartz</groupId>
+                <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
-                <version>1.6.1</version>
+                <version>2.2.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -801,7 +866,7 @@
                 <type>jar</type>
                 <scope>test</scope>
             </dependency>
-            
+
             <!-- Spring Plugins -->
             <dependency>
                 <groupId>org.springframework.social</groupId>
@@ -810,7 +875,7 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
-            
+
             <!-- Spring Security -->
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -982,7 +1047,7 @@
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.2.9</version>
+                <version>2.3.1</version>
                 <type>jar</type>
                 <scope>test</scope>
             </dependency>

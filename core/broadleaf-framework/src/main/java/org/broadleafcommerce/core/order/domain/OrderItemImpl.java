@@ -1,26 +1,33 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -82,6 +89,9 @@ import javax.persistence.Table;
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
 public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 
     private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
@@ -215,6 +225,15 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
                 fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
+    
+    @OneToMany(mappedBy = "parentOrderItem", targetEntity = OrderItemImpl.class)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    protected List<OrderItem> childOrderItems = new ArrayList<OrderItem>();
+
+    @ManyToOne(targetEntity = OrderItemImpl.class)
+    @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
+    @Index(name="ORDERITEM_PARENT_INDEX", columnNames={"PARENT_ORDER_ITEM_ID"})
+    protected OrderItem parentOrderItem;
     
     @Override
     public Money getRetailPrice() {
@@ -623,6 +642,44 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     public List<OrderItemPriceDetail> getOrderItemPriceDetails() {
         return orderItemPriceDetails;
     }
+    
+    @Override
+    public List<OrderItem> getChildOrderItems() {
+        return childOrderItems;
+    }
+    
+    @Override
+    public void setChildOrderItems(List<OrderItem> childOrderItems) {
+        this.childOrderItems = childOrderItems;
+    }
+    
+    @Override
+    public OrderItem getParentOrderItem() {
+        return parentOrderItem;
+    }
+    
+    @Override
+    public void setParentOrderItem(OrderItem parentOrderItem) {
+        this.parentOrderItem = parentOrderItem;
+    }
+    
+    @Override
+    public boolean isAParentOf(OrderItem candidateChild) {
+        if (CollectionUtils.isNotEmpty(this.getChildOrderItems())) {
+            for (OrderItem child : this.getChildOrderItems()) {
+                if (child.equals(candidateChild)) {
+                    return true;
+                }
+            }
+            // Item wasn't a direct child. Let's check the hierarchy
+            for (OrderItem child : this.getChildOrderItems()) {
+                if (child.isAParentOf(candidateChild)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     @Override
     public String getMainEntityName() {
@@ -683,6 +740,14 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 }
             }
             
+            if (CollectionUtils.isNotEmpty(childOrderItems)) {
+                for (OrderItem childOrderItem : childOrderItems) {
+                    OrderItem clone = childOrderItem.clone();
+                    clone.setParentOrderItem(clonedOrderItem);
+                    clonedOrderItem.getChildOrderItems().add(clone);
+                }
+            }
+            
             clonedOrderItem.setCategory(category);
             clonedOrderItem.setGiftWrapOrderItem(giftWrapOrderItem);
             clonedOrderItem.setName(name);
@@ -695,6 +760,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             clonedOrderItem.discountsAllowed = discountsAllowed;
             clonedOrderItem.salePriceOverride = salePriceOverride;
             clonedOrderItem.retailPriceOverride = retailPriceOverride;
+            clonedOrderItem.setParentOrderItem(parentOrderItem);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -715,6 +781,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         result = prime * result + quantity;
         result = prime * result + ((retailPrice == null) ? 0 : retailPrice.hashCode());
         result = prime * result + ((salePrice == null) ? 0 : salePrice.hashCode());
+        result = prime * result + ((parentOrderItem == null) ? 0 : parentOrderItem.hashCode());
         return result;
     }
 
@@ -792,6 +859,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
                 return false;
             }
         } else if (!salePrice.equals(other.salePrice)) {
+            return false;
+        }
+        if (parentOrderItem == null) {
+            if (other.parentOrderItem != null) {
+                return false;
+            }
+        } else if (!parentOrderItem.equals(other.parentOrderItem)) {
             return false;
         }
         return true;

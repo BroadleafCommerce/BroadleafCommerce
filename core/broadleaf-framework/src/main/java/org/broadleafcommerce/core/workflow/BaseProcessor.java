@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.workflow;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -51,7 +54,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
 
     protected BeanFactory beanFactory;
     protected String beanName;
-    protected List<Activity<ProcessContext>> activities = new ArrayList<Activity<ProcessContext>>();
+    protected List<Activity<ProcessContext<? extends Object>>> activities = new ArrayList<Activity<ProcessContext<? extends Object>>>();
     protected List<ModuleActivity> moduleActivities = new ArrayList<ModuleActivity>();
     
     protected ErrorHandler defaultErrorHandler;
@@ -147,8 +150,8 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
         OrderComparator.sort(activities);
 
         HashSet<String> moduleNames = new HashSet<String>();
-        for (Iterator<Activity<ProcessContext>> iter = activities.iterator(); iter.hasNext();) {
-            Activity<? extends ProcessContext> activity = iter.next();
+        for (Iterator<Activity<ProcessContext<? extends Object>>> iter = activities.iterator(); iter.hasNext();) {
+            Activity<? extends ProcessContext<? extends Object>> activity = iter.next();
             if ( !supports(activity)) {
                 throw new BeanInitializationException("The workflow processor ["+beanName+"] does " +
                         "not support the activity of type"+activity.getClass().getName());
@@ -198,7 +201,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
      * @param activities ordered collection (List) of activities to be executed by the processor
      */
     @Override
-    public void setActivities(List<Activity<ProcessContext>> activities) {
+    public void setActivities(List<Activity<ProcessContext<? extends Object>>> activities) {
         this.activities = activities;
     }
 
@@ -207,7 +210,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
         this.defaultErrorHandler = defaultErrorHandler;
     }
 
-    public List<Activity<ProcessContext>> getActivities() {
+    public List<Activity<ProcessContext<? extends Object>>> getActivities() {
         return activities;
     }
     

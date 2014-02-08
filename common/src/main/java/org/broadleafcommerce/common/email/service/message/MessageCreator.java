@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.email.service.message;
 
 import org.broadleafcommerce.common.email.domain.EmailTarget;
@@ -25,7 +28,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import javax.mail.internet.MimeMessage;
 import javax.mail.util.ByteArrayDataSource;
-import java.util.HashMap;
+import java.util.Map;
 
 public abstract class MessageCreator {
 
@@ -35,14 +38,14 @@ public abstract class MessageCreator {
         this.mailSender = mailSender;
     }
 
-    public void sendMessage(final HashMap<String,Object> props) throws MailException {
+    public void sendMessage(final Map<String,Object> props) throws MailException {
         MimeMessagePreparator preparator = buildMimeMessagePreparator(props);
         this.mailSender.send(preparator);
     }
     
-    public abstract String buildMessageBody(EmailInfo info, HashMap<String,Object> props);
+    public abstract String buildMessageBody(EmailInfo info, Map<String,Object> props);
     
-    public MimeMessagePreparator buildMimeMessagePreparator(final HashMap<String,Object> props) {
+    public MimeMessagePreparator buildMimeMessagePreparator(final Map<String,Object> props) {
          MimeMessagePreparator preparator = new MimeMessagePreparator() {
              public void prepare(MimeMessage mimeMessage) throws Exception {
                  EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.getType());

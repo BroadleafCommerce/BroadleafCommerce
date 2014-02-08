@@ -1,22 +1,28 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.util;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -65,5 +71,23 @@ public class BLCRequestUtils {
             returnValue = request.getParameter(varName);
         }
         return returnValue;
+    }
+
+    /**
+     * Convenience method to obtain the server prefix of the current request.
+     * Useful for many modules that configure Relative URL's and need to send absolute URL's
+     * to Third Party Gateways.
+     */
+    public static String getRequestedServerPrefix() {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        String scheme = request.getScheme();
+        StringBuilder serverPrefix = new StringBuilder(scheme);
+        serverPrefix.append("://");
+        serverPrefix.append(request.getServerName());
+        if ((scheme.equalsIgnoreCase("http") && request.getServerPort() != 80) || (scheme.equalsIgnoreCase("https") && request.getServerPort() != 443)) {
+            serverPrefix.append(":");
+            serverPrefix.append(request.getServerPort());
+        }
+        return serverPrefix.toString();
     }
 }

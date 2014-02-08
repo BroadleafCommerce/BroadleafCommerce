@@ -11,23 +11,29 @@
                  (listGrid.subCollectionFieldName != null)}">
         
         <ul class="inline-list small-spacing">
-            <li th:each="action : ${listGrid.toolbarActions}" th:if="${!listGrid.readOnly}">
+            <li th:each="action : ${listGrid.activeToolbarActions}">
                 <button class="tiny radius dark button" 
                     type="button"
                     th:classappend="${action.buttonClass}"
-                    th:attr="data-actionurl=@{${listGrid.path + action.urlPostfix}}">
+                    th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-urlpostfix=${action.urlPostfix},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
                     <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
                 </button>
             </li>
             
-            <li style="color: #8495A5" th:if="${!listGrid.readOnly}">|</li>
+            <li style="color: #8495A5" 
+                th:if="${#lists.size(listGrid.activeToolbarActions) > 0 and #lists.size(listGrid.activeRowActions) > 0}"
+                th:text="'|'" />
 
-            <li th:each="action : ${listGrid.rowActions}" th:if="${listGrid.readOnly==action.forListGridReadOnly}">
+            <li th:each="action : ${listGrid.activeRowActions}">
                 <button disabled="disabled" 
                     class="tiny radius dark row-action button" 
                     type="button"
                     th:classappend="${action.buttonClass}"
-                    th:attr="data-urlpostfix=${action.urlPostfix}">
+                    th:attr="data-urlpostfix=${action.urlPostfix},
+                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
                     <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
                 </button>
             </li>

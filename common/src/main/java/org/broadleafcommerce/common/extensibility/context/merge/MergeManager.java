@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.extensibility.context.merge;
 
 import org.apache.commons.logging.Log;
@@ -26,14 +29,7 @@ import org.broadleafcommerce.common.extensibility.context.merge.handlers.MergeHa
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,8 +41,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * This class manages all xml merge interactions with callers. It is responsible for
@@ -88,6 +95,7 @@ public class MergeManager {
     public MergeManager() throws MergeManagerSetupException {
         try {
             Properties props = loadProperties();
+            removeSkippedMergeComponents(props);
             setHandlers(props);
         } catch (IOException e) {
             throw new MergeManagerSetupException(e);
@@ -97,6 +105,110 @@ public class MergeManager {
             throw new MergeManagerSetupException(e);
         } catch (InstantiationException e) {
             throw new MergeManagerSetupException(e);
+        }
+    }
+
+    private void removeSkippedMergeComponents(Properties props) {
+        InputStream inputStream = this.getClass().getClassLoader()
+                .getResourceAsStream("/broadleaf-commmerce/skipMergeComponents.txt");
+
+        if (inputStream != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("mergeClassOverrides file found.");
+            }
+
+            final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            try {
+                while (bufferedReader.ready())
+                {
+                    String line = bufferedReader.readLine();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("mergeComponentOverrides - overridding " + line);
+                    }
+                    removeSkipMergeComponents(props, line);
+                }
+            } catch (IOException e) {
+                LOG.error("Error reading resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
+            } finally {
+                try {
+                    bufferedReader.close();
+                } catch (IOException ioe) {
+                    LOG.error("Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt", ioe);
+                }
+            }
+        }
+    }
+
+    /**
+     * Examines the properties file for an entry with an id equal to the component that we want
+     * to ignore and then removes all keys that have the same number (e.g. if xpath.28 is the key
+     * then handler.28, xpath.28, and priority.28 will all be removed).
+     * 
+     * @param props
+     * @param componentName
+     */
+    private void removeSkipMergeComponents(Properties props, String componentName) {
+        String lookupName = "@id='" + componentName.trim() + "'";
+        String key = findComponentKey(lookupName, props);
+        while (key  != null) {
+            removeItemsMatchingKey(key, props);
+            key = findComponentKey(lookupName, props);
+        }
+    }
+
+    /**
+     * Examines the properties file for an entry that contains the passed in component id string and returns its key
+     * 
+     * to ignore. 
+     * 
+     * @param componentName
+     * @param props
+     * @return
+     */
+    private String findComponentKey(String componentIdStr, Properties props) {
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                String valueStr = (String) value;
+                if (valueStr.contains(componentIdStr)) {
+                    Object key = entry.getKey();
+                    if (key instanceof String) {
+                        return (String) key;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Removes all keys that share the same number.   (e.g. if xpath.28 is the key
+     * then handler.28, xpath.28, and priority.28 will all be removed).
+     * 
+     * @param firstKey
+     * @param props
+     * @return
+     */
+    private void removeItemsMatchingKey(String firstKey, Properties props) {
+        int dotPos = firstKey.indexOf(".");
+        if (dotPos > 0) {
+            String keyNumberToMatch = firstKey.substring(dotPos);
+            
+            Iterator<Object> iter = props.keySet().iterator();
+            
+            while (iter.hasNext()) {
+                Object keyObj = iter.next();
+                if (keyObj instanceof String) {
+                    String keyStr = (String) keyObj;
+                    dotPos = keyStr.indexOf(".");
+                    String keyNumber = keyStr.substring(dotPos);
+                    if (keyNumber.equals(keyNumberToMatch)) {
+                        iter.remove();
+                    }
+                }
+            }
         }
     }
 

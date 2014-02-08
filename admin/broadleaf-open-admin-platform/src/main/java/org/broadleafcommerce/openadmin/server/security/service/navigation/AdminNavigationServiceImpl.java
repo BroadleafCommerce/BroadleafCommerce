@@ -1,20 +1,30 @@
 /*
- * Copyright 2008-2009 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.service.navigation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
@@ -29,13 +39,8 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This service is used to build the left hand navigation for the admin
@@ -145,6 +150,14 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
             if (!CollectionUtils.isEmpty(adminUser.getAllPermissions())) {
                 for (AdminPermission permission : adminUser.getAllPermissions()){
                     if (checkPermissions(authorizedPermissions, permission)) {
+                        response = true;
+                        break checkAuth;
+                    }
+                }
+            }
+            for (String defaultPermission : AdminSecurityService.DEFAULT_PERMISSIONS) {
+                for (AdminPermission authorizedPermission : authorizedPermissions) {
+                    if (authorizedPermission.getName().equals(defaultPermission)) {
                         response = true;
                         break checkAuth;
                     }

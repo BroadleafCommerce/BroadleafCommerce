@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce CMS Module
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
@@ -92,14 +112,6 @@
             </list>
         </property>
     </bean>
-    
-    <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
-        <property name="processors">
-            <set>
-                <ref bean="blContentProcessor"/>
-            </set>
-        </property>
-    </bean>          
 
     <bean id="blNamedOperationManager" class="org.broadleafcommerce.cms.file.service.operation.NamedOperationManagerImpl">
         <property name="namedOperationComponents">
@@ -132,6 +144,39 @@
                 </entry>
             </map>
         </property>
+    </bean>
+    
+    <bean id="blContentDeepLinkService" class="org.broadleafcommerce.cms.web.deeplink.ContentDeepLinkServiceImpl">
+        <property name="structuredContentAdminPath" value="structured-content/" />
+    </bean>
+    
+    <bean id="blContentProcessor" class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
+    <bean id="blContentProcessorExtensionManager" class="org.broadleafcommerce.cms.web.processor.ContentProcessorExtensionManager" />
+    <bean id="blUrlRewriteProcessor" class="org.broadleafcommerce.cms.web.processor.UrlRewriteProcessor" />
+
+    <bean id="blDialectCmsProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blContentProcessor"/>
+                <ref bean="blUrlRewriteProcessor" />
+            </set>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blDialectCmsProcessors" />
+        <property name="targetRef" value="blDialectProcessors" />
+    </bean>
+
+    <bean id="blCMSSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blPageSiteMapGenerator" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCMSSiteMapGenerators" />
+        <property name="targetRef" value="blSiteMapGenerators" />
     </bean>
 
 </beans>

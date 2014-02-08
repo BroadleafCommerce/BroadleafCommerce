@@ -1,21 +1,26 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Profile
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.profile.core.service;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +47,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -121,18 +125,21 @@ public class CustomerServiceImpl implements CustomerService {
         }
         
         if (customer.getUnencodedPassword() != null) {
-            customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), getSalt(customer)));
+            customer.setPassword(encodePassword(customer.getUnencodedPassword(), customer));
         }
 
         // let's make sure they entered a new challenge answer (we will populate
         // the password field with hashed values so check that they have changed
         // id
         if (customer.getUnencodedChallengeAnswer() != null && !customer.getUnencodedChallengeAnswer().equals(customer.getChallengeAnswer())) {
-            customer.setChallengeAnswer(passwordEncoder.encodePassword(customer.getUnencodedChallengeAnswer(), getSalt(customer)));
+            customer.setChallengeAnswer(encodePassword(customer.getUnencodedChallengeAnswer(), customer));
         }
         return customerDao.save(customer);
     }
     
+    protected String generateSecurePassword() {
+        return RandomStringUtils.randomAlphanumeric(16);
+    }
 
     @Override
     public Customer registerCustomer(Customer customer, String password, String passwordConfirm) {
@@ -224,8 +231,6 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer createCustomer() {
         return createCustomerFromId(null);
     }
-    
-    
 
     @Override
     public Customer createCustomerFromId(Long customerId) {
@@ -256,6 +261,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public void deleteCustomer(Customer customer) {
+        customerDao.delete(customer);
+    }
+
+    @Override
     public Customer readCustomerByUsername(String username) {
         return customerDao.readCustomerByUsername(username);
     }
@@ -274,6 +284,16 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     /**
+     * 
+     * @deprecated use {@link #getSalt(Customer, String)} instead
+     */
+    @Deprecated
+    @Override
+    public Object getSalt(Customer customer) {
+        return getSalt(customer, "");
+    }
+    
+    /**
      * Optionally provide a salt based on a customer.  By default, this returns
      * the salt property
      * 
@@ -282,20 +302,32 @@ public class CustomerServiceImpl implements CustomerService {
      * @see {@link CustomerServiceImpl#getSalt()}
      */
     @Override
-    public Object getSalt(Customer customer) {
+    public Object getSalt(Customer customer, String unencodedPassword) {
         Object salt = null;
-        if (saltSource != null) {
-            salt = saltSource.getSalt(new User(customer.getUsername(), customer.getUnencodedPassword(), new ArrayList<GrantedAuthority>()));
+        if (saltSource != null && customer != null) {
+            salt = saltSource.getSalt(new CustomerUserDetails(customer.getId(), customer.getUsername(), unencodedPassword, new ArrayList<GrantedAuthority>()));
         }
         return salt;
     }
     
     @Override
+    public String encodePassword(String clearText, Customer customer) {
+        return passwordEncoder.encodePassword(clearText, getSalt(customer, clearText));
+    }
+
+    @Override
+    public boolean isPasswordValid(String rawPassword, String encodedPassword, Customer customer) {
+        return passwordEncoder.isPasswordValid(encodedPassword, rawPassword, getSalt(customer, rawPassword));
+    }
+
+    @Override
+    @Deprecated
     public String getSalt() {
         return salt;
     }
     
     @Override
+    @Deprecated
     public void setSalt(String salt) {
         this.salt = salt;
     }
@@ -375,11 +407,22 @@ public class CustomerServiceImpl implements CustomerService {
             String token = PasswordUtils.generateTemporaryPassword(getPasswordTokenLength());
             token = token.toLowerCase();
 
+            Object salt = getSalt(customer, token);
+
+            String saltString = null;
+            if (salt != null) {
+                saltString = Hex.encodeHexString(salt.toString().getBytes());
+            }
+
             CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
             fpst.setCustomerId(customer.getId());
-            fpst.setToken(passwordEncoder.encodePassword(token, null));
+            fpst.setToken(passwordEncoder.encodePassword(token, saltString));
             fpst.setCreateDate(SystemTime.asDate());
             customerForgotPasswordSecurityTokenDao.saveToken(fpst);
+
+            if (saltString != null) {
+                token = token + '-' + saltString;
+            }
 
             HashMap<String, Object> vars = new HashMap<String, Object>();
             vars.put("token", token);
@@ -403,15 +446,28 @@ public class CustomerServiceImpl implements CustomerService {
         return response;
     }
     
-    private CustomerForgotPasswordSecurityToken checkPasswordResetToken(String token, GenericResponse response) {
+    protected CustomerForgotPasswordSecurityToken checkPasswordResetToken(String token, GenericResponse response) {
         if (token == null || "".equals(token)) {
             response.addErrorCode("invalidToken");
         }
         
+        String rawToken = null;
+        String salt = null;
+
+        String[] tokens = token.split("-");
+        if (tokens.length > 2) {
+            response.addErrorCode("invalidToken");
+        } else {
+            rawToken = tokens[0].toLowerCase();
+            if (tokens.length == 2) {
+                salt = tokens[1];
+            }
+        }
+
+
         CustomerForgotPasswordSecurityToken fpst = null;
-        if (! response.getHasErrors()) {
-            token = token.toLowerCase();
-            fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(token, null));
+        if (!response.getHasErrors()) {
+            fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(rawToken, salt));
             if (fpst == null) {
                 response.addErrorCode("invalidToken");
             } else if (fpst.isTokenUsedFlag()) {

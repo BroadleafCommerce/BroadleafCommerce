@@ -1,26 +1,29 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Integration
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.payment.service;
 
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.PaymentInfoDataProvider;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -31,16 +34,17 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 public class PaymentInfoServiceTest extends BaseTest {
 
     String userName = new String();
-    private PaymentInfo paymentInfo;
+    private OrderPayment paymentInfo;
 
     @Resource
-    private PaymentInfoService paymentInfoService;
+    private OrderPaymentService paymentInfoService;
 
     @Resource(name = "blOrderService")
     private OrderService orderService;
@@ -54,7 +58,7 @@ public class PaymentInfoServiceTest extends BaseTest {
     @Test(groups={"createPaymentInfo"}, dataProvider="basicPaymentInfo", dataProviderClass=PaymentInfoDataProvider.class, dependsOnGroups={"readCustomer", "createOrder"})
     @Rollback(false)
     @Transactional
-    public void createPaymentInfo(PaymentInfo paymentInfo){
+    public void createPayment(OrderPayment payment){
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         List<CustomerAddress> addresses = customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId());
@@ -63,19 +67,19 @@ public class PaymentInfoServiceTest extends BaseTest {
             address = addresses.get(0).getAddress();
         Order salesOrder = orderService.createNewCartForCustomer(customer);
 
-        paymentInfo.setAddress(address);
-        paymentInfo.setOrder(salesOrder);
-        paymentInfo.setType(PaymentInfoType.CREDIT_CARD);
+        payment.setBillingAddress(address);
+        payment.setOrder(salesOrder);
+        payment.setType(PaymentType.CREDIT_CARD);
 
-        assert paymentInfo.getId() == null;
-        paymentInfo = paymentInfoService.save(paymentInfo);
-        assert paymentInfo.getId() != null;
-        this.paymentInfo = paymentInfo;
+        assert payment.getId() == null;
+        payment = paymentInfoService.save(payment);
+        assert payment.getId() != null;
+        this.paymentInfo = payment;
     }
 
     @Test(groups={"readPaymentInfoById"}, dependsOnGroups={"createPaymentInfo"})
     public void readPaymentInfoById(){
-        PaymentInfo sop = paymentInfoService.readPaymentInfoById(paymentInfo.getId());
+        OrderPayment sop = paymentInfoService.readPaymentById(paymentInfo.getId());
         assert sop !=null;
         assert sop.getId().equals(paymentInfo.getId());
     }
@@ -83,16 +87,16 @@ public class PaymentInfoServiceTest extends BaseTest {
     @Test(groups={"readPaymentInfosByOrder"}, dependsOnGroups={"createPaymentInfo"})
     @Transactional
     public void readPaymentInfoByOrder(){
-        List<PaymentInfo> payments = paymentInfoService.readPaymentInfosForOrder(paymentInfo.getOrder());
+        List<OrderPayment> payments = paymentInfoService.readPaymentsForOrder(paymentInfo.getOrder());
         assert payments != null;
         assert payments.size() > 0;
     }
 
     @Test(groups={"testCreatePaymentInfo"}, dependsOnGroups={"createPaymentInfo"})
     @Transactional
-    public void createTestPaymentInfo(){
+    public void createTestPayment(){
         userName = "customer1";
-        PaymentInfo paymentInfo = paymentInfoService.create();
+        OrderPayment paymentInfo = paymentInfoService.create();
         Customer customer = customerService.readCustomerByUsername(userName);
         List<CustomerAddress> addresses = customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId());
         Address address = null;
@@ -100,16 +104,16 @@ public class PaymentInfoServiceTest extends BaseTest {
             address = addresses.get(0).getAddress();
         Order salesOrder = orderService.findCartForCustomer(customer);
 
-        paymentInfo.setAddress(address);
+        paymentInfo.setBillingAddress(address);
         paymentInfo.setOrder(salesOrder);
-        paymentInfo.setType(PaymentInfoType.CREDIT_CARD);
+        paymentInfo.setType(PaymentType.CREDIT_CARD);
 
         assert paymentInfo != null;
         paymentInfo = paymentInfoService.save(paymentInfo);
         assert paymentInfo.getId() != null;
         Long paymentInfoId = paymentInfo.getId();
         paymentInfoService.delete(paymentInfo);
-        paymentInfo = paymentInfoService.readPaymentInfoById(paymentInfoId);
+        paymentInfo = paymentInfoService.readPaymentById(paymentInfoId);
         assert paymentInfo == null;
     }
 

@@ -1,23 +1,27 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.extensibility.jpa;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -223,8 +227,16 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                         if (!(transformer instanceof NullClassTransformer) && pui.getPersistenceUnitName().equals("blPU")) {
                             pui.addTransformer(transformer);
                         }
-                    } catch (IllegalStateException e) {
-                        LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring reported a problem (likely that a LoadTimeWeaver is not registered). As a result, the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is not being registered with the persistence unit.", e);
+                    } catch (Exception e) {
+                        Exception refined = ExceptionHelper.refineException(IllegalStateException.class, RuntimeException.class, e);
+                        if (refined instanceof IllegalStateException) {
+                            LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring " +
+                                    "reported a problem (likely that a LoadTimeWeaver is not registered). As a result, " +
+                                    "the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is " +
+                                    "not being registered with the persistence unit.");
+                        } else {
+                            throw refined;
+                        }
                     }
                 }
             }

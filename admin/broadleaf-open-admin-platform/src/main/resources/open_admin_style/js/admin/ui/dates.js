@@ -1,12 +1,33 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 (function($, BLCAdmin) {
     
-    // Add utility functions for dates to the BLCAdmin object
-    BLCAdmin.dates = {
+    var adminFormats = {
         blcDateFormat : "yy.mm.dd",
         blcTimeFormat : "HH:mm:ss",
         displayDateFormat : 'mm/dd/yy',
-        displayTimeFormat : 'HH:mm',
-        
+        displayTimeFormat : 'HH:mm:ss'
+    };
+
+    // Add utility functions for dates to the BLCAdmin object
+    BLCAdmin.dates = {
         /**
          * This function should be called for any element that wants to be a rulebuilder
          */
@@ -15,33 +36,19 @@
             $element.val(this.getDisplayDate($element.val()));
           
             // Make it a date-time picker
-            $element.datetimepicker();
+            $element.datetimepicker({
+                showSecond: true,
+                timeFormat: 'HH:mm:ss'
+            });
         },
         
         /**
          * serverDate should be in the Broadleaf datetime format, "yyyy.MM.dd HH:mm:ss" (Java spec)
-         * returns the display format, "mm/dd/yy HH:mm" (JavaScript spec)
+         * returns the display format, "mm/dd/yy HH:mm:ss" (JavaScript spec)
          */
         getDisplayDate : function(serverDate) {
-            if (serverDate) {
-                // We have to send the blcTimeFormat twice in this method due to how the library works
-                var result = $.datepicker.parseDateTime(this.blcDateFormat, this.blcTimeFormat, serverDate, {}, {
-                    timeFormat : this.blcTimeFormat
-                });
-                
-                // Pull the appropriate parts from the result and format them
-                if (result != null) {
-                    var displayDate = $.datepicker.formatDate(this.displayDateFormat, result);
-                    var displayTime = $.datepicker.formatTime(this.displayTimeFormat, {
-                        hour : result.getHours(),
-                        minute : result.getMinutes()
-                    });
-                    
-                    return displayDate + " " + displayTime;
-                }
-            }
-            
-            return null;
+            var display = BLC.dates.getDisplayDate(serverDate, adminFormats);
+            return display == null ? null : display.displayDate + " " + display.displayTime;
         },
         
         /**
@@ -49,44 +56,34 @@
          * returns the server-expected format, "yyyy.MM.dd HH:mm:ss Z" (Java spec)
          */
         getServerDate : function(displayDate) {
-            if (displayDate) {
-                // First, let's parse the display date into a date object
-                var result = $.datepicker.parseDateTime(this.displayDateFormat, this.displayTimeFormat, displayDate, {}, {
-                    timeFormat : this.displayTimeFormat
+            var server = BLC.dates.getServerDate(displayDate, adminFormats);
+            return server == null ? null : server.serverDate + " " + server.serverTime;
+        },
+        
+        initializationHandler : function($container) {
+            $container.find('.datepicker').each(function(index, element) {
+                BLCAdmin.dates.initialize($(element));
+            });
+        },
+        
+        postValidationSubmitHandler : function($form) {
+            $form.find('.datepicker').each(function(index, element) {
+                var name = $(this).attr('name');
+
+                var $hiddenClone = $('<input>', {
+                    type: 'hidden',
+                    name: name,
+                    value: BLCAdmin.dates.getServerDate($(this).val()),
+                    'class': 'datepicker-clone'
                 });
-                
-                // Now, let's convert it to the server format
-                var serverDate = $.datepicker.formatDate(this.blcDateFormat, result);
-                
-                var serverTime = $.datepicker.formatTime(this.blcTimeFormat, {
-                    hour : result.getHours(),
-                    minute : result.getMinutes(),
-                });
-                
-                return serverDate + " " + serverTime;
-            }
-            
-            return null;
+              
+                $(this).data('previous-name', name).removeAttr('name').after($hiddenClone);
+            });
         }
     };
     
-    BLCAdmin.addInitializationHandler(function($container) {
-        $container.find('.datepicker').each(function(index, element) {
-            BLCAdmin.dates.initialize($(element));
-        });
-    });
-    
-    BLCAdmin.addPostValidationSubmitHandler(function($form) {
-        $form.find('.datepicker').each(function(index, element) {
-            var $hiddenClone = $('<input>', {
-                type: 'hidden',
-                name: $(this).attr('name'),
-                value: BLCAdmin.dates.getServerDate($(this).val())
-            });
-          
-            $(this).removeAttr('name').after($hiddenClone);
-        });
-    });
+    BLCAdmin.addInitializationHandler(BLCAdmin.dates.initializationHandler);
+    BLCAdmin.addPostValidationSubmitHandler(BLCAdmin.dates.postValidationSubmitHandler);
             
 })(jQuery, BLCAdmin);
 

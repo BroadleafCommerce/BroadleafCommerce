@@ -1,24 +1,31 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.domain;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -39,12 +46,15 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -55,6 +65,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -68,10 +79,14 @@ import javax.persistence.Transient;
 @Table(name = "BLC_ADMIN_USER")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "AdminUserImpl_baseAdminUser")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINUSER)
+})
 public class AdminUserImpl implements AdminUser, AdminMainEntity {
 
     private static final Log LOG = LogFactory.getLog(AdminUserImpl.class);
     private static final long serialVersionUID = 1L;
+    protected static final String LAST_USED_SANDBOX = "LAST_USED_SANDBOX";
 
     @Id
     @GeneratedValue(generator = "AdminUserId")
@@ -156,6 +171,13 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID", referencedColumnName = "SANDBOX_ID"))
     @AdminPresentation(excluded = true)
     protected SandBox overrideSandBox;
+
+    @ElementCollection
+    @MapKeyColumn(name = "FIELD_NAME")
+    @Column(name = "FIELD_VALUE")
+    @CollectionTable(name = "BLC_ADMIN_USER_ADDTL_FIELDS", joinColumns = @JoinColumn(name="ADMIN_USER_ID"))
+    @BatchSize(size = 50)
+    protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Override
     public void setUnencodedPassword(String unencodedPassword) {
@@ -281,55 +303,29 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     public void setContextKey(String contextKey) {
         //do nothing
     }
-
-    public void checkCloneable(AdminUser adminUser) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = adminUser.getClass().getMethod("clone", new Class[]{});
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !adminUser.getClass().getName().startsWith("org.broadleafcommerce")) {
-            //subclass is not implementing the clone method
-            throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
-        }
+    
+    @Override
+    public Map<String, String> getAdditionalFields() {
+        return additionalFields;
     }
 
     @Override
-    public AdminUser clone() {
-        AdminUser clone;
-        try {
-            clone = (AdminUser) Class.forName(this.getClass().getName()).newInstance();
-            try {
-                checkCloneable(clone);
-            } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
-            }
-            clone.setId(id);
-            clone.setName(name);
-            clone.setLogin(login);
-            clone.setPassword(password);
-            clone.setEmail(email);
-            clone.setPhoneNumber(phoneNumber);
-            clone.setActiveStatusFlag(activeStatusFlag);
-
-            if (allRoles != null) {
-                for (AdminRole role : allRoles) {
-                    AdminRole roleClone = role.clone();
-                    clone.getAllRoles().add(roleClone);
-                }
-            }
-
-            if (allPermissions != null) {
-                for (AdminPermission permission : allPermissions) {
-                    AdminPermission permissionClone = permission.clone();
-                    clone.getAllPermissions().add(permissionClone);
-                }
-            }
-
-            if (overrideSandBox != null) {
-                clone.setOverrideSandBox(overrideSandBox.clone());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public void setAdditionalFields(Map<String, String> additionalFields) {
+        this.additionalFields = additionalFields;
+    }
+    
+    @Override
+    public Long getLastUsedSandBoxId() {
+        String sandBox = getAdditionalFields().get(LAST_USED_SANDBOX);
+        if (StringUtils.isNotBlank(sandBox)) {
+            return Long.parseLong(sandBox);
         }
-
-        return clone;
+        return null;
+    }
+    
+    @Override
+    public void setLastUsedSandBoxId(Long sandBoxId) {
+        getAdditionalFields().put(LAST_USED_SANDBOX, String.valueOf(sandBoxId));
     }
 
     @Override

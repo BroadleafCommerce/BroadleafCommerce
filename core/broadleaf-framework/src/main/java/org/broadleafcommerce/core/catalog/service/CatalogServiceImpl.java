@@ -1,21 +1,26 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.service;
 
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
@@ -33,11 +38,12 @@ import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {
@@ -53,6 +59,9 @@ public class CatalogServiceImpl implements CatalogService {
     
     @Resource(name="blProductOptionDao")
     protected ProductOptionDao productOptionDao;
+
+    @Resource(name = "blCatalogServiceExtensionManager")
+    protected CatalogServiceExtensionManager extensionManager;
 
     @Override
     public Product findProductById(Long productId) {
@@ -157,6 +166,12 @@ public class CatalogServiceImpl implements CatalogService {
     @Transactional("blTransactionManager")
     public void removeCategory(Category category){
         categoryDao.delete(category);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public void removeProduct(Product product) {
+        productDao.delete(product);
     }
 
     @Override
@@ -283,6 +298,7 @@ public class CatalogServiceImpl implements CatalogService {
         return productOptionDao.readAllProductOptions();
     }
     
+    @Override
     @Transactional("blTransactionManager")
     public ProductOption saveProductOption(ProductOption option) {
         return productOptionDao.saveProductOption(option);
@@ -300,11 +316,25 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Category findCategoryByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(uri, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Category) holder.getResult();
+            }
+        }
         return categoryDao.findCategoryByURI(uri);
     }
 
     @Override
     public Product findProductByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(uri, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Product) holder.getResult();
+            }
+        }
         List<Product> products = productDao.findProductByURI(uri);
         if (products == null || products.size() == 0) {
             return null;

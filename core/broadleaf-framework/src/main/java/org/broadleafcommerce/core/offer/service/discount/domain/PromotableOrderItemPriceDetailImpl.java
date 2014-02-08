@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
 import org.broadleafcommerce.common.money.Money;
@@ -345,10 +348,11 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     }
 
     @Override
-    public void addPromotionQualifier(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsQualifier) {
+    public PromotionQualifier addPromotionQualifier(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsQualifier) {
         PromotionQualifier pq = lookupOrCreatePromotionQualifier(itemOffer);
         pq.incrementQuantity(qtyToMarkAsQualifier);
         pq.setItemCriteria(itemCriteria);
+        return pq;
     }
 
     @Override
@@ -490,6 +494,38 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         return calculateAdjustmentsUnitValue().multiply(quantity);
     }
 
+    @Override
+    public PromotableOrderItemPriceDetail shallowCopy() {
+        PromotableOrderItemPriceDetail copyDetail = promotableOrderItem.createNewDetail(quantity);
+        return copyDetail;
+    }
+
+    @Override
+    public PromotableOrderItemPriceDetail copyWithFinalizedData() {
+        PromotableOrderItemPriceDetail copyDetail = promotableOrderItem.createNewDetail(quantity);
+
+        for (PromotionDiscount existingDiscount : promotionDiscounts) {
+            if (existingDiscount.isFinalized()) {
+                PromotionDiscount newDiscount = existingDiscount.copy();
+                copyDetail.getPromotionDiscounts().add(newDiscount);
+            }
+        }
+
+        for (PromotionQualifier existingQualifier : promotionQualifiers) {
+            if (existingQualifier.isFinalized()) {
+                PromotionQualifier newQualifier = existingQualifier.copy();
+                copyDetail.getPromotionQualifiers().add(newQualifier);
+            }
+        }
+
+        for (PromotableOrderItemPriceDetailAdjustment existingAdjustment : promotableOrderItemPriceDetailAdjustments) {
+            PromotableOrderItemPriceDetailAdjustment newAdjustment = existingAdjustment.copy();
+            copyDetail.addCandidateItemPriceDetailAdjustment(newAdjustment);
+        }
+
+        return copyDetail;
+    }
+
     protected PromotableOrderItemPriceDetail split(int discountQty, Long offerId) {
         int originalQty = quantity;
         quantity = discountQty;
@@ -545,5 +581,4 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     public boolean useSaleAdjustments() {
         return useSaleAdjustments;
     }
-
 }

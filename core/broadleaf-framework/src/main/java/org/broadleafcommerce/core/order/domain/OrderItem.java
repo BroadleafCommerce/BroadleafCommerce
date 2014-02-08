@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.money.Money;
@@ -153,7 +156,6 @@ public interface OrderItem extends Serializable, Cloneable {
     Money getPrice();
 
     /**
-     * @deprecated
      * Calling this method is the same as calling the following:
      * 
      * {@link #setRetailPrice(Money)}
@@ -166,10 +168,7 @@ public interface OrderItem extends Serializable, Cloneable {
      * 
      * @param price
      */
-    @Deprecated
     void setPrice(Money price);
-
-
 
     /**
      * The quantity of this {@link OrderItem}.
@@ -465,5 +464,35 @@ public interface OrderItem extends Serializable, Cloneable {
      * the sku can add the sku to their cart.
      */
     public boolean isSkuActive();
+
+    /**
+     * @return the list of orderitems that are dependent on this order item
+     */
+    public List<OrderItem> getChildOrderItems();
+
+    /**
+     * Sets the list of orderitems that are dependent on this order item
+     * 
+     * @param childOrderItems
+     */
+    public void setChildOrderItems(List<OrderItem> childOrderItems);
+
+    /**
+     * @return the parent order item for this item (potentially null)
+     */
+    public OrderItem getParentOrderItem();
+
+    /**
+     * Sets the parent order item for this order item
+     * 
+     * @param parentOrderItem
+     */
+    public void setParentOrderItem(OrderItem parentOrderItem);
+
+    /**
+     * @param candidateChild
+     * @return true if the candidateChild is a child of the hierarchy starting from this OrderItem
+     */
+    public boolean isAParentOf(OrderItem candidateChild);
 
 }

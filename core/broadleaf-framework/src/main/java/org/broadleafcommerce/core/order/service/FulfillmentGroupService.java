@@ -1,29 +1,34 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service;
 
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.core.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupStatusType;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
 import java.util.List;
@@ -41,6 +46,8 @@ public interface FulfillmentGroupService {
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException;
     
     public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder) throws PricingException;
+
+    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest, boolean priceOrder, boolean save) throws PricingException;
     
     public Order removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
 
@@ -57,7 +64,7 @@ public interface FulfillmentGroupService {
     public FulfillmentGroupFee createFulfillmentGroupFee();
 
     /**
-     * Associates FulfillmentGroupItems in the given Order such that they match the structure
+     * Associates shippable FulfillmentGroupItems in the given Order such that they match the structure
      * of the OrderMultishipOptions associated with the given Order. 
      * 
      * @see OrderMultishipOption
@@ -69,7 +76,7 @@ public interface FulfillmentGroupService {
     public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException;
 
     /**
-     * Collapses all of the fulfillment groups in the given order to the first fulfillment group
+     * Collapses all of the shippable fulfillment groups in the given order to the first shippable fulfillment group
      * in the order.
      * 
      * @see #matchFulfillmentGroupsToMultishipOptions(Order, boolean)
@@ -79,7 +86,7 @@ public interface FulfillmentGroupService {
      * @return the saved order
      * @throws PricingException 
      */
-    public Order collapseToOneFulfillmentGroup(Order order, boolean priceOrder) throws PricingException;
+    public Order collapseToOneShippableFulfillmentGroup(Order order, boolean priceOrder) throws PricingException;
 
 
     /**
@@ -128,5 +135,30 @@ public interface FulfillmentGroupService {
      * @return
      */
     public List<FulfillmentGroup> findFulfillmentGroupsByStatus(FulfillmentGroupStatusType status, int start, int maxResults);
+
+    /**
+     * Determines if a fulfillment group is shippable based on its fulfillment type.
+     * 
+     * @param fulfillmentType
+     * @return
+     */
+    public boolean isShippable(FulfillmentType fulfillmentType);
+    
+    /**
+     * Returns the first shippable fulfillment group from an order.
+     *
+     * @param order
+     */
+    public FulfillmentGroup getFirstShippableFulfillmentGroup(Order order);
+
+    /**
+     * Finds all FulfillmentGroupItems in the given Order that reference the given OrderItem.
+     * 
+     * @param order
+     * @param orderItem
+     * @return the list of related FulfillmentGroupItems
+     */
+    public List<FulfillmentGroupItem> getFulfillmentGroupItemsForOrderItem(Order order, OrderItem orderItem);
+
 
 }

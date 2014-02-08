@@ -1,23 +1,27 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.domain;
 
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -92,5 +96,22 @@ public interface AdminUser extends AdminSecurityContext {
 
     public Set<AdminPermission> getAllPermissions();
     public void setAllPermissions(Set<AdminPermission> allPermissions);
-    public AdminUser clone();
+    //public AdminUser clone();
+
+    public Map<String, String> getAdditionalFields();
+
+    public void setAdditionalFields(Map<String, String> additionalFields);
+    
+    /**
+     * @return the id of the last sandbox this admin user used
+     */
+    public Long getLastUsedSandBoxId();
+
+    /**
+     * Sets the last used sandbox for this admin user
+     * 
+     * @param sandBoxId
+     */
+    public void setLastUsedSandBoxId(Long sandBoxId);
+
 }

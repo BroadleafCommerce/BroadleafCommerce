@@ -1,21 +1,26 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.i18n.dao;
 
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
@@ -47,6 +52,9 @@ public class TranslationDaoImpl implements TranslationDao {
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Resource(name = "blTranslationDaoExtensionManager")
+    protected TranslationDaoExtensionManager extensionManager;
+
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
     
     @Override
@@ -77,6 +85,8 @@ public class TranslationDaoImpl implements TranslationDao {
     
     @Override
     public List<Translation> readTranslations(TranslatedEntity entity, String entityId, String fieldName) {
+        entityId = getUpdatedEntityId(entity, entityId);
+
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> translation = criteria.from(TranslationImpl.class);
@@ -98,6 +108,8 @@ public class TranslationDaoImpl implements TranslationDao {
 
     @Override
     public Translation readTranslation(TranslatedEntity entity, String entityId, String fieldName, String localeCode) {
+        entityId = getUpdatedEntityId(entity, entityId);
+
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> translation = criteria.from(TranslationImpl.class);
@@ -115,6 +127,23 @@ public class TranslationDaoImpl implements TranslationDao {
         } catch (NoResultException e) {
             return null;
         }
+    }
+    
+    protected String getUpdatedEntityId(TranslatedEntity entity, String entityId) {
+        Class<?> clazz = entityConfiguration.lookupEntityClass(entity.getType());
+
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        try {
+            Long id = Long.parseLong(entityId);
+            ExtensionResultStatusType result = extensionManager.getProxy().overrideRequestedId(erh, em, clazz, id);
+            if (result.equals(ExtensionResultStatusType.HANDLED)) {
+                return String.valueOf((Long) erh.getResult());
+            }
+        } catch (NumberFormatException e) {
+            // The ID was not a Long, which means we can't override it. We'll return the default value below.
+        }
+
+        return entityId;
     }
 
     public DynamicDaoHelper getDynamicDaoHelper() {

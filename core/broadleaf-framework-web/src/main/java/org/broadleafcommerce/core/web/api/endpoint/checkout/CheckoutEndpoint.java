@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.api.endpoint.checkout;
 
 import org.apache.commons.logging.Log;
@@ -23,31 +26,19 @@ import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.CompositePaymentService;
-import org.broadleafcommerce.core.payment.service.exception.PaymentException;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.core.payment.service.workflow.CompositePaymentResponse;
-import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.service.OrderPaymentService;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
+import org.broadleafcommerce.core.web.api.wrapper.OrderPaymentWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.PaymentReferenceMapWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.PaymentResponseItemWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This endpoint depends on JAX-RS to provide checkout services.  It should be extended by components that actually wish 
@@ -65,86 +56,92 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
     @Resource(name="blCheckoutService")
     protected CheckoutService checkoutService;
 
-    //This service is backed by the entire payment workflow configured in the application context.
-    //It is the entry point for engaging the payment workflow
-    @Resource(name="blCompositePaymentService")
-    protected CompositePaymentService compositePaymentService;
-
     @Resource(name="blOrderService")
     protected OrderService orderService;
 
-    //This should only be called for modules that need to engage the workflow directly without doing a complete checkout.
-    //e.g. PayPal for doing an authorize and retrieving the redirect: url to PayPal
-    public PaymentResponseItemWrapper executePayment(HttpServletRequest request, PaymentReferenceMapWrapper mapWrapper) {
+    @Resource(name="blOrderPaymentService")
+    protected OrderPaymentService orderPaymentService;
+
+    public List<OrderPaymentWrapper> findPaymentsForOrder(HttpServletRequest request) {
+        Order cart = CartState.getCart();
+        if (cart != null && cart.getPayments() != null && !cart.getPayments().isEmpty()) {
+            List<OrderPayment> payments = cart.getPayments();
+            List<OrderPaymentWrapper> paymentWrappers = new ArrayList<OrderPaymentWrapper>();
+            for (OrderPayment payment : payments) {
+                OrderPaymentWrapper orderPaymentWrapper = (OrderPaymentWrapper) context.getBean(OrderPaymentWrapper.class.getName());
+                orderPaymentWrapper.wrapSummary(payment, request);
+                paymentWrappers.add(orderPaymentWrapper);
+            }
+            return paymentWrappers;
+        }
+
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+    }
+
+    public OrderPaymentWrapper addPaymentToOrder(HttpServletRequest request,
+                                                              OrderPaymentWrapper wrapper) {
         Order cart = CartState.getCart();
         if (cart != null) {
-            try {
-                Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-                PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
-                Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
-                payments.put(paymentInfo, referenced);
+            OrderPayment orderPayment = wrapper.unwrap(request, context);
 
-                CompositePaymentResponse compositePaymentResponse = compositePaymentService.executePayment(cart, payments);
-                PaymentResponseItem responseItem = compositePaymentResponse.getPaymentResponse().getResponseItems().get(paymentInfo);
-
-                PaymentResponseItemWrapper paymentResponseItemWrapper = context.getBean(PaymentResponseItemWrapper.class);
-                paymentResponseItemWrapper.wrapDetails(responseItem, request);
-
-                return paymentResponseItemWrapper;
-
-            } catch (PaymentException e) {
-                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured with payment.").build());
+            if (orderPayment.getOrder() != null && orderPayment.getOrder().getId().equals(cart.getId())) {
+                orderPayment = orderPaymentService.save(orderPayment);
+                OrderPayment savedPayment = orderService.addPaymentToOrder(cart, orderPayment, null);
+                OrderPaymentWrapper orderPaymentWrapper = (OrderPaymentWrapper) context.getBean(OrderPaymentWrapper.class.getName());
+                orderPaymentWrapper.wrapSummary(savedPayment, request);
+                return orderPaymentWrapper;
             }
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
 
-    public OrderWrapper performCheckout(HttpServletRequest request, List<PaymentReferenceMapWrapper> mapWrappers) {
+    public OrderWrapper removePaymentFromOrder(HttpServletRequest request, OrderPaymentWrapper wrapper) {
+
+        Order cart = CartState.getCart();
+        if (cart != null) {
+            OrderPayment orderPayment = wrapper.unwrap(request, context);
+
+            if (orderPayment.getOrder() != null && orderPayment.getOrder().getId().equals(cart.getId())) {
+                OrderPayment paymentToRemove = null;
+                for (OrderPayment payment : cart.getPayments()) {
+                    if (payment.getId().equals(orderPayment.getId())) {
+                        paymentToRemove = payment;
+                    }
+                }
+
+                orderService.removePaymentFromOrder(cart, paymentToRemove);
+
+                OrderWrapper orderWrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                orderWrapper.wrapDetails(cart, request);
+                return orderWrapper;
+            }
+        }
+
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
+    }
+
+    public OrderWrapper performCheckout(HttpServletRequest request) {
         Order cart = CartState.getCart();
         if (cart != null) {
             try {
-                if (mapWrappers != null && !mapWrappers.isEmpty()) {
-                    Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-                    orderService.removePaymentsFromOrder(cart, PaymentInfoType.CREDIT_CARD);
-
-                    for (PaymentReferenceMapWrapper mapWrapper : mapWrappers) {
-                        PaymentInfo paymentInfo = mapWrapper.getPaymentInfoWrapper().unwrap(request, context);
-                        paymentInfo.setOrder(cart);
-                        Referenced referenced = mapWrapper.getReferencedWrapper().unwrap(request, context);
-
-                        if (cart.getPaymentInfos() == null) {
-                            cart.setPaymentInfos(new ArrayList<PaymentInfo>());
-                        }
-
-                        cart.getPaymentInfos().add(paymentInfo);
-                        payments.put(paymentInfo, referenced);
-                    }
-
-                    CheckoutResponse response = checkoutService.performCheckout(cart, payments);
-                    Order order = response.getOrder();
-                    OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                    wrapper.wrapDetails(order, request);
-                    return wrapper;
-                }
+                CheckoutResponse response = checkoutService.performCheckout(cart);
+                Order order = response.getOrder();
+                OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+                wrapper.wrapDetails(order, request);
+                return wrapper;
             } catch (CheckoutException e) {
-
-                cart.setStatus(OrderStatus.IN_PROCESS);
-
-                try {
-                    orderService.save(cart, false);
-                } catch (PricingException e1) {
-                    LOG.error("An unexpected error occured saving / pricing the cart.", e1);
-                }
-
-                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured during checkout.").build());
+                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                        .addMessage(BroadleafWebServicesException.CHECKOUT_PROCESSING_ERROR);
             }
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
 }

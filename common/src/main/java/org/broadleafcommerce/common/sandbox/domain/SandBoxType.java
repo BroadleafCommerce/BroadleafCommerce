@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.sandbox.domain;
 
 
@@ -32,9 +35,10 @@ public class SandBoxType implements Serializable, BroadleafEnumerationType {
 
     private static final Map<String, SandBoxType> TYPES = new LinkedHashMap<String, SandBoxType>();
 
-    public static final SandBoxType USER = new SandBoxType("USER", "User");
-    public static final SandBoxType APPROVAL = new SandBoxType("APPROVAL", "Approval");
-    public static final SandBoxType PRODUCTION = new SandBoxType("PRODUCTION", "Production");
+    public static final SandBoxType USER = new SandBoxType("USER", "User", 3);
+    public static final SandBoxType APPROVAL = new SandBoxType("APPROVAL", "Approval", 2);
+    public static final SandBoxType DEFAULT = new SandBoxType("DEFAULT", "Default", 2);
+    public static final SandBoxType PRODUCTION = new SandBoxType("PRODUCTION", "Production", 1);
 
 
     public static SandBoxType getInstance(final String type) {
@@ -43,13 +47,15 @@ public class SandBoxType implements Serializable, BroadleafEnumerationType {
 
     private String type;
     private String friendlyType;
+    private Integer priority;
 
     public SandBoxType() {
         //do nothing
     }
 
-    public SandBoxType(final String type, final String friendlyType) {
+    public SandBoxType(final String type, final String friendlyType, final Integer priority) {
         this.friendlyType = friendlyType;
+        this.priority = priority;
         setType(type);
     }
 
@@ -59,6 +65,10 @@ public class SandBoxType implements Serializable, BroadleafEnumerationType {
 
     public String getFriendlyType() {
         return friendlyType;
+    }
+
+    public Integer getPriority() {
+        return priority;
     }
 
     private void setType(final String type) {

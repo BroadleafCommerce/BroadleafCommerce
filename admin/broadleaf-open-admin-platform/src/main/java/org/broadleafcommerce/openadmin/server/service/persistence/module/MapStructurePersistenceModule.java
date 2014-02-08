@@ -1,21 +1,25 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,7 +28,9 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.value.ValueAssignable;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -40,6 +46,8 @@ import org.broadleafcommerce.openadmin.dto.SimpleValueMapStructure;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.type.StringType;
+import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -56,6 +64,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * 
  * @author jfischer
@@ -64,6 +74,9 @@ import java.util.Map;
 @Component("blMapStructurePersistenceModule")
 @Scope("prototype")
 public class MapStructurePersistenceModule extends BasicPersistenceModule {
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     private static final Log LOG = LogFactory.getLog(MapStructurePersistenceModule.class);
     
@@ -82,74 +95,6 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         }
     }
 
-    protected Entity[] getMapRecords(Serializable record, MapStructure mapStructure, Map<String, FieldMetadata> ceilingMergedProperties, Map<String, FieldMetadata> valueMergedProperties, Property symbolicIdProperty) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchFieldException {
-        //compile a list of mapKeys that were used as mapFields
-        List<String> mapFieldKeys = new ArrayList<String>();
-        String mapProperty = mapStructure.getMapProperty();
-        for (Map.Entry<String, FieldMetadata> entry : ceilingMergedProperties.entrySet()) {
-            if (entry.getKey().startsWith(mapProperty + FieldManager.MAPFIELDSEPARATOR)) {
-                mapFieldKeys.add(entry.getKey().substring(entry.getKey().indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), entry.getKey().length()));
-            }
-        }
-        Collections.sort(mapFieldKeys);
-
-        FieldManager fieldManager = getFieldManager();
-        Map map;
-        try {
-            map = (Map) fieldManager.getFieldValue(record, mapProperty);
-        } catch (FieldNotAvailableException e) {
-            throw new IllegalArgumentException(e);
-        }
-        List<Entity> entities = new ArrayList<Entity>(map.size());
-        for (Object key : map.keySet()) {
-            if (key instanceof String && mapFieldKeys.contains(key)) {
-                continue;
-            }
-            Entity entityItem = new Entity();
-            entityItem.setType(new String[]{record.getClass().getName()});
-            entities.add(entityItem);
-            List<Property> props = new ArrayList<Property>();
-            
-            Property propertyItem = new Property();
-            propertyItem.setName(mapStructure.getKeyPropertyName());
-            props.add(propertyItem);
-            String strVal;
-            if (Date.class.isAssignableFrom(key.getClass())) {
-                strVal = getSimpleDateFormatter().format((Date) key);
-            } else if (Timestamp.class.isAssignableFrom(key.getClass())) {
-                strVal = getSimpleDateFormatter().format(new Date(((Timestamp) key).getTime()));
-            } else if (Calendar.class.isAssignableFrom(key.getClass())) {
-                strVal = getSimpleDateFormatter().format(((Calendar) key).getTime());
-            } else if (Double.class.isAssignableFrom(key.getClass())) {
-                strVal = getDecimalFormatter().format(key);
-            } else if (BigDecimal.class.isAssignableFrom(key.getClass())) {
-                strVal = getDecimalFormatter().format(key);
-            } else {
-                strVal = key.toString();
-            }
-            propertyItem.setValue(strVal);
-            
-            PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
-            if (persistentClass == null) {
-                Property temp = new Property();
-                temp.setName(((SimpleValueMapStructure) mapStructure).getValuePropertyName());
-                temp.setValue(String.valueOf(map.get(key)));
-                props.add(temp);
-            } else {
-                extractPropertiesFromPersistentEntity(valueMergedProperties, (Serializable) map.get(key), props);
-            }
-            if (symbolicIdProperty != null) {
-                props.add(symbolicIdProperty);
-            }
-            
-            Property[] properties = new Property[props.size()];
-            properties = props.toArray(properties);
-            entityItem.setProperties(properties);
-        }
-        
-        return entities.toArray(new Entity[entities.size()]);
-    }
-    
     @Override
     public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -213,14 +158,6 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                     );
                 }
                 allMergedProperties.put(MergedPropertyType.MAPSTRUCTUREVALUE, valueMergedProperties);
-                //clear out all but the primary key field from the owning entity
-//                Iterator<Map.Entry<String, FieldMetadata>> itr = allMergedProperties.get(MergedPropertyType.PRIMARY).entrySet().iterator();
-//                while (itr.hasNext()) {
-//                    Map.Entry<String, FieldMetadata> entry = itr.next();
-//                    if (!(entry.getValue() instanceof BasicFieldMetadata) || !SupportedFieldType.ID.equals(((BasicFieldMetadata) entry.getValue()).getFieldType())) {
-//                        itr.remove();
-//                    }
-//                }
             }
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
@@ -403,43 +340,52 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                 entity.addValidationError(mapStructure.getKeyPropertyName(), RequiredPropertyValidator.ERROR_MESSAGE);
                 LOG.debug("No key property passed in for map, failing validation");
             }
-            
-            if (persistentClass != null) {
-                Serializable valueInstance = (Serializable) map.get(entity.findProperty("priorKey").getValue());
 
-                if (map.get(mapKey) != null && !map.get(mapKey).equals(valueInstance)) {
-                    entity.addValidationError(mapStructure.getKeyPropertyName(), "keyExistsValidationError");
-                }
-                
-                if (StringUtils.isNotBlank(mapStructure.getMapKeyValueProperty())) {
-                    Property p = entity.findProperty("key");
-                    Property newP = new Property();
-                    newP.setName(mapStructure.getMapKeyValueProperty());
-                    newP.setValue(p.getValue());
-                    newP.setIsDirty(p.getIsDirty());
-                    entity.addProperty(newP);
-                }
-                
-                //allow validation on other properties in order to show key validation errors along with all the other properties
-                //validation errors
-                valueInstance = createPopulatedInstance(valueInstance, entity, valueMergedProperties, false);
-                
-                if (StringUtils.isNotEmpty(mapKey) && !entity.isValidationFailure()) {
-                    if (!entity.findProperty("priorKey").getValue().equals(mapKey)) {
-                        map.remove(entity.findProperty("priorKey").getValue());
+            populate: {
+                if (persistentClass != null) {
+                    Serializable valueInstance = (Serializable) map.get(entity.findProperty("priorKey").getValue());
+
+                    if (valueInstance == null) {
+                        valueInstance = procureSandBoxMapValue(mapStructure, entity);
+                        if (valueInstance == null) {
+                            break populate;
+                        }
                     }
-                    /*
-                     * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept
-                     * additional types of primitive objects.
-                     */
-                    map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), valueInstance);
-                }
-            } else {
-                if (StringUtils.isNotEmpty(mapKey) && !entity.isValidationFailure()) {
-                    map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), entity.findProperty(((SimpleValueMapStructure) mapStructure).getValuePropertyName()).getValue());
+
+                    if (map.get(mapKey) != null && !map.get(mapKey).equals(valueInstance)) {
+                        entity.addValidationError(mapStructure.getKeyPropertyName(), "keyExistsValidationError");
+                    }
+
+                    if (StringUtils.isNotBlank(mapStructure.getMapKeyValueProperty())) {
+                        Property p = entity.findProperty("key");
+                        Property newP = new Property();
+                        newP.setName(mapStructure.getMapKeyValueProperty());
+                        newP.setValue(p.getValue());
+                        newP.setIsDirty(p.getIsDirty());
+                        entity.addProperty(newP);
+                    }
+
+                    //allow validation on other properties in order to show key validation errors along with all the other properties
+                    //validation errors
+                    valueInstance = createPopulatedInstance(valueInstance, entity, valueMergedProperties, false);
+
+                    if (StringUtils.isNotEmpty(mapKey) && !entity.isValidationFailure()) {
+                        if (!entity.findProperty("priorKey").getValue().equals(mapKey)) {
+                            map.remove(entity.findProperty("priorKey").getValue());
+                        }
+                        /*
+                         * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept
+                         * additional types of primitive objects.
+                         */
+                        map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), valueInstance);
+                    }
+                } else {
+                    if (StringUtils.isNotEmpty(mapKey) && !entity.isValidationFailure()) {
+                        map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), entity.findProperty(((SimpleValueMapStructure) mapStructure).getValuePropertyName()).getValue());
+                    }
                 }
             }
-            
+
             instance = persistenceManager.getDynamicEntityDao().merge(instance);
             
             Entity[] responses = getMapRecords(instance, mapStructure, ceilingMergedProperties, valueMergedProperties, entity.findProperty("symbolicId"));
@@ -448,7 +394,8 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
                     return response;
                 }
             }
-            return responses[0];
+            //could be empty if reverting a sandbox item that has experienced a deletion. make sure to at least return an empty instance of Entity.
+            return ArrayUtils.isEmpty(responses)?new Entity():responses[0];
         } catch (Exception e) {
             throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
         }
@@ -562,4 +509,107 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
         return results;
     }
 
+    protected Serializable procureSandBoxMapValue(MapStructure mapStructure, Entity entity) {
+        try {
+            Serializable valueInstance = null;
+            //this is probably a sync from another sandbox where they've updated a map item for which we've updated the key in our own sandbox
+            //(i.e. the map entry key was changed by us in our sandbox, so our map does not have the requested key)
+            Class<?> valueClass = Class.forName(mapStructure.getValueClassName());
+            Map<String, Object> idMetadata = getPersistenceManager().getDynamicEntityDao().
+                    getIdMetadata(valueClass);
+            String idProperty = (String) idMetadata.get("name");
+            Property prop = entity.findProperty(idProperty);
+            if (prop != null) {
+                Serializable identifier;
+                if (!(((Type) idMetadata.get("type")) instanceof StringType)) {
+                    identifier = Long.parseLong(prop.getValue());
+                } else {
+                    identifier = prop.getValue();
+                }
+                valueInstance = (Serializable) getPersistenceManager().getDynamicEntityDao().find(valueClass, identifier);
+                BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+                if (sandBoxHelper.isSandBoxable(valueInstance.getClass().getName()) &&
+                        context != null && !context.isProductionSandBox()) {
+                    if (sandBoxHelper.isPromote() && !sandBoxHelper.isReject()) {
+                        //if this is a prod record (i.e. the destination map has deleted our record), then duplicate our value
+                        //so it's available in this sandbox
+                        valueInstance = getPersistenceManager().getDynamicEntityDao().merge(valueInstance);
+                    } else {
+                        valueInstance = null;
+                    }
+                }
+            }
+            return valueInstance;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected Entity[] getMapRecords(Serializable record, MapStructure mapStructure, Map<String, FieldMetadata> ceilingMergedProperties, Map<String, FieldMetadata> valueMergedProperties, Property symbolicIdProperty) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchFieldException {
+        //compile a list of mapKeys that were used as mapFields
+        List<String> mapFieldKeys = new ArrayList<String>();
+        String mapProperty = mapStructure.getMapProperty();
+        for (Map.Entry<String, FieldMetadata> entry : ceilingMergedProperties.entrySet()) {
+            if (entry.getKey().startsWith(mapProperty + FieldManager.MAPFIELDSEPARATOR)) {
+                mapFieldKeys.add(entry.getKey().substring(entry.getKey().indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), entry.getKey().length()));
+            }
+        }
+        Collections.sort(mapFieldKeys);
+
+        FieldManager fieldManager = getFieldManager();
+        Map map;
+        try {
+            map = (Map) fieldManager.getFieldValue(record, mapProperty);
+        } catch (FieldNotAvailableException e) {
+            throw new IllegalArgumentException(e);
+        }
+        List<Entity> entities = new ArrayList<Entity>(map.size());
+        for (Object key : map.keySet()) {
+            if (key instanceof String && mapFieldKeys.contains(key)) {
+                continue;
+            }
+            Entity entityItem = new Entity();
+            entityItem.setType(new String[]{record.getClass().getName()});
+            entities.add(entityItem);
+            List<Property> props = new ArrayList<Property>();
+
+            Property propertyItem = new Property();
+            propertyItem.setName(mapStructure.getKeyPropertyName());
+            props.add(propertyItem);
+            String strVal;
+            if (Date.class.isAssignableFrom(key.getClass())) {
+                strVal = getSimpleDateFormatter().format((Date) key);
+            } else if (Timestamp.class.isAssignableFrom(key.getClass())) {
+                strVal = getSimpleDateFormatter().format(new Date(((Timestamp) key).getTime()));
+            } else if (Calendar.class.isAssignableFrom(key.getClass())) {
+                strVal = getSimpleDateFormatter().format(((Calendar) key).getTime());
+            } else if (Double.class.isAssignableFrom(key.getClass())) {
+                strVal = getDecimalFormatter().format(key);
+            } else if (BigDecimal.class.isAssignableFrom(key.getClass())) {
+                strVal = getDecimalFormatter().format(key);
+            } else {
+                strVal = key.toString();
+            }
+            propertyItem.setValue(strVal);
+
+            PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
+            if (persistentClass == null) {
+                Property temp = new Property();
+                temp.setName(((SimpleValueMapStructure) mapStructure).getValuePropertyName());
+                temp.setValue(String.valueOf(map.get(key)));
+                props.add(temp);
+            } else {
+                extractPropertiesFromPersistentEntity(valueMergedProperties, (Serializable) map.get(key), props);
+            }
+            if (symbolicIdProperty != null) {
+                props.add(symbolicIdProperty);
+            }
+
+            Property[] properties = new Property[props.size()];
+            properties = props.toArray(properties);
+            entityItem.setProperties(properties);
+        }
+
+        return entities.toArray(new Entity[entities.size()]);
+    }
 }

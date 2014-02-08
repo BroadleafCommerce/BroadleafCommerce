@@ -1,27 +1,38 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.DialectHelper;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
@@ -45,8 +56,10 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.FetchParent;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -59,11 +72,22 @@ import javax.persistence.criteria.Root;
 @Repository("blProductDao")
 public class ProductDaoImpl implements ProductDao {
 
+    private static final SupportLogger logger = SupportLogManager.getLogger("Enterprise", ProductDaoImpl.class);
+
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blProductDaoExtensionManager")
+    protected ProductDaoExtensionManager extensionManager;
+
+    @Resource(name = "blDialectHelper")
+    protected DialectHelper dialectHelper;
 
     protected Long currentDateResolution = 10000L;
     protected Date cachedDate = SystemTime.asDate();
@@ -83,19 +107,34 @@ public class ProductDaoImpl implements ProductDao {
         if (productIds == null || productIds.size() == 0) {
             return null;
         }
-        
+        if (productIds.size() > 100) {
+            logger.warn("Not recommended to use the readProductsByIds method for long lists of productIds, since " +
+                    "Hibernate is required to transform the distinct results. The list of requested" +
+                    "product ids was (" + productIds.size() +") in length.");
+        }
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
         Root<ProductImpl> product = criteria.from(ProductImpl.class);
+
+        FetchParent fetchParent = product.fetch("defaultSku", JoinType.LEFT);
+        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
+            fetchParent.fetch("skuMedia", JoinType.LEFT);
+        }
         criteria.select(product);
-        
+
         // We only want results that match the product IDs
-        criteria.where(product.get("id").as(Long.class).in(productIds));
+        criteria.where(product.get("id").as(Long.class).in(
+                sandBoxHelper.mergeCloneIds(em, ProductImpl.class,
+                        productIds.toArray(new Long[productIds.size()]))));
+        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
+            criteria.distinct(true);
+        }
+
         TypedQuery<Product> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-        
+
         return query.getResultList();
     }
 
@@ -145,7 +184,7 @@ public class ProductDaoImpl implements ProductDao {
 
     protected List<Product> readActiveProductsByCategoryInternal(Long categoryId, Date currentDate) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
-        query.setParameter("categoryId", categoryId);
+        query.setParameter("categoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, categoryId));
         query.setParameter("currentDate", currentDate);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
@@ -224,18 +263,19 @@ public class ProductDaoImpl implements ProductDao {
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
         
         // The root of our search is Category since we are browsing
-        Root<CategoryImpl> category = criteria.from(CategoryImpl.class);
+        Root<CategoryProductXrefImpl> productXref = criteria.from(CategoryProductXrefImpl.class);
         
         // We want to filter on attributes from product and sku
-        Join<Category, Product> product = category.join("allProducts");
+        Join<CategoryProductXref, Product> product = productXref.join("product");
         Join<Product, Sku> sku = product.join("defaultSku");
-        
+        Join<CategoryProductXref, Category> category = productXref.join("category");
+
         // Product objects are what we want back
         criteria.select(product);
         
         // We only want results from the determine category
         List<Predicate> restrictions = new ArrayList<Predicate>();
-        restrictions.add(builder.equal(category.get("id"), categoryId));
+        restrictions.add(category.get("id").in(sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, categoryId)));
         
         attachProductSearchCriteria(searchCriteria, product, sku, restrictions);
         
@@ -248,7 +288,8 @@ public class ProductDaoImpl implements ProductDao {
         
         TypedQuery<Product> typedQuery = em.createQuery(criteria);
         //don't cache - not really practical for open ended search
-        
+        //typedQuery.setHint(SandBoxHelper.QueryHints.FILTER_INCLUDE, ".*CategoryProductXrefImpl");
+
         return typedQuery.getResultList();
     }
 
@@ -400,7 +441,7 @@ public class ProductDaoImpl implements ProductDao {
 
     public List<Product> readActiveProductsByCategoryInternal(Long categoryId, Date currentDate, int limit, int offset) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY", Product.class);
-        query.setParameter("categoryId", categoryId);
+        query.setParameter("categoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, categoryId));
         query.setParameter("currentDate", currentDate);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
@@ -413,7 +454,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public List<Product> readProductsByCategory(Long categoryId) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY", Product.class);
-        query.setParameter("categoryId", categoryId);
+        query.setParameter("categoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, categoryId));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
@@ -423,7 +464,7 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public List<Product> readProductsByCategory(Long categoryId, int limit, int offset) {
         TypedQuery<Product> query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY", Product.class);
-        query.setParameter("categoryId", categoryId);
+        query.setParameter("categoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, categoryId));
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -467,7 +508,13 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<Product> findProductByURI(String uri) {
-        
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(uri, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<Product>) holder.getResult();
+            }
+        }
         String urlKey = uri.substring(uri.lastIndexOf('/'));        
         Query query;
     
@@ -479,7 +526,7 @@ public class ProductDaoImpl implements ProductDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
     
         @SuppressWarnings("unchecked")
-        List<Product> results = (List<Product>) query.getResultList();
+        List<Product> results = query.getResultList();
         return results;
     }
     

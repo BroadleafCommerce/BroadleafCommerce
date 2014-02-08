@@ -1,20 +1,26 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service;
+
+import java.util.List;
+import java.util.Map;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -23,10 +29,10 @@ import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-
-import java.util.Map;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -40,7 +46,7 @@ public interface AdminEntityService {
      * @return ClassMetadata for the given request
      * @throws ServiceException
      */
-    public ClassMetadata getClassMetadata(PersistencePackageRequest request)
+    public PersistenceResponse getClassMetadata(PersistencePackageRequest request)
             throws ServiceException;
 
     /**
@@ -50,7 +56,7 @@ public interface AdminEntityService {
      * @return DynamicResultSet 
      * @throws ServiceException
      */
-    public DynamicResultSet getRecords(PersistencePackageRequest request)
+    public PersistenceResponse getRecords(PersistencePackageRequest request)
             throws ServiceException;
 
     /**
@@ -63,7 +69,7 @@ public interface AdminEntityService {
      * @return the Entity
      * @throws ServiceException
      */
-    public Entity getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd, boolean isCollectionRequest)
+    public PersistenceResponse getRecord(PersistencePackageRequest request, String id, ClassMetadata cmd, boolean isCollectionRequest)
             throws ServiceException;
 
     /**
@@ -74,7 +80,7 @@ public interface AdminEntityService {
      * @return the persisted Entity
      * @throws ServiceException
      */
-    public Entity addEntity(EntityForm entityForm, String[] customCriteria)
+    public PersistenceResponse addEntity(EntityForm entityForm, String[] customCriteria, List<SectionCrumb> sectionCrumb)
             throws ServiceException;
 
     /**
@@ -85,7 +91,7 @@ public interface AdminEntityService {
      * @return the persisted Entity
      * @throws ServiceException
      */
-    public Entity updateEntity(EntityForm entityForm, String[] customCriteria)
+    public PersistenceResponse updateEntity(EntityForm entityForm, String[] customCriteria, List<SectionCrumb> sectionCrumb)
             throws ServiceException;
 
     /**
@@ -95,7 +101,7 @@ public interface AdminEntityService {
      * @param customCriteria
      * @throws ServiceException
      */
-    public void removeEntity(EntityForm entityForm, String[] customCriteria)
+    public PersistenceResponse removeEntity(EntityForm entityForm, String[] customCriteria, List<SectionCrumb> sectionCrumb)
             throws ServiceException;
 
     /**
@@ -108,8 +114,8 @@ public interface AdminEntityService {
      * @return the Entity
      * @throws ServiceException
      */
-    public Entity getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
-            Property collectionProperty, String collectionItemId)
+    public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
+            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumb)
             throws ServiceException;
 
     /**
@@ -125,8 +131,8 @@ public interface AdminEntityService {
      * @return the DynamicResultSet
      * @throws ServiceException
      */
-    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity, 
-            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex)
+    public PersistenceResponse getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
+            Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex, List<SectionCrumb> sectionCrumb)
             throws ServiceException;
     
     /**
@@ -140,12 +146,12 @@ public interface AdminEntityService {
      * @param startIndex
      * @param maxIndex
      * @param idValueOverride
-     * @return the DynamicResultSet
+     * @return the PersistenceResponse
      * @throws ServiceException
      */
-    public DynamicResultSet getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity, 
+    public PersistenceResponse getRecordsForCollection(ClassMetadata containingClassMetadata, Entity containingEntity,
             Property collectionProperty, FilterAndSortCriteria[] fascs, Integer startIndex, Integer maxIndex, 
-            String idValueOverride) throws ServiceException;
+            String idValueOverride, List<SectionCrumb> sectionCrumb) throws ServiceException;
     /**
      * Returns all records for all subcollections of the specified request and its primary key
      * 
@@ -157,7 +163,7 @@ public interface AdminEntityService {
      * @see #getRecordsForCollection(ClassMetadata, String, Property)
      */
     public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, 
-            Entity containingEntity)
+            Entity containingEntity, List<SectionCrumb> sectionCrumb)
             throws ServiceException;
 
     /**
@@ -171,8 +177,8 @@ public interface AdminEntityService {
      * @throws ServiceException
      * @throws ClassNotFoundException
      */
-    public Entity addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field, 
-            Entity parentEntity)
+    public PersistenceResponse addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
+            Entity parentEntity, List<SectionCrumb> sectionCrumb)
             throws ServiceException, ClassNotFoundException;
 
     /**
@@ -187,8 +193,8 @@ public interface AdminEntityService {
      * @throws ServiceException
      * @throws ClassNotFoundException
      */
-    public Entity updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
-            Entity parentEntity, String collectionItemId)
+    public PersistenceResponse updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
+            Entity parentEntity, String collectionItemId, List<SectionCrumb> sectionCrumb)
             throws ServiceException, ClassNotFoundException;
 
     /**
@@ -201,8 +207,8 @@ public interface AdminEntityService {
      * @param priorKey - only needed for Map type collections
      * @throws ServiceException
      */
-    public void removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
-            String priorKey)
+    public PersistenceResponse removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
+            String priorKey, List<SectionCrumb> sectionCrumb)
             throws ServiceException;
 
     /**

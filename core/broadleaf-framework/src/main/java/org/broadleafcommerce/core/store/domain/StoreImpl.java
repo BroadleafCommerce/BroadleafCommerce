@@ -1,76 +1,128 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.store.domain;
-
-import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
+
 @Entity
 @Table(name = "BLC_STORE")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StoreImpl_baseStore")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class StoreImpl implements Store {
 
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(generator= "StoreId")
+    @GenericGenerator(
+            name="StoreId",
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name="segment_value", value="StoreImpl"),
+                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.store.domain.StoreImpl")
+            }
+    )
     @Column(name = "STORE_ID", nullable = false)
-    private String id;
+    @AdminPresentation(friendlyName = "StoreImpl_Store_ID", visibility = VisibilityEnum.HIDDEN_ALL)
+    private Long id;
 
-    @Column(name = "STORE_NAME")
-    @Index(name="STORE_NAME_INDEX", columnNames={"STORE_NAME"})
+    @Column(name = "STORE_NAME", nullable = false)
+    @AdminPresentation(friendlyName = "StoreImpl_Store_Name", order = Presentation.FieldOrder.NAME,
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            prominent = true, gridOrder = 1, columnWidth = "200px",
+            requiredOverride = RequiredOverride.REQUIRED)
     private String name;
 
+
     @Column(name = "ADDRESS_1")
+    @AdminPresentation(friendlyName = "StoreImpl_address1", order = Presentation.FieldOrder.ADDRESS_1,
+            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
+            gridOrder = 2, columnWidth = "200px")
     private String address1;
 
     @Column(name = "ADDRESS_2")
+    @AdminPresentation(friendlyName = "StoreImpl_address2", order = Presentation.FieldOrder.ADDRESS_2,
+            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
+            gridOrder = 3, columnWidth = "200px")
     private String address2;
 
     @Column(name = "STORE_CITY")
-    @Index(name="STORE_CITY_INDEX", columnNames={"STORE_CITY"})
+    @AdminPresentation(friendlyName = "StoreImpl_city", order = Presentation.FieldOrder.CITY,
+            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
+            prominent = true, gridOrder = 4)
     private String city;
 
     @Column(name = "STORE_STATE")
-    @Index(name="STORE_STATE_INDEX", columnNames={"STORE_STATE"})
+    @AdminPresentation(friendlyName = "StoreImpl_State", order = Presentation.FieldOrder.STATE,
+            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
+            prominent = true, gridOrder = 5)
     private String state;
 
     @Column(name = "STORE_ZIP")
-    @Index(name="STORE_ZIP_INDEX", columnNames={"STORE_ZIP"})
+    @AdminPresentation(friendlyName = "StoreImpl_Zip", order = Presentation.FieldOrder.ZIP,
+            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
+            prominent = true, gridOrder = 6)
     private String zip;
 
     @Column(name = "STORE_COUNTRY")
-    @Index(name="STORE_COUNTRY_INDEX", columnNames={"STORE_COUNTRY"})
+    @AdminPresentation(friendlyName = "StoreImpl_Country", order = Presentation.FieldOrder.COUNTRY,
+            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
+            gridOrder = 7, columnWidth = "200px")
     private String country;
 
     @Column(name = "STORE_PHONE")
+    @AdminPresentation(friendlyName = "StoreImpl_Phone", order = Presentation.FieldOrder.PHONE,
+            group = Presentation.Group.Name.Location, groupOrder = Presentation.Group.Order.Location,
+            gridOrder = 8, columnWidth = "200px")
     private String phone;
 
     @Column(name = "LATITUDE")
-    @Index(name="STORE_LATITUDE_INDEX", columnNames={"LATITUDE"})
+    @AdminPresentation(friendlyName = "StoreImpl_lat", order = Presentation.FieldOrder.LATITUDE,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Geocoding, groupOrder = Presentation.Group.Order.Geocoding,
+            gridOrder = 9, columnWidth = "200px")
     private Double latitude;
 
     @Column(name = "LONGITUDE")
-    @Index(name="STORE_LONGITUDE_INDEX", columnNames={"LONGITUDE"})
+    @AdminPresentation(friendlyName = "StoreImpl_lng", order = Presentation.FieldOrder.LONGITUDE,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Geocoding, groupOrder = Presentation.Group.Order.Geocoding,
+            gridOrder = 10, columnWidth = "200px")
     private Double longitude;
 
     /* (non-Javadoc)
@@ -79,17 +131,17 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.store.domain.Store#getId()
      */
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
     /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setId(java.lang.String)
+     * @see org.broadleafcommerce.core.store.domain.Store#setId(java.lang.Long)
      */
     /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.store.domain.Store#setId(java.lang.String)
+     * @see org.broadleafcommerce.core.store.domain.Store#setId(java.lang.Long)
      */
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -291,6 +343,47 @@ public class StoreImpl implements Store {
      */
     public String getState() {
         return state;
+    }
+
+    public static class Presentation {
+
+        public static class Tab {
+            public static class Name {
+                public static final String Advanced = "StoreImpl_Advanced_Tab";
+
+            }
+
+            public static class Order {
+                public static final int Advanced = 7000;
+            }
+        }
+
+        public static class Group {
+            public static class Name {
+                public static final String General = "StoreImpl_Store_General";
+                public static final String Location = "StoreImpl_Store_Location";
+                public static final String Geocoding = "StoreImpl_Store_Geocoding";
+            }
+
+            public static class Order {
+                public static final int General = 1000;
+                public static final int Location = 2000;
+                public static final int Geocoding = 3000;
+            }
+        }
+
+        public static class FieldOrder {
+            public static final int NAME = 1000;
+            public static final int ADDRESS_1 = 2000;
+            public static final int ADDRESS_2 = 3000;
+            public static final int CITY = 4000;
+            public static final int STATE = 5000;
+            public static final int ZIP = 6000;
+            public static final int COUNTRY = 7000;
+            public static final int PHONE = 8000;
+            public static final int LATITUDE = 9000;
+            public static final int LONGITUDE = 10000;
+        }
     }
 
 }

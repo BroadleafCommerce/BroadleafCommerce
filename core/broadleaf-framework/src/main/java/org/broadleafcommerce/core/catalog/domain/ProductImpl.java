@@ -1,27 +1,37 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatable;
+import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminatableType;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyAdornedTargetCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
@@ -30,17 +40,15 @@ import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetC
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -69,8 +77,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
@@ -104,10 +110,15 @@ import javax.persistence.Transient;
             columnNames = {"URL","URL_KEY"}
     )
 })
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
-public class ProductImpl implements Product, Status, AdminMainEntity {
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRODUCT_INVOKE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+})
+public class ProductImpl implements Product, Status, AdminMainEntity, Locatable {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
@@ -161,17 +172,17 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
         prominent = true, gridOrder = 4)
     protected String manufacturer;
     
-    @Column(name = "TAX_CODE")
-    protected String taxCode;
-
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", requiredOverride = RequiredOverride.NOT_REQUIRED,
         tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
         group = Presentation.Group.Name.Badges, groupOrder = Presentation.Group.Order.Badges)
     protected Boolean isFeaturedProduct = false;
     
-    @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL}, mappedBy = "defaultProduct")
+    @OneToOne(targetEntity = SkuImpl.class, cascade={CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
+    @JoinColumn(name = "DEFAULT_SKU_ID")
+    @ClonePolicy(toOneProperty = "defaultProduct")
     protected Sku defaultSku;
     
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
@@ -188,7 +199,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
 
     @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle", order = 1000,
         tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
@@ -196,11 +207,13 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
         sortProperty = "sequence", 
         maintainedAdornedTargetFields = { "promotionMessage" }, 
         gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @ClonePolicyAdornedTargetCollection
+    @SiteDiscriminatable(type= SiteDiscriminatableType.CATALOG)
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 2000,
         tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
@@ -208,13 +221,16 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
         sortProperty = "sequence",
         maintainedAdornedTargetFields = { "promotionMessage" }, 
         gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @ClonePolicyAdornedTargetCollection
+    @SiteDiscriminatable(type= SiteDiscriminatableType.CATALOG)
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy="product")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName="ProductImpl_Additional_Skus", order = 1000,
         tab = Presentation.Tab.Name.ProductOptions, tabOrder = Presentation.Tab.Order.ProductOptions)
+    @ClonePolicyCollection
     protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
     @ManyToOne(targetEntity = CategoryImpl.class)
@@ -227,42 +243,45 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 
-    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "categoryProductXref.product")
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @OrderBy(value="displayOrder")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "allParentCategoriesTitle", order = 3000,
         tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
         joinEntityClass = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl",
-        targetObjectProperty = "categoryProductXref.category",
-        parentObjectProperty = "categoryProductXref.product",
+        targetObjectProperty = "category",
+        parentObjectProperty = "product",
         sortProperty = "displayOrder",
         gridVisibleFields = { "name" })
+    @ClonePolicyAdornedTargetCollection(unowned = true)
+    @SiteDiscriminatable(type= SiteDiscriminatableType.CATALOG)
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
 
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
     @MapKey(name="name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "productAttributesTitle",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
     )
+    @ClonePolicyMap
     protected Map<String, ProductAttribute> productAttributes = new HashMap<String, ProductAttribute>();
-    
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductOptionImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_OPTION_XREF", 
-        joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_ID", referencedColumnName = "PRODUCT_OPTION_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+
+    @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product")
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "productOptionsTitle",
+    @AdminPresentationAdornedTargetCollection(friendlyName = "productOptionsTitle",
         tab = Presentation.Tab.Name.ProductOptions, tabOrder = Presentation.Tab.Order.ProductOptions,
-        addType = AddMethodType.LOOKUP,
-        manyToField = "products",
-        operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
-    protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
+        joinEntityClass = "org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl",
+        targetObjectProperty = "productOption",
+        parentObjectProperty = "product",
+        gridVisibleFields = {"label", "required"})
+    @SiteDiscriminatable(type= SiteDiscriminatableType.CATALOG)
+    protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -474,6 +493,10 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
 
     @Override
     public List<CategoryProductXref> getAllParentCategoryXrefs() {
+        return getAllParentCategoryXrefsInternal();
+    }
+
+    protected List<CategoryProductXref> getAllParentCategoryXrefsInternal() {
         return allParentCategoryXrefs;
     }
 
@@ -586,17 +609,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
 
     @Override
     public List<RelatedProduct> getCrossSaleProducts() {
-        List<RelatedProduct> returnProducts = new ArrayList<RelatedProduct>();
-        if (crossSaleProducts != null) {
-            returnProducts.addAll(crossSaleProducts);
-             CollectionUtils.filter(returnProducts, new Predicate() {
-                 @Override
-                 public boolean evaluate(Object arg) {
-                     return 'Y'!=((Status)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
-                 }
-             });            
-        }
-        return returnProducts;
+        return crossSaleProducts;
     }
 
     @Override
@@ -609,17 +622,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
 
     @Override
     public List<RelatedProduct> getUpSaleProducts() {
-        List<RelatedProduct> returnProducts = new ArrayList<RelatedProduct>();
-        if (upSaleProducts != null) {
-            returnProducts.addAll(upSaleProducts);
-            CollectionUtils.filter(returnProducts, new Predicate() {
-                 @Override
-                 public boolean evaluate(Object arg) {
-                     return 'Y'!=((Status)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
-                 }
-             });            
-        }
-        return returnProducts;
+        return upSaleProducts;
     }
 
     @Override
@@ -680,13 +683,31 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     }
 
     @Override
-    public List<ProductOption> getProductOptions() {
+    public List<ProductOptionXref> getProductOptionXrefs() {
+        return getProductOptionXrefsInternal();
+    }
+
+    public List<ProductOptionXref> getProductOptionXrefsInternal() {
         return productOptions;
     }
 
     @Override
-    public void setProductOptions(List<ProductOption> productOptions) {
+    public void setProductOptionXrefs(List<ProductOptionXref> productOptions) {
         this.productOptions = productOptions;
+    }
+
+    @Override
+    public List<ProductOption> getProductOptions() {
+        List<ProductOption> response = new ArrayList<ProductOption>();
+        for (ProductOptionXref xref : productOptions) {
+            response.add(xref.getProductOption());
+        }
+        return Collections.unmodifiableList(response);
+    }
+
+    @Override
+    public void setProductOptions(List<ProductOption> productOptions) {
+        throw new UnsupportedOperationException("Use setProductOptionXrefs(..) instead");
     }
     
     @Override
@@ -865,15 +886,17 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
 
     @Override
     public String getTaxCode() {
-        if (StringUtils.isEmpty(taxCode) && getDefaultCategory() != null) {
-            return getDefaultCategory().getTaxCode();
-        }
-        return taxCode;
+        return getDefaultSku().getTaxCode();
     }
 
     @Override
     public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
+        getDefaultSku().setTaxCode(taxCode);
+    }
+
+    @Override
+    public String getLocation() {
+        return getUrl();
     }
 
 }

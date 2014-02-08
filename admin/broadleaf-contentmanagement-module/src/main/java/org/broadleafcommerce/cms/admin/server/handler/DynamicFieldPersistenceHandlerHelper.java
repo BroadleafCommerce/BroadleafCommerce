@@ -1,26 +1,36 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.admin.server.handler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
-import org.broadleafcommerce.cms.field.domain.FieldEnumerationItem;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -29,13 +39,6 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -74,13 +77,13 @@ public class DynamicFieldPersistenceHandlerHelper {
                 fieldMetadata.setForeignKeyCollection(false);
                 fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
                 fieldMetadata.setLength(definition.getMaxLength());
-                if (definition.getFieldEnumeration() != null && !CollectionUtils.isEmpty(definition.getFieldEnumeration().getEnumerationItems())) {
-                    int count = definition.getFieldEnumeration().getEnumerationItems().size();
+                if (definition.getDataDrivenEnumeration() != null && !CollectionUtils.isEmpty(definition.getDataDrivenEnumeration().getEnumValues())) {
+                    int count = definition.getDataDrivenEnumeration().getEnumValues().size();
                     String[][] enumItems = new String[count][2];
                     for (int j = 0; j < count; j++) {
-                        FieldEnumerationItem item = definition.getFieldEnumeration().getEnumerationItems().get(j);
-                        enumItems[j][0] = item.getName();
-                        enumItems[j][1] = item.getFriendlyName();
+                        DataDrivenEnumerationValue item = definition.getDataDrivenEnumeration().getEnumValues().get(j);
+                        enumItems[j][0] = item.getKey();
+                        enumItems[j][1] = item.getDisplay();
                     }
                     fieldMetadata.setEnumerationValues(enumItems);
                 }
@@ -100,6 +103,7 @@ public class DynamicFieldPersistenceHandlerHelper {
                 fieldMetadata.setColumnWidth(String.valueOf(definition.getColumnWidth()));
                 fieldMetadata.setBroadleafEnumeration("");
                 fieldMetadata.setReadOnly(false);
+                fieldMetadata.setRequiredOverride(definition.getRequiredFlag());
                 if (definition.getValidationRegEx() != null) {
                     Map<String, String> itemMap = new HashMap<String, String>();
                     itemMap.put("regularExpression", definition.getValidationRegEx());

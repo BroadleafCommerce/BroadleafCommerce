@@ -1,25 +1,29 @@
 /*
- * Copyright 2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
 import java.io.Serializable;
 import java.util.List;
@@ -42,15 +46,15 @@ public interface EntityValidatorService {
      * @param entity DTO representation of <b>instance</b>
      * @param instance actual domain representation of <b>entity</b>
      * @param propertiesMetadata all of the merged properties metadata for the given {@link Entity}
+     * @param recordHelper
      * @param validateUnsubmittedProperties if set to true, will ignore validation for properties that weren't submitted
      *                                      along with the entity
      * @throws InstantiationException
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata, 
-            boolean validateUnsubmittedProperties);
-
+    public void validate(Entity submittedEntity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata, 
+            RecordHelper recordHelper, boolean validateUnsubmittedProperties);
     /**
      * @return the global validators that will be executed for every {@link Entity}
      */

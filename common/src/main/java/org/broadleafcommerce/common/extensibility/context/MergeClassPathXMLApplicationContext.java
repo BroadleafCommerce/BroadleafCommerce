@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.extensibility.context;
 
 import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
@@ -21,8 +24,6 @@ import org.broadleafcommerce.common.extensibility.context.merge.exceptions.Merge
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.core.io.Resource;
 
 /**
  * Standalone XML application context, taking the locations of one or more
@@ -42,12 +43,10 @@ import org.springframework.core.io.Resource;
  * @author jfischer
  *
  */
-public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationContext {
+public class MergeClassPathXMLApplicationContext extends AbstractMergeXMLApplicationContext {
 
-    protected Resource[] configResources;
-    
-    protected Resource[] getConfigResources() {
-        return this.configResources;
+    public MergeClassPathXMLApplicationContext(ApplicationContext parent) {
+        super(parent);
     }
     
     /**
@@ -78,16 +77,16 @@ public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationC
      * @throws BeansException
      */
     public MergeClassPathXMLApplicationContext(String[] sourceLocations, String[] patchLocations, ApplicationContext parent) throws BeansException {
-        super(parent);
+        this(parent);
         
         ResourceInputStream[] sources = new ResourceInputStream[sourceLocations.length];
         for (int j=0;j<sourceLocations.length;j++){
-            sources[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(sourceLocations[j]), sourceLocations[j]);
+            sources[j] = new ResourceInputStream(getClassLoader(parent).getResourceAsStream(sourceLocations[j]), sourceLocations[j]);
         }
         
         ResourceInputStream[] patches = new ResourceInputStream[patchLocations.length];
         for (int j=0;j<patches.length;j++){
-            patches[j] = new ResourceInputStream(MergeClassPathXMLApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[j]), patchLocations[j]);
+            patches[j] = new ResourceInputStream(getClassLoader(parent).getResourceAsStream(patchLocations[j]), patchLocations[j]);
         }
 
         ImportProcessor importProcessor = new ImportProcessor(this);
@@ -101,5 +100,13 @@ public class MergeClassPathXMLApplicationContext extends AbstractXmlApplicationC
         this.configResources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
         refresh();
     }
-
+    
+    /**
+     * This could be advantageous for subclasses to override in order to utilize the parent application context. By default,
+     * this utilizes the class loader for the current class.
+     */
+    protected ClassLoader getClassLoader(ApplicationContext parent) {
+        return MergeClassPathXMLApplicationContext.class.getClassLoader();
+    }
+    
 }

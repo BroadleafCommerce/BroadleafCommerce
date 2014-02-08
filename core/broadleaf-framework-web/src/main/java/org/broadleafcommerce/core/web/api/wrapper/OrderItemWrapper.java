@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.money.Money;
@@ -74,7 +77,7 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
 
     @XmlElement
     protected Long productId;
-    
+    @XmlElement
     protected Boolean isBundle = Boolean.FALSE;
 
     @XmlElement(name = "orderItemAttribute")
@@ -94,6 +97,9 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     @XmlElementWrapper(name = "qualifiers")
     @XmlElement(name = "qualifier")
     protected List<OrderItemQualifierWrapper> qualifiers;
+
+    @XmlElement
+    protected Boolean isDiscountingAllowed;
 
     @Override
     public void wrapDetails(OrderItem model, HttpServletRequest request) {
@@ -134,12 +140,13 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
             this.skuId = doi.getSku().getId();
             this.productId = doi.getProduct().getId();
             this.isBundle = false;
+            this.isDiscountingAllowed = doi.isDiscountingAllowed();
         } else if (model instanceof BundleOrderItem) {
             BundleOrderItem boi = (BundleOrderItem) model;
             this.skuId = boi.getSku().getId();
             this.productId = boi.getProduct().getId();
             this.isBundle = true;
-
+            this.isDiscountingAllowed = boi.isDiscountingAllowed();
             //Wrap up all the discrete order items for this bundle order item
             List<DiscreteOrderItem> discreteItems = boi.getDiscreteOrderItems();
             if (discreteItems != null && !discreteItems.isEmpty()) {
@@ -166,5 +173,19 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
     @Override
     public void wrapSummary(OrderItem model, HttpServletRequest request) {
         wrapDetails(model, request);
+    }
+
+    public Long getSkuId() {
+        return skuId;
+    }
+
+    public void setSkuId(Long skuId) {
+        this.skuId = skuId;
+
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+
     }
 }

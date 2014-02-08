@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.strategy;
 
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -65,7 +68,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
     @Override
     public CartOperationRequest onItemAdded(CartOperationRequest request) throws PricingException {
         Order order = request.getOrder();
-        OrderItem orderItem = request.getAddedOrderItem();
+        OrderItem orderItem = request.getOrderItem();
         Map<FulfillmentType, FulfillmentGroup> fulfillmentGroups = new HashMap<FulfillmentType, FulfillmentGroup>();
         FulfillmentGroup nullFulfillmentTypeGroup = null;
         
@@ -111,12 +114,10 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                     //Set the type
                     fulfillmentGroup.setType(type);
                     fulfillmentGroup.setOrder(order);
-                    fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
                     order.getFulfillmentGroups().add(fulfillmentGroup);
                 }
                 
                 fulfillmentGroup = addItemToFulfillmentGroup(order, doi, doi.getQuantity() * orderItem.getQuantity(), fulfillmentGroup);
-                order = fulfillmentGroup.getOrder();
             }
         } else if (orderItem instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem)orderItem;
@@ -142,7 +143,6 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                 //Set the type
                 fulfillmentGroup.setType(type);
                 fulfillmentGroup.setOrder(order);
-                fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
                 order.getFulfillmentGroups().add(fulfillmentGroup);
             }
             
@@ -153,15 +153,12 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             if (fulfillmentGroup == null) {
                 fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
                 fulfillmentGroup.setOrder(order);
-                fulfillmentGroup = fulfillmentGroupService.save(fulfillmentGroup);
                 order.getFulfillmentGroups().add(fulfillmentGroup);
             }
             
             fulfillmentGroup = addItemToFulfillmentGroup(order, orderItem, fulfillmentGroup);
-            order = fulfillmentGroup.getOrder();
         }
         
-        request.setOrder(order);
         return request;
     }
     
@@ -196,35 +193,38 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
         fulfillmentGroupItemRequest.setOrderItem(orderItem);
         fulfillmentGroupItemRequest.setQuantity(quantity);
         fulfillmentGroupItemRequest.setFulfillmentGroup(fulfillmentGroup);
-        return fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, false);
+        return fulfillmentGroupService.addItemToFulfillmentGroup(fulfillmentGroupItemRequest, false, false);
     }
     
     @Override
     public CartOperationRequest onItemUpdated(CartOperationRequest request) throws PricingException {
         Order order = request.getOrder();
-        OrderItem orderItem = request.getAddedOrderItem();
+        OrderItem orderItem = request.getOrderItem();
         Integer orderItemQuantityDelta = request.getOrderItemQuantityDelta();
         
         if (orderItemQuantityDelta == 0) {
             // If the quantity didn't change, nothing needs to happen
             return request;
         } else {
+            List<FulfillmentGroupItem> fgisToDelete = new ArrayList<FulfillmentGroupItem>();
             if (orderItem instanceof BundleOrderItem) {
                 List<OrderItem> itemsToUpdate = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
                 for (OrderItem oi : itemsToUpdate) {
                     int quantityPer = oi.getQuantity();
-                    order = updateItemQuantity(order, oi, (quantityPer * orderItemQuantityDelta));
+                    fgisToDelete.addAll(updateItemQuantity(order, oi, (quantityPer * orderItemQuantityDelta)));
                 }
             } else {
-                order = updateItemQuantity(order, orderItem, orderItemQuantityDelta);
+                fgisToDelete.addAll(updateItemQuantity(order, orderItem, orderItemQuantityDelta));
             }
+            request.setFgisToDelete(fgisToDelete);
         }
         
-        request.setOrder(order);
         return request;
     }
         
-    protected Order updateItemQuantity(Order order, OrderItem orderItem, Integer orderItemQuantityDelta) throws PricingException {
+    protected List<FulfillmentGroupItem> updateItemQuantity(Order order, OrderItem orderItem, 
+            Integer orderItemQuantityDelta) throws PricingException {
+        List<FulfillmentGroupItem> fgisToDelete = new ArrayList<FulfillmentGroupItem>();
         boolean done = false;
         
         if (orderItemQuantityDelta > 0) {
@@ -244,14 +244,11 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             int remainingToDecrement = -1 * orderItemQuantityDelta;
             
             for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                ListIterator<FulfillmentGroupItem> fgItemIter = fg.getFulfillmentGroupItems().listIterator();
-                while (fgItemIter.hasNext()) {
-                    FulfillmentGroupItem fgItem = fgItemIter.next();
+                for (FulfillmentGroupItem fgItem : fg.getFulfillmentGroupItems()) {
                     if (fgItem.getOrderItem().equals(orderItem)) {
                         if (!done &&fgItem.getQuantity() == remainingToDecrement) {
                             // Quantity matches exactly. Simply remove the item.
-                            fgItemIter.remove();
-                            fgItemDao.delete(fgItem);
+                            fgisToDelete.add(fgItem);
                             done = true;
                         } else if (!done && fgItem.getQuantity() > remainingToDecrement) {
                             // We have enough quantity in this fg item to facilitate the entire requsted update
@@ -261,8 +258,7 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                             // We do not have enough quantity. We'll remove this item and continue searching
                             // for the remainder.
                             remainingToDecrement = remainingToDecrement - fgItem.getQuantity();
-                            fgItemIter.remove();
-                            fgItemDao.delete(fgItem);
+                            fgisToDelete.add(fgItem);
                         }
                     }
                 }
@@ -273,22 +269,21 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
             throw new IllegalStateException("Could not find matching fulfillment group item for the given order item");
         }
         
-        order = orderService.save(order, false);
-        return order;
+        return fgisToDelete;
     }
 
     @Override
     public CartOperationRequest onItemRemoved(CartOperationRequest request) {
         Order order = request.getOrder();
-        OrderItem orderItem = orderItemService.readOrderItemById(request.getItemRequest().getOrderItemId());
+        OrderItem orderItem = request.getOrderItem();
         
         if (orderItem instanceof BundleOrderItem) {
             List<OrderItem> itemsToRemove = new ArrayList<OrderItem>(((BundleOrderItem) orderItem).getDiscreteOrderItems());
             for (OrderItem oi : itemsToRemove) {
-                fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, oi);
+                request.getFgisToDelete().addAll(fulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(order, oi));
             }
         } else {
-            fulfillmentGroupService.removeOrderItemFromFullfillmentGroups(order, orderItem);
+            request.getFgisToDelete().addAll(fulfillmentGroupService.getFulfillmentGroupItemsForOrderItem(order, orderItem));
         }
         
         return request;

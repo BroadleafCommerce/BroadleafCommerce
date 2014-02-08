@@ -1,20 +1,29 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.store.service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 import org.broadleafcommerce.core.store.dao.StoreDao;
 import org.broadleafcommerce.core.store.domain.Store;
@@ -22,19 +31,23 @@ import org.broadleafcommerce.core.store.domain.ZipCode;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Service("blStoreService")
 public class StoreServiceImpl implements StoreService {
 
     // private final static int MAXIMUM_DISTANCE = Integer.valueOf(25);
     @Resource(name = "blStoreDao")
     private StoreDao storeDao;
+
     @Resource(name = "blZipCodeService")
     private ZipCodeService zipCodeService;
+
+    public Store readStoreById(Long id) {
+        return storeDao.readStoreById(id);
+    }
+
+    public Store readStoreByStoreName(String storeName) {
+        return storeDao.readStoreByStoreName(storeName);
+    }
 
     public Store readStoreByStoreCode(String storeCode) {
         return storeDao.readStoreByStoreCode(storeCode);
@@ -42,6 +55,10 @@ public class StoreServiceImpl implements StoreService {
 
     public List<Store> readAllStores() {
         return storeDao.readAllStores();
+    }
+
+    public List<Store> readAllStoresByState(String state) {
+        return storeDao.readAllStoresByState(state);
     }
 
     public Map<Store, Double> findStoresByAddress(Address searchAddress, double distance) {

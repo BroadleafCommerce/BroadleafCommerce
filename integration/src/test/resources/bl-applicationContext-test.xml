@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Integration
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -34,21 +54,23 @@
     <bean id="blTaxModule" class="org.broadleafcommerce.core.pricing.service.module.SimpleTaxModule">
         <property name="factor" value="0.05"/>
     </bean>
-
-    <bean p:order="2000" id="blPaymentServiceActivity"
-          class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity">
-        <property name="rollbackHandler" ref="blTestRollbackHandler"/>
-        <property name="stateConfiguration">
-            <map>
-                <entry key="testProperty" value="testValue"/>
-            </map>
+    
+    <bean id="blTestPaymentConfigurationServices" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blNullPaymentGatewayConfigurationService"/>
+            </list>
         </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blTestPaymentConfigurationServices"/>
+        <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
     </bean>
 
     <!-- Configuration used in WorkflowTests -->
     <bean p:order="8080" id="blTotalActivity"
           class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
-
+          
     <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
@@ -59,21 +81,21 @@
                      by bean definitions in bl-applicationContext-test-module.xml -->
                 <!-- 
                     The final configuration of this workflow should be:
-                    0 100 - TestPassThroughActivity
+                    0 100 - PassThroughActivity
                     1 1000 - framework activity
                     2 2000 - framework activity
                     3 3000 - framework activity
-                    4 3000 - TestPassThroughActivity
+                    4 3000 - PassThroughActivity
                     5 4000 - framework activity
                     6 5000 - TestRollbackActivity
                 -->
-                <bean p:order="100" class="org.broadleafcommerce.core.workflow.state.test.TestPassThroughActivity"/>
+                <bean p:order="100" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
                 <bean p:order="5000" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity">
                     <property name="errorHandler">
                         <bean class="org.broadleafcommerce.core.workflow.state.test.TestPassThroughRollbackErrorHandler"/>
                     </property>
                 </bean>
-                <bean p:order="3000" class="org.broadleafcommerce.core.workflow.state.test.TestPassThroughActivity"/>
+                <bean p:order="3000" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
             </list>
         </property>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
@@ -154,8 +176,6 @@
           class="org.broadleafcommerce.common.email.service.info.EmailInfo"
           parent="baseEmailInfo">
     </bean>
-
-    <bean id="blCreditCardModule" class="org.broadleafcommerce.checkout.service.DummyCreditCardModule"/>
 
     <bean id="compositeStatusHandler"
           class="org.broadleafcommerce.common.vendor.service.monitor.handler.CompositeStatusHandler">

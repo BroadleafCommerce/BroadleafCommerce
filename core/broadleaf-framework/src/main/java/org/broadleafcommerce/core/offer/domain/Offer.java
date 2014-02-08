@@ -1,22 +1,26 @@
 /*
- * Copyright 2008-2013 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
@@ -29,9 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
-public interface Offer extends Serializable {
+public interface Offer extends Status, Serializable {
 
     public void setId(Long id);
 
@@ -177,7 +179,6 @@ public interface Offer extends Serializable {
      *
      * @return
      */
-    @Nonnull
     public Long getMaxUsesPerCustomer();
 
     /**
@@ -191,7 +192,7 @@ public interface Offer extends Serializable {
      * @param maxUses
      */
     public void setMaxUsesPerCustomer(Long maxUses);
-    
+
     /**
      * Indicates that there is no limit to how many times a customer can use this offer. By default this is true if
      * {@link #getMaxUsesPerCustomer()} == 0
@@ -212,7 +213,7 @@ public interface Offer extends Serializable {
      * @deprecated use {@link #getMaxUsesPerOrder()} directly instead
      */
     @Deprecated
-    public int getMaxUses();
+    public int getMaxUses() ;
 
     /**
      * Sets the maximum number of times that this offer
@@ -301,10 +302,10 @@ public interface Offer extends Serializable {
     
     public void setQualifyingItemSubTotal(Money qualifyingItemSubtotal);
 
-    void setMarketingMessage(String marketingMessage);
+    public void setMarketingMessage(String marketingMessage);
 
-    String getMarketingMessage();
-    
+    public String getMarketingMessage();
+
     /**
      * Returns the offer codes that can be used to retrieve this Offer. These codes would be used in situations where
      * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
@@ -316,5 +317,9 @@ public interface Offer extends Serializable {
      * this Offer is not automatically considered (meaning {@link Offer#isAutomaticallyAdded()} is false}
      */
     public void setOfferCodes(List<OfferCode> offerCodes);
+
+    public Boolean getRequiresRelatedTargetAndQualifiers();
+
+    public void setRequiresRelatedTargetAndQualifiers(Boolean requiresRelatedTargetAndQualifiers);
 
 }
