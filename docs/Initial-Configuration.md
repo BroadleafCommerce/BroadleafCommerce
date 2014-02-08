@@ -39,8 +39,11 @@
 >Note: This line should go before the `classpath:/applicationContext.xml` line
 
 
-**Step 5.** Reference the additional required SQL file in `development-shared.properties` in the `blPU.hibernate.hbm2ddl.import_files` property:
-    
+**Step 5.** To enable security configurations in the Broadleaf admin, you will need to load new permissions. The recommended changes are located in the following files:
+
 ```
-    /config/bc/sql/load_custom_field_admin_security.sql
+/config/bc/sql/load_custom_field_admin_security.sql
 ```
+
+> Note: In development, you can automatically load this SQL by adding this file to the blPU.hibernate.hbm2ddl.import\_files property in the development-shared.properties file.
+
