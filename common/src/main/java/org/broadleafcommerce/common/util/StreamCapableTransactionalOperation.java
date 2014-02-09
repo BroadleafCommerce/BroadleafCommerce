@@ -30,4 +30,10 @@ public interface StreamCapableTransactionalOperation extends TransactionalOperat
 
     Long retrieveTotalCount();
 
+    void executeAfterCommit(Object[] param);
+
+    boolean shouldRetryOnTransactionLockAcquisitionFailure();
+
+    int retryMaxCountOverrideForLockAcquisitionFailure();
+
 }
