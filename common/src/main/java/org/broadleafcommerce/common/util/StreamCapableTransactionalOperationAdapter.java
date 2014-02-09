@@ -58,4 +58,14 @@ public abstract class StreamCapableTransactionalOperationAdapter implements Stre
     public void setPagedItems(Object[] pagedItems) {
         this.pagedItems = pagedItems;
     }
+
+    @Override
+    public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+        return false;
+    }
+
+    @Override
+    public int retryMaxCountOverrideForLockAcquisitionFailure() {
+        return -1;
+    }
 }

@@ -19,15 +19,10 @@
  */
 package org.broadleafcommerce.common.util;
 
-import java.util.Collection;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.hibernate.exception.LockAcquisitionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -36,6 +31,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+
+import java.util.Collection;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 /**
  * @author Jeff Fischer
@@ -50,6 +51,9 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     protected PlatformTransactionManager transactionManager;
 
     protected EntityManager em;
+
+    @Value("${streaming.transaction.lock.retry.max}")
+    protected int retryMax = 10;
 
     @Value("${streaming.transaction.item.page.size}")
     protected int pageSize;
@@ -106,16 +110,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     @Override
     public <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
                                         Class<G> exceptionType, int transactionBehavior, int isolationLevel) throws G {
-        TransactionStatus status = startTransaction(transactionBehavior, isolationLevel);
-        boolean isError = false;
-        try {
-            operation.execute();
-        } catch (Throwable e) {
-            isError = true;
-            ExceptionHelper.processException(exceptionType, RuntimeException.class, e);
-        } finally {
-            endTransaction(status, isError, exceptionType);
-        }
+        runOptionalTransactionalOperation(operation, exceptionType, true, transactionBehavior, isolationLevel);
     }
 
     @Override
@@ -127,21 +122,55 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     @Override
     public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
                                         Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel) throws G {
-        TransactionStatus status = null;
-        if (useTransaction) {
-            status = startTransaction(transactionBehavior, isolationLevel);
+        int maxCount = operation.retryMaxCountOverrideForLockAcquisitionFailure();
+        if (maxCount == -1) {
+            maxCount = retryMax;
         }
-        boolean isError = false;
-        try {
-            operation.execute();
-        } catch (Throwable e) {
-            isError = true;
-            ExceptionHelper.processException(exceptionType, RuntimeException.class, e);
-        } finally {
-            if (useTransaction) {
-                endTransaction(status, isError, exceptionType);
+        int tryCount = 0;
+        boolean retry = false;
+        do {
+            tryCount++;
+            try {
+                TransactionStatus status = null;
+                if (useTransaction) {
+                    status = startTransaction(transactionBehavior, isolationLevel);
+                }
+                boolean isError = false;
+                try {
+                    operation.execute();
+                    retry = false;
+                } catch (Throwable e) {
+                    isError = true;
+                    ExceptionHelper.processException(exceptionType, RuntimeException.class, e);
+                } finally {
+                    if (useTransaction) {
+                        endTransaction(status, isError, exceptionType);
+                    }
+                }
+            } catch (RuntimeException e) {
+                checkException: {
+                    if (operation.shouldRetryOnTransactionLockAcquisitionFailure()) {
+                        Exception result = ExceptionHelper.refineException(LockAcquisitionException.class, RuntimeException.class, e);
+                        if (result.getClass().equals(LockAcquisitionException.class)) {
+                            if (tryCount < maxCount) {
+                                try {
+                                    Thread.sleep(300);
+                                } catch (InterruptedException ie) {
+                                    //do nothing
+                                }
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Unable to acquire a transaction lock. Retrying - count(" + tryCount + ").");
+                                }
+                                retry = true;
+                                break checkException;
+                            }
+                            LOG.warn("Unable to acquire a transaction lock after " + maxCount + " tries.");
+                        }
+                    }
+                    throw e;
+                }
             }
-        }
+        } while (tryCount < maxCount && retry && operation.shouldRetryOnTransactionLockAcquisitionFailure());
     }
 
     @Override
@@ -163,6 +192,16 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
         init();
+    }
+
+    @Override
+    public int getRetryMax() {
+        return retryMax;
+    }
+
+    @Override
+    public void setRetryMax(int retryMax) {
+        this.retryMax = retryMax;
     }
 
     protected <G extends Throwable> void endTransaction(TransactionStatus status, boolean error, Class<G> exceptionType) throws G {
