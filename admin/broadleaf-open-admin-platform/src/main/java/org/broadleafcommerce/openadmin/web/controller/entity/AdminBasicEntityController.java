@@ -44,6 +44,7 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
@@ -439,6 +440,19 @@ public class AdminBasicEntityController extends AdminAbstractController {
         try {
             service.removeEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs);
         } catch (ServiceException e) {
+            if (e instanceof ValidationException) {
+                // Create a flash attribute for the unsuccessful delete
+                FlashMap fm = new FlashMap();
+                fm.put("headerFlash", e.getMessage());
+                fm.put("headerFlashAlert", true);
+                request.setAttribute(DispatcherServlet.OUTPUT_FLASH_MAP_ATTRIBUTE, fm);
+
+                // Make sure we have this error show up in our logs
+                LOG.error("Could not delete record", e);
+
+                // Refresh the page
+                return "redirect:/" + sectionKey + "/" + id;
+            }
             if (e.containsCause(ConstraintViolationException.class)) {
                 // Create a flash attribute for the unsuccessful delete
                 FlashMap fm = new FlashMap();
