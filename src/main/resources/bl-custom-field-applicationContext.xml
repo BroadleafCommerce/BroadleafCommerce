@@ -45,34 +45,5 @@
             </list>
         </property>
     </bean>
-    
-    <!--
-        These beans are responsible for contributing functionality to the multitenant module. They are dormant
-        unless the multitenant module is loaded
-     -->
-    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blCustomFieldSiteConfigProviders"/>
-        <property name="targetRef" value="blMultiTenantSiteConfigProviders"/>
-        <property name="statusProvider" ref="blMultiTenantMergeBeanStatusProvider"/>
-    </bean>
-
-    <bean id="blDefaultCustomFieldAccessRoles" class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-                <value>ROLE_ADMIN</value>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="blCustomFieldSiteConfigProviders" class="org.springframework.beans.factory.config.ListFactoryBean" lazy-init="true">
-        <property name="sourceList">
-            <list>
-                <bean id="blCustomFieldSiteConfigProvider" class="com.broadleafcommerce.customfield.service.provider.CustomFieldSiteConfigProvider" />
-            </list>
-        </property>
-    </bean>
-    <!--
-        End of multitenant module support
-    -->
 
 </beans>
