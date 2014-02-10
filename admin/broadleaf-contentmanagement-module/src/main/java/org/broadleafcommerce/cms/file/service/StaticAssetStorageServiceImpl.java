@@ -137,6 +137,10 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     protected File lookupAssetAndCreateLocalFile(StaticAsset staticAsset, File baseLocalFile)
             throws IOException, SQLException {
         if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
+            File returnFile = broadleafFileService.getResource(staticAsset.getFullUrl());
+            if (!returnFile.getAbsolutePath().equals(baseLocalFile.getAbsolutePath())) {
+                createLocalFileFromInputStream(new FileInputStream(returnFile), baseLocalFile);
+            }
             return broadleafFileService.getResource(staticAsset.getFullUrl());            
         } else {
             StaticAssetStorage storage = readStaticAssetStorageByStaticAssetId(staticAsset.getId());
