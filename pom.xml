@@ -22,10 +22,10 @@
     <url>http://www.broadleafcommerce.com</url>
     <licenses>
         <license>
-            <name>Apache 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>Broadleaf Commerce Confidential</name>
+            <url>http://www.broadleafcommerce.com/license/commercial</url>
             <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
+            <comments>Broadleaf Commerce Commercial License</comments>
         </license>
     </licenses>
     <developers>
