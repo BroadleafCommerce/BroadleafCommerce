@@ -73,11 +73,6 @@
                     <artifactId>jrebel-maven-plugin</artifactId>
                     <version>1.1.5</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.9.1</version>
-                </plugin>
                 
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
                 <plugin>
@@ -121,7 +116,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -211,7 +206,7 @@
                 <plugins>
                     <plugin>
                         <groupId>org.zeroturnaround</groupId>
-                        <artifactId>javarebel-maven-plugin</artifactId>
+                        <artifactId>jrebel-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>generate-rebel-xml</id>
@@ -266,34 +261,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>attach-javadocs</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>aggregate-jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <minmemory>128m</minmemory>
-                            <maxmemory>1g</maxmemory>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
     <distributionManagement>
         <snapshotRepository>
@@ -305,6 +272,19 @@
             <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/customfield-module-releases/</url>
         </repository>
     </distributionManagement>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <minmemory>128m</minmemory>
+                    <maxmemory>1g</maxmemory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
     <dependencies>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
