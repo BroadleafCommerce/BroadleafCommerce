@@ -129,7 +129,9 @@ var BLC = (function($) {
     }
     
     function defaultErrorHandler(data) {
-        alert("An error occurred while processing your request.");
+        if (data.getAllResponseHeaders()) {
+            alert("An error occurred while processing your request.");
+        }
     }
     
     function serializeObject($object) {
