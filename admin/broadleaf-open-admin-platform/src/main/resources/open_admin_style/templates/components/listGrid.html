@@ -97,7 +97,7 @@
                     th:if="${headerField.isVisible}"
                     th:switch="${listGrid.listGridType}"
                     th:with="field=${record.getField(headerField.name)}"
-                    th:attr="data-fieldname=${field.name},data-fieldvalue=${field.displayValue}"
+                    th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
                     th:class="${field.isDerived ? 'derived' : ''}">
                     
                     <span th:case="'main'" th:remove="tag">
