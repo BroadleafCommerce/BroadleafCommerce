@@ -129,7 +129,10 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
                 sb.append(",'" + order.getTotalTax() + "'");
                 sb.append(",'" + order.getTotalShipping() + "'");
                 sb.append(",'" + paymentAddress.getCity() + "'");
-                sb.append(",'" + paymentAddress.getState().getName() + "'");
+                //UK friendly
+                if(paymentAddress.getState()!=null){
+                    sb.append(",'" + paymentAddress.getState().getName() + "'");    
+                }
                 sb.append(",'" + paymentAddress.getCountry().getName() + "'");
                 sb.append("]);");
             }
