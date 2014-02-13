@@ -102,6 +102,8 @@ public interface TranslationService {
      * @return the translated value of the property for the given entity
      */
     public String getTranslatedValue(Object entity, String property, Locale locale);
+    
+    public Translation findTranslationById(Long id);
 
 
 }
