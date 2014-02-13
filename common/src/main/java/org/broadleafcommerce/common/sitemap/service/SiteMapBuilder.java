@@ -151,7 +151,12 @@ public class SiteMapBuilder {
         SiteMapIndexWrapper siteMapIndexWrapper = new SiteMapIndexWrapper();
         for (String fileName : indexedFileNames) {
             SiteMapWrapper siteMapWrapper = new SiteMapWrapper();
-            String fileLoc = BroadleafFileUtils.buildFilePath(baseUrl, fileName);
+            String fileLoc = null;
+            if (gzipSiteMapFiles) {
+                fileLoc = BroadleafFileUtils.buildFilePath(baseUrl, fileName + ".gz");
+            } else {
+                fileLoc = BroadleafFileUtils.buildFilePath(baseUrl, fileName);
+            }
             siteMapWrapper.setLoc(fileLoc)   ;         
             siteMapWrapper.setLastmod(now);
             siteMapIndexWrapper.getSiteMapWrappers().add(siteMapWrapper);
@@ -175,11 +180,7 @@ public class SiteMapBuilder {
         String pattern = siteMapConfig.getSiteMapIndexFilePattern();
         int indexFileNumber = indexedFileNames.size() + 1;
         String fileName = pattern.replaceFirst("###", String.valueOf(indexFileNumber));
-        if (gzipSiteMapFiles) {
-            return fileName + ".gz";
-        } else {
-            return fileName;
-        }
+        return fileName;
     }
 
     protected void persistSiteMap() {
