@@ -34,8 +34,9 @@ import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
-import javax.annotation.Resource;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will on order confirmation page, submit order
@@ -123,8 +124,14 @@ public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProce
                 sb.append(",'" + order.getTotalTax() + "'");
                 sb.append(",'" + order.getTotalShipping() + "'");
                 sb.append(",'" + paymentAddress.getCity() + "'");
-                sb.append(",'" + paymentAddress.getState().getName() + "'");
-                sb.append(",'" + paymentAddress.getCountry().getName() + "'");
+
+                if (paymentAddress.getState() != null) {
+                    sb.append(",'" + paymentAddress.getState().getName() + "'");
+                }
+
+                if (paymentAddress.getCountry() != null) {
+                    sb.append(",'" + paymentAddress.getCountry().getName() + "'");
+                }
                 sb.append("]);");
             }
             for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
