@@ -19,19 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.security.dao;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import org.apache.commons.lang.ClassUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
@@ -41,6 +28,20 @@ import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityServ
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * 
@@ -79,7 +80,9 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
 
         // Execute the query with the restrictions
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        List<AdminPermission> results = em.createQuery(criteria).getResultList();
+        TypedQuery<AdminPermission> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        List<AdminPermission> results = query.getResultList();
         if (results == null || results.size() == 0) {
             return null;
         } else {
@@ -94,6 +97,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     @SuppressWarnings("unchecked")
     public List<AdminPermission> readAllAdminPermissions() {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_PERMISSIONS");
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         List<AdminPermission> permissions = query.getResultList();
         return permissions;
     }
