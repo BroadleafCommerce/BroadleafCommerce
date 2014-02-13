@@ -201,17 +201,22 @@ public interface Sku extends Serializable {
     public void setDiscountable(Boolean discountable);
 
     /**
-     * Returns whether the Sku is available.
+     * Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
+     * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
+     * it. This defaults to true
      */
     public Boolean isAvailable();
 
     /**
      * Convenience that passes through to isAvailable
+     * @see {@link #isAvailable()}
      */
     public Boolean getAvailable();
     
     /**
-     * Sets the whether the Sku is available.
+     * Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
+     * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
+     * it. This defaults to true
      */
     public void setAvailable(Boolean available);
 

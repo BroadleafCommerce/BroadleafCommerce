@@ -46,8 +46,9 @@ $(document).ready(function() {
 	    var $form = BLCAdmin.getForm($(this));
 	    $form.submit();
 
-	    $(this).hide();
-	    $(this).closest('.entity-form-actions').find('img.ajax-loader').show();
+	    var $actions = $(this).closest('.entity-form-actions');
+	    $actions.find('button').hide();
+	    $actions.find('img.ajax-loader').show();
 
 		event.preventDefault();
 	});

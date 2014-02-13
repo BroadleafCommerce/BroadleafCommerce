@@ -789,13 +789,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         for (Property property : cmd.getProperties()) {
             FieldMetadata fieldMetadata = property.getMetadata();
             if (fieldMetadata instanceof BasicFieldMetadata) {
-                if (!((BasicFieldMetadata) fieldMetadata).getReadOnly()) {
-                    readOnly = false;
+                readOnly = ((BasicFieldMetadata) fieldMetadata).getReadOnly() != null && ((BasicFieldMetadata) fieldMetadata).getReadOnly();
+                if (!readOnly) {
                     break;
                 }
             } else {
-                if (((CollectionMetadata) fieldMetadata).isMutable()) {
-                    readOnly = false;
+                readOnly = ((CollectionMetadata) fieldMetadata).isMutable();
+                if (!readOnly) {
                     break;
                 }
             }

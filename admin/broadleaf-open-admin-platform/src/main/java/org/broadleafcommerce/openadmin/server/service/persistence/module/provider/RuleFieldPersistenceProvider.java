@@ -144,7 +144,13 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         }
                         //This is a simple String field (or String map field)
                         if (String.class.isAssignableFrom(valueType)) {
-                            dirty = checkDirtyState(populateValueRequest, instance, mvel);
+                            //first check if the property is null and the mvel is null
+                            if (instance != null && mvel == null) {
+                                Object value = populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName());
+                                dirty = value != null;
+                            } else {
+                                dirty = checkDirtyState(populateValueRequest, instance, mvel);
+                            }
                             populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), mvel);
                         }
                         if (SimpleRule.class.isAssignableFrom(valueType)) {

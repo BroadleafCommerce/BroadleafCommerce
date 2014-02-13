@@ -137,6 +137,10 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     protected File lookupAssetAndCreateLocalFile(StaticAsset staticAsset, File baseLocalFile)
             throws IOException, SQLException {
         if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
+            File returnFile = broadleafFileService.getResource(staticAsset.getFullUrl());
+            if (!returnFile.getAbsolutePath().equals(baseLocalFile.getAbsolutePath())) {
+                createLocalFileFromInputStream(new FileInputStream(returnFile), baseLocalFile);
+            }
             return broadleafFileService.getResource(staticAsset.getFullUrl());            
         } else {
             StaticAssetStorage storage = readStaticAssetStorageByStaticAssetId(staticAsset.getId());
@@ -158,9 +162,17 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         FileWorkArea workArea = null;
         try {
             if (!baseLocalFile.getParentFile().exists()) {
-                if (!baseLocalFile.getParentFile().mkdirs()) {
-                    throw new RuntimeException("Unable to create middle directories for file: " + 
-                            baseLocalFile.getAbsolutePath());
+                boolean directoriesCreated = false;
+                if (!baseLocalFile.getParentFile().exists()) {
+                    directoriesCreated = baseLocalFile.getParentFile().mkdirs();
+                    if (!directoriesCreated) {
+                        // There is a chance that another VM created the directories.   If not, we may not have 
+                        // proper permissions and this is an error we need to report.
+                        if (!baseLocalFile.getParentFile().exists()) {
+                            throw new RuntimeException("Unable to create middle directories for file: " +
+                                    baseLocalFile.getAbsolutePath());
+                        }
+                    }
                 }
             }
             
@@ -365,7 +377,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             File destFile = new File(destFileName);
             if (!destFile.getParentFile().exists()) {
                 if (!destFile.getParentFile().mkdirs()) {
-                    throw new RuntimeException("Unable to create parent directories for file: " + destFileName);
+                    if (!destFile.getParentFile().exists()) {
+                        throw new RuntimeException("Unable to create parent directories for file: " + destFileName);
+                    }
                 }
             }
 

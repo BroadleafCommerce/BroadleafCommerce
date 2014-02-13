@@ -131,10 +131,19 @@ public class URLHandlerServiceImpl implements URLHandlerService {
             List<URLHandler> urlHandlers = findAllURLHandlers();
             for (URLHandler urlHandler : urlHandlers) {
                 currentHandler = urlHandler;
-                Pattern p = urlPatternMap.get(urlHandler.getIncomingURL());
+                String incomingUrl = currentHandler.getIncomingURL();
+                if (!incomingUrl.startsWith("^")) {
+                    if (incomingUrl.startsWith("/")) {
+                        incomingUrl = "^" + incomingUrl;
+                    } else {
+                        incomingUrl = "^/" + incomingUrl;
+                    }
+                }
+
+                Pattern p = urlPatternMap.get(incomingUrl);
                 if (p == null) {
-                    p = Pattern.compile(urlHandler.getIncomingURL());
-                    urlPatternMap.put(urlHandler.getIncomingURL(), p);
+                    p = Pattern.compile(incomingUrl);
+                    urlPatternMap.put(incomingUrl, p);
                 }
                 Matcher m = p.matcher(requestURI);
                 if (m.find()) {

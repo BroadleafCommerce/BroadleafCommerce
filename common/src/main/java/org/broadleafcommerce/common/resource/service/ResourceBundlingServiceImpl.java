@@ -23,19 +23,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +36,19 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @see ResourceBundlingService
@@ -159,7 +159,10 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         File file = new File(getFilePath(resource.getDescription()));
         if (!file.getParentFile().exists()) {
             if (!file.getParentFile().mkdirs()) {
-                throw new RuntimeException("Unable to create middle directories for file: " + file.getAbsolutePath());
+                // Possibly created by another thread, if not then error
+                if (!file.getParentFile().exists()) {
+                    throw new RuntimeException("Unable to create middle directories for file: " + file.getAbsolutePath());
+                }
             }
         }
         

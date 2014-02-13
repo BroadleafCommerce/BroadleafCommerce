@@ -133,6 +133,11 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                 public Long retrieveTotalCount() {
                     return getCartsToPurgeLength(config);
                 }
+
+                @Override
+                public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+                    return true;
+                }
             }, RuntimeException.class);
         } catch (Exception e) {
             LOG.error("Unable to purge carts", e);
@@ -168,6 +173,11 @@ public class ResourcePurgeServiceImpl implements ResourcePurgeService {
                 @Override
                 public Long retrieveTotalCount() {
                     return getCustomersToPurgeLength(config);
+                }
+
+                @Override
+                public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+                    return true;
                 }
             }, RuntimeException.class);
         } catch (Exception e) {

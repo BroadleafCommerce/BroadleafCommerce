@@ -71,7 +71,6 @@ $(document).ready(function() {
         var properties = BLCAdmin.translations.getProperties($container);
         
         properties.localeCode = rowFields.localeCode;
-        properties.translatedValue = rowFields.translatedValue;
         properties.translationId = rowFields.id;
         
         BLCAdmin.showLinkAsModal(baseUrl + '/update?' + $.param(properties));

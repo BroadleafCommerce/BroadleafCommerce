@@ -238,7 +238,12 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
      * @param requestDTO
      */
     protected void populateDefaultLineItemsAndSubtotal(Order order, PaymentRequestDTO requestDTO) {
-        requestDTO.orderSubtotal(order.getSubTotal().toString());
+        String subtotal = ZERO_TOTAL;
+        if (order.getSubTotal() != null) {
+            subtotal = order.getSubTotal().toString();
+        }
+
+        requestDTO.orderSubtotal(subtotal);
     }
 
 }

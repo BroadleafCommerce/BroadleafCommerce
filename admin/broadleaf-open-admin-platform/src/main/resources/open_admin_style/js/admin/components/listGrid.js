@@ -538,8 +538,10 @@ $(document).ready(function() {
                     BLCAdmin.initializeModalTabs($(BLCAdmin.currentModal()));
                     BLCAdmin.initializeModalButtons($(BLCAdmin.currentModal()));
                     BLCAdmin.initializeFields();
-            	    BLCAdmin.currentModal().find('.submit-button').show();
-            	    BLCAdmin.currentModal().find('img.ajax-loader').hide();
+
+            	    var $actions = BLCAdmin.currentModal().find('.entity-form-actions');
+            	    $actions.find('button').show();
+            	    $actions.find('img.ajax-loader').hide();
                 } else {
                     BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
                         message: BLCAdmin.messages.saved + '!', 
