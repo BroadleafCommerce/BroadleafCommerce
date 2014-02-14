@@ -115,7 +115,10 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
     @Override
     protected boolean removeHostElement(Arguments arguments, Element element) {
-        return true;
+        // TODO: This is currently required else the entire form will be removed. What should happen is that the
+        // root element should be removed (since that is the unprocessed Thymeleaf element) but all of the children elements
+        // should be hooked up to this element's parent
+        return false;
     }
 
     @Override
