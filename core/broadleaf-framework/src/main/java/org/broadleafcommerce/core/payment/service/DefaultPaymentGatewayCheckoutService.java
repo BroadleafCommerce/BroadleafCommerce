@@ -33,8 +33,10 @@ import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstrac
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutResponse;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -87,6 +89,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     
     @Resource(name = "blPhoneService")
     protected PhoneService phoneService;
+
+    @Resource(name = "blFulfillmentGroupService")
+    protected FulfillmentGroupService fulfillmentGroupService;
     
     @Override
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config) {
@@ -120,6 +125,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
                 customer.setEmailAddress(gatewayCustomer.getEmail());
             }
         }
+
+        // If the gateway sends back Shipping Information, we will save that to the first shippable fulfillment group.
+        populateShippingInfo(responseDTO, order);
 
         // If this gateway does not support multiple payments then mark all of the existing payments
         // as invalid before adding the new one
@@ -226,6 +234,48 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         }
         
         return payment.getId();
+    }
+
+    protected void populateShippingInfo(PaymentResponseDTO responseDTO, Order order) {
+        FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
+        Address shippingAddress = null;
+        if (responseDTO.getShipTo() != null && shippableFulfillmentGroup != null) {
+            shippingAddress = addressService.create();
+            AddressDTO<PaymentResponseDTO> shipToDTO = responseDTO.getShipTo();
+            shippingAddress.setFirstName(shipToDTO.getAddressFirstName());
+            shippingAddress.setLastName(shipToDTO.getAddressLastName());
+            shippingAddress.setAddressLine1(shipToDTO.getAddressLine1());
+            shippingAddress.setAddressLine2(shipToDTO.getAddressLine2());
+            shippingAddress.setCity(shipToDTO.getAddressCityLocality());
+
+            State state = stateService.findStateByAbbreviation(shipToDTO.getAddressStateRegion());
+            if (state == null) {
+                Log.warn("The given state from the response: " + shipToDTO.getAddressStateRegion() + " could not be found"
+                        + " as a state abbreviation in BLC_STATE");
+            }
+            shippingAddress.setState(state);
+
+            shippingAddress.setPostalCode(shipToDTO.getAddressPostalCode());
+
+            Country country = countryService.findCountryByAbbreviation(shipToDTO.getAddressCountryCode());
+            if (country == null) {
+                Log.warn("The given country from the response: " + shipToDTO.getAddressCountryCode() + " could not be found"
+                        + " as a country abbreviation in BLC_COUNTRY");
+            }
+            shippingAddress.setCountry(country);
+
+            if (shipToDTO.getAddressPhone() != null) {
+                Phone shippingPhone = phoneService.create();
+                shippingPhone.setPhoneNumber(shipToDTO.getAddressPhone());
+                shippingAddress.setPhonePrimary(shippingPhone);
+            }
+
+            shippableFulfillmentGroup = fulfillmentGroupService.findFulfillmentGroupById(shippableFulfillmentGroup.getId());
+            if (shippableFulfillmentGroup != null) {
+                shippableFulfillmentGroup.setAddress(shippingAddress);
+                fulfillmentGroupService.save(shippableFulfillmentGroup);
+            }
+        }
     }
 
     /**

@@ -197,14 +197,9 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
         FulfillmentGroup firstShippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
         if (firstShippableFulfillmentGroup != null) {
-            FulfillmentOption fulfillmentOption = firstShippableFulfillmentGroup.getFulfillmentOption();
-            if (fulfillmentOption != null) {
-                //if the cart has already has fulfillment information
-                if (firstShippableFulfillmentGroup.getAddress()!=null) {
-                    shippingForm.setAddress(firstShippableFulfillmentGroup.getAddress());
-                }
-                shippingForm.setFulfillmentOption(fulfillmentOption);
-                shippingForm.setFulfillmentOptionId(fulfillmentOption.getId());
+            //if the cart has already has fulfillment information
+            if (firstShippableFulfillmentGroup.getAddress()!=null) {
+                shippingForm.setAddress(firstShippableFulfillmentGroup.getAddress());
             } else {
                 //check for a default address for the customer
                 CustomerAddress defaultAddress = customerAddressService.findDefaultCustomerAddress(CustomerState.getCustomer().getId());
@@ -213,7 +208,14 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
                     shippingForm.setAddressName(defaultAddress.getAddressName());
                 }
             }
+
+            FulfillmentOption fulfillmentOption = firstShippableFulfillmentGroup.getFulfillmentOption();
+            if (fulfillmentOption != null) {
+                shippingForm.setFulfillmentOption(fulfillmentOption);
+                shippingForm.setFulfillmentOptionId(fulfillmentOption.getId());
+            }
         }
+
 
         if (cart.getPayments() != null) {
             for (OrderPayment payment : cart.getPayments()) {
