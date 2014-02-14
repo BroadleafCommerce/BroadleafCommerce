@@ -21,11 +21,6 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.payment.PaymentType;
-import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
@@ -55,8 +50,6 @@ import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementPro
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -69,6 +62,9 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is a Thymeleaf Processor that aids in rendering a dynamic One Page Checkout screen.
@@ -114,7 +110,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
     @Override
     protected boolean removeHostElement(Arguments arguments, Element element) {
-        return false;
+        return true;
     }
 
     @Override
