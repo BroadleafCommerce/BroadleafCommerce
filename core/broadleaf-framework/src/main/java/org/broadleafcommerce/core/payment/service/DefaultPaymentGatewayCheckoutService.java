@@ -126,6 +126,12 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             }
         }
 
+        // If the gateway sends back an email address and the order does not contain one, set it.
+        GatewayCustomerDTO<PaymentResponseDTO> gatewayCustomer = responseDTO.getCustomer();
+        if (order.getEmailAddress() == null && gatewayCustomer != null) {
+            order.setEmailAddress(gatewayCustomer.getEmail());
+        }
+
         // If the gateway sends back Shipping Information, we will save that to the first shippable fulfillment group.
         populateShippingInfo(responseDTO, order);
 
