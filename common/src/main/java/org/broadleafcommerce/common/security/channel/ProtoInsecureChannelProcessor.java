@@ -56,15 +56,13 @@ public class ProtoInsecureChannelProcessor extends InsecureChannelProcessor {
 
         for (ConfigAttribute attribute : config) {
             if (supports(attribute)) {
-                if (supports(attribute)) {
-                    if (invocation.getHttpRequest().getHeader("X-Forwarded-Proto") != null
-                            && "http".equalsIgnoreCase(invocation.getHttpRequest().getHeader("X-Forwarded-Proto"))) {
-                        return;
-                    } else if (!invocation.getHttpRequest().isSecure()) {
-                        return;
-                    } else {
-                        getEntryPoint().commence(invocation.getRequest(), invocation.getResponse());
-                    }
+                if (invocation.getHttpRequest().getHeader("X-Forwarded-Proto") != null
+                        && "http".equalsIgnoreCase(invocation.getHttpRequest().getHeader("X-Forwarded-Proto"))) {
+                    return;
+                } else if (!invocation.getHttpRequest().isSecure()) {
+                    return;
+                } else {
+                    getEntryPoint().commence(invocation.getRequest(), invocation.getResponse());
                 }
             }
         }
