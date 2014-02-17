@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.web.controller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
@@ -487,6 +488,13 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      */
     protected String getClassNameForSection(String sectionKey) {
         AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
+        
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().overrideClassNameForSection(erh, sectionKey, section);
+        if (erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME) != null) {
+            return (String) erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME); 
+        }
+        
         return (section == null) ? sectionKey : section.getCeilingEntity();
     }
 
