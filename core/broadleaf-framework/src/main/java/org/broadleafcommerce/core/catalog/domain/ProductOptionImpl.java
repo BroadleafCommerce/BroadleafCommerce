@@ -19,6 +19,31 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.extension.ProductOptionEntityExtensionManager;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,27 +59,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
-import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION")
@@ -62,7 +66,7 @@ import org.hibernate.annotations.Parameter;
 @AdminPresentationClass(friendlyName = "ProductOptionImpl_baseProductOption", populateToOneFields=PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRODUCTOPTION_INVOKE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRECLONE_INFORMATION),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class ProductOptionImpl implements ProductOption, AdminMainEntity {
@@ -202,10 +206,16 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
 
     @Override
     public List<ProductOptionXref> getProductXrefs() {
-        return getProductXrefsInternal();
-    }
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blProductOptionEntityExtensionManager")) {
+            ProductOptionEntityExtensionManager extensionManager = (ProductOptionEntityExtensionManager) context.getAdditionalProperties().get("blProductOptionEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getProductXrefs(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<ProductOptionXref>) holder.getResult();
+            }
+        }
 
-    protected List<ProductOptionXref> getProductXrefsInternal() {
         return products;
     }
 
