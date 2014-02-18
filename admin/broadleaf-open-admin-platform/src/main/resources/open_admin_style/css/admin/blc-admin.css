@@ -495,6 +495,29 @@ table.table-hover tbody tr.draggable:hover {
 }
 
 /* -----------------------------------------
+  Header Detailed Message
+----------------------------------------- */
+div#headerDetailedMsgContainer {
+	text-align: center;
+	padding-bottom: 20px;
+}
+
+div#headerDetailedMsgContainer.alert {
+	color: #c60f13;
+}
+
+div#headerDetailedMsgContainer div#headerDetailedMsgHeader {
+	margin-bottom: 10px;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+div#headerDetailedMsgContainer div#headerDetailedMsgBody {
+	line-height: 20px;
+}
+
+
+/* -----------------------------------------
   List Grid
 ----------------------------------------- */
 
