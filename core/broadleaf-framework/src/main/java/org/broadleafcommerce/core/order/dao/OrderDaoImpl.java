@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -111,6 +112,8 @@ public class OrderDaoImpl implements OrderDao {
         final Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getType());
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
         @SuppressWarnings("rawtypes")
         final List temp = query.getResultList();
         if (temp != null && !temp.isEmpty()) {

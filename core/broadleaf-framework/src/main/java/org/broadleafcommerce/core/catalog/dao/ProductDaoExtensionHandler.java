@@ -30,4 +30,8 @@ public interface ProductDaoExtensionHandler extends ExtensionHandler {
 
     public ExtensionResultStatusType findProductByURI(String uri, ExtensionResultHolder resultHolder);
 
+    Long getCurrentDateResolution();
+
+    void setCurrentDateResolution(Long currentDateResolution);
+
 }

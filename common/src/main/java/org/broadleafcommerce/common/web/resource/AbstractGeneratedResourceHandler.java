@@ -29,7 +29,11 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.resource.GeneratedResource;
+import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.springframework.core.io.Resource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -49,6 +53,9 @@ public abstract class AbstractGeneratedResourceHandler {
 
     @javax.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
+
+    @javax.annotation.Resource(name="blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
 
     protected Cache generatedResourceCache;
     
@@ -81,31 +88,40 @@ public abstract class AbstractGeneratedResourceHandler {
      * @param location
      * @return the generated resource
      */
-    public Resource getResource(String path, List<Resource> locations) {
-        Element e = getGeneratedResourceCache().get(path);
-        Resource r = null;
-        if (e == null) {
-            statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), false);
-        } else {
-            statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), true);
-        }
-        boolean shouldGenerate = false;
-        if (e == null || e.getObjectValue() == null) {
-            shouldGenerate = true;
-        } else if (e.getObjectValue() instanceof GeneratedResource
-                && isCachedResourceExpired((GeneratedResource) e.getObjectValue(), path, locations)) {
-            shouldGenerate = true;
-        } else {
-            r = (Resource) e.getObjectValue();
-        }
-        
-        if (shouldGenerate) {
-            r = getFileContents(path, locations);
-            e = new Element(path,  r);
-            getGeneratedResourceCache().put(e);
-        }
-        
-        return r;
+    public Resource getResource(final String path, final List<Resource> locations) {
+        //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
+        //only run the operation under a transaction if there is not already an entity manager in the view
+        final Resource[] response = new Resource[1];
+        transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public void execute() throws Throwable {
+                Element e = getGeneratedResourceCache().get(path);
+                Resource r = null;
+                if (e == null) {
+                    statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), false);
+                } else {
+                    statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), true);
+                }
+                boolean shouldGenerate = false;
+                if (e == null || e.getObjectValue() == null) {
+                    shouldGenerate = true;
+                } else if (e.getObjectValue() instanceof GeneratedResource
+                        && isCachedResourceExpired((GeneratedResource) e.getObjectValue(), path, locations)) {
+                    shouldGenerate = true;
+                } else {
+                    r = (Resource) e.getObjectValue();
+                }
+
+                if (shouldGenerate) {
+                    r = getFileContents(path, locations);
+                    e = new Element(path,  r);
+                    getGeneratedResourceCache().put(e);
+                }
+                response[0] = r;
+            }
+        }, RuntimeException.class, !TransactionSynchronizationManager.hasResource(((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory()));
+
+        return response[0];
     }
     
     /**
