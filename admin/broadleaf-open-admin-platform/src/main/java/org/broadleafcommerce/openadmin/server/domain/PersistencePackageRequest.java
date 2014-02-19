@@ -19,12 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.domain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -42,6 +36,13 @@ import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A DTO class used to seed a persistence package.
@@ -294,6 +295,21 @@ public class PersistencePackageRequest {
     
     public PersistencePackageRequest addFilterAndSortCriteria(List<FilterAndSortCriteria> filterAndSortCriteria) {
         this.filterAndSortCriteria.addAll(filterAndSortCriteria);
+        return this;
+    }
+
+    /* ************** */
+    /* REMOVE METHODS */
+    /* ************** */
+    
+    public PersistencePackageRequest removeFilterAndSortCriteria(String name) {
+        Iterator<FilterAndSortCriteria> it = filterAndSortCriteria.listIterator();
+        while (it.hasNext()) {
+            FilterAndSortCriteria fasc = it.next();
+            if (fasc.getPropertyId().equals(name)) {
+                it.remove();
+            }
+        }
         return this;
     }
 
