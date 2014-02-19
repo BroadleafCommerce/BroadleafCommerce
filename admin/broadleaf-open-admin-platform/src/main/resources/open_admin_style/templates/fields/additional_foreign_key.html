@@ -40,7 +40,7 @@
         
         <button class="to-one-lookup tiny radius secondary button hover-cursor"
             type="button" th:inline="text"
-            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}}">
+            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id})}">
             <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
         </button>
 
