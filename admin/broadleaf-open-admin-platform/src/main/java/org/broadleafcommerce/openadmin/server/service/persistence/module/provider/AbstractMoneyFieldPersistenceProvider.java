@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -63,9 +64,7 @@ public abstract class AbstractMoneyFieldPersistenceProvider extends FieldPersist
     protected String formatDisplayValue(BigDecimal value, ExtractValueRequest extractValueRequest, Property property) {
         Locale locale = getLocale(extractValueRequest, property);
         Currency currency = getCurrency(extractValueRequest, property);
-        NumberFormat format = NumberFormat.getCurrencyInstance(locale);
-        format.setCurrency(currency);
-        return format.format(value);
+        return BroadleafCurrencyUtils.getNumberFormatFromCache(locale, currency).format(value);
     }
     
     protected abstract boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property);
