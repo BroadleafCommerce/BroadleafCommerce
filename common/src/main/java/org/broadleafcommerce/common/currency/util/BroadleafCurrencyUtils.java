@@ -21,11 +21,16 @@ package org.broadleafcommerce.common.currency.util;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.codehaus.jackson.map.util.LRUMap;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.Currency;
+import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -35,6 +40,8 @@ import java.util.Currency;
  * @see {@link BroadleafCurrency}
  */
 public class BroadleafCurrencyUtils {
+
+    protected static final Map<String,NumberFormat> FORMAT_CACHE = new LRUMap<String, NumberFormat>(20, 100);
 
     public static final MathContext ROUND_FLOOR_MATH_CONTEXT = new MathContext(0, RoundingMode.FLOOR);
 
@@ -114,5 +121,23 @@ public class BroadleafCurrencyUtils {
 
         BigDecimal remainder = amount.remainder(new BigDecimal(quantity), ROUND_FLOOR_MATH_CONTEXT);
         return remainder.toBigInteger().intValue();
+    }
+
+    /**
+     * Provides a cached approach for creating NumberFormat instances. More performant
+     * than creating a new one each time.
+     *
+     * @param locale the Locale
+     * @param currency the Currency
+     * @return either a new NumberFormat instance, or one taken from the cache
+     */
+    public static NumberFormat getNumberFormatFromCache(Locale locale, Currency currency) {
+        String key = locale.toString() + currency.getCurrencyCode();
+        if (!FORMAT_CACHE.containsKey(key)) {
+            NumberFormat format = NumberFormat.getCurrencyInstance(locale);
+            format.setCurrency(currency);
+            FORMAT_CACHE.put(key, format);
+        }
+        return FORMAT_CACHE.get(key);
     }
 }
