@@ -32,6 +32,7 @@ import org.thymeleaf.templatewriter.ITemplateWriter;
 public class BroadleafThymeleafTemplateModeHandler implements ITemplateModeHandler {
 
     private ITemplateModeHandler handler;
+    private CacheAwareGeneralTemplateWriter writer;
 
     public BroadleafThymeleafTemplateModeHandler(ITemplateModeHandler handler) {
         super();
@@ -48,7 +49,10 @@ public class BroadleafThymeleafTemplateModeHandler implements ITemplateModeHandl
 
     public ITemplateWriter getTemplateWriter() {
         if (handler.getTemplateWriter() instanceof AbstractGeneralTemplateWriter) {
-            return new CacheAwareGeneralTemplateWriter((AbstractGeneralTemplateWriter) handler.getTemplateWriter());
+            if (writer == null) {
+                writer = new CacheAwareGeneralTemplateWriter((AbstractGeneralTemplateWriter) handler.getTemplateWriter());
+            }
+            return writer;
         } else {
             return handler.getTemplateWriter();
         }
