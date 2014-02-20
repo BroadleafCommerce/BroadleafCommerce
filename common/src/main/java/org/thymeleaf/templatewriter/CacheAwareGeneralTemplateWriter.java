@@ -39,15 +39,16 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.CacheableNode;
 import org.thymeleaf.dom.Node;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Random;
 
 /**
  * Wrapper for Thymeleaf's {@link AbstractGeneralTemplateWriter} that provides content caching
@@ -65,28 +66,63 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
     public CacheAwareGeneralTemplateWriter(AbstractGeneralTemplateWriter delegateWriter) {
         this.delegateWriter = delegateWriter;
     }
+    
+    public void printChildProperties(Node node) {
+        System.out.println("found " + node);
+        if (node.getNodePropertyNames().size() > 0) {
+            System.out.println("found properties on node + " + node.getNodePropertyNames());
+        }
+        
+        if (node instanceof org.thymeleaf.dom.Element) {
+            org.thymeleaf.dom.Element e = (org.thymeleaf.dom.Element) node;
+            
+            if (e.hasChildren()) {
+                for (Node child : e.getChildren()) {
+                    printChildProperties(child);
+                }
+            }
+        }
+    }
 
     @Override
     public void writeNode(final Arguments arguments, final Writer writer, final Node node) 
             throws IOException {
-        if (node instanceof CacheableNode) {
-            CacheableNode cn = (CacheableNode) node;
+        if (!(node instanceof org.thymeleaf.dom.Element)) {
+            super.writeNode(arguments, writer, node);
+            return;
+        }
+        
+        org.thymeleaf.dom.Element e = (org.thymeleaf.dom.Element) node;
+        
+        String cacheKey = e.getAttributeValueFromNormalizedName("cachekey");
+        
+        boolean forceGenerate = new Random().nextBoolean();
 
-            Element element = getCache().get(cn.getCacheKey());
+        if (StringUtils.isNotBlank(cacheKey)) {
+            Element element = getCache().get(cacheKey);
             String valueToWrite;
             
+            if (forceGenerate) { 
+                element = null;
+            }
+            
+            long start = System.currentTimeMillis();
             if (element != null && element.getObjectValue() != null) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Read template from cache - " + cn.getCacheKey());
+                    LOG.trace("Read template from cache - " + cacheKey);
                 }
                 valueToWrite = (String) element.getObjectValue();
+                System.out.println("It took " + (System.currentTimeMillis() - start) + "ms to read from cache");
             } else {
+                e.removeAttribute("cachekey");
+
                 StringWriter w2 = new StringWriter();
-                super.writeNode(arguments, w2, cn.getDelegateNode());
+                super.writeNode(arguments, w2, node);
                 valueToWrite = w2.toString();
 
-                element = new Element(cn.getCacheKey(), valueToWrite);
+                element = new Element(cacheKey, valueToWrite);
                 getCache().put(element);
+                System.out.println("It took " + (System.currentTimeMillis() - start) + "ms to generate");
             }
             
             writer.write(valueToWrite);

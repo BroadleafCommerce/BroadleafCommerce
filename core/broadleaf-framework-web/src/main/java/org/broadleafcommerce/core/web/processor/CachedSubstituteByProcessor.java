@@ -40,7 +40,6 @@ import net.sf.ehcache.CacheManager;
 
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Attribute;
-import org.thymeleaf.dom.CacheableNode;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.fragment.WholeFragmentSpec;
@@ -52,7 +51,6 @@ import org.thymeleaf.standard.fragment.StandardFragmentProcessor;
 import org.thymeleaf.standard.processor.attr.AbstractStandardFragmentHandlingAttrProcessor;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -77,12 +75,13 @@ public class CachedSubstituteByProcessor extends AbstractFragmentHandlingElement
                 .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValueFromNormalizedName("cachekey"));
         String cacheKey = (String) expression.execute(arguments.getConfiguration(), arguments);
         
-        List<Node> cacheableNodes = new ArrayList<Node>(nodes.size());
-        for (int i = 0; i < nodes.size(); i++) {
-            CacheableNode cn = new CacheableNode(nodes.get(i), cacheKey + ":" + i);
-            cacheableNodes.add(cn);
+        int i = 0;
+        for (Node node : nodes) {
+            if (node instanceof Element) {
+                ((Element) node).setAttribute("cachekey", cacheKey + ":" + (i++));
+            }
         }
-        return cacheableNodes;
+        return nodes;
     }
 
     /**
