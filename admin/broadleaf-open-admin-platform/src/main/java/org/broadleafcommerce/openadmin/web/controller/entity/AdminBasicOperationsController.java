@@ -138,10 +138,12 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             ppr.addFilterAndSortCriteria(new FilterAndSortCriteria(searchField, query));
 
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
+            ClassMetadata lookupMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             for (Entity e : drs.getRecords()) {
                 Map<String, String> responseMap = new HashMap<String, String>();
-                responseMap.put("id", e.findProperty("id").getValue());
-                responseMap.put("displayKey", e.findProperty(searchField).getValue());
+                String idProperty = service.getIdProperty(lookupMetadata);
+                responseMap.put("id", e.findProperty(idProperty).getValue());
+                responseMap.put("displayKey", e.findProperty(searchField).getDisplayValue());
                 responses.add(responseMap);
             }
         }
