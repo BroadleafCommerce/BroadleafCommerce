@@ -176,7 +176,7 @@
             </set>
         </property>
         <property name="templateResolvers" ref="blWebTemplateResolvers" />
-        <property name="templateModeHandlers" value="#blThymeleafStandardTemplateModeHandlers" />
+        <property name="templateModeHandlers" value="#{blThymeleafStandardTemplateModeHandlers.standardTemplateModeHandlers}" />
         <property name="dialects">
             <set>
                 <ref bean="thymeleafSpringStandardDialect" />
