@@ -136,9 +136,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
                 model.setViewName(getDefaultCategoryView());
             }
         }
-        //return model;
-        response.getWriter().write("<html></html>");
-        return null;
+        return model;
     }
 
     public String getDefaultCategoryView() {
