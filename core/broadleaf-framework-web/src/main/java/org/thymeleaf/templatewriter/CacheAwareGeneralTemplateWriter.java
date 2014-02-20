@@ -24,20 +24,34 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.CacheableNode;
+import org.thymeleaf.dom.Document;
 import org.thymeleaf.dom.Node;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
+/**
+ * Wrapper for Thymeleaf's {@link AbstractGeneralTemplateWriter} that provides content caching
+ * on the node level.
+ * 
+ * @author Andre Azzolini (apazzolini)
+ */
+public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWriter {
 
-public class CacheAwareXhtmlHtml5TemplateWriter extends AbstractGeneralTemplateWriter {
-    protected static final Log LOG = LogFactory.getLog(CacheAwareXhtmlHtml5TemplateWriter.class);
+    protected static final Log LOG = LogFactory.getLog(CacheAwareGeneralTemplateWriter.class);
 
     protected Cache cache;
+    protected AbstractGeneralTemplateWriter delegateWriter;
 
-    public CacheAwareXhtmlHtml5TemplateWriter() {
-        super();
+    public CacheAwareGeneralTemplateWriter(AbstractGeneralTemplateWriter delegateWriter) {
+        this.delegateWriter = delegateWriter;
+    }
+
+    @Override
+    public void write(final Arguments arguments, final Writer writer, final Document document) 
+                throws IOException {
+        delegateWriter.write(arguments, writer, document);
     }
     
     @Override
@@ -56,7 +70,7 @@ public class CacheAwareXhtmlHtml5TemplateWriter extends AbstractGeneralTemplateW
                 valueToWrite = (String) element.getObjectValue();
             } else {
                 StringWriter w2 = new StringWriter();
-                super.writeNode(arguments, w2, cn.getDelegateNode());
+                delegateWriter.writeNode(arguments, w2, cn.getDelegateNode());
                 valueToWrite = w2.toString();
 
                 element = new Element(cn.getCacheKey(), valueToWrite);
@@ -65,18 +79,18 @@ public class CacheAwareXhtmlHtml5TemplateWriter extends AbstractGeneralTemplateW
             
             writer.write(valueToWrite);
         } else {
-            super.writeNode(arguments, writer, node);
+            delegateWriter.writeNode(arguments, writer, node);
         }
     }
 
     @Override
     protected boolean shouldWriteXmlDeclaration() {
-        return false;
+        return delegateWriter.shouldWriteXmlDeclaration();
     }
 
     @Override
     protected boolean useXhtmlTagMinimizationRules() {
-        return true;
+        return delegateWriter.useXhtmlTagMinimizationRules();
     }
 
     public Cache getCache() {
