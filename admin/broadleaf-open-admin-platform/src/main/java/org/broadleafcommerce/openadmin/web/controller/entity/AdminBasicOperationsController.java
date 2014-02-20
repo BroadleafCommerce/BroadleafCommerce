@@ -68,6 +68,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value = "owningClass") String owningClass,
             @PathVariable(value="collectionField") String collectionField,
+            @RequestParam(required = false) String requestingEntityId,
             @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams, sectionCrumbs, pathVars);
@@ -80,6 +81,8 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ppr.addFilterAndSortCriteria(getCriteria(requestParams));
         ppr.setStartIndex(getStartIndex(requestParams));
         ppr.setMaxIndex(getMaxIndex(requestParams));
+        ppr.removeFilterAndSortCriteria(requestingEntityId);
+        ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
         
         if (md instanceof BasicFieldMetadata) {
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
