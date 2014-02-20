@@ -47,7 +47,7 @@ public class CacheAwareXhtmlHtml5TemplateWriter extends AbstractGeneralTemplateW
             CacheableNode cn = (CacheableNode) node;
 
             Element element = getCache().get(cn.getCacheKey());
-            String valueToWrite = null;
+            String valueToWrite;
             
             if (element != null && element.getObjectValue() != null) {
                 if (LOG.isTraceEnabled()) {
@@ -63,7 +63,7 @@ public class CacheAwareXhtmlHtml5TemplateWriter extends AbstractGeneralTemplateW
                 getCache().put(element);
             }
             
-            writer.write((String) element.getObjectValue());
+            writer.write(valueToWrite);
         } else {
             super.writeNode(arguments, writer, node);
         }
