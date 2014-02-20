@@ -21,6 +21,8 @@ package org.broadleafcommerce.common.web;
 
 import org.thymeleaf.templatemode.ITemplateModeHandler;
 import org.thymeleaf.templateparser.ITemplateParser;
+import org.thymeleaf.templatewriter.AbstractGeneralTemplateWriter;
+import org.thymeleaf.templatewriter.CacheAwareGeneralTemplateWriter;
 import org.thymeleaf.templatewriter.ITemplateWriter;
 
 /**
@@ -45,7 +47,11 @@ public class BroadleafThymeleafTemplateModeHandler implements ITemplateModeHandl
     }
 
     public ITemplateWriter getTemplateWriter() {
-        return handler.getTemplateWriter();
+        if (handler.getTemplateWriter() instanceof AbstractGeneralTemplateWriter) {
+            return new CacheAwareGeneralTemplateWriter((AbstractGeneralTemplateWriter) handler.getTemplateWriter());
+        } else {
+            return handler.getTemplateWriter();
+        }
     }
 }
 
