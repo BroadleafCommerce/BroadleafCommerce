@@ -165,6 +165,9 @@
         </property>
     </bean>
     
+    <bean id="blThymeleafStandardTemplateModeHandlers" 
+        class="org.broadleafcommerce.common.web.BroadleafThymeleafStandardTemplateModeHandlers" />
+    
     <bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
         <property name="messageResolvers">
             <set>
@@ -173,6 +176,7 @@
             </set>
         </property>
         <property name="templateResolvers" ref="blWebTemplateResolvers" />
+        <property name="templateModeHandlers" value="#blThymeleafStandardTemplateModeHandlers" />
         <property name="dialects">
             <set>
                 <ref bean="thymeleafSpringStandardDialect" />
