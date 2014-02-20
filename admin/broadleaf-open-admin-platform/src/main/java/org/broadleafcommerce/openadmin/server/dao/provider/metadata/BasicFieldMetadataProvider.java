@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -64,6 +57,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -256,6 +256,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 metadata.setExplicitFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 metadata.setLookupDisplayProperty(annot.lookupDisplayProperty());
                 metadata.setForcePopulateChildProperties(annot.forcePopulateChildProperties());
+                metadata.setDisableTypeaheadLookup(annot.disableTypeaheadLookup());
                 if (!StringUtils.isEmpty(annot.lookupDisplayProperty())) {
                     metadata.setForeignKeyDisplayValueProperty(annot.lookupDisplayProperty());
                 }
@@ -446,6 +447,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.FORCEPOPULATECHILDPROPERTIES)) {
                 fieldMetadataOverride.setForcePopulateChildProperties(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
                                         Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.DISABLETYPEAHEADLOOKUP)) {
+                fieldMetadataOverride.setDisableTypeaheadLookup(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
+                                        Boolean.parseBoolean(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.USESERVERSIDEINSPECTIONCACHE)) {
                 fieldMetadataOverride.setUseServerSideInspectionCache(StringUtils.isEmpty(stringValue)?
                                         entry.getValue().booleanOverrideValue():Boolean.parseBoolean(stringValue));
@@ -525,6 +529,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 override.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
                 override.setLookupDisplayProperty(toOneLookup.lookupDisplayProperty());
                 override.setForcePopulateChildProperties(toOneLookup.forcePopulateChildProperties());
+                override.setDisableTypeaheadLookup(toOneLookup.disableTypeaheadLookup());
                 override.setCustomCriteria(toOneLookup.customCriteria());
                 override.setUseServerSideInspectionCache(toOneLookup.useServerSideInspectionCache());
                 override.setToOneLookupCreatedViaAnnotation(true);
@@ -682,6 +687,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getForcePopulateChildProperties()!=null) {
             metadata.setForcePopulateChildProperties(basicFieldMetadata.getForcePopulateChildProperties());
+        }
+        if (basicFieldMetadata.getDisableTypeaheadLookup()!=null) {
+            metadata.setDisableTypeaheadLookup(basicFieldMetadata.getDisableTypeaheadLookup());
         }
         if (basicFieldMetadata.getCustomCriteria() != null) {
             metadata.setCustomCriteria(basicFieldMetadata.getCustomCriteria());

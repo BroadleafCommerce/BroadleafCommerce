@@ -91,5 +91,15 @@ public @interface AdminPresentationToOneLookup {
      * @return whether or not to force population of the child properties
      */
     boolean forcePopulateChildProperties() default false;
+    
+    /**
+     * <p>Optional - by setting this value to true, the admin will utilize a modal
+     * based listgrid to search for the associated entity. When the value is set to
+     * false, the admin will utilize an input field that can be typed in, which will
+     * be backed by an AJAX search to the server for the associated entity.</p>
+     * 
+     * @return whether or not to disable the typeahead lookup feature for this field
+     */
+    boolean disableTypeaheadLookup() default false;
 
 }
