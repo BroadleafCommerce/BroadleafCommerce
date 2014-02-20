@@ -26,11 +26,11 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.util.Currency;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -48,6 +48,10 @@ public class BroadleafRequestContext {
     
     public static void setBroadleafRequestContext(BroadleafRequestContext broadleafRequestContext) {
         BROADLEAF_REQUEST_CONTEXT.set(broadleafRequestContext);
+    }
+
+    public static void removeBroadleafRequestContext() {
+        BROADLEAF_REQUEST_CONTEXT.remove();
     }
 
     public static boolean hasLocale(){
@@ -86,9 +90,7 @@ public class BroadleafRequestContext {
      */
     public void setRequest(HttpServletRequest request) {
         this.request = request;
-        if (webRequest == null) {
-            setWebRequest(new ServletWebRequest(request));
-        }
+        this.webRequest = new ServletWebRequest(request);
     }
 
     /**
@@ -123,11 +125,9 @@ public class BroadleafRequestContext {
      */
     public void setWebRequest(WebRequest webRequest) {
         this.webRequest = webRequest;
-        if (this.request == null) {
-            if (webRequest instanceof ServletWebRequest) {
-                setRequest(((ServletWebRequest) webRequest).getRequest());
-                setResponse(((ServletWebRequest) webRequest).getResponse());
-            }
+        if (webRequest instanceof ServletWebRequest) {
+            this.request = ((ServletWebRequest) webRequest).getRequest();
+            setResponse(((ServletWebRequest) webRequest).getResponse());
         }
     }
 

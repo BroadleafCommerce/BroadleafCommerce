@@ -23,16 +23,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Responsible for setting up the site and locale used by Broadleaf Commerce components.
@@ -98,6 +98,7 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } finally {
             SandBoxContext.setSandBoxContext(null);
+            BroadleafRequestContext.removeBroadleafRequestContext();
         }
     }
 
