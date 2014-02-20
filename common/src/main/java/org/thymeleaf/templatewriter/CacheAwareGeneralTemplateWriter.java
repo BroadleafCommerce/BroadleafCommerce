@@ -43,7 +43,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.CacheableNode;
-import org.thymeleaf.dom.Document;
 import org.thymeleaf.dom.Node;
 
 import java.io.IOException;
@@ -68,12 +67,6 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
     }
 
     @Override
-    public void write(final Arguments arguments, final Writer writer, final Document document) 
-                throws IOException {
-        delegateWriter.write(arguments, writer, document);
-    }
-    
-    @Override
     public void writeNode(final Arguments arguments, final Writer writer, final Node node) 
             throws IOException {
         if (node instanceof CacheableNode) {
@@ -89,7 +82,7 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
                 valueToWrite = (String) element.getObjectValue();
             } else {
                 StringWriter w2 = new StringWriter();
-                delegateWriter.writeNode(arguments, w2, cn.getDelegateNode());
+                super.writeNode(arguments, w2, cn.getDelegateNode());
                 valueToWrite = w2.toString();
 
                 element = new Element(cn.getCacheKey(), valueToWrite);
@@ -98,7 +91,7 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
             
             writer.write(valueToWrite);
         } else {
-            delegateWriter.writeNode(arguments, writer, node);
+            super.writeNode(arguments, writer, node);
         }
     }
 
