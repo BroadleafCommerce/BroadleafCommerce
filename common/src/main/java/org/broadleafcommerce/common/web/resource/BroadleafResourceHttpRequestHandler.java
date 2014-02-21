@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.web.resource;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
@@ -76,11 +77,15 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
         if (unminifiedResource == null) {
             unminifiedResource = super.getResource(request);
         }
-        
-        if (!minifyService.getEnabled() || !minifyService.getAllowSingleMinification()) {
-            return unminifiedResource;
+
+        try {
+            if (!minifyService.getEnabled() || !minifyService.getAllowSingleMinification()) {
+                return unminifiedResource;
+            }
+        } finally {
+            ThreadLocalManager.remove();
         }
-        
+
         LOG.warn("Minifying individual file - this should only be used in development to trace down particular " +
         		 "files that are causing an exception in the minification service. The results of the minification " +
         		 "performed outside of a bundle are not stored to disk.");
