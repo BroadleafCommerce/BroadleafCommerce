@@ -106,7 +106,7 @@
                     }
                     
                     if ($criteriaInput && $criteriaInput.length > 0) {
-                        $criteriaInput.val(value);
+                        $criteriaInput.val(decodeURIComponent(value));
                         $criteriaInput.closest('.filter-fields').find('button.listgrid-clear-filter').removeAttr('disabled');
                         //show the active filter icon
                         var filterIcon = $($criteriaInput).parents('.listgrid-headerBtn').find('div i.filter-icon');
