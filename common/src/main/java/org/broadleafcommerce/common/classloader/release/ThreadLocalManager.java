@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.common.classloader.release;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,7 +37,7 @@ public class ThreadLocalManager {
         protected ThreadLocalManager initialValue() {
             ThreadLocalManager manager = new ThreadLocalManager();
             String checkOrphans = System.getProperty("ThreadLocalManager.notify.orphans");
-            if (!StringUtils.isBlank(checkOrphans) && "true".equals(checkOrphans)) {
+            if ("true".equals(checkOrphans)) {
                 manager.marker = new RuntimeException("Thread Local Manager is not empty - the following is the culprit call that setup the thread local but did not clear it.");
             }
             return manager;
