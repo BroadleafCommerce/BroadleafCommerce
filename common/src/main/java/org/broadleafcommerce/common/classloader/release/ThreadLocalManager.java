@@ -19,11 +19,12 @@
  */
 package org.broadleafcommerce.common.classloader.release;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -35,11 +36,17 @@ public class ThreadLocalManager {
     private static final ThreadLocal<ThreadLocalManager> THREAD_LOCAL_MANAGER = new ThreadLocal<ThreadLocalManager>() {
         @Override
         protected ThreadLocalManager initialValue() {
-            return new ThreadLocalManager();
+            ThreadLocalManager manager = new ThreadLocalManager();
+            String checkOrphans = System.getProperty("ThreadLocalManager.notify.orphans");
+            if (!StringUtils.isBlank(checkOrphans) && "true".equals(checkOrphans)) {
+                manager.marker = new RuntimeException("Thread Local Manager is not empty - the following is the culprit call that setup the thread local but did not clear it.");
+            }
+            return manager;
         }
     };
 
     protected Map<Long, ThreadLocal> threadLocals = new LinkedHashMap<Long, ThreadLocal>();
+    protected RuntimeException marker = null;
 
     public static void addThreadLocal(ThreadLocal threadLocal) {
         Long position;
@@ -93,4 +100,12 @@ public class ThreadLocalManager {
 
     private static Long count = 0L;
     private static final Object threadLock = new Object();
+
+    @Override
+    public String toString() {
+        if (!threadLocals.isEmpty() && marker != null) {
+            marker.printStackTrace();
+        }
+        return super.toString();
+    }
 }
