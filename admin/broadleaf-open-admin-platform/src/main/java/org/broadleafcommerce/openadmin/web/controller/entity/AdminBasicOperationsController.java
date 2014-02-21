@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -143,7 +144,13 @@ public class AdminBasicOperationsController extends AdminAbstractController {
                 Map<String, String> responseMap = new HashMap<String, String>();
                 String idProperty = service.getIdProperty(lookupMetadata);
                 responseMap.put("id", e.findProperty(idProperty).getValue());
-                responseMap.put("displayKey", e.findProperty(searchField).getDisplayValue());
+
+                String displayKey = e.findProperty(searchField).getDisplayValue();
+                if (StringUtils.isBlank(displayKey)) {
+                    displayKey = e.findProperty(searchField).getValue();
+                }
+                responseMap.put("displayKey", displayKey);
+
                 responses.add(responseMap);
             }
         }
