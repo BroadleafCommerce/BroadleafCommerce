@@ -32,6 +32,7 @@ import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.SelectionType;
+import com.smartgwt.client.types.TitleOrientation;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.Canvas;
@@ -42,6 +43,7 @@ import com.smartgwt.client.widgets.form.FilterBuilder;
 import com.smartgwt.client.widgets.form.fields.FloatItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.validator.FloatRangeValidator;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
@@ -101,6 +103,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
     protected ToolStripButton advancedButton;
     protected ImgButton helpButtonType;
     protected RadioGroupItem deliveryTypeRadio;
+    protected TextItem codeField;
     protected RadioGroupItem customerRuleRadio;
     protected FilterBuilder customerFilterBuilder;
     protected FilterBuilder fulfillmentGroupFilterBuilder;
@@ -239,13 +242,23 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         valueMap.put("CODE", BLCMain.getMessageManager().getString("deliveryTypeEnumCode"));
         valueMap.put("MANUAL", BLCMain.getMessageManager().getString("deliveryTypeEnumManual"));
 
-        deliveryTypeRadio = new PromotionAnswerGroup(valueMap, "AUTOMATIC", false);
+        deliveryTypeRadio = new PromotionAnswerGroup(valueMap, "AUTOMATIC", true);
+
+        codeField = new TextItem();
+        codeField.setTitle(BLCMain.getMessageManager().getString("offerCodeFieldTitle"));
+        codeField.setWrapTitle(false);
+        codeField.setVisible(false);
+        codeField.setWidth(240);
+        codeField.setShowTitle(false);
+        codeField.setHint(BLCMain.getMessageManager().getString("offerCodeFieldTitle"));
+        codeField.setShowHintInField(true);
+        codeField.setTitleOrientation(TitleOrientation.LEFT);
 
         customerObtainForm = new DynamicForm();
         customerObtainForm.setNumCols(1);
         customerObtainForm.setStyleName(BL_PROMO_QUESTION_ANSWERS);
+        customerObtainForm.setFields(deliveryTypeRadio, codeField);
         customerObtainForm.setTitleSuffix("");
-        customerObtainForm.setFields(deliveryTypeRadio);
         customerLayout.addMember(customerObtainForm);
 
         whichCustomerForm = new DynamicForm();
@@ -722,6 +735,11 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
     @Override
     public RadioGroupItem getDeliveryTypeRadio() {
         return deliveryTypeRadio;
+    }
+
+    @Override
+    public TextItem getCodeField() {
+        return codeField;
     }
 
     @Override

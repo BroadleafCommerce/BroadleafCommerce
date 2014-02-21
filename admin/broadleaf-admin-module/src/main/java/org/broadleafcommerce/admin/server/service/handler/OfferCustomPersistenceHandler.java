@@ -18,15 +18,21 @@ package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.openadmin.client.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.client.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.client.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.client.dto.Entity;
 import org.broadleafcommerce.openadmin.client.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.client.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.client.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.client.dto.PersistencePerspective;
@@ -46,6 +52,7 @@ import com.anasoft.os.daofusion.criteria.NestedPropertyCriteria;
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
+import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -113,6 +120,15 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
              */
             mergedProperties.put("appliesToFulfillmentGroupRules", mergedProperties.get("appliesToOrderRules"));
             
+            PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
+            Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
+            BasicFieldMetadata metadata = (BasicFieldMetadata) offerCodeMergedProperties.get("offerCode");
+            metadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
+            mergedProperties.put("offerCode.offerCode", metadata);
+            BasicFieldMetadata metadata2 = (BasicFieldMetadata) offerCodeMergedProperties.get("id");
+            metadata2.setVisibility(VisibilityEnum.HIDDEN_ALL);
+            mergedProperties.put("offerCode.id", metadata2);
+
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
             ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
             
@@ -170,6 +186,26 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
                 }
             }
             
+            PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
+            Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
+            for (Entity record : entities) {
+                CriteriaTransferObject offerCodeCto = new CriteriaTransferObject();
+                FilterAndSortCriteria filterCriteria = offerCodeCto.get("offer");
+                filterCriteria.setFilterValue(record.findProperty("id").getValue());
+                BaseCtoConverter offerCodeCtoConverter = helper.getCtoConverter(offerCodePersistencePerspective, offerCodeCto, OfferCode.class.getName(), offerCodeMergedProperties);
+                
+                PersistentEntityCriteria offerCodeQueryCriteria = offerCodeCtoConverter.convert(offerCodeCto, OfferCode.class.getName());
+                List<Serializable> offerCodes = dynamicEntityDao.query(offerCodeQueryCriteria, OfferCode.class);
+                Entity[] offerCodeEntities = helper.getRecords(offerCodeMergedProperties, offerCodes, null, null);
+                
+                if (offerCodeEntities.length > 0) {
+                    Entity temp = new Entity();
+                    temp.setType(offerCodeEntities[0].getType());
+                    temp.setProperties(new Property[] {offerCodeEntities[0].findProperty("offerCode"), offerCodeEntities[0].findProperty("id")});
+                    record.mergeProperties("offerCode", temp);
+                }
+            }
+            
             int totalRecords = helper.getTotalRecords(persistencePackage, cto, ctoConverter);
             
             DynamicResultSet response = new DynamicResultSet(null, entities, totalRecords);
@@ -224,8 +260,28 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             
             dynamicEntityDao.persist(offerInstance);
             
+            OfferCode offerCode = null;
+            if (entity.findProperty("deliveryType").getValue().equals("CODE")) {
+                offerCode = (OfferCode) entityConfiguration.createEntityInstance(OfferCode.class.getName());
+                offerCode.setOfferCode(entity.findProperty("offerCode.offerCode").getValue());
+                offerCode.setEndDate(offerInstance.getEndDate());
+                offerCode.setMaxUses(offerInstance.getMaxUses());
+                offerCode.setOffer(offerInstance);
+                offerCode.setStartDate(offerInstance.getStartDate());
+                offerCode = (OfferCode) dynamicEntityDao.merge(offerCode);
+            }
             
             Entity offerEntity = helper.getRecord(offerProperties, offerInstance, null, null);
+            if (offerCode != null) {
+                PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
+                Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
+                Entity offerCodeEntity = helper.getRecord(offerCodeMergedProperties, offerCode, null, null);
+                
+                Entity temp = new Entity();
+                temp.setType(offerCodeEntity.getType());
+                temp.setProperties(new Property[] {offerCodeEntity.findProperty("offerCode"), offerCodeEntity.findProperty("id")});
+                offerEntity.mergeProperties("offerCode", temp);
+            }
             Property fgProperty = entity.findProperty("appliesToFulfillmentGroupRules");
             if (fgProperty != null) {
                 offerEntity.addProperty(fgProperty);
@@ -243,6 +299,14 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
         Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Property offerCodeId = entity.findProperty("offerCode.id");
+            if (offerCodeId != null){
+                OfferCode offerCode = (OfferCode) dynamicEntityDao.retrieve(OfferCodeImpl.class, Long.valueOf(entity.findProperty("offerCode.id").getValue()));
+                if (offerCode != null) {
+                    offerCode.setOffer(null);
+                    dynamicEntityDao.remove(offerCode);
+                }
+            }
             Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, offerProperties);
             Offer offerInstance = (Offer) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
@@ -270,7 +334,38 @@ public class OfferCustomPersistenceHandler extends CustomPersistenceHandlerAdapt
             
             dynamicEntityDao.merge(offerInstance);
             
+            Property offerCodeId = entity.findProperty("offerCode.id");
+            OfferCode offerCode = null;
+            if (entity.findProperty("deliveryType") != null && entity.findProperty("deliveryType").getValue().equals("CODE")) {
+                if (offerCodeId == null) {
+                    offerCode = (OfferCode) entityConfiguration.createEntityInstance(OfferCode.class.getName());
+                } else {
+                    offerCode = (OfferCode) dynamicEntityDao.retrieve(OfferCodeImpl.class, Long.valueOf(entity.findProperty("offerCode.id").getValue()));
+                }
+                offerCode.setOfferCode(entity.findProperty("offerCode.offerCode").getValue());
+                offerCode.setEndDate(offerInstance.getEndDate());
+                offerCode.setMaxUses(offerInstance.getMaxUses());
+                offerCode.setOffer(offerInstance);
+                offerCode.setStartDate(offerInstance.getStartDate());
+                offerCode = (OfferCode) dynamicEntityDao.merge(offerCode);
+            } else if (offerCodeId != null){
+                offerCode = (OfferCode) dynamicEntityDao.retrieve(OfferCodeImpl.class, Long.valueOf(entity.findProperty("offerCode.id").getValue()));
+                offerCode.setOffer(null);
+                dynamicEntityDao.remove(offerCode);
+                offerCode = null;
+            }
+            
             Entity offerEntity = helper.getRecord(offerProperties, offerInstance, null, null);
+            if (offerCode != null) {
+                PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
+                Map<String, FieldMetadata> offerCodeMergedProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), offerCodePersistencePerspective);
+                Entity offerCodeEntity = helper.getRecord(offerCodeMergedProperties, offerCode, null, null);
+                
+                Entity temp = new Entity();
+                temp.setType(offerCodeEntity.getType());
+                temp.setProperties(new Property[] {offerCodeEntity.findProperty("offerCode"), offerCodeEntity.findProperty("id")});
+                offerEntity.mergeProperties("offerCode", temp);
+            }
             Property fgProperty = entity.findProperty("appliesToFulfillmentGroupRules");
             if (fgProperty != null) {
                 offerEntity.addProperty(fgProperty);

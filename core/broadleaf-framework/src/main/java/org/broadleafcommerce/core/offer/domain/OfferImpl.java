@@ -16,17 +16,13 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
@@ -37,7 +33,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
@@ -48,11 +43,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,7 +66,6 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-
 @Entity
 @Table(name = "BLC_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -93,7 +85,11 @@ public class OfferImpl implements Offer, Status {
         name="OfferId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="OfferImpl"),
+            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferImpl")
         }
     )
@@ -222,14 +218,6 @@ public class OfferImpl implements Offer, Status {
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
-    
-    @OneToMany(mappedBy = "offer", targetEntity = OfferCodeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-    @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST,
-            friendlyName = "offerCodeListTitle",
-            order = 1)
-    protected List<OfferCode> offerCodes = new ArrayList<OfferCode>(100);
     
     @Column(name = "USE_NEW_FORMAT")
     @AdminPresentation(friendlyName = "OfferImpl_Treat_As_New_Format", group = "OfferImpl_Advanced", groupOrder=4, visibility = VisibilityEnum.HIDDEN_ALL)
@@ -482,53 +470,31 @@ public class OfferImpl implements Offer, Status {
 
     @Override
     public Long getMaxUsesPerCustomer() {
-        return maxUsesPerCustomer == null ? 0 : maxUsesPerCustomer;
+        return maxUsesPerCustomer;
     }
 
     @Override
     public void setMaxUsesPerCustomer(Long maxUsesPerCustomer) {
         this.maxUsesPerCustomer = maxUsesPerCustomer;
     }
-    
-    @Override
-    public boolean isUnlimitedUsePerCustomer() {
-        return getMaxUsesPerCustomer() == 0;
-    }
-    
-    @Override
-    public boolean isLimitedUsePerCustomer() {
-        return getMaxUsesPerCustomer() > 0;
-    }
 
-    @Override
     public int getMaxUsesPerOrder() {
         return maxUsesPerOrder;
     }
 
-    @Override
     public void setMaxUsesPerOrder(int maxUsesPerOrder) {
         this.maxUsesPerOrder = maxUsesPerOrder;
     }
 
-    @Override
-    public boolean isUnlimitedUsePerOrder() {
-        return getMaxUsesPerOrder() == 0;
-    }
-    
-    @Override
-    public boolean isLimitedUsePerOrder() {
-        return getMaxUsesPerOrder() > 0;
-    }
 
     @Override
-    @Deprecated
     public int getMaxUses() {
-        return getMaxUsesPerOrder();
+        return maxUsesPerOrder;
     }
 
     @Override
     public void setMaxUses(int maxUses) {
-         setMaxUsesPerOrder(maxUses);
+        this.maxUsesPerOrder = maxUses;
     }
 
     @Override
@@ -647,28 +613,61 @@ public class OfferImpl implements Offer, Status {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .append(name)
-            .append(startDate)
-            .append(type)
-            .append(value)
-            .build();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        return result;
     }
-    
+
     @Override
-    public boolean equals(Object o) {
-        if (o instanceof OfferImpl) {
-            OfferImpl that = (OfferImpl) o;
-            return new EqualsBuilder()
-                .append(this.id, that.id)
-                .append(this.name, that.name)
-                .append(this.startDate, that.startDate)
-                .append(this.type, that.type)
-                .append(this.value, that.value)
-                .build();
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        OfferImpl other = (OfferImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
         }
         
-        return false;
+        if (name == null) {
+            if (other.name != null) {
+                return false;
+            }
+        } else if (!name.equals(other.name)) {
+            return false;
+        }
+        if (startDate == null) {
+            if (other.startDate != null) {
+                return false;
+            }
+        } else if (!startDate.equals(other.startDate)) {
+            return false;
+        }
+        if (type == null) {
+            if (other.type != null) {
+                return false;
+            }
+        } else if (!type.equals(other.type)) {
+            return false;
+        }
+        if (value == null) {
+            if (other.value != null) {
+                return false;
+            }
+        } else if (!value.equals(other.value)) {
+            return false;
+        }
+        return true;
     }
 
 

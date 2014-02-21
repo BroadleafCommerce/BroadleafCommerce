@@ -16,25 +16,19 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -48,6 +42,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
@@ -63,7 +60,7 @@ import javax.persistence.Table;
         @AdminPresentationOverride(name="offer.targetItemCriteria", value=@AdminPresentation(excluded = true))
     }
 )
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE, friendlyName = "OfferCodeImpl_baseOfferCode")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OfferCodeImpl_baseOfferCode")
 public class OfferCodeImpl implements OfferCode {
 
     public static final long serialVersionUID = 1L;
@@ -74,7 +71,11 @@ public class OfferCodeImpl implements OfferCode {
         name="OfferCodeId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
+            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
+            @Parameter(name="segment_column_name", value="ID_NAME"),
+            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="OfferCodeImpl"),
+            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferCodeImpl")
         }
     )
@@ -85,6 +86,7 @@ public class OfferCodeImpl implements OfferCode {
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", group = "OfferCodeImpl_Description")
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
@@ -105,7 +107,7 @@ public class OfferCodeImpl implements OfferCode {
     protected int maxUses;
 
     @Column(name = "USES")
-    @AdminPresentation(excluded=true)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Uses", visibility = VisibilityEnum.HIDDEN_ALL)
     @Deprecated
     protected int uses;
     
@@ -114,120 +116,107 @@ public class OfferCodeImpl implements OfferCode {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<Order> orders = new ArrayList<Order>();
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    @Override
     public Offer getOffer() {
         return offer;
     }
 
-    @Override
     public void setOffer(Offer offer) {
         this.offer = offer;
     }
 
-    @Override
     public String getOfferCode() {
         return offerCode;
     }
 
-    @Override
     public void setOfferCode(String offerCode) {
         this.offerCode = offerCode;
     }
 
-    @Override
     public int getMaxUses() {
         return maxUses;
     }
 
-    @Override
     public void setMaxUses(int maxUses) {
         this.maxUses = maxUses;
     }
-    
-    @Override
-    public boolean isUnlimitedUse() {
-        return getMaxUses() == 0;
-    }
-    
-    @Override
-    public boolean isLimitedUse() {
-        return getMaxUses() > 0;
-    }
 
-    @Override
     @Deprecated
     public int getUses() {
         return uses;
     }
 
-    @Override
     @Deprecated
     public void setUses(int uses) {
         this.uses = uses;
     }
 
-    @Override
     public Date getStartDate() {
         return startDate;
     }
 
-    @Override
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    @Override
     public Date getEndDate() {
         return endDate;
     }
 
-    @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
-    @Override
     public List<Order> getOrders() {
         return orders;
     }
 
-    @Override
     public void setOrders(List<Order> orders) {
         this.orders = orders;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .append(offer)
-            .append(offerCode)
-            .build();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((offer == null) ? 0 : offer.hashCode());
+        result = prime * result + ((offerCode == null) ? 0 : offerCode.hashCode());
+        return result;
     }
-    
+
     @Override
-    public boolean equals(Object o) {
-        if (o instanceof OfferCodeImpl) {
-            OfferCodeImpl that = (OfferCodeImpl) o;
-            return new EqualsBuilder()
-                .append(this.id, that.id)
-                .append(this.offer, that.offer)
-                .append(this.offerCode, that.offerCode)
-                .build();
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OfferCodeImpl other = (OfferCodeImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
         }
-        
-        return false;
+
+        if (offer == null) {
+            if (other.offer != null)
+                return false;
+        } else if (!offer.equals(other.offer))
+            return false;
+        if (offerCode == null) {
+            if (other.offerCode != null)
+                return false;
+        } else if (!offerCode.equals(other.offerCode))
+            return false;
+        return true;
     }
 
 
 }
-

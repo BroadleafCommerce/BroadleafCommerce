@@ -16,14 +16,6 @@
 
 package org.broadleafcommerce.admin.client.presenter.promotion;
 
-import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
-import org.broadleafcommerce.openadmin.client.BLCMain;
-import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.openadmin.client.translation.MVELToAdvancedCriteriaTranslator;
-import org.broadleafcommerce.openadmin.client.view.dynamic.FilterRestartCallback;
-import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.data.AdvancedCriteria;
@@ -35,6 +27,13 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import org.broadleafcommerce.admin.client.view.promotion.OfferDisplay;
+import org.broadleafcommerce.openadmin.client.BLCMain;
+import org.broadleafcommerce.openadmin.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.openadmin.client.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.openadmin.client.translation.MVELToAdvancedCriteriaTranslator;
+import org.broadleafcommerce.openadmin.client.view.dynamic.FilterRestartCallback;
+import org.broadleafcommerce.openadmin.client.view.dynamic.ItemBuilderDisplay;
 
 import java.util.LinkedHashMap;
 
@@ -244,7 +243,6 @@ public class OfferPresenterInitializer {
     public void initItemTargets(final Record selectedRecord, final FilterRestartCallback cb) {
         Criteria relationshipCriteria = offerItemTargetCriteriaDataSource.createRelationshipCriteria(offerItemTargetCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
         offerItemTargetCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
-            @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {
                 boolean isTargetCriteria = false;
                 if (response.getTotalRows() > 0) {
@@ -282,7 +280,6 @@ public class OfferPresenterInitializer {
                                 display.getRawItemTextArea().setValue(record.getAttribute("orderItemMatchRule"));
                             }
                             display.getRemoveButton().addClickHandler(new ClickHandler() {
-                                @Override
                                 public void onClick(ClickEvent event) {
                                     getDisplay().removeTargetItemBuilder(display);
                                 }
@@ -329,7 +326,6 @@ public class OfferPresenterInitializer {
     public void initItemQualifiers(final Record selectedRecord, final String type, final FilterRestartCallback cb) {
         Criteria relationshipCriteria = offerItemCriteriaDataSource.createRelationshipCriteria(offerItemCriteriaDataSource.getPrimaryKeyValue(selectedRecord));
         offerItemCriteriaDataSource.fetchData(relationshipCriteria, new DSCallback() {
-            @Override
             public void execute(DSResponse response, Object rawData, DSRequest request) {
                 boolean isItemQualifierCriteria = false;
                 if (response.getTotalRows() > 0) {
@@ -373,7 +369,6 @@ public class OfferPresenterInitializer {
                                 display.getRawItemTextArea().setValue(record.getAttribute("orderItemMatchRule"));
                             }
                             display.getRemoveButton().addClickHandler(new ClickHandler() {
-                                @Override
                                 public void onClick(ClickEvent event) {
                                     getDisplay().removeItemBuilder(display);
                                 }
@@ -454,7 +449,16 @@ public class OfferPresenterInitializer {
     }
     
     public void initDeliveryType(String deliveryType, Record selectedRecord) {
-        // unimplemented; codes are added in their own list grid
+        if (deliveryType.equals("CODE")) {
+            getDisplay().getCodeField().enable();
+            getDisplay().getCodeField().show();
+            getDisplay().getCodeField().setValue(selectedRecord.getAttribute("offerCode.offerCode"));
+        } else {
+            getDisplay().getCodeField().disable();
+            getDisplay().getCodeField().hide();
+            getDisplay().getCodeField().setValue("");
+        }
+        
     }
     
     public void initCustomerRule(String customerRule, Record selectedRecord) {
