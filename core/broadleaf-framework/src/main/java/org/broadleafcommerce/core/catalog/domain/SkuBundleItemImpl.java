@@ -100,7 +100,7 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
     @AdminPresentation(friendlyName = "Sku", prominent = true, 
         order = 0, gridOrder = 0)
-    @AdminPresentationToOneLookup(disableTypeaheadLookup = true)
+    @AdminPresentationToOneLookup()
     protected Sku sku;
 
     @Transient

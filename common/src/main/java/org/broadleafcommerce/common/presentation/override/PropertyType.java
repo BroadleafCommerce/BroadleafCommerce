@@ -58,7 +58,7 @@ public class PropertyType {
         public static final String LOOKUPTYPE = "lookupType";
         public static final String CUSTOMCRITERIA = "customCriteria";
         public static final String FORCEPOPULATECHILDPROPERTIES = "forcePopulateChildProperties";
-        public static final String DISABLETYPEAHEADLOOKUP = "disableTypeaheadLookup";
+        public static final String ENABLETYPEAHEADLOOKUP = "enableTypeaheadLookup";
     }
 
     public static class AdminPresentationDataDrivenEnumeration {

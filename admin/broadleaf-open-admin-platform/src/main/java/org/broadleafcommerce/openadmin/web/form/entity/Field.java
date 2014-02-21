@@ -58,7 +58,7 @@ public class Field {
     protected Boolean isDerived;
     protected Boolean isLargeEntry;
     protected Boolean isDirty;
-    protected Boolean isTypeaheadDisabled;
+    protected Boolean isTypeaheadEnabled;
     protected String hint;
     protected String tooltip;
     protected String help;
@@ -183,8 +183,8 @@ public class Field {
         return this;
     }
     
-    public Field withTypeaheadDisabled(Boolean isTypeaheadDisabled) {
-        setIsTypeaheadDisabled(isTypeaheadDisabled);
+    public Field withTypeaheadEnabled(Boolean isTypeaheadEnabled) {
+        setIsTypeaheadEnabled(isTypeaheadEnabled);
         return this;
     }
 
@@ -256,8 +256,8 @@ public class Field {
         return getAttributes().get(key);
     }
     
-    public Boolean getIsTypeaheadDisabled() {
-        return isTypeaheadDisabled == null ? false : isTypeaheadDisabled;
+    public Boolean getIsTypeaheadEnabled() {
+        return isTypeaheadEnabled == null ? false : isTypeaheadEnabled;
     }
     
     /* ************************** */
@@ -444,8 +444,8 @@ public class Field {
         this.attributes = attributes;
     }
 
-    public void setIsTypeaheadDisabled(Boolean isTypeaheadDisabled) {
-        this.isTypeaheadDisabled = isTypeaheadDisabled;
+    public void setIsTypeaheadEnabled(Boolean isTypeaheadEnabled) {
+        this.isTypeaheadEnabled = isTypeaheadEnabled;
     }
     
 }

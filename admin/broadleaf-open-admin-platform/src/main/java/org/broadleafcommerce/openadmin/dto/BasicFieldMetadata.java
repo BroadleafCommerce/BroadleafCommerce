@@ -72,7 +72,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String hint;
     protected String lookupDisplayProperty;
     protected Boolean forcePopulateChildProperties;
-    protected Boolean disableTypeaheadLookup;
+    protected Boolean enableTypeaheadLookup;
     protected String optionListEntity;
     protected String optionValueFieldName;
     protected String optionDisplayFieldName;
@@ -373,13 +373,12 @@ public class BasicFieldMetadata extends FieldMetadata {
     public void setForcePopulateChildProperties(Boolean forcePopulateChildProperties) {
         this.forcePopulateChildProperties = forcePopulateChildProperties;
     }
-    
-    public Boolean getDisableTypeaheadLookup() {
-        return disableTypeaheadLookup;
+    public Boolean getEnableTypeaheadLookup() {
+        return enableTypeaheadLookup;
     }
     
-    public void setDisableTypeaheadLookup(Boolean disableTypeaheadLookup) {
-        this.disableTypeaheadLookup = disableTypeaheadLookup;
+    public void setEnableTypeaheadLookup(Boolean enableTypeaheadLookup) {
+        this.enableTypeaheadLookup = enableTypeaheadLookup;
     }
 
     public Boolean getOptionCanEditValues() {
@@ -546,7 +545,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         }
         metadata.lookupDisplayProperty = lookupDisplayProperty;
         metadata.forcePopulateChildProperties = forcePopulateChildProperties;
-        metadata.disableTypeaheadLookup = disableTypeaheadLookup;
+        metadata.enableTypeaheadLookup = enableTypeaheadLookup;
         metadata.optionListEntity = optionListEntity;
         metadata.optionCanEditValues = optionCanEditValues;
         metadata.optionDisplayFieldName = optionDisplayFieldName;
@@ -647,7 +646,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (forcePopulateChildProperties != null ? !forcePopulateChildProperties.equals(metadata.forcePopulateChildProperties) : metadata.forcePopulateChildProperties != null) {
             return false;
         }
-        if (disableTypeaheadLookup != null ? !disableTypeaheadLookup.equals(metadata.disableTypeaheadLookup) : metadata.disableTypeaheadLookup != null) {
+        if (enableTypeaheadLookup != null ? !enableTypeaheadLookup.equals(metadata.enableTypeaheadLookup) : metadata.enableTypeaheadLookup != null) {
             return false;
         }
         if (mergedPropertyType != metadata.mergedPropertyType) {
@@ -765,7 +764,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (hint != null ? hint.hashCode() : 0);
         result = 31 * result + (lookupDisplayProperty != null ? lookupDisplayProperty.hashCode() : 0);
         result = 31 * result + (forcePopulateChildProperties != null ? forcePopulateChildProperties.hashCode() : 0);
-        result = 31 * result + (disableTypeaheadLookup != null ? disableTypeaheadLookup.hashCode() : 0);
+        result = 31 * result + (enableTypeaheadLookup != null ? enableTypeaheadLookup.hashCode() : 0);
         result = 31 * result + (optionListEntity != null ? optionListEntity.hashCode() : 0);
         result = 31 * result + (optionValueFieldName != null ? optionValueFieldName.hashCode() : 0);
         result = 31 * result + (optionDisplayFieldName != null ? optionDisplayFieldName.hashCode() : 0);

@@ -112,7 +112,7 @@ public class FieldMetadataOverride {
     private String hint;
     private String lookupDisplayProperty;
     private Boolean forcePopulateChildProperties;
-    private Boolean disableTypeaheadLookup;
+    private Boolean enableTypeaheadLookup;
     private String optionListEntity;
     private String optionValueFieldName;
     private String optionDisplayFieldName;
@@ -434,12 +434,12 @@ public class FieldMetadataOverride {
         this.forcePopulateChildProperties = forcePopulateChildProperties;
     }
     
-    public Boolean getDisableTypeaheadLookup() {
-        return disableTypeaheadLookup;
+    public Boolean getEnableTypeaheadLookup() {
+        return enableTypeaheadLookup;
     }
-    
-    public void setDisableTypeaheadLookup(Boolean disableTypeaheadLookup) {
-        this.disableTypeaheadLookup = disableTypeaheadLookup;
+
+    public void setEnableTypeaheadLookup(Boolean enableTypeaheadLookup) {
+        this.enableTypeaheadLookup = enableTypeaheadLookup;
     }
 
     public Boolean getOptionCanEditValues() {

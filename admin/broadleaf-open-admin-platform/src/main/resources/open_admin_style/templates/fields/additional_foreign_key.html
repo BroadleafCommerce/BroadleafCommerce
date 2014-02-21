@@ -28,7 +28,7 @@
 
     <div class="foreign-key-value-container">
         
-        <div th:remove="tag" th:if="${field.isTypeaheadDisabled}">
+        <div th:remove="tag" th:unless="${field.isTypeaheadEnabled}">
             <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>
             <span class="display-value read-only"
                 th:text="*{fields['__${field.name}__'].displayValue}" />
@@ -55,7 +55,7 @@
             </span>
         </div>
 
-        <div th:remove="tag" th:unless="${field.isTypeaheadDisabled}">
+        <div th:remove="tag" th:if="${field.isTypeaheadEnabled}">
             <input type="text" class="to-one-typeahead twelve"
                 th:placeholder="#{typeahead.placeholder(#{${field.friendlyName}})}"
                 th:value="*{fields['__${field.name}__'].displayValue}"

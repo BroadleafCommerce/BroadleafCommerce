@@ -93,13 +93,13 @@ public @interface AdminPresentationToOneLookup {
     boolean forcePopulateChildProperties() default false;
     
     /**
-     * <p>Optional - by setting this value to true, the admin will utilize a modal
-     * based listgrid to search for the associated entity. When the value is set to
-     * false, the admin will utilize an input field that can be typed in, which will
-     * be backed by an AJAX search to the server for the associated entity.</p>
+     * <p>Optional - by setting this value to true, the admin will utilize a typeahead
+     * based lookup to search for the associated entity. When the value is set to
+     * false, the admin will utilize a model that can be used to
+     * search to the server for the associated entity.</p>
      * 
-     * @return whether or not to disable the typeahead lookup feature for this field
+     * @return whether or not to enable the typeahead lookup feature for this field
      */
-    boolean disableTypeaheadLookup() default false;
+    boolean enableTypeaheadLookup() default false;
 
 }

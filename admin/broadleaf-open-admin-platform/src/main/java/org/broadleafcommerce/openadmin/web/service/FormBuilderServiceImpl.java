@@ -507,7 +507,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withHint(fmd.getHint())
                          .withTooltip(fmd.getTooltip())
                          .withHelp(fmd.getHelpText())
-                         .withTypeaheadDisabled(fmd.getDisableTypeaheadLookup());
+                         .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup());
 
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());
