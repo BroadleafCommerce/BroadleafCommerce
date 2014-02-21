@@ -35,9 +35,7 @@
                 </bean>
                 <bean class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
                 <bean class="org.broadleafcommerce.core.checkout.service.workflow.PaymentServiceActivity"/>
-                <bean class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity">
-                    <property name="rollbackHandler" ref="blRecordOfferUsageRollbackHandler" />
-                </bean>
+                <bean class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity"/>
                 <bean class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity"/>
                 <bean class="org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity">
                     <property name="errorHandler">

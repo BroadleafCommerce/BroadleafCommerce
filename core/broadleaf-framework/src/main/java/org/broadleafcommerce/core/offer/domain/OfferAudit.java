@@ -51,30 +51,6 @@ public interface OfferAudit extends Serializable {
      * @param offerId
      */
     public void setOfferId(Long offerId);
-    
-    /**
-     * <p>The offer code that was used to retrieve the offer. This will be null if the offer was automatically applied
-     * and not obtained by an {@link OfferCode}.</p>
-     * 
-     * <p>For any Broadleaf version prior to 3.1, this has the potential to throw an {@link UnsupportedOperationException}.
-     * This column does not exist until 3.1.0. Rather than prevent a drop-in release by making this database
-     * modification, {@link OfferAuditWeaveImpl} should instead be weaved into this class to obtain the column definition
-     * along with correct implementation of this method.</p>
-     * @see {@link OfferAuditWeaveImpl}
-     */
-    public Long getOfferCodeId() throws UnsupportedOperationException;
-
-    /**
-     * <p>Sets the offer code that was used to retrieve the offer. This should be null if the offer was automatically applied
-     * and not obtained by an {@link OfferCode}.</p>
-     * 
-     * <p>For any Broadleaf version prior to 3.1, this has the potential to throw an {@link UnsupportedOperationException}.
-     * This column does not exist until 3.1.0. Rather than prevent a drop-in release of by making this database
-     * modification, {@link OfferAuditWeaveImpl} should instead be weaved into this class to obtain the column definition
-     * along with correct implementation of this method.</p>
-     * @see {@link OfferAuditWeaveImpl}
-     */
-    public void setOfferCodeId(Long offerCodeId) throws UnsupportedOperationException;
 
     /**
      * The associated order id.

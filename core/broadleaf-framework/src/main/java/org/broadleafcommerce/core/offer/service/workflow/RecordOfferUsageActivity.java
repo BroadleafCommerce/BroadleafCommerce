@@ -16,106 +16,78 @@
 
 package org.broadleafcommerce.core.offer.service.workflow;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutContext;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
-import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.dao.OfferAuditDao;
+import org.broadleafcommerce.core.offer.domain.Adjustment;
 import org.broadleafcommerce.core.offer.domain.OfferAudit;
-import org.broadleafcommerce.core.offer.domain.OfferCode;
-import org.broadleafcommerce.core.offer.service.OfferAuditService;
-import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
-import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 
 /**
  * Saves an instance of OfferAudit for each offer in the passed in order.
- * 
- * @author Phillip Verheyden (phillipuniverse)
- * @see {@link RecordOfferUsageRollbackHandler}
+ * Assumes that it is part of a larger transaction context.
  */
 public class RecordOfferUsageActivity extends BaseActivity {
 
-    /**
-     * Key to retrieve the audits that were persisted
-     */
-    public static final String SAVED_AUDITS = "savedAudits";
-    
-    protected static final Log LOG = LogFactory.getLog(RecordOfferUsageActivity.class);
+    @Resource(name="blOfferAuditDao")
+    private OfferAuditDao offerAuditDao;
 
-    @Resource(name="blOfferAuditService")
-    protected OfferAuditService offerAuditService;
-    
-    @Resource(name = "blOfferService")
-    protected OfferService offerService;
-
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
+        Set<Long> appliedOfferIds = new HashSet<Long>();
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
         Order order = seed.getOrder();
-        Set<Offer> appliedOffers = offerService.getUniqueOffersFromOrder(order);
-        Map<Offer, OfferCode> offerToCodeMapping = offerService.getOffersRetrievedFromCodes(order.getAddedOfferCodes(), appliedOffers);
-        
-        List<OfferAudit> audits = saveOfferIds(appliedOffers, offerToCodeMapping, order);
-        
-        Map<String, Object> state = new HashMap<String, Object>();
-        state.put(SAVED_AUDITS, audits);
-        
-        ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), state);
+        if (order != null) {
+            addOfferIds(order.getOrderAdjustments(), appliedOfferIds);
+
+            if (order.getOrderItems() != null) {
+                for (OrderItem item : order.getOrderItems()) {
+                    addOfferIds(item.getOrderItemAdjustments(), appliedOfferIds);
+                }
+            }
+
+            if (order.getFulfillmentGroups() != null) {
+                for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+                    addOfferIds(fg.getFulfillmentGroupAdjustments(), appliedOfferIds);
+                }
+            }
+            saveOfferIds(appliedOfferIds, order);
+        }
 
         return context;
     }
     
-    /**
-     * Persists each of the offers to the database as {@link OfferAudit}s.
-     * 
-     * @return the {@link OfferAudit}s that were persisted
-     */
-    protected List<OfferAudit> saveOfferIds(Set<Offer> offers, Map<Offer, OfferCode> offerToCodeMapping, Order order) {
-        List<OfferAudit> audits = new ArrayList<OfferAudit>(offers.size());
-        for (Offer offer : offers) {
-            OfferAudit audit = offerAuditService.create();
-            audit.setCustomerId(order.getCustomer().getId());
-            audit.setOfferId(offer.getId());
-            audit.setOrderId(order.getId());
-            
-            //add the code that was used to obtain the offer to the audit context
-            try {
-                OfferCode codeUsedToRetrieveOffer = offerToCodeMapping.get(offer);
-                if (codeUsedToRetrieveOffer != null) {
-                    audit.setOfferCodeId(codeUsedToRetrieveOffer.getId());
-                }
-            } catch (UnsupportedOperationException e) {
-                LOG.warn("Checking for offer code max usage has not been enabled in your Broadleaf installation. This warning" +
-                        " will only appear in Broadleaf versions prior to 3.1.0. In order to fix your" +
-                        " version of Broadleaf to enable this functionality, refer to the OfferAuditWeaveImpl or directly to" +
-                        " https://github.com/BroadleafCommerce/BroadleafCommerce/pull/195.");
+    private void saveOfferIds(Set<Long> offerIds, Order order) {
+        for (Long offerId : offerIds) {
+            OfferAudit audit = offerAuditDao.create();
+            if (order.getCustomer() != null) {
+                audit.setCustomerId(order.getCustomer().getId());
             }
-            
+            audit.setOfferId(offerId);
+            audit.setOrderId(order.getId());
             audit.setRedeemedDate(SystemTime.asDate());
-            audit = offerAuditService.save(audit);
-            audits.add(audit);
+            offerAuditDao.save(audit);
         }
+    }
         
-        return audits;
+    private void addOfferIds(List<? extends Adjustment> adjustments, Set<Long> offerIds) {
+        if (adjustments != null) {
+            for(Adjustment adjustment : adjustments) {
+                if (adjustment.getOffer() != null) {
+                    offerIds.add(adjustment.getOffer().getId());
+                }
+            }
+        }
     }
-    
-    /**
-     * Do not automatically register for rollbacks since it relies on state existing
-     */
-    @Override
-    public boolean getAutomaticallyRegisterRollbackHandler() {
-        return false;
-    }
+
 }

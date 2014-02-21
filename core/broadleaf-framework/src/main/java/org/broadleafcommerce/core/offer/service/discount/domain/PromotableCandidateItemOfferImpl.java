@@ -80,12 +80,10 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
         return savings;
     }
 
-    @Override
     public BroadleafCurrency getCurrency() {
         return promotableOrder.getOrderCurrency();
     }
 
-    @Override
     public Money calculateSavingsForOrderItem(PromotableOrderItem orderItem, int qtyToReceiveSavings) {
         Money savings = new Money(promotableOrder.getOrderCurrency());
         Money price = orderItem.getPriceBeforeAdjustments(getOffer().getApplyDiscountToSalePrice());
@@ -99,7 +97,6 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
      * Returns the number of items that potentially could be targets for the offer.   Due to combination or bogo
      * logic, they may not all get the tiered offer price.
      */
-    @Override
     public int calculateTargetQuantityForTieredOffer() {
         int returnQty = 0;
         for (PromotableOrderItem promotableOrderItem : candidateTargets) {
@@ -143,7 +140,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
         }
 
         maxMatchesFound = Math.min(maxMatchesFound, numberOfUsesForThisItemCriteria);
-        int offerMaxUses = getOffer().isUnlimitedUsePerOrder() ? maxMatchesFound : getOffer().getMaxUsesPerOrder();
+        int offerMaxUses = getOffer().getMaxUses()==0?maxMatchesFound:getOffer().getMaxUses();
 
         return Math.min(maxMatchesFound, offerMaxUses);
     }
