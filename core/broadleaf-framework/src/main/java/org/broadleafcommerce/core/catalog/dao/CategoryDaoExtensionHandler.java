@@ -30,4 +30,8 @@ public interface CategoryDaoExtensionHandler extends ExtensionHandler {
 
     public ExtensionResultStatusType findCategoryByURI(String uri, ExtensionResultHolder resultHolder);
 
+    Long getCurrentDateResolution();
+
+    void setCurrentDateResolution(Long currentDateResolution);
+
 }

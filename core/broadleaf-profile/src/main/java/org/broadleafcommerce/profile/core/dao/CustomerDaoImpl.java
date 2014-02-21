@@ -19,17 +19,18 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerDao")
 public class CustomerDaoImpl implements CustomerDao {
@@ -54,7 +55,9 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public List<Customer> readCustomersByUsername(String username) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME");
-        query.setParameter("username", username);        
+        query.setParameter("username", username);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
         return query.getResultList();        
     }
 
@@ -68,6 +71,8 @@ public class CustomerDaoImpl implements CustomerDao {
     public List<Customer> readCustomersByEmail(String emailAddress) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL");
         query.setParameter("email", emailAddress);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
         return query.getResultList();        
     }
 

@@ -73,6 +73,7 @@ public class CatalogImpl implements Catalog {
 
     @ManyToMany(targetEntity = SiteImpl.class)
     @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "CATALOG_ID"), inverseJoinColumns = @JoinColumn(name = "SITE_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<Site> sites = new ArrayList<Site>();
 

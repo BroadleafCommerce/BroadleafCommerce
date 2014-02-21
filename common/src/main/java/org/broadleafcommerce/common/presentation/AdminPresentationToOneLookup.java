@@ -91,5 +91,15 @@ public @interface AdminPresentationToOneLookup {
      * @return whether or not to force population of the child properties
      */
     boolean forcePopulateChildProperties() default false;
+    
+    /**
+     * <p>Optional - by setting this value to true, the admin will utilize a typeahead
+     * based lookup to search for the associated entity. When the value is set to
+     * false, the admin will utilize a model that can be used to
+     * search to the server for the associated entity.</p>
+     * 
+     * @return whether or not to enable the typeahead lookup feature for this field
+     */
+    boolean enableTypeaheadLookup() default false;
 
 }

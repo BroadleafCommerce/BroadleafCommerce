@@ -58,6 +58,7 @@ public class Field {
     protected Boolean isDerived;
     protected Boolean isLargeEntry;
     protected Boolean isDirty;
+    protected Boolean isTypeaheadEnabled;
     protected String hint;
     protected String tooltip;
     protected String help;
@@ -181,6 +182,11 @@ public class Field {
         getAttributes().put(key, value);
         return this;
     }
+    
+    public Field withTypeaheadEnabled(Boolean isTypeaheadEnabled) {
+        setIsTypeaheadEnabled(isTypeaheadEnabled);
+        return this;
+    }
 
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
@@ -248,6 +254,10 @@ public class Field {
     
     public Object getAttribute(String key) {
         return getAttributes().get(key);
+    }
+    
+    public Boolean getIsTypeaheadEnabled() {
+        return isTypeaheadEnabled == null ? false : isTypeaheadEnabled;
     }
     
     /* ************************** */
@@ -432,6 +442,10 @@ public class Field {
 
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
+    }
+
+    public void setIsTypeaheadEnabled(Boolean isTypeaheadEnabled) {
+        this.isTypeaheadEnabled = isTypeaheadEnabled;
     }
     
 }

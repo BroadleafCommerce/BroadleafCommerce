@@ -117,7 +117,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                 
                 try {
                     is = r.getInputStream();
-                    StreamUtils.copy(r.getInputStream(), baos);
+                    StreamUtils.copy(is, baos);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 } finally {
@@ -131,10 +131,9 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                 // If we're creating a JavaScript bundle, we'll put a semicolon between each
                 // file to ensure it won't fail to compile.
                 if (versionedBundleName.endsWith(".js")) {
-                    baos.write(";\r\n".getBytes());
-                } else {
-                    baos.write("\r\n".getBytes());
+                    baos.write(";".getBytes());
                 }
+                baos.write(System.getProperty("line.separator").getBytes());
             }
             bytes = baos.toByteArray();
         } catch (IOException e) {

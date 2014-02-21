@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -81,6 +82,9 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     
     @Value("${thymeleaf.threadLocalCleanup.enabled}")
     protected boolean thymeleafThreadLocalCleanupEnabled = true;
+
+    @Resource(name="blEntityExtensionManagers")
+    protected Map<String, ExtensionManager> entityExtensionManagers;
     
     @Override
     public void process(WebRequest request) {
@@ -162,6 +166,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             //TODO: Add token logic to secure the admin user id
             brc.setAdminUserId(Long.parseLong(adminUserId));
         }
+
+        brc.getAdditionalProperties().putAll(entityExtensionManagers);
     }
 
     @Override

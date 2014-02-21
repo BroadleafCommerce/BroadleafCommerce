@@ -126,6 +126,7 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             }
 
             String passwordBefore = adminInstance.getPassword();
+            adminInstance.setPassword(null);
             adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             Property passwordProperty = entity.getPMap().get("password");
             if (passwordProperty != null) {

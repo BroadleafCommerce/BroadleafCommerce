@@ -266,4 +266,11 @@
             </bean>
         </property>
     </bean>
+
+    <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
+        </property>
+    </bean>
 </beans>

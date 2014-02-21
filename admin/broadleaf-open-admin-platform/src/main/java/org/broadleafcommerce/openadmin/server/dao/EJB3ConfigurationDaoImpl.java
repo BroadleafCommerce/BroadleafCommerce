@@ -21,8 +21,9 @@ package org.broadleafcommerce.openadmin.server.dao;
 
 import org.hibernate.ejb.Ejb3Configuration;
 
-import javax.persistence.spi.PersistenceUnitInfo;
 import java.util.HashMap;
+
+import javax.persistence.spi.PersistenceUnitInfo;
 
 /**
  * 
@@ -43,7 +44,9 @@ public class EJB3ConfigurationDaoImpl implements EJB3ConfigurationDao {
                 persistenceUnitInfo.getProperties().setProperty("hibernate.hbm2ddl.auto", "none");
                 configuration = temp.configure(persistenceUnitInfo, new HashMap());
                 configuration.getHibernateConfiguration().buildSessionFactory();
-                persistenceUnitInfo.getProperties().setProperty("hibernate.hbm2ddl.auto", previousValue);
+                if (previousValue != null) {
+                    persistenceUnitInfo.getProperties().setProperty("hibernate.hbm2ddl.auto", previousValue);
+                }
             }
         }
         return configuration;

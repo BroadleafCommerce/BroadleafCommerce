@@ -20,7 +20,9 @@
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.springframework.ui.Model;
 
 
@@ -36,6 +38,12 @@ public class AbstractAdminAbstractControllerExtensionHandler extends AbstractExt
 
     @Override
     public ExtensionResultStatusType setAdditionalModelAttributes(Model model, String sectionKey) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+    
+    @Override
+    public ExtensionResultStatusType overrideClassNameForSection(ExtensionResultHolder erh, String sectionKey, 
+            AdminSection section) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

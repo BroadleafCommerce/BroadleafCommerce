@@ -22,12 +22,18 @@ var BLC = (function($) {
     
     var redirectUrlDiv = "blc-redirect-url",
         extraDataDiv   = "blc-extra-data",
+        internalDataDiv   = "blc-internal-data",
         preAjaxCallbackHandlers = [],
+        internalDataHandlers = [],
         servletContext = "//BLC-SERVLET-CONTEXT",
         siteBaseUrl = "//BLC-SITE-BASEURL";
     
     function addPreAjaxCallbackHandler(fn) {
         preAjaxCallbackHandlers.push(fn);
+    }
+
+    function addInternalDataHandler(fn) {
+        internalDataHandlers.push(fn);
     }
     
     /**
@@ -35,8 +41,20 @@ var BLC = (function($) {
      * we will stop invocation of additional handlers as well as the callback function.
      */
     function runPreAjaxCallbackHandlers($data) {
-        for (var i = 0; i < preAjaxCallbackHandlers.length; i++) {
-            if (!preAjaxCallbackHandlers[i]($data)) {
+        return runGenericHandlers($data, preAjaxCallbackHandlers);
+    }
+
+    /**
+     * Runs all currently registered internal data handlers. If any such handler returns false,
+     * we will stop invocation of additional handlers as well as the callback function.
+     */
+    function runInternalDataHandlers($data) {
+        return runGenericHandlers($data, internalDataHandlers);
+    }
+    
+    function runGenericHandlers($data, handlers) {
+        for (var i = 0; i < handlers.length; i++) {
+            if (!handlers[i]($data)) {
                 return false;
             }
         }
@@ -58,18 +76,38 @@ var BLC = (function($) {
         return true;
     }
     
+    function getInternalData($data) {
+        var extractedData = extractData($data, internalDataDiv);
+
+        if (($data instanceof jQuery) && ($data.attr('id') == internalDataDiv + "-container")) {
+            $data.unwrap();
+        }
+
+        return extractedData;
+    }
+
     function getExtraData($data) {
+        return extractData($data, extraDataDiv);
+    }
+    
+    function extractData($data, dataDivId) {
         if (!($data instanceof jQuery)) {
             return null;
         }
         
-    	var extraData;
-    	var $extraDataDiv = $data.find('#' + extraDataDiv);
-    	if ($extraDataDiv.length > 0) {
-	        extraData = $.parseJSON($extraDataDiv.text());
-	        $extraDataDiv.remove();
+    	var extractedData = null;
+
+	    var $dataDiv = $data.find('#' + dataDivId);
+    	if ($dataDiv.length > 0) {
+    	    try {
+    	        extractedData = $.parseJSON($dataDiv.text());
+    	    } catch (e) {
+    	        console.log("Could not parse data as JSON: " + $dataDiv.text());
+    	    }
+	        $dataDiv.remove();
     	}
-	    return extraData;
+
+	    return extractedData;
     }
     
     function ajax(options, callback) {
@@ -104,6 +142,13 @@ var BLC = (function($) {
                 data = $($.trim(data));
             }
             
+            var internalData = getInternalData(data);
+            if (internalData != null) {
+                runInternalDataHandlers(internalData);
+            }
+            
+            trackAjaxAnalytics(this, data);
+            
             if (runPreAjaxCallbackHandlers(data)) {
                 var extraData = getExtraData(data);
                 callback(data, extraData);
@@ -117,6 +162,22 @@ var BLC = (function($) {
         }
         
         return $.ajax(options);
+    }
+    
+    function trackAjaxAnalytics(options, data) {
+        if (typeof _gaq == 'undefined') {
+            return;
+        }
+
+        _gaq.push(['_trackPageview', options.url]);
+        console.log('Tracked GA pageview: ' + options.url);
+        
+        if (options.additionalAnalyticsEvents) {
+            for (var i = 0; i < options.additionalAnalyticsEvents.length; i++) {
+                _gaq.push(options.additionalAnalyticsEvents[i]);
+                console.log('Tracked additional GA event: ' + options.additionalAnalyticsEvents[i]);
+            }
+        }
     }
         
     function getCsrfToken() {
@@ -185,6 +246,7 @@ var BLC = (function($) {
     
     return {
         addPreAjaxCallbackHandler : addPreAjaxCallbackHandler,
+        addInternalDataHandler : addInternalDataHandler,
         redirectIfNecessary : redirectIfNecessary,
         getExtraData : getExtraData,
         ajax : ajax,
