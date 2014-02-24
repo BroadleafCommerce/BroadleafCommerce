@@ -23,6 +23,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
@@ -50,7 +51,10 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     protected ResourceBundlingService bundlingService;
 
     @javax.annotation.Resource(name = "blResourceMinificationService")
-    protected ResourceMinificationService minifyService;;
+    protected ResourceMinificationService minifyService;
+    
+    @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
+    protected ResourceRequestExtensionManager extensionManager;
     
     /**
      * Checks to see if the requested path corresponds to a registered bundle. If so, returns the generated bundle.
@@ -71,6 +75,14 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
                 if (handler.canHandle(path)) {
                     unminifiedResource = handler.getResource(path, getLocations());
                 }
+            }
+        }
+        
+        if (unminifiedResource == null) {
+            ExtensionResultHolder erh = new ExtensionResultHolder();
+            extensionManager.getProxy().getOverrideResource(path, erh);
+            if (erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR) != null) {
+                unminifiedResource = (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR);
             }
         }
         

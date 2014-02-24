@@ -112,6 +112,9 @@
             </list>
         </property>
     </bean>
+
+    <!-- This component should be overridden to provide templates from the database   -->    
+    <bean id="blWebDatabaseTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
     
     <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
     <bean id="blWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
@@ -155,6 +158,7 @@
     <bean id="blWebTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
             <set>
+                <ref bean="blWebDatabaseTemplateResolver" />
                 <ref bean="blWebTemplateResolver" />
                 <ref bean="blWebClasspathTemplateResolver" />
                 <ref bean="blWebCustomTemplateResolver" />

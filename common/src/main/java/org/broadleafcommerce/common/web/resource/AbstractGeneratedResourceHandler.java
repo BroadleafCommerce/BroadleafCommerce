@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
@@ -56,6 +57,9 @@ public abstract class AbstractGeneratedResourceHandler {
 
     @javax.annotation.Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
+
+    @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
+    protected ResourceRequestExtensionManager extensionManager;
 
     protected Cache generatedResourceCache;
     
@@ -132,6 +136,12 @@ public abstract class AbstractGeneratedResourceHandler {
      * @return the resource from the file system, classpath, etc, if it exists
      */
     protected Resource getRawResource(String path, List<Resource> locations) {
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().getOverrideResource(path, erh);
+        if (erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR) != null) {
+            return (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR);
+        }
+
 		for (Resource location : locations) {
 			try {
 				Resource resource = location.createRelative(path);

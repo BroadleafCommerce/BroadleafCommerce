@@ -28,9 +28,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
+import org.broadleafcommerce.common.web.resource.ResourceRequestExtensionHandler;
+import org.broadleafcommerce.common.web.resource.ResourceRequestExtensionManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -80,6 +83,9 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     @javax.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
+    
+    @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
+    protected ResourceRequestExtensionManager extensionManager;
 
     @Override
     public Resource getBundle(String versionedBundleName) {
@@ -214,6 +220,17 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     		}
     		
     		// If we didn't find a generator that could handle this file, let's see if we can 
+    		// look it up from our known locations
+            if (!match) {
+                ExtensionResultHolder erh = new ExtensionResultHolder();
+                extensionManager.getProxy().getOverrideResource(file, erh);
+                if (erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR) != null) {
+                    foundResources.put(file, (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR));
+                    match = true;
+                }
+            }
+
+    		// If we didn't find an override for this file, let's see if we can 
     		// look it up from our known locations
     		if (!match) {
         		for (Resource location : handler.getLocations()) {

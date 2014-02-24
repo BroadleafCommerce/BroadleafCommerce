@@ -30,8 +30,8 @@
     <context:component-scan base-package="org.broadleafcommerce.common"/>
 
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
-        <property name="xsrfProtectionEnabled" value="true" />
-        <property name="xssProtectionEnabled" value="true" />
+        <property name="xsrfProtectionEnabled" value="${exploitProtection.xsrfEnabled}" />
+        <property name="xssProtectionEnabled" value="${exploitProtection.xssEnabled}" />
     </bean>
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
@@ -201,6 +201,13 @@
     </bean>
     
     <bean id="blJsFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blAdminJsLibFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
             </list>
