@@ -20,8 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
@@ -47,6 +46,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -223,19 +223,18 @@ public class ProductDaoImpl implements ProductDao {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
         
-        // The root of our search is Category since we are browsing
-        Root<CategoryImpl> category = criteria.from(CategoryImpl.class);
+        Root<ProductImpl> product = criteria.from(ProductImpl.class);
         
         // We want to filter on attributes from product and sku
-        Join<Category, Product> product = category.join("allProducts");
         Join<Product, Sku> sku = product.join("defaultSku");
+        ListJoin<Product, CategoryProductXref> categoryXref = product.joinList("allParentCategoryXrefs");
         
         // Product objects are what we want back
         criteria.select(product);
         
-        // We only want results from the determine category
+        // We only want results from the selected category
         List<Predicate> restrictions = new ArrayList<Predicate>();
-        restrictions.add(builder.equal(category.get("id"), categoryId));
+        restrictions.add(builder.equal(categoryXref.get("categoryProductXref").get("category").get("id"), categoryId));
         
         attachProductSearchCriteria(searchCriteria, product, sku, restrictions);
         
