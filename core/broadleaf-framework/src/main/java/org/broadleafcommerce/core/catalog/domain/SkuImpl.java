@@ -347,6 +347,15 @@ public class SkuImpl implements Sku {
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
     protected String inventoryType;
+    
+    @Column(name = "QUANTITY_AVAILABLE")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_QuantityAvailable",
+            order = 1010,
+            tab = ProductImpl.Presentation.Tab.Name.Inventory,
+            tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
+            group = ProductImpl.Presentation.Group.Name.Inventory,
+            groupOrder = ProductImpl.Presentation.Group.Order.Inventory)
+    protected Integer quantityAvailable = 0;
 
     @Column(name = "FULFILLMENT_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_FulfillmentType", order = 2000,
@@ -882,12 +891,12 @@ public class SkuImpl implements Sku {
     
     @Override
     public Integer getQuantityAvailable() {
-        throw new UnsupportedOperationException("Sku quantity available is not implemented");
+        return quantityAvailable;
     }
     
     @Override
     public void setQuantityAvailable(Integer quantityAvailable) {
-        throw new UnsupportedOperationException("Sku quantity available is not implemented");
+        this.quantityAvailable = quantityAvailable;
     }
 
     @Override

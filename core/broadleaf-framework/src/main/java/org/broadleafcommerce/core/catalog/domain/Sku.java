@@ -499,8 +499,6 @@ public interface Sku extends Serializable {
      * Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
      * This field is checked within the {@link CheckAvailabilityActivity} to determine if inventory is actually available
      * for this Sku.
-     * 
-     * @throws UnsupportedOperationException if this feature is not enabled
      */
     public Integer getQuantityAvailable() throws UnsupportedOperationException;
     
@@ -509,7 +507,6 @@ public interface Sku extends Serializable {
      * inventory is available for this Sku.
      * 
      * @param quantityAvailable the quantity available for this sku 
-     * @throws UnsupportedOperationException if this feature is not enabled
      */
     public void setQuantityAvailable(Integer quantityAvailable) throws UnsupportedOperationException;
     
