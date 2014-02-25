@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.admin.web.rulebuilder.service.options;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.common.time.HourOfDayType;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -36,6 +37,23 @@ import java.util.Map;
 @Component("blInventoryTypeOptionsExtensionListener")
 public class InventoryTypeEnumOptionsExtensionListener extends AbstractRuleBuilderEnumOptionsExtensionListener {
 
+    /**
+     * Overridden to remove deprecated options
+     */
+    @Override
+    protected Map<String, ? extends BroadleafEnumerationType> getTypes(Class<? extends BroadleafEnumerationType> clazz) {
+        
+        try {
+            Map<String, ? extends BroadleafEnumerationType> options =
+                    (Map<String, ? extends BroadleafEnumerationType>) FieldUtils.readStaticField(clazz, "TYPES", true);
+            options.remove("NONE");
+            options.remove("BASIC");
+            return options;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     @Override
     protected Map<String, Class<? extends BroadleafEnumerationType>> getValuesToGenerate() {
         Map<String, Class<? extends BroadleafEnumerationType>> map = 

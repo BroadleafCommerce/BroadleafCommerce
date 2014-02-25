@@ -175,13 +175,17 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 }
             } else {
                 // If we have a product to filter the list of available product options, then use it
-                Long productId = Long.parseLong(persistencePackage.getCustomCriteria()[0]);
-                Product product = catalogService.findProductById(productId);
-                for (ProductOption option : product.getProductOptions()) {
-                    FieldMetadata md = createIndividualOptionField(option, 0);
-                    if (md != null) {
-                        properties.put("productOption" + option.getId(), md);
+                try {
+                    Long productId = Long.parseLong(persistencePackage.getCustomCriteria()[0]);
+                    Product product = catalogService.findProductById(productId);
+                    for (ProductOption option : product.getProductOptions()) {
+                        FieldMetadata md = createIndividualOptionField(option, 0);
+                        if (md != null) {
+                            properties.put("productOption" + option.getId(), md);
+                        }
                     }
+                } catch (NumberFormatException e) {
+                    // the criteria wasn't a product id, just don't do anything
                 }
             }
 
@@ -470,13 +474,13 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
 
             //persist the newly-created Sku
-            adminInstance = (Sku) dynamicEntityDao.persist(adminInstance);
+            adminInstance = dynamicEntityDao.persist(adminInstance);
 
             //associate the product option values
             associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
 
             //After associating the product option values, save off the Sku
-            adminInstance = (Sku) dynamicEntityDao.merge(adminInstance);
+            adminInstance = dynamicEntityDao.merge(adminInstance);
 
             //Fill out the DTO and add in the product option value properties to it
             Entity result = helper.getRecord(adminProperties, adminInstance, null, null);
@@ -511,7 +515,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
 
-            adminInstance = (Sku) dynamicEntityDao.merge(adminInstance);
+            adminInstance = dynamicEntityDao.merge(adminInstance);
 
             //Fill out the DTO and add in the product option value properties to it
             Entity result = helper.getRecord(adminProperties, adminInstance, null, null);

@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
@@ -410,6 +409,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
+            helpText = "inventoryTypeHelpText",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
