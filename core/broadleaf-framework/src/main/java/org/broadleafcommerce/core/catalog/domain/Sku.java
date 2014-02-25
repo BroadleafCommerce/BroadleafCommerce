@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -201,23 +202,34 @@ public interface Sku extends Serializable {
     public void setDiscountable(Boolean discountable);
 
     /**
-     * Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
+     * <p>Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
      * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
-     * it. This defaults to true
+     * it. This defaults to true</p>
+     * 
+     * <p>This method only checks that this Sku is not marked as {@link InventoryType#UNAVAILABLE}. If {@link #getInventoryType()}
+     * is set to {@link InventoryType#CHECK_QUANTITY} then this will return true.</p>
+     * 
+     * @deprecated use {@link #getInventoryType()} instead
      */
+    @Deprecated
     public Boolean isAvailable();
 
     /**
      * Convenience that passes through to isAvailable
      * @see {@link #isAvailable()}
+     * @deprecated use {@link #getInventoryType()} instead
      */
+    @Deprecated
     public Boolean getAvailable();
     
     /**
      * Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
      * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
      * it. This defaults to true
+     * 
+     * @deprecated use {@link #setInventoryType(InventoryType)} instead
      */
+    @Deprecated
     public void setAvailable(Boolean available);
 
     /**
@@ -482,6 +494,24 @@ public interface Sku extends Serializable {
      * @param inventoryType the {@link InventoryType} for this sku
      */
     public void setInventoryType(InventoryType inventoryType);
+    
+    /**
+     * Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
+     * This field is checked within the {@link CheckAvailabilityActivity} to determine if inventory is actually available
+     * for this Sku.
+     * 
+     * @throws UnsupportedOperationException if this feature is not enabled
+     */
+    public Integer getQuantityAvailable() throws UnsupportedOperationException;
+    
+    /**
+     * Used in conjunction with {@link InventoryType#CHECK_QUANTITY} from {@link #getInventoryType()}. This sets how much
+     * inventory is available for this Sku.
+     * 
+     * @param quantityAvailable the quantity available for this sku 
+     * @throws UnsupportedOperationException if this feature is not enabled
+     */
+    public void setQuantityAvailable(Integer quantityAvailable) throws UnsupportedOperationException;
     
     /**
      * Returns the fulfillment type for this sku. May be null.
