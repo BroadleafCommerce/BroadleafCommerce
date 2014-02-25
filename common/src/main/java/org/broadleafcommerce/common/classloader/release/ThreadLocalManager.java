@@ -97,6 +97,20 @@ public class ThreadLocalManager {
         THREAD_LOCAL_MANAGER.remove();
     }
 
+    public static void remove(ThreadLocal threadLocal) {
+        Long removePosition = null;
+        for (Map.Entry<Long, ThreadLocal> entry : THREAD_LOCAL_MANAGER.get().threadLocals.entrySet()) {
+            if (entry.getValue().equals(threadLocal)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Removing ThreadLocal #" + entry.getKey() + " from request thread.");
+                }
+                entry.getValue().remove();
+                removePosition = entry.getKey();
+            }
+        }
+        THREAD_LOCAL_MANAGER.get().threadLocals.remove(removePosition);
+    }
+
     private static Long count = 0L;
     private static final Object threadLock = new Object();
 
