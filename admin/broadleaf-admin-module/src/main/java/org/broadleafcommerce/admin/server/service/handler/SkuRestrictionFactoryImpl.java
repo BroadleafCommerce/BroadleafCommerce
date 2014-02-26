@@ -25,21 +25,22 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate .BetweenDatePredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.BetweenDatePredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.BetweenPredicateProvider;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate .CollectionSizeEqualPredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.CollectionSizeEqualPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.EqPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNullPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.LikePredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
-import java.util.List;
 
 /**
  * This class takes into account that filters should be applied on either the root Sku property itself OR the defaultSku
@@ -67,13 +68,14 @@ public class SkuRestrictionFactoryImpl implements RestrictionFactory {
                 public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
                                                 From root, String ceilingEntity, String fullPropertyName,
                                                 Path explicitPath, List directValues) {
+                    
                     FieldPath fieldPath = fieldPathBuilder.getFieldPath(root, fullPropertyName);
                     if ((StringUtils.isNotEmpty(skuPropertyPrefix) && fullPropertyName.startsWith(skuPropertyPrefix))
-                                            || CollectionUtils.isEmpty(fieldPath.getAssociationPath())) {
+                                            || (StringUtils.isEmpty(skuPropertyPrefix) && CollectionUtils.isEmpty(fieldPath.getAssociationPath()))) {
                         Path targetPropertyPath = fieldPathBuilder.getPath(root, fieldPath, builder);
                         Path defaultSkuPropertyPath = fieldPathBuilder.getPath(root,
-                                DEFAULT_SKU_PATH_PREFIX + fullPropertyName, builder);
-                        Path productPath = fieldPathBuilder.getPath(root, "product", builder);
+                                getSkuPropertyPrefix() + DEFAULT_SKU_PATH_PREFIX + fullPropertyName.replace(getSkuPropertyPrefix(),  ""), builder);
+                        Path productPath = fieldPathBuilder.getPath(root, getSkuPropertyPrefix() + "product", builder);
                         Predicate propertyExpression;
                         Predicate defaultSkuExpression;
                         if (delegateRestriction.getPredicateProvider() instanceof LikePredicateProvider) {
@@ -136,16 +138,15 @@ public class SkuRestrictionFactoryImpl implements RestrictionFactory {
 
     protected Predicate buildCompositePredicate(CriteriaBuilder builder, Path targetPropertyPath, Path productPath,
                                                 Predicate propertyExpression, Predicate defaultSkuExpression) {
+        // The first part of this expression successfully grabs default Skus, the second part successfully grabs
+        // the additional Skus; need a way to get them TOGETHER
         return builder.or(
-            builder.or(
-                builder.and(builder.isNotNull(targetPropertyPath), propertyExpression),
-                builder.and(
-                    builder.and(
-                        builder.isNull(targetPropertyPath),
-                        builder.isNotNull(productPath)
-                    ), defaultSkuExpression
-                )
-            ), builder.and(builder.isNull(productPath), propertyExpression)
+                builder.and(builder.isNotNull(targetPropertyPath), propertyExpression)//,
+//                builder.and(
+//                    builder.isNull(targetPropertyPath),
+//                    builder.isNotNull(productPath),
+//                    defaultSkuExpression
+//                )//,
         );
     }
 
