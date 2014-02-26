@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.site.service;
 
 import org.broadleafcommerce.common.site.dao.SiteDaoImpl;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 
 import java.util.List;
@@ -61,4 +62,13 @@ public interface SiteService {
      * @return a List of all sites in the system
      */
     public List<Site> findAllActiveSites();
+
+    /**
+     * Finds a catalog by its id.
+     * 
+     * @param id
+     * @return the catalog
+     */
+    public Catalog findCatalogById(Long id);
+
 }

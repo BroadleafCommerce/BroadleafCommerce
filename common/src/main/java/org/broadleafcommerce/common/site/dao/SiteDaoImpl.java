@@ -20,6 +20,8 @@
 package org.broadleafcommerce.common.site.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.site.domain.Catalog;
+import org.broadleafcommerce.common.site.domain.CatalogImpl;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
@@ -49,6 +51,11 @@ public class SiteDaoImpl implements SiteDao {
     @Override
     public Site retrieve(Long id) {
         return em.find(SiteImpl.class, id);
+    }
+    
+    @Override
+    public Catalog retrieveCatalog(Long id) {
+        return em.find(CatalogImpl.class, id);
     }
     
     @Override
