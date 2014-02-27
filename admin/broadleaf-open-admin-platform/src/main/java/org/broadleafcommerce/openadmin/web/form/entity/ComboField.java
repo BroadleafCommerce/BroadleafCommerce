@@ -43,8 +43,10 @@ public class ComboField extends Field {
     /* ************************** */
     
     public void setOptions(String[][] options) {
-        for (String[] option : options) {
-            putOption(option[0], option[1]);
+        if (options != null) {
+            for (String[] option : options) {
+                putOption(option[0], option[1]);
+            }
         }
     }
     
