@@ -59,13 +59,4 @@ public class PropertiesVariableExpression implements BroadleafVariableExpression
         return forceShow;
     }
     
-    public boolean getForceShowIdColumns() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-
-        boolean forceShow = Boolean.parseBoolean(propMgr.getProperty("listGrid.forceShowIdColumns"));
-        forceShow = forceShow || "true".equals(request.getParameter("showIds"));
-        
-        return forceShow;
-    }
-
 }
