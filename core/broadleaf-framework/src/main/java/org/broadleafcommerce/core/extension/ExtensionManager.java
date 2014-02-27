@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.extension;
 import org.apache.commons.beanutils.BeanComparator;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -125,12 +126,16 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         boolean notHandled = true;
         for (ExtensionHandler handler : getHandlers()) {
-            ExtensionResultStatusType result = (ExtensionResultStatusType) method.invoke(handler, args);
-            if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                notHandled = false;
-            }
-            if (!shouldContinue(result, handler, method, args)) {
-                break;
+            try {
+                ExtensionResultStatusType result = (ExtensionResultStatusType) method.invoke(handler, args);
+                if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                    notHandled = false;
+                }
+                if (!shouldContinue(result, handler, method, args)) {
+                    break;
+                }
+            } catch (InvocationTargetException e) {
+                throw e.getCause();
             }
         }
         if (notHandled) {
