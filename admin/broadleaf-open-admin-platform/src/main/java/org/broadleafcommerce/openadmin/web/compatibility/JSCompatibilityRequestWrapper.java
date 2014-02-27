@@ -20,18 +20,18 @@
 package org.broadleafcommerce.openadmin.web.compatibility;
 
 
-import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.openadmin.server.service.JSCompatibilityHelper;
 import org.springframework.security.web.firewall.FirewalledRequest;
 import org.springframework.security.web.savedrequest.Enumerator;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Jeff Fischer
@@ -83,6 +83,7 @@ public class JSCompatibilityRequestWrapper extends FirewalledRequest {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public Enumeration getParameterNames() {
         List<String> names = new ArrayList<String>();
         Enumeration enumeration = super.getParameterNames();
@@ -94,6 +95,7 @@ public class JSCompatibilityRequestWrapper extends FirewalledRequest {
     }
 
     @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Map getParameterMap() {
         Map params = super.getParameterMap();
         Map temp = new LinkedHashMap();
@@ -115,6 +117,7 @@ public class JSCompatibilityRequestWrapper extends FirewalledRequest {
         return temp;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Map<String, String> getParameterNameConversionMap() {
         if (getAttribute("requestParameterConversionMap") == null) {
             Map<String, String> map = new HashMap<String, String>();
@@ -128,21 +131,5 @@ public class JSCompatibilityRequestWrapper extends FirewalledRequest {
 
         return (Map<String, String>) getAttribute("requestParameterConversionMap");
     }
-
-    @Override
-    public String[] getParameterValues(String name) {
-        String[] paramValues = super.getParameterValues(getParameterNameConversionMap().get(name));
-        if (!ArrayUtils.isEmpty(paramValues)) {
-            String[] temp = new String[paramValues.length];
-            int j = 0;
-            for (String val : paramValues) {
-                temp[j] = JSCompatibilityHelper.unencode(val);
-                j++;
-            }
-            return temp;
-        }
-        return paramValues;
-    }
-
 
 }
