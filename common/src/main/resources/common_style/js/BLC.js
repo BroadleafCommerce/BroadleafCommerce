@@ -138,7 +138,7 @@ var BLC = (function($) {
         }
         
         options.success = function(data) {
-            if (typeof data == "string") {
+            if (typeof data == "string" && !this.noParse) {
                 data = $($.trim(data));
             }
             
