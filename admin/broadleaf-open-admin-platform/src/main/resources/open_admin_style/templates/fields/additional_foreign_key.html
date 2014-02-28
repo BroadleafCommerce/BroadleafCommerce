@@ -22,36 +22,46 @@
     <input type="hidden" class="display-value-property" th:value="*{fields['__${field.name}__'].foreignKeyDisplayValueProperty}"  />
     <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}" th:attr="data-onchangetrigger=${field.onChangeTrigger}" />
     <input type="hidden" class="hidden-display-value" th:field="*{fields['__${field.name}__'].displayValue}" />
-    
+
     <label th:for="${field.name}" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
     
-    <div class="foreign-key-value-container">
-        <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>
-        <span
-            class="display-value read-only"
-            th:text="*{fields['__${field.name}__'].displayValue}" />
-            
-        <button class="clear-foreign-key tiny radius secondary button hover-cursor"
-            type="button" th:inline="text"
-            th:unless="${field.required}"
-            th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-            <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
-        </button>
-        
-        <button class="to-one-lookup tiny radius secondary button hover-cursor"
-            type="button" th:inline="text"
-            th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id})}">
-            <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
-        </button>
 
-        <span class="external-link-container" th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
-           <a th:href="@{${'/' + field.entityViewPath}}" 
-              th:attr="data-foreign-key-link=@{${'/' + field.foreignKeyClass}}"
-              class="modal-view">
-                <i class="icon-external-link"></i>
-           </a>
-        </span>
+    <div class="foreign-key-value-container">
         
+        <div th:remove="tag" th:unless="${field.isTypeaheadEnabled}">
+            <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>
+            <span class="display-value read-only"
+                th:text="*{fields['__${field.name}__'].displayValue}" />
+                
+            <button class="clear-foreign-key tiny radius secondary button hover-cursor"
+                type="button" th:inline="text"
+                th:unless="${field.required}"
+                th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
+                <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
+            </button>
+            
+            <button class="to-one-lookup tiny radius secondary button hover-cursor"
+                type="button" th:inline="text"
+                th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id})}">
+                <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
+            </button>
+
+            <span class="external-link-container" th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
+               <a th:href="@{${'/' + field.entityViewPath}}" 
+                  th:attr="data-foreign-key-link=@{${'/' + field.foreignKeyClass}}"
+                  class="modal-view">
+                    <i class="icon-external-link"></i>
+               </a>
+            </span>
+        </div>
+
+        <div th:remove="tag" th:if="${field.isTypeaheadEnabled}">
+            <input type="text" class="to-one-typeahead twelve"
+                th:placeholder="#{typeahead.placeholder(#{${field.friendlyName}})}"
+                th:value="*{fields['__${field.name}__'].displayValue}"
+                th:attr="data-typeahead-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/typeahead'}(requestingEntityId=${entityForm.id})}" />
+        </div>
+
         <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     </div>
     

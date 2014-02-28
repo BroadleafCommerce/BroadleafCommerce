@@ -24,16 +24,19 @@ import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
-import java.util.List;
 
 @Repository("blSearchFacetDao")
 public class SearchFacetDaoImpl implements SearchFacetDao {
@@ -55,8 +58,10 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         criteria.where(
             builder.equal(facet.get("showOnSearch").as(Boolean.class), true)
         );
+        TypedQuery<SearchFacet> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         
-        return em.createQuery(criteria).getResultList();
+        return query.getResultList();
     }
     
     @Override
@@ -85,9 +90,14 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         } else {
             throw new IllegalArgumentException("Invalid facet fieldName specified: " + fieldName);
         }
-        criteria.distinct(true).select(pathToUse.get(fieldName).as(fieldValueClass));
         
-        return em.createQuery(criteria).getResultList();
+        criteria.where(pathToUse.get(fieldName).as(fieldValueClass).isNotNull());
+        criteria.distinct(true).select(pathToUse.get(fieldName).as(fieldValueClass));
+
+        TypedQuery<T> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        
+        return query.getResultList();
     }
 
     public SearchFacet save(SearchFacet searchFacet) {

@@ -92,6 +92,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.STRING ||
+                metadata.getFieldType() == SupportedFieldType.CODE ||
                 metadata.getFieldType() == SupportedFieldType.HTML ||
                 metadata.getFieldType() == SupportedFieldType.HTML_BASIC ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
@@ -234,6 +235,9 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                                 .getRequestedValue()));
                     }
                     break;
+                case CODE:
+                    // **NOTE** We want to fall through in this case, do not break.
+                    setNonDisplayableValues(populateValueRequest);
                 case STRING:
                 case HTML_BASIC:
                 case HTML:

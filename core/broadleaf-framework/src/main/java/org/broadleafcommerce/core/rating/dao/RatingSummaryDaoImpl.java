@@ -95,6 +95,8 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
     public List<RatingSummary> readRatingSummaries(final List<String> itemIds, final RatingType type) {
         final Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
         query.setParameter("ratingType", type.getType());
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         List<RatingSummary> ratings = batchExecuteReadQuery(query, itemIds, "itemIds");
 
         return ratings;

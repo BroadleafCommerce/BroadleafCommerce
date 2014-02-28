@@ -36,7 +36,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -99,11 +98,8 @@ public class TranslationDaoImpl implements TranslationDao {
 
         TypedQuery<Translation> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
+
+        return query.getResultList();
     }
 
     @Override
@@ -122,11 +118,14 @@ public class TranslationDaoImpl implements TranslationDao {
         );
         TypedQuery<Translation> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
-            return null;
+        List<Translation> translations = query.getResultList();
+        if (translations.size() > 1) {
+            throw new IllegalStateException("Found multiple translations for: " + entity.getFriendlyType() + "|" + entityId + "|" + fieldName + "|" + localeCode);
         }
+        if (!translations.isEmpty()) {
+            return translations.get(0);
+        }
+        return null;
     }
     
     protected String getUpdatedEntityId(TranslatedEntity entity, String entityId) {

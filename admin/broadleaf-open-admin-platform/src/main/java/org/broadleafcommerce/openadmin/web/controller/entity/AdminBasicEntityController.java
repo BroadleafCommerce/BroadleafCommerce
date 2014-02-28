@@ -288,7 +288,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
-            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(entityForm.getEntityType(), sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+            String sectionClassName = getClassNameForSection(sectionKey);
+            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, entityForm, sectionCrumbs);
 
@@ -470,52 +471,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         return "redirect:/" + sectionKey;
-    }
-
-    /**
-     * Shows the modal dialog that is used to select a "to-one" collection item. For example, this could be used to show
-     * a list of categories for the ManyToOne field "defaultCategory" in Product.
-     * 
-     * @param request
-     * @param response
-     * @param model
-     * @param pathVars
-     * @param owningClass
-     * @param collectionField
-     * @return the return view path
-     * @throws Exception
-     */
-    @RequestMapping(value = "/{owningClass:.*}/{collectionField:.*}/select", method = RequestMethod.GET)
-    public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @PathVariable(value = "owningClass") String owningClass,
-            @PathVariable(value="collectionField") String collectionField,
-            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
-        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
-        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams, sectionCrumbs, pathVars);
-        ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
-        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
-        FieldMetadata md = collectionProperty.getMetadata();
-
-        ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
-        
-        ppr.addFilterAndSortCriteria(getCriteria(requestParams));
-        ppr.setStartIndex(getStartIndex(requestParams));
-        ppr.setMaxIndex(getMaxIndex(requestParams));
-        
-        if (md instanceof BasicFieldMetadata) {
-            DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
-            ListGrid listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
-
-            model.addAttribute("listGrid", listGrid);
-            model.addAttribute("viewType", "modal/simpleSelectEntity");
-        }
-
-        model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "selectCollectionItem");
-        model.addAttribute("collectionProperty", collectionProperty);
-        setModelAttributes(model, owningClass);
-        return "modules/modalContainer";
     }
 
     @RequestMapping(value = "/{collectionField:.*}/details", method = RequestMethod.GET)

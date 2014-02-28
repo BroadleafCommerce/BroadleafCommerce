@@ -6,8 +6,13 @@
         window.jQuery || document.write('<script src="[[@{/js/lib/jquery-1.9.1.js}]]"><\/script>');
         //]]>
     </script>
+
+    <blc_admin:admin_user resultVar="adminUser" />
+    <script th:with="adminUser=${adminUser}" th:inline="javascript">
+        var BLC_USER_PREFS = /*[[${adminUser.additionalFields}]]*/ {};
+    </script>
     
-    <blc:bundle name="lib.js" 
+    <blc:bundle name="adminlib.js" 
                 mapping-prefix="/js/"
                 files="admin/lib/plugins/jquery.cookie.js,
                        admin/lib/plugins/jquery.event.move.js,
@@ -36,7 +41,8 @@
                        admin/lib/plugins/spectrum.js,
                        admin/lib/redactor.js,
                        admin/lib/plugins/bootstrap.js,
-                       admin/lib/blc-conditions-builder.js" />
+                       admin/lib/blc-conditions-builder.js,
+                       admin/lib/plugins/typeahead.bundle.js" />
                       
     <blc:bundle name="admin.js" 
                 mapping-prefix="/js/"
@@ -61,7 +67,8 @@
                        admin/components/listGrid.js,
                        admin/components/listGrid-filter.js,
                        admin/components/listGrid-paginate.js,
+                       admin/components/typeahead.js,
                       
                        admin/blc-admin-init.js" />
-                          
+
 </footer>

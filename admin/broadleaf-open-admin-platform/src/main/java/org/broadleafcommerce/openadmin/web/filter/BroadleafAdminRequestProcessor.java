@@ -112,6 +112,10 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
         brc.setBroadleafCurrency(currency);
 
+        prepareSandBox(request, brc);
+    }
+
+    protected void prepareSandBox(WebRequest request, BroadleafRequestContext brc) {
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
         if (adminUser == null) {
             //clear any sandbox
