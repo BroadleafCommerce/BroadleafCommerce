@@ -270,7 +270,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
-            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(entityForm.getEntityType(), sectionCrumbs)).getDynamicResultSet().getClassMetaData();
+            String sectionClassName = getClassNameForSection(sectionKey);
+            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs)).getDynamicResultSet().getClassMetaData();
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, entityForm, sectionCrumbs);
 
