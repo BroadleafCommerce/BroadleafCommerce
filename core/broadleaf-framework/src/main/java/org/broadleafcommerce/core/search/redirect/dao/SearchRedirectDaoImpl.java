@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.redirect.dao;
 
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -59,7 +60,8 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
         query.setParameter("searchTerm", searchTerm);
         query.setParameter("now", getCurrentDateAfterFactoringInDateResolution());
         query.setMaxResults(1);
-        @SuppressWarnings("unchecked")
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
         List<SearchRedirect> results = query.getResultList();
         if (results != null && !results.isEmpty()) {
             return results.get(0);
