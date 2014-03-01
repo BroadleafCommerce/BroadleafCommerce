@@ -885,12 +885,19 @@ public class SkuImpl implements Sku {
     
     @Override
     public Integer getQuantityAvailable() {
-        throw new UnsupportedOperationException("Sku quantity available is not implemented");
+        LOG.warn("Inventory was attempted to be invoked on a Sku, but there is no byte code weaving hooked up in order" +
+                 " to determine the correct quantity available. If you would like to enable the quantity enable field, hook" +
+                 " up the quantityAvailable field via the QuantityAvailableSkuTemplate or override the getQuantityAvailable()" +
+                 " method in a SkuImpl subclass. Returning null to indicate that quantity available is unset");
+        return null;
     }
     
     @Override
     public void setQuantityAvailable(Integer quantityAvailable) {
-        throw new UnsupportedOperationException("Sku quantity available is not implemented");
+        LOG.warn("Inventory was attempted to be invoked on a Sku, but there is no byte code weaving hooked up in order" +
+                " to determine the correct quantity available. If you would like to enable the quantity enable field, hook" +
+                " up the quantityAvailable field via the QuantityAvailableSkuTemplate or override the setQuantityAvailable()" +
+                " method in a SkuImpl subclass. No inventory operation is being performed");
     }
 
     @Override

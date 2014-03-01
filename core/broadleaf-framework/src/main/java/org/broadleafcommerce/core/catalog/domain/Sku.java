@@ -496,22 +496,27 @@ public interface Sku extends Serializable {
     public void setInventoryType(InventoryType inventoryType);
     
     /**
-     * Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
+     * <p>Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
      * This field is checked within the {@link CheckAvailabilityActivity} to determine if inventory is actually available
-     * for this Sku.
+     * for this Sku.</p>
      * 
-     * @throws UnsupportedOperationException if this feature is not enabled
+     * <p>In order to enable this feature in a Broadleaf 3.1.1+ installation, you must hook up the {@link QuantityAvailableSkuTemplate}
+     * to dynamically weave in the quantityAvailable field or override this method in a subclass. This is enabled out of the
+     * box in Broadleaf 3.2+</p>
      */
-    public Integer getQuantityAvailable() throws UnsupportedOperationException;
+    public Integer getQuantityAvailable();
     
     /**
-     * Used in conjunction with {@link InventoryType#CHECK_QUANTITY} from {@link #getInventoryType()}. This sets how much
-     * inventory is available for this Sku.
+     * <p>Used in conjunction with {@link InventoryType#CHECK_QUANTITY} from {@link #getInventoryType()}. This sets how much
+     * inventory is available for this Sku.</p>
+     * 
+     * <p>In order to enable this feature in a Broadleaf 3.1.1+ installation, you must hook up the {@link QuantityAvailableSkuTemplate}
+     * to dynamically weave in the quantityAvailable field or override this method in a subclass. This is enabled out of the
+     * box in Broadleaf 3.2+</p>
      * 
      * @param quantityAvailable the quantity available for this sku 
-     * @throws UnsupportedOperationException if this feature is not enabled
      */
-    public void setQuantityAvailable(Integer quantityAvailable) throws UnsupportedOperationException;
+    public void setQuantityAvailable(Integer quantityAvailable);
     
     /**
      * Returns the fulfillment type for this sku. May be null.
