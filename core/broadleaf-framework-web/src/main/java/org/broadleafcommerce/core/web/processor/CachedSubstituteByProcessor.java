@@ -28,7 +28,8 @@ import org.thymeleaf.dom.Attribute;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
 import org.thymeleaf.fragment.WholeFragmentSpec;
-import org.thymeleaf.processor.element.AbstractFragmentHandlingElementProcessor;
+import org.thymeleaf.processor.ProcessorResult;
+import org.thymeleaf.processor.element.AbstractElementProcessor;
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.standard.fragment.StandardFragment;
@@ -42,7 +43,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class CachedSubstituteByProcessor extends AbstractFragmentHandlingElementProcessor {
+public class CachedSubstituteByProcessor extends AbstractElementProcessor {
 
     public static final int ATTR_PRECEDENCE = 100;
     public static final String ATTR_NAME = "substituteby";
@@ -55,22 +56,27 @@ public class CachedSubstituteByProcessor extends AbstractFragmentHandlingElement
     }
 
     @Override
-    protected List<Node> computeFragment(Arguments arguments, Element element) {
+    public final ProcessorResult processElement(final Arguments arguments, final Element element) {
         String template = element.getAttributeValue("template");
-        List<Node> nodes = computeFragmentInternal(arguments, element, "template", template);
-        
+        String cacheKeyAttrValue = element.getAttributeValueFromNormalizedName("cachekey");
         Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValueFromNormalizedName("cachekey"));
+                .parseExpression(arguments.getConfiguration(), arguments, cacheKeyAttrValue);
         String cacheKey = (String) expression.execute(arguments.getConfiguration(), arguments);
-        
-        int i = 0;
-        for (Node node : nodes) {
-            if (node instanceof Element) {
-                ((Element) node).setAttribute("cachekey", cacheKey + ":" + (i++));
-            }
+        element.setAttribute("blcCacheKey", cacheKey);
+
+        net.sf.ehcache.Element cacheElement = getCache().get(cacheKey);
+
+        if (cacheElement != null && cacheElement.getObjectValue() != null) {
+            // This template has been cached.
+            element.clearChildren();
+        } else {
+            final List<Node> fragmentNodes = computeFragment(arguments, element, "template", template);
+            element.clearChildren();
+            element.setChildren(fragmentNodes);
         }
-        return nodes;
+        return ProcessorResult.OK;
     }
+
 
     /**
      * <b>NOTE</b> This method is copied from {@link AbstractStandardFragmentHandlingAttrProcessor#computeFragment}
@@ -81,7 +87,7 @@ public class CachedSubstituteByProcessor extends AbstractFragmentHandlingElement
      * @param attributeValue
      * @return
      */
-    protected final List<Node> computeFragmentInternal(final Arguments arguments, final Element element, 
+    protected final List<Node> computeFragment(final Arguments arguments, final Element element,
             final String attributeName, final String attributeValue) {
         final String dialectPrefix = Attribute.getPrefixFromAttributeName(attributeName);
 
@@ -133,16 +139,15 @@ public class CachedSubstituteByProcessor extends AbstractFragmentHandlingElement
         return ATTR_PRECEDENCE;
     }
 
+    protected boolean getRemoveHostNode(Arguments arguments, Element element) {
+        return false;
+    }
+    
     public Cache getCache() {
         if (cache == null) {
             cache = CacheManager.getInstance().getCache("blTemplateElements");
         }
         return cache;
-    }
-
-    @Override
-    protected boolean getRemoveHostNode(Arguments arguments, Element element) {
-        return true;
-    }
+    }    
 
 }

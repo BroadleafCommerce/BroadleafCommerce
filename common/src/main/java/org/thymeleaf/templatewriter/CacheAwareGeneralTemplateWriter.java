@@ -61,7 +61,7 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
         
         org.thymeleaf.dom.Element e = (org.thymeleaf.dom.Element) node;
         
-        String cacheKey = e.getAttributeValueFromNormalizedName("cachekey");
+        String cacheKey = e.getAttributeValueFromNormalizedName("blccachekey");
         
         if (StringUtils.isNotBlank(cacheKey)) {
             Element element = getCache().get(cacheKey);
@@ -73,10 +73,14 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
                 }
                 valueToWrite = (String) element.getObjectValue();
             } else {
-                e.removeAttribute("cachekey");
-
                 StringWriter w2 = new StringWriter();
-                super.writeNode(arguments, w2, node);
+
+                final Node[] children = e.unsafeGetChildrenNodeArray();
+                final int childrenLen = e.numChildren();
+                for (int i = 0; i < childrenLen; i++) {
+                    writeNode(arguments, w2, children[i]);
+                }
+
                 valueToWrite = w2.toString();
 
                 element = new Element(cacheKey, valueToWrite);
