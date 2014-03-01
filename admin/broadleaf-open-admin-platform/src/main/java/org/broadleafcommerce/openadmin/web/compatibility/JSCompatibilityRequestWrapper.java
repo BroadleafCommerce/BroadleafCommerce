@@ -128,5 +128,10 @@ public class JSCompatibilityRequestWrapper extends FirewalledRequest {
 
         return (Map<String, String>) getAttribute("requestParameterConversionMap");
     }
+    
+    @Override
+    public String[] getParameterValues(String name) {
+        return super.getParameterValues(getParameterNameConversionMap().get(name));
+    }
 
 }
