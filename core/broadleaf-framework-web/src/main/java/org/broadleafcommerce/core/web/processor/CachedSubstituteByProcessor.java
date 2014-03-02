@@ -23,6 +23,10 @@ package org.broadleafcommerce.core.web.processor;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Attribute;
 import org.thymeleaf.dom.Element;
@@ -55,16 +59,64 @@ public class CachedSubstituteByProcessor extends AbstractElementProcessor {
         super(ATTR_NAME);
     }
 
+    public String buildCacheKey(String template, String cacheKey, String customerCacheMethod) {
+        StringBuilder sb = new StringBuilder();        
+        sb.append(template);
+        if (cacheKey != null) {
+            sb.append('-').append(cacheKey);
+        }
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc != null && brc.getLocale() != null) {
+            sb.append(brc.getLocale().getLocaleCode());
+
+            if (! StringUtils.isEmpty(customerCacheMethod)) {
+                Customer c = CustomerState.getCustomer(brc.getWebRequest());
+                if ("anonymousOnly".equals(customerCacheMethod)) {
+                    if (c != null && !c.isAnonymous()) {
+                        return null;
+                    }
+                } else if ("byId".equals(customerCacheMethod)) {
+                    if (c != null && c.getId() != null) {
+                        sb.append('-').append(c.getId());
+                    }
+                } else if ("common".equals(customerCacheMethod)) {
+                    if (c != null && c.getId() != null && !c.isAnonymous()) {
+                        sb.append('-').append(c.getId());
+                    }
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+
     @Override
     public final ProcessorResult processElement(final Arguments arguments, final Element element) {
         String template = element.getAttributeValue("template");
         String cacheKeyAttrValue = element.getAttributeValueFromNormalizedName("cachekey");
-        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, cacheKeyAttrValue);
-        String cacheKey = (String) expression.execute(arguments.getConfiguration(), arguments);
-        element.setAttribute("blcCacheKey", cacheKey);
+        String customerCacheMethodAttrValue = element.getAttributeValueFromNormalizedName("customercachemethod");
 
-        net.sf.ehcache.Element cacheElement = getCache().get(cacheKey);
+        String cacheKey = "";
+        if (cacheKeyAttrValue != null) {
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, cacheKeyAttrValue);
+            cacheKey = (String) expression.execute(arguments.getConfiguration(), arguments);
+        }
+
+        String customerCacheMethod = "";
+        if (customerCacheMethodAttrValue != null) {
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                    .parseExpression(arguments.getConfiguration(), arguments, customerCacheMethodAttrValue);
+            customerCacheMethod = (String) expression.execute(arguments.getConfiguration(), arguments);
+        }
+
+        String blcCacheKey = buildCacheKey(template, cacheKey, customerCacheMethod);
+
+        if (blcCacheKey != null) {
+            element.setAttribute("blcCacheKey", blcCacheKey);
+        }
+
+        net.sf.ehcache.Element cacheElement = getCache().get(blcCacheKey);
 
         if (cacheElement != null && cacheElement.getObjectValue() != null) {
             // This template has been cached.
