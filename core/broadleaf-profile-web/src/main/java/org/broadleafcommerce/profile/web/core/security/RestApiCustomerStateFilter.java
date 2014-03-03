@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.profile.web.core.security;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.core.Ordered;
@@ -49,10 +51,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class RestApiCustomerStateFilter extends GenericFilterBean implements Ordered {
 
-    @Resource(name="blCustomerService")
-    private CustomerService customerService;
+    protected static final Log LOG = LogFactory.getLog(RestApiCustomerStateFilter.class);
     
-    private String customerIdAttributeName = "customerId";
+    @Resource(name="blCustomerService")
+    protected CustomerService customerService;
+    
+    protected String customerIdAttributeName = "customerId";
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -87,7 +91,11 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
                     servletRequest.setAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(), customer);
                 }
             }
-
+            
+            if (customerId == null) {
+                LOG.warn("No customer ID was found for the API request. In order to look up a customer for the request" +
+                         " send a request parameter or request header for the '" + customerIdAttributeName + "' attribute");
+            }
         }
 
         filterChain.doFilter(request, servletResponse);
