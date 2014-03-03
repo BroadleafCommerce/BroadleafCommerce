@@ -23,10 +23,6 @@ package org.broadleafcommerce.core.web.processor;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
-import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Attribute;
 import org.thymeleaf.dom.Element;
@@ -44,81 +40,25 @@ import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 import java.util.List;
 
 /**
- * 
- * @author Andre Azzolini (apazzolini)
+ * @author Andre Azzolini (apazzolini), bpolster
  */
 public class CachedSubstituteByProcessor extends AbstractElementProcessor {
 
     public static final int ATTR_PRECEDENCE = 100;
     public static final String ATTR_NAME = "substituteby";
-    public static final String FRAGMENT_ATTR_NAME = StandardFragmentAttrProcessor.ATTR_NAME;
 
     protected Cache cache;
-    
+    protected ITemplateCacheKeyResolver cacheKeyResolver = new SimpleCacheKeyResolver();
+
     public CachedSubstituteByProcessor() {
         super(ATTR_NAME);
-    }
-
-    public String buildCacheKey(String template, String cacheKey, String customerCacheMethod) {
-        StringBuilder sb = new StringBuilder();        
-        sb.append(template);
-        if (cacheKey != null) {
-            sb.append('-').append(cacheKey);
-        }
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc != null && brc.getLocale() != null) {
-            sb.append(brc.getLocale().getLocaleCode());
-
-            if (! StringUtils.isEmpty(customerCacheMethod)) {
-                Customer c = CustomerState.getCustomer(brc.getWebRequest());
-                if ("anonymousOnly".equals(customerCacheMethod)) {
-                    if (c != null && !c.isAnonymous()) {
-                        return null;
-                    }
-                } else if ("byId".equals(customerCacheMethod)) {
-                    if (c != null && c.getId() != null) {
-                        sb.append('-').append(c.getId());
-                    }
-                } else if ("common".equals(customerCacheMethod)) {
-                    if (c != null && c.getId() != null && !c.isAnonymous()) {
-                        sb.append('-').append(c.getId());
-                    }
-                }
-            }
-        }
-
-        return sb.toString();
     }
 
     @Override
     public final ProcessorResult processElement(final Arguments arguments, final Element element) {
         String template = element.getAttributeValue("template");
-        String cacheKeyAttrValue = element.getAttributeValueFromNormalizedName("cachekey");
-        String customerCacheMethodAttrValue = element.getAttributeValueFromNormalizedName("customercachemethod");
 
-        String cacheKey = "";
-        if (cacheKeyAttrValue != null) {
-            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                .parseExpression(arguments.getConfiguration(), arguments, cacheKeyAttrValue);
-            cacheKey = (String) expression.execute(arguments.getConfiguration(), arguments);
-        }
-
-        String customerCacheMethod = "";
-        if (customerCacheMethodAttrValue != null) {
-            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                    .parseExpression(arguments.getConfiguration(), arguments, customerCacheMethodAttrValue);
-            customerCacheMethod = (String) expression.execute(arguments.getConfiguration(), arguments);
-        }
-
-        String blcCacheKey = buildCacheKey(template, cacheKey, customerCacheMethod);
-
-        if (blcCacheKey != null) {
-            element.setAttribute("blcCacheKey", blcCacheKey);
-        }
-
-        net.sf.ehcache.Element cacheElement = getCache().get(blcCacheKey);
-
-        if (cacheElement != null && cacheElement.getObjectValue() != null) {
+        if (checkCacheForElement(arguments, element, template)) {
             // This template has been cached.
             element.clearChildren();
         } else {
@@ -127,6 +67,39 @@ public class CachedSubstituteByProcessor extends AbstractElementProcessor {
             element.setChildren(fragmentNodes);
         }
         return ProcessorResult.OK;
+    }
+
+    /**
+     * If this template was found in cache, adds the response to the element and returns true.
+     * 
+     * If not found in cache, adds the cacheKey to the element so that the Writer can cache after the
+     * first process.
+     * 
+     * @param arguments
+     * @param element
+     * @param template
+     * @return
+     */
+    protected boolean checkCacheForElement(Arguments arguments, Element element, String template) {
+        String cacheKeyParam = "";
+        String cacheKeyAttrValue = element.getAttributeValueFromNormalizedName("cachekey");
+
+        if (cacheKeyAttrValue != null) {
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                    .parseExpression(arguments.getConfiguration(), arguments, cacheKeyAttrValue);
+            cacheKeyParam = (String) expression.execute(arguments.getConfiguration(), arguments);
+        }
+
+        String cacheKey = cacheKeyResolver.resolveCacheKey(template, cacheKeyParam);
+        element.setAttribute("blCacheKey", cacheKey);
+
+        net.sf.ehcache.Element cacheElement = getCache().get(cacheKey);
+        if (cacheElement != null && !cacheElement.isExpired()) {
+            element.setAttribute("blCacheResponse", (String) cacheElement.getObjectValue());
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -183,7 +156,7 @@ public class CachedSubstituteByProcessor extends AbstractElementProcessor {
 
     protected String getFragmentSignatureUnprefixedAttributeName(final Arguments arguments, final Element element,
             final String attributeName, final String attributeValue) {
-        return FRAGMENT_ATTR_NAME;
+        return StandardFragmentAttrProcessor.ATTR_NAME;
     }
 
     @Override
@@ -194,12 +167,23 @@ public class CachedSubstituteByProcessor extends AbstractElementProcessor {
     protected boolean getRemoveHostNode(Arguments arguments, Element element) {
         return false;
     }
-    
+
+    public ITemplateCacheKeyResolver getCacheKeyResolver() {
+        return cacheKeyResolver;
+    }
+
+    public void setCacheKeyResolver(ITemplateCacheKeyResolver cacheKeyResolver) {
+        this.cacheKeyResolver = cacheKeyResolver;
+    }
+
     public Cache getCache() {
         if (cache == null) {
             cache = CacheManager.getInstance().getCache("blTemplateElements");
         }
         return cache;
-    }    
+    }
 
+    public void setCache(Cache cache) {
+        this.cache = cache;
+    }
 }

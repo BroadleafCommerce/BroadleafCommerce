@@ -38,7 +38,7 @@ import java.io.Writer;
  * Wrapper for Thymeleaf's {@link AbstractGeneralTemplateWriter} that provides content caching
  * on the node level.
  * 
- * @author Andre Azzolini (apazzolini)
+ * @author Andre Azzolini (apazzolini), Brian Polster (bpolster)
  */
 public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWriter {
 
@@ -64,14 +64,12 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
         String cacheKey = e.getAttributeValueFromNormalizedName("blccachekey");
         
         if (StringUtils.isNotBlank(cacheKey)) {
-            Element element = getCache().get(cacheKey);
-            String valueToWrite;
+            String valueToWrite = e.getAttributeValueFromNormalizedName("blcacheresponse");
             
-            if (element != null && element.getObjectValue() != null) {
+            if (valueToWrite != null) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Read template from cache - " + cacheKey);
                 }
-                valueToWrite = (String) element.getObjectValue();
             } else {
                 StringWriter w2 = new StringWriter();
 
@@ -83,7 +81,7 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
 
                 valueToWrite = w2.toString();
 
-                element = new Element(cacheKey, valueToWrite);
+                Element element = new Element(cacheKey, valueToWrite);
                 getCache().put(element);
             }
             
@@ -101,6 +99,10 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
     @Override
     protected boolean useXhtmlTagMinimizationRules() {
         return delegateWriter.useXhtmlTagMinimizationRules();
+    }
+
+    public void setCache(Cache cache) {
+        this.cache = cache;
     }
 
     public Cache getCache() {
