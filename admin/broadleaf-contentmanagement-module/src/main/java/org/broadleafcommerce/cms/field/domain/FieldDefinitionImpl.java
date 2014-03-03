@@ -108,6 +108,15 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Column(name="FLD_ORDER")
     protected int fieldOrder;
 
+    @Column (name = "TOOLTIP")
+    protected String tooltip;
+
+    @Column (name = "HELP_TEXT")
+    protected String helpText;
+
+    @Column (name = "HINT")
+    protected String hint;
+
     @Override
     public Long getId() {
         return id;
@@ -267,5 +276,37 @@ public class FieldDefinitionImpl implements FieldDefinition {
     public void setDataDrivenEnumeration(DataDrivenEnumeration dataDrivenEnumeration) {
         this.dataDrivenEnumeration = dataDrivenEnumeration;
     }
+
+    @Override
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    @Override
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+    }
+
+    @Override
+    public String getHelpText() {
+        return helpText;
+    }
+
+    @Override
+    public void setHelpText(String helpText) {
+        this.helpText = helpText;
+    }
+
+    @Override
+    public String getHint() {
+        return hint;
+    }
+
+    @Override
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+    
+    
 }
 

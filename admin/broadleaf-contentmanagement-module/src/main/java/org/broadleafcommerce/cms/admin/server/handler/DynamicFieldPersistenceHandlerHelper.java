@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
@@ -39,6 +32,13 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -104,6 +104,9 @@ public class DynamicFieldPersistenceHandlerHelper {
                 fieldMetadata.setBroadleafEnumeration("");
                 fieldMetadata.setReadOnly(false);
                 fieldMetadata.setRequiredOverride(definition.getRequiredFlag());
+                fieldMetadata.setHint(definition.getHint());
+                fieldMetadata.setHelpText(definition.getHelpText());
+                fieldMetadata.setTooltip(definition.getTooltip());
                 if (definition.getValidationRegEx() != null) {
                     Map<String, String> itemMap = new HashMap<String, String>();
                     itemMap.put("regularExpression", definition.getValidationRegEx());

@@ -93,4 +93,16 @@ public interface FieldDefinition extends Serializable {
 
     public void setFieldOrder(int fieldOrder);
 
+    public String getTooltip();
+
+    public void setTooltip(String tooltip);
+
+    public String getHelpText();
+
+    public void setHelpText(String helpText);
+
+    public String getHint();
+
+    public void setHint(String hint);
+
 }
