@@ -19,14 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -42,6 +34,14 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -125,7 +125,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                                     propertyName,
                                     propertyValue);
                             if (!result.isValid()) {
-                                entity.addValidationError(propertyName, result.getErrorMessage());
+                                submittedEntity.addValidationError(propertyName, result.getErrorMessage());
                             }
                         }
                     }
@@ -166,7 +166,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                                                                         propertyName,
                                                                         propertyValue);
                         if (!result.isValid()) {
-                            entity.addValidationError(propertyName, result.getErrorMessage());
+                            submittedEntity.addValidationError(propertyName, result.getErrorMessage());
                         }
                     }
                 }
