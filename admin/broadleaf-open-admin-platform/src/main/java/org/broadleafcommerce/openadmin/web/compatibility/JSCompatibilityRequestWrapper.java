@@ -131,7 +131,8 @@ public class JSCompatibilityRequestWrapper extends FirewalledRequest {
     
     @Override
     public String[] getParameterValues(String name) {
-        return super.getParameterValues(getParameterNameConversionMap().get(name));
+        String convertedParameterName = getParameterNameConversionMap().get(name);
+        return convertedParameterName == null ? super.getParameterValues(name) : super.getParameterValues(convertedParameterName);
     }
 
 }
