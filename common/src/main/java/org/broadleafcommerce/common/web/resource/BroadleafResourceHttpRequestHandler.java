@@ -27,8 +27,17 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
+import org.broadleafcommerce.common.web.BroadleafSiteResolver;
+import org.broadleafcommerce.common.web.BroadleafThemeResolver;
 import org.springframework.core.io.Resource;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
@@ -39,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHandler {
@@ -56,6 +66,15 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
     protected ResourceRequestExtensionManager extensionManager;
     
+    @javax.annotation.Resource(name = "blSiteResolver")
+    protected BroadleafSiteResolver siteResolver;
+    
+    @javax.annotation.Resource(name = "blSandBoxResolver")
+    protected BroadleafSandBoxResolver sbResolver;
+    
+    @javax.annotation.Resource(name = "blThemeResolver")
+    protected BroadleafThemeResolver themeResolver;
+    
     /**
      * Checks to see if the requested path corresponds to a registered bundle. If so, returns the generated bundle.
      * Otherwise, checks to see if any of the configured GeneratedResourceHandlers can handle the given request.
@@ -63,6 +82,11 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
      */
     @Override
 	protected Resource getResource(HttpServletRequest request) {
+        establishThinRequestContext();
+        return getResourceInternal(request);
+    }
+
+	protected Resource getResourceInternal(HttpServletRequest request) {
 		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         if (bundlingService.hasBundle(path)) {
             return bundlingService.getBundle(path);
@@ -143,6 +167,51 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    @SuppressWarnings("deprecation")
+    protected void establishThinRequestContext() {
+        BroadleafRequestContext oldBrc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (oldBrc == null || oldBrc.getSite() == null) {
+            // Resolving sites and sandboxes is often dependent on having a security context present in the request.
+            // For example, resolving a sandbox requires the current user to have the BLC_ADMIN_USER in his Authentication.
+            // For performance reasons, we do not go through the entire Spring Security filter chain on requests
+            // for resources like JavaScript and CSS files. However, when theming is enabled, we potentially have to
+            // resolve a specific version of the theme for a sandbox so that we can replace variables appropriately. This
+            // then depends on the sandbox being resolved, which requires the Authentication object to be present.
+            // We will grab the Authentication object associated with this user's session and set it on the
+            // SecurityContextHolder since Spring Security will be bypassed.
+            HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            HttpSession session = req.getSession(false);
+            SecurityContext ctx = readSecurityContextFromSession(session);
+            if (ctx != null) {
+                SecurityContextHolder.setContext(ctx);
+            }
+            
+            BroadleafRequestContext newBrc = new BroadleafRequestContext();
+            newBrc.setSite(siteResolver.resolveSite(req));
+            newBrc.setSandBox(sbResolver.resolveSandBox(req, newBrc.getSite()));
+            BroadleafRequestContext.setBroadleafRequestContext(newBrc);
+            newBrc.setTheme(themeResolver.resolveTheme(req, newBrc.getSite()));
+        }
+    }
+    
+    // **NOTE** This method is lifted from HttpSessionSecurityContextRepository
+    protected SecurityContext readSecurityContextFromSession(HttpSession httpSession) {
+        if (httpSession == null) {
+            return null;
+        }
+
+        Object ctxFromSession = httpSession.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+        if (ctxFromSession == null) {
+            return null;
+        }
+
+        if (!(ctxFromSession instanceof SecurityContext)) {
+            return null;
+        }
+
+        return (SecurityContext) ctxFromSession;
     }
     
     /* *********** */

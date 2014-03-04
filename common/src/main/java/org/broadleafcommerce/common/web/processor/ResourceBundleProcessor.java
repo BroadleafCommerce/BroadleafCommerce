@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.web.processor;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.broadleafcommerce.common.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
@@ -50,7 +51,8 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     protected ResourceBundlingService bundlingService;
     
     protected boolean getBundleEnabled() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled");
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled") && brc.getSandBox() == null;
     }
 
     public ResourceBundleProcessor() {

@@ -304,11 +304,17 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         this.additionalBundleFiles = additionalBundleFiles;
     }
     
-    protected Cache getBundleVersionsCache() {
+    @Override
+    public Cache getBundleVersionsCache() {
         if (bundleVersionsCache == null) {
             bundleVersionsCache = CacheManager.getInstance().getCache("blBundleElements");
         }
         return bundleVersionsCache;
+    }
+    
+    @Override
+    public Map<String, Collection<Resource>> getBundles() {
+        return bundles;
     }
 
 }
