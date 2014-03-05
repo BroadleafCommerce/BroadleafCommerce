@@ -217,6 +217,7 @@ public class SkuImpl implements Sku {
     protected Character available;
 
     @Column(name = "ACTIVE_START_DATE")
+    @Index(name="SKU_ACTIVE_START_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 1000,
         group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
         groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
@@ -224,7 +225,7 @@ public class SkuImpl implements Sku {
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
+    @Index(name="SKU_ACTIVE_END_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 2000, 
         group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
         groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
