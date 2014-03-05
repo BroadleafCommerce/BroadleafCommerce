@@ -267,7 +267,7 @@
         <property name="appName">
             <bean class="org.springframework.jndi.JndiObjectFactoryBean">
                 <property name="jndiName">
-                    <value>java:/comp/env/appName</value>
+                    <value>java:comp/env/appName</value>
                 </property>
                 <property name="defaultObject" value="broadleaf"/>
             </bean>
