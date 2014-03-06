@@ -19,16 +19,6 @@
  */
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -57,6 +47,16 @@ import org.broadleafcommerce.openadmin.server.service.handler.DynamicEntityRetri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 /**
  * Created by jfischer
@@ -233,8 +233,8 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     if (structuredContentField != null) {
                         boolean isDirty = (structuredContentField.getValue() == null && property.getValue() != null) ||
                                 (structuredContentField.getValue() != null && property.getValue() == null);
-                        if (!isDirty && structuredContentField.getValue() != null && property.getValue() != null &&
-                                !structuredContentField.getValue().trim().equals(property.getValue().trim())) {
+                        if (isDirty || (structuredContentField.getValue() != null && property.getValue() != null &&
+                                !structuredContentField.getValue().trim().equals(property.getValue().trim()))) {
                             dirtyFields.add(property.getName());
                             dirtyFieldsOrigVals.put(property.getName(), structuredContentField.getValue());
                         }
