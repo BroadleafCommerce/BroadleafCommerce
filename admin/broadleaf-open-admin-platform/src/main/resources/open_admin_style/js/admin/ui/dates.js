@@ -68,12 +68,17 @@
         
         postValidationSubmitHandler : function($form) {
             $form.find('.datepicker').each(function(index, element) {
-                var name = $(this).attr('name');
+                var $this = $(this);
+                if ($this.closest('.entityFormTab').data('initialized') != 'true') {
+                    BLCAdmin.dates.initialize($this);
+                }
+
+                var name = $this.attr('name');
 
                 var $hiddenClone = $('<input>', {
                     type: 'hidden',
                     name: name,
-                    value: BLCAdmin.dates.getServerDate($(this).val()),
+                    value: BLCAdmin.dates.getServerDate($this.val()),
                     'class': 'datepicker-clone'
                 });
               

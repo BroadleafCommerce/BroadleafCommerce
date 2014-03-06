@@ -200,6 +200,7 @@
         <property name="sourceList">
             <list>
                 <ref bean="blRequiredPropertyValidator"/>
+                <ref bean="blFieldLengthValidator"/>
             </list>
         </property>
     </bean>

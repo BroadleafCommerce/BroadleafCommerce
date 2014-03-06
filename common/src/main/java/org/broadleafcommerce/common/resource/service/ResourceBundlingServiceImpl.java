@@ -23,18 +23,18 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.file.domain.FileWorkArea;
+import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.broadleafcommerce.common.web.resource.ResourceRequestExtensionHandler;
 import org.broadleafcommerce.common.web.resource.ResourceRequestExtensionManager;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -60,7 +60,6 @@ import java.util.Map.Entry;
 @Service("blResourceBundlingService")
 public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     protected static final Log LOG = LogFactory.getLog(ResourceBundlingServiceImpl.class);
-    protected static final String DEFAULT_STORAGE_DIRECTORY = System.getProperty("java.io.tmpdir");
     
     // Map of known versioned bundle names ==> the resources that are part of that bundle
     // ex: "global12345.js" ==> [Resource("/js/BLC.js"), Resource("/js/blc-admin.js")]
@@ -75,8 +74,8 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     // ex: "global.js" ==> ["classpath:/file1.js", "/js/file2.js"]
     protected Map<String, List<String>> additionalBundleFiles = new HashMap<String, List<String>>();
     
-    @Value("${asset.server.file.system.path}")
-    protected String assetFileSystemPath;
+    @javax.annotation.Resource(name = "blFileService")
+    protected BroadleafFileService fileService;
     
     @javax.annotation.Resource(name = "blResourceMinificationService")
     protected ResourceMinificationService minifyService;
@@ -103,13 +102,12 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     }
     
     protected Resource readBundle(String versionedBundleName) {
-        return new FileSystemResource(getFilePath(versionedBundleName));
+        File bundleFile = fileService.getResource(getFilePath(versionedBundleName));
+        return new FileSystemResource(bundleFile);
     }
     
     protected String getFilePath(String name) {
-        String base = StringUtils.isBlank(assetFileSystemPath) ? DEFAULT_STORAGE_DIRECTORY : assetFileSystemPath;
-        base = StringUtils.removeEnd(base, "/");
-        return base + "/bundles/" + name;
+        return "bundles/" + name;
     }
     
     protected Resource createBundle(String versionedBundleName) {
@@ -161,21 +159,32 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     }
     
     protected void saveBundle(Resource resource) {
-        File file = new File(getFilePath(resource.getDescription()));
-        if (!file.getParentFile().exists()) {
-            if (!file.getParentFile().mkdirs()) {
-                // Possibly created by another thread, if not then error
-                if (!file.getParentFile().exists()) {
-                    throw new RuntimeException("Unable to create middle directories for file: " + file.getAbsolutePath());
+        FileWorkArea tempWorkArea = fileService.initializeWorkArea();
+        String tempFilename = tempWorkArea.getFilePathLocation() + getFilePath(resource.getDescription());
+        File tempFile = new File(tempFilename);
+        if (!tempFile.getParentFile().exists()) {
+            if (!tempFile.getParentFile().mkdirs()) {
+                if (!tempFile.getParentFile().exists()) {
+                    throw new RuntimeException("Unable to create parent directories for file: " + tempFilename);
                 }
             }
         }
-        
+        BufferedOutputStream out = null;
         try {
-            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+            out = new BufferedOutputStream(new FileOutputStream(tempFile));
             StreamUtils.copy(resource.getInputStream(), out);
+            fileService.addOrUpdateResource(tempWorkArea, tempFile, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            fileService.closeWorkArea(tempWorkArea);
         }
     }
     
@@ -295,11 +304,17 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         this.additionalBundleFiles = additionalBundleFiles;
     }
     
-    protected Cache getBundleVersionsCache() {
+    @Override
+    public Cache getBundleVersionsCache() {
         if (bundleVersionsCache == null) {
             bundleVersionsCache = CacheManager.getInstance().getCache("blBundleElements");
         }
         return bundleVersionsCache;
+    }
+    
+    @Override
+    public Map<String, Collection<Resource>> getBundles() {
+        return bundles;
     }
 
 }

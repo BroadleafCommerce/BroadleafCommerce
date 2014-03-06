@@ -381,6 +381,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             for (OrderItem containedItem : getOrderItems()) {
                 returnValue = returnValue.add(containedItem.getTotalPrice());
             }
+            returnValue = returnValue.multiply(quantity);
         } else {
             returnValue = super.getTotalPrice();
         }
