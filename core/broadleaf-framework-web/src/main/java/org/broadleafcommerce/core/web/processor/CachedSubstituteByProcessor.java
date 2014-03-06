@@ -91,11 +91,11 @@ public class CachedSubstituteByProcessor extends AbstractElementProcessor {
         }
 
         String cacheKey = cacheKeyResolver.resolveCacheKey(template, cacheKeyParam);
-        element.setAttribute("blCacheKey", cacheKey);
+        element.setAttribute("cachekey", cacheKey);
 
         net.sf.ehcache.Element cacheElement = getCache().get(cacheKey);
         if (cacheElement != null && !cacheElement.isExpired()) {
-            element.setAttribute("blCacheResponse", (String) cacheElement.getObjectValue());
+            element.setAttribute("blcacheresponse", (String) cacheElement.getObjectValue());
             return true;
         } else {
             return false;

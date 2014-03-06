@@ -61,7 +61,7 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
         
         org.thymeleaf.dom.Element e = (org.thymeleaf.dom.Element) node;
         
-        String cacheKey = e.getAttributeValueFromNormalizedName("blccachekey");
+        String cacheKey = e.getAttributeValueFromNormalizedName("cachekey");
         
         if (StringUtils.isNotBlank(cacheKey)) {
             String valueToWrite = e.getAttributeValueFromNormalizedName("blcacheresponse");
