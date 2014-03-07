@@ -56,6 +56,7 @@
     <bean id="blPaginationPageLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationPageLinkProcessor" />
     <bean id="blPaginationSizeLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationSizeLinkProcessor" />
     <bean id="blPaginationSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationSortLinkProcessor" />
+    <bean id="blCachedSubstituteByProcessor" class="org.broadleafcommerce.core.web.processor.CachedSubstituteByProcessor" />
     <bean id="blPriceTextDisplayProcessor" class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
     <bean id="blRatingsProcessor" class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
     <bean id="blRelatedProductProcessor" class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
@@ -78,6 +79,7 @@
                 <ref bean="blPaginationPageLinkProcessor" />
                 <ref bean="blPaginationSizeLinkProcessor" />
                 <ref bean="blPaginationSortLinkProcessor" />
+                <ref bean="blCachedSubstituteByProcessor" />
                 <ref bean="blPriceTextDisplayProcessor" />
                 <ref bean="blProductOptionValueProcessor" />
                 <ref bean="blProductOptionsProcessor" />
@@ -167,6 +169,9 @@
         </property>
     </bean>
     
+    <bean id="blThymeleafStandardTemplateModeHandlers" 
+        class="org.broadleafcommerce.common.web.BroadleafThymeleafStandardTemplateModeHandlers" />
+    
     <bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
         <property name="messageResolvers">
             <set>
@@ -175,6 +180,7 @@
             </set>
         </property>
         <property name="templateResolvers" ref="blWebTemplateResolvers" />
+        <property name="templateModeHandlers" value="#{blThymeleafStandardTemplateModeHandlers.standardTemplateModeHandlers}" />
         <property name="dialects">
             <set>
                 <ref bean="thymeleafSpringStandardDialect" />
