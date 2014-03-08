@@ -16,19 +16,6 @@
 
 package org.broadleafcommerce.core.search.service.solr;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +39,7 @@ import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsidera
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.search.dao.FieldDao;
+import org.broadleafcommerce.core.search.dao.SolrIndexDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +47,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -91,11 +92,15 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
 
+    @Resource(name = "blSolrIndexDao")
+    protected SolrIndexDao solrIndexDao;
+
+    protected Map<Long, List<Long>> categoryProductCache;
+
     public static String ATTR_MAP = "productAttributes";
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public void rebuildIndex() throws ServiceException, IOException {
+    public synchronized void rebuildIndex() throws ServiceException, IOException {
         LOG.info("Rebuilding the solr index...");
         StopWatch s = new StopWatch();
 
@@ -110,6 +115,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         DynamicSkuPricingService savedPricingService = SkuPricingConsiderationContext.getSkuPricingService();
         DynamicSkuActiveDatesService savedActiveDateServcie = SkuActiveDateConsiderationContext.getSkuActiveDatesService();
         try {
+            categoryProductCache = new HashMap<Long, List<Long>>();
             Long numProducts = productDao.readCountAllActiveProducts();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("There are " + numProducts + " total products");
@@ -135,6 +141,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             SkuPricingConsiderationContext.setSkuPricingConsiderationContext(savedPricing);
             SkuPricingConsiderationContext.setSkuPricingService(savedPricingService);
             SkuActiveDateConsiderationContext.setSkuActiveDatesService(savedActiveDateServcie);
+            categoryProductCache = null;
         }
 
         // Swap the active and the reindex cores
@@ -321,14 +328,14 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             document.addField(shs.getExplicitCategoryFieldName(), categoryXref.getCategory().getId());
 
             String categorySortFieldName = shs.getCategorySortFieldName(categoryXref.getCategory());
+
             int index = -1;
-            int count = 0;
-            for (CategoryProductXref productXref : categoryXref.getCategory().getAllProductXrefs()) {
-                if (productXref.getProduct().equals(product)) {
-                    index = count;
-                    break;
-                }
-                count++;
+            if (!categoryProductCache.containsKey(categoryXref.getCategory().getId())) {
+                categoryProductCache.put(categoryXref.getCategory().getId(), solrIndexDao.readProductIdsByCategory(categoryXref.getCategory().getId()));
+            }
+            int position = categoryProductCache.get(categoryXref.getCategory().getId()).indexOf(product.getId());
+            if (position >= 0) {
+                index = position;
             }
             document.addField(categorySortFieldName, index);
         }
