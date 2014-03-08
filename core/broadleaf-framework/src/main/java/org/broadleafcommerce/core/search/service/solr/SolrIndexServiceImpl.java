@@ -43,6 +43,7 @@ import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingServi
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.search.dao.FieldDao;
+import org.broadleafcommerce.core.search.dao.SolrIndexDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,10 +96,15 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
 
+    @Resource(name = "blSolrIndexDao")
+    protected SolrIndexDao solrIndexDao;
+
+    protected Map<Long, List<Long>> categoryProductCache;
+
     public static String ATTR_MAP = "productAttributes";
 
     @Override
-    public void rebuildIndex() throws ServiceException, IOException {
+    public synchronized void rebuildIndex() throws ServiceException, IOException {
         LOG.info("Rebuilding the solr index...");
         StopWatch s = new StopWatch();
 
@@ -109,6 +115,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         Object[] pack = saveState();
         try {
+            categoryProductCache = new HashMap<Long, List<Long>>();
             Long numProducts = productDao.readCountAllActiveProducts();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("There are " + numProducts + " total products");
@@ -122,6 +129,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         } catch (ServiceException e) {
             throw e;
         } finally {
+            categoryProductCache = null;
             restoreState(pack);
         }
 
@@ -307,14 +315,14 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryXref.getCategory().getId()));
 
             String categorySortFieldName = shs.getCategorySortFieldName(categoryXref.getCategory());
+
             int index = -1;
-            int count = 0;
-            for (CategoryProductXref productXref : categoryXref.getCategory().getAllProductXrefs()) {
-                if (productXref.getProduct().equals(product)) {
-                    index = count;
-                    break;
-                }
-                count++;
+            if (!categoryProductCache.containsKey(categoryXref.getCategory().getId())) {
+                categoryProductCache.put(categoryXref.getCategory().getId(), solrIndexDao.readProductIdsByCategory(categoryXref.getCategory().getId()));
+            }
+            int position = categoryProductCache.get(categoryXref.getCategory().getId()).indexOf(product.getId());
+            if (position >= 0) {
+                index = position;
             }
 
             if (document.getField(categorySortFieldName) == null) {

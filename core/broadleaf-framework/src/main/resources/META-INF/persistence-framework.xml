@@ -44,6 +44,7 @@
         <mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
         <mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/SearchRedirect.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Solr.orm.xml</mapping-file>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl</class>
