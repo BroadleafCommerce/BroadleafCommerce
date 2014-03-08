@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Broadleaf Commerce Confidential
+  ~ _______________________________
+  ~
+  ~ [2009] - [2013] Broadleaf Commerce, LLC
+  ~ All Rights Reserved.
+  ~
+  ~ NOTICE:  All information contained herein is, and remains
+  ~ the property of Broadleaf Commerce, LLC
+  ~ The intellectual and technical concepts contained
+  ~ herein are proprietary to Broadleaf Commerce, LLC
+  ~ and may be covered by U.S. and Foreign Patents,
+  ~ patents in process, and are protected by trade secret or copyright law.
+  ~ Dissemination of this information or reproduction of this material
+  ~ is strictly forbidden unless prior written permission is obtained
+  ~ from Broadleaf Commerce, LLC.
+  -->
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+
+    <named-query name="BC_READ_PRODUCT_IDS_BY_CATEGORY" >
+        <query>SELECT categoryProduct.categoryProductXref.product.id FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
+        WHERE categoryProduct.categoryProductXref.category.id = :categoryId
+        ORDER BY categoryProduct.displayOrder
+        </query>
+    </named-query>
+
+</entity-mappings>

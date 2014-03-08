@@ -109,15 +109,29 @@ public class FulfillmentGroupItemStrategyImpl implements FulfillmentGroupItemStr
                 }
                 
                 //If the null type or specified type, above were null, then we need to create a new fulfillment group
+                boolean createdFulfillmentGroup = false;
                 if (fulfillmentGroup == null) {
                     fulfillmentGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
                     //Set the type
                     fulfillmentGroup.setType(type);
                     fulfillmentGroup.setOrder(order);
                     order.getFulfillmentGroups().add(fulfillmentGroup);
+                    
+                    createdFulfillmentGroup = true;
                 }
                 
                 fulfillmentGroup = addItemToFulfillmentGroup(order, doi, doi.getQuantity() * orderItem.getQuantity(), fulfillmentGroup);
+                order = fulfillmentGroup.getOrder();
+                
+                // If we had to create a new fulfillment group, then ensure that this will operate correctly for the next set
+                // of fulfillment groups
+                if (createdFulfillmentGroup) {
+                    if (type == null) {
+                        nullFulfillmentTypeGroup = fulfillmentGroup;
+                    } else {
+                        fulfillmentGroups.put(type, fulfillmentGroup);
+                    }
+                }
             }
         } else if (orderItem instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem)orderItem;
