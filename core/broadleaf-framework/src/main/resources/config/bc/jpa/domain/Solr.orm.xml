@@ -23,8 +23,8 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
     <named-query name="BC_READ_PRODUCT_IDS_BY_CATEGORY" >
-        <query>SELECT categoryProduct.product.id FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
-        WHERE categoryProduct.category.id = :categoryId
+        <query>SELECT categoryProduct.categoryProductXref.product.id FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
+        WHERE categoryProduct.categoryProductXref.category.id = :categoryId
         ORDER BY categoryProduct.displayOrder
         </query>
     </named-query>
