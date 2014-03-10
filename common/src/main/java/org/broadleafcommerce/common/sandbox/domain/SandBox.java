@@ -68,6 +68,11 @@ public interface SandBox extends Serializable {
 
     void setChildSandBoxes(List<SandBox> childSandBoxes);
 
+    /**
+     * @return whether or not this sandbox, or any of its parent sandboxes, has type DEFAULT.
+     */
+    public boolean getIsInDefaultHierarchy();
+
 }
 
 

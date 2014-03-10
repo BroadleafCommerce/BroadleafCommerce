@@ -258,5 +258,18 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     public String getMainEntityName() {
         return getName();
     }
+    
+    @Override
+    public boolean getIsInDefaultHierarchy() {
+        if (SandBoxType.DEFAULT.equals(getSandBoxType())) {
+            return true;
+        }
+
+        if (getParentSandBox() != null) {
+            return getParentSandBox().getIsInDefaultHierarchy();
+        }
+        
+        return false;
+    }
 
 }
