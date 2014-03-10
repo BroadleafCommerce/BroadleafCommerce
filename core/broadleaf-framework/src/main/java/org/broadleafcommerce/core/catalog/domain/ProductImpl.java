@@ -240,7 +240,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
         group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
         prominent = true, gridOrder = 2, 
         requiredOverride = RequiredOverride.REQUIRED)
-    @AdminPresentationToOneLookup(enableTypeaheadLookup = true)
+    @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product", orphanRemoval = true)
