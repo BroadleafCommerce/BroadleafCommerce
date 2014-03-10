@@ -139,6 +139,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
         }
         
+        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
+        
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("listGrid", listGrid);

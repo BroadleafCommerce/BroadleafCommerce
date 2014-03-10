@@ -23,7 +23,11 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.springframework.ui.Model;
+
+import java.util.List;
 
 
 /**
@@ -34,6 +38,16 @@ import org.springframework.ui.Model;
 public interface AdminAbstractControllerExtensionHandler extends ExtensionHandler {
     
     public static final String NEW_CLASS_NAME = "newClassName";
+
+    /**
+     * Invoked every time {@link AdminBasicEntityController#viewEntityList()} is invoked to allow additional
+     * main form actions to be contributed.
+     * 
+     * @param model
+     * @param sectionKey
+     * @return
+     */
+    public ExtensionResultStatusType addAdditionalMainActions(String sectionClassName, List<EntityFormAction> actions);
 
     /**
      * Invoked every time {@link AdminAbstractController#setModelAttributes(Model, String)} is invoked.
