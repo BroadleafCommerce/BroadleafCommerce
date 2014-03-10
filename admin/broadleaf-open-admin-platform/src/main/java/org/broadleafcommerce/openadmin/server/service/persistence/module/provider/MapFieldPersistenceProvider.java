@@ -120,7 +120,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-        return FieldProviderResponse.HANDLED;
+        return FieldProviderResponse.HANDLED_BREAK;
     }
 
     @Override
