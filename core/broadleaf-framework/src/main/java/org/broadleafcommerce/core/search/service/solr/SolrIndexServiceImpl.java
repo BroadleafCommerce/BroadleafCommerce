@@ -27,21 +27,22 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.search.dao.CatalogStructure;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SolrIndexDao;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -52,12 +53,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -103,13 +106,29 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     public static String ATTR_MAP = "productAttributes";
 
+    @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
         try {
-            Map<Long, List<Long>> cache = new HashMap<Long, List<Long>>();
+            CatalogStructure cache = new CatalogStructure();
             SolrIndexCachedOperation.setCache(cache);
             cacheOperation.execute();
         } finally {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Cleaning up Solr index cache from memory - size approx: " + getCacheSizeInMemoryApproximation(SolrIndexCachedOperation.getCache()) + " bytes");
+            }
             SolrIndexCachedOperation.clearCache();
+        }
+    }
+
+    protected int getCacheSizeInMemoryApproximation(CatalogStructure structure) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(structure);
+            oos.close();
+            return baos.size();
+        } catch (IOException e) {
+            throw ExceptionHelper.refineException(e);
         }
     }
 
@@ -182,12 +201,29 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             LOG.debug(String.format("Building index - page: [%s], pageSize: [%s]", page, pageSize));
         }
         StopWatch s = new StopWatch();
+        boolean cacheOperationManaged = false;
         try {
+            CatalogStructure cache = SolrIndexCachedOperation.getCache();
+            if (cache != null) {
+                cacheOperationManaged = true;
+            } else {
+                cache = new CatalogStructure();
+                SolrIndexCachedOperation.setCache(cache);
+            }
             List<Product> products = readAllActiveProducts(page, pageSize);
+            List<Long> productIds = (List<Long>) CollectionUtils.collect(products, new TypedTransformer<Long>() {
+                @Override
+                public Long transform(Object input) {
+                    return ((Product) input).getId();
+                }
+            });
+            solrIndexDao.populateCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
+
             List<Field> fields = fieldDao.readAllProductFields();
             List<Locale> locales = getAllLocales();
 
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
+
             for (Product product : products) {
                 SolrInputDocument doc = buildDocument(product, fields, locales);
                 //If someone overrides the buildDocument method and determines that they don't want a product 
@@ -215,6 +251,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         } catch (RuntimeException e) {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw e;
+        } finally {
+            if (!cacheOperationManaged) {
+                SolrIndexCachedOperation.clearCache();
+            }
         }
 
         if (LOG.isDebugEnabled()) {
@@ -321,12 +361,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     protected void attachBasicDocumentFields(Product product, SolrInputDocument document) {
         boolean cacheOperationManaged = false;
         try {
-            Map<Long, List<Long>> cache = SolrIndexCachedOperation.getCache();
+            CatalogStructure cache = SolrIndexCachedOperation.getCache();
             if (cache != null) {
                 cacheOperationManaged = true;
             } else {
-                cache = new HashMap<Long, List<Long>>();
+                cache = new CatalogStructure();
                 SolrIndexCachedOperation.setCache(cache);
+                solrIndexDao.populateCatalogStructure(Arrays.asList(product.getId()), SolrIndexCachedOperation.getCache());
             }
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
@@ -335,16 +376,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
 
             // The explicit categories are the ones defined by the product itself
-            for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
-                document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryXref.getCategory().getId()));
+            for (Long categoryId : cache.getParentCategoriesByProduct().get(product.getId())) {
+                document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
-                String categorySortFieldName = shs.getCategorySortFieldName(categoryXref.getCategory());
+                String categorySortFieldName = shs.getCategorySortFieldName(categoryId);
 
                 int index = -1;
-                if (!cache.containsKey(categoryXref.getCategory().getId())) {
-                    cache.put(categoryXref.getCategory().getId(), solrIndexDao.readProductIdsByCategory(categoryXref.getCategory().getId()));
-                }
-                int position = cache.get(categoryXref.getCategory().getId()).indexOf(product.getId());
+                int position = cache.getProductsByCategory().get(categoryId).indexOf(product.getId());
                 if (position >= 0) {
                     index = position;
                 }
@@ -352,20 +390,29 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 if (document.getField(categorySortFieldName) == null) {
                     document.addField(categorySortFieldName, index);
                 }
-            }
 
-            // This is the entire tree of every category defined on the product
-            Set<Category> fullCategoryHierarchy = new HashSet<Category>();
-            for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
-                fullCategoryHierarchy.addAll(categoryXref.getCategory().buildFullCategoryHierarchy(null));
-            }
-            for (Category category : fullCategoryHierarchy) {
-                document.addField(shs.getCategoryFieldName(), shs.getCategoryId(category.getId()));
+                // This is the entire tree of every category defined on the product
+                buildFullCategoryHierarchy(document, cache, categoryId);
             }
         } finally {
             if (!cacheOperationManaged) {
                 SolrIndexCachedOperation.clearCache();
             }
+        }
+    }
+
+    /**
+     * Walk the category hierarchy upwards, adding a field for each level to the solr document
+     *
+     * @param document the solr document for the product
+     * @param cache the catalog structure cache
+     * @param categoryId the current category id
+     */
+    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId) {
+        document.addField(shs.getCategoryFieldName(), shs.getCategoryId(categoryId));
+        Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
+        for (Long parent : parents) {
+            buildFullCategoryHierarchy(document, cache, parent);
         }
     }
 

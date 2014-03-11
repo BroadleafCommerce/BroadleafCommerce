@@ -30,12 +30,12 @@ import java.util.List;
 public interface SolrIndexDao {
 
     /**
-     * Retrieve the product ids that belong to this category. The products will be sorted
-     * based on their display order.
+     * Populate the contents of a lightweight catalog structure for a list of products.
      *
-     * @param categoryId the category
-     * @return the list of sorted product ids
+     * @param productIds
+     * @param catalogStructure lightweight container defining product and category hierarchies
+     * @see org.broadleafcommerce.core.search.dao.CatalogStructure
      */
-    List<Long> readProductIdsByCategory(Long categoryId);
+    void populateCatalogStructure(List<Long> productIds, CatalogStructure catalogStructure);
 
 }

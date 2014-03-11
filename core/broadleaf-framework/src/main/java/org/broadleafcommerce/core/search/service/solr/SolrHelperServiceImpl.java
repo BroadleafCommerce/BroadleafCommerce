@@ -215,6 +215,14 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 .toString();
     }
 
+    @Override
+    public String getCategorySortFieldName(Long categoryId) {
+        return new StringBuilder()
+                .append(getCategoryFieldName())
+                .append("_").append(categoryId).append("_").append("sort_i")
+                .toString();
+    }
+
     public String getLocalePrefix() {
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
             Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();

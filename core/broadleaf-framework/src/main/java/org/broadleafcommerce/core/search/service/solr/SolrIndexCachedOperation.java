@@ -20,9 +20,7 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.broadleafcommerce.common.exception.ServiceException;
-
-import java.util.List;
-import java.util.Map;
+import org.broadleafcommerce.core.search.dao.CatalogStructure;
 
 /**
  * Provides a single cache while exposing a block of code for execution to
@@ -34,14 +32,14 @@ import java.util.Map;
  */
 public class SolrIndexCachedOperation {
 
-    private static final ThreadLocal<Map<Long, List<Long>>> CACHE = new ThreadLocal<Map<Long, List<Long>>>();
+    private static final ThreadLocal<CatalogStructure> CACHE = new ThreadLocal<CatalogStructure>();
 
     /**
      * Retrieve the cache bound to the current thread.
      *
      * @return The cache for the current thread, or null if not set
      */
-    public static Map<Long, List<Long>> getCache() {
+    public static CatalogStructure getCache() {
         return CACHE.get();
     }
 
@@ -50,7 +48,7 @@ public class SolrIndexCachedOperation {
      *
      * @param cache the cache object (usually an empty map)
      */
-    public static void setCache(Map<Long, List<Long>> cache) {
+    public static void setCache(CatalogStructure cache) {
         CACHE.set(cache);
     }
 

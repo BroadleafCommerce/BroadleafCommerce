@@ -24,8 +24,24 @@
 
     <named-query name="BC_READ_PRODUCT_IDS_BY_CATEGORY" >
         <query>SELECT categoryProduct.product.id FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
-        WHERE categoryProduct.category.id = :categoryId
-        ORDER BY categoryProduct.displayOrder
+            WHERE categoryProduct.category.id = :categoryId
+            ORDER BY categoryProduct.displayOrder
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_PARENT_CATEGORY_IDS_BY_PRODUCTS" >
+        <query>SELECT NEW org.broadleafcommerce.core.search.dao.ParentCategoryByProduct(categoryProduct.category.id, categoryProduct.product.id)
+            FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
+            WHERE categoryProduct.product.id IN :productIds
+            ORDER BY categoryProduct.product.id
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_PARENT_CATEGORY_IDS_BY_CATEGORIES" >
+        <query>SELECT NEW org.broadleafcommerce.core.search.dao.ParentCategoryByCategory(categoryXref.category.id, categoryXref.subCategory.defaultParentCategory.id, categoryXref.subCategory.id)
+            FROM org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl categoryXref
+            WHERE categoryXref.subCategory.id IN :categoryIds
+            ORDER BY categoryXref.subCategory.id
         </query>
     </named-query>
 
