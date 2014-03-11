@@ -139,11 +139,13 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
             SecurityServiceException ex = new SecurityServiceException("Security Check Failed for entity operation: " + operationType.toString() + " (" + ceilingEntityFullyQualifiedName + ")");
             //check if the requested entity is not configured and warn
             if (!securityService.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName)) {
-                LOG.warn("Detected security request for an unregistered ceiling entity (" + ceilingEntityFullyQualifiedName + "). " +
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Detected security request for an unregistered ceiling entity (" + ceilingEntityFullyQualifiedName + "). " +
                         "As a result, the request failed. Please make sure to configure security for any ceiling entities " +
                         "referenced via the admin. This is usually accomplished by adding records in the " +
                         "BLC_ADMIN_PERMISSION_ENTITY table. Note, depending on how the entity in question is used, you " +
                         "may need to add to BLC_ADMIN_PERMISSION, BLC_ADMIN_ROLE_PERMISSION_XREF and BLC_ADMIN_SEC_PERM_XREF.", ex);
+                }
             }
             throw ex;
         }

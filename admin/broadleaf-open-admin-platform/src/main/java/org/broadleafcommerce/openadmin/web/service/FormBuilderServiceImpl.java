@@ -802,12 +802,14 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
 
-        // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
-        try {
-            adminRemoteSecurityService.securityCheck(entityForm.getCeilingEntityClassname(), EntityOperationType.UPDATE);
-        } catch (ServiceException e) {
-            if (e instanceof SecurityServiceException) {
-                readOnly = true;
+        if (!readOnly) {
+            // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
+            try {
+                adminRemoteSecurityService.securityCheck(entityForm.getCeilingEntityClassname(), EntityOperationType.UPDATE);
+            } catch (ServiceException e) {
+                if (e instanceof SecurityServiceException) {
+                    readOnly = true;
+                }
             }
         }
 
