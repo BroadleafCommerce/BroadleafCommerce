@@ -149,12 +149,14 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             previewSandBoxContext.setPreviewMode(true);
             SandBoxContext.setSandBoxContext(previewSandBoxContext);
         }
-        // Note that this must happen after the request context is set up as resolving a theme is dependent on site
-        Theme theme = themeResolver.resolveTheme(request);
         brc.setLocale(locale);
         brc.setBroadleafCurrency(currency);
         brc.setSandBox(currentSandbox);
+
+        // Note that this must happen after the request context is set up as resolving a theme is dependent on site
+        Theme theme = themeResolver.resolveTheme(request);
         brc.setTheme(theme);
+
         brc.setMessageSource(messageSource);
         brc.setTimeZone(timeZone);
         brc.setRequestDTO(requestDTO);
