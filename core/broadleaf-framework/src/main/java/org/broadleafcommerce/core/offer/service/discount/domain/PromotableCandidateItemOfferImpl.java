@@ -75,7 +75,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     public int calculateTargetQuantityForTieredOffer() {
         int returnQty = 0;
 
-        for (OfferItemCriteria itemCriteria : getCandidateQualifiersMap().keySet()) {
+        for (OfferItemCriteria itemCriteria : getCandidateTargetsMap().keySet()) {
             List<PromotableOrderItem> candidateTargets = getCandidateTargetsMap().get(itemCriteria);
             for (PromotableOrderItem promotableOrderItem : candidateTargets) {
                 returnQty += promotableOrderItem.getQuantity();

@@ -101,7 +101,14 @@ public class PromotableOfferUtility {
                 if (maxTier != null) {
                     return maxTier.getAmount();
                 }
-                return BigDecimal.ZERO;
+
+                if (OfferDiscountType.FIX_PRICE.equals(offer.getDiscountType())) {
+                    // Choosing an arbitrary large value.    The retail / sale price will be less than this, 
+                    // so the offer will not get selected.
+                    return BigDecimal.valueOf(Integer.MAX_VALUE);
+                } else {
+                    return BigDecimal.ZERO;
+                }
             }
         }
         return offer.getValue();
