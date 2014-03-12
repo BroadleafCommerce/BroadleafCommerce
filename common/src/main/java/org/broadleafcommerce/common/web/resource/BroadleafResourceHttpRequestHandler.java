@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.web.resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +32,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafThemeResolver;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -74,6 +76,12 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     
     @javax.annotation.Resource(name = "blThemeResolver")
     protected BroadleafThemeResolver themeResolver;
+
+    @Value("${global.admin.prefix}")
+    protected String globalAdminPrefix;
+
+    @Value("${global.admin.url}")
+    protected String globalAdminUrl;
     
     /**
      * Checks to see if the requested path corresponds to a registered bundle. If so, returns the generated bundle.
@@ -189,13 +197,38 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             }
             
             BroadleafRequestContext newBrc = new BroadleafRequestContext();
-            newBrc.setSite(siteResolver.resolveSite(req));
-            newBrc.setSandBox(sbResolver.resolveSandBox(req, newBrc.getSite()));
-            BroadleafRequestContext.setBroadleafRequestContext(newBrc);
-            newBrc.setTheme(themeResolver.resolveTheme(req, newBrc.getSite()));
+            if (!isGlobalAdmin(req)) {
+                newBrc.setSite(siteResolver.resolveSite(req));
+                newBrc.setSandBox(sbResolver.resolveSandBox(req, newBrc.getSite()));
+                BroadleafRequestContext.setBroadleafRequestContext(newBrc);
+                newBrc.setTheme(themeResolver.resolveTheme(req, newBrc.getSite()));
+            }
         }
     }
     
+    protected boolean isGlobalAdmin(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        if (!StringUtils.isEmpty(globalAdminPrefix)) {
+            if (globalAdminPrefix.equals(getContextName(request))) {
+                return true;
+            } else {
+                if (!StringUtils.isEmpty(globalAdminUrl)) {
+                    return uri.startsWith(globalAdminUrl);
+                }
+            }
+        }
+        return false;
+    }
+
+    protected String getContextName(HttpServletRequest request) {
+        String contextName = request.getServerName();
+        int pos = contextName.indexOf('.');
+        if (pos >= 0) {
+            contextName = contextName.substring(0, contextName.indexOf('.'));
+        }
+        return contextName;
+    }
+
     // **NOTE** This method is lifted from HttpSessionSecurityContextRepository
     protected SecurityContext readSecurityContextFromSession(HttpSession httpSession) {
         if (httpSession == null) {
