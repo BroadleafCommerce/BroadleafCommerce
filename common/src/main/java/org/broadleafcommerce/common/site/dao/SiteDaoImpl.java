@@ -49,6 +49,11 @@ public class SiteDaoImpl implements SiteDao {
     protected EntityConfiguration entityConfiguration;
 
     @Override
+    public Site create() {
+        return (Site) entityConfiguration.createEntityInstance(Site.class.getName());
+    }
+
+    @Override
     public Site retrieve(Long id) {
         return em.find(SiteImpl.class, id);
     }

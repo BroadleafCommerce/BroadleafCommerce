@@ -44,6 +44,11 @@ public class SiteServiceImpl implements SiteService {
     protected SiteDao siteDao;
 
     @Override
+    public Site createSite() {
+        return siteDao.create();
+    }
+
+    @Override
     public Site retrieveSiteById(final Long id) {
         //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
         //only run the operation under a transaction if there is not already an entity manager in the view

@@ -27,6 +27,14 @@ import java.util.List;
 public interface SiteDao {
 
     /**
+     * Creates an instance of Site based on the class matching the bean id of 
+     * "org.broadleafcommerce.common.site.domain.Site"
+     * 
+     * @return
+     */
+    public Site create();
+
+    /**
      * Finds a site by its id.
      * @param id
      * @return

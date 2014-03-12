@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.site.service;
 
+import org.broadleafcommerce.common.site.dao.SiteDao;
 import org.broadleafcommerce.common.site.dao.SiteDaoImpl;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -26,6 +27,13 @@ import org.broadleafcommerce.common.site.domain.Site;
 import java.util.List;
 
 public interface SiteService {
+
+    /**
+     * Creates an instance of Site.   Default implementation delegates to {@link SiteDao#create()}.
+     * 
+     * @return
+     */
+    public Site createSite();
 
     /**
      * Find a site by its id.
