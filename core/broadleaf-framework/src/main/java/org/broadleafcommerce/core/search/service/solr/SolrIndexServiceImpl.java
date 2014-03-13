@@ -376,23 +376,25 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
 
             // The explicit categories are the ones defined by the product itself
-            for (Long categoryId : cache.getParentCategoriesByProduct().get(product.getId())) {
-                document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
+            if (cache.getParentCategoriesByProduct().containsKey(product.getId())) {
+                for (Long categoryId : cache.getParentCategoriesByProduct().get(product.getId())) {
+                    document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
-                String categorySortFieldName = shs.getCategorySortFieldName(categoryId);
+                    String categorySortFieldName = shs.getCategorySortFieldName(categoryId);
 
-                int index = -1;
-                int position = cache.getProductsByCategory().get(categoryId).indexOf(product.getId());
-                if (position >= 0) {
-                    index = position;
+                    int index = -1;
+                    int position = cache.getProductsByCategory().get(categoryId).indexOf(product.getId());
+                    if (position >= 0) {
+                        index = position;
+                    }
+
+                    if (document.getField(categorySortFieldName) == null) {
+                        document.addField(categorySortFieldName, index);
+                    }
+
+                    // This is the entire tree of every category defined on the product
+                    buildFullCategoryHierarchy(document, cache, categoryId);
                 }
-
-                if (document.getField(categorySortFieldName) == null) {
-                    document.addField(categorySortFieldName, index);
-                }
-
-                // This is the entire tree of every category defined on the product
-                buildFullCategoryHierarchy(document, cache, categoryId);
             }
         } finally {
             if (!cacheOperationManaged) {

@@ -24,7 +24,7 @@
 
     <named-query name="BC_READ_PRODUCT_IDS_BY_CATEGORY" >
         <query>SELECT categoryProduct.product.id FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
-            WHERE categoryProduct.category.id = :categoryId
+            WHERE categoryProduct.category.id IN :categoryIds
             ORDER BY categoryProduct.displayOrder
         </query>
     </named-query>

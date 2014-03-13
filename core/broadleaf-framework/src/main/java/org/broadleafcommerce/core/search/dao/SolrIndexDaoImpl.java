@@ -19,7 +19,12 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.BiMap;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -42,12 +48,16 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+
     @Override
     public void populateCatalogStructure(List<Long> productIds, CatalogStructure catalogStructure) {
         Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<Long, Set<Long>>();
         Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
 
         Long[] products = productIds.toArray(new Long[productIds.size()]);
+        BiMap<Long, Long> sandBoxProductToOriginalMap = sandBoxHelper.getSandBoxToOriginalMap(em, ProductImpl.class, products);
         int batchSize = 800;
         int count = 0;
         int pos = 0;
@@ -57,14 +67,25 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
             Long[] temp = new Long[mySize];
             System.arraycopy(products, pos, temp, 0, mySize);
             TypedQuery<ParentCategoryByProduct> query = em.createNamedQuery("BC_READ_PARENT_CATEGORY_IDS_BY_PRODUCTS", ParentCategoryByProduct.class);
-            query.setParameter("productIds", Arrays.asList(temp));
+            query.setParameter("productIds", sandBoxHelper.mergeCloneIds(em, ProductImpl.class, temp));
+
             List<ParentCategoryByProduct> results = query.getResultList();
             for (ParentCategoryByProduct item : results) {
-                if (!catalogStructure.getParentCategoriesByProduct().containsKey(item.getProduct())) {
-                    if (!parentCategoriesByProduct.containsKey(item.getProduct())) {
-                        parentCategoriesByProduct.put(item.getProduct(), new HashSet<Long>());
+                Long sandBoxProductVal = item.getProduct();
+                BiMap<Long, Long> reverse = sandBoxProductToOriginalMap.inverse();
+                if (reverse.containsKey(sandBoxProductVal)) {
+                    sandBoxProductVal = reverse.get(sandBoxProductVal);
+                }
+                if (!catalogStructure.getParentCategoriesByProduct().containsKey(sandBoxProductVal)) {
+                    if (!parentCategoriesByProduct.containsKey(sandBoxProductVal)) {
+                        parentCategoriesByProduct.put(sandBoxProductVal, new HashSet<Long>());
                     }
-                    parentCategoriesByProduct.get(item.getProduct()).add(item.getParent());
+                    //We only want the sandbox parent - if applicable
+                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(em, CategoryImpl.class, item.getParent());
+                    if (sandBoxVal == null) {
+                        sandBoxVal = item.getParent();
+                    }
+                    parentCategoriesByProduct.get(sandBoxProductVal).add(sandBoxVal);
                 }
             }
             for (Map.Entry<Long, Set<Long>> entry : parentCategoriesByProduct.entrySet()) {
@@ -74,7 +95,15 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                         parentCategoriesByCategory.put(categoryId, hierarchy);
                     }
                     if (!catalogStructure.getProductsByCategory().containsKey(categoryId)) {
-                        catalogStructure.getProductsByCategory().put(categoryId, readProductIdsByCategory(categoryId));
+                        //filter the list for sandbox values
+                        List<Long> categoryChildren = readProductIdsByCategory(categoryId);
+                        for (Map.Entry<Long, Long> sandBoxProduct : sandBoxProductToOriginalMap.entrySet()) {
+                            int index = categoryChildren.indexOf(sandBoxProduct.getValue());
+                            if (index >= 0) {
+                                categoryChildren.set(index, sandBoxProduct.getKey());
+                            }
+                        }
+                        catalogStructure.getProductsByCategory().put(categoryId, categoryChildren);
                     }
                 }
             }
@@ -88,7 +117,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
 
     protected List<Long> readProductIdsByCategory(Long categoryId) {
         TypedQuery<Long> query = em.createNamedQuery("BC_READ_PRODUCT_IDS_BY_CATEGORY", Long.class);
-        query.setParameter("categoryId", categoryId);
+        query.setParameter("categoryIds", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, categoryId));
         return query.getResultList();
     }
 
@@ -109,20 +138,35 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
             Long[] temp = new Long[mySize];
             System.arraycopy(categoryIds, pos, temp, 0, mySize);
             TypedQuery<ParentCategoryByCategory> query = em.createNamedQuery("BC_READ_PARENT_CATEGORY_IDS_BY_CATEGORIES", ParentCategoryByCategory.class);
-            query.setParameter("categoryIds", Arrays.asList(temp));
+            query.setParameter("categoryIds", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, temp));
             List<ParentCategoryByCategory> results = query.getResultList();
             for (ParentCategoryByCategory item : results) {
-                Set<Long> hierarchy = categoryHierarchy.get(item.getChild());
+                //only the sandbox child
+                Long childSandBoxVal = sandBoxHelper.getSandBoxVersionId(em, CategoryImpl.class, item.getChild());
+                if (childSandBoxVal == null) {
+                    childSandBoxVal = item.getChild();
+                }
+                Set<Long> hierarchy = categoryHierarchy.get(childSandBoxVal);
                 if (item.getParent() != null) {
-                    hierarchy.add(item.getParent());
-                    if (!nextLevel.containsKey(item.getParent())) {
-                        nextLevel.put(item.getParent(), new HashSet<Long>());
+                    //We only want the sandbox parent - if applicable
+                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(em, CategoryImpl.class, item.getParent());
+                    if (sandBoxVal == null) {
+                        sandBoxVal = item.getParent();
+                    }
+                    hierarchy.add(sandBoxVal);
+                    if (!nextLevel.containsKey(sandBoxVal)) {
+                        nextLevel.put(sandBoxVal, new HashSet<Long>());
                     }
                 }
                 if (item.getDefaultParent() != null) {
-                    hierarchy.add(item.getDefaultParent());
-                    if (!nextLevel.containsKey(item.getDefaultParent())) {
-                        nextLevel.put(item.getDefaultParent(), new HashSet<Long>());
+                    //We only want the sandbox parent - if applicable
+                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(em, CategoryImpl.class, item.getDefaultParent());
+                    if (sandBoxVal == null) {
+                        sandBoxVal = item.getDefaultParent();
+                    }
+                    hierarchy.add(sandBoxVal);
+                    if (!nextLevel.containsKey(sandBoxVal)) {
+                        nextLevel.put(sandBoxVal, new HashSet<Long>());
                     }
                 }
             }
