@@ -423,16 +423,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     checkHandler: {
                         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
                             if (handler.canHandleAdd(subPackage.getValue())) {
-                                if (!handler.willHandleSecurity(subPackage.getValue())) {
-                                    adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
-                                }
                                 subResponse = handler.add(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
                                 subPackage.getValue().setEntity(subResponse);
 
                                 break checkHandler;
                             }
                         }
-                        adminRemoteSecurityService.securityCheck(subPackage.getValue().getCeilingEntityFullyQualifiedClassname(), EntityOperationType.ADD);
                         PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getAddType());
                         subResponse = subModule.add(persistencePackage);
                         subPackage.getValue().setEntity(subResponse);
@@ -566,25 +562,13 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             try {
                 //Run through any subPackages -- add up any validation errors
                 checkHandler: {
-                    PersistencePackage pp = subPackage.getValue();
-                    final String securityCeilingEntityName;
-                    if (StringUtils.isEmpty(pp.getSecurityCeilingEntityFullyQualifiedClassname())) {
-                        securityCeilingEntityName = pp.getCeilingEntityFullyQualifiedClassname();
-                    } else {
-                        securityCeilingEntityName = pp.getSecurityCeilingEntityFullyQualifiedClassname();
-                    }
                     for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
-
-                        if (handler.canHandleUpdate(pp)) {
-                            if (!handler.willHandleSecurity(pp)) {
-                                adminRemoteSecurityService.securityCheck(securityCeilingEntityName, EntityOperationType.UPDATE);
-                            }
-                            Entity subResponse = handler.update(pp, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
-                            pp.setEntity(subResponse);
+                        if (handler.canHandleUpdate(subPackage.getValue())) {
+                            Entity subResponse = handler.update(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                            subPackage.getValue().setEntity(subResponse);
                             break checkHandler;
                         }
                     }
-                    adminRemoteSecurityService.securityCheck(securityCeilingEntityName, EntityOperationType.UPDATE);
                     PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getUpdateType());
                     Entity subResponse = subModule.update(persistencePackage);
                     subPackage.getValue().setEntity(subResponse);
