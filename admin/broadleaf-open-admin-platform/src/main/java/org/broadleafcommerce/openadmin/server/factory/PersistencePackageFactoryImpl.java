@@ -19,13 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.server.factory;
 
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -40,6 +35,12 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -99,6 +100,9 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
 
         PersistencePackage pp = new PersistencePackage();
         pp.setCeilingEntityFullyQualifiedClassname(request.getCeilingEntityClassname());
+        if (!StringUtils.isEmpty(request.getSecurityCeilingEntityClassname())) {
+            pp.setSecurityCeilingEntityFullyQualifiedClassname(request.getSecurityCeilingEntityClassname());
+        }
         if (!ArrayUtils.isEmpty(request.getSectionCrumbs())) {
             SectionCrumb[] converted = new SectionCrumb[request.getSectionCrumbs().length];
             int index = 0;

@@ -70,10 +70,11 @@ public class AdminStructuredContentController extends AdminBasicEntityController
         
         // Attach the dynamic fields to the form
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-            .withCeilingClassName(StructuredContentType.class.getName())
-            .withCriteriaName("constructForm")
-            .withPropertyName("structuredContentType")
-            .withPropertyValue(ef.findField("structuredContentType").getValue());
+                .withCeilingClassName(StructuredContentType.class.getName())
+                .withSecurityCeilingClassName(StructuredContent.class.getName())
+                .withCriteriaName("constructForm")
+                .withPropertyName("structuredContentType")
+                .withPropertyValue(ef.findField("structuredContentType").getValue());
         EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, null);
         ef.putDynamicFormInfo("structuredContentType", info);
         ef.putDynamicForm("structuredContentType", dynamicForm);
@@ -93,9 +94,10 @@ public class AdminStructuredContentController extends AdminBasicEntityController
             RedirectAttributes ra) throws Exception {
         // Attach the dynamic form info so that the update service will know how to split up the fields
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-            .withCeilingClassName(StructuredContentType.class.getName())
-            .withCriteriaName("constructForm")
-            .withPropertyName("structuredContentType");
+                .withCeilingClassName(StructuredContentType.class.getName())
+                .withSecurityCeilingClassName(StructuredContent.class.getName())
+                .withCriteriaName("constructForm")
+                .withPropertyName("structuredContentType");
         entityForm.putDynamicFormInfo("structuredContentType", info);
         
         String returnPath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
@@ -120,10 +122,11 @@ public class AdminStructuredContentController extends AdminBasicEntityController
             @PathVariable("propertyName") String propertyName,
             @RequestParam("propertyTypeId") String propertyTypeId) throws Exception {
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-            .withCeilingClassName(StructuredContentType.class.getName())
-            .withCriteriaName("constructForm")
-            .withPropertyName(propertyName)
-            .withPropertyValue(propertyTypeId);
+                .withCeilingClassName(StructuredContentType.class.getName())
+                .withSecurityCeilingClassName(StructuredContent.class.getName())
+                .withCriteriaName("constructForm")
+                .withPropertyName(propertyName)
+                .withPropertyValue(propertyTypeId);
         
         return super.getDynamicForm(request, response, model, pathVars, info);
     }

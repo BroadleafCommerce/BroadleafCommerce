@@ -19,20 +19,21 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
-
 public class PersistencePackage implements Serializable, StateDescriptor {
 
     private static final long serialVersionUID = 1L;
     
     protected String ceilingEntityFullyQualifiedClassname;
+    protected String securityCeilingEntityFullyQualifiedClassname;
     protected String sectionEntityField;
     protected String fetchTypeFullyQualifiedClassname;
     protected PersistencePerspective persistencePerspective;
@@ -85,6 +86,15 @@ public class PersistencePackage implements Serializable, StateDescriptor {
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
     }
     
+    public String getSecurityCeilingEntityFullyQualifiedClassname() {
+        return securityCeilingEntityFullyQualifiedClassname;
+    }
+
+    public void setSecurityCeilingEntityFullyQualifiedClassname(
+            String securityCeilingEntityFullyQualifiedClassname) {
+        this.securityCeilingEntityFullyQualifiedClassname = securityCeilingEntityFullyQualifiedClassname;
+    }
+
     public PersistencePerspective getPersistencePerspective() {
         return persistencePerspective;
     }

@@ -222,6 +222,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(info.getCeilingClassName())
+                .withSecurityCeilingEntityClassname(info.getSecurityCeilingClassName())
                 .withCustomCriteria(new String[] { info.getCriteriaName(), null, info.getPropertyName(), info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         
@@ -272,6 +273,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(info.getCeilingClassName())
+                .withSecurityCeilingEntityClassname(info.getSecurityCeilingClassName())
                 .withCustomCriteria(new String[] { info.getCriteriaName(), entityId, info.getPropertyName(), info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         

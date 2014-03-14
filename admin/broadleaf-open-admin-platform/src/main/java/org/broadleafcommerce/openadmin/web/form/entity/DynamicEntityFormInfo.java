@@ -20,6 +20,17 @@
 
 package org.broadleafcommerce.openadmin.web.form.entity;
 
+/**
+ * Used to setup what data will be needed to create add dynamic form fields to an entity.
+ * 
+ * Use the {@link #withCeilingClassName(String)} to indicate the entity which contains the template fields.
+ * Use the {@link #withSecurityCeilingClassName(String)} to indicate the entity that should be used to control 
+ * the security of the fields.   For example, if a user has access to Page, then they should also have access to the
+ * fields introduced by the PageTemplate.
+ * 
+ * @author bpolster
+ *
+ */
 public class DynamicEntityFormInfo {
 
     public static final String FIELD_SEPARATOR = "|";
@@ -28,6 +39,7 @@ public class DynamicEntityFormInfo {
     protected String propertyName;
     protected String propertyValue;
     protected String ceilingClassName;
+    protected String securityCeilingClassName;
     
     public DynamicEntityFormInfo withCriteriaName(String criteriaName) {
         setCriteriaName(criteriaName);
@@ -46,6 +58,18 @@ public class DynamicEntityFormInfo {
 
     public DynamicEntityFormInfo withCeilingClassName(String ceilingClassName) {
         setCeilingClassName(ceilingClassName);
+        return this;
+    }
+
+    /**
+     * The security class name that permissions will be based off of for this entity.    Generally this is different
+     * from the "ceilingClassName" which represents the template that will be used to define the fields being used.
+     * 
+     * @param securityCeilingClassName
+     * @return
+     */
+    public DynamicEntityFormInfo withSecurityCeilingClassName(String securityCeilingClassName) {
+        setSecurityCeilingClassName(securityCeilingClassName);
         return this;
     }
 
@@ -77,8 +101,16 @@ public class DynamicEntityFormInfo {
         return ceilingClassName;
     }
 
+    public String getSecurityCeilingClassName() {
+        return securityCeilingClassName;
+    }
+
     public void setCeilingClassName(String ceilingClassName) {
         this.ceilingClassName = ceilingClassName;
+    }
+
+    public void setSecurityCeilingClassName(String securityCeilingClassName) {
+        this.securityCeilingClassName = securityCeilingClassName;
     }
 
 }

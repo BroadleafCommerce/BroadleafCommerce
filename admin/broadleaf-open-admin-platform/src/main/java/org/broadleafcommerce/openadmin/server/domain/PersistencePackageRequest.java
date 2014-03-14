@@ -53,6 +53,7 @@ public class PersistencePackageRequest {
 
     protected Type type;
     protected String ceilingEntityClassname;
+    protected String securityCeilingEntityClassname;
     protected String configKey;
     protected AdornedTargetList adornedList;
     protected MapStructure mapStructure;
@@ -188,6 +189,11 @@ public class PersistencePackageRequest {
 
     public PersistencePackageRequest withCeilingEntityClassname(String className) {
         setCeilingEntityClassname(className);
+        return this;
+    }
+
+    public PersistencePackageRequest withSecurityCeilingEntityClassname(String className) {
+        setSecurityCeilingEntityClassname(className);
         return this;
     }
 
@@ -367,6 +373,24 @@ public class PersistencePackageRequest {
         this.type = type;
     }
     
+    /**
+     * Returns the entity that should be checked for security purposes.   If no value is defined explicitly, returns the 
+     * value for {@link #getCeilingEntityClassname()}.
+     * 
+     * @return
+     */
+    public String getSecurityCeilingEntityClassname() {
+        if (securityCeilingEntityClassname != null) {
+            return securityCeilingEntityClassname;
+        } else {
+            return getCeilingEntityClassname();
+        }
+    }
+
+    public void setSecurityCeilingEntityClassname(String securityCeilingEntityClassname) {
+        this.securityCeilingEntityClassname = securityCeilingEntityClassname;
+    }
+
     public String getCeilingEntityClassname() {
         return ceilingEntityClassname;
     }

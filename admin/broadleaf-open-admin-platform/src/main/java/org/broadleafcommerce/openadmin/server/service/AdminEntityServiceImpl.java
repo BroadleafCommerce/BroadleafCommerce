@@ -19,19 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -65,6 +52,19 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+
 /**
  * @author Andre Azzolini (apazzolini)
  */
@@ -91,6 +91,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         PersistenceResponse response = inspect(request);
         ClassMetadata cmd = response.getDynamicResultSet().getClassMetaData();
         cmd.setCeilingType(request.getCeilingEntityClassname());
+        cmd.setSecurityCeilingType(request.getSecurityCeilingEntityClassname());
         return response;
     }
 
@@ -149,6 +150,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             customCriteria = new String[] { info.getCriteriaName(), entityForm.getId(), propertyName, propertyValue };
 
             PersistencePackageRequest subRequest = getRequestForEntityForm(entry.getValue(), customCriteria, sectionCrumb);
+            subRequest.withSecurityCeilingEntityClassname(info.getSecurityCeilingClassName());
             ppr.addSubRequest(info.getPropertyName(), subRequest);
         }
         return update(ppr);

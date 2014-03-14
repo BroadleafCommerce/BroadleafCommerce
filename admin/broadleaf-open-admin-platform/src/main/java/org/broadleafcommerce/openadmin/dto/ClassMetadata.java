@@ -36,6 +36,7 @@ public class ClassMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private String ceilingType;
+    private String securityCeilingType;
     private ClassTree polymorphicEntities;
     private Property[] properties;
     private String currencyCode = "USD";
@@ -61,6 +62,21 @@ public class ClassMetadata implements Serializable {
     
     public void setCeilingType(String type) {
         this.ceilingType = type;
+    }
+
+    /**
+     * For dynamic forms, the type to check security permissions will be different than the type used to generate the 
+     * forms.   For example, a user with "ADD" or "UPDATE" permissions on STRUCTURE_CONTENT does not need 
+     * to have the same level of access to StructuredContentTemplate.   
+     * 
+     * @param type
+     */
+    public String getSecurityCeilingType() {
+        return securityCeilingType;
+    }
+
+    public void setSecurityCeilingType(String securityCeilingType) {
+        this.securityCeilingType = securityCeilingType;
     }
 
     public ClassTree getPolymorphicEntities() {

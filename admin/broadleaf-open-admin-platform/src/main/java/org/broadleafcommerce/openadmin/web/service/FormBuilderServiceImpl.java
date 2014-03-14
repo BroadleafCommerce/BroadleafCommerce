@@ -65,6 +65,7 @@ import org.broadleafcommerce.openadmin.web.form.component.MediaField;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
@@ -805,7 +806,22 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (!readOnly) {
             // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
             try {
-                adminRemoteSecurityService.securityCheck(entityForm.getCeilingEntityClassname(), EntityOperationType.UPDATE);
+                String securityEntityClassname = entityForm.getCeilingEntityClassname();
+
+                if (!StringUtils.isEmpty(cmd.getSecurityCeilingType())) {
+                    securityEntityClassname = cmd.getSecurityCeilingType();
+                } else {
+                    if (entityForm.getDynamicFormInfos() != null) {
+                        for (DynamicEntityFormInfo info : entityForm.getDynamicFormInfos().values()) {
+                            if (!StringUtils.isEmpty(info.getSecurityCeilingClassName())) {
+                                securityEntityClassname = info.getSecurityCeilingClassName();
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                adminRemoteSecurityService.securityCheck(securityEntityClassname, EntityOperationType.UPDATE);
             } catch (ServiceException e) {
                 if (e instanceof SecurityServiceException) {
                     readOnly = true;
