@@ -72,4 +72,9 @@ public class StoreDaoImpl implements StoreDao {
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
+
+    @Override
+    public Store save(Store store) {
+        return em.merge(store);
+    }
 }

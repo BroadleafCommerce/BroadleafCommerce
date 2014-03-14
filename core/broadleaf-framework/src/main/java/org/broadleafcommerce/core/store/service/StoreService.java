@@ -40,6 +40,8 @@ public interface StoreService {
     @Deprecated
     public Store readStoreByStoreCode(String storeCode);
 
+    public Store saveStore(Store store);
+
     public Map<Store,Double> findStoresByAddress(Address searchAddress, double distance);
 
     public List<Store> readAllStores();

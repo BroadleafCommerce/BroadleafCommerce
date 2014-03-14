@@ -42,4 +42,6 @@ public interface StoreDao {
 
     public List<Store> readAllStoresByState(final String state);
 
+    public Store save(Store store);
+
 }
