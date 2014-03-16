@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -117,12 +118,16 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     public void closeWorkArea(FileWorkArea fwArea) {
         File tempDirectory = new File(fwArea.getFilePathLocation());
         try {
-            FileUtils.deleteDirectory(tempDirectory);
+        	if (tempDirectory.exists()) {
+                FileUtils.deleteDirectory(tempDirectory);
+        	}
 
             for (int i = 1; i < maxGeneratedDirectoryDepth; i++) {
                 tempDirectory = tempDirectory.getParentFile();
                 if (tempDirectory.list().length == 0) {
-                    FileUtils.deleteDirectory(tempDirectory);
+                	if (tempDirectory.exists()) {
+                        FileUtils.deleteDirectory(tempDirectory);
+                	}
                 }
             }
 
@@ -296,12 +301,16 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         StringBuilder path = new StringBuilder();
         if (tempFileSystemBaseDirectory == null || "".equals(tempFileSystemBaseDirectory.trim())) {
             path = path.append(DEFAULT_STORAGE_DIRECTORY);
-            if (!DEFAULT_STORAGE_DIRECTORY.endsWith("/")) {
+            if (BLCSystemProperty.isWindows() && !DEFAULT_STORAGE_DIRECTORY.endsWith("\\")) {
+                path = path.append('\\');
+            } else if (!BLCSystemProperty.isWindows() && !DEFAULT_STORAGE_DIRECTORY.endsWith("/")){
                 path = path.append('/');
             }
         } else {
             path = path.append(tempFileSystemBaseDirectory);
-            if (!tempFileSystemBaseDirectory.endsWith("/")) {
+            if (BLCSystemProperty.isWindows() && !tempFileSystemBaseDirectory.endsWith("\\")) {
+                path = path.append('\\');
+            } else if (!BLCSystemProperty.isWindows() && !tempFileSystemBaseDirectory.endsWith("/")){
                 path = path.append('/');
             }
         }
@@ -337,7 +346,11 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
             }
             // check next int value
             int num = random.nextInt(256);
-            baseDirectory = baseDirectory.append(Integer.toHexString(num)).append('/');
+            if (BLCSystemProperty.isWindows()){
+                baseDirectory = baseDirectory.append(Integer.toHexString(num)).append('\\');
+            } else {
+                baseDirectory = baseDirectory.append(Integer.toHexString(num)).append('/');
+            }
         }
         return baseDirectory.toString();
     }

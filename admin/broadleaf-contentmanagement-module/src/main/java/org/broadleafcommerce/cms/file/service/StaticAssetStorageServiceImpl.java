@@ -396,7 +396,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                     }
                     output.write(buffer, 0, bytesRead);
                 }
-
+                output.close();
                 broadleafFileService.addOrUpdateResource(tempWorkArea, destFile, true);
             } finally {
                 output.close();
