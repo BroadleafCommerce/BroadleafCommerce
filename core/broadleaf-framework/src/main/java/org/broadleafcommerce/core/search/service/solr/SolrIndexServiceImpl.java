@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
@@ -211,7 +212,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 SolrIndexCachedOperation.setCache(cache);
             }
             List<Product> products = readAllActiveProducts(page, pageSize);
-            List<Long> productIds = (List<Long>) CollectionUtils.collect(products, new TypedTransformer<Long>() {
+            List<Long> productIds = BLCCollectionUtils.collectList(products, new TypedTransformer<Long>() {
                 @Override
                 public Long transform(Object input) {
                     return ((Product) input).getId();
