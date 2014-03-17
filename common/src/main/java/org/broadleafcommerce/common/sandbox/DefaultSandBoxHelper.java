@@ -30,6 +30,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 /**
+ * @see org.broadleafcommerce.common.sandbox.SandBoxHelper
  * @author Jeff Fischer
  */
 @Component("blSandBoxHelper")
@@ -37,6 +38,11 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
 
     @Override
     public Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent) {
+        return requestedParent;
+    }
+
+    @Override
+    public Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance) {
         return requestedParent;
     }
 

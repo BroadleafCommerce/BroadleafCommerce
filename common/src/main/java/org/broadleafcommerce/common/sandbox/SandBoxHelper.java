@@ -83,6 +83,18 @@ public interface SandBoxHelper {
     Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent);
 
     /**
+     * Return the sandbox version id for the requested original id. Will return null
+     * if no sandbox version is available.
+     *
+     * @param entityManager the Entity Manager
+     * @param linkedObjectType the type of the entity in question
+     * @param requestedParent the id to check
+     * @param includeSandBoxInheritance override whether or not parent sandbox ids should be included in the query. Can be null - True by default.
+     * @return the sandbox version, or null
+     */
+    Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
+
+    /**
      * Return the original id for the requested id. Will return the passed in id if
      * the type is not sandboxable. Will return null if the passed in id
      * is not a sandbox record, or if it's a sandbox add.
