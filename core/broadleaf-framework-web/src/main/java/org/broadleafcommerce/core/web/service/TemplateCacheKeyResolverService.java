@@ -17,28 +17,27 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.processor;
+package org.broadleafcommerce.core.web.service;
 
+import org.thymeleaf.Arguments;
+import org.thymeleaf.dom.Element;
 
 /**
  * Used to build a cacheKey for caching templates.
  * @author Brian Polster (bpolster)
  */
-public interface ITemplateCacheKeyResolver {
-    
+public interface TemplateCacheKeyResolverService {
+
     /**
-     * Takes in the cacheKey param and parses into an actual cacheKey.    A simple implementation simply returns the
-     * templateName + cacheKey.    
-     * 
-     * More complex implementations could allow additional meaning with the cacheKey.    For example, an implementation
-     * could honor a cacheKey like this  <pre>cacheKey="includeQueryParams=true,key=value"</pre> and convert it into 
-     * something meaningful for the application.
-     * 
-     * @param templateName - Name of the template that is subject to being cached. 
-     * @param cacheKey - Value of the param passed in from the template
+     * Takes in the Thymeleaf arguments, element, and templateName.    Returns the cacheKey by which
+     * this template can be cached.      
      * 
      * @see SimpleCacheKeyResolver
+     * 
+     * @param arguments
+     * @param element
+     * @param templateName
      * @return
      */
-    public String resolveCacheKey(String templateName, String cacheKey);
+    public String resolveCacheKey(Arguments arguments, Element element, String templateName);
 }

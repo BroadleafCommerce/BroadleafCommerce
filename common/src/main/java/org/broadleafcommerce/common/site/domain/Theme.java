@@ -26,6 +26,17 @@ import java.io.Serializable;
  */
 public interface Theme extends Serializable {
     
+    /**
+     * @return the id
+     */
+    public Long getId();
+
+    /**
+     * Sets the id
+     * @param id
+     */
+    public void setId(Long id);
+
     public String getName();
 
     public void setName(String name);

@@ -23,6 +23,12 @@ package org.broadleafcommerce.core.web.processor;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.config.service.SystemPropertiesService;
+import org.broadleafcommerce.core.web.service.SimpleCacheKeyResolver;
+import org.broadleafcommerce.core.web.service.TemplateCacheKeyResolverService;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Attribute;
 import org.thymeleaf.dom.Element;
@@ -30,8 +36,6 @@ import org.thymeleaf.dom.Node;
 import org.thymeleaf.fragment.WholeFragmentSpec;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.expression.Expression;
-import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.standard.fragment.StandardFragment;
 import org.thymeleaf.standard.fragment.StandardFragmentProcessor;
 import org.thymeleaf.standard.processor.attr.AbstractStandardFragmentHandlingAttrProcessor;
@@ -39,18 +43,47 @@ import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 /**
+ * Allows for a customizable cache mechanism that can be used to avoid expensive thymeleaf processing for 
+ * html fragments that are static.   
+ * 
+ * For high volume sites, even a 30 second cache of pages can have significant overall performance impacts.
+ * 
+ * The parameters allowed for this processor include a "cacheTimeout" and "cacheKey".    This component will rely on
+ * an implementation of {@link TemplateCacheKeyResolverService} to build the actual cacheKey used by the underlying
+ * caching implementation.   The parameter named "cacheKey" will be used in the construction of the actual cacheKey
+ * which may rely on variables like the customer, site, theme, etc. to build the actual cacheKey.
+ * 
+ * The "cacheTimeout" variable defines the maximum length of time that the fragment will be allowed to be cached.   This
+ * is important for fragments for which a good cacheKey would be difficult to generate.
+ * 
+ * The cacheKey resolution  is pluggable using an instance of {@link TemplateCacheKeyResolverService} which will be 
+ * invoked by this.   The default implementation is {@link SimpleCacheKeyResolver}.   
+ * 
+ * Implementors can create more functional cacheKey mechanisms.   For example, Broadleaf Enterprise provides an 
+ * additional implementation named <code>EnterpriseCacheKeyResolver</code> with support for additional caching 
+ * features.
+ *  
  * @author Andre Azzolini (apazzolini), bpolster
  */
-public class CachedSubstituteByProcessor extends AbstractElementProcessor {
+public class TemplateCacheProcessor extends AbstractElementProcessor {
+
+    private static final Log LOG = LogFactory.getLog(TemplateCacheProcessor.class);
 
     public static final int ATTR_PRECEDENCE = 100;
-    public static final String ATTR_NAME = "substituteby";
+    public static final String ATTR_NAME = "cache";
 
     protected Cache cache;
-    protected ITemplateCacheKeyResolver cacheKeyResolver = new SimpleCacheKeyResolver();
 
-    public CachedSubstituteByProcessor() {
+    @Resource(name = "blSystemPropertiesService")
+    protected SystemPropertiesService systemPropertiesService;
+
+    @Resource(name = "blTemplateCacheKeyResolver")
+    protected TemplateCacheKeyResolverService cacheKeyResolver;
+
+    public TemplateCacheProcessor() {
         super(ATTR_NAME);
     }
 
@@ -81,25 +114,58 @@ public class CachedSubstituteByProcessor extends AbstractElementProcessor {
      * @return
      */
     protected boolean checkCacheForElement(Arguments arguments, Element element, String template) {
-        String cacheKeyParam = "";
-        String cacheKeyAttrValue = element.getAttributeValueFromNormalizedName("cachekey");
 
-        if (cacheKeyAttrValue != null) {
-            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                    .parseExpression(arguments.getConfiguration(), arguments, cacheKeyAttrValue);
-            cacheKeyParam = (String) expression.execute(arguments.getConfiguration(), arguments);
+        if (isCachingEnabled()) {
+            String cacheKey = cacheKeyResolver.resolveCacheKey(arguments, element, template);
+    
+            if (!StringUtils.isEmpty(cacheKey)) {
+                element.setAttribute("cachekey", cacheKey);
+    
+                net.sf.ehcache.Element cacheElement = getCache().get(cacheKey);
+                if (cacheElement != null && !checkExpired(element, cacheElement)) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Template Cache Hit " + template + " with cacheKey " + cacheKey + " found in cache.");
+                    }
+                    element.setAttribute("blcacheresponse", (String) cacheElement.getObjectValue());
+                    return true;
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Template Cache Miss " + template + " with cacheKey " + cacheKey + " not found in cache.");
+                    }
+                }
+            } else {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Template " + template + " not cached due to empty cacheKey");
+                }
+            }
+        } else {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Template caching disabled - not retrieving template " + template + " from cache");
+            }
         }
+        return false;
+    }
 
-        String cacheKey = cacheKeyResolver.resolveCacheKey(template, cacheKeyParam);
-        element.setAttribute("cachekey", cacheKey);
-
-        net.sf.ehcache.Element cacheElement = getCache().get(cacheKey);
-        if (cacheElement != null && !cacheElement.isExpired()) {
-            element.setAttribute("blcacheresponse", (String) cacheElement.getObjectValue());
+    /**
+     * Returns true if the item has been 
+     * @param element
+     * @param cacheElement
+     * @return
+     */
+    protected boolean checkExpired(Element element, net.sf.ehcache.Element cacheElement) {
+        if (cacheElement.isExpired()) {
             return true;
         } else {
-            return false;
+            String cacheTimeout = element.getAttributeValue("cacheTimeout");
+            if (!StringUtils.isEmpty(cacheTimeout) && StringUtils.isNumeric(cacheTimeout)) {
+                Long timeout = Long.valueOf(cacheTimeout) * 1000;
+                Long expiryTime = cacheElement.getCreationTime() + timeout;
+                if (expiryTime < System.currentTimeMillis()) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
 
@@ -168,14 +234,6 @@ public class CachedSubstituteByProcessor extends AbstractElementProcessor {
         return false;
     }
 
-    public ITemplateCacheKeyResolver getCacheKeyResolver() {
-        return cacheKeyResolver;
-    }
-
-    public void setCacheKeyResolver(ITemplateCacheKeyResolver cacheKeyResolver) {
-        this.cacheKeyResolver = cacheKeyResolver;
-    }
-
     public Cache getCache() {
         if (cache == null) {
             cache = CacheManager.getInstance().getCache("blTemplateElements");
@@ -185,5 +243,9 @@ public class CachedSubstituteByProcessor extends AbstractElementProcessor {
 
     public void setCache(Cache cache) {
         this.cache = cache;
+    }
+
+    public boolean isCachingEnabled() {
+        return !systemPropertiesService.resolveBooleanSystemProperty("disableThymeleafTemplateCaching");
     }
 }
