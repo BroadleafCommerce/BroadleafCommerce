@@ -180,7 +180,7 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     @SuppressWarnings("deprecation")
     protected void establishThinRequestContext() {
         BroadleafRequestContext oldBrc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (oldBrc == null || oldBrc.getSite() == null) {
+        if (oldBrc == null || oldBrc.getSite() == null || oldBrc.getTheme() == null) {
             // Resolving sites and sandboxes is often dependent on having a security context present in the request.
             // For example, resolving a sandbox requires the current user to have the BLC_ADMIN_USER in his Authentication.
             // For performance reasons, we do not go through the entire Spring Security filter chain on requests
