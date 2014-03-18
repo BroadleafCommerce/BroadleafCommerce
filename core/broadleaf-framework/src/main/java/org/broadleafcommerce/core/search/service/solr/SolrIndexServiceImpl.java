@@ -58,6 +58,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -381,16 +382,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 for (Long categoryId : cache.getParentCategoriesByProduct().get(product.getId())) {
                     document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
-                    String categorySortFieldName = shs.getCategorySortFieldName(categoryId);
-
-                    int index = -1;
-                    int position = cache.getProductsByCategory().get(categoryId).indexOf(product.getId());
-                    if (position >= 0) {
-                        index = position;
+                    String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
+                    String displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
+                    BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+                    if (displayOrder == null) {
+                        displayOrderKey = categoryId + "-" + product.getId();
+                        displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
                     }
 
                     if (document.getField(categorySortFieldName) == null) {
-                        document.addField(categorySortFieldName, index);
+                        document.addField(categorySortFieldName, displayOrder);
                     }
 
                     // This is the entire tree of every category defined on the product
@@ -412,7 +413,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @param categoryId the current category id
      */
     protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId) {
-        document.addField(shs.getCategoryFieldName(), shs.getCategoryId(categoryId));
+        Long catIdToAdd = shs.getCategoryId(categoryId); 
+
+        Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
+        if (existingValues == null || !existingValues.contains(catIdToAdd)) {
+            document.addField(shs.getCategoryFieldName(), catIdToAdd);
+        }
+
         Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
         for (Long parent : parents) {
             buildFullCategoryHierarchy(document, cache, parent);

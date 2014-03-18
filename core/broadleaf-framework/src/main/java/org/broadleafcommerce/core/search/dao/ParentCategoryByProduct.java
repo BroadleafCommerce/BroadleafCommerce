@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
+
 /**
  * Container object for the results of a lightweight query that retrieves the parent category
  * for a child product
@@ -50,4 +51,5 @@ public class ParentCategoryByProduct {
     public void setProduct(Long product) {
         this.product = product;
     }
+    
 }

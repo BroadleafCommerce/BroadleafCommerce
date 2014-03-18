@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.search.dao;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class CatalogStructure implements Serializable {
     Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<Long, Set<Long>>();
     Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
     Map<Long, List<Long>> productsByCategory = new HashMap<Long, List<Long>>();
+    Map<String, BigDecimal> displayOrdersByCategoryProduct = new HashMap<String, BigDecimal>();
 
     public Map<Long, Set<Long>> getParentCategoriesByProduct() {
         return parentCategoriesByProduct;
@@ -63,6 +65,14 @@ public class CatalogStructure implements Serializable {
 
     public void setProductsByCategory(Map<Long, List<Long>> productsByCategory) {
         this.productsByCategory = productsByCategory;
+    }
+
+    public Map<String, BigDecimal> getDisplayOrdersByCategoryProduct() {
+        return displayOrdersByCategoryProduct;
+    }
+
+    public void setDisplayOrdersByCategoryProduct(Map<String, BigDecimal> displayOrdersByCategoryProduct) {
+        this.displayOrdersByCategoryProduct = displayOrdersByCategoryProduct;
     }
 
 }

@@ -20,13 +20,14 @@
 package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
+import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.BiMap;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -95,15 +96,29 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                         parentCategoriesByCategory.put(categoryId, hierarchy);
                     }
                     if (!catalogStructure.getProductsByCategory().containsKey(categoryId)) {
+                        List<ProductsByCategoryWithOrder> categoryChildren = readProductIdsByCategory(categoryId);
+
+                        // Cache the display order bigdecimals
+                        for (ProductsByCategoryWithOrder child : categoryChildren) {
+                            catalogStructure.getDisplayOrdersByCategoryProduct().put(categoryId + "-" + child.getProductId(), child.getDisplayOrder());
+                        }
+
                         //filter the list for sandbox values
-                        List<Long> categoryChildren = readProductIdsByCategory(categoryId);
                         for (Map.Entry<Long, Long> sandBoxProduct : sandBoxProductToOriginalMap.entrySet()) {
-                            int index = categoryChildren.indexOf(sandBoxProduct.getValue());
-                            if (index >= 0) {
-                                categoryChildren.set(index, sandBoxProduct.getKey());
+                            for (ProductsByCategoryWithOrder child : categoryChildren) {
+                                if (child.getProductId().equals(sandBoxProduct.getValue())) {
+                                    child.setProductId(sandBoxProduct.getKey());
+                                }
                             }
                         }
-                        catalogStructure.getProductsByCategory().put(categoryId, categoryChildren);
+                        
+                        List<Long> categoryChildProductIds = BLCCollectionUtils.collectList(categoryChildren, new TypedTransformer<Long>() {
+                            @Override
+                            public Long transform(Object input) {
+                                return ((ProductsByCategoryWithOrder) input).getProductId();
+                            }
+                        });
+                        catalogStructure.getProductsByCategory().put(categoryId, categoryChildProductIds);
                     }
                 }
             }
@@ -115,8 +130,8 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
         catalogStructure.getParentCategoriesByCategory().putAll(parentCategoriesByCategory);
     }
 
-    protected List<Long> readProductIdsByCategory(Long categoryId) {
-        TypedQuery<Long> query = em.createNamedQuery("BC_READ_PRODUCT_IDS_BY_CATEGORY", Long.class);
+    protected List<ProductsByCategoryWithOrder> readProductIdsByCategory(Long categoryId) {
+        TypedQuery<ProductsByCategoryWithOrder> query = em.createNamedQuery("BC_READ_PRODUCT_IDS_BY_CATEGORY_WITH_ORDER", ProductsByCategoryWithOrder.class);
         query.setParameter("categoryIds", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, categoryId));
         return query.getResultList();
     }

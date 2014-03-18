@@ -626,7 +626,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         if (products != null) {
             Collections.sort(products, new Comparator<Product>() {
                 public int compare(Product o1, Product o2) {
-                    return new Integer(productIds.indexOf(o1.getId())).compareTo(productIds.indexOf(o2.getId()));
+                    Long o1id = shs.getProductId(o1.getId());
+                    Long o2id = shs.getProductId(o2.getId());
+                    return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
                 }
             });
         }
