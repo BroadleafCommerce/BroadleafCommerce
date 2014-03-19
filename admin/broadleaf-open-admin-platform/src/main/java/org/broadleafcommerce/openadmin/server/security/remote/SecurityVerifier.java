@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.server.security.remote;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
 /**
@@ -30,5 +31,7 @@ public interface SecurityVerifier {
     AdminUser getPersistentAdminUser();
 
     void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType operationType) throws ServiceException;
+
+    void securityCheck(PersistencePackage persistencePackage, EntityOperationType operationType) throws ServiceException;
 
 }
