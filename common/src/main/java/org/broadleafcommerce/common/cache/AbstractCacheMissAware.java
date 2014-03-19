@@ -25,6 +25,7 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.util.ClassUtils;
@@ -46,7 +47,7 @@ import javax.annotation.Resource;
  * @author Jeff Fischer
  */
 public abstract class AbstractCacheMissAware {
-
+    
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
 
@@ -64,7 +65,7 @@ public abstract class AbstractCacheMissAware {
     protected String buildKey(String... params) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         SandBox sandBox = context.getSandBox();
-        String key = StringUtils.join(params);
+        String key = StringUtils.join(params, '_');
         if (sandBox != null) {
             key = sandBox.getId() + "_" + key;
         }
@@ -109,6 +110,9 @@ public abstract class AbstractCacheMissAware {
      */
     protected void removeItemFromCache(String cacheName, String... params) {
         String key = buildKey(params);
+        if (getLogger().isTraceEnabled()) {
+            getLogger().trace("Evicting [" + key + "] from the [" + cacheName + "] cache.");
+        }
         getCache(cacheName).remove(key);
     }
 
@@ -118,6 +122,9 @@ public abstract class AbstractCacheMissAware {
      * @param cacheName the name of the cache - the ehcache region name
      */
     protected void clearCache(String cacheName) {
+        if (getLogger().isTraceEnabled()) {
+            getLogger().trace("Evicting all keys from the [" + cacheName + "] cache.");
+        }
         getCache(cacheName).removeAll();
     }
 
@@ -179,6 +186,9 @@ public abstract class AbstractCacheMissAware {
             if (context.isProductionSandBox() && response.equals(nullResponse)) {
                 statisticsService.addCacheStat(statisticsName, false);
                 getCache(cacheName).put(new Element(key, response));
+                if (getLogger().isTraceEnabled()) {
+                    getLogger().trace("Caching [" + key + "] as null in the [" + cacheName + "] cache.");
+                }
             }
         } else {
             statisticsService.addCacheStat(statisticsName, true);
@@ -188,4 +198,12 @@ public abstract class AbstractCacheMissAware {
         }
         return response;
     }
+    
+    /**
+     * To provide more accurate logging, this abstract cache should utilize a logger from its child
+     * implementation.
+     * 
+     * @return a {@link Log} instance from the subclass of this abstract class
+     */
+    protected abstract Log getLogger();
 }
