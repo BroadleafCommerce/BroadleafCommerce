@@ -205,7 +205,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 .withEntity(entity)
                 .withCustomCriteria(customCriteria)
                 .withCeilingEntityClassname(entityForm.getCeilingEntityClassname())
-                .withSectionCrumbs(sectionCrumbs);
+                .withSectionCrumbs(sectionCrumbs)
+                .withRequestingEntityName(entityForm.getMainEntityName());
         return ppr;
     }
 

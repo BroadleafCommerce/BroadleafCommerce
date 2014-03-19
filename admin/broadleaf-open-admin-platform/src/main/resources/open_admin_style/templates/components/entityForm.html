@@ -23,6 +23,7 @@
     <input type="hidden" th:field="*{entityType}" />
     <input type="hidden" th:field="*{id}" />
     <input type="hidden" th:field="*{sectionCrumbs}"  />
+    <input type="hidden" th:field="*{mainEntityName}" />
 
     <div class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
         <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
