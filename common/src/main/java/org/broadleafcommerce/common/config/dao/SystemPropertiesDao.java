@@ -40,4 +40,12 @@ public interface SystemPropertiesDao {
     public SystemProperty readSystemPropertyByName(String name);
 
     public SystemProperty createNewSystemProperty();
+
+    /**
+     * Reads a SystemProperty by its internal database id
+     * 
+     * @param id
+     * @return the {@link SystemProperty}
+     */
+    public SystemProperty readById(Long id);
 }

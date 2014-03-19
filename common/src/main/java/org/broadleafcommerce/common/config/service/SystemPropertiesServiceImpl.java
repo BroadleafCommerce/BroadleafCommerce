@@ -66,7 +66,14 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
             }
         }
 
-        String result = getPropertyFromCache(name);
+        String result;
+        // We don't want to utilize this cache for sandboxes
+        if (BroadleafRequestContext.getBroadleafRequestContext().getSandBox() == null) {
+            result = getPropertyFromCache(name);
+        } else {
+            result = null;
+        }
+
         if (result != null) {
             return result;
         }
@@ -121,6 +128,17 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
             systemPropertyCache = CacheManager.getInstance().getCache("blSystemPropertyElements");
         }
         return systemPropertyCache;
+    }
+
+    @Override
+    public SystemProperty findById(Long id) {
+        return systemPropertiesDao.readById(id);
+    }
+    
+    @Override
+    public void removeFromCache(SystemProperty systemProperty) {
+        String key = buildKey(systemProperty.getName());
+        getSystemPropertyCache().remove(key);
     }
 
     @Override

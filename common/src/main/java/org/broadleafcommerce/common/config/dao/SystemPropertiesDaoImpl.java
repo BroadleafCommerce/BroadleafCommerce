@@ -20,15 +20,17 @@
 package org.broadleafcommerce.common.config.dao;
 
 import org.broadleafcommerce.common.config.domain.SystemProperty;
+import org.broadleafcommerce.common.config.domain.SystemPropertyImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 /**
  * This DAO enables access to manage system properties that can be stored in the database.
@@ -44,6 +46,11 @@ public class SystemPropertiesDaoImpl implements SystemPropertiesDao{
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    @Override
+    public SystemProperty readById(Long id) {
+        return em.find(SystemPropertyImpl.class, id);
+    }
 
     @Override
     public SystemProperty saveSystemProperty(SystemProperty systemProperty) {
