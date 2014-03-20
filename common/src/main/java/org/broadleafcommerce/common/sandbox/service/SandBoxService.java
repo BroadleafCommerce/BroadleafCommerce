@@ -21,7 +21,6 @@ package org.broadleafcommerce.common.sandbox.service;
 
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
-import org.broadleafcommerce.common.site.domain.Site;
 
 import java.util.List;
 import java.util.Map;
@@ -59,6 +58,13 @@ public interface SandBoxService {
 
     public SandBox createDefaultSandBox();
 
-
+    /**
+     * Reads all SandBoxes that are of type {@link SandBoxType.USER} and belong to the given
+     * user.
+     * 
+     * @param authorId
+     * @return a list of SandBox belonging to the user
+     */
+    public List<SandBox> retrieveAllUserSandBoxes(Long authorId);
 
 }

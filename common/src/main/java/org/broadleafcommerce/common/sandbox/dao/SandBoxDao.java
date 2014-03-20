@@ -50,4 +50,13 @@ public interface SandBoxDao {
 
     public SandBox createDefaultSandBox();
 
+    /**
+     * Reads all SandBoxes that are of type {@link SandBoxType.USER} and belong to the given
+     * user.
+     * 
+     * @param authorId
+     * @return a list of SandBox belonging to the user
+     */
+    public List<SandBox> retrieveAllUserSandBoxes(Long authorId);
+
 }

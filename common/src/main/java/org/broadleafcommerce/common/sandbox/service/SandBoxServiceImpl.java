@@ -129,5 +129,10 @@ public class SandBoxServiceImpl implements SandBoxService {
     public SandBox retrieveSandBox(String sandBoxName, SandBoxType sandBoxType) {
         return sandBoxDao.retrieveNamedSandBox(sandBoxType, sandBoxName);
     }
+
+    @Override
+    public List<SandBox> retrieveAllUserSandBoxes(Long authorId) {
+        return sandBoxDao.retrieveAllUserSandBoxes(authorId);
+    }
     
 }
