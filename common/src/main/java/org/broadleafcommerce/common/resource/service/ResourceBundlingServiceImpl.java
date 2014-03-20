@@ -262,9 +262,13 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         String versionedName = getBundleName(bundleName, version);
         
         bundles.put(versionedName, foundResources.values());
-        getBundleVersionsCache().put(new Element(bundleName, versionedName));
+        getBundleVersionsCache().put(new Element(getCacheKey(bundleName), versionedName));
         
         return versionedName;
+    }
+
+    protected String getCacheKey(String unversionedBundleName) {
+        return unversionedBundleName;
     }
     
     protected String getBundleName(String bundleName, String version) {
