@@ -253,7 +253,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
         joinEntityClass = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl",
         targetObjectProperty = "category",
         parentObjectProperty = "product",
-        sortProperty = "displayOrder",
         gridVisibleFields = { "name" })
     @ClonePolicyAdornedTargetCollection(unowned = true)
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
