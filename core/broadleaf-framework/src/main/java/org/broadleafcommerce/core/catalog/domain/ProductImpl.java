@@ -237,7 +237,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
         joinEntityClass = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl",
         targetObjectProperty = "categoryProductXref.category",
         parentObjectProperty = "categoryProductXref.product",
-        sortProperty = "displayOrder",
         gridVisibleFields = { "name" })
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
 
