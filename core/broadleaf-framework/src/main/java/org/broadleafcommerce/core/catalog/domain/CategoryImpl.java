@@ -248,7 +248,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity {
             targetObjectProperty = "categoryXrefPK.category",
             parentObjectProperty = "categoryXrefPK.subCategory",
             friendlyName = "allParentCategoriesTitle",
-            sortProperty = "displayOrder",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             gridVisibleFields = { "name" })
     protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<CategoryXref>(10);
