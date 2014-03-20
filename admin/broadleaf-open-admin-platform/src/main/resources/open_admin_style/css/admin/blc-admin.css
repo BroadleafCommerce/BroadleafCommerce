@@ -1723,7 +1723,7 @@ div.action-popup button {
 	float: right;
 }
 
-div.action-popup a.workflow-prompt-cancel {
+div.action-popup a.action-popup-cancel {
 	float: right;
 	margin-right: 10px;
 	color: #000;
