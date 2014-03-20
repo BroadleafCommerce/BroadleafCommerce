@@ -549,3 +549,19 @@ $(window).on('scroll', function() {
         $('.sticky-container-padding').outerHeight($sc.outerHeight());
     }
 });
+
+/**
+ * Close the workflow confirm action dialog
+ */
+$('body').on('click', 'a.action-popup-cancel', function() {
+    $(this).closest('div.action-popup').remove();
+    return false;
+});
+$(document).keyup(function(e){
+    if (e.keyCode === 27) {
+        var $actionPopup = $('div.action-popup');
+        if ($actionPopup) {
+            $actionPopup.remove();
+        }
+    }
+});

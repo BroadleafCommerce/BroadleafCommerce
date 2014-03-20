@@ -1650,3 +1650,115 @@ div#thumbnail-zoom {
 	line-height: 19px;
 	text-align: center;
 }
+
+/* -----------------------------------------
+   Action popup
+----------------------------------------- */
+
+div.action-popup {
+	position: absolute;
+	padding: 10px;
+	margin: 10px;
+	z-index: 999;
+	border: 1px solid #CCC;
+	border-radius: 4px;
+	box-shadow: 1px 1px 1px #888887;
+	background-image: -webkit-gradient(linear, top, bottom, from(#F1F1F1), to(#E2E2E2));
+	background-image: -webkit-linear-gradient(top, #F1F1F1, #E2E2E2);
+	background-image:    -moz-linear-gradient(top, #F1F1F1, #E2E2E2);
+	background-image:      -o-linear-gradient(top, #F1F1F1, #E2E2E2);
+	background-image:         linear-gradient(to bottom, #F1F1F1, #E2E2E2);
+	line-height: 22px;
+}
+
+div.entity-form-actions div.action-popup {
+	right: 0;
+}
+
+div.action-popup label {
+	font-weight: normal;
+	display: inline-block;
+}
+
+div.action-popup label.deployTime {
+	  margin: 0 5px 0 35px;
+}
+
+div.action-popup fieldset {
+	background-color: #F7F7F7;
+}
+
+div.action-popup span.action {
+	font-weight: bold;
+}
+
+div.action-popup span.message {
+	display: block;
+}
+
+div.action-popup span.message.title {
+	font-weight: bold;
+	margin-bottom: 15px;
+	width: 275px;
+}
+
+div.action-popup textarea {
+	height: 103px;
+}
+
+div.action-popup input[type=text].datepicker {
+	display: inline-block;
+	width: 170px;
+	margin: 0;
+}
+
+div.action-popup textarea,
+div.action-popup input[type=text] {
+	display: block;
+	width: 325px;
+	margin: 7px 0px 7px;
+}
+
+div.action-popup button {
+	float: right;
+}
+
+div.action-popup a.workflow-prompt-cancel {
+	float: right;
+	margin-right: 10px;
+	color: #000;
+	line-height: 27px;
+}
+
+div.action-popup span.submit-error,
+div.action-popup span.sync-ok {
+	line-height: 27px;
+	color: #890923;
+	display: none;
+}
+
+div.action-popup span.sync-ok {
+	color: green !important;
+}
+
+div.action-popup span.sync-error {
+	line-height: 30px;
+	clear: both;
+	color: #890923;
+	display: none;
+}
+
+div.action-popup span.sync-error button {
+	float: right;
+	margin-top: 5px;
+}
+
+div.action-popup form {
+	margin-bottom: 0px;
+}
+
+div.action-popup img.ajax-loader {
+    float: right;
+    margin-right: 10px;
+    display: none;
+}

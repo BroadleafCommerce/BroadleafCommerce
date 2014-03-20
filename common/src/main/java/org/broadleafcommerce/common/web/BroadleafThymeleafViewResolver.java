@@ -123,7 +123,7 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
             addStaticVariable(BroadleafControllerUtility.BLC_REDIRECT_ATTRIBUTE, redirectUrl);
             return super.loadView(viewName, locale);
         } else {
-            return new RedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());
+            return new RedirectView(redirectUrl, false, isRedirectHttp10Compatible());
         }
     }
     
