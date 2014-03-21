@@ -46,10 +46,15 @@ public interface FieldPersistenceProvider extends Ordered {
 
     //standard ordering constants for BLC providers
     public static final int BASIC = Integer.MAX_VALUE;
-    public static final int MAP_FIELD = 20000;
-    public static final int RULE = 30000;
-    public static final int MONEY = 40000;
-    public static final int MEDIA = 50000;
+    /**
+     * The {@link MediaFieldPersistenceProvider} MUST come prior to the normal Map field provider since they can both
+     * respond to the same type of map fields. However, the Media fields are a special case since it needs to parse out the
+     * Media DTO
+     */
+    public static final int MEDIA = 20000;
+    public static final int MAP_FIELD = 30000;
+    public static final int RULE = 40000;
+    public static final int MONEY = 50000;
 
     /**
      * Set the property value on the target object. Implementations should translate the requestedValue

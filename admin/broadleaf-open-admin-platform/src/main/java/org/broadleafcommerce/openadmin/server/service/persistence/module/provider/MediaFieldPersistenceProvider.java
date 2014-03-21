@@ -102,14 +102,13 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(media);
                 populateValueRequest.getFieldManager().setFieldValue(instance,
                         populateValueRequest.getProperty().getName(), media);
+                return FieldProviderResponse.HANDLED_BREAK;
             } else {
                 throw new UnsupportedOperationException("MediaFields only work with Media types.");
             }
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
-
-        return FieldProviderResponse.HANDLED;
     }
 
     @Override
@@ -125,6 +124,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 property.setValue(jsonString);
                 property.setUnHtmlEncodedValue(jsonString);
                 property.setDisplayValue(extractValueRequest.getDisplayVal());
+                return FieldProviderResponse.HANDLED_BREAK;
             } else {
                 throw new UnsupportedOperationException("MEDIA type is currently only supported on fields of type Media");
             }
