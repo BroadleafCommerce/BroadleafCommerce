@@ -42,6 +42,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -167,6 +168,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Where(clause = "archived='N'")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Addresses", order = 1000,
             addType = AddMethodType.PERSIST,
             tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)

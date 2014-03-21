@@ -27,6 +27,7 @@
         <query>SELECT ca FROM org.broadleafcommerce.profile.core.domain.CustomerAddress ca
         WHERE ca.customer.id = :customerId
         AND ca.address.isActive = TRUE
+        AND ca.archiveStatus.archived = :archived
         ORDER BY ca.id</query>
     </named-query>
 

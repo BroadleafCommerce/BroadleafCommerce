@@ -21,7 +21,9 @@ package org.broadleafcommerce.profile.core.domain;
 
 import java.io.Serializable;
 
-public interface CustomerAddress extends Serializable {
+import org.broadleafcommerce.common.persistence.Status;
+
+public interface CustomerAddress extends Status, Serializable {
 
     public void setId(Long id);
 
