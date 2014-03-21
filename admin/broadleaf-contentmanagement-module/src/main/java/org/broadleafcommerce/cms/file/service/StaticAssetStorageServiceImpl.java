@@ -20,6 +20,7 @@
 package org.broadleafcommerce.cms.file.service;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -101,8 +101,8 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
      * @return
      */
     protected String appendTrailingSlash(String path) {
-        if (!path.endsWith("/")) {
-            path = "/" + path;
+        if (!path.endsWith(File.separator)) {
+            path = File.separator + path;
         }
 
         return path;
@@ -114,7 +114,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
      * @return
      */
     protected String removeLeadingSlash(String path) {
-        if (path.startsWith("/")) {
+        if (path.startsWith(File.separator)) {
             path = path.substring(1);
         }
 
@@ -159,6 +159,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
     
     protected void createLocalFileFromInputStream(InputStream is, File baseLocalFile) throws IOException {
+        FileOutputStream tos = null;
         FileWorkArea workArea = null;
         try {
             if (!baseLocalFile.getParentFile().exists()) {
@@ -177,22 +178,23 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             }
             
             workArea = broadleafFileService.initializeWorkArea();
-            File tmpFile = new File(workArea.getFilePathLocation(), baseLocalFile.getName());
+            File tmpFile = new File(FilenameUtils.concat(workArea.getFilePathLocation(), baseLocalFile.getName()));
             
-            FileOutputStream tos = new FileOutputStream(tmpFile);
+            tos = new FileOutputStream(tmpFile);
 
             IOUtils.copy(is, tos);
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(tos);
+            
+            // close the input/output streams before trying to move files around
+            is.close();
+            tos.close();
 
             FileUtils.moveFile(tmpFile, baseLocalFile);
         } finally {
-            try {
-                if (workArea != null) {
-                    broadleafFileService.closeWorkArea(workArea);
-                }
-            } catch (Throwable e) {
-                //do nothing
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(tos);
+            
+            if (workArea != null) {
+                broadleafFileService.closeWorkArea(workArea);
             }
         }
     }    
@@ -384,10 +386,13 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
                     }
                     output.write(buffer, 0, bytesRead);
                 }
-
-                broadleafFileService.addOrUpdateResource(tempWorkArea, destFile, true);
-            } finally {
+                
+                // close the output file stream prior to moving files around
+                
                 output.close();
+                broadleafFileService.addOrUpdateResource(tempWorkArea, destFile, deleteFile);
+            } finally {
+                IOUtils.closeQuietly(output);
                 broadleafFileService.closeWorkArea(tempWorkArea);
             }
         }
