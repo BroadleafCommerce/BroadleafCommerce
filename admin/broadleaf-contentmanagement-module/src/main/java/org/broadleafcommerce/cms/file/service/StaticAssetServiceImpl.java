@@ -158,7 +158,7 @@ public class StaticAssetServiceImpl extends AbstractContentService implements St
             path = path.append(entityType).append("/");
         }
 
-        if (entityId != null) {
+        if (entityId != null && !"null".equals(entityId)) {
             path = path.append(entityId).append("/");
         }
 
