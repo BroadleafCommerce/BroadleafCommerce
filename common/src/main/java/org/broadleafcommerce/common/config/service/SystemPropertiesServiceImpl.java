@@ -23,6 +23,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
@@ -79,10 +80,14 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         }
 
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
-        if (property == null || property.getValue() == null) {
+        if (property == null || StringUtils.isEmpty(property.getValue())) {
             result = propMgr.getProperty(name);
         } else {
-            result = property.getValue();
+            if ("_blank_".equals(property.getValue())) {
+                result = "";
+            } else {
+                result = property.getValue();
+            }
         }
 
         if (result != null) {
