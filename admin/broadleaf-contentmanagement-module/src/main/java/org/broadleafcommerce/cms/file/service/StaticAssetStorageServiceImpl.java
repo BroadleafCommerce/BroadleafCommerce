@@ -20,6 +20,7 @@
 package org.broadleafcommerce.cms.file.service;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AssetNotFoundException;
@@ -158,7 +159,6 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
     
     protected void createLocalFileFromInputStream(InputStream is, File baseLocalFile) throws IOException {
-        BufferedOutputStream bos = null;
         FileWorkArea workArea = null;
         try {
             if (!baseLocalFile.getParentFile().exists()) {
@@ -177,29 +177,17 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             }
             
             workArea = broadleafFileService.initializeWorkArea();
-            File tmpFile = new File(appendTrailingSlash(workArea.getFilePathLocation()) +
-                    baseLocalFile.getName());
-
-            bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
+            File tmpFile = new File(workArea.getFilePathLocation(), baseLocalFile.getName());
             
-            boolean eof = false;
-            int temp;
-            while (!eof) {
-                temp = is.read();
-                if (temp < 0) {
-                    eof = true;
-                } else {
-                    bos.write(temp);
-                }
-            }
+            FileOutputStream tos = new FileOutputStream(tmpFile);
+
+            IOUtils.copy(is, tos);
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(tos);
 
             FileUtils.moveFile(tmpFile, baseLocalFile);
         } finally {
             try {
-                if (bos != null) {
-                    bos.flush();
-                    bos.close();
-                }
                 if (workArea != null) {
                     broadleafFileService.closeWorkArea(workArea);
                 }
