@@ -43,10 +43,10 @@ public interface WorkflowInventoryExtensionHandler extends ExtensionHandler {
 
     /**
      * Invoked during the blAddItemWorkflow and blUpdateItemWorkflow within the {@link CheckAvailabilityActivity} if it is hooked up.
-     * If this returns
-     * {@link ExtensionResultStatusType#NOT_HANDLED} then the default inventory system in the framework will be checked. 
-     * Therefore, if you decide to implement this method then you MUST return {@link ExtensionResultStatusType#HANDLED},
-     * even if the given Sku's {@link Sku#getInventoryType()} does not return {@link InventoryType#CHECK_QUANTITY}
+     * If this returns {@link ExtensionResultStatusType#NOT_HANDLED} then the default inventory system in the framework will
+     * be checked as long as the given <b>sku</b>'s {@link Sku#getInventoryType()} is {@link InventoryType#CHECK_QUANTITY}. 
+     * If you decide to implement this method then you MUST return {@link ExtensionResultStatusType#HANDLED} in order to
+     * prevent the framework from checking default inventory.
      * 
      * @see {@link InventoryService}
      * @see {@link CheckAvailabilityActivity}
@@ -56,10 +56,10 @@ public interface WorkflowInventoryExtensionHandler extends ExtensionHandler {
                 ProcessContext<CartOperationRequest> context) throws InventoryUnavailableException;
     
     /**
-     * Invoked during the blCheckoutWorkflow
-     * {@link ExtensionResultStatusType#NOT_HANDLED} then the default inventory system in the framework will be checked. 
-     * Therefore, if you decide to implement this method then you MUST return {@link ExtensionResultStatusType#HANDLED},
-     * even if the given Sku's {@link Sku#getInventoryType()} does not return {@link InventoryType#CHECK_QUANTITY}
+     * Invoked during the blCheckoutWorkflow. If this returns {@link ExtensionResultStatusType#NOT_HANDLED} then the default
+     * inventory system in the framework will be checked as long as the given <b>sku</b>'s {@link Sku#getInventoryType()} is
+     * {@link InventoryType#CHECK_QUANTITY}. If you decide to implement this method then you MUST return 
+     * {@link ExtensionResultStatusType#HANDLED} in order to prevent the framework from attempting to decrement its default inventory.
      * 
      * @throws {@link InventoryUnavailableException} if there is not enough inventory available for any of the Skus within
      * <b>skuQuantities</b>
@@ -67,16 +67,20 @@ public interface WorkflowInventoryExtensionHandler extends ExtensionHandler {
      * @see {@link DecrementInventoryActivity}
      */
     public ExtensionResultStatusType decrementInventory(Map<Sku, Integer> skuQuantities,
-                ProcessContext<CheckoutSeed> context, Map<String, Object> rollbackState) throws InventoryUnavailableException;
+                ProcessContext<CheckoutSeed> context,
+                Map<String, Object> rollbackState) throws InventoryUnavailableException;
 
     /**
-     * Invoked from the {@link DecrementInventoryRollbackHandler}
+     * Invoked from the {@link DecrementInventoryRollbackHandler} to rollback the inventory operation performed by
+     * {@link #decrementInventory(Map, ProcessContext, Map)}.
      * 
      * @param inventoryToIncrement - inventory that was previously <b>decremented</b> and now should be incremented
      * @param incrementedInventory - inventory that was previously <b>incremented</b> and now should be decremented
      * @param orderId
      * @return If being implemented, {@link ExtensionResultStatusType#HANDLED}
      * @throws {@link RollbackFailureException} if there was a problem rolling back the inventory operation
+     * @see {@link DecrementInventoryRollbackHandler}
      */
-    public ExtensionResultStatusType rollbackInventoryOperation(ProcessContext<CheckoutSeed> context, Map<String, Object> rollbackState) throws RollbackFailureException;
+    public ExtensionResultStatusType rollbackInventoryOperation(ProcessContext<CheckoutSeed> context,
+            Map<String, Object> rollbackState) throws RollbackFailureException;
 }
