@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -142,7 +143,12 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
         StringBuilder resourceName = new StringBuilder();
         // Create directories based on hash
         String fileHash = null;
-        if (!url.startsWith("/")) {
+        if (BLCSystemProperty.isWindows() && !url.startsWith("\\")) {
+        	if(url.startsWith("/")){
+        		url=url.substring(1);
+        	}
+            fileHash = DigestUtils.md5Hex("\\" + url);
+        } else if (!BLCSystemProperty.isWindows() && !url.startsWith("/")) {
             fileHash = DigestUtils.md5Hex("/" + url);
         } else {
             fileHash = DigestUtils.md5Hex(url);
@@ -154,10 +160,19 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
                         maxGeneratedDirectoryDepth);
                 break;
             }
-            resourceName = resourceName.append(fileHash.substring(i * 2, (i + 1) * 2)).append('/');
+            if (BLCSystemProperty.isWindows()){
+                resourceName = resourceName.append(fileHash.substring(i * 2, (i + 1) * 2)).append('\\');
+            } else {
+                resourceName = resourceName.append(fileHash.substring(i * 2, (i + 1) * 2)).append('/');
+            }
         }
 
-        int pos = url.lastIndexOf("/");
+        int pos;
+        if (BLCSystemProperty.isWindows()){
+            pos = url.lastIndexOf("\\");
+        } else {
+            pos = url.lastIndexOf("/");
+        }
         if (pos >= 0 && (pos < url.length() - 1)) {
             // Use the fileName as specified if possible.
             resourceName = resourceName.append(url.substring(pos + 1));
@@ -180,7 +195,9 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
                 baseDirectory = DEFAULT_STORAGE_DIRECTORY;
             }
 
-            if (!baseDirectory.endsWith("/")) {
+            if (BLCSystemProperty.isWindows() && !baseDirectory.endsWith("\\")) {
+                baseDirectory = baseDirectory.trim() + "\\";
+            } else if (!BLCSystemProperty.isWindows() && !baseDirectory.endsWith("/")) {
                 baseDirectory = baseDirectory.trim() + "/";
             }
         }

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.file.service;
 
+import org.broadleafcommerce.common.util.BLCSystemProperty;
+
 
 public class BroadleafFileUtils {
 
@@ -55,8 +57,17 @@ public class BroadleafFileUtils {
      */
 
     public static String addLeadingSlash(String fileName) {
-        if (fileName.startsWith("/")) {
+    	if(BLCSystemProperty.isWindows() && fileName.startsWith("\\")) {
             return fileName;
+    	}
+        if (!BLCSystemProperty.isWindows() && fileName.startsWith("/")) {
+            return fileName;
+        }
+        if(BLCSystemProperty.isWindows()) {
+        	if(fileName.startsWith("/")) {
+        		fileName=removeLeadingSlash(fileName);        		
+        	}
+            return "\\" + fileName;
         }
         return "/" + fileName;
     }

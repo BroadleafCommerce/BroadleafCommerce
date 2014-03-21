@@ -38,6 +38,8 @@ public class BLCSystemProperty implements ApplicationContextAware {
 
     protected static ApplicationContext applicationContext;
     
+    private static String OS = System.getProperty("os.name").toLowerCase();
+    
     /**
      * @see SystemPropertiesService#resolveSystemProperty(String)
      */
@@ -76,6 +78,10 @@ public class BLCSystemProperty implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         BLCSystemProperty.applicationContext = applicationContext;
+    }
+    
+    public static boolean isWindows(){
+    	return (OS.indexOf("win") >= 0);
     }
 
 }
