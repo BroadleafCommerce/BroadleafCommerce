@@ -64,8 +64,17 @@ public interface FulfillmentGroup extends Serializable {
 
     public void setAddress(Address address);
 
+    /**
+     * @deprecated use {@link Address#getPhonePrimary()} instead.
+     */
+    @Deprecated
     public Phone getPhone();
 
+    /**
+     * @deprecated use {@link Address#getPhonePrimary()} instead
+     * @param phone
+     */
+    @Deprecated
     public void setPhone(Phone phone);
 
     public List<FulfillmentGroupItem> getFulfillmentGroupItems();
@@ -135,36 +144,42 @@ public interface FulfillmentGroup extends Serializable {
      * fulfillment types such as PickUpAtStore fees or download fees.
      * @return
      */
+    @Deprecated
     public Money getRetailShippingPrice();
 
     /**
      * @deprecated - use {@link #setRetailFulfillmentPrice(Money)} instead.
      * @return
      */
+    @Deprecated
     public void setRetailShippingPrice(Money retailShippingPrice);
 
     /**
      * @deprecated - use {@link #getSaleFulfillmentPrice()} instead.
      * @return
      */
+    @Deprecated
     public Money getSaleShippingPrice();
 
     /**
      * @deprecated - use {@link #setSaleFulfillmentPrice(Money)} instead.
      * @param saleShippingPrice
      */
+    @Deprecated
     public void setSaleShippingPrice(Money saleShippingPrice);
 
     /**
      * @deprecated - use {@link #getFulfillmentPrice()} instead.
      * @return
      */
+    @Deprecated
     public Money getShippingPrice();
 
     /**
      * @deprecated - use {@link #setRetailFulfillmentPrice(Money)} instead.
      * @param shippingPrice
      */
+    @Deprecated
     public void setShippingPrice(Money shippingPrice);
 
     public String getReferenceNumber();
