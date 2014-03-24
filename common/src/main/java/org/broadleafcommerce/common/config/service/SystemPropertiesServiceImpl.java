@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -52,6 +53,9 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     @Resource(name = "blSystemPropertyServiceExtensionManager")
     protected SystemPropertyServiceExtensionManager extensionManager;
+
+    @Value("${system.property.cache.timeout}")
+    protected int systemPropertyCacheTimeout;
 
     @Autowired
     protected RuntimeEnvironmentPropertiesManager propMgr;
@@ -98,7 +102,12 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     protected void addPropertyToCache(String propertyName, String propertyValue) {
         String key = buildKey(propertyName);
-        getSystemPropertyCache().put(new Element(key, propertyValue));
+        if (systemPropertyCacheTimeout < 0) {
+            getSystemPropertyCache().put(new Element(key, propertyValue));
+        } else {
+            getSystemPropertyCache().put(new Element(key, propertyValue, systemPropertyCacheTimeout, 
+                    systemPropertyCacheTimeout));
+        }
     }
 
     protected String getPropertyFromCache(String propertyName) {
