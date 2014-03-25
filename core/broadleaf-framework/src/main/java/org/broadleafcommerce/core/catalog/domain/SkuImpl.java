@@ -271,6 +271,7 @@ public class SkuImpl implements Sku {
                             friendlyName = "SkuImpl_Primary_Media")
             )
     })
+    @BatchSize(size = 50)
     @ClonePolicyMap
     protected Map<String, Media> skuMedia = new HashMap<String, Media>();
 
@@ -318,6 +319,7 @@ public class SkuImpl implements Sku {
             joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true),
             inverseJoinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @BatchSize(size = 50)
     @ClonePolicyCollection
     protected List<SkuFee> fees = new ArrayList<SkuFee>();
 
@@ -329,6 +331,7 @@ public class SkuImpl implements Sku {
     @Column(name = "RATE", precision = 19, scale = 5)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @BatchSize(size = 50)
     @ClonePolicyMap
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
 

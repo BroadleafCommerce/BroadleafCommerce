@@ -104,7 +104,7 @@ public interface SandBoxHelper {
      * @param id the id to check
      * @return the original id for the requested sandbox id
      */
-    Long getOriginalId(EntityManager em, Class<?> type, Long id);
+    OriginalIdResponse getOriginalId(EntityManager em, Class<?> type, Long id);
 
     /**
      * Setup basic required fields for sandbox support
@@ -162,4 +162,25 @@ public interface SandBoxHelper {
      */
     void optionallyIncludeDeletedItemsInQueriesAndCollections(Runnable runnable, boolean includeDeleted);
 
+    public class OriginalIdResponse {
+
+        private boolean recordFound = false;
+        private Long originalId;
+
+        public boolean isRecordFound() {
+            return recordFound;
+        }
+
+        public void setRecordFound(boolean recordFound) {
+            this.recordFound = recordFound;
+        }
+
+        public Long getOriginalId() {
+            return originalId;
+        }
+
+        public void setOriginalId(Long originalId) {
+            this.originalId = originalId;
+        }
+    }
 }

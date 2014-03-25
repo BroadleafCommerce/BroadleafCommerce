@@ -57,8 +57,10 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     }
 
     @Override
-    public Long getOriginalId(EntityManager em, Class<?> type, Long id) {
-        return id;
+    public OriginalIdResponse getOriginalId(EntityManager em, Class<?> type, Long id) {
+        OriginalIdResponse response = new OriginalIdResponse();
+        response.setOriginalId(id);
+        return response;
     }
 
     @Override
