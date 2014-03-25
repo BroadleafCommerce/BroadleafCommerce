@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -75,15 +76,15 @@ public abstract class CartEndpoint extends BaseEndpoint {
      */
     public OrderWrapper findCartForCustomer(HttpServletRequest request) {
         Order cart = CartState.getCart();
-        if (cart != null) {
-            OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-            wrapper.wrapDetails(cart, request);
-
-            return wrapper;
+        if (cart == null || cart instanceof NullOrderImpl) {
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
+        
+        OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+        wrapper.wrapDetails(cart, request);
 
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        return wrapper;
     }
 
    /**
@@ -137,57 +138,57 @@ public abstract class CartEndpoint extends BaseEndpoint {
             boolean priceOrder) {
         
         Order cart = CartState.getCart();
+        if (cart == null || cart instanceof NullOrderImpl) {
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        }
 
-        if (cart != null) {
-            try {
-                //We allow product options to be submitted via form post or via query params.  We need to take 
-                //the product options and build a map with them...
-                MultivaluedMap<String, String> multiValuedMap = uriInfo.getQueryParameters();
-                HashMap<String, String> productOptions = new HashMap<String, String>();
+        try {
+            //We allow product options to be submitted via form post or via query params.  We need to take 
+            //the product options and build a map with them...
+            MultivaluedMap<String, String> multiValuedMap = uriInfo.getQueryParameters();
+            HashMap<String, String> productOptions = new HashMap<String, String>();
 
-                //Fill up a map of key values that will represent product options
-                Set<String> keySet = multiValuedMap.keySet();
-                for (String key : keySet) {
-                    if (multiValuedMap.getFirst(key) != null) {
-                        //Product options should be returned with "productOption." as a prefix. We'll look for those, and 
-                        //remove the prefix.
-                        if (key.startsWith("productOption.")) {
-                            productOptions.put(StringUtils.removeStart(key, "productOption."), multiValuedMap.getFirst(key));
-                        }
+            //Fill up a map of key values that will represent product options
+            Set<String> keySet = multiValuedMap.keySet();
+            for (String key : keySet) {
+                if (multiValuedMap.getFirst(key) != null) {
+                    //Product options should be returned with "productOption." as a prefix. We'll look for those, and 
+                    //remove the prefix.
+                    if (key.startsWith("productOption.")) {
+                        productOptions.put(StringUtils.removeStart(key, "productOption."), multiValuedMap.getFirst(key));
                     }
                 }
-
-                OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-                orderItemRequestDTO.setProductId(productId);
-                orderItemRequestDTO.setCategoryId(categoryId);
-                orderItemRequestDTO.setQuantity(quantity);
-
-                //If we have product options set them on the DTO
-                if (productOptions.size() > 0) {
-                    orderItemRequestDTO.setItemAttributes(productOptions);
-                }
-
-                Order order = orderService.addItem(cart.getId(), orderItemRequestDTO, priceOrder);
-                order = orderService.save(order, priceOrder);
-
-                OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                wrapper.wrapDetails(order, request);
-
-                return wrapper;
-            } catch (PricingException e) {
-                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the order.").build());
-            } catch (AddToCartException e) {
-                if (e.getCause() != null) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("" + e.getCause()).build());
-                }
-                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured adding the item to the cart." + e.getCause()).build());
             }
+
+            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+            orderItemRequestDTO.setProductId(productId);
+            orderItemRequestDTO.setCategoryId(categoryId);
+            orderItemRequestDTO.setQuantity(quantity);
+
+            //If we have product options set them on the DTO
+            if (productOptions.size() > 0) {
+                orderItemRequestDTO.setItemAttributes(productOptions);
+            }
+
+            Order order = orderService.addItem(cart.getId(), orderItemRequestDTO, priceOrder);
+            order = orderService.save(order, priceOrder);
+
+            OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+            wrapper.wrapDetails(order, request);
+
+            return wrapper;
+        } catch (PricingException e) {
+            throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the order.").build());
+        } catch (AddToCartException e) {
+            if (e.getCause() != null) {
+                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .type(MediaType.TEXT_PLAIN).entity("" + e.getCause()).build());
+            }
+            throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .type(MediaType.TEXT_PLAIN).entity("An error occured adding the item to the cart." + e.getCause()).build());
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
     }
 
     public OrderWrapper removeItemFromOrder(HttpServletRequest request,
@@ -195,31 +196,31 @@ public abstract class CartEndpoint extends BaseEndpoint {
             boolean priceOrder) {
 
         Order cart = CartState.getCart();
-        if (cart != null) {
-            try {
-                Order order = orderService.removeItem(cart.getId(), itemId, priceOrder);
-                order = orderService.save(order, priceOrder);
+        if (cart == null || cart instanceof NullOrderImpl) {
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        }
+        
+        try {
+            Order order = orderService.removeItem(cart.getId(), itemId, priceOrder);
+            order = orderService.save(order, priceOrder);
 
-                OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                wrapper.wrapDetails(order, request);
+            OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+            wrapper.wrapDetails(order, request);
 
-                return wrapper;
-            } catch (PricingException e) {
+            return wrapper;
+        } catch (PricingException e) {
+            throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+        } catch (RemoveFromCartException e) {
+            if (e.getCause() instanceof ItemNotFoundException) {
+                throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
+                        .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
+            } else {
                 throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
-            } catch (RemoveFromCartException e) {
-                if (e.getCause() instanceof ItemNotFoundException) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
-                            .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
-                } else {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
-                }
+                        .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
             }
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
-
     }
 
     public OrderWrapper updateItemQuantity(HttpServletRequest request,
@@ -229,41 +230,42 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
         Order cart = CartState.getCart();
 
-        if (cart != null) {
-            try {
-                OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
-                orderItemRequestDTO.setOrderItemId(itemId);
-                orderItemRequestDTO.setQuantity(quantity);
-                Order order = orderService.updateItemQuantity(cart.getId(), orderItemRequestDTO, priceOrder);
-                order = orderService.save(order, priceOrder);
-
-                OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
-                wrapper.wrapDetails(order, request);
-
-                return wrapper;
-            } catch (UpdateCartException e) {
-                if (e.getCause() instanceof ItemNotFoundException) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
-                            .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
-                } else {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
-                }
-            } catch (RemoveFromCartException e) {
-                if (e.getCause() instanceof ItemNotFoundException) {
-                    throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
-                            .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
-                } else {
-                    throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
-                }
-            } catch (PricingException pe) {
-                throw new WebApplicationException(pe, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
-            }
+        if (cart == null || cart instanceof NullOrderImpl) {
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
+                    .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
-        throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
+        
+        try {
+            OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
+            orderItemRequestDTO.setOrderItemId(itemId);
+            orderItemRequestDTO.setQuantity(quantity);
+            Order order = orderService.updateItemQuantity(cart.getId(), orderItemRequestDTO, priceOrder);
+            order = orderService.save(order, priceOrder);
+
+            OrderWrapper wrapper = (OrderWrapper) context.getBean(OrderWrapper.class.getName());
+            wrapper.wrapDetails(order, request);
+
+            return wrapper;
+        } catch (UpdateCartException e) {
+            if (e.getCause() instanceof ItemNotFoundException) {
+                throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
+                        .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
+            } else {
+                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
+            }
+        } catch (RemoveFromCartException e) {
+            if (e.getCause() instanceof ItemNotFoundException) {
+                throw new WebApplicationException(e, Response.status(Response.Status.NOT_FOUND)
+                        .type(MediaType.TEXT_PLAIN).entity("Could not find order item id " + itemId).build());
+            } else {
+                throw new WebApplicationException(e, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .type(MediaType.TEXT_PLAIN).entity("An error occured removing the item to the cart.").build());
+            }
+        } catch (PricingException pe) {
+            throw new WebApplicationException(pe, Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .type(MediaType.TEXT_PLAIN).entity("An error occured pricing the cart.").build());
+        }
     }
 
     public OrderWrapper addOfferCode(HttpServletRequest request,
@@ -272,7 +274,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
         Order cart = CartState.getCart();
 
-        if (cart == null) {
+        if (cart == null || cart instanceof NullOrderImpl) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
                     .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
@@ -305,7 +307,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
             String promoCode,
             boolean priceOrder) {
         Order cart = CartState.getCart();
-        if (cart == null) {
+        if (cart == null || cart instanceof NullOrderImpl) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
                     .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
@@ -334,7 +336,7 @@ public abstract class CartEndpoint extends BaseEndpoint {
 
         Order cart = CartState.getCart();
 
-        if (cart == null) {
+        if (cart == null || cart instanceof NullOrderImpl) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
                     .type(MediaType.TEXT_PLAIN).entity("Cart could not be found").build());
         }
