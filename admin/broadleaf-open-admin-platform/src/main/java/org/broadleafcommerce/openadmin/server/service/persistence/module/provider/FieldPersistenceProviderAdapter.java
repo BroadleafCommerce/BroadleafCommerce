@@ -19,12 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -36,6 +30,12 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -78,7 +78,7 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
                 value = ((String) value).trim();
             }
             if (value instanceof BigDecimal) {
-                checkValue = ((BigDecimal) checkValue).setScale(((BigDecimal) value).scale(), RoundingMode.UNNECESSARY);
+                checkValue = ((BigDecimal) checkValue).setScale(((BigDecimal) value).scale(), RoundingMode.HALF_UP);
             }
             dirty = value == null || !value.equals(checkValue);
         }
