@@ -48,4 +48,11 @@ public interface SystemPropertiesDao {
      * @return the {@link SystemProperty}
      */
     public SystemProperty readById(Long id);
+
+    /**
+     * Removes the SystemProperty from the null-capable cache.
+     *
+     * @param systemProperty the property instance
+     */
+    public void removeFromCache(SystemProperty systemProperty);
 }

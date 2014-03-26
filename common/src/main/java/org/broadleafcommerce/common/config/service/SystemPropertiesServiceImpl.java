@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
+import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,7 +123,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     /**
      * Properties can vary by site.   If a site is found on the request, use the site id as part of the
      * cache-key.
-     * 
+     *
      * @param propertyName
      * @return
      */
@@ -133,6 +134,21 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
             if (brc.getSite() != null) {
                 key = brc.getSite().getId() + "-" + key;
             }
+        }
+        return key;
+    }
+
+    /**
+     * Properties can vary by site.   If a site is found on the request, use the site id as part of the
+     * cache-key.
+     * 
+     * @param systemProperty
+     * @return
+     */
+    protected String buildKey(SystemProperty systemProperty) {
+        String key = systemProperty.getName();
+        if (systemProperty instanceof SiteDiscriminator && ((SiteDiscriminator) systemProperty).getSiteDiscriminator() != null) {
+            key = ((SiteDiscriminator) systemProperty).getSiteDiscriminator() + "-" + key;
         }
         return key;
     }
@@ -151,8 +167,12 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     
     @Override
     public void removeFromCache(SystemProperty systemProperty) {
-        String key = buildKey(systemProperty.getName());
+        //Could have come from a cache invalidation service that does not
+        //include the site on the thread, so we should build the key
+        //including the site (if applicable) from the systemProperty itself
+        String key = buildKey(systemProperty);
         getSystemPropertyCache().remove(key);
+        systemPropertiesDao.removeFromCache(systemProperty);
     }
 
     @Override
