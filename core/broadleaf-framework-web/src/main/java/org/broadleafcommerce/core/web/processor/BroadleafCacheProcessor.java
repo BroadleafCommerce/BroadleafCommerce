@@ -33,15 +33,12 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Attribute;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Node;
-import org.thymeleaf.fragment.WholeFragmentSpec;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.element.AbstractElementProcessor;
-import org.thymeleaf.standard.fragment.StandardFragment;
-import org.thymeleaf.standard.fragment.StandardFragmentProcessor;
-import org.thymeleaf.standard.processor.attr.AbstractStandardFragmentHandlingAttrProcessor;
+import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
-import java.util.List;
+import java.lang.reflect.Field;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -66,14 +63,13 @@ import javax.annotation.Resource;
  * additional implementation named <code>EnterpriseCacheKeyResolver</code> with support for additional caching 
  * features.
  *  
- * @author Andre Azzolini (apazzolini), bpolster
+ * @author bpolster
  */
-public class TemplateCacheProcessor extends AbstractElementProcessor {
+public class BroadleafCacheProcessor extends AbstractAttrProcessor {
 
-    private static final Log LOG = LogFactory.getLog(TemplateCacheProcessor.class);
+    private static final Log LOG = LogFactory.getLog(BroadleafCacheProcessor.class);
 
-    public static final int ATTR_PRECEDENCE = 100;
-    public static final String ATTR_NAME = "cache";
+    public static final String ATTR_NAME = "cacheKey";
 
     protected Cache cache;
 
@@ -83,23 +79,84 @@ public class TemplateCacheProcessor extends AbstractElementProcessor {
     @Resource(name = "blTemplateCacheKeyResolver")
     protected TemplateCacheKeyResolverService cacheKeyResolver;
 
-    public TemplateCacheProcessor() {
+    public BroadleafCacheProcessor() {
         super(ATTR_NAME);
     }
 
+    public void fixElement(Element element, Arguments arguments) {
+        boolean elementAdded = false;
+        boolean removeElement = false;
+        Set<String> attributeNames = element.getAttributeMap().keySet();
+
+        for (String a : attributeNames) {
+            String attrName = a.toLowerCase();
+            if (attrName.startsWith("th")) {
+                if (attrName.equals("th:substituteby") || (attrName.equals("th:replace") || attrName.equals("th:include"))) {
+                    if (!elementAdded) {
+                        Element extraDiv = new Element("div");
+                        String attrValue = element.getAttributeValue(attrName);
+                        element.removeAttribute(attrName);
+                        extraDiv.setAttribute(attrName, attrValue);
+                        element.addChild(extraDiv);
+                        elementAdded = true;
+                        element.setAttribute("template", false, attrValue);
+
+                        // This will ensure that the substituteby and replace processors only run for the child element
+                        element.setRecomputeProcessorsImmediately(true);
+                    }
+                } else if (attrName.equals("th:remove")) {
+                    Attribute attr = element.getAttributeMap().get(attrName);
+                    if ("tag".equals(attr.getValue())) {
+                        removeElement = true;
+
+                        // The cache functionality will remove the element. 
+                        element.setAttribute(attrName, "none");
+                    }
+                }
+            }
+        }
+
+        if (!elementAdded || removeElement) {
+            element.setNodeProperty("blcOutputParentNode", Boolean.TRUE);
+        }
+    }
+
     @Override
-    public final ProcessorResult processElement(final Arguments arguments, final Element element) {
+    public ProcessorResult processAttribute(final Arguments arguments, final Element element, String attributeName) {
+        final String attributeValue = element.getAttributeValue(attributeName);
+        element.removeAttribute(attributeName);
+
+        fixElement(element, arguments);
+
         String template = element.getAttributeValue("template");
 
         if (checkCacheForElement(arguments, element, template)) {
             // This template has been cached.
             element.clearChildren();
-        } else {
-            final List<Node> fragmentNodes = computeFragment(arguments, element, "template", template);
-            element.clearChildren();
-            element.setChildren(fragmentNodes);
+            element.clearAttributes();
+            markElementAsSkippable(element);
         }
         return ProcessorResult.OK;
+    }
+
+    /**
+     * We don't want thymeleaf to process this node any further.   We have what we need as we are pulling 
+     * the results from cache.   The prescribed method of "setRecomputeProcessorsImmediately" is not as performant.
+     * @param element
+     */
+    protected void markElementAsSkippable(final Element element) {
+        try {
+            Field skippableField = Node.class.getDeclaredField("skippable");
+            skippableField.setAccessible(true);
+            skippableField.setBoolean(element, true);
+        } catch (Exception e) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Error setting skippable field, possible thymeleaf / framework mismatch. Broadleaf assumes that " +
+                        "the thymeleaf node class has a property called skippable.   This error should not effect " +
+                        "functionality but likely does impact performance.", e);
+            }
+            element.setRecomputeProcessorsImmediately(true);
+        }
     }
 
     /**
@@ -119,14 +176,14 @@ public class TemplateCacheProcessor extends AbstractElementProcessor {
             String cacheKey = cacheKeyResolver.resolveCacheKey(arguments, element, template);
     
             if (!StringUtils.isEmpty(cacheKey)) {
-                element.setAttribute("cachekey", cacheKey);
+                element.setNodeProperty("cacheKey", cacheKey);
     
                 net.sf.ehcache.Element cacheElement = getCache().get(cacheKey);
                 if (cacheElement != null && !checkExpired(element, cacheElement)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Template Cache Hit " + template + " with cacheKey " + cacheKey + " found in cache.");
                     }
-                    element.setAttribute("blcacheresponse", (String) cacheElement.getObjectValue());
+                    element.setNodeProperty("blCacheResponse", (String) cacheElement.getObjectValue());
                     return true;
                 } else {
                     if (LOG.isTraceEnabled()) {
@@ -168,58 +225,6 @@ public class TemplateCacheProcessor extends AbstractElementProcessor {
         return false;
     }
 
-
-    /**
-     * <b>NOTE</b> This method is copied from {@link AbstractStandardFragmentHandlingAttrProcessor#computeFragment}
-     * 
-     * @param arguments
-     * @param element
-     * @param attributeName
-     * @param attributeValue
-     * @return
-     */
-    protected final List<Node> computeFragment(final Arguments arguments, final Element element,
-            final String attributeName, final String attributeValue) {
-        final String dialectPrefix = Attribute.getPrefixFromAttributeName(attributeName);
-
-        final String fragmentSignatureAttributeName =
-                getFragmentSignatureUnprefixedAttributeName(arguments, element, attributeName, attributeValue);
-
-        final StandardFragment fragment =
-                StandardFragmentProcessor.computeStandardFragmentSpec(
-                        arguments.getConfiguration(), arguments, attributeValue, dialectPrefix, fragmentSignatureAttributeName);
-
-        final List<Node> extractedNodes =
-                fragment.extractFragment(arguments.getConfiguration(), arguments, arguments.getTemplateRepository());
-
-        final boolean removeHostNode = getRemoveHostNode(arguments, element);
-
-        // If fragment is a whole document (no selection inside), we should never remove its parent node/s
-        // Besides, we know that StandardFragmentProcessor.computeStandardFragmentSpec only creates two types of
-        // IFragmentSpec objects: WholeFragmentSpec and DOMSelectorFragmentSpec.
-        final boolean isWholeDocument = (fragment.getFragmentSpec() instanceof WholeFragmentSpec);
-
-        if (extractedNodes == null || removeHostNode || isWholeDocument) {
-            return extractedNodes;
-        }
-
-        // Host node is NOT to be removed, therefore what should be removed is the top-level elements of the returned
-        // nodes.
-
-        final Element containerElement = new Element("container");
-
-        for (final Node extractedNode : extractedNodes) {
-            // This is done in this indirect way in order to preserver internal structures like e.g. local variables.
-            containerElement.addChild(extractedNode);
-            containerElement.extractChild(extractedNode);
-        }
-
-        final List<Node> extractedChildren = containerElement.getChildren();
-        containerElement.clearChildren();
-
-        return extractedChildren;
-    }
-
     protected String getFragmentSignatureUnprefixedAttributeName(final Arguments arguments, final Element element,
             final String attributeName, final String attributeValue) {
         return StandardFragmentAttrProcessor.ATTR_NAME;
@@ -227,11 +232,7 @@ public class TemplateCacheProcessor extends AbstractElementProcessor {
 
     @Override
     public int getPrecedence() {
-        return ATTR_PRECEDENCE;
-    }
-
-    protected boolean getRemoveHostNode(Arguments arguments, Element element) {
-        return false;
+        return Integer.MIN_VALUE;
     }
 
     public Cache getCache() {

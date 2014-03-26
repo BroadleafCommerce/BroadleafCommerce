@@ -55,8 +55,8 @@
     <bean id="blProductOptionsProcessor" class="org.broadleafcommerce.core.web.processor.ProductOptionsProcessor" />
     <bean id="blPaginationPageLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationPageLinkProcessor" />
     <bean id="blPaginationSizeLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationSizeLinkProcessor" />
-    <bean id="blPaginationSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationSortLinkProcessor" />
-    <bean id="blTemplateCacheProcessor" class="org.broadleafcommerce.core.web.processor.TemplateCacheProcessor" />
+    <bean id="blPaginationSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationSortLinkProcessor" />    
+    <bean id="blBroadleafCacheProcessor" class="org.broadleafcommerce.core.web.processor.BroadleafCacheProcessor" />    
     <bean id="blPriceTextDisplayProcessor" class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
     <bean id="blRatingsProcessor" class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
     <bean id="blRelatedProductProcessor" class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
@@ -78,8 +78,8 @@
                 <ref bean="blNamedOrderProcessor" />
                 <ref bean="blPaginationPageLinkProcessor" />
                 <ref bean="blPaginationSizeLinkProcessor" />
-                <ref bean="blPaginationSortLinkProcessor" />
-                <ref bean="blTemplateCacheProcessor" />
+                <ref bean="blPaginationSortLinkProcessor" />                
+                <ref bean="blBroadleafCacheProcessor" />
                 <ref bean="blPriceTextDisplayProcessor" />
                 <ref bean="blProductOptionValueProcessor" />
                 <ref bean="blProductOptionsProcessor" />

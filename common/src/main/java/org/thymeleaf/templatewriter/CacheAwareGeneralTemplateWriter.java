@@ -61,22 +61,27 @@ public class CacheAwareGeneralTemplateWriter extends AbstractGeneralTemplateWrit
         
         org.thymeleaf.dom.Element e = (org.thymeleaf.dom.Element) node;
         
-        String cacheKey = e.getAttributeValueFromNormalizedName("cachekey");
+        String cacheKey = (String) e.getNodeProperty("cacheKey");
         
         if (StringUtils.isNotBlank(cacheKey)) {
-            String valueToWrite = e.getAttributeValueFromNormalizedName("blcacheresponse");
+            String valueToWrite = (String) e.getNodeProperty("blCacheResponse");
             
             if (valueToWrite != null) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Read template from cache - " + cacheKey);
                 }
             } else {
+                Boolean outputParentNode = (Boolean) e.getNodeProperty("blcOutputParentNode");
                 StringWriter w2 = new StringWriter();
 
-                final Node[] children = e.unsafeGetChildrenNodeArray();
-                final int childrenLen = e.numChildren();
-                for (int i = 0; i < childrenLen; i++) {
-                    writeNode(arguments, w2, children[i]);
+                if (Boolean.TRUE.equals(outputParentNode)) {
+                    super.writeNode(arguments, w2, e);
+                } else {
+                    final Node[] children = e.unsafeGetChildrenNodeArray();
+                    final int childrenLen = e.numChildren();
+                    for (int i = 0; i < childrenLen; i++) {
+                        super.writeNode(arguments, w2, children[i]);
+                    }
                 }
 
                 valueToWrite = w2.toString();
