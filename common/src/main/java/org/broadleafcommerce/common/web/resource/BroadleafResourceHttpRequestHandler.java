@@ -47,6 +47,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,6 +60,7 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     
     // XML Configured generated resource handlers
     protected List<AbstractGeneratedResourceHandler> handlers;
+    protected List<AbstractGeneratedResourceHandler> sortedHandlers;
     
     @javax.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
@@ -102,10 +105,21 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
         
         Resource unminifiedResource = null;
         
-        if (handlers != null) {
-            for (AbstractGeneratedResourceHandler handler : handlers) {
+        if (sortedHandlers == null && handlers != null) {
+            sortedHandlers = new ArrayList<AbstractGeneratedResourceHandler>(handlers);
+            Collections.sort(sortedHandlers, new Comparator<AbstractGeneratedResourceHandler>() {
+                @Override
+                public int compare(AbstractGeneratedResourceHandler o1, AbstractGeneratedResourceHandler o2) {
+                    return new Integer(o1.getOrder()).compareTo(o2.getOrder());
+                }
+            });
+        }
+        
+        if (sortedHandlers != null) {
+            for (AbstractGeneratedResourceHandler handler : sortedHandlers) {
                 if (handler.canHandle(path)) {
                     unminifiedResource = handler.getResource(path, getLocations());
+                    break;
                 }
             }
         }

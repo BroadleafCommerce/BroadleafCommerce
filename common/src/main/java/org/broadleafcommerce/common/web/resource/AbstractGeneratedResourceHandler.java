@@ -30,11 +30,9 @@ import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -48,7 +46,9 @@ import java.util.List;
  * @author Andre Azzolini (apazzolini)
  *
  */
-public abstract class AbstractGeneratedResourceHandler {
+public abstract class AbstractGeneratedResourceHandler implements Ordered {
+    
+    public static final int DEFAULT_ORDER = 10000;
 
     protected static final Log LOG = LogFactory.getLog(AbstractGeneratedResourceHandler.class);
 
@@ -169,6 +169,11 @@ public abstract class AbstractGeneratedResourceHandler {
             generatedResourceCache = CacheManager.getInstance().getCache("generatedResourceCache");
         }
         return generatedResourceCache;
+    }
+
+    @Override
+    public int getOrder() {
+        return DEFAULT_ORDER;
     }
     
 }
