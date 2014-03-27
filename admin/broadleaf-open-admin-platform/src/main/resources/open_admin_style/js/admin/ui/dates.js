@@ -23,7 +23,8 @@
         blcDateFormat : "yy.mm.dd",
         blcTimeFormat : "HH:mm:ss",
         displayDateFormat : 'mm/dd/yy',
-        displayTimeFormat : 'HH:mm:ss'
+        displayTimeFormat : 'HH:mm:ss',
+        displayDateDelimiter : '/'
     };
 
     // Add utility functions for dates to the BLCAdmin object
@@ -33,7 +34,7 @@
          */
         initialize : function($element) {
             // Set the value of this datepicker to be the appropriately formatted one
-            $element.val(this.getDisplayDate($element.val()));
+            $element.val($element.val().contains(adminFormats.displayDateDelimiter)?this.getDisplayDate(this.getServerDate($element.val())):this.getDisplayDate($element.val()));
           
             // Make it a date-time picker
             $element.datetimepicker({
