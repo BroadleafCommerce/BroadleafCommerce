@@ -30,7 +30,6 @@ import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 import org.broadleafcommerce.cms.web.deeplink.ContentDeepLinkServiceImpl;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
@@ -154,11 +153,8 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
         String contentName = element.getAttributeValue("contentName");
         String maxResultsStr = element.getAttributeValue("maxResults");
 
-        boolean extensionLookupNotHandled = ExtensionResultStatusType.NOT_HANDLED.equals(extensionManager.getProxy().shouldHandleContentLookup(element));
-
-        if (StringUtils.isEmpty(contentType) && StringUtils.isEmpty(contentName) && extensionLookupNotHandled) {
-            throw new IllegalArgumentException("The content processor must have a non-empty attribute value for 'contentType' or 'contentName' or register an extension manager to handle content lookup");
-
+        if (StringUtils.isEmpty(contentType) && StringUtils.isEmpty(contentName)) {
+            throw new IllegalArgumentException("The content processor must have a non-empty attribute value for 'contentType' or 'contentName'");
         }
 
         Integer maxResults = null;
@@ -286,16 +282,7 @@ public class ContentProcessor extends AbstractModelVariableModifierProcessor {
             Locale locale, Arguments arguments, Element element) {
         List<StructuredContentDTO> contentItems;
         if (structuredContentType == null) {
-            if (contentName == null || "".equals(contentName)) {
-                contentItems = new ArrayList<StructuredContentDTO>();
-
-                // allow modules to lookup content by a specific field
-                // e.g. (For the AdvancedCMS module you can lookup by "layoutArea")
-                extensionManager.getProxy().lookupContentByElementAttribute(contentItems, currentSandbox, locale, maxResults, mvelParameters, isSecure(request), element);
-
-            } else {
-                contentItems = structuredContentService.lookupStructuredContentItemsByName(contentName, locale, maxResults, mvelParameters, isSecure(request));
-            }
+            contentItems = structuredContentService.lookupStructuredContentItemsByName(contentName, locale, maxResults, mvelParameters, isSecure(request));
         } else {
             if (contentName == null || "".equals(contentName)) {
                 contentItems = structuredContentService.lookupStructuredContentItemsByType(structuredContentType, locale, maxResults, mvelParameters, isSecure(request));
