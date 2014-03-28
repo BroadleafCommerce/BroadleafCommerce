@@ -32,12 +32,10 @@ import org.broadleafcommerce.core.web.service.TemplateCacheKeyResolverService;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Attribute;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.dom.Node;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
-import java.lang.reflect.Field;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -123,40 +121,20 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
 
     @Override
     public ProcessorResult processAttribute(final Arguments arguments, final Element element, String attributeName) {
-        final String attributeValue = element.getAttributeValue(attributeName);
+        final String cacheKeyAttrValue = element.getAttributeValue(attributeName);
         element.removeAttribute(attributeName);
 
         fixElement(element, arguments);
 
         String template = element.getAttributeValue("template");
 
-        if (checkCacheForElement(arguments, element, template)) {
+        if (checkCacheForElement(arguments, element, template, cacheKeyAttrValue)) {
             // This template has been cached.
             element.clearChildren();
             element.clearAttributes();
-            markElementAsSkippable(element);
-        }
-        return ProcessorResult.OK;
-    }
-
-    /**
-     * We don't want thymeleaf to process this node any further.   We have what we need as we are pulling 
-     * the results from cache.   The prescribed method of "setRecomputeProcessorsImmediately" is not as performant.
-     * @param element
-     */
-    protected void markElementAsSkippable(final Element element) {
-        try {
-            Field skippableField = Node.class.getDeclaredField("skippable");
-            skippableField.setAccessible(true);
-            skippableField.setBoolean(element, true);
-        } catch (Exception e) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Error setting skippable field, possible thymeleaf / framework mismatch. Broadleaf assumes that " +
-                        "the thymeleaf node class has a property called skippable.   This error should not effect " +
-                        "functionality but likely does impact performance.", e);
-            }
             element.setRecomputeProcessorsImmediately(true);
         }
+        return ProcessorResult.OK;
     }
 
     /**
@@ -168,12 +146,13 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
      * @param arguments
      * @param element
      * @param template
+     * @param cacheKeyAttr
      * @return
      */
-    protected boolean checkCacheForElement(Arguments arguments, Element element, String template) {
+    protected boolean checkCacheForElement(Arguments arguments, Element element, String template, String cacheKeyAttrValue) {
 
         if (isCachingEnabled()) {
-            String cacheKey = cacheKeyResolver.resolveCacheKey(arguments, element, template);
+            String cacheKey = cacheKeyResolver.resolveCacheKey(arguments, element, template, cacheKeyAttrValue);
     
             if (!StringUtils.isEmpty(cacheKey)) {
                 element.setNodeProperty("cacheKey", cacheKey);

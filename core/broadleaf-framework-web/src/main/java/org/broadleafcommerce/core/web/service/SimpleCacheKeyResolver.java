@@ -45,9 +45,8 @@ public class SimpleCacheKeyResolver implements TemplateCacheKeyResolverService {
      * @param cacheKey - Value of the parameter passed in from the template
      * @return
      */
-    public String resolveCacheKey(Arguments arguments, Element element, String templateName) {
+    public String resolveCacheKey(Arguments arguments, Element element, String templateName, String cacheKeyAttrValue) {
         String cacheKeyParam = "";
-        String cacheKeyAttrValue = element.getAttributeValueFromNormalizedName("cachekey");
 
         if (cacheKeyAttrValue != null) {
             Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())

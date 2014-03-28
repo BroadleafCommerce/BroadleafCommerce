@@ -37,7 +37,8 @@ public interface TemplateCacheKeyResolverService {
      * @param arguments
      * @param element
      * @param templateName
+     * @param cacheKeyAttrValue 
      * @return
      */
-    public String resolveCacheKey(Arguments arguments, Element element, String templateName);
+    public String resolveCacheKey(Arguments arguments, Element element, String templateName, String cacheKeyAttrValue);
 }
