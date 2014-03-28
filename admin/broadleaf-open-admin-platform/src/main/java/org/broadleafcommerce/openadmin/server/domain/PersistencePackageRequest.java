@@ -115,6 +115,7 @@ public class PersistencePackageRequest {
             public void visit(BasicFieldMetadata fmd) {
                 request.setType(Type.STANDARD);
                 request.setCeilingEntityClassname(fmd.getForeignKeyClass());
+                request.setCustomCriteria(fmd.getCustomCriteria());
             }
 
             @Override
@@ -126,6 +127,7 @@ public class PersistencePackageRequest {
                 request.setCeilingEntityClassname(fmd.getCollectionCeilingEntity());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setForeignKey(foreignKey);
+                request.setCustomCriteria(fmd.getCustomCriteria());
             }
 
             @Override
@@ -137,6 +139,7 @@ public class PersistencePackageRequest {
                 request.setCeilingEntityClassname(fmd.getCollectionCeilingEntity());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setAdornedList(adornedList);
+                request.setCustomCriteria(fmd.getCustomCriteria());
             }
 
             @Override
@@ -152,6 +155,7 @@ public class PersistencePackageRequest {
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setMapStructure(mapStructure);
                 request.setForeignKey(foreignKey);
+                request.setCustomCriteria(fmd.getCustomCriteria());
             }
         });
         
@@ -336,11 +340,11 @@ public class PersistencePackageRequest {
     }
     
     public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
-        this.additionalForeignKeys = Arrays.asList(additionalForeignKeys);
+        this.additionalForeignKeys.addAll(Arrays.asList(additionalForeignKeys));
     }
 
     public void setCustomCriteria(String[] customCriteria) {
-        this.customCriteria = Arrays.asList(customCriteria);
+        this.customCriteria.addAll(Arrays.asList(customCriteria));
     }
 
     public FilterAndSortCriteria[] getFilterAndSortCriteria() {
