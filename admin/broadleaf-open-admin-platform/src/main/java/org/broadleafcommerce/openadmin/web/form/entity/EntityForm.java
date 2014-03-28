@@ -231,7 +231,7 @@ public class EntityForm {
         }
         
         if (fields != null) {
-            fields.remove(fieldName);
+            fieldToRemove = fields.remove(fieldName);
         }
         
         return fieldToRemove;
@@ -407,6 +407,25 @@ public class EntityForm {
         List<EntityFormAction> clonedActions = new ArrayList<EntityFormAction>(actions);
         Collections.reverse(clonedActions);
         return Collections.unmodifiableList(clonedActions);
+    }
+    
+    public FieldGroup collapseToOneFieldGroup() {
+        Tab newTab = new Tab();
+        FieldGroup newFg = new FieldGroup();
+        newTab.getFieldGroups().add(newFg);
+        
+        for (Tab tab : getTabs()) {
+            for (FieldGroup fg : tab.getFieldGroups()) {
+                for (Field field : fg.getFields()) {
+                    newFg.addField(field);
+                }
+            }
+        }
+        
+        getTabs().clear();
+        getTabs().add(newTab);
+        
+        return newFg;
     }
     
     /* *********************** */

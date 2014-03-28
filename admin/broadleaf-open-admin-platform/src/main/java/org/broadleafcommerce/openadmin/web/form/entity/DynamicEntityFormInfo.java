@@ -40,6 +40,7 @@ public class DynamicEntityFormInfo {
     protected String propertyValue;
     protected String ceilingClassName;
     protected String securityCeilingClassName;
+    protected String[] customCriteriaOverride;
     
     public DynamicEntityFormInfo withCriteriaName(String criteriaName) {
         setCriteriaName(criteriaName);
@@ -70,6 +71,11 @@ public class DynamicEntityFormInfo {
      */
     public DynamicEntityFormInfo withSecurityCeilingClassName(String securityCeilingClassName) {
         setSecurityCeilingClassName(securityCeilingClassName);
+        return this;
+    }
+
+    public DynamicEntityFormInfo withCustomCriteriaOverride(String[] customCriteriaOverride) {
+        setCustomCriteriaOverride(customCriteriaOverride);
         return this;
     }
 
@@ -111,6 +117,14 @@ public class DynamicEntityFormInfo {
 
     public void setSecurityCeilingClassName(String securityCeilingClassName) {
         this.securityCeilingClassName = securityCeilingClassName;
+    }
+    
+    public String[] getCustomCriteriaOverride() {
+        return customCriteriaOverride;
+    }
+
+    public void setCustomCriteriaOverride(String[] customCriteriaOverride) {
+        this.customCriteriaOverride = customCriteriaOverride;
     }
 
 }

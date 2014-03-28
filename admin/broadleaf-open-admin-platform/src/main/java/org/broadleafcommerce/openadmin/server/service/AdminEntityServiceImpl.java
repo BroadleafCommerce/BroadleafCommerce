@@ -125,9 +125,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         for (Entry<String, EntityForm> entry : entityForm.getDynamicForms().entrySet()) {
             DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(entry.getKey());
 
-            String propertyName = info.getPropertyName();
-            String propertyValue = entityForm.getFields().get(propertyName).getValue();
-            customCriteria = new String[] {info.getCriteriaName(), entityForm.getId(), propertyName, propertyValue};
+            if (info.getCustomCriteriaOverride() != null) {
+                customCriteria = info.getCustomCriteriaOverride();
+            } else {
+                String propertyName = info.getPropertyName();
+                String propertyValue = entityForm.getFields().get(propertyName).getValue();
+                customCriteria = new String[] {info.getCriteriaName(), entityForm.getId(), propertyName, propertyValue};
+            }
 
             PersistencePackageRequest subRequest = getRequestForEntityForm(entry.getValue(), customCriteria, sectionCrumb);
             ppr.addSubRequest(info.getPropertyName(), subRequest);
@@ -145,9 +149,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         for (Entry<String, EntityForm> entry : entityForm.getDynamicForms().entrySet()) {
             DynamicEntityFormInfo info = entityForm.getDynamicFormInfo(entry.getKey());
 
-            String propertyName = info.getPropertyName();
-            String propertyValue = entityForm.getFields().get(propertyName).getValue();
-            customCriteria = new String[] { info.getCriteriaName(), entityForm.getId(), propertyName, propertyValue };
+            if (info.getCustomCriteriaOverride() != null) {
+                customCriteria = info.getCustomCriteriaOverride();
+            } else {
+                String propertyName = info.getPropertyName();
+                String propertyValue = entityForm.getFields().get(propertyName).getValue();
+                customCriteria = new String[] { info.getCriteriaName(), entityForm.getId(), propertyName, propertyValue };
+            }
 
             PersistencePackageRequest subRequest = getRequestForEntityForm(entry.getValue(), customCriteria, sectionCrumb);
             subRequest.withSecurityCeilingEntityClassname(info.getSecurityCeilingClassName());

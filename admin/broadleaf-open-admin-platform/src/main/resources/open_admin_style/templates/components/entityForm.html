@@ -72,8 +72,14 @@
                 </div>
             </fieldset>
             
-            <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}">
-                <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+            <div th:remove="tag" th:if="${dynamicFormTemplateOverride == null}">
+                <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}">
+                    <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+                </div>
+            </div>
+
+            <div th:remove="tag" th:unless="${dynamicFormTemplateOverride == null}">
+                <div th:include="${dynamicFormTemplateOverride}" />
             </div>
 
             <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container" th:id="${collectionListGrid.subCollectionFieldName}">
