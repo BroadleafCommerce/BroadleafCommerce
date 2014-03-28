@@ -74,7 +74,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         if (!canHandlePersistence(populateValueRequest, instance)) {
             return FieldProviderResponse.NOT_HANDLED;
         }
-        
+        FieldProviderResponse response = FieldProviderResponse.HANDLED;
         boolean dirty = false;
         try {
             setNonDisplayableValues(populateValueRequest);
@@ -136,7 +136,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     }
                     populateValueRequest.getFieldManager().setFieldValue(instance,
                             populateValueRequest.getProperty().getName(), media);
-		    return FieldProviderResponse.HANDLED_BREAK;
+		            response = FieldProviderResponse.HANDLED_BREAK;
                 }
             } else {
                 throw new UnsupportedOperationException("MediaFields only work with Media types.");
@@ -146,7 +146,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
         populateValueRequest.getProperty().setIsDirty(dirty);
 
-        return FieldProviderResponse.HANDLED;
+        return response;
     }
 
     @Override
