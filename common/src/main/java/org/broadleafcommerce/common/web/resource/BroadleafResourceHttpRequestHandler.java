@@ -106,13 +106,7 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
         Resource unminifiedResource = null;
         
         if (sortedHandlers == null && handlers != null) {
-            sortedHandlers = new ArrayList<AbstractGeneratedResourceHandler>(handlers);
-            Collections.sort(sortedHandlers, new Comparator<AbstractGeneratedResourceHandler>() {
-                @Override
-                public int compare(AbstractGeneratedResourceHandler o1, AbstractGeneratedResourceHandler o2) {
-                    return new Integer(o1.getOrder()).compareTo(o2.getOrder());
-                }
-            });
+            sortHandlers();
         }
         
         if (sortedHandlers != null) {
@@ -261,12 +255,27 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
         return (SecurityContext) ctxFromSession;
     }
     
+    
+    protected void sortHandlers() {
+        sortedHandlers = new ArrayList<AbstractGeneratedResourceHandler>(handlers);
+        Collections.sort(sortedHandlers, new Comparator<AbstractGeneratedResourceHandler>() {
+            @Override
+            public int compare(AbstractGeneratedResourceHandler o1, AbstractGeneratedResourceHandler o2) {
+                return new Integer(o1.getOrder()).compareTo(o2.getOrder());
+            }
+        });
+    }
+    
+    
     /* *********** */
     /* BOILERPLATE */
     /* *********** */
     
     public List<AbstractGeneratedResourceHandler> getHandlers() {
-        return handlers;
+        if (sortedHandlers == null && handlers != null) {
+            sortHandlers();
+        }
+        return sortedHandlers;
     }
     
     public void setHandlers(List<AbstractGeneratedResourceHandler> handlers) {
