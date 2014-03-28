@@ -23,6 +23,7 @@ package org.broadleafcommerce.cms.url.service;
 import org.broadleafcommerce.cms.url.dao.URLHandlerDao;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandlerImpl;
+import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
@@ -52,6 +53,7 @@ public class URLHandlerServiceTest extends TestCase {
         URLHandler handler = new URLHandlerImpl();
         handler.setIncomingURL(incomingUrl);
         handler.setNewURL(newUrl);
+        handler.setUrlRedirectType(URLRedirectType.REDIRECT_PERM);
         return handler;
     }
 

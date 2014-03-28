@@ -134,9 +134,9 @@ public class URLHandlerServiceImpl implements URLHandlerService {
                 String incomingUrl = currentHandler.getIncomingURL();
                 if (!incomingUrl.startsWith("^")) {
                     if (incomingUrl.startsWith("/")) {
-                        incomingUrl = "^" + incomingUrl;
+                        incomingUrl = "^" + incomingUrl + "$";
                     } else {
-                        incomingUrl = "^/" + incomingUrl;
+                        incomingUrl = "^/" + incomingUrl + "$";
                     }
                 }
 
