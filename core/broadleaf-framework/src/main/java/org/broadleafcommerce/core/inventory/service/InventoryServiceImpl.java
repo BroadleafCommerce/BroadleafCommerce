@@ -55,7 +55,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public Integer retrieveQuantityAvailable(Sku sku) {
+    public Integer retrieveQuantityAvailable(Sku sku, Map<String, Object> context) {
         if (checkBasicAvailablility(sku)) {
             if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
                 return sku.getQuantityAvailable();
@@ -68,7 +68,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus) {
+    public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus, Map<String, Object> context) {
         Map<Sku, Integer> inventories = new HashMap<Sku, Integer>();
         for (Sku sku : skus) {
             if (checkBasicAvailablility(sku)) {
@@ -88,13 +88,13 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public boolean isAvailable(Sku sku, int quantity) {
+    public boolean isAvailable(Sku sku, int quantity, Map<String, Object> context) {
         if (quantity < 1) {
             throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero.");
         }
         if (checkBasicAvailablility(sku)) {
             if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                Integer quantityAvailable = retrieveQuantityAvailable(sku);
+                Integer quantityAvailable = retrieveQuantityAvailable(sku, context);
                 return quantityAvailable != null && quantity <= quantityAvailable;
             }
         }
@@ -109,7 +109,7 @@ public class InventoryServiceImpl implements InventoryService {
         }
         if (checkBasicAvailablility(sku)) {
             if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                Integer inventoryAvailable = retrieveQuantityAvailable(sku);
+                Integer inventoryAvailable = retrieveQuantityAvailable(sku, null);
                 if (inventoryAvailable == null) {
                     return;
                 }
@@ -148,7 +148,7 @@ public class InventoryServiceImpl implements InventoryService {
             throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero.");
         }
         if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-            int inventoryAvailable = retrieveQuantityAvailable(sku);
+            int inventoryAvailable = retrieveQuantityAvailable(sku, null);
             int newInventory = inventoryAvailable + quantity;
             sku.setQuantityAvailable(newInventory);
             catalogService.saveSku(sku);

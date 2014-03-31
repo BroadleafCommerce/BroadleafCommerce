@@ -48,10 +48,11 @@ public interface InventoryService {
      * which has specific meaning, we return null as this can be interpreted by the client to mean whatever they define it as (including 
      * infinitely available), which is the most likely scenario.
      * 
-     * @param skuId
+     * @param
+     * @param context an optional context (can be null) to pass to an {@link InventoryServiceExtensionManager}
      * @return
      */
-    public Integer retrieveQuantityAvailable(Sku sku);
+    public Integer retrieveQuantityAvailable(Sku sku, Map<String, Object> context);
 
     /**
      * Retrieves the quantities available for a set of Skus.  The values in the map returned may be null if no inventory is maintained 
@@ -62,22 +63,24 @@ public interface InventoryService {
      * infinitely available), which is the most likely scenario.
      * 
      * @param skuIds
+     * @param context an optional context (can be null) to pass to an {@link InventoryServiceExtensionManager}
      * @return
      */
-    public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus);
+    public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus, Map<String, Object> context);
 
     /**
-     * Indicates whether the given quantity is available for the particular skuId. The result will be 
-     * true if Sku.getInventoryType() == null or not Sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE).
+     * <p>Indicates whether the given quantity is available for the particular skuId. The result will be 
+     * true if Sku.getInventoryType() == null or not Sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE).</p>
      * 
-     * The result will be false if the Sku is inactive, if the Sku.getAvaialable() == false, if the quantity 
-     * field is null, or if the quantity requested exceeds the quantity available.
+     * <p>The result will be false if the Sku is inactive, if the Sku.getAvaialable() == false, if the quantity 
+     * field is null, or if the quantity requested exceeds the quantity available.</p>
      * 
      * @param skuId
      * @param quantity
+     * @param context an optional context (can be null) to pass to an {@link InventoryServiceExtensionManager}
      * @return
      */
-    public boolean isAvailable(Sku sku, int quantity);
+    public boolean isAvailable(Sku sku, int quantity, Map<String, Object> context);
 
     /**
      * Attempts to decrement inventory if it is available. If the Sku is marked as {@link InventoryType#ALWAYS_AVAILABLE}
