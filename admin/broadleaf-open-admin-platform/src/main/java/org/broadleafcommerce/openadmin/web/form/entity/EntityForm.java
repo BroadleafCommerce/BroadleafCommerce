@@ -31,7 +31,6 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -76,11 +75,11 @@ public class EntityForm {
     // This is used in cases where there is a sub-form on this page that is dynamically
     // rendered based on other values on this entity form. It is keyed by the name of the
     // property that drives the dynamic form.
-    protected Map<String, EntityForm> dynamicForms = new HashMap<String, EntityForm>();
+    protected Map<String, EntityForm> dynamicForms = new LinkedHashMap<String, EntityForm>();
     
     // These values are used when dynamic forms are in play. They are not rendered to the client,
     // but they can be used when performing actions on the submit event
-    protected Map<String, DynamicEntityFormInfo> dynamicFormInfos = new HashMap<String, DynamicEntityFormInfo>();
+    protected Map<String, DynamicEntityFormInfo> dynamicFormInfos = new LinkedHashMap<String, DynamicEntityFormInfo>();
     
     protected List<EntityFormAction> actions = new ArrayList<EntityFormAction>();
 
