@@ -53,6 +53,11 @@ public class InventoryServiceImpl implements InventoryService {
         }
         return false;
     }
+    
+    @Override
+    public Integer retrieveQuantityAvailable(Sku sku) {
+        return retrieveQuantityAvailable(sku, null);
+    }
 
     @Override
     public Integer retrieveQuantityAvailable(Sku sku, Map<String, Object> context) {
@@ -67,6 +72,11 @@ public class InventoryServiceImpl implements InventoryService {
         return 0;
     }
 
+    @Override
+    public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus) {
+        return retrieveQuantitiesAvailable(skus, null);
+    }
+    
     @Override
     public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus, Map<String, Object> context) {
         Map<Sku, Integer> inventories = new HashMap<Sku, Integer>();
@@ -85,6 +95,11 @@ public class InventoryServiceImpl implements InventoryService {
         }
 
         return inventories;
+    }
+    
+    @Override
+    public boolean isAvailable(Sku sku, int quantity) {
+        return isAvailable(sku, quantity, null);
     }
 
     @Override

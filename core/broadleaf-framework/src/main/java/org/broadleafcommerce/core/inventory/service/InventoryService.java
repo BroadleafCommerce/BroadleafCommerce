@@ -53,6 +53,7 @@ public interface InventoryService {
      * @return
      */
     public Integer retrieveQuantityAvailable(Sku sku, Map<String, Object> context);
+    public Integer retrieveQuantityAvailable(Sku sku);
 
     /**
      * Retrieves the quantities available for a set of Skus.  The values in the map returned may be null if no inventory is maintained 
@@ -67,7 +68,8 @@ public interface InventoryService {
      * @return
      */
     public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus, Map<String, Object> context);
-
+    public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus);
+    
     /**
      * <p>Indicates whether the given quantity is available for the particular skuId. The result will be 
      * true if Sku.getInventoryType() == null or not Sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE).</p>
@@ -81,7 +83,8 @@ public interface InventoryService {
      * @return
      */
     public boolean isAvailable(Sku sku, int quantity, Map<String, Object> context);
-
+    public boolean isAvailable(Sku sku, int quantity);
+    
     /**
      * Attempts to decrement inventory if it is available. If the Sku is marked as {@link InventoryType#ALWAYS_AVAILABLE}
      * then this is a no-op.
