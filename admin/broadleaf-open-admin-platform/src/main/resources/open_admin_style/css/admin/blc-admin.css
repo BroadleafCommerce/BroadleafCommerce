@@ -1753,6 +1753,18 @@ div.action-popup span.sync-error button {
 	margin-top: 5px;
 }
 
+div.action-popup span.deploy-error {
+	line-height: 30px;
+	clear: both;
+	color: #890923;
+	display: none;
+}
+
+div.action-popup span.deploy-error button {
+	float: right;
+	margin-top: 5px;
+}
+
 div.action-popup form {
 	margin-bottom: 0px;
 }
