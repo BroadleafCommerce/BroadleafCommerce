@@ -19,10 +19,14 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.codehaus.jettison.json.JSONObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
 
@@ -77,5 +81,33 @@ public class StringUtil {
             input = input.replaceAll("[ \\r\\n]", "");
         }
         return input;
+    }
+
+    public static String getMapAsJson(Map<String, Object> objectMap) {
+        String nullString = "null";
+        StringBuffer sb = new StringBuffer("{");
+        boolean firstIteration = true;
+
+        for (Entry<String, Object> entry : objectMap.entrySet()) {
+            if (firstIteration) {
+                sb.append(',');
+            }
+            sb.append(JSONObject.quote(entry.getKey()));
+            sb.append(':');
+            Object value = entry.getValue();
+            if (value == null) {
+                sb.append(nullString);
+            } else if (value instanceof Boolean) {
+                sb.append(((Boolean) value).booleanValue());
+            } else if (value instanceof String) {
+                sb.append(JSONObject.quote(value.toString()));
+            } else {
+                sb.append(value.toString());
+            }
+            firstIteration = false;
+        }
+        sb.append("}");
+
+        return sb.toString();
     }
 }
