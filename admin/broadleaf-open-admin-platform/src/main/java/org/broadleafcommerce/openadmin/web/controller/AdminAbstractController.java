@@ -114,6 +114,32 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     // *********************************************************
     
     /**
+     * Convenience method for obtaining a fully built EntityForm for the given sectionKey, sectionClassName, and id.
+     * 
+     * @param sectionKey
+     * @param sectionClassName
+     * @param id
+     * @return a fully composed EntityForm
+     * @throws ServiceException
+     */
+    protected EntityForm getEntityForm(String sectionKey, String sectionClassName, String id) throws ServiceException {
+        SectionCrumb sc = new SectionCrumb();
+        sc.setSectionId(id);
+        sc.setSectionIdentifier("structured-content/all");
+        List<SectionCrumb> crumbs = new ArrayList<SectionCrumb>(1);
+        crumbs.add(sc);
+
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, crumbs, null);
+        ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        Entity entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
+
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, crumbs);
+
+        EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
+        return entityForm;
+    }
+    
+    /**
      * Returns a partial representing a dynamic form. An example of this is the dynamic fields that render
      * on structured content, which are determined by the currently selected structured content type. This 
      * method is typically only invoked through Javascript and used to replace the current dynamic form with
