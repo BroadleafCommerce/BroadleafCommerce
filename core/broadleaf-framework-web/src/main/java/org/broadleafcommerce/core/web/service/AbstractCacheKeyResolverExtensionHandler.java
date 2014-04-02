@@ -19,24 +19,17 @@
  */
 package org.broadleafcommerce.core.web.service;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
+import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
-/**
- * Used to build a cacheKey for caching templates.
- * @author Brian Polster (bpolster)
- */
-public interface TemplateCacheKeyResolverService {
 
-    /**
-     * Takes in the Thymeleaf arguments, element, and templateName.    Returns the cacheKey by which
-     * this template can be cached.      
-     * 
-     * @see SimpleCacheKeyResolver
-     * 
-     * @param arguments
-     * @param element
-     * @return
-     */
-    public String resolveCacheKey(Arguments arguments, Element element);
+public class AbstractCacheKeyResolverExtensionHandler extends AbstractExtensionHandler implements
+        CacheKeyResolverExtensionHandler {
+
+
+    @Override
+    public ExtensionResultStatusType updateCacheKey(StringBuilder stringBuilder, boolean hasProducts) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
 }

@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.core.web.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -45,22 +46,38 @@ public class SimpleCacheKeyResolver implements TemplateCacheKeyResolverService {
      * @param cacheKey - Value of the parameter passed in from the template
      * @return
      */
-    public String resolveCacheKey(Arguments arguments, Element element, String templateName, String cacheKeyAttrValue) {
-        String cacheKeyParam = "";
+    public String resolveCacheKey(Arguments arguments, Element element) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getStringValue(arguments, element, "cacheKey", true));
+        sb.append(resolveTemplateName(arguments, element));
+        return sb.toString();
+    }
 
-        if (cacheKeyAttrValue != null) {
+    protected String resolveTemplateName(Arguments arguments, Element element) {
+        String templateName = getStringValue(arguments, element, "templateName", true);
+
+        if (StringUtils.isEmpty(templateName)) {
+            templateName = (String) element.getNodeProperty("templateName");
+        }
+
+        if (StringUtils.isEmpty(templateName)) {
+            templateName = element.getDocumentName();
+        }
+
+        return templateName;
+    }
+
+    protected String getStringValue(Arguments arguments, Element element, String attrName, boolean removeAttribute) {
+        if (element.hasAttribute(attrName)) {
+            String cacheKeyParam = element.getAttributeValue(attrName);
             Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                    .parseExpression(arguments.getConfiguration(), arguments, cacheKeyAttrValue);
-            cacheKeyParam = (String) expression.execute(arguments.getConfiguration(), arguments);
-        }
-
-        if (cacheKeyParam != null) {
-            if ("none".equals(cacheKeyParam)) {
-                return null;
+                    .parseExpression(arguments.getConfiguration(), arguments, cacheKeyParam);
+            if (removeAttribute) {
+                element.removeAttribute(attrName);
             }
-            return templateName + "_" + cacheKeyParam;
-        } else {
-            return templateName;
+            return expression.execute(arguments.getConfiguration(), arguments).toString();
+
         }
+        return "";
     }
 }

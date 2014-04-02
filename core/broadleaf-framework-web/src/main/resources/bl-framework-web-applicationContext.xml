@@ -64,6 +64,7 @@
     <bean id="blToggleFacetLinkProcessor" class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
     <bean id="blHeadProcessorExtensionManager" class="org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionManager" />
     <bean id="blOnePageCheckoutProcessor" class="org.broadleafcommerce.core.web.processor.OnePageCheckoutProcessor"/>
+    <bean id="blUncacheableDataProcessor" class="org.broadleafcommerce.core.web.processor.UncacheableDataProcessor"/>
 
     <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
     <!-- own dialect and add your processors there. -->
@@ -94,6 +95,7 @@
                 <ref bean="blDataDrivenEnumerationProcessor" />
                 <ref bean="blTransparentRedirectCreditCardFormProcessor" />
                 <ref bean="blCreditCardTypesProcessor" />
+                <ref bean="blUncacheableDataProcessor" />
             </set>
         </property>
     </bean>

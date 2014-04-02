@@ -34,6 +34,8 @@ import org.thymeleaf.dom.Attribute;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 
 import java.util.Set;
@@ -67,7 +69,7 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
 
     private static final Log LOG = LogFactory.getLog(BroadleafCacheProcessor.class);
 
-    public static final String ATTR_NAME = "cacheKey";
+    public static final String ATTR_NAME = "cache";
 
     protected Cache cache;
 
@@ -97,7 +99,7 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
                         extraDiv.setAttribute(attrName, attrValue);
                         element.addChild(extraDiv);
                         elementAdded = true;
-                        element.setAttribute("template", false, attrValue);
+                        element.setNodeProperty("templateName", attrValue);
 
                         // This will ensure that the substituteby and replace processors only run for the child element
                         element.setRecomputeProcessorsImmediately(true);
@@ -119,20 +121,45 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
         }
     }
 
-    @Override
-    public ProcessorResult processAttribute(final Arguments arguments, final Element element, String attributeName) {
-        final String cacheKeyAttrValue = element.getAttributeValue(attributeName);
+    protected boolean shouldCache(Arguments args, Element element, String attributeName) {
+        String cacheAttrValue = element.getAttributeValue(attributeName);
         element.removeAttribute(attributeName);
 
-        fixElement(element, arguments);
+        if (StringUtils.isEmpty(cacheAttrValue)) {
+            return false;
+        }
 
-        String template = element.getAttributeValue("template");
+        cacheAttrValue = cacheAttrValue.toLowerCase();
+        if (!isCachingEnabled() || "false".equals(cacheAttrValue)) {
+            return false;
+        } else if ("true".equals(cacheAttrValue)) {
+            return true;
+        }
 
-        if (checkCacheForElement(arguments, element, template, cacheKeyAttrValue)) {
-            // This template has been cached.
-            element.clearChildren();
-            element.clearAttributes();
-            element.setRecomputeProcessorsImmediately(true);
+        // Check for an expression
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
+                .parseExpression(args.getConfiguration(), args, cacheAttrValue);
+        Object o = expression.execute(args.getConfiguration(), args);
+        if (o instanceof Boolean) {
+            return (Boolean) o;
+        } else if (o instanceof String) {
+            cacheAttrValue = (String) o;
+            cacheAttrValue = cacheAttrValue.toLowerCase();
+            return "true".equals(cacheAttrValue);
+        }
+        return false;
+    }
+
+    @Override
+    public ProcessorResult processAttribute(final Arguments arguments, final Element element, String attributeName) {
+        if (shouldCache(arguments, element, attributeName)) {
+            fixElement(element, arguments);
+            if (checkCacheForElement(arguments, element)) {
+                // This template has been cached.
+                element.clearChildren();
+                element.clearAttributes();
+                element.setRecomputeProcessorsImmediately(true);
+            }
         }
         return ProcessorResult.OK;
     }
@@ -145,14 +172,12 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
      * 
      * @param arguments
      * @param element
-     * @param template
-     * @param cacheKeyAttr
      * @return
      */
-    protected boolean checkCacheForElement(Arguments arguments, Element element, String template, String cacheKeyAttrValue) {
+    protected boolean checkCacheForElement(Arguments arguments, Element element) {
 
         if (isCachingEnabled()) {
-            String cacheKey = cacheKeyResolver.resolveCacheKey(arguments, element, template, cacheKeyAttrValue);
+            String cacheKey = cacheKeyResolver.resolveCacheKey(arguments, element);
     
             if (!StringUtils.isEmpty(cacheKey)) {
                 element.setNodeProperty("cacheKey", cacheKey);
@@ -160,23 +185,23 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
                 net.sf.ehcache.Element cacheElement = getCache().get(cacheKey);
                 if (cacheElement != null && !checkExpired(element, cacheElement)) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Template Cache Hit " + template + " with cacheKey " + cacheKey + " found in cache.");
+                        LOG.trace("Template Cache Hit with cacheKey " + cacheKey + " found in cache.");
                     }
                     element.setNodeProperty("blCacheResponse", (String) cacheElement.getObjectValue());
                     return true;
                 } else {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Template Cache Miss " + template + " with cacheKey " + cacheKey + " not found in cache.");
+                        LOG.trace("Template Cache Miss with cacheKey " + cacheKey + " not found in cache.");
                     }
                 }
             } else {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Template " + template + " not cached due to empty cacheKey");
+                    LOG.trace("Template not cached due to empty cacheKey");
                 }
             }
         } else {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Template caching disabled - not retrieving template " + template + " from cache");
+                LOG.trace("Template caching disabled - not retrieving template from cache");
             }
         }
         return false;
