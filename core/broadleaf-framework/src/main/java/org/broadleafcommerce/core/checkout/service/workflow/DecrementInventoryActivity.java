@@ -71,19 +71,28 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
                 } else {
                     quantity += orderItem.getQuantity();
                 }
-                skuInventoryMap.put(sku, quantity);
+                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                    skuInventoryMap.put(sku, quantity);
+                }
             } else if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
-                skuInventoryMap.put(bundleItem.getSku(), bundleItem.getQuantity());
+                if (InventoryType.CHECK_QUANTITY.equals(bundleItem.getSku().getInventoryType())) {
+                    // add the bundle sku of quantities to decrement
+                    skuInventoryMap.put(bundleItem.getSku(), bundleItem.getQuantity());
+                }
+                
+                // Now add all of the discrete items within the bundl
                 List<DiscreteOrderItem> discreteItems = bundleItem.getDiscreteOrderItems();
                 for (DiscreteOrderItem discreteItem : discreteItems) {
-                    Integer quantity = skuInventoryMap.get(discreteItem.getSku().getId());
-                    if (quantity == null) {
-                        quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
-                    } else {
-                        quantity += (discreteItem.getQuantity() * bundleItem.getQuantity());
+                    if (InventoryType.CHECK_QUANTITY.equals(discreteItem.getSku().getInventoryType())) {
+                        Integer quantity = skuInventoryMap.get(discreteItem.getSku().getId());
+                        if (quantity == null) {
+                            quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
+                        } else {
+                            quantity += (discreteItem.getQuantity() * bundleItem.getQuantity());
+                        }
+                        skuInventoryMap.put(discreteItem.getSku(), quantity);
                     }
-                    skuInventoryMap.put(discreteItem.getSku(), quantity);
                 }
             }
         }
