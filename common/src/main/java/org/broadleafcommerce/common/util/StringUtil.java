@@ -89,7 +89,7 @@ public class StringUtil {
         boolean firstIteration = true;
 
         for (Entry<String, Object> entry : objectMap.entrySet()) {
-            if (firstIteration) {
+            if (!firstIteration) {
                 sb.append(',');
             }
             sb.append(JSONObject.quote(entry.getKey()));
