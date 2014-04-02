@@ -19,7 +19,45 @@
  */
 package org.broadleafcommerce.core.inventory.service;
 
+import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 
-public class InventoryServiceExtensionHandler {
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
+
+
+/**
+ * Marker interface to dictate the overridden methods within {@link ContextualInventoryService}. Usually, implementers
+ * will want to only override the {@link ContextualInventoryService} methods rather than all of the methods included
+ * in {@link InventoryService} and so you will extend from {@link AbstractInventoryServiceExtensionHandler}.
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link ContextualInventoryService}
+ * @see {@link AbstractInventoryServiceExtensionHandler}
+ */
+public interface InventoryServiceExtensionHandler extends ExtensionHandler {
+
+    /**
+     * @param context can be null. If not null, this should at least contain the {@link #CART_CONTEXT_KEY}
+     * @see {@link ContextualInventoryService#retrieveQuantitiesAvailable(Set, Map)}
+     */
+    public ExtensionResultStatusType retrieveQuantitiesAvailable(Collection<Sku> skus, Map<String, Object> context, ExtensionResultHolder<Map<Sku, Integer>> result);
+    
+    /**
+     * @param context can be null. If not null, this should at least contain the {@link #CHECKOUT_CONTEXT_KEY} and/or the
+     * {@link #ROLLBACK_STATE_KEY}
+     * @see {@link ContextualInventoryService#decrementInventory(Map, Map)}
+     */
+    public ExtensionResultStatusType decrementInventory(Map<Sku, Integer> skuQuantities, Map<String, Object> context) throws InventoryUnavailableException;
+
+    /**
+     * @param context can be null. If not null, this should at least contain the {@link #ROLLBACK_STATE_KEY}
+     * @see {@link ContextualInventoryService#incrementInventory(Map, Map)}
+     */
+    public ExtensionResultStatusType incrementInventory(Map<Sku, Integer> skuQuantities, Map<String, Object> context);
+    
 }

@@ -19,7 +19,15 @@
  */
 package org.broadleafcommerce.core.inventory.service;
 
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Component;
 
-public class InventoryServiceExtensionManager {
+
+@Component("blInventoryServiceExtensionManager")
+public class InventoryServiceExtensionManager extends ExtensionManager<InventoryServiceExtensionHandler> {
+
+    public InventoryServiceExtensionManager() {
+        super(InventoryServiceExtensionHandler.class);
+    }
 
 }

@@ -21,10 +21,9 @@ package org.broadleafcommerce.core.order.service.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.inventory.service.InventoryService;
+import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -34,6 +33,9 @@ import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -55,10 +57,7 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
     protected OrderItemService orderItemService;
     
     @Resource(name = "blInventoryService")
-    protected InventoryService inventoryService;
-    
-    @Resource(name = "blWorkflowInventoryExtensionManager")
-    protected WorkflowInventoryExtensionManager extensionManager;
+    protected ContextualInventoryService inventoryService;
     
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
@@ -93,14 +92,10 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
         if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
             Integer requestedQuantity = request.getItemRequest().getQuantity();
             
-            ExtensionResultStatusType status = extensionManager.getProxy().checkAvailability(sku, requestedQuantity, context);
-            if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
-                // Only if some other inventory system did not handle this thing should you go and check the inventory on the sku
-                boolean available = isInventoryAvailable(sku, requestedQuantity, context);
-                if (!available) {
-                    throw new InventoryUnavailableException(sku.getId(),
-                            requestedQuantity, inventoryService.retrieveQuantityAvailable(sku));
-                }
+            boolean available = isInventoryAvailable(sku, requestedQuantity, context);
+            if (!available) {
+                throw new InventoryUnavailableException(sku.getId(),
+                        requestedQuantity, inventoryService.retrieveQuantityAvailable(sku));
             }
         }
         
@@ -110,12 +105,13 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
     }
     
     /**
-     * Checks to see if there is available inventory for the given Sku, only if not handled by the
-     * {@link WorkflowInventoryExtensionManager}
+     * Checks to see if there is available inventory for the given Sku
      * @return
      */
     protected boolean isInventoryAvailable(Sku sku, Integer quantity, ProcessContext<CartOperationRequest> context) {
-        return inventoryService.isAvailable(sku, quantity);
+        Map<String, Object> contextMap = new HashMap<String, Object>();
+        contextMap.put(ContextualInventoryService.ORDER_KEY, context.getSeedData().getOrder());
+        return inventoryService.isAvailable(sku, quantity, contextMap);
     }
 
 }

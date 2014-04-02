@@ -23,8 +23,8 @@ package org.broadleafcommerce.core.inventory.service;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This basic inventory service checks and adjusts the current inventory of a sku. All Skus will be considered 
@@ -36,7 +36,7 @@ import java.util.Set;
  * return null (as the sku is available but no inventory strategy is defined).
  * 
  * @author Kelly Tisdell
- *
+ * @author Phillip Verheyden (phillipuniverse)
  */
 public interface InventoryService {
 
@@ -49,10 +49,8 @@ public interface InventoryService {
      * infinitely available), which is the most likely scenario.
      * 
      * @param
-     * @param context an optional context (can be null) to pass to an {@link InventoryServiceExtensionManager}
      * @return
      */
-    public Integer retrieveQuantityAvailable(Sku sku, Map<String, Object> context);
     public Integer retrieveQuantityAvailable(Sku sku);
 
     /**
@@ -64,11 +62,9 @@ public interface InventoryService {
      * infinitely available), which is the most likely scenario.
      * 
      * @param skuIds
-     * @param context an optional context (can be null) to pass to an {@link InventoryServiceExtensionManager}
      * @return
      */
-    public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus, Map<String, Object> context);
-    public Map<Sku, Integer> retrieveQuantitiesAvailable(Set<Sku> skus);
+    public Map<Sku, Integer> retrieveQuantitiesAvailable(Collection<Sku> skus);
     
     /**
      * <p>Indicates whether the given quantity is available for the particular skuId. The result will be 
@@ -79,10 +75,8 @@ public interface InventoryService {
      * 
      * @param skuId
      * @param quantity
-     * @param context an optional context (can be null) to pass to an {@link InventoryServiceExtensionManager}
      * @return
      */
-    public boolean isAvailable(Sku sku, int quantity, Map<String, Object> context);
     public boolean isAvailable(Sku sku, int quantity);
     
     /**
