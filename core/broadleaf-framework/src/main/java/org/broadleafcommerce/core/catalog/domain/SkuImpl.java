@@ -648,7 +648,7 @@ public class SkuImpl implements Sku {
             }
             return true;
         }
-        return available == 'Y';
+        return available != 'N';
     }
 
     @Override

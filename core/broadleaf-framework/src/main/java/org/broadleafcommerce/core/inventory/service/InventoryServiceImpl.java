@@ -50,7 +50,8 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     @Resource(name = "blInventoryServiceExtensionManager")
     protected InventoryServiceExtensionManager extensionManager;
 
-    protected boolean checkBasicAvailablility(Sku sku) {
+    @Override
+    public boolean checkBasicAvailablility(Sku sku) {
         Boolean available = sku.isAvailable();
         if (available == null) {
             available = true;
@@ -123,6 +124,9 @@ public class InventoryServiceImpl implements ContextualInventoryService {
             for (Sku sku : skus) {
                 if (checkBasicAvailablility(sku)) {
                     if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                        if (sku.getQuantityAvailable() == null) {
+                            inventories.put(sku, 0);
+                        }
                         inventories.put(sku, sku.getQuantityAvailable());
                     } else if (sku.getInventoryType() == null || InventoryType.ALWAYS_AVAILABLE.equals(sku.getInventoryType())) {
                         inventories.put(sku, null);
@@ -148,7 +152,11 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         if (checkBasicAvailablility(sku)) {
             if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
                 Integer quantityAvailable = retrieveQuantityAvailable(sku);
-                return quantityAvailable != null && quantity <= quantityAvailable;
+                if (quantityAvailable == null) {
+                    return true;
+                }
+                
+                return quantity <= quantityAvailable;
             }
         }
         return false;
@@ -217,8 +225,11 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                     throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
                 }
                 if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                    int inventoryAvailable = retrieveQuantityAvailable(sku);
-                    int newInventory = inventoryAvailable + quantity;
+                    Integer currentInventoryAvailable = retrieveQuantityAvailable(sku);
+                    if (currentInventoryAvailable == null) {
+                        throw new IllegalArgumentException("The current inventory for this Sku is null");
+                    }
+                    int newInventory = currentInventoryAvailable + quantity;
                     sku.setQuantityAvailable(newInventory);
                     catalogService.saveSku(sku);
                 } else {

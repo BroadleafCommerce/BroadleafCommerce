@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity;
+import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
 
 import java.util.Collection;
 import java.util.Map;
@@ -42,20 +44,26 @@ import java.util.Set;
 public interface InventoryServiceExtensionHandler extends ExtensionHandler {
 
     /**
-     * @param context can be null. If not null, this should at least contain the {@link #CART_CONTEXT_KEY}
+     * Usually invoked within the {@link CheckAvailabilityActivity} to retrieve the quantity that is available for the given
+     * <b>skus</b>.
+     * 
+     * @param context can be null. If not null, this should at least contain the {@link ContextualInventoryService#ORDER_KEY}
      * @see {@link ContextualInventoryService#retrieveQuantitiesAvailable(Set, Map)}
      */
     public ExtensionResultStatusType retrieveQuantitiesAvailable(Collection<Sku> skus, Map<String, Object> context, ExtensionResultHolder<Map<Sku, Integer>> result);
     
     /**
-     * @param context can be null. If not null, this should at least contain the {@link #CHECKOUT_CONTEXT_KEY} and/or the
-     * {@link #ROLLBACK_STATE_KEY}
+     * Usually invoked within the {@link DecrementInventoryActivity} to decrement inventory for the {@link Sku}s that are in
+     * <b>skuQuantities</b>
+     * 
+     * @param context can be null. If not null, this should at least contain the {@link ContextualInventoryService#ORDER_KEY} and/or the
+     * {@link ContextualInventoryService#ROLLBACK_STATE_KEY}
      * @see {@link ContextualInventoryService#decrementInventory(Map, Map)}
      */
     public ExtensionResultStatusType decrementInventory(Map<Sku, Integer> skuQuantities, Map<String, Object> context) throws InventoryUnavailableException;
 
     /**
-     * @param context can be null. If not null, this should at least contain the {@link #ROLLBACK_STATE_KEY}
+     * @param context can be null. If not null, this should at least contain the {@link ContextualInventoryService#ROLLBACK_STATE_KEY}
      * @see {@link ContextualInventoryService#incrementInventory(Map, Map)}
      */
     public ExtensionResultStatusType incrementInventory(Map<Sku, Integer> skuQuantities, Map<String, Object> context);

@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivi
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Provides the same methods from {@link InventoryService} but with optional, additional context information. This context
@@ -56,13 +55,13 @@ public interface ContextualInventoryService extends InventoryService {
     
     /**
      * @param context can be null. If not null, this should at least contain the {@link #CART_CONTEXT_KEY}
-     * @see {@link #retrieveQuantitiesAvailable(Set)}
+     * @see {@link #retrieveQuantitiesAvailable(Collection, Map)}
      */
     public Integer retrieveQuantityAvailable(Sku sku, Map<String, Object> context);
 
     /**
      * @param context can be null. If not null, this should at least contain the {@link #CART_CONTEXT_KEY}
-     * @see {@link #retrieveQuantitiesAvailable(Set)}
+     * @see {@link #retrieveQuantitiesAvailable(Collection)}
      */
     public Map<Sku, Integer> retrieveQuantitiesAvailable(Collection<Sku> skus, Map<String, Object> context);
     
@@ -73,26 +72,41 @@ public interface ContextualInventoryService extends InventoryService {
     public boolean isAvailable(Sku sku, int quantity, Map<String, Object> context);
     
     /**
-     * @param context can be null. If not null, this should at least contain the {@link #CHECKOUT_CONTEXT_KEY} and/or the
-     * {@link #ROLLBACK_STATE_KEY}
-     * @see {@link #decrementInventory(Sku, int)}
+     * <p>Pass through for {@link #decrementInventory(Map, Map)}
+     * @see {@link #decrementInventory(Map, Map)}
      */
     public void decrementInventory(Sku sku, int quantity, Map<String, Object> context) throws InventoryUnavailableException;
 
     /**
-     * @param context can be null. If not null, this should at least contain the {@link #CHECKOUT_CONTEXT_KEY} and/or the
+     * <p>Usually invoked from {@link DecrementInventoryActivity}</p>
+     * 
+     * <p>Callers that invoke this method directly should check the given <b>context</b> object for a {@link #ROLLBACK_STATE_KEY}.
+     * This will contain information about what actually happened in terms of decrementing inventory. For implementers of this
+     * interface </p>
+     * 
+     * <p>Implementers of this method (explicitly those that are utilizing the {@link InventoryServiceExtensionHandler})
+     * should populate a {@link #ROLLBACK_STATE_KEY} within the given <b>context</b> in order to communicate back to the
+     * caller what actually happened while decrementing inventory so that it can be undone later</b></p>
+     * 
+     * @param context can be null. If not null, this should at least contain the {@link #ORDER_KEY} and/or the
      * {@link #ROLLBACK_STATE_KEY}
      * @see {@link #decrementInventory(Map)}
      */
     public void decrementInventory(Map<Sku, Integer> skuQuantities, Map<String, Object> context) throws InventoryUnavailableException;
 
     /**
-     * @param context can be null. If not null, this should at least contain the {@link #ROLLBACK_STATE_KEY}
-     * @see {@link #incrementInventory(Sku, int)}
+     * @see {@link #incrementInventory(Map, Map)}
      */
     public void incrementInventory(Sku sku, int quantity, Map<String, Object> context);
 
     /**
+     * <p>Callers that invoke this method directly should check for a {@link #ROLLBACK_STATE_KEY} in the given <b>context</b>.
+     * This will contain information about what actually happened in terms of decrementing inventory</p>
+     * 
+     * <p>Implementers of this method (explicitly those that are utilizing the {@link InventoryServiceExtensionHandler})
+     * should populate a {@link #ROLLBACK_STATE_KEY} within the given <b>context</b> in order to communicate back to the
+     * caller what actually happened while decrementing inventory so that it can be undone later</b></p>
+     * 
      * @param context can be null. If not null, this should at least contain the {@link #ROLLBACK_STATE_KEY}
      * @see {@link #incrementInventory(Map)}
      */

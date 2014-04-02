@@ -114,8 +114,8 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
                 rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_ORDER_ID, seed.getOrder().getId());
             }
             
-            // add remaining rollback state that might have been registered from the contextualInfo
-            rollbackState.putAll((Map<String, Object>)contextualInfo.get(ContextualInventoryService.ROLLBACK_STATE_KEY));
+            // add the rollback state that was used in the rollback handler
+            rollbackState.put(DecrementInventoryRollbackHandler.EXTENDED_ROLLBACK_STATE, contextualInfo.get(ContextualInventoryService.ROLLBACK_STATE_KEY));
         }
 
         return context;
