@@ -157,6 +157,9 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 }
                 
                 return quantity <= quantityAvailable;
+            } else {
+                // basically available but we do not need to check quantity, definitely available
+                return true;
             }
         }
         return false;
