@@ -152,11 +152,8 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         if (checkBasicAvailablility(sku)) {
             if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
                 Integer quantityAvailable = retrieveQuantityAvailable(sku);
-                if (quantityAvailable == null) {
-                    return true;
-                }
                 
-                return quantity <= quantityAvailable;
+                return quantityAvailable != null && quantity <= quantityAvailable;
             } else {
                 // basically available but we do not need to check quantity, definitely available
                 return true;
