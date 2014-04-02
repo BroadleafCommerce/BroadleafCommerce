@@ -20,6 +20,8 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
@@ -70,6 +72,9 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
     @Resource(name = "blInventoryService")
     protected InventoryService inventoryService;
 
+    @Resource(name = "blExploitProtectionService")
+    protected ExploitProtectionService eps;
+
     private String defaultCallbackFunction = "updateUncacheableData(params)";
 
     /**
@@ -90,9 +95,9 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
         StringBuffer sb = new StringBuffer();
         sb.append("<SCRIPT>\n");
         sb.append("  var params = \n");
-        sb.append(buildContentMap(arguments));
+        sb.append(buildContentMap(arguments)).append("\n");
         sb.append(getUncacheableDataFunction(arguments, element));
-        sb.append("</SCRIPT>");
+        sb.append("\n</SCRIPT>");
                 
         // Add contentNode to the document
         Node contentNode = new Macro(sb.toString());
@@ -110,6 +115,13 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
         addCartData(attrMap);
         addCustomerData(attrMap);
         addProductInventoryData(attrMap, arguments);
+
+        try {
+            attrMap.put("csrfToken", eps.getCSRFToken());
+            attrMap.put("csrfTokenParameter", eps.getCsrfTokenParameter());
+        } catch (ServiceException e) {
+            throw new RuntimeException("Could not get a CSRF token for this session", e);
+        }
         return StringUtil.getMapAsJson(attrMap)  ;      
     }
 
@@ -120,8 +132,9 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
         if (products != null) {
             for (Product product : products) {
                 if (product.getDefaultSku() != null) {
-                    Integer qtyAvailable = inventoryService.retrieveQuantityAvailable(product.getDefaultSku());
-                    if (qtyAvailable != null && qtyAvailable == 0) {
+
+                    Boolean qtyAvailable = inventoryService.isAvailable(product.getDefaultSku(), 1);
+                    if (qtyAvailable != null && !qtyAvailable) {
                         outOfStockProducts.add(product.getId());
                     }
                 }
