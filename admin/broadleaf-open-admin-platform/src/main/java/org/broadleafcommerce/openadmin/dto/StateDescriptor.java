@@ -22,6 +22,8 @@ package org.broadleafcommerce.openadmin.dto;
 import java.util.Map;
 
 /**
+ * The current state of an entity
+ *
  * @author Jeff Fischer
  */
 public interface StateDescriptor {
