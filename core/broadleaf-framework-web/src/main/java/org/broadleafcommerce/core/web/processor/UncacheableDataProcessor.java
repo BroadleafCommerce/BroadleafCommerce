@@ -94,10 +94,10 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
     protected ProcessorResult processElement(Arguments arguments, Element element) {
         StringBuffer sb = new StringBuffer();
         sb.append("<SCRIPT>\n");
-        sb.append("  var params = \n");
-        sb.append(buildContentMap(arguments)).append("\n");
-        sb.append(getUncacheableDataFunction(arguments, element));
-        sb.append("\n</SCRIPT>");
+        sb.append("  var params = \n  ");
+        sb.append(buildContentMap(arguments)).append(";\n  ");
+        sb.append(getUncacheableDataFunction(arguments, element)).append(";\n");
+        sb.append("</SCRIPT>");
                 
         // Add contentNode to the document
         Node contentNode = new Macro(sb.toString());
