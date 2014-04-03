@@ -31,6 +31,7 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -82,6 +83,8 @@ public class EntityForm {
     protected Map<String, DynamicEntityFormInfo> dynamicFormInfos = new LinkedHashMap<String, DynamicEntityFormInfo>();
     
     protected List<EntityFormAction> actions = new ArrayList<EntityFormAction>();
+
+    protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /**
      * @return a flattened, field name keyed representation of all of 
@@ -558,4 +561,13 @@ public class EntityForm {
         }
         return sb.toString();
     }
+    
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+    
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+    
 }
