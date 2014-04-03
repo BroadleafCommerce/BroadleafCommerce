@@ -136,7 +136,9 @@ public class BroadleafSearchController extends AbstractCatalogController {
                 model.addAttribute(FACETS_ATTRIBUTE_NAME, result.getFacets());
                 model.addAttribute(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME, result);
                 model.addAttribute(ORIGINAL_QUERY_ATTRIBUTE_NAME, query);
-                model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
+                if (result.getProducts() != null) {
+                    model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
+                }
             }
             
         }

@@ -130,7 +130,9 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             model.addObject(PRODUCTS_ATTRIBUTE_NAME, result.getProducts());
             model.addObject(FACETS_ATTRIBUTE_NAME, result.getFacets());
             model.addObject(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME, result);
-            model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
+            if (result.getProducts() != null) {
+                model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
+            }
             
             addDeepLink(model, deepLinkService, category);
     
