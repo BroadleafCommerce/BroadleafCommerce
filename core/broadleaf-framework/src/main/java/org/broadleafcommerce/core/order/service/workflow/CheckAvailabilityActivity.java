@@ -92,10 +92,12 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
         if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
             Integer requestedQuantity = request.getItemRequest().getQuantity();
             
-            boolean available = isInventoryAvailable(sku, requestedQuantity, context);
+            Map<String, Object> inventoryContext = new HashMap<String, Object>();
+            inventoryContext.put(ContextualInventoryService.ORDER_KEY, context.getSeedData().getOrder());
+            boolean available = inventoryService.isAvailable(sku, requestedQuantity, inventoryContext);
             if (!available) {
                 throw new InventoryUnavailableException(sku.getId(),
-                        requestedQuantity, inventoryService.retrieveQuantityAvailable(sku));
+                        requestedQuantity, inventoryService.retrieveQuantityAvailable(sku, inventoryContext));
             }
         }
         
@@ -104,14 +106,4 @@ public class CheckAvailabilityActivity extends BaseActivity<ProcessContext<CartO
         return context;
     }
     
-    /**
-     * Checks to see if there is available inventory for the given Sku
-     * @return
-     */
-    protected boolean isInventoryAvailable(Sku sku, Integer quantity, ProcessContext<CartOperationRequest> context) {
-        Map<String, Object> contextMap = new HashMap<String, Object>();
-        contextMap.put(ContextualInventoryService.ORDER_KEY, context.getSeedData().getOrder());
-        return inventoryService.isAvailable(sku, quantity, contextMap);
-    }
-
 }

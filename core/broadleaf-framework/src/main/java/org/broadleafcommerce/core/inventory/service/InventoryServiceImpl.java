@@ -151,7 +151,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
         }
         if (checkBasicAvailablility(sku)) {
             if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                Integer quantityAvailable = retrieveQuantityAvailable(sku);
+                Integer quantityAvailable = retrieveQuantityAvailable(sku, context);
                 
                 return quantityAvailable != null && quantity <= quantityAvailable;
             } else {
@@ -184,7 +184,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 
                 if (checkBasicAvailablility(sku)) {
                     if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                        Integer inventoryAvailable = retrieveQuantityAvailable(sku);
+                        Integer inventoryAvailable = retrieveQuantityAvailable(sku, context);
                         if (inventoryAvailable == null) {
                             return;
                         }
@@ -225,7 +225,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                     throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
                 }
                 if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
-                    Integer currentInventoryAvailable = retrieveQuantityAvailable(sku);
+                    Integer currentInventoryAvailable = retrieveQuantityAvailable(sku, context);
                     if (currentInventoryAvailable == null) {
                         throw new IllegalArgumentException("The current inventory for this Sku is null");
                     }
