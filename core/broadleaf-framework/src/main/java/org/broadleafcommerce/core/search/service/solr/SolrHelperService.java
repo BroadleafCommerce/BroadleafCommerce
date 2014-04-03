@@ -133,6 +133,11 @@ public interface SolrHelperService {
     public String getProductIdFieldName();
 
     /**
+     * @return the skuId field name
+     */
+    public String getSkuIdFieldName();
+
+    /**
      * @return the category field name, with the global prefix as appropriate
      */
     public String getCategoryFieldName();
@@ -184,6 +189,5 @@ public interface SolrHelperService {
      * @return the category id to use
      */
     public Long getCategoryId(Long tentativeCategoryId);
-
 
 }

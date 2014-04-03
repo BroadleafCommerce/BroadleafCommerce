@@ -39,4 +39,14 @@ public class DateUtil {
         return !(startDate == null || startDate.getTime() > date || (endDate != null && endDate.getTime() < date));
     }
 
+    public static Date getCurrentDateAfterFactoringInDateResolution(Date cachedDate, Long currentDateResolution) {
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, currentDateResolution);
+        if (returnDate != cachedDate) {
+            if (SystemTime.shouldCacheDate()) {
+                cachedDate = returnDate;
+            }
+        }
+        return returnDate;
+    }
+
 }

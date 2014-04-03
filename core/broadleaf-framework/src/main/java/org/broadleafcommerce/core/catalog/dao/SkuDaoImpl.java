@@ -20,16 +20,26 @@
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * {@inheritDoc}
@@ -44,6 +54,9 @@ public class SkuDaoImpl implements SkuDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    protected Long currentDateResolution = 10000L;
+    protected Date cachedDate = SystemTime.asDate();
 
     @Override
     public Sku save(Sku sku) {
@@ -91,4 +104,88 @@ public class SkuDaoImpl implements SkuDao {
     public Sku create() {
         return (Sku) entityConfiguration.createEntityInstance(Sku.class.getName());
     }
+
+    @Override
+    public Long readCountAllActiveSkus() {
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        return readCountAllActiveSkusInternal(currentDate);
+    }
+
+    protected Long readCountAllActiveSkusInternal(Date currentDate) {
+        // Set up the criteria query that specifies we want to return a Long
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+
+        // The root of our search is sku
+        Root<SkuImpl> sku = criteria.from(SkuImpl.class);
+
+        // We want the count of products
+        criteria.select(builder.count(sku));
+
+        // Ensure the sku is currently active
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+
+        // Add the active start/end date restrictions
+        restrictions.add(builder.lessThan(sku.get("activeStartDate").as(Date.class), currentDate));
+        restrictions.add(builder.or(
+                builder.isNull(sku.get("activeEndDate")),
+                builder.greaterThan(sku.get("activeEndDate").as(Date.class), currentDate)));
+
+        // Add the restrictions to the criteria query
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        TypedQuery<Long> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getSingleResult();
+    }
+
+    @Override
+    public List<Sku> readAllActiveSkus(int page, int pageSize) {
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
+        return readAllActiveSkusInternal(page, pageSize, currentDate);
+    }
+
+    protected List<Sku> readAllActiveSkusInternal(int page, int pageSize, Date currentDate) {
+        // Set up the criteria query that specifies we want to return Products
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Sku> criteria = builder.createQuery(Sku.class);
+
+        // The root of our search is Product
+        Root<SkuImpl> sku = criteria.from(SkuImpl.class);
+
+        // Product objects are what we want back
+        criteria.select(sku);
+
+        // Ensure the product is currently active
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+
+        // Add the active start/end date restrictions
+        restrictions.add(builder.lessThan(sku.get("activeStartDate").as(Date.class), currentDate));
+        restrictions.add(builder.or(
+                builder.isNull(sku.get("activeEndDate")),
+                builder.greaterThan(sku.get("activeEndDate").as(Date.class), currentDate)));
+
+        // Add the restrictions to the criteria query
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        int firstResult = page * pageSize;
+        TypedQuery<Sku> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.setFirstResult(firstResult).setMaxResults(pageSize).getResultList();
+    }
+
+    @Override
+    public Long getCurrentDateResolution() {
+        return currentDateResolution;
+    }
+
+    @Override
+    public void setCurrentDateResolution(Long currentDateResolution) {
+        this.currentDateResolution = currentDateResolution;
+    }
+
 }

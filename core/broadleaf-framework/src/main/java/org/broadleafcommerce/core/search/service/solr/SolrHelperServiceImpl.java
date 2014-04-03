@@ -198,6 +198,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
+    public String getSkuIdFieldName() {
+        return "skuId";
+    }
+
+    @Override
     public String getCategoryFieldName() {
         return "category";
     }

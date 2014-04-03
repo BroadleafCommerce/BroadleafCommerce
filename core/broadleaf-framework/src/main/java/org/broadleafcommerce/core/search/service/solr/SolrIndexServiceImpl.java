@@ -35,9 +35,11 @@ import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
+import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
@@ -77,8 +79,14 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Value("${solr.index.product.pageSize}")
     protected int pageSize;
 
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
+
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
+
+    @Resource(name = "blSkuDao")
+    protected SkuDao skuDao;
 
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
@@ -109,12 +117,17 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         Object[] pack = saveState();
         try {
-            Long numProducts = productDao.readCountAllActiveProducts();
+            Long numItemsToIndex = null;
+            if (useSku) {
+                numItemsToIndex = skuDao.readCountAllActiveSkus();
+            } else {
+                numItemsToIndex = productDao.readCountAllActiveProducts();
+            }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("There are " + numProducts + " total products");
+                LOG.debug("There are " + numItemsToIndex + " total items to index");
             }
             int page = 0;
-            while ((page * pageSize) < numProducts) {
+            while ((page * pageSize) < numItemsToIndex) {
                 buildIncrementalIndex(page, pageSize);
                 page++;
             }
@@ -153,25 +166,29 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException {
-        TransactionStatus status = TransactionUtils.createTransaction("readProducts",
-                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
+        TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex", TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Building index - page: [%s], pageSize: [%s]", page, pageSize));
         }
         StopWatch s = new StopWatch();
         try {
-            List<Product> products = readAllActiveProducts(page, pageSize);
-            List<Field> fields = fieldDao.readAllProductFields();
+            Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             List<Locale> locales = getAllLocales();
 
-            Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
-            for (Product product : products) {
-                SolrInputDocument doc = buildDocument(product, fields, locales);
-                //If someone overrides the buildDocument method and determines that they don't want a product 
-                //indexed, then they can return null. If the document is null it does not get added to 
-                //to the index.
-                if (doc != null) {
-                    documents.add(doc);
+            if (useSku) {
+                List<Sku> skus = readAllActiveSkus(page, pageSize);
+            } else {
+                List<Product> products = readAllActiveProducts(page, pageSize);
+                List<Field> fields = fieldDao.readAllProductFields();
+
+                for (Product product : products) {
+                    SolrInputDocument doc = buildDocument(product, fields, locales);
+                    //If someone overrides the buildDocument method and determines that they don't want a product 
+                    //indexed, then they can return null. If the document is null it does not get added to 
+                    //to the index.
+                    if (doc != null) {
+                        documents.add(doc);
+                    }
                 }
             }
 
@@ -223,6 +240,20 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      */
     protected List<Product> readAllActiveProducts(int page, int pageSize) {
         return productDao.readAllActiveProducts(page, pageSize);
+    }
+
+    /**
+     * This method to read active products utilizes paging to improve performance.
+     * While not optimal, this will reduce the memory required to load large catalogs.
+     * 
+     * It could still be improved for specific implementations by only loading fields that will be indexed or by accessing
+     * the database via direct JDBC (instead of Hibernate).
+     * 
+     * @return the list of all active SKUs to be used by the index building task
+     * @since 2.2.0
+     */
+    protected List<Sku> readAllActiveSkus(int page, int pageSize) {
+        return skuDao.readAllActiveSkus(page, pageSize);
     }
 
     @Override

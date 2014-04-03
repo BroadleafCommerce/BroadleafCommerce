@@ -103,4 +103,41 @@ public interface SkuDao {
      */
     public Sku create();
     
+    /**
+     * Returns the number of Skus that are currently active.
+     * 
+     * @return the number of currently active Skus
+     */
+    public Long readCountAllActiveSkus();
+
+    /**
+     * Reads all Skus from the database that are currently active. This method utilizes database paging.
+     * 
+     * It will fetch results in pages. For example, if page = 3 and pageSize = 25, this method would
+     * return rows 75-99 from the database.
+     * 
+     * @param page - the number of the page to get (0 indexed)
+     * @param pageSize - the number of results per page
+     * @return a list of active Skus for the given page
+     */
+    public List<Sku> readAllActiveSkus(int page, int pageSize);
+
+    /**
+     * Returns the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @return the milliseconds to cache the current date/time
+     */
+    public Long getCurrentDateResolution();
+
+    /**
+     * Sets the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @param currentDateResolution the milliseconds to cache the current date/time
+     */
+    public void setCurrentDateResolution(Long currentDateResolution);
+
 }
