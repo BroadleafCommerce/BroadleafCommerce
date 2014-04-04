@@ -108,7 +108,11 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
             int index = 0;
             for (SectionCrumb crumb : request.getSectionCrumbs()) {
                 SectionCrumb temp = new SectionCrumb();
-                temp.setSectionIdentifier(getClassNameForSection(crumb.getSectionIdentifier()));
+                try {
+                    temp.setSectionIdentifier(getClassNameForSection(crumb.getSectionIdentifier()));
+                } catch (Exception e) {
+                    temp.setSectionIdentifier(request.getCeilingEntityClassname());
+                }
                 temp.setSectionId(crumb.getSectionId());
                 converted[index] = temp;
                 index++;
