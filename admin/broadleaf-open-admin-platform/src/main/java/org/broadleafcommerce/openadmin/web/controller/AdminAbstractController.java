@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.web.controller;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
@@ -113,6 +114,32 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     // *********************************************************
     
     /**
+     * Convenience method for obtaining a fully built EntityForm for the given sectionKey, sectionClassName, and id.
+     * 
+     * @param sectionKey
+     * @param sectionClassName
+     * @param id
+     * @return a fully composed EntityForm
+     * @throws ServiceException
+     */
+    protected EntityForm getEntityForm(String sectionKey, String sectionClassName, String id) throws ServiceException {
+        SectionCrumb sc = new SectionCrumb();
+        sc.setSectionId(id);
+        sc.setSectionIdentifier("structured-content/all");
+        List<SectionCrumb> crumbs = new ArrayList<SectionCrumb>(1);
+        crumbs.add(sc);
+
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, crumbs, null);
+        ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        Entity entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
+
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, crumbs);
+
+        EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
+        return entityForm;
+    }
+    
+    /**
      * Returns a partial representing a dynamic form. An example of this is the dynamic fields that render
      * on structured content, which are determined by the currently selected structured content type. This 
      * method is typically only invoked through Javascript and used to replace the current dynamic form with
@@ -134,6 +161,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         EntityForm dynamicForm = getBlankDynamicFieldTemplateForm(info);
 
         blankFormContainer.putDynamicForm(info.getPropertyName(), dynamicForm);
+        model.addAttribute("dynamicForm", dynamicForm);
         model.addAttribute("entityForm", blankFormContainer);
         model.addAttribute("dynamicPropertyName", info.getPropertyName());
         
@@ -221,6 +249,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(info.getCeilingClassName())
+                .withSecurityCeilingEntityClassname(info.getSecurityCeilingClassName())
                 .withCustomCriteria(new String[] { info.getCriteriaName(), null, info.getPropertyName(), info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         
@@ -271,6 +300,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         // the desired structured content type
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(info.getCeilingClassName())
+                .withSecurityCeilingEntityClassname(info.getSecurityCeilingClassName())
                 .withCustomCriteria(new String[] { info.getCriteriaName(), entityId, info.getPropertyName(), info.getPropertyValue() });
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         
@@ -487,6 +517,13 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      */
     protected String getClassNameForSection(String sectionKey) {
         AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
+        
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().overrideClassNameForSection(erh, sectionKey, section);
+        if (erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME) != null) {
+            return (String) erh.getContextMap().get(AbstractAdminAbstractControllerExtensionHandler.NEW_CLASS_NAME); 
+        }
+        
         return (section == null) ? sectionKey : section.getCeilingEntity();
     }
 

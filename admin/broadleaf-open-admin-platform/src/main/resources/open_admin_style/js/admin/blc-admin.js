@@ -33,6 +33,10 @@ var BLCAdmin = (function($) {
 	}
 	var originalStickyBarOffset = $('.sticky-container').offset().top;
 	
+    var fieldSelectors = 'input, .custom-checkbox, .foreign-key-value-container span.display-value, .redactor_box, ' + 
+                         '.asset-selector-container img, select, div.custom-checkbox, div.small-enum-container, ' + 
+                         'textarea';
+	
 	/**
 	 * Initialize necessary font mappings for Redactor
 	 */
@@ -376,7 +380,8 @@ var BLCAdmin = (function($) {
                 },
                 convertDivs : false,
                 xhtml       : true,
-                paragraphy  : false
+                paragraphy  : false,
+                minHeight   : 140
             });
             
             $container.find('textarea.autosize').autosize();
@@ -441,6 +446,10 @@ var BLCAdmin = (function($) {
     	
     	getOriginalStickyBarOffset : function() {
     	    return originalStickyBarOffset;
+    	},
+    	
+    	getFieldSelectors : function getFieldSelectors() {
+    	    return fieldSelectors.concat();
     	}
 	};
 	
@@ -546,5 +555,26 @@ $(window).on('scroll', function() {
         $sc.addClass('sticky-fixed');
         $sc.outerWidth($('section.main').outerWidth());
         $('.sticky-container-padding').outerHeight($sc.outerHeight());
+    }
+});
+
+/**
+ * Close the workflow confirm action dialog
+ */
+$('body').on('click', 'a.action-popup-cancel', function() {
+    var $this = $(this);
+    if ($this.hasClass('no-remove')) {
+        $this.closest('div.action-popup').addClass('hidden');
+    } else {
+        $this.closest('div.action-popup').remove();
+    }
+    return false;
+});
+$(document).keyup(function(e){
+    if (e.keyCode === 27) {
+        var $actionPopup = $('div.action-popup');
+        if ($actionPopup) {
+            $actionPopup.remove();
+        }
     }
 });

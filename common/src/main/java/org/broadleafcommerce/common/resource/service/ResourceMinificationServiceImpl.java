@@ -45,10 +45,6 @@ import java.io.OutputStreamWriter;
 @Service("blResourceMinificationService")
 public class ResourceMinificationServiceImpl implements ResourceMinificationService {
     protected static final Log LOG = LogFactory.getLog(ResourceMinificationServiceImpl.class);
-    
-    protected boolean getEnabled() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("minify.enabled");
-    }
 
     @Value("${minify.linebreak}")
     protected int linebreak;
@@ -64,6 +60,16 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     
     @Value("${minify.disableOptimizations}")
     protected boolean disableOptimizations;
+
+    @Override
+    public boolean getEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("minify.enabled");
+    }
+
+    @Override
+    public boolean getAllowSingleMinification() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("minify.allowSingleMinification");
+    }
     
     @Override
     public byte[] minify(String filename, byte[] bytes) {

@@ -176,6 +176,9 @@ public class AdminTranslationController extends AdminAbstractController {
             @ModelAttribute(value="form") TranslationForm form, BindingResult result) throws Exception {
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
         
+        Translation t = translationService.findTranslationById(form.getTranslationId());
+        form.setTranslatedValue(t.getTranslatedValue());
+        
         EntityForm entityForm = formService.buildTranslationForm(form);
         entityForm.setId(String.valueOf(form.getTranslationId()));
         

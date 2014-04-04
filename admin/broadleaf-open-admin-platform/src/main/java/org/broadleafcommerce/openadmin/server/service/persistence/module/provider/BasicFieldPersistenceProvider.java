@@ -19,19 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -63,6 +50,18 @@ import org.hibernate.Session;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -94,6 +93,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.STRING ||
+                metadata.getFieldType() == SupportedFieldType.CODE ||
                 metadata.getFieldType() == SupportedFieldType.HTML ||
                 metadata.getFieldType() == SupportedFieldType.HTML_BASIC ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
@@ -175,17 +175,12 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
 
-                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
-                        format.setParseBigDecimal(true);
-                        BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
                         populateValueRequest.getFieldManager().setFieldValue(instance,
-                                populateValueRequest.getProperty().getName(), val);
-                        format.setParseBigDecimal(false);
+                                populateValueRequest.getProperty().getName(), new BigDecimal(populateValueRequest.getRequestedValue()));
                     } else {
                         dirty = checkDirtyState(populateValueRequest, instance, new Double(populateValueRequest.getRequestedValue()));
-
-                        Double val = populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue()).doubleValue();
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
+                        
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
                     }
                     break;
                 case MONEY:
@@ -196,30 +191,18 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
                         
-                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
-                        format.setParseBigDecimal(true);
-                        BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
-                        
-                        populateValueRequest.getFieldManager()
-                            .setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
-                        format.setParseBigDecimal(true);
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new BigDecimal(populateValueRequest.getRequestedValue()));
                     } else if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
-                        
-                        Double val = populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue()).doubleValue();
                         
                         LOG.warn("The requested Money field is of type double and could result in a loss of precision." +
                         		" Broadleaf recommends that the type of all Money fields are 'BigDecimal' in order to avoid" +
                         		" this loss of precision that could occur.");
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
                     } else {
                         dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
 
-                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
-                        format.setParseBigDecimal(true);
-                        BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Money(val));
-                        format.setParseBigDecimal(false);
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Money(new BigDecimal(populateValueRequest.getRequestedValue())));
                     }
                     break;
                 case INTEGER:
@@ -253,6 +236,9 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                                 .getRequestedValue()));
                     }
                     break;
+                case CODE:
+                    // **NOTE** We want to fall through in this case, do not break.
+                    setNonDisplayableValues(populateValueRequest);
                 case STRING:
                 case HTML_BASIC:
                 case HTML:
@@ -416,7 +402,19 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     val = extractValueRequest.getDataFormatProvider().getDecimalFormatter().format
                             (extractValueRequest.getRequestedValue());
                 } else if (BigDecimal.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
-                    val = extractValueRequest.getDataFormatProvider().getDecimalFormatter().format(extractValueRequest.getRequestedValue());
+                    BigDecimal decimal = (BigDecimal) extractValueRequest.getRequestedValue();
+                    DecimalFormat format = extractValueRequest.getDataFormatProvider().getDecimalFormatter();
+                    //track all the decimal places in the scale of the BigDecimal - even if they're all zeros
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("0");
+                    if (decimal.scale() > 0) {
+                        sb.append(".");
+                        for (int j=0;j<decimal.scale();j++) {
+                            sb.append("0");
+                        }
+                    }
+                    format.applyPattern(sb.toString());
+                    val = format.format(extractValueRequest.getRequestedValue());
                 } else if (extractValueRequest.getMetadata().getForeignKeyClass() != null) {
                     try {
                         val = extractValueRequest.getFieldManager().getFieldValue

@@ -19,14 +19,6 @@
  */
 package org.broadleafcommerce.common.config;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -42,6 +34,14 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.StringValueResolver;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * A property resource configurer that chooses the property file at runtime
@@ -96,8 +96,8 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         defaultEnvironments.add("integrationdev");
         defaultEnvironments.add("development");
         
-        blcPropertyLocations.add(new ClassPathResource("config/bc/admin/"));
         blcPropertyLocations.add(new ClassPathResource("config/bc/"));
+        blcPropertyLocations.add(new ClassPathResource("config/bc/admin/"));
         blcPropertyLocations.add(new ClassPathResource("config/bc/cms/"));
         blcPropertyLocations.add(new ClassPathResource("config/bc/web/"));
         blcPropertyLocations.add(new ClassPathResource("config/bc/fw/"));

@@ -19,12 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.domain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -43,6 +37,13 @@ import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * A DTO class used to seed a persistence package.
  * 
@@ -52,6 +53,7 @@ public class PersistencePackageRequest {
 
     protected Type type;
     protected String ceilingEntityClassname;
+    protected String securityCeilingEntityClassname;
     protected String configKey;
     protected AdornedTargetList adornedList;
     protected MapStructure mapStructure;
@@ -113,6 +115,7 @@ public class PersistencePackageRequest {
             public void visit(BasicFieldMetadata fmd) {
                 request.setType(Type.STANDARD);
                 request.setCeilingEntityClassname(fmd.getForeignKeyClass());
+                request.setCustomCriteria(fmd.getCustomCriteria());
             }
 
             @Override
@@ -124,6 +127,7 @@ public class PersistencePackageRequest {
                 request.setCeilingEntityClassname(fmd.getCollectionCeilingEntity());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setForeignKey(foreignKey);
+                request.setCustomCriteria(fmd.getCustomCriteria());
             }
 
             @Override
@@ -135,6 +139,7 @@ public class PersistencePackageRequest {
                 request.setCeilingEntityClassname(fmd.getCollectionCeilingEntity());
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setAdornedList(adornedList);
+                request.setCustomCriteria(fmd.getCustomCriteria());
             }
 
             @Override
@@ -150,6 +155,7 @@ public class PersistencePackageRequest {
                 request.setOperationTypesOverride(fmd.getPersistencePerspective().getOperationTypes());
                 request.setMapStructure(mapStructure);
                 request.setForeignKey(foreignKey);
+                request.setCustomCriteria(fmd.getCustomCriteria());
             }
         });
         
@@ -187,6 +193,11 @@ public class PersistencePackageRequest {
 
     public PersistencePackageRequest withCeilingEntityClassname(String className) {
         setCeilingEntityClassname(className);
+        return this;
+    }
+
+    public PersistencePackageRequest withSecurityCeilingEntityClassname(String className) {
+        setSecurityCeilingEntityClassname(className);
         return this;
     }
 
@@ -297,6 +308,21 @@ public class PersistencePackageRequest {
         return this;
     }
 
+    /* ************** */
+    /* REMOVE METHODS */
+    /* ************** */
+    
+    public PersistencePackageRequest removeFilterAndSortCriteria(String name) {
+        Iterator<FilterAndSortCriteria> it = filterAndSortCriteria.listIterator();
+        while (it.hasNext()) {
+            FilterAndSortCriteria fasc = it.next();
+            if (fasc.getPropertyId().equals(name)) {
+                it.remove();
+            }
+        }
+        return this;
+    }
+
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
     /* ************************ */
@@ -314,11 +340,11 @@ public class PersistencePackageRequest {
     }
     
     public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
-        this.additionalForeignKeys = Arrays.asList(additionalForeignKeys);
+        this.additionalForeignKeys.addAll(Arrays.asList(additionalForeignKeys));
     }
 
     public void setCustomCriteria(String[] customCriteria) {
-        this.customCriteria = Arrays.asList(customCriteria);
+        this.customCriteria.addAll(Arrays.asList(customCriteria));
     }
 
     public FilterAndSortCriteria[] getFilterAndSortCriteria() {
@@ -351,6 +377,24 @@ public class PersistencePackageRequest {
         this.type = type;
     }
     
+    /**
+     * Returns the entity that should be checked for security purposes.   If no value is defined explicitly, returns the 
+     * value for {@link #getCeilingEntityClassname()}.
+     * 
+     * @return
+     */
+    public String getSecurityCeilingEntityClassname() {
+        if (securityCeilingEntityClassname != null) {
+            return securityCeilingEntityClassname;
+        } else {
+            return getCeilingEntityClassname();
+        }
+    }
+
+    public void setSecurityCeilingEntityClassname(String securityCeilingEntityClassname) {
+        this.securityCeilingEntityClassname = securityCeilingEntityClassname;
+    }
+
     public String getCeilingEntityClassname() {
         return ceilingEntityClassname;
     }

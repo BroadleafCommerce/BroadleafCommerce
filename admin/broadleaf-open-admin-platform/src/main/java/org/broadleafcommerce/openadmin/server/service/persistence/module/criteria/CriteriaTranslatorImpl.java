@@ -37,6 +37,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -245,10 +246,14 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     }
 
     protected void addSorting(CriteriaBuilder criteriaBuilder, List<Order> sorts, FilterMapping filterMapping, Path path) {
+        Expression exp = path;
+        if (filterMapping.getNullsLast() != null && filterMapping.getNullsLast()) {
+            exp = criteriaBuilder.coalesce(path, 99999999999L);
+        }
         if (SortDirection.ASCENDING == filterMapping.getSortDirection()) {
-            sorts.add(criteriaBuilder.asc(path));
+            sorts.add(criteriaBuilder.asc(exp));
         } else {
-            sorts.add(criteriaBuilder.desc(path));
+            sorts.add(criteriaBuilder.desc(exp));
         }
     }
 

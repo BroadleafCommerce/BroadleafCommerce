@@ -21,15 +21,11 @@ package org.broadleafcommerce.cms.web.processor;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Extension handler for the {@link ContentProcessor}
@@ -37,46 +33,6 @@ import java.util.Map;
  * @author Elbert Bautista (elbertbautista)
  */
 public interface ContentProcessorExtensionHandler extends ExtensionHandler {
-
-    /**
-     * This method returns whether or not this implementation should handle the content lookup
-     * This is determined by the element attribute values that are passed in.
-     *
-     * @param element - the Thymeleaf Processor element
-     * @return ExtensionResultStatusType
-     */
-    public ExtensionResultStatusType shouldHandleContentLookup(Element element);
-
-    /**
-     * This method returns content given a specific element attribute
-     * <br>
-     * Returns active content items for the passed in sandbox that match the passed in type.
-     * <br>
-     * For example, the AdvancedCMS module allows lookup by "layoutArea", you would then
-     * pass in an extensionFieldName="layoutArea", extensionFieldValue="My Layout Area 1"
-     * This would return all the content items in that particular layout area. Other modules
-     * may pass in their specific lookup criteria. See the modules docs for more details.
-     * <br>
-     * The SandBox parameter impacts the results as follows.  If a <code>SandBoxType</code> of
-     * production is passed in, only those items in that SandBox are returned.
-     * <br>
-     * If a non-production SandBox is passed in, then the method will return the items associatd
-     * with the related production SandBox and then merge in the results of the passed in SandBox.
-     *
-     * @param contentItems - the list of DTOs to add to
-     * @param sandBox - the sandbox to find structured content items (null indicates items that are in production for
-     *                  sites that are single tenant.
-     * @param locale - the locale
-     * @param count - the max number of content items to return
-     * @param ruleDTOs - a Map of objects that will be used in MVEL processing.
-     * @param secure - set to true if the request is being served over https
-     * @param element - the Thymeleaf Processor element
-     * @return - ExtensionResultStatusType
-     * @see ContentProcessor
-     */
-    public ExtensionResultStatusType lookupContentByElementAttribute(List<StructuredContentDTO> contentItems,
-            SandBox sandBox, Locale locale, Integer count, Map<String,Object> ruleDTOs,
-            boolean secure, Element element);
 
     /**
      * This method will add any additional attributes to the model that the extension needs

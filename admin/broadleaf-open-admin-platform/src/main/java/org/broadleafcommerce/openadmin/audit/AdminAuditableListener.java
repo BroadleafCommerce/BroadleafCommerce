@@ -82,7 +82,7 @@ public class AdminAuditableListener {
     protected void setAuditValueAgent(Field field, Object entity) throws IllegalArgumentException, IllegalAccessException {
         try {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-            if (context != null && context.getAdmin()) {
+            if (context != null && context.getAdmin() && context.getAdditionalProperties().containsKey("adminUser")) {
                 field.setAccessible(true);
                 field.set(entity, ((AdminUser) context.getAdditionalProperties().get("adminUser")).getId());
             }

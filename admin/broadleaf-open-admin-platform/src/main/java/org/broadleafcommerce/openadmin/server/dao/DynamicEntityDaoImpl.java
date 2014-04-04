@@ -43,6 +43,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.FieldNamePropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.codehaus.jackson.map.util.LRUMap;
 import org.hibernate.Criteria;
@@ -53,7 +54,10 @@ import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -87,7 +91,7 @@ import javax.persistence.EntityManager;
  */
 @Component("blDynamicEntityDao")
 @Scope("prototype")
-public class DynamicEntityDaoImpl implements DynamicEntityDao {
+public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContextAware {
     
     private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
     
@@ -123,6 +127,13 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
     protected int cacheEntityMetaDataTtl;
 
     protected long lastCacheFlushTime = System.currentTimeMillis();
+
+    protected ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     public Criteria createCriteria(Class<?> entityClass) {
@@ -1173,6 +1184,27 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao {
         Map<String, FieldMetadata> convertedFields = new HashMap<String, FieldMetadata>(newFields.size());
         for (Map.Entry<String, FieldMetadata> key : newFields.entrySet()) {
             convertedFields.put(propertyName + '.' + key.getKey(), key.getValue());
+            if (key.getValue() instanceof BasicFieldMetadata) {
+                for (Map.Entry<String, Map<String, String>> entry : ((BasicFieldMetadata) key.getValue()).getValidationConfigurations().entrySet()) {
+                    Class<?> validatorImpl = null;
+                    try {
+                        validatorImpl = Class.forName(entry.getKey());
+                    } catch (ClassNotFoundException e) {
+                        Object bean = applicationContext.getBean(entry.getKey());
+                        if (bean != null) {
+                            validatorImpl = bean.getClass();
+                        }
+                    }
+                    if (validatorImpl != null && FieldNamePropertyValidator.class.isAssignableFrom(validatorImpl)) {
+                        for (Map.Entry<String, String> configs : entry.getValue().entrySet()) {
+                            if (newFields.containsKey(configs.getValue())) {
+                                configs.setValue(propertyName + "." + configs.getValue());
+                            }
+                        }
+                    }
+                }
+
+            }
         }
         fields.putAll(convertedFields);
     }

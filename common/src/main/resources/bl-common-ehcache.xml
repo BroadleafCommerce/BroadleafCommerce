@@ -22,7 +22,7 @@
     <!-- 1 hour cache -->
     <cache
         name="blTranslationElements"
-        maxElementsInMemory="10000"
+        maxElementsInMemory="10000000"
         eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="3600"/>
@@ -32,7 +32,7 @@
         name="blConfigurationModuleElements"
         maxElementsInMemory="1000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="600"/>      
     
     <!-- 10 minute cache -->    
@@ -40,8 +40,14 @@
         name="blSystemPropertyElements"
         maxElementsInMemory="1000"
         eternal="false"
-        overflowToDisk="true"
-        timeToLiveSeconds="600"/>          
+        overflowToDisk="false"
+        timeToLiveSeconds="600"/>
+
+    <cache name="blSystemPropertyNullCheckCache"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="600"/>
         
     <!-- 24 hour cache -->
     <cache

@@ -1,0 +1,14 @@
+<div id="headerDetailedMsgContainer" class="eight columns centered" 
+    th:if="${headerDetailedMsg}"
+    th:classappend="${(headerDetailedMsg == null ? 'hidden' : '') + (headerDetailedMsgAlert ? 'alert' : '')}">
+
+    <div th:remove="tag" th:unless="${headerDetailedMsgNoI18n}">
+        <div id="headerDetailedMsgHeader" th:if="${headerDetailedMsgHeader}" th:text="#{${headerDetailedMsgHeader}}" />
+        <div id="headerDetailedMsgBody" th:if="${headerDetailedMsgBody}" th:utext="#{${headerDetailedMsgBody}}" />
+    </div>
+
+    <div th:remove="tag" th:if="${headerDetailedMsgNoI18n}">
+        <div id="headerDetailedMsgHeader" th:if="${headerDetailedMsgHeader}" th:text="${headerDetailedMsgHeader}" />
+        <div id="headerDetailedMsgBody" th:if="${headerDetailedMsgBody}" th:utext="${headerDetailedMsgBody}" />
+    </div>
+</div>

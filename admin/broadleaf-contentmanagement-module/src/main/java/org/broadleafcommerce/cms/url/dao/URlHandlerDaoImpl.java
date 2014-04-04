@@ -19,6 +19,12 @@
  */
 package org.broadleafcommerce.cms.url.dao;
 
+import org.broadleafcommerce.cms.url.domain.URLHandler;
+import org.broadleafcommerce.cms.url.domain.URLHandlerImpl;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,17 +32,10 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import org.broadleafcommerce.cms.url.domain.URLHandler;
-import org.broadleafcommerce.cms.url.domain.URLHandlerImpl;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
 
 /**
  * Created by ppatel.
@@ -75,8 +74,10 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
         CriteriaQuery<URLHandler> criteria = builder.createQuery(URLHandler.class);
         Root<URLHandlerImpl> handler = criteria.from(URLHandlerImpl.class);
         criteria.select(handler);
+        TypedQuery<URLHandler> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         try {
-            return em.createQuery(criteria).getResultList();
+            return query.getResultList();
         } catch (NoResultException e) {
             return new ArrayList<URLHandler>();
         }

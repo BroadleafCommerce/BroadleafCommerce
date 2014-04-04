@@ -460,6 +460,7 @@ public interface Category extends Serializable {
      * @see {@link #getMappedCategoryAttributes()}
      * @deprecated This will be replaced with {@link #getCategoryAttributesMap()} in 3.1.0.
      */
+    @Deprecated
     public List<CategoryAttribute> getCategoryAttributes();
 
     /**
@@ -469,6 +470,7 @@ public interface Category extends Serializable {
      * @return
      * @deprecated This will be replaced with {@link #setCategoryAttributesMap()} in 3.1.0.
      */
+    @Deprecated
     public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes);
 
     /**
@@ -479,6 +481,7 @@ public interface Category extends Serializable {
      * @see {@link #getCategoryAttributes()}, {@link #getMappedCategoryAttributes()}
      * @deprecated This will be removed in 3.1.0
      */
+    @Deprecated
     public CategoryAttribute getCategoryAttributeByName(String name);
 
     /**
@@ -488,10 +491,11 @@ public interface Category extends Serializable {
      * @return
      * @deprecated This will be removed in 3.1.0
      */
+    @Deprecated
     public Map<String, CategoryAttribute> getMappedCategoryAttributes();
 
     /**
-     * Returns the type of inventory for this category
+     * Used to determine availability for all of the products/skus in this category
      * @return the {@link InventoryType} for this category
      */
     public InventoryType getInventoryType();

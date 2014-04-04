@@ -32,4 +32,8 @@ public interface StreamCapableTransactionalOperation extends TransactionalOperat
 
     void executeAfterCommit(Object[] param);
 
+    boolean shouldRetryOnTransactionLockAcquisitionFailure();
+
+    int retryMaxCountOverrideForLockAcquisitionFailure();
+
 }

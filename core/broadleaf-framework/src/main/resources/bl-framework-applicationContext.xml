@@ -46,7 +46,7 @@
         <constructor-arg>
             <bean class="org.springframework.jndi.JndiObjectFactoryBean">
                 <property name="jndiName">
-                    <value>java:/comp/env/appName</value>
+                    <value>java:comp/env/appName</value>
                 </property>
                 <property name="defaultObject" value="broadleaf"/>
             </bean>
@@ -129,9 +129,26 @@
             </list>
         </property>
     </bean>
+
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
         <property name="collectionRef" value="blFrameworkSiteMapGenerators" />
         <property name="targetRef" value="blSiteMapGenerators" />
     </bean>
-                        
+
+    <bean id="blFrameworkEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="blCategoryEntityExtensionManager" value-ref="blCategoryEntityExtensionManager"/>
+                <entry key="blOfferEntityExtensionManager" value-ref="blOfferEntityExtensionManager"/>
+                <entry key="blProductOptionEntityExtensionManager" value-ref="blProductOptionEntityExtensionManager"/>
+                <entry key="blProductEntityExtensionManager" value-ref="blProductEntityExtensionManager"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blFrameworkEntityExtensionManagers"/>
+        <property name="targetRef" value="blEntityExtensionManagers"/>
+    </bean>
+
 </beans>

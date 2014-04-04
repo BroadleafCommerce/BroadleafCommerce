@@ -58,6 +58,9 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
 
     @XmlElement
     protected Boolean active;
+    
+    @XmlElement
+    protected String inventoryType;
 
     @XmlElement
     protected String description;
@@ -84,7 +87,10 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
         this.retailPrice = model.getRetailPrice();
         this.salePrice = model.getSalePrice();
         this.active = model.isActive();
-
+        if (model.getInventoryType() != null) {
+            this.inventoryType = model.getInventoryType().getType();
+        }
+        
         if (model.getWeight() != null){
             weight = (WeightWrapper)context.getBean(WeightWrapper.class.getName());
             weight.wrapDetails(model.getWeight(), request);

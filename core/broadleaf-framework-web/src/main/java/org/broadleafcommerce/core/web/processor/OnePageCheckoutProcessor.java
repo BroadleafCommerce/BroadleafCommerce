@@ -55,8 +55,6 @@ import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementPro
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -69,6 +67,9 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is a Thymeleaf Processor that aids in rendering a dynamic One Page Checkout screen.
@@ -114,6 +115,9 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
     @Override
     protected boolean removeHostElement(Arguments arguments, Element element) {
+        // TODO: This is currently required else the entire form will be removed. What should happen is that the
+        // root element should be removed (since that is the unprocessed Thymeleaf element) but all of the children elements
+        // should be hooked up to this element's parent
         return false;
     }
 
@@ -197,14 +201,9 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
         FulfillmentGroup firstShippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
         if (firstShippableFulfillmentGroup != null) {
-            FulfillmentOption fulfillmentOption = firstShippableFulfillmentGroup.getFulfillmentOption();
-            if (fulfillmentOption != null) {
-                //if the cart has already has fulfillment information
-                if (firstShippableFulfillmentGroup.getAddress()!=null) {
-                    shippingForm.setAddress(firstShippableFulfillmentGroup.getAddress());
-                }
-                shippingForm.setFulfillmentOption(fulfillmentOption);
-                shippingForm.setFulfillmentOptionId(fulfillmentOption.getId());
+            //if the cart has already has fulfillment information
+            if (firstShippableFulfillmentGroup.getAddress()!=null) {
+                shippingForm.setAddress(firstShippableFulfillmentGroup.getAddress());
             } else {
                 //check for a default address for the customer
                 CustomerAddress defaultAddress = customerAddressService.findDefaultCustomerAddress(CustomerState.getCustomer().getId());
@@ -213,7 +212,14 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
                     shippingForm.setAddressName(defaultAddress.getAddressName());
                 }
             }
+
+            FulfillmentOption fulfillmentOption = firstShippableFulfillmentGroup.getFulfillmentOption();
+            if (fulfillmentOption != null) {
+                shippingForm.setFulfillmentOption(fulfillmentOption);
+                shippingForm.setFulfillmentOptionId(fulfillmentOption.getId());
+            }
         }
+
 
         if (cart.getPayments() != null) {
             for (OrderPayment payment : cart.getPayments()) {

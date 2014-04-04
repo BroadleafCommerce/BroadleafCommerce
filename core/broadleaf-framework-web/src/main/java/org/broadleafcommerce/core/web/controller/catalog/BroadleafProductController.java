@@ -32,6 +32,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -44,7 +47,8 @@ import javax.servlet.http.HttpServletResponse;
 public class BroadleafProductController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
     
     protected String defaultProductView = "catalog/product";
-    protected static String MODEL_ATTRIBUTE_NAME = "product";    
+    protected static String MODEL_ATTRIBUTE_NAME = "product";
+    protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
     
     @Autowired(required = false)
     @Qualifier("blProductDeepLinkService")
@@ -57,6 +61,9 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         assert(product != null);
         
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
+        Set<Product> allProductsSet = new HashSet<Product>();
+        allProductsSet.add(product);
+        model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(allProductsSet));
 
         addDeepLink(model, deepLinkService, product);
 

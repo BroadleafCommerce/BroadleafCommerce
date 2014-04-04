@@ -32,17 +32,17 @@ import java.util.Map;
  * @author bpolster
  *
  */
-public class ExtensionResultHolder {
+public class ExtensionResultHolder<T> {
 
-    Object result;
-    Throwable throwable;
-    Map<String, Object> contextMap = new HashMap<String, Object>();
+    protected T result;
+    protected Throwable throwable;
+    protected Map<String, Object> contextMap = new HashMap<String, Object>();
 
-    public Object getResult() {
+    public T getResult() {
         return result;
     }
 
-    public void setResult(Object result) {
+    public void setResult(T result) {
         this.result = result;
     }
 

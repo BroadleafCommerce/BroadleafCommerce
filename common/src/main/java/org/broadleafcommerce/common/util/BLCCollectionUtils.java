@@ -21,10 +21,15 @@ package org.broadleafcommerce.common.util;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -106,4 +111,40 @@ public class BLCCollectionUtils {
         return (list == null) ? new ArrayList<T>() : list;
     }
 
+    /**
+     * Create a collection proxy that will perform some piece of work whenever modification methods are called on the
+     * proxy. This includes the add, allAll, remove, removeAll, clear methods. Additionally, calling remove on an iterator
+     * created from this collection is also covered.
+     *
+     * @param work the work to perform on collection modification
+     * @param original the original collection to make change aware
+     * @param <T> the collection type (e.g. List, Set, etc...)
+     * @return the proxied collection
+     */
+    public static <T extends Collection> T createChangeAwareCollection(final WorkOnChange work, final Collection original) {
+        T proxy = (T) Proxy.newProxyInstance(BLCCollectionUtils.class.getClassLoader(), ClassUtils.getAllInterfacesForClass(original.getClass()), new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                if (method.getName().startsWith("add") || method.getName().startsWith("remove") || method.getName()
+                        .startsWith("clear")) {
+                    work.doWork(original);
+                }
+                if (method.getName().equals("iterator")) {
+                    final Iterator itr = (Iterator) method.invoke(original, args);
+                    Iterator proxyItr = (Iterator) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(itr.getClass()), new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                            if (method.getName().equals("remove")) {
+                                work.doWork(original);
+                            }
+                            return method.invoke(itr, args);
+                        }
+                    });
+                    return proxyItr;
+                }
+                return method.invoke(original, args);
+            }
+        });
+        return proxy;
+    }
 }

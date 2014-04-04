@@ -19,6 +19,52 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.MediaImpl;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.OptionFilterParam;
+import org.broadleafcommerce.common.presentation.OptionFilterParamType;
+import org.broadleafcommerce.common.presentation.client.LookupType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl.Presentation;
+import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
+import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
+import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+import org.springframework.util.ClassUtils;
+
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -51,52 +97,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.media.domain.Media;
-import org.broadleafcommerce.common.media.domain.MediaImpl;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
-import org.broadleafcommerce.common.presentation.client.LookupType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl.Presentation;
-import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
-import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
-import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
-import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.springframework.util.ClassUtils;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -212,12 +212,12 @@ public class SkuImpl implements Sku {
 
     @Column(name = "AVAILABLE_FLAG")
     @Index(name = "SKU_AVAILABLE_INDEX", columnNames = {"AVAILABLE_FLAG"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Available", order = 2000,
-        tab = ProductImpl.Presentation.Tab.Name.Inventory, tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
-        group = ProductImpl.Presentation.Group.Name.Inventory, groupOrder = ProductImpl.Presentation.Group.Order.Inventory)
+    @AdminPresentation(excluded = true)
+    @Deprecated
     protected Character available;
 
     @Column(name = "ACTIVE_START_DATE")
+    @Index(name="SKU_ACTIVE_START_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 1000,
         group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
         groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
@@ -225,7 +225,7 @@ public class SkuImpl implements Sku {
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
+    @Index(name="SKU_ACTIVE_END_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 2000, 
         group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
         groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
@@ -246,7 +246,7 @@ public class SkuImpl implements Sku {
         tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
         group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
     protected Boolean isMachineSortable = true;
-
+    
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_SKU_MEDIA_MAP", 
         inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
@@ -271,6 +271,7 @@ public class SkuImpl implements Sku {
                             friendlyName = "SkuImpl_Primary_Media")
             )
     })
+    @BatchSize(size = 50)
     @ClonePolicyMap
     protected Map<String, Media> skuMedia = new HashMap<String, Media>();
 
@@ -318,6 +319,7 @@ public class SkuImpl implements Sku {
             joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true),
             inverseJoinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @BatchSize(size = 50)
     @ClonePolicyCollection
     protected List<SkuFee> fees = new ArrayList<SkuFee>();
 
@@ -329,6 +331,7 @@ public class SkuImpl implements Sku {
     @Column(name = "RATE", precision = 19, scale = 5)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @BatchSize(size = 50)
     @ClonePolicyMap
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
 
@@ -342,7 +345,10 @@ public class SkuImpl implements Sku {
     protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
 
     @Column(name = "INVENTORY_TYPE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", order = 1000,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType",
+        helpText = "inventoryTypeHelpText",
+        tooltip = "skuInventoryTypeTooltip",
+        order = 1000,
         tab = ProductImpl.Presentation.Tab.Name.Inventory, tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
         group = ProductImpl.Presentation.Group.Name.Inventory, groupOrder = ProductImpl.Presentation.Group.Order.Inventory,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
@@ -632,13 +638,17 @@ public class SkuImpl implements Sku {
 
     @Override
     public Boolean isAvailable() {
+        if (InventoryType.UNAVAILABLE.equals(getInventoryType())) {
+            return false;
+        }
+        
         if (available == null) {
             if (hasDefaultSku()) {
                 return lookupDefaultSku().isAvailable();
             }
-            return null;
+            return true;
         }
-        return available == 'Y' ? Boolean.TRUE : Boolean.FALSE;
+        return available != 'N';
     }
 
     @Override
@@ -875,6 +885,23 @@ public class SkuImpl implements Sku {
     @Override
     public void setInventoryType(InventoryType inventoryType) {
         this.inventoryType = (inventoryType == null) ? null : inventoryType.getType();
+    }
+    
+    @Override
+    public Integer getQuantityAvailable() {
+        LOG.warn("Inventory was attempted to be invoked on a Sku, but there is no byte code weaving hooked up in order" +
+                 " to determine the correct quantity available. If you would like to enable the quantity enable field, hook" +
+                 " up the quantityAvailable field via the QuantityAvailableSkuTemplate or override the getQuantityAvailable()" +
+                 " method in a SkuImpl subclass. Returning null to indicate that quantity available is unset");
+        return null;
+    }
+    
+    @Override
+    public void setQuantityAvailable(Integer quantityAvailable) {
+        LOG.warn("Inventory was attempted to be invoked on a Sku, but there is no byte code weaving hooked up in order" +
+                " to determine the correct quantity available. If you would like to enable the quantity enable field, hook" +
+                " up the quantityAvailable field via the QuantityAvailableSkuTemplate or override the setQuantityAvailable()" +
+                " method in a SkuImpl subclass. No inventory operation is being performed");
     }
 
     @Override

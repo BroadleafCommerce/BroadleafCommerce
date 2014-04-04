@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
@@ -151,9 +152,8 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
         }
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getJavaLocale() != null) {
-            NumberFormat format = NumberFormat.getCurrencyInstance(brc.getJavaLocale());
-            format.setCurrency(price.getCurrency());
-            return format.format(price.getAmount());
+            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency()).format
+                                (price.getAmount());
         } else {
             // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
             return "$ " + price.getAmount().toString();

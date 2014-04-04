@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Convenience class for those {@link org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler} implementations
+ * that do not wish to implement all the methods of the interface.
  *
  * @author Jeff Fischer
  */

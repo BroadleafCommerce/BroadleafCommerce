@@ -3,7 +3,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.1.0-GA</version>
+        <version>3.1.1-GA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-common</artifactId>
@@ -353,5 +353,19 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>           
+            <exclusions>
+              <exclusion>
+                <groupId>stax</groupId>
+                <artifactId>stax-api</artifactId>
+              </exclusion>
+            </exclusions>
+        </dependency>        
     </dependencies>
 </project>

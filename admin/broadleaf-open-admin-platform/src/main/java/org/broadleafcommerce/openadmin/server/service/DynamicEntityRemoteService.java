@@ -203,6 +203,12 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                     PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
                     return persistenceManager.remove(persistencePackage);
                 } catch (ServiceException e) {
+                    //immediately throw validation exceptions without printing a stack trace
+                    if (e instanceof ValidationException) {
+                        throw e;
+                    } else if (e.getCause() instanceof ValidationException) {
+                        throw (ValidationException) e.getCause();
+                    }
                     LOG.error("Problem removing " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
                     String message = exploitProtectionService.cleanString(e.getMessage());
                     throw recreateSpecificServiceException(e, message, e.getCause());

@@ -28,6 +28,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
+ * Event handler for adding restrictions to criteria created for admin fetch requests
+ *
  * @author Jeff Fischer
  */
 public interface CriteriaTranslatorEventHandler {

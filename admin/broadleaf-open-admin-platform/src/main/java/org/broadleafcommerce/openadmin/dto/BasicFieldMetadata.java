@@ -72,6 +72,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String hint;
     protected String lookupDisplayProperty;
     protected Boolean forcePopulateChildProperties;
+    protected Boolean enableTypeaheadLookup;
     protected String optionListEntity;
     protected String optionValueFieldName;
     protected String optionDisplayFieldName;
@@ -372,6 +373,13 @@ public class BasicFieldMetadata extends FieldMetadata {
     public void setForcePopulateChildProperties(Boolean forcePopulateChildProperties) {
         this.forcePopulateChildProperties = forcePopulateChildProperties;
     }
+    public Boolean getEnableTypeaheadLookup() {
+        return enableTypeaheadLookup;
+    }
+    
+    public void setEnableTypeaheadLookup(Boolean enableTypeaheadLookup) {
+        this.enableTypeaheadLookup = enableTypeaheadLookup;
+    }
 
     public Boolean getOptionCanEditValues() {
         return optionCanEditValues;
@@ -537,6 +545,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         }
         metadata.lookupDisplayProperty = lookupDisplayProperty;
         metadata.forcePopulateChildProperties = forcePopulateChildProperties;
+        metadata.enableTypeaheadLookup = enableTypeaheadLookup;
         metadata.optionListEntity = optionListEntity;
         metadata.optionCanEditValues = optionCanEditValues;
         metadata.optionDisplayFieldName = optionDisplayFieldName;
@@ -635,6 +644,9 @@ public class BasicFieldMetadata extends FieldMetadata {
             return false;
         }
         if (forcePopulateChildProperties != null ? !forcePopulateChildProperties.equals(metadata.forcePopulateChildProperties) : metadata.forcePopulateChildProperties != null) {
+            return false;
+        }
+        if (enableTypeaheadLookup != null ? !enableTypeaheadLookup.equals(metadata.enableTypeaheadLookup) : metadata.enableTypeaheadLookup != null) {
             return false;
         }
         if (mergedPropertyType != metadata.mergedPropertyType) {
@@ -752,6 +764,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (hint != null ? hint.hashCode() : 0);
         result = 31 * result + (lookupDisplayProperty != null ? lookupDisplayProperty.hashCode() : 0);
         result = 31 * result + (forcePopulateChildProperties != null ? forcePopulateChildProperties.hashCode() : 0);
+        result = 31 * result + (enableTypeaheadLookup != null ? enableTypeaheadLookup.hashCode() : 0);
         result = 31 * result + (optionListEntity != null ? optionListEntity.hashCode() : 0);
         result = 31 * result + (optionValueFieldName != null ? optionValueFieldName.hashCode() : 0);
         result = 31 * result + (optionDisplayFieldName != null ? optionDisplayFieldName.hashCode() : 0);

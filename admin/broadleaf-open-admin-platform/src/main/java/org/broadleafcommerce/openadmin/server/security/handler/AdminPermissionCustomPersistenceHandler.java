@@ -19,12 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.security.handler;
 
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -34,6 +28,7 @@ import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -42,9 +37,11 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionImpl;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -135,33 +132,34 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        try {
-            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            //get the default properties from Sku and its subclasses
-            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(AdminPermissionImpl.class.getName(), persistencePerspective);
-            List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps);
-            
-            cto.setMaxResults(500);
-            List<Serializable> records = helper.getPersistentRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
-            Iterator<Serializable> itr = records.iterator();
-            
-            while(itr.hasNext()) {
-                AdminPermissionImpl perm = (AdminPermissionImpl)itr.next();
-                if(!perm.isFriendly()) {
-                    itr.remove();
-                }
+        addFriendlyRestriction(cto);
+        addDefaultSort(cto);
+
+        PersistenceModule myModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
+        DynamicResultSet results = myModule.fetch(persistencePackage, cto);
+        
+        return results;
+    }
+    
+    protected void addFriendlyRestriction(CriteriaTransferObject cto) {
+        cto.add(new FilterAndSortCriteria("isFriendly", "true"));
+    }
+    
+    protected void addDefaultSort(CriteriaTransferObject cto) {
+        boolean userSort = false;
+        for (FilterAndSortCriteria fasc : cto.getCriteriaMap().values()) {
+            if (fasc.getSortDirection() != null) {
+                userSort = true;
+                break;
             }
-            Entity[] payload = helper.getRecords(originalProps, records);
-            return new DynamicResultSet(payload, records.size());
-        } catch (Exception e) {
-            throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
+        }
+        if (!userSort) {
+            FilterAndSortCriteria sortFasc = new FilterAndSortCriteria("description");
+            sortFasc.setSortAscending(true);
+            cto.add(sortFasc);
         }
     }
     
-    
-
 }

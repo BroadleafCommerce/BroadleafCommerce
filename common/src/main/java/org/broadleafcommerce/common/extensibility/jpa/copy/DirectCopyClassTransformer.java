@@ -36,6 +36,12 @@ import javassist.bytecode.annotation.BooleanMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.broadleafcommerce.common.logging.LifeCycleEvent;
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
+
 import java.io.ByteArrayInputStream;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -51,12 +57,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityListeners;
-
-import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
-import org.broadleafcommerce.common.logging.LifeCycleEvent;
-import org.broadleafcommerce.common.logging.SupportLogManager;
-import org.broadleafcommerce.common.logging.SupportLogger;
 
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
@@ -218,7 +218,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                             CtClass[] myInterfaces = clazz.getInterfaces();
                             for (CtClass myInterface : myInterfaces) {
                                 if (myInterface.getName().equals(i.getName())) {
-                                    if (xformSkipOverlaps[index]) {
+                                    if (xformSkipOverlaps != null && xformSkipOverlaps[index]) {
                                         break checkInterfaces;
                                     } else {
                                         throw new RuntimeException("Duplicate interface detected " + myInterface.getName());
@@ -254,7 +254,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                             "already exists. The field in the target class should be updated to a different name, " +
                                             "or made to have a matching type.");
                                 }
-                                if (xformSkipOverlaps[index]) {
+                                if (xformSkipOverlaps != null && xformSkipOverlaps[index]) {
                                     logger.debug(String.format("Skipping overlapped field [%s]", field.getName()));
                                     continue;
                                 }
@@ -303,7 +303,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                 CtClass[] paramTypes = method.getParameterTypes();
                                 CtMethod originalMethod = clazz.getDeclaredMethod(method.getName(), paramTypes);
 
-                                if (xformSkipOverlaps[index]) {
+                                if (xformSkipOverlaps != null && xformSkipOverlaps[index]) {
                                     logger.debug(String.format("Skipping overlapped method [%s]", methodDescription(originalMethod)));
                                     continue;
                                 }
@@ -316,7 +316,7 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
                                 }
 
                                 logger.debug(String.format("Removing method [%s]", method.getName()));
-                                if (xformRenameMethodOverlaps[index]) {
+                                if (xformRenameMethodOverlaps != null && xformRenameMethodOverlaps[index]) {
                                     originalMethod.setName(renameMethodPrefix + method.getName());
                                 } else {
                                     clazz.removeMethod(originalMethod);
@@ -347,7 +347,11 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
             throw new RuntimeException("Unable to transform class", e);
         } finally {
             if (clazz != null) {
-                clazz.detach();
+                try {
+                    clazz.detach();
+                } catch (Exception e) {
+                    //do nothing
+                }
             }
         }
 

@@ -26,6 +26,9 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 
 /**
+ * Convenience adapter for PersistenceManagerEventHandler implementations that don't need to implement every
+ * method of the interface.
+ *
  * @author Jeff Fischer
  */
 public class PersistenceManagerEventHandlerAdapter implements PersistenceManagerEventHandler {

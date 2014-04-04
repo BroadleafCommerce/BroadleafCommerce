@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
@@ -43,6 +45,8 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.offer.extension.OfferEntityExtensionManager;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
@@ -91,7 +95,7 @@ import javax.persistence.Table;
 @SQLDelete(sql="UPDATE BLC_OFFER SET ARCHIVED = 'Y' WHERE OFFER_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_OFFER_INVOKE),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRECLONE_INFORMATION),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
@@ -804,6 +808,15 @@ public class OfferImpl implements Offer, AdminMainEntity {
 
     @Override
     public List<OfferCode> getOfferCodes() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blOfferEntityExtensionManager")) {
+            OfferEntityExtensionManager extensionManager = (OfferEntityExtensionManager) context.getAdditionalProperties().get("blOfferEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getOfferCodes(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<OfferCode>) holder.getResult();
+            }
+        }
         return offerCodes;
     }
 

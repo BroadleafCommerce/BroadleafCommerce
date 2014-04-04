@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.common.AssetNotFoundException;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -91,6 +92,8 @@ public class StaticAssetViewController extends AbstractController {
         } catch (Exception e) {
             LOG.error("Unable to retrieve static asset", e);
             throw new RuntimeException(e);
+        } finally {
+            ThreadLocalManager.remove();
         }
     }
     

@@ -10,7 +10,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>3.1.0-GA</version>
+    <version>3.1.1-GA</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -151,6 +151,7 @@
                         <exclude>**/spectrum.css</exclude>
                         <exclude>**/spectrum.js</exclude>
                         <exclude>**/redactor.js</exclude>   
+                        <exclude>**/typeahead.bundle.js</exclude>   
                         <exclude>**/sitemap/**/*.xml</exclude>                       
                     </excludes>
                 </configuration>
@@ -181,20 +182,6 @@
     </modules>
     <dependencies>
     </dependencies>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.8</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <minmemory>128m</minmemory>
-                    <maxmemory>1g</maxmemory>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
     <distributionManagement>
         <snapshotRepository>
             <id>snapshots</id>
@@ -240,6 +227,36 @@
                     <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/releases</url>
                 </repository>
             </distributionManagement>
+        </profile>
+        <profile>
+            <id>aggregate-javadocs</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <minmemory>128m</minmemory>
+                            <maxmemory>1g</maxmemory>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
     <dependencyManagement>
@@ -1140,6 +1157,18 @@
                 <artifactId>guava</artifactId>
                 <version>12.0</version>
             </dependency>
+            <dependency>
+                <groupId>org.codehaus.jettison</groupId>
+                <artifactId>jettison</artifactId>
+                <version>1.1</version>
+                <exclusions>
+                  <exclusion>
+                    <groupId>stax</groupId>
+                    <artifactId>stax-api</artifactId>
+                  </exclusion>
+                </exclusions>
+            </dependency>
+            
             <dependency>
                 <groupId>com.yahoo.platform.yui</groupId>
                 <artifactId>yuicompressor</artifactId>

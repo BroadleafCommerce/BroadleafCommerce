@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.1.0-GA</version>
+        <version>3.1.1-GA</version>
     </parent>
     <artifactId>broadleaf-open-admin-platform</artifactId>
     <packaging>jar</packaging>
@@ -196,10 +196,6 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
 </project>

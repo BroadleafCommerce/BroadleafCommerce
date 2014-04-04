@@ -30,8 +30,8 @@
     <context:component-scan base-package="org.broadleafcommerce.common"/>
 
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
-        <property name="xsrfProtectionEnabled" value="true" />
-        <property name="xssProtectionEnabled" value="true" />
+        <property name="xsrfProtectionEnabled" value="${exploitProtection.xsrfEnabled}" />
+        <property name="xssProtectionEnabled" value="${exploitProtection.xssEnabled}" />
     </bean>
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
@@ -206,6 +206,13 @@
             </list>
         </property>
     </bean>
+
+    <bean id="blAdminJsLibFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
     
     <bean id="blCssFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
@@ -260,10 +267,17 @@
         <property name="appName">
             <bean class="org.springframework.jndi.JndiObjectFactoryBean">
                 <property name="jndiName">
-                    <value>java:/comp/env/appName</value>
+                    <value>java:comp/env/appName</value>
                 </property>
                 <property name="defaultObject" value="broadleaf"/>
             </bean>
+        </property>
+    </bean>
+
+    <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
         </property>
     </bean>
 </beans>

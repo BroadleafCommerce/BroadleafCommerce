@@ -21,6 +21,7 @@ package org.broadleafcommerce.common.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -35,6 +36,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -47,6 +49,11 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     private static final Log LOG = LogFactory.getLog(BroadleafThymeleafViewResolver.class);
+    
+    @Resource(name = "blBroadleafThymeleafViewResolverExtensionManager")
+    protected BroadleafThymeleafViewResolverExtensionManager extensionManager;
+    
+    public static final String EXTENSION_TEMPLATE_ATTR_NAME = "extensionTemplateAttr";
     
     /**
      * <p>
@@ -116,7 +123,7 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
             addStaticVariable(BroadleafControllerUtility.BLC_REDIRECT_ATTRIBUTE, redirectUrl);
             return super.loadView(viewName, locale);
         } else {
-            return new RedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());
+            return new RedirectView(redirectUrl, false, isRedirectHttp10Compatible());
         }
     }
     
@@ -146,8 +153,19 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
                 viewName = getFullPageLayout();
             }
         }
+
+        AbstractThymeleafView view = null;
         
-        AbstractThymeleafView view = (AbstractThymeleafView) super.loadView(viewName, locale);
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().overrideView(erh);
+        String templateOverride = (String) erh.getContextMap().get(EXTENSION_TEMPLATE_ATTR_NAME);
+
+        if (templateOverride != null && isAjaxRequest()) {
+            view = (AbstractThymeleafView) super.loadView(templateOverride, locale);
+            view.addStaticVariable("wrappedTemplate", viewName);
+        } else {
+            view = (AbstractThymeleafView) super.loadView(viewName, locale);
+        }
         
         if (!isAjaxRequest()) {
             view.addStaticVariable("templateName", originalViewName);

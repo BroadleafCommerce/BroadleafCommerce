@@ -56,8 +56,9 @@ public class BroadleafSiteMapController {
     public FileSystemResource retrieveSiteMapFile(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         File siteMapFile = siteMapService.getSiteMapFile(getRequestURIWithoutContext(request));
-        if (!siteMapFile.exists()) {
+        if (siteMapFile == null || !siteMapFile.exists()) {
             response.setStatus(404);
+            return null;
         }
         return new FileSystemResource(siteMapFile);
     }

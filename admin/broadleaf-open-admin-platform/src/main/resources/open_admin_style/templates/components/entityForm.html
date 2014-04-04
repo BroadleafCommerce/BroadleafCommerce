@@ -23,6 +23,7 @@
     <input type="hidden" th:field="*{entityType}" />
     <input type="hidden" th:field="*{id}" />
     <input type="hidden" th:field="*{sectionCrumbs}"  />
+    <input type="hidden" th:field="*{mainEntityName}" />
 
     <div class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
         <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
@@ -55,7 +56,7 @@
 
                 <div th:each="field : ${group.fields}" 
                      th:if="${field.name}" 
-                     th:class="${'field-box' + (field.isDirty ? ' dirty' : '')}" 
+                     th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 
                      blc_admin:component_id="${field}"
                      th:classappend="${!field.isVisible}? 'hidden'">
 
@@ -71,8 +72,14 @@
                 </div>
             </fieldset>
             
-            <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}">
-                <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+            <div th:remove="tag" th:if="${dynamicFormTemplateOverride == null}">
+                <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}">
+                    <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
+                </div>
+            </div>
+
+            <div th:remove="tag" th:unless="${dynamicFormTemplateOverride == null}">
+                <div th:include="${dynamicFormTemplateOverride}" />
             </div>
 
             <div th:each="collectionListGrid : ${tab.listGrids}" class="listgrid-container" th:id="${collectionListGrid.subCollectionFieldName}">

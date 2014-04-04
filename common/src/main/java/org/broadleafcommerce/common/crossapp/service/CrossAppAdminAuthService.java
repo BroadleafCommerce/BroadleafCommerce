@@ -59,7 +59,7 @@ public interface CrossAppAdminAuthService {
      * 
      * @param adminUserId
      * @param rolesToContrib
-     * @return
+     * @return the generated token
      */
     public String generateTokenForSiteAuth(Long adminUserId, List<String> rolesToContrib);
 

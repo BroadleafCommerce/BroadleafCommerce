@@ -55,8 +55,12 @@ public class ProtoSecureChannelProcessor extends SecureChannelProcessor {
 
         for (ConfigAttribute attribute : config) {
             if (supports(attribute)) {
-                if (!invocation.getHttpRequest().isSecure() || 
-                        "http".equals(invocation.getHttpRequest().getHeader("X-Forwarded-Proto"))) {
+                if (invocation.getHttpRequest().getHeader("X-Forwarded-Proto") != null
+                        && "https".equalsIgnoreCase(invocation.getHttpRequest().getHeader("X-Forwarded-Proto"))) {
+                    return;
+                } else if (invocation.getHttpRequest().isSecure()) {
+                    return;
+                } else {
                     getEntryPoint().commence(invocation.getRequest(), invocation.getResponse());
                 }
             }

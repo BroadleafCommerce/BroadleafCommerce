@@ -45,4 +45,20 @@ public interface ResourceMinificationService {
      */
     public byte[] minify(String filename, byte[] bytes);
 
+    /**
+     * Indicates whether or not the system is allowed to minify bundled resources.
+     * 
+     * @return the value of the system property "minify.enabled"
+     */
+    public boolean getEnabled();
+
+    /**
+     * Indicates whether or not the system is allowed to attempt to minify individual files. This can be useful if
+     * the YUI compressor is failing to minify JavaScript/CSS due to syntax errors and you are attempting to track
+     * down which file is problematic. It should not be enabled in a production environment.
+     * 
+     * @return the value of the system property "minify.allowSingleMinification"
+     */
+    boolean getAllowSingleMinification();
+
 }

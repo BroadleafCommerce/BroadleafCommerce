@@ -35,7 +35,7 @@ import java.util.Map;
  * @author Phillip Verheyden
  */
 @Component("blMatchesFieldValidator")
-public class MatchesFieldValidator extends ValidationConfigurationBasedPropertyValidator {
+public class MatchesFieldValidator extends ValidationConfigurationBasedPropertyValidator implements FieldNamePropertyValidator {
 
     @Override
     public boolean validateInternal(Entity entity,

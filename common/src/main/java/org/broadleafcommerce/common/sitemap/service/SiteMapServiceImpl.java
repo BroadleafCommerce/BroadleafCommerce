@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.springframework.stereotype.Service;
 
@@ -61,12 +60,6 @@ public class SiteMapServiceImpl implements SiteMapService {
     protected static final Log LOG = LogFactory.getLog(SiteMapServiceImpl.class);
 
     protected Boolean gzipSiteMapFiles;
-
-    protected boolean getGzipSiteMapFilesDefault() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.gzip.files");
-    }
-
-    protected Long siteMapTimeout = DateUtil.ONE_WEEK_MILLIS;
 
     @Resource(name = "blModuleConfigurationService")
     protected ModuleConfigurationService moduleConfigurationService;
@@ -135,28 +128,32 @@ public class SiteMapServiceImpl implements SiteMapService {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Method getSiteMapFile() invoked for " + fileName);
         }
-        File siteMapFile = broadleafFileService.getResource(fileName, getSiteMapTimeout());
+        File siteMapFile = broadleafFileService.getResource(fileName, getSiteMapTimeoutInMillis());
         if (siteMapFile.exists()) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Returning existing SiteMap");
             }
             return siteMapFile;
         } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Generating SiteMap");
-            }
-            generateSiteMap();
-            siteMapFile = broadleafFileService.getResource(fileName, getSiteMapTimeout());
-            if (siteMapFile.exists()) {
+            if (getCreateSiteMapIfNotFound()) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Returning SiteMap file " + fileName);
+                    LOG.trace("Generating SiteMap");
                 }
+                generateSiteMap();
+                siteMapFile = broadleafFileService.getResource(fileName, getSiteMapTimeoutInMillis());
+                if (siteMapFile.exists()) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Returning SiteMap file " + fileName);
+                    }
+                } else {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Sitemap file " + fileName + " not found after call to generate siteMap.xml");
+                    }
+                }
+                return siteMapFile;
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Sitemap file " + fileName + " not found after call to generate siteMap.xml");
-                }
+                return null;
             }
-            return siteMapFile;
         }        
     }
 
@@ -244,13 +241,19 @@ public class SiteMapServiceImpl implements SiteMapService {
         this.moduleConfigurationService = moduleConfigurationService;
     }
 
-    public Long getSiteMapTimeout() {
-        return siteMapTimeout;
+    protected boolean getGzipSiteMapFilesDefault() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.gzip.files");
     }
 
-    public void setSiteMapTimeout(Long siteMapTimeout) {
-        this.siteMapTimeout = siteMapTimeout;
+    public boolean getCreateSiteMapIfNotFound() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.createIfNotFound");
     }
+
+    public Long getSiteMapTimeoutInMillis() {
+        Long cacheSeconds = BLCSystemProperty.resolveLongSystemProperty("sitemap.cache.seconds");
+        return cacheSeconds * 1000;
+    }
+
 
     public void setGzipSiteMapFiles(Boolean gzipSiteMapFiles) {
         this.gzipSiteMapFiles = gzipSiteMapFiles;

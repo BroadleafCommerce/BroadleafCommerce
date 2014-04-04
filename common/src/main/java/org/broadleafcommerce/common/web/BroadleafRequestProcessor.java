@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -81,6 +82,12 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     
     @Value("${thymeleaf.threadLocalCleanup.enabled}")
     protected boolean thymeleafThreadLocalCleanupEnabled = true;
+
+    @Value("${site.enforce.production.workflow.update}")
+    protected boolean enforceProductionWorkflowUpdate = false;
+
+    @Resource(name="blEntityExtensionManagers")
+    protected Map<String, ExtensionManager> entityExtensionManagers;
     
     @Override
     public void process(WebRequest request) {
@@ -94,6 +101,10 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             brc.setIgnoreSite(true);
         }
         brc.setAdmin(false);
+
+        if (enforceProductionWorkflowUpdate) {
+            brc.getAdditionalProperties().put("site.enforce.production.workflow.update", enforceProductionWorkflowUpdate);
+        }
 
         BroadleafRequestContext.setBroadleafRequestContext(brc);
 
@@ -138,12 +149,14 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             previewSandBoxContext.setPreviewMode(true);
             SandBoxContext.setSandBoxContext(previewSandBoxContext);
         }
-        // Note that this must happen after the request context is set up as resolving a theme is dependent on site
-        Theme theme = themeResolver.resolveTheme(request);
         brc.setLocale(locale);
         brc.setBroadleafCurrency(currency);
         brc.setSandBox(currentSandbox);
+
+        // Note that this must happen after the request context is set up as resolving a theme is dependent on site
+        Theme theme = themeResolver.resolveTheme(request);
         brc.setTheme(theme);
+
         brc.setMessageSource(messageSource);
         brc.setTimeZone(timeZone);
         brc.setRequestDTO(requestDTO);
@@ -162,6 +175,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             //TODO: Add token logic to secure the admin user id
             brc.setAdminUserId(Long.parseLong(adminUserId));
         }
+
+        brc.getAdditionalProperties().putAll(entityExtensionManagers);
     }
 
     @Override

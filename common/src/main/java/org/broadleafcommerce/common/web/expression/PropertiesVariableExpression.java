@@ -58,5 +58,5 @@ public class PropertiesVariableExpression implements BroadleafVariableExpression
         
         return forceShow;
     }
-
+    
 }

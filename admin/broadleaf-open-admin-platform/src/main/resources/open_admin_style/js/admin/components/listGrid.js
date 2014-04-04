@@ -321,7 +321,15 @@ $(document).ready(function() {
     $('body').on('listGrid-adorned-rowSelected', function(event, link, fields, currentUrl) {
         $(this).find('input#adornedTargetIdProperty').val(fields['id']);
         var $modal = BLCAdmin.currentModal();
-        $modal.find('form.modal-form').submit();
+        
+	    var $actions = $modal.find('.entity-form-actions');
+	    var $ajaxLoader = $actions.find('img.ajax-loader');
+	    
+	    if (!$ajaxLoader.is(':visible')) {
+    	    $actions.find('button').hide();
+    	    $actions.find('img.ajax-loader').show();
+    	    $modal.find('form.modal-form').submit();
+	    }
     });
     
     /**
@@ -538,8 +546,10 @@ $(document).ready(function() {
                     BLCAdmin.initializeModalTabs($(BLCAdmin.currentModal()));
                     BLCAdmin.initializeModalButtons($(BLCAdmin.currentModal()));
                     BLCAdmin.initializeFields();
-            	    BLCAdmin.currentModal().find('.submit-button').show();
-            	    BLCAdmin.currentModal().find('img.ajax-loader').hide();
+
+            	    var $actions = BLCAdmin.currentModal().find('.entity-form-actions');
+            	    $actions.find('button').show();
+            	    $actions.find('img.ajax-loader').hide();
                 } else {
                     BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
                         message: BLCAdmin.messages.saved + '!', 

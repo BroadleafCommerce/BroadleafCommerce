@@ -35,6 +35,9 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
     @Resource(name = "blOrderService")
     protected OrderService orderService;
     
+    @Resource(name = "blConfirmationControllerExtensionManager")
+    protected ConfirmationControllerExtensionManager extensionManager;
+    
     protected static String orderConfirmationView = "checkout/confirmation";
 
     public String displayOrderConfirmationByOrderNumber(String orderNumber, Model model,
@@ -43,6 +46,8 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
         if (customer != null) {
             Order order = orderService.findOrderByOrderNumber(orderNumber);
             if (order != null && customer.equals(order.getCustomer())) {
+                extensionManager.getProxy().processAdditionalConfirmationActions(order);
+
                 model.addAttribute("order", order);
                 return getOrderConfirmationView();
             }
@@ -57,6 +62,8 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
         if (customer != null) {
             Order order = orderService.findOrderById(orderId);
             if (order != null && customer.equals(order.getCustomer())) {
+                extensionManager.getProxy().processAdditionalConfirmationActions(order);
+
                 model.addAttribute("order", order);
                 return getOrderConfirmationView();
             }

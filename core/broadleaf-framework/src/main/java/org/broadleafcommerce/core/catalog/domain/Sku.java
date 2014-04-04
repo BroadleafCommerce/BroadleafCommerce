@@ -23,10 +23,12 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -201,18 +203,34 @@ public interface Sku extends Serializable {
     public void setDiscountable(Boolean discountable);
 
     /**
-     * Returns whether the Sku is available.
+     * <p>Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
+     * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
+     * it. This defaults to true</p>
+     * 
+     * <p>This method only checks that this Sku is not marked as {@link InventoryType#UNAVAILABLE}. If {@link #getInventoryType()}
+     * is set to {@link InventoryType#CHECK_QUANTITY} then this will return true.</p>
+     * 
+     * @deprecated use {@link #getInventoryType()} or {@link InventoryService#isAvailable(Sku, int)} instead.
      */
+    @Deprecated
     public Boolean isAvailable();
 
     /**
      * Convenience that passes through to isAvailable
+     * @see {@link #isAvailable()}
+     * @deprecated use {@link #getInventoryType()} instead
      */
+    @Deprecated
     public Boolean getAvailable();
     
     /**
-     * Sets the whether the Sku is available.
+     * Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
+     * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
+     * it. This defaults to true
+     * 
+     * @deprecated use {@link #setInventoryType(InventoryType)} instead
      */
+    @Deprecated
     public void setAvailable(Boolean available);
 
     /**
@@ -477,6 +495,29 @@ public interface Sku extends Serializable {
      * @param inventoryType the {@link InventoryType} for this sku
      */
     public void setInventoryType(InventoryType inventoryType);
+    
+    /**
+     * <p>Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
+     * This field is checked within the {@link CheckAvailabilityActivity} to determine if inventory is actually available
+     * for this Sku.</p>
+     * 
+     * <p>In order to enable this feature in a Broadleaf 3.1.1+ installation, you must hook up the {@link QuantityAvailableSkuTemplate}
+     * to dynamically weave in the quantityAvailable field or override this method in a subclass. This is enabled out of the
+     * box in Broadleaf 3.2+</p>
+     */
+    public Integer getQuantityAvailable();
+    
+    /**
+     * <p>Used in conjunction with {@link InventoryType#CHECK_QUANTITY} from {@link #getInventoryType()}. This sets how much
+     * inventory is available for this Sku.</p>
+     * 
+     * <p>In order to enable this feature in a Broadleaf 3.1.1+ installation, you must hook up the {@link QuantityAvailableSkuTemplate}
+     * to dynamically weave in the quantityAvailable field or override this method in a subclass. This is enabled out of the
+     * box in Broadleaf 3.2+</p>
+     * 
+     * @param quantityAvailable the quantity available for this sku 
+     */
+    public void setQuantityAvailable(Integer quantityAvailable);
     
     /**
      * Returns the fulfillment type for this sku. May be null.

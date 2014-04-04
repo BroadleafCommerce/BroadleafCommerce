@@ -28,7 +28,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.resource.GeneratedResource;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -43,12 +46,20 @@ import java.util.List;
  * @author Andre Azzolini (apazzolini)
  *
  */
-public abstract class AbstractGeneratedResourceHandler {
+public abstract class AbstractGeneratedResourceHandler implements Ordered {
+    
+    public static final int DEFAULT_ORDER = 10000;
 
     protected static final Log LOG = LogFactory.getLog(AbstractGeneratedResourceHandler.class);
 
     @javax.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
+
+    @javax.annotation.Resource(name="blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
+
+    @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
+    protected ResourceRequestExtensionManager extensionManager;
 
     protected Cache generatedResourceCache;
     
@@ -81,7 +92,7 @@ public abstract class AbstractGeneratedResourceHandler {
      * @param location
      * @return the generated resource
      */
-    public Resource getResource(String path, List<Resource> locations) {
+    public Resource getResource(final String path, final List<Resource> locations) {
         Element e = getGeneratedResourceCache().get(path);
         Resource r = null;
         if (e == null) {
@@ -98,13 +109,12 @@ public abstract class AbstractGeneratedResourceHandler {
         } else {
             r = (Resource) e.getObjectValue();
         }
-        
+
         if (shouldGenerate) {
             r = getFileContents(path, locations);
             e = new Element(path,  r);
             getGeneratedResourceCache().put(e);
         }
-        
         return r;
     }
     
@@ -116,6 +126,12 @@ public abstract class AbstractGeneratedResourceHandler {
      * @return the resource from the file system, classpath, etc, if it exists
      */
     protected Resource getRawResource(String path, List<Resource> locations) {
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().getOverrideResource(path, erh);
+        if (erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR) != null) {
+            return (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR);
+        }
+
 		for (Resource location : locations) {
 			try {
 				Resource resource = location.createRelative(path);
@@ -153,6 +169,11 @@ public abstract class AbstractGeneratedResourceHandler {
             generatedResourceCache = CacheManager.getInstance().getCache("generatedResourceCache");
         }
         return generatedResourceCache;
+    }
+
+    @Override
+    public int getOrder() {
+        return DEFAULT_ORDER;
     }
     
 }

@@ -25,7 +25,10 @@ import org.thymeleaf.dom.NestableNode;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.element.AbstractElementProcessor;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author apazzolini
@@ -70,6 +73,25 @@ public abstract class AbstractModelVariableModifierProcessor extends AbstractEle
         ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put(key, value);
     }
     
+    @SuppressWarnings("unchecked")
+    protected <T> void addCollectionToExistingSet(Arguments arguments, String key, Collection<T> value) {
+        Set<T> items = (Set<T>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get(key);
+        if (items == null) {
+            items = new HashSet<T>();
+            ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put(key, items);
+        }
+        items.addAll(value);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> void addItemToExistingSet(Arguments arguments, String key, Object value) {
+        Set<T> items = (Set<T>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get(key);
+        if (items == null) {
+            items = new HashSet<T>();                         
+            ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).put(key, items);
+        }
+        items.add((T) value);
+    }
     
     /**
      * This method must be overriding by a processor that wishes to modify the model. It will

@@ -51,6 +51,7 @@ public class Field {
     protected Boolean isVisible;
     protected Boolean isAlternateOrdering;
     protected Boolean isReadOnly;
+    protected Boolean isDisabled;
     protected Boolean isTranslatable;
     protected Boolean isMainEntityLink;
     protected Boolean isFilterSortDisabled;
@@ -58,6 +59,7 @@ public class Field {
     protected Boolean isDerived;
     protected Boolean isLargeEntry;
     protected Boolean isDirty;
+    protected Boolean isTypeaheadEnabled;
     protected String hint;
     protected String tooltip;
     protected String help;
@@ -136,6 +138,11 @@ public class Field {
         setReadOnly(isReadOnly);
         return this;
     }
+
+    public Field withDisabled(Boolean isDisabled) {
+        setDisabled(isDisabled);
+        return this;
+    }
     
     public Field withTranslatable(Boolean isTranslatable) {
         setTranslatable(isTranslatable);
@@ -179,6 +186,11 @@ public class Field {
     
     public Field withAttribute(String key, Object value) {
         getAttributes().put(key, value);
+        return this;
+    }
+    
+    public Field withTypeaheadEnabled(Boolean isTypeaheadEnabled) {
+        setIsTypeaheadEnabled(isTypeaheadEnabled);
         return this;
     }
 
@@ -226,6 +238,10 @@ public class Field {
         return isReadOnly == null ? false : isReadOnly;
     }
     
+    public Boolean getDisabled() {
+        return isDisabled == null ? false : isDisabled;
+    }
+    
     public Boolean getAlternateOrdering() {
         return isAlternateOrdering == null ? false : isAlternateOrdering;
     }
@@ -248,6 +264,10 @@ public class Field {
     
     public Object getAttribute(String key) {
         return getAttributes().get(key);
+    }
+    
+    public Boolean getIsTypeaheadEnabled() {
+        return isTypeaheadEnabled == null ? false : isTypeaheadEnabled;
     }
     
     /* ************************** */
@@ -345,6 +365,10 @@ public class Field {
     public void setReadOnly(Boolean readOnly) {
         this.isReadOnly = readOnly;
     }
+
+    public void setDisabled(Boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
     
     public void setTranslatable(Boolean translatable) {
         this.isTranslatable = translatable;
@@ -432,6 +456,10 @@ public class Field {
 
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
+    }
+
+    public void setIsTypeaheadEnabled(Boolean isTypeaheadEnabled) {
+        this.isTypeaheadEnabled = isTypeaheadEnabled;
     }
     
 }

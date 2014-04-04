@@ -114,9 +114,4 @@
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blShippingRateServiceOperation"/>
     </aop:config>
     
-    <aop:config>
-        <aop:pointcut id="blAvailabilityServiceOperation" expression="execution(* org.broadleafcommerce.core.inventory.service.AvailabilityService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAvailabilityServiceOperation"/>
-    </aop:config>
-
 </beans>

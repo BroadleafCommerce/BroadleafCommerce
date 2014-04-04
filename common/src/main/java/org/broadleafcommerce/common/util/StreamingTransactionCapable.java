@@ -30,6 +30,10 @@ public interface StreamingTransactionCapable {
 
     void setPageSize(int pageSize);
 
+    int getRetryMax();
+
+    void setRetryMax(int retryMax);
+
     <G extends Throwable> void runStreamingTransactionalOperation(final StreamCapableTransactionalOperation
                                                                           streamOperation, Class<G> exceptionType) throws G;
 

@@ -118,8 +118,8 @@ public class SkuRestrictionFactoryImpl implements RestrictionFactory {
                             propertyExpression = builder.equal(builder.size(targetPropertyPath), directValues.get(0));
                             defaultSkuExpression = builder.equal(builder.size(defaultSkuPropertyPath), directValues.get(0));
                         } else if (delegateRestriction.getPredicateProvider() instanceof EqPredicateProvider) {
-                            propertyExpression = targetPropertyPath.in(directValues);
-                            defaultSkuExpression = defaultSkuPropertyPath.in(directValues);
+                            propertyExpression = builder.equal(targetPropertyPath, directValues.get(0));
+                            defaultSkuExpression = builder.equal(defaultSkuPropertyPath, directValues.get(0));
                         } else {
                             throw new IllegalArgumentException("Unknown PredicateProvider instance: " +
                                     delegateRestriction.getPredicateProvider().getClass().getName());
