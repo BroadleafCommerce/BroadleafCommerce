@@ -52,7 +52,7 @@ public class ReflectiveWorkOnChange implements WorkOnChange {
 
     @Override
     public void doWork(Collection changed) {
-        String key = target.getClass().getName() + "_" + changed.getClass().getName();
+        String key = target.getClass().getName() + "." + methodName + "(" + changed.getClass().getName() + ")";
         Method method;
         if (methodCache.containsKey(key)) {
             method = methodCache.get(key);
