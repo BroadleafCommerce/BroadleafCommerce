@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
@@ -81,6 +82,25 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
     /**
+     * Given the input field, populates the values array with the fields needed for the 
+     * passed in field.   
+     * 
+     * For example, a handler might create multiple fields for the given passed in field.
+     * @param sku
+     * @param field
+     * @param values
+     * @param propertyName
+     * @param locales
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
+    public ExtensionResultStatusType addPropertyValues(Sku sku, Field field, FieldType fieldType,
+            Map<String, Object> values, String propertyName, List<Locale> locales)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+
+    /**
      * Provides an extension point to modify the SolrQuery.
      * 
      * @param context
@@ -97,8 +117,12 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
     /**
      * Allows the extension additional fields to the document that are not configured via the DB.
      */
-    public ExtensionResultStatusType attachAdditionalBasicFields(Product product, SolrInputDocument document,
-            SolrHelperService shs);
+    public ExtensionResultStatusType attachAdditionalBasicFields(Product product, SolrInputDocument document, SolrHelperService shs);
+
+    /**
+     * Allows the extension additional fields to the document that are not configured via the DB.
+     */
+    public ExtensionResultStatusType attachAdditionalBasicFields(Sku sku, SolrInputDocument document, SolrHelperService shs);
 
     /**
      * In certain scenarios, the requested category id might not be the one that should be used in Solr.

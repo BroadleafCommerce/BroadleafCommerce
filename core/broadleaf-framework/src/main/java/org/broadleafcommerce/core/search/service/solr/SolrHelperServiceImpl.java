@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
@@ -182,6 +183,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         return String.valueOf(product.getId());
     }
     
+    @Override
+    public String getSolrDocumentId(SolrInputDocument document, Sku sku) {
+        return String.valueOf(sku.getId());
+    }
+
     @Override
     public String getNamespaceFieldName() {
         return "namespace";

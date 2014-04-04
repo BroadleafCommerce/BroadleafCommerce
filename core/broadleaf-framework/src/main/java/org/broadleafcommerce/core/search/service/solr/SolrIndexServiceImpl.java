@@ -177,12 +177,23 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
             if (useSku) {
                 List<Sku> skus = readAllActiveSkus(page, pageSize);
+                List<Field> fields = fieldDao.readAllSkuFields();
+
+                for (Sku sku : skus) {
+                    SolrInputDocument doc = buildDocument(null, sku, fields, locales);
+                    //If someone overrides the buildDocument method and determines that they don't want a product 
+                    //indexed, then they can return null. If the document is null it does not get added to 
+                    //to the index.
+                    if (doc != null) {
+                        documents.add(doc);
+                    }
+                }
             } else {
                 List<Product> products = readAllActiveProducts(page, pageSize);
                 List<Field> fields = fieldDao.readAllProductFields();
 
                 for (Product product : products) {
-                    SolrInputDocument doc = buildDocument(product, fields, locales);
+                    SolrInputDocument doc = buildDocument(product, null, fields, locales);
                     //If someone overrides the buildDocument method and determines that they don't want a product 
                     //indexed, then they can return null. If the document is null it does not get added to 
                     //to the index.
@@ -262,10 +273,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     @Override
-    public SolrInputDocument buildDocument(Product product, List<Field> fields, List<Locale> locales) {
+    public SolrInputDocument buildDocument(Product product, Sku sku, List<Field> fields, List<Locale> locales) {
         SolrInputDocument document = new SolrInputDocument();
 
-        attachBasicDocumentFields(product, document);
+        attachBasicDocumentFields(product, sku, document);
 
         // Keep track of searchable fields added to the index.   We need to also add the search facets if 
         // they weren't already added as a searchable field.
@@ -277,7 +288,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 if (field.getSearchable()) {
                     List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(field);
                     for (FieldType sft : searchableFieldTypes) {
-                        Map<String, Object> propertyValues = getPropertyValues(product, field, sft, locales);
+                        Map<String, Object> propertyValues = getPropertyValues(product, sku, field, sft, locales);
 
                         // Build out the field for every prefix
                         for (Entry<String, Object> entry : propertyValues.entrySet()) {
@@ -296,7 +307,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 // Index the faceted field type as well
                 FieldType facetType = field.getFacetFieldType();
                 if (facetType != null) {
-                    Map<String, Object> propertyValues = getPropertyValues(product, field, facetType, locales);
+                    Map<String, Object> propertyValues = getPropertyValues(product, sku, field, facetType, locales);
 
                     // Build out the field for every prefix
                     for (Entry<String, Object> entry : propertyValues.entrySet()) {
@@ -312,8 +323,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     }
                 }
             } catch (Exception e) {
-                LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
-                        + product.getId() + "]", e);
+                if (useSku) {
+                    LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for sku id[" + sku.getId() + "]", e);
+                }
+                LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id[" + product.getId() + "]", e);
             }
         }
 
@@ -321,14 +334,19 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     /**
-     * Adds the ID, category, and explicitCategory fields for the product to the document
+     * Adds the ID, category, and explicitCategory fields for the product or sku to the document
      * 
      * @param product
+     * @param sku
      * @param document
      */
-    protected void attachBasicDocumentFields(Product product, SolrInputDocument document) {
+    protected void attachBasicDocumentFields(Product product, Sku sku, SolrInputDocument document) {
         // Add the namespace and ID fields for this product
         document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
+        if (useSku) {
+            document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, sku));
+            product = sku.getProduct();
+        }
         document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
         document.addField(shs.getProductIdFieldName(), product.getId());
         extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
@@ -371,6 +389,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      *   "es_ES" : "Una descripcion" }
      * 
      * @param product
+     * @param sku
      * @param field
      * @param isPriceField
      * @param prefix
@@ -379,19 +398,27 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    protected Map<String, Object> getPropertyValues(Product product, Field field, FieldType fieldType,
-            List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    protected Map<String, Object> getPropertyValues(Product product, Sku sku, Field field, FieldType fieldType, List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String propertyName = field.getPropertyName();
         Map<String, Object> values = new HashMap<String, Object>();
 
         if (extensionManager != null) {
-            ExtensionResultStatusType result = extensionManager.getProxy().addPropertyValues(product, field, fieldType, values, propertyName, locales);
+            ExtensionResultStatusType result = null;
+            if (useSku) {
+                result = extensionManager.getProxy().addPropertyValues(sku, field, fieldType, values, propertyName, locales);
+            } else {
+                result = extensionManager.getProxy().addPropertyValues(product, field, fieldType, values, propertyName, locales);
+            }
 
             if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                 Object propertyValue;
                 if (propertyName.contains(ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                    if (useSku) {
+                        propertyValue = PropertyUtils.getMappedProperty(sku, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                    } else {
+                        propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                    }
                     // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
                     // value field out of it if it exists.
                     if (propertyValue != null) {
@@ -402,7 +429,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                         }
                     }
                 } else {
-                    propertyValue = PropertyUtils.getProperty(product, propertyName);
+                    if(useSku) {
+                        propertyValue = PropertyUtils.getProperty(sku, propertyName);
+
+                    } else {
+                        propertyValue = PropertyUtils.getProperty(product, propertyName);
+                    }
                 }
                 values.put("", propertyValue);
             }

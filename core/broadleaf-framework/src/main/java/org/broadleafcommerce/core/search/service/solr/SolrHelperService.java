@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
@@ -116,6 +117,12 @@ public interface SolrHelperService {
      * @return the Solr id of this product
      */
     public String getSolrDocumentId(SolrInputDocument document, Product product);
+
+    /**
+     * @param sku
+     * @return the Solr id of this sku
+     */
+    public String getSolrDocumentId(SolrInputDocument document, Sku sku);
 
     /**
      * @return the name of the field that keeps track what namespace this document belongs to
