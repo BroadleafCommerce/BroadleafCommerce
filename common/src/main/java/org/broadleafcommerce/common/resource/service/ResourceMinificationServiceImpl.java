@@ -90,20 +90,22 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         
         byte[] minifiedBytes;
         
-        // Input streams to read the bytes
-        ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-        InputStreamReader isr = new InputStreamReader(bais);
-        BufferedReader in = new BufferedReader(isr);
-        
-        // Output streams to save the modified bytes
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        OutputStreamWriter osw = new OutputStreamWriter(baos);
-        BufferedWriter out = new BufferedWriter(osw);
-        
+        BufferedReader in = null;
+        BufferedWriter out = null;
         try {
+            // Input streams to read the bytes
+            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            InputStreamReader isr = new InputStreamReader(bais, "utf-8");
+            in = new BufferedReader(isr);
+
+            // Output streams to save the modified bytes
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(baos, "utf-8");
+            out = new BufferedWriter(osw);
+
             if ("js".equals(type)) {
                 JavaScriptCompressor jsc = new JavaScriptCompressor(in, getLogBasedErrorReporter());
-                jsc.compress(out, linebreak, true, verbose, preserveAllSemiColons, disableOptimizations);
+                jsc.compress(out, linebreak, munge, verbose, preserveAllSemiColons, disableOptimizations);
             } else if ("css".equals(type)) {
                 CssCompressor cssc = new CssCompressor(in);
                 cssc.compress(out, 100);
@@ -115,8 +117,12 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             return bytes;
         } finally {
             try {
-                in.close();
-                out.close();
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
             } catch (IOException e2) {
                 throw new RuntimeException(e2);
             }
