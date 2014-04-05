@@ -19,9 +19,13 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.util.DialectHelper;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
@@ -49,11 +53,19 @@ import javax.persistence.criteria.Root;
 @Repository("blSkuDao")
 public class SkuDaoImpl implements SkuDao {
 
+    private static final SupportLogger logger = SupportLogManager.getLogger("Enterprise", SkuDaoImpl.class);
+
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blDialectHelper")
+    protected DialectHelper dialectHelper;
 
     protected Long currentDateResolution = 10000L;
     protected Date cachedDate = SystemTime.asDate();
@@ -90,8 +102,30 @@ public class SkuDaoImpl implements SkuDao {
         if (skuIds == null || skuIds.size() == 0) {
             return null;
         }
-        TypedQuery<Sku> query = em.createNamedQuery("BC_READ_SKUS_BY_IDS", Sku.class);
-        query.setParameter("skuIds", skuIds);
+        if (skuIds.size() > 100) {
+            logger.warn("Not recommended to use the readSkusByIds method for long lists of skuIds, since " +
+                    "Hibernate is required to transform the distinct results. The list of requested" +
+                    "sku ids was (" + skuIds.size() + ") in length.");
+        }
+        // Set up the criteria query that specifies we want to return Products
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Sku> criteria = builder.createQuery(Sku.class);
+        Root<SkuImpl> sku = criteria.from(SkuImpl.class);
+
+        criteria.select(sku);
+
+        // We only want results that match the sku IDs
+        criteria.where(sku.get("id").as(Long.class).in(
+                sandBoxHelper.mergeCloneIds(em, SkuImpl.class,
+                        skuIds.toArray(new Long[skuIds.size()]))));
+        if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
+            criteria.distinct(true);
+        }
+
+        TypedQuery<Sku> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
         return query.getResultList();
     }
 
