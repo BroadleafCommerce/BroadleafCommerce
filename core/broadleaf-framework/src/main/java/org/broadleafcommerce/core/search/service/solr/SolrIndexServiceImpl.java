@@ -325,8 +325,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             } catch (Exception e) {
                 if (useSku) {
                     LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for sku id[" + sku.getId() + "]", e);
+                } else {
+                    LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id[" + product.getId() + "]", e);
                 }
-                LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id[" + product.getId() + "]", e);
             }
         }
 
