@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.core.web.service;
 
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 
@@ -42,7 +42,7 @@ public interface SearchFacetDTOService {
      * @param availableFacets
      * @return the ProductSearchCriteria 
      */
-    public ProductSearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets);
+    public SearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets);
 
     /**
      * Sets the "active" boolean on a given SearchFacetResultDTO as determined by the current request

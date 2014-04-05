@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 
 import java.util.Date;
 import java.util.List;
@@ -69,17 +69,17 @@ public interface CatalogService {
      * @param searchCriteria
      * @return the matching products
      */
-    public List<Product> findFilteredActiveProductsByCategory(Category category, ProductSearchCriteria searchCriteria);
+    public List<Product> findFilteredActiveProductsByCategory(Category category, SearchCriteria searchCriteria);
 
     /**
-     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, ProductSearchCriteria)}
+     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, SearchCriteria)}
      * 
      * @param category
      * @param currentDate
      * @param searchCriteria
      * @return
      */
-    public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria);
+    public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, SearchCriteria searchCriteria);
     
     /**
      * Given a search query and a ProductSearchCriteria, returns the appropriate matching products
@@ -88,12 +88,12 @@ public interface CatalogService {
      * @param searchCriteria
      * @return the matching products
      */
-    public List<Product> findFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria);
+    public List<Product> findFilteredActiveProductsByQuery(String query, SearchCriteria searchCriteria);
 
     /**
-     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, ProductSearchCriteria)}
+     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, SearchCriteria)}
      */
-    public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
+    public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, SearchCriteria searchCriteria);
 
     /**
      * Same as {@link #findActiveProductsByCategory(Category)} but allowing for pagination.

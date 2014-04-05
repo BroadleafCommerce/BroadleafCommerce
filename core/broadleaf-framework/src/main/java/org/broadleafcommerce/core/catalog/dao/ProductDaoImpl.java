@@ -39,7 +39,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -184,18 +184,18 @@ public class ProductDaoImpl implements ProductDao {
     }
     
     @Override
-    public List<Product> readFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria) {
+    public List<Product> readFilteredActiveProductsByQuery(String query, SearchCriteria searchCriteria) {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
         return readFilteredActiveProductsByQueryInternal(query, currentDate, searchCriteria);
     }
 
     @Override
     @Deprecated
-    public List<Product> readFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria) {
+    public List<Product> readFilteredActiveProductsByQuery(String query, Date currentDate, SearchCriteria searchCriteria) {
         return readFilteredActiveProductsByQueryInternal(query, currentDate, searchCriteria);
     }
 
-    protected List<Product> readFilteredActiveProductsByQueryInternal(String query, Date currentDate, ProductSearchCriteria searchCriteria) {
+    protected List<Product> readFilteredActiveProductsByQueryInternal(String query, Date currentDate, SearchCriteria searchCriteria) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
@@ -235,7 +235,7 @@ public class ProductDaoImpl implements ProductDao {
     }
     
     @Override
-    public List<Product> readFilteredActiveProductsByCategory(Long categoryId, ProductSearchCriteria searchCriteria) {
+    public List<Product> readFilteredActiveProductsByCategory(Long categoryId, SearchCriteria searchCriteria) {
         Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution);
         return readFilteredActiveProductsByCategoryInternal(categoryId, currentDate, searchCriteria);
     }
@@ -243,12 +243,12 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     @Deprecated
     public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, 
-            ProductSearchCriteria searchCriteria) {
+            SearchCriteria searchCriteria) {
         return readFilteredActiveProductsByCategoryInternal(categoryId, currentDate, searchCriteria);
     }
 
     protected List<Product> readFilteredActiveProductsByCategoryInternal(Long categoryId, Date currentDate,
-            ProductSearchCriteria searchCriteria) {
+            SearchCriteria searchCriteria) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
@@ -300,7 +300,7 @@ public class ProductDaoImpl implements ProductDao {
                 builder.greaterThan(sku.get("activeEndDate").as(Date.class), currentDate)));
     }
     
-    protected void attachOrderBy(ProductSearchCriteria searchCriteria, 
+    protected void attachOrderBy(SearchCriteria searchCriteria, 
             From<?, ? extends Product> product, Path<? extends Sku> sku, CriteriaQuery<?> criteria) {
         if (StringUtils.isNotBlank(searchCriteria.getSortQuery())) {
             CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -340,7 +340,7 @@ public class ProductDaoImpl implements ProductDao {
         }
     }
 
-    protected void attachProductSearchCriteria(ProductSearchCriteria searchCriteria, 
+    protected void attachProductSearchCriteria(SearchCriteria searchCriteria, 
             From<?, ? extends Product> product, From<?, ? extends Sku> sku, List<Predicate> restrictions) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         

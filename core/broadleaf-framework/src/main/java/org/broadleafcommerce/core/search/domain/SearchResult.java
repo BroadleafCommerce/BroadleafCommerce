@@ -20,17 +20,19 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import java.util.List;
 
 /**
- * Container that holds the result of a ProductSearch
+ * Container that holds the result of a ProductSearch or a SkuSearch
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class ProductSearchResult {
+public class SearchResult {
     
     protected List<Product> products;
+    protected List<Sku> skus;
     protected List<SearchFacetDTO> facets;
     
     protected Integer totalResults;
@@ -43,6 +45,14 @@ public class ProductSearchResult {
 
     public void setProducts(List<Product> products) {
         this.products = products;
+    }
+
+    public List<Sku> getSkus() {
+        return skus;
+    }
+
+    public void setSkus(List<Sku> skus) {
+        this.skus = skus;
     }
 
     public List<SearchFacetDTO> getFacets() {

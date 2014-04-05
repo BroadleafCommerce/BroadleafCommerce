@@ -43,22 +43,25 @@ import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
+import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
-import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
 
 import java.io.BufferedInputStream;
@@ -93,8 +96,14 @@ import javax.xml.parsers.ParserConfigurationException;
 public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
 
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
+
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
+
+    @Resource(name = "blSkuDao")
+    protected SkuDao skuDao;
 
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
@@ -236,38 +245,34 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     @Override
-    public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
-            throws ServiceException {
+    public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
         String query = shs.getExplicitCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
-        return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
+        return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
-    public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
-            throws ServiceException {
+    public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
         String query = shs.getCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
-        return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
+        return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
-    public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria)
-            throws ServiceException {
+    public SearchResult findSearchResultsByQuery(String query, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
         query = "(" + sanitizeQuery(query) + ")";
-        return findProducts(query, facets, searchCriteria, null);
+        return findSearchResults(query, facets, searchCriteria, null);
     }
 
     @Override
-    public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query,
-            ProductSearchCriteria searchCriteria) throws ServiceException {
+    public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
 
         String catFq = shs.getCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
         query = "(" + sanitizeQuery(query) + ")";
         
-        return findProducts(query, facets, searchCriteria, null, catFq);
+        return findSearchResults(query, facets, searchCriteria, null, catFq);
     }
 
     public String getLocalePrefix() {
@@ -299,11 +304,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     /**
-     * @deprecated in favor of the other findProducts() method
+     * @deprecated in favor of the other findSearchResults() method
      */
-    protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
-            ProductSearchCriteria searchCriteria, String defaultSort) throws ServiceException {
-        return findProducts(qualifiedSolrQuery, facets, searchCriteria, defaultSort, null);
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
+            SearchCriteria searchCriteria, String defaultSort) throws ServiceException {
+        return findSearchResults(qualifiedSolrQuery, facets, searchCriteria, defaultSort, null);
     }
 
     /**
@@ -316,16 +321,19 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return the ProductSearchResult of the search
      * @throws ServiceException
      */
-    protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
-            ProductSearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Build the basic query
         SolrQuery solrQuery = new SolrQuery()
                 .setQuery(qualifiedSolrQuery)
-                .setFields(shs.getProductIdFieldName())
                 .setRows(searchCriteria.getPageSize())
                 .setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
+        if (useSku) {
+            solrQuery.setFields(shs.getSkuIdFieldName());
+        } else {
+            solrQuery.setFields(shs.getProductIdFieldName());
+        }
         if (filterQueries != null) {
             solrQuery.setFilterQueries(filterQueries);
         }
@@ -338,8 +346,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap);
         
-        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
-                searchCriteria, defaultSort);
+        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
 
         if (LOG.isTraceEnabled()) {
             try {
@@ -373,13 +380,19 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         setFacetResults(namedFacetMap, response);
         sortFacetResults(namedFacetMap);
 
-        // Get the products
-        List<Product> products = getProducts(responseDocuments);
-
-        ProductSearchResult result = new ProductSearchResult();
+        SearchResult result = new SearchResult();
         result.setFacets(facets);
-        result.setProducts(products);
         setPagingAttributes(result, numResults, searchCriteria);
+
+        if (useSku) {
+            List<Sku> skus = getSkus(responseDocuments);
+            result.setSkus(skus);
+        } else {
+            // Get the products
+            List<Product> products = getProducts(responseDocuments);
+            result.setProducts(products);
+        }
+
         return result;
     }
     
@@ -426,7 +439,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param query
      * @param searchCriteria
      */
-    protected void attachSortClause(SolrQuery query, ProductSearchCriteria searchCriteria, String defaultSort) {
+    protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
         Map<String, String> solrFieldKeyMap = getSolrFieldKeyMap(searchCriteria);
 
         String sortQuery = searchCriteria.getSortQuery();
@@ -458,7 +471,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param searchCriteria
      */
     protected void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap,
-            ProductSearchCriteria searchCriteria) {
+            SearchCriteria searchCriteria) {
         for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
             String solrKey = null;
             for (Entry<String, SearchFacetDTO> dtoEntry : namedFacetMap.entrySet()) {
@@ -600,7 +613,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param response
      * @param searchCriteria
      */
-    public void setPagingAttributes(ProductSearchResult result, int numResults, ProductSearchCriteria searchCriteria) {
+    public void setPagingAttributes(SearchResult result, int numResults, SearchCriteria searchCriteria) {
         result.setTotalResults(numResults);
         result.setPage(searchCriteria.getPage());
         result.setPageSize(searchCriteria.getPageSize());
@@ -632,6 +645,34 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         }
 
         return products;
+    }
+
+    /**
+     * Given a list of Sku IDs from solr, this method will look up the IDs via the skuDao and build out
+     * actual Sku instances. It will return a Sku list that is sorted by the order of the IDs in the passed
+     * in list.
+     * 
+     * @param response
+     * @return the actual Sku instances as a result of the search
+     */
+    protected List<Sku> getSkus(List<SolrDocument> responseDocuments) {
+        final List<Long> skuIds = new ArrayList<Long>();
+        for (SolrDocument doc : responseDocuments) {
+            skuIds.add((Long) doc.getFieldValue(shs.getSkuIdFieldName()));
+        }
+
+        List<Sku> skus = skuDao.readSkusById(skuIds);
+
+        // We have to sort the skus list by the order of the skuIds list to maintain sortability in the UI
+        if (skus != null) {
+            Collections.sort(skus, new Comparator<Sku>() {
+                public int compare(Sku o1, Sku o2) {
+                    return new Integer(skuIds.indexOf(o1.getId())).compareTo(skuIds.indexOf(o2.getId()));
+                }
+            });
+        }
+
+        return skus;
     }
 
     /**
@@ -755,7 +796,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return a map of fully qualified solr index field key to the searchFacetDTO object
      */
     protected Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets,
-            final ProductSearchCriteria searchCriteria) {
+            final SearchCriteria searchCriteria) {
         return BLCMapUtils.keyedMap(facets, new TypedClosure<String, SearchFacetDTO>() {
 
             public String getKey(SearchFacetDTO facet) {
@@ -776,7 +817,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param searchCriteria the searchCriteria in case it is needed to determine the field key
      * @return the solr field index key to use
      */
-    protected String getSolrFieldKey(Field field, ProductSearchCriteria searchCriteria) {
+    protected String getSolrFieldKey(Field field, SearchCriteria searchCriteria) {
         return shs.getPropertyNameForFieldFacet(field);
     }
 
@@ -784,7 +825,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param searchCriteria
      * @return a map of abbreviated key to fully qualified solr index field key for all product fields
      */
-    protected Map<String, String> getSolrFieldKeyMap(ProductSearchCriteria searchCriteria) {
+    protected Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria) {
         List<Field> fields = fieldDao.readAllProductFields();
         Map<String, String> solrFieldKeyMap = new HashMap<String, String>();
         for (Field field : fields) {

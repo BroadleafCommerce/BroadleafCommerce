@@ -19,16 +19,7 @@
  */
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.media.domain.Media;
@@ -42,9 +33,9 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
-import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
@@ -59,6 +50,14 @@ import org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 
 /**
  * This class exposes catalog services as RESTful APIs.  It is dependent on
@@ -157,10 +156,10 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         }
 
         List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
-        ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         try {
-            ProductSearchResult result = null;
-            result = getSearchService().findProductsByCategoryAndQuery(category, q, searchCriteria);
+            SearchResult result = null;
+            result = getSearchService().findSearchResultsByCategoryAndQuery(category, q, searchCriteria);
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
@@ -198,10 +197,10 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         }
 
         List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
-        ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         try {
-            ProductSearchResult result = null;
-            result = getSearchService().findProductsByQuery(q, searchCriteria);
+            SearchResult result = null;
+            result = getSearchService().findSearchResultsByQuery(q, searchCriteria);
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());

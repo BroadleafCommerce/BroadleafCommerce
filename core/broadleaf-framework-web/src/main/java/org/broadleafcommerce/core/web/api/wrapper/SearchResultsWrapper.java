@@ -20,7 +20,7 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "searchResults")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<ProductSearchResult> {
+public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<SearchResult> {
 
     @XmlElement
     protected Integer page;
@@ -73,7 +73,7 @@ public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<Prod
     protected List<SearchFacetWrapper> searchFacets;
 
     @Override
-    public void wrapDetails(ProductSearchResult model, HttpServletRequest request) {
+    public void wrapDetails(SearchResult model, HttpServletRequest request) {
 
         page = model.getPage();
         pageSize = model.getPageSize();
@@ -100,7 +100,7 @@ public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<Prod
     }
 
     @Override
-    public void wrapSummary(ProductSearchResult model, HttpServletRequest request) {
+    public void wrapSummary(SearchResult model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
 }

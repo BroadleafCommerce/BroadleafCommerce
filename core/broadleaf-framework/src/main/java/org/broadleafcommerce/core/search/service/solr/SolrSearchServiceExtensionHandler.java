@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
@@ -112,7 +112,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      *      * @return
      */
     public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-            List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria, String defaultSort);
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
 
     /**
      * Allows the extension additional fields to the document that are not configured via the DB.
