@@ -346,6 +346,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
         if (useSku) {
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, sku));
+            document.addField(shs.getSkuIdFieldName(), sku.getId());
             product = sku.getProduct();
         } else {
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
