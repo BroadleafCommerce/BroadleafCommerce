@@ -347,8 +347,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         if (useSku) {
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, sku));
             product = sku.getProduct();
+        } else {
+            document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
         }
-        document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
         document.addField(shs.getProductIdFieldName(), product.getId());
         extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
 
