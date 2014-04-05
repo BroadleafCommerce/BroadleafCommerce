@@ -71,7 +71,7 @@ public interface SkuDao {
      * @param ids the list of primary key values
      * @return the list of skus that match the list of primary key values
      */
-    public List<Sku> readSkusById(List<Long> ids);
+    public List<Sku> readSkusByIds(List<Long> ids);
 
     /**
      * Remove the {@code Sku} instance from the datastore

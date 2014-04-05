@@ -86,9 +86,12 @@ public class SkuDaoImpl implements SkuDao {
     }
 
     @Override
-    public List<Sku> readSkusById(List<Long> ids) {
-        TypedQuery<Sku> query = em.createNamedQuery("BC_READ_SKUS_BY_ID", Sku.class);
-        query.setParameter("skuIds", ids);
+    public List<Sku> readSkusByIds(List<Long> skuIds) {
+        if (skuIds == null || skuIds.size() == 0) {
+            return null;
+        }
+        TypedQuery<Sku> query = em.createNamedQuery("BC_READ_SKUS_BY_IDS", Sku.class);
+        query.setParameter("skuIds", skuIds);
         return query.getResultList();
     }
 

@@ -661,7 +661,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             skuIds.add((Long) doc.getFieldValue(shs.getSkuIdFieldName()));
         }
 
-        List<Sku> skus = skuDao.readSkusById(skuIds);
+        List<Sku> skus = skuDao.readSkusByIds(skuIds);
 
         // We have to sort the skus list by the order of the skuIds list to maintain sortability in the UI
         if (skus != null) {

@@ -243,7 +243,7 @@ public class CatalogServiceImpl implements CatalogService {
     
     @Override
     public List<Sku> findSkusByIds(List<Long> ids) {
-        return skuDao.readSkusById(ids);
+        return skuDao.readSkusByIds(ids);
     }
 
     public void setProductDao(ProductDao productDao) {
