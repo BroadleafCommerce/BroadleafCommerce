@@ -24,18 +24,16 @@
     <input type="hidden" th:field="*{id}" />
     <input type="hidden" th:field="*{sectionCrumbs}"  />
 
-    <div th:unless="${hideTopLevelErrors}">
-        <div class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
-            <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
-                <b>[[#{__${tab.key}__}]]</b>
-            <span class="fieldError error" th:each="field : ${tab.value.entrySet()}">
-                [[#{__${field.key}__}]]: [[#{__${field.value}__}]]
-            </span>
-                <br />
-            </div>
+    <div th:unless="${hideTopLevelErrors}" class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
+        <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
+            <b>[[#{__${tab.key}__}]]</b>
+        <span class="fieldError error" th:each="field : ${tab.value.entrySet()}">
+            [[#{__${field.key}__}]]: [[#{__${field.value}__}]]
+        </span>
+            <br />
         </div>
     </div>
-    
+
     <div class="tabs-container" th:if="${renderTabs}">
         <dl class="tabs" th:classappend="${additionalTabClasses}">
             <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'">
