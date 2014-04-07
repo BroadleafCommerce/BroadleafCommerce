@@ -1553,7 +1553,7 @@ body .redactor_toolbar li a.redactor_btn_selectAssetButton {
 }
 
 body .redactor_toolbar li a.redactor_btn_font { 
-	background-image: url('../img/admin/font-selection.png');
+	background-image: url('../../img/admin/font-selection.png');
 	background-position-x: 0;
 }
 
