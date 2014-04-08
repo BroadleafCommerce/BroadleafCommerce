@@ -28,12 +28,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -47,7 +46,9 @@ import java.util.List;
  * @author Andre Azzolini (apazzolini)
  *
  */
-public abstract class AbstractGeneratedResourceHandler {
+public abstract class AbstractGeneratedResourceHandler implements Ordered {
+    
+    public static final int DEFAULT_ORDER = 10000;
 
     protected static final Log LOG = LogFactory.getLog(AbstractGeneratedResourceHandler.class);
 
@@ -56,6 +57,9 @@ public abstract class AbstractGeneratedResourceHandler {
 
     @javax.annotation.Resource(name="blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
+
+    @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
+    protected ResourceRequestExtensionManager extensionManager;
 
     protected Cache generatedResourceCache;
     
@@ -89,39 +93,29 @@ public abstract class AbstractGeneratedResourceHandler {
      * @return the generated resource
      */
     public Resource getResource(final String path, final List<Resource> locations) {
-        //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
-        //only run the operation under a transaction if there is not already an entity manager in the view
-        final Resource[] response = new Resource[1];
-        transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
-            @Override
-            public void execute() throws Throwable {
-                Element e = getGeneratedResourceCache().get(path);
-                Resource r = null;
-                if (e == null) {
-                    statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), false);
-                } else {
-                    statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), true);
-                }
-                boolean shouldGenerate = false;
-                if (e == null || e.getObjectValue() == null) {
-                    shouldGenerate = true;
-                } else if (e.getObjectValue() instanceof GeneratedResource
-                        && isCachedResourceExpired((GeneratedResource) e.getObjectValue(), path, locations)) {
-                    shouldGenerate = true;
-                } else {
-                    r = (Resource) e.getObjectValue();
-                }
+        Element e = getGeneratedResourceCache().get(path);
+        Resource r = null;
+        if (e == null) {
+            statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), false);
+        } else {
+            statisticsService.addCacheStat(CacheStatType.GENERATED_RESOURCE_CACHE_HIT_RATE.toString(), true);
+        }
+        boolean shouldGenerate = false;
+        if (e == null || e.getObjectValue() == null) {
+            shouldGenerate = true;
+        } else if (e.getObjectValue() instanceof GeneratedResource
+                && isCachedResourceExpired((GeneratedResource) e.getObjectValue(), path, locations)) {
+            shouldGenerate = true;
+        } else {
+            r = (Resource) e.getObjectValue();
+        }
 
-                if (shouldGenerate) {
-                    r = getFileContents(path, locations);
-                    e = new Element(path,  r);
-                    getGeneratedResourceCache().put(e);
-                }
-                response[0] = r;
-            }
-        }, RuntimeException.class, !TransactionSynchronizationManager.hasResource(((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory()));
-
-        return response[0];
+        if (shouldGenerate) {
+            r = getFileContents(path, locations);
+            e = new Element(path,  r);
+            getGeneratedResourceCache().put(e);
+        }
+        return r;
     }
     
     /**
@@ -132,6 +126,12 @@ public abstract class AbstractGeneratedResourceHandler {
      * @return the resource from the file system, classpath, etc, if it exists
      */
     protected Resource getRawResource(String path, List<Resource> locations) {
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().getOverrideResource(path, erh);
+        if (erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR) != null) {
+            return (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR);
+        }
+
 		for (Resource location : locations) {
 			try {
 				Resource resource = location.createRelative(path);
@@ -169,6 +169,11 @@ public abstract class AbstractGeneratedResourceHandler {
             generatedResourceCache = CacheManager.getInstance().getCache("generatedResourceCache");
         }
         return generatedResourceCache;
+    }
+
+    @Override
+    public int getOrder() {
+        return DEFAULT_ORDER;
     }
     
 }

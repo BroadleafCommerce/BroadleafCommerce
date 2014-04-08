@@ -51,6 +51,7 @@ public class Field {
     protected Boolean isVisible;
     protected Boolean isAlternateOrdering;
     protected Boolean isReadOnly;
+    protected Boolean isDisabled;
     protected Boolean isTranslatable;
     protected Boolean isMainEntityLink;
     protected Boolean isFilterSortDisabled;
@@ -135,6 +136,11 @@ public class Field {
     
     public Field withReadOnly(Boolean isReadOnly) {
         setReadOnly(isReadOnly);
+        return this;
+    }
+
+    public Field withDisabled(Boolean isDisabled) {
+        setDisabled(isDisabled);
         return this;
     }
     
@@ -230,6 +236,10 @@ public class Field {
 
     public Boolean getReadOnly() {
         return isReadOnly == null ? false : isReadOnly;
+    }
+    
+    public Boolean getDisabled() {
+        return isDisabled == null ? false : isDisabled;
     }
     
     public Boolean getAlternateOrdering() {
@@ -354,6 +364,10 @@ public class Field {
     
     public void setReadOnly(Boolean readOnly) {
         this.isReadOnly = readOnly;
+    }
+
+    public void setDisabled(Boolean isDisabled) {
+        this.isDisabled = isDisabled;
     }
     
     public void setTranslatable(Boolean translatable) {

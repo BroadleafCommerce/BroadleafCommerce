@@ -237,8 +237,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                     if (pageField != null) {
                         boolean isDirty = (pageField.getValue() == null && property.getValue() != null) ||
                                 (pageField.getValue() != null && property.getValue() == null);
-                        if (!isDirty && pageField.getValue() != null && property.getValue() != null &&
-                                !pageField.getValue().trim().equals(property.getValue().trim())) {
+                        if (isDirty || (pageField.getValue() != null && property.getValue() != null &&
+                                !pageField.getValue().trim().equals(property.getValue().trim()))) {
                             dirtyFields.add(property.getName());
                             dirtyFieldsOrigVals.put(property.getName(), pageField.getValue());
                         }

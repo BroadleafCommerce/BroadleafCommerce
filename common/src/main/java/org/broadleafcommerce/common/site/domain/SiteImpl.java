@@ -109,7 +109,7 @@ public class SiteImpl implements Site, Status {
     protected List<Catalog> catalogs = new ArrayList<Catalog>();
 
     @Column(name = "DEACTIVATED")
-    @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order=4, gridOrder = 4, group = "SiteImpl_Site")
+    @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order = 4, gridOrder = 4, group = "SiteImpl_Site", excluded = true)
     protected Boolean deactivated = false;
 
     @Embedded

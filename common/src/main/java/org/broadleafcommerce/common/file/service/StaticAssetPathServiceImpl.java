@@ -24,6 +24,8 @@ import org.apache.velocity.tools.view.ImportSupport;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+
 @Service("blStaticAssetPathService")
 public class StaticAssetPathServiceImpl implements StaticAssetPathService {
 
@@ -79,12 +81,12 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
 
             if (envPrefix != null) {
                 String trailing = "";
-                if (envPrefix.endsWith("/")) {
-                    trailing = "/";
+                if (envPrefix.endsWith(File.separator)) {
+                    trailing = File.separator;
                 }
                 returnValue = returnValue.replaceAll(getStaticAssetUrlPrefix()+trailing, envPrefix);
                 //Catch any scenario where there is a leading "/" after the replacement
-                returnValue = returnValue.replaceAll("/"+envPrefix, envPrefix);
+                returnValue = returnValue.replaceAll(File.separator + envPrefix, envPrefix);
             }
 
         }
@@ -137,7 +139,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
             }
             if (envPrefix != null) {
                 // remove the starting "/" if it exists.
-                if (returnValue.startsWith("/")) {
+                if (returnValue.startsWith(File.separator)) {
                     returnValue = returnValue.substring(1);
                 }
 
@@ -146,7 +148,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
                     returnValue = returnValue.substring(getStaticAssetUrlPrefix().trim().length());
 
                     // remove the starting "/" if it exists.
-                    if (returnValue.startsWith("/")) {
+                    if (returnValue.startsWith(File.separator)) {
                         returnValue = returnValue.substring(1);
                     }
                 }                
@@ -154,21 +156,21 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
             }
         } else {
             if (returnValue != null && ! ImportSupport.isAbsoluteUrl(returnValue)) {
-                if (! returnValue.startsWith("/")) {
-                    returnValue = "/" + returnValue;
+                if (! returnValue.startsWith(File.separator)) {
+                    returnValue = File.separator + returnValue;
                 }
 
                 // Add context path
                 if (contextPath != null && ! contextPath.equals("")) {
-                    if (! contextPath.equals("/")) {
+                    if (! contextPath.equals(File.separator)) {
                         // Shouldn't be the case, but let's handle it anyway
-                        if (contextPath.endsWith("/")) {
+                        if (contextPath.endsWith(File.separator)) {
                             returnValue = returnValue.substring(1);
                         }
-                        if (contextPath.startsWith("/")) {
+                        if (contextPath.startsWith(File.separator)) {
                             returnValue = contextPath + returnValue;  // normal case
                         } else {
-                            returnValue = "/" + contextPath + returnValue;
+                            returnValue = File.separator + contextPath + returnValue;
                         }
                     }
                 }

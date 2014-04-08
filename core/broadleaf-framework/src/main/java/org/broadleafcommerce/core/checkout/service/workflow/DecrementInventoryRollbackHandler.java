@@ -21,17 +21,16 @@ package org.broadleafcommerce.core.checkout.service.workflow;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.inventory.service.InventoryService;
+import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
 import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException;
-import org.broadleafcommerce.core.order.service.workflow.WorkflowInventoryExtensionManager;
 import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -49,24 +48,16 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Checko
     public static final String ROLLBACK_BLC_INVENTORY_DECREMENTED = "ROLLBACK_BLC_INVENTORY_DECREMENTED";
     public static final String ROLLBACK_BLC_INVENTORY_INCREMENTED = "ROLLBACK_BLC_INVENTORY_INCREMENTED";
     public static final String ROLLBACK_BLC_ORDER_ID = "ROLLBACK_BLC_ORDER_ID";
+    public static final String EXTENDED_ROLLBACK_STATE = "BLC_EXTENDED_ROLLBACK_STATE";
 
     @Resource(name = "blInventoryService")
-    protected InventoryService inventoryService;
+    protected ContextualInventoryService inventoryService;
     
-    @Resource(name = "blWorkflowInventoryExtensionManager")
-    protected WorkflowInventoryExtensionManager extensionManager;
-
     @Override
     public void rollbackState(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration)
             throws RollbackFailureException {
 
-        ExtensionResultStatusType extensionResult = extensionManager.getProxy().rollbackInventoryOperation(processContext, stateConfiguration);
-        if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
-            if (stateConfiguration == null ||
-                    (stateConfiguration.get(ROLLBACK_BLC_INVENTORY_DECREMENTED) == null &&
-                    stateConfiguration.get(ROLLBACK_BLC_INVENTORY_INCREMENTED) == null)) {
-                return;
-            }
+        if (shouldExecute(activity, processContext, stateConfiguration)) {
 
             String orderId = "(Not Known)";
             if (stateConfiguration.get(ROLLBACK_BLC_ORDER_ID) != null) {
@@ -78,9 +69,12 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Checko
             @SuppressWarnings("unchecked")
             Map<Sku, Integer> inventoryToDecrement = (Map<Sku, Integer>) stateConfiguration.get(ROLLBACK_BLC_INVENTORY_INCREMENTED);
             
+            Map<String, Object> contextualInformation = new HashMap<String, Object>();
+            contextualInformation.put(ContextualInventoryService.ROLLBACK_STATE_KEY, stateConfiguration.get(EXTENDED_ROLLBACK_STATE));
+            contextualInformation.put(ContextualInventoryService.ORDER_KEY, processContext.getSeedData().getOrder());
             if (inventoryToIncrement != null && !inventoryToIncrement.isEmpty()) {
                 try {
-                    inventoryService.incrementInventory(inventoryToIncrement);
+                    inventoryService.incrementInventory(inventoryToIncrement, contextualInformation);
                 } catch (Exception ex) {
                     RollbackFailureException rfe = new RollbackFailureException("An unexpected error occured in the error handler of the checkout workflow trying to compensate for inventory. This happend for order ID: " +
                             orderId + ". This should be corrected manually!", ex);
@@ -93,7 +87,7 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Checko
     
             if (inventoryToDecrement != null && !inventoryToDecrement.isEmpty()) {
                 try {
-                    inventoryService.decrementInventory(inventoryToDecrement);
+                    inventoryService.decrementInventory(inventoryToDecrement, contextualInformation);
                 } catch (InventoryUnavailableException e) {
                     //This is an awkward, unlikely state.  I just added some inventory, but something happened, and I want to remove it, but it's already gone!
                     RollbackFailureException rfe = new RollbackFailureException("While trying roll back (decrement) inventory, we found that there was none left decrement.", e);
@@ -115,9 +109,16 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Checko
             }
         }
     }
-
-    public void setInventoryService(InventoryService service) {
-        this.inventoryService = service;
-    }
     
+    /**
+     * Returns true if this rollback handler should execute
+     */
+    protected boolean shouldExecute(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) {
+        return stateConfiguration != null && (
+                stateConfiguration.get(ROLLBACK_BLC_INVENTORY_DECREMENTED) != null ||
+                stateConfiguration.get(ROLLBACK_BLC_INVENTORY_INCREMENTED) != null ||
+                stateConfiguration.get(EXTENDED_ROLLBACK_STATE) != null
+             );
+    }
+
 }

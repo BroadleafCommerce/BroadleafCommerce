@@ -130,7 +130,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
             throw new PersistenceException(e);
         }
         populateValueRequest.getProperty().setIsDirty(dirty);
-        return FieldProviderResponse.HANDLED;
+        return FieldProviderResponse.HANDLED_BREAK;
     }
 
     @Override

@@ -19,12 +19,16 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
+import net.sf.ehcache.Cache;
+
 import org.broadleafcommerce.common.web.processor.ResourceBundleProcessor;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This service is responsible for interaction with the {@link ResourceBundleProcessor} to generate
@@ -77,5 +81,15 @@ public interface ResourceBundlingService {
      * @return a list of additional files that are registered for the given bundle name
      */
     public List<String> getAdditionalBundleFiles(String bundleName);
+
+    /**
+     * @return the Cache used to store known bundle versions
+     */
+    public Cache getBundleVersionsCache();
+
+    /**
+     * @return the map of known versioned bundle names to the collection of resources they contain
+     */
+    public Map<String, Collection<Resource>> getBundles();
 
 }

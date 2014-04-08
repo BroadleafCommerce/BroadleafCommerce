@@ -23,7 +23,10 @@ import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.springframework.ui.Model;
+
+import java.util.List;
 
 
 /**
@@ -35,6 +38,11 @@ import org.springframework.ui.Model;
  * @author Andre Azzolini (apazzolini)
  */
 public class AbstractAdminAbstractControllerExtensionHandler extends AbstractExtensionHandler implements AdminAbstractControllerExtensionHandler {
+
+    @Override
+    public ExtensionResultStatusType addAdditionalMainActions(String sectionClassName, List<EntityFormAction> actions) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 
     @Override
     public ExtensionResultStatusType setAdditionalModelAttributes(Model model, String sectionKey) {

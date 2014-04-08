@@ -55,6 +55,7 @@
     <bean id="org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper" class="org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.SkuWrapper" class="org.broadleafcommerce.core.web.api.wrapper.SkuWrapper" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.web.api.wrapper.InventoryWrapper" class="org.broadleafcommerce.core.web.api.wrapper.InventoryWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.StateWrapper" class="org.broadleafcommerce.core.web.api.wrapper.StateWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductOptionWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductOptionWrapper" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.web.api.wrapper.ProductOptionValueWrapper" class="org.broadleafcommerce.core.web.api.wrapper.ProductOptionValueWrapper" scope="prototype"/>

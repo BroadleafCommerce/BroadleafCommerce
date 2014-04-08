@@ -54,10 +54,10 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
     public static final FieldType PRICE = new FieldType("p", "Price");
     public static final FieldType DATE = new FieldType("dt", "Date");
     public static final FieldType DATES = new FieldType("dts", "Date (Multi)");
-    public static final FieldType TRIEINT = new FieldType("tint", "Trie Integer");
-    public static final FieldType TRIELONG = new FieldType("tlong", "Trie Long");
-    public static final FieldType TRIEDOUBLE = new FieldType("tdouble", "Trie Double");
-    public static final FieldType TRIEDATE = new FieldType("tdate", "Trie Date");
+    public static final FieldType TRIEINT = new FieldType("ti", "Trie Integer");
+    public static final FieldType TRIELONG = new FieldType("tl", "Trie Long");
+    public static final FieldType TRIEDOUBLE = new FieldType("td", "Trie Double");
+    public static final FieldType TRIEDATE = new FieldType("tdt", "Trie Date");
 
     public static FieldType getInstance(final String type) {
         return TYPES.get(type);
@@ -75,10 +75,12 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
         return friendlyType;
     }

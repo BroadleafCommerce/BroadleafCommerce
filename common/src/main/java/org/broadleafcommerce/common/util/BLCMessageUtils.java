@@ -47,7 +47,7 @@ public class BLCMessageUtils implements ApplicationContextAware {
      * @return the message
      */
     public static String getMessage(String code) {
-        return getMessage(code, null);
+        return getMessage(code, (Object) null);
     }
     
     /**
@@ -57,7 +57,7 @@ public class BLCMessageUtils implements ApplicationContextAware {
      * @param code
      * @return the message
      */
-    public static String getMessage(String code, Object[] args) {
+    public static String getMessage(String code, Object... args) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         return getMessageSource().getMessage(code, args, brc.getJavaLocale());
     }

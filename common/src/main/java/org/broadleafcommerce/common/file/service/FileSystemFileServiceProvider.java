@@ -142,8 +142,8 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
         StringBuilder resourceName = new StringBuilder();
         // Create directories based on hash
         String fileHash = null;
-        if (!url.startsWith("/")) {
-            fileHash = DigestUtils.md5Hex("/" + url);
+        if (!url.startsWith(File.separator)) {
+            fileHash = DigestUtils.md5Hex(File.separator + url);
         } else {
             fileHash = DigestUtils.md5Hex(url);
         }
@@ -154,10 +154,10 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
                         maxGeneratedDirectoryDepth);
                 break;
             }
-            resourceName = resourceName.append(fileHash.substring(i * 2, (i + 1) * 2)).append('/');
+            resourceName = resourceName.append(fileHash.substring(i * 2, (i + 1) * 2)).append(File.separator);
         }
 
-        int pos = url.lastIndexOf("/");
+        int pos = url.lastIndexOf(File.separator);
         if (pos >= 0 && (pos < url.length() - 1)) {
             // Use the fileName as specified if possible.
             resourceName = resourceName.append(url.substring(pos + 1));
@@ -180,8 +180,8 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
                 baseDirectory = DEFAULT_STORAGE_DIRECTORY;
             }
 
-            if (!baseDirectory.endsWith("/")) {
-                baseDirectory = baseDirectory.trim() + "/";
+            if (!baseDirectory.endsWith(File.separator)) {
+                baseDirectory = baseDirectory.trim() + File.separator;
             }
         }
 
@@ -201,9 +201,9 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
         if (brc != null) {
             Site site = brc.getSite();
             if (site != null) {
-                String siteDirectory = "/site-" + site.getId();
+                String siteDirectory = File.separator + "site-" + site.getId();
                 String siteHash = DigestUtils.md5Hex(siteDirectory);
-                return baseDirectory + siteHash.substring(0, 2) + siteDirectory + "/";
+                return baseDirectory + siteHash.substring(0, 2) + siteDirectory + File.separator;
             }
         }
 

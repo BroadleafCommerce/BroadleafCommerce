@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.config.service;
 
+import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
 
 
@@ -72,6 +73,21 @@ public interface SystemPropertiesService {
      * @return whether or not the SystemProperty is in a valid state
      */
     public boolean isValueValidForType(String value, SystemPropertyFieldType type);
+
+    /**
+     * Evicts the given SystemProperty from the cache
+     * 
+     * @param systemProperty
+     */
+    public void removeFromCache(SystemProperty systemProperty);
+
+    /**
+     * Finds a SystemProperty by its internal id
+     * 
+     * @param id
+     * @return the {@link SystemProperty}
+     */
+    public SystemProperty findById(Long id);
 
 
 }

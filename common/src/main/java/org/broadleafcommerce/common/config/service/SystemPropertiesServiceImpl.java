@@ -23,13 +23,16 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
 import org.broadleafcommerce.common.config.dao.SystemPropertiesDao;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
+import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -52,6 +55,9 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     @Resource(name = "blSystemPropertyServiceExtensionManager")
     protected SystemPropertyServiceExtensionManager extensionManager;
 
+    @Value("${system.property.cache.timeout}")
+    protected int systemPropertyCacheTimeout;
+
     @Autowired
     protected RuntimeEnvironmentPropertiesManager propMgr;
 
@@ -66,16 +72,27 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
             }
         }
 
-        String result = getPropertyFromCache(name);
+        String result;
+        // We don't want to utilize this cache for sandboxes
+        if (BroadleafRequestContext.getBroadleafRequestContext().getSandBox() == null) {
+            result = getPropertyFromCache(name);
+        } else {
+            result = null;
+        }
+
         if (result != null) {
             return result;
         }
 
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
-        if (property == null || property.getValue() == null) {
+        if (property == null || StringUtils.isEmpty(property.getValue())) {
             result = propMgr.getProperty(name);
         } else {
-            result = property.getValue();
+            if ("_blank_".equals(property.getValue())) {
+                result = "";
+            } else {
+                result = property.getValue();
+            }
         }
 
         if (result != null) {
@@ -86,7 +103,12 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     protected void addPropertyToCache(String propertyName, String propertyValue) {
         String key = buildKey(propertyName);
-        getSystemPropertyCache().put(new Element(key, propertyValue));
+        if (systemPropertyCacheTimeout < 0) {
+            getSystemPropertyCache().put(new Element(key, propertyValue));
+        } else {
+            getSystemPropertyCache().put(new Element(key, propertyValue, systemPropertyCacheTimeout, 
+                    systemPropertyCacheTimeout));
+        }
     }
 
     protected String getPropertyFromCache(String propertyName) {
@@ -101,7 +123,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     /**
      * Properties can vary by site.   If a site is found on the request, use the site id as part of the
      * cache-key.
-     * 
+     *
      * @param propertyName
      * @return
      */
@@ -116,11 +138,41 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         return key;
     }
 
+    /**
+     * Properties can vary by site.   If a site is found on the request, use the site id as part of the
+     * cache-key.
+     * 
+     * @param systemProperty
+     * @return
+     */
+    protected String buildKey(SystemProperty systemProperty) {
+        String key = systemProperty.getName();
+        if (systemProperty instanceof SiteDiscriminator && ((SiteDiscriminator) systemProperty).getSiteDiscriminator() != null) {
+            key = ((SiteDiscriminator) systemProperty).getSiteDiscriminator() + "-" + key;
+        }
+        return key;
+    }
+
     protected Cache getSystemPropertyCache() {
         if (systemPropertyCache == null) {
             systemPropertyCache = CacheManager.getInstance().getCache("blSystemPropertyElements");
         }
         return systemPropertyCache;
+    }
+
+    @Override
+    public SystemProperty findById(Long id) {
+        return systemPropertiesDao.readById(id);
+    }
+    
+    @Override
+    public void removeFromCache(SystemProperty systemProperty) {
+        //Could have come from a cache invalidation service that does not
+        //include the site on the thread, so we should build the key
+        //including the site (if applicable) from the systemProperty itself
+        String key = buildKey(systemProperty);
+        getSystemPropertyCache().remove(key);
+        systemPropertiesDao.removeFromCache(systemProperty);
     }
 
     @Override

@@ -76,13 +76,15 @@ public class EntityForm {
     // This is used in cases where there is a sub-form on this page that is dynamically
     // rendered based on other values on this entity form. It is keyed by the name of the
     // property that drives the dynamic form.
-    protected Map<String, EntityForm> dynamicForms = new HashMap<String, EntityForm>();
+    protected Map<String, EntityForm> dynamicForms = new LinkedHashMap<String, EntityForm>();
     
     // These values are used when dynamic forms are in play. They are not rendered to the client,
     // but they can be used when performing actions on the submit event
-    protected Map<String, DynamicEntityFormInfo> dynamicFormInfos = new HashMap<String, DynamicEntityFormInfo>();
+    protected Map<String, DynamicEntityFormInfo> dynamicFormInfos = new LinkedHashMap<String, DynamicEntityFormInfo>();
     
     protected List<EntityFormAction> actions = new ArrayList<EntityFormAction>();
+
+    protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /**
      * @return a flattened, field name keyed representation of all of 
@@ -231,7 +233,7 @@ public class EntityForm {
         }
         
         if (fields != null) {
-            fields.remove(fieldName);
+            fieldToRemove = fields.remove(fieldName);
         }
         
         return fieldToRemove;
@@ -409,6 +411,25 @@ public class EntityForm {
         return Collections.unmodifiableList(clonedActions);
     }
     
+    public FieldGroup collapseToOneFieldGroup() {
+        Tab newTab = new Tab();
+        FieldGroup newFg = new FieldGroup();
+        newTab.getFieldGroups().add(newFg);
+        
+        for (Tab tab : getTabs()) {
+            for (FieldGroup fg : tab.getFieldGroups()) {
+                for (Field field : fg.getFields()) {
+                    newFg.addField(field);
+                }
+            }
+        }
+        
+        getTabs().clear();
+        getTabs().add(newTab);
+        
+        return newFg;
+    }
+    
     /* *********************** */
     /* GENERIC GETTERS/SETTERS */
     /* *********************** */
@@ -540,4 +561,13 @@ public class EntityForm {
         }
         return sb.toString();
     }
+    
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+    
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+    
 }

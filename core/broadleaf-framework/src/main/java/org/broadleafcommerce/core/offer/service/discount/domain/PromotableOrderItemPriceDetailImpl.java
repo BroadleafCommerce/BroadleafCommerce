@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
@@ -493,7 +494,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     public Money calculateTotalAdjustmentValue() {
         return calculateAdjustmentsUnitValue().multiply(quantity);
     }
-
+    
     @Override
     public PromotableOrderItemPriceDetail shallowCopy() {
         PromotableOrderItemPriceDetail copyDetail = promotableOrderItem.createNewDetail(quantity);
@@ -526,7 +527,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         return copyDetail;
     }
 
-    protected PromotableOrderItemPriceDetail split(int discountQty, Long offerId) {
+    protected PromotableOrderItemPriceDetail split(int discountQty, Long offerId, boolean hasQualifiers) {
         int originalQty = quantity;
         quantity = discountQty;
 
@@ -543,18 +544,20 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
             }
         }
 
-        Iterator<PromotionQualifier> qualifiers = promotionQualifiers.iterator();
-        while (qualifiers.hasNext()) {
-            PromotionQualifier currentQualifier = qualifiers.next();
-            Long qualifierOfferId = currentQualifier.getPromotion().getId();
-            if (qualifierOfferId.equals(offerId) && currentQualifier.getQuantity() <= splitItemQty) {
-                // Remove this one from the original detail
-                qualifiers.remove();
-                newDetail.getPromotionQualifiers().add(currentQualifier);
-            } else {
-                PromotionQualifier newQualifier = currentQualifier.split(splitItemQty);
-                newDetail.getPromotionQualifiers().add(newQualifier);
-            }            
+        if (hasQualifiers) {
+            Iterator<PromotionQualifier> qualifiers = promotionQualifiers.iterator();
+            while (qualifiers.hasNext()) {
+                PromotionQualifier currentQualifier = qualifiers.next();
+                Long qualifierOfferId = currentQualifier.getPromotion().getId();
+                if (qualifierOfferId.equals(offerId) && currentQualifier.getQuantity() <= splitItemQty) {
+                    // Remove this one from the original detail
+                    qualifiers.remove();
+                    newDetail.getPromotionQualifiers().add(currentQualifier);
+                } else {
+                    PromotionQualifier newQualifier = currentQualifier.split(splitItemQty);
+                    newDetail.getPromotionQualifiers().add(newQualifier);
+                }
+            }
         }
 
         for (PromotableOrderItemPriceDetailAdjustment existingAdjustment : promotableOrderItemPriceDetailAdjustments) {
@@ -571,7 +574,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         for (PromotionDiscount discount : promotionDiscounts) {
             if (discount.getQuantity() != quantity) {
                 Long offerId = discount.getCandidateItemOffer().getOffer().getId();
-                return this.split(discount.getQuantity(), offerId);
+                return this.split(discount.getQuantity(), offerId, !CollectionUtils.isEmpty(discount.getCandidateItemOffer().getOffer().getQualifyingItemCriteria()));
             }
         }
         return returnDetail;
@@ -581,4 +584,5 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     public boolean useSaleAdjustments() {
         return useSaleAdjustments;
     }
+
 }

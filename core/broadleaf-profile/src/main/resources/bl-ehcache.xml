@@ -49,7 +49,7 @@
     <cache name="blProductUrlCache"
         maxElementsInMemory="1000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="3600"/>
 
     <cache
@@ -64,7 +64,7 @@
     <cache name="blCategoryUrlCache"
         maxElementsInMemory="1000"
         eternal="false"
-        overflowToDisk="true"
+        overflowToDisk="false"
         timeToLiveSeconds="3600"/>
 
     <cache
@@ -146,5 +146,11 @@
         maxElementsInMemory="5000" 
         eternal="true" 
         overflowToDisk="true"/>
+
+    <cache name="blTemplateElements"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="3600"/>
         
 </ehcache>

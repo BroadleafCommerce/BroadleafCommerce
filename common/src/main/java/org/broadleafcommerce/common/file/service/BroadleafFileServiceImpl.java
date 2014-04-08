@@ -88,6 +88,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
      * Create a file work area that can be used for further operations. 
      * @return
      */
+    @Override
     public FileWorkArea initializeWorkArea() {
         StringBuilder baseDirectory = getBaseDirectory(false);
         String tempDirectory = getTempDirectory(baseDirectory);
@@ -117,11 +118,13 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     public void closeWorkArea(FileWorkArea fwArea) {
         File tempDirectory = new File(fwArea.getFilePathLocation());
         try {
-            FileUtils.deleteDirectory(tempDirectory);
+            if (tempDirectory.exists()) {
+                FileUtils.deleteDirectory(tempDirectory);
+            }
 
             for (int i = 1; i < maxGeneratedDirectoryDepth; i++) {
                 tempDirectory = tempDirectory.getParentFile();
-                if (tempDirectory.list().length == 0) {
+                if (tempDirectory.list().length == 0 && tempDirectory.exists()) {
                     FileUtils.deleteDirectory(tempDirectory);
                 }
             }
@@ -296,13 +299,13 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         StringBuilder path = new StringBuilder();
         if (tempFileSystemBaseDirectory == null || "".equals(tempFileSystemBaseDirectory.trim())) {
             path = path.append(DEFAULT_STORAGE_DIRECTORY);
-            if (!DEFAULT_STORAGE_DIRECTORY.endsWith("/")) {
-                path = path.append('/');
+            if (!DEFAULT_STORAGE_DIRECTORY.endsWith(File.separator)) {
+                path = path.append(File.separator);
             }
         } else {
             path = path.append(tempFileSystemBaseDirectory);
-            if (!tempFileSystemBaseDirectory.endsWith("/")) {
-                path = path.append('/');
+            if (!tempFileSystemBaseDirectory.endsWith(File.separator)) {
+                path = path.append(File.separator);
             }
         }
 
@@ -312,7 +315,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
             if (brc.getSite() != null) {
                 String siteDirectory = "site-" + brc.getSite().getId();
                 String siteHash = DigestUtils.md5Hex(siteDirectory);
-                path = path.append(siteHash.substring(0, 2)).append('/').append(siteDirectory);
+                path = path.append(siteHash.substring(0, 2)).append(File.separator).append(siteDirectory);
             }
         }
 
@@ -337,7 +340,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
             }
             // check next int value
             int num = random.nextInt(256);
-            baseDirectory = baseDirectory.append(Integer.toHexString(num)).append('/');
+            baseDirectory = baseDirectory.append(Integer.toHexString(num)).append(File.separator);
         }
         return baseDirectory.toString();
     }
