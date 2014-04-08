@@ -123,6 +123,28 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * Allows the extension additional fields to the document that are not configured via the DB.
      */
     public ExtensionResultStatusType attachAdditionalBasicFields(Sku sku, SolrInputDocument document, SolrHelperService shs);
+    
+    /**
+     * In certain scenarios, we may want to produce a different Solr document id than the default.
+     * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
+     * in the returnContainer should be used.
+     * 
+     * @param document
+     * @param product
+     * @return the extension result status type
+     */
+    public ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Product product, String[] returnContainer);
+
+    /**
+     * In certain scenarios, we may want to produce a different Solr document id than the default.
+     * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
+     * in the returnContainer should be used.
+     * 
+     * @param document
+     * @param sku
+     * @return the extension result status type
+     */
+    public ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Sku sku, String[] returnContainer);
 
     /**
      * In certain scenarios, the requested category id might not be the one that should be used in Solr.
@@ -134,4 +156,16 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return the extension result status type
      */
     public ExtensionResultStatusType getCategoryId(Long tentativeId, Long[] returnContainer);
+
+    /**
+     * In certain scenarios, the requested product id might not be the one that should be used in Solr.
+     * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
+     * in the returnContainer should be used.
+     * 
+     * @param tentativeId
+     * @param returnContainer
+     * @return the extension result status type
+     */
+    public ExtensionResultStatusType getProductId(Long tentativeId, Long[] returnContainer);
+    
 }

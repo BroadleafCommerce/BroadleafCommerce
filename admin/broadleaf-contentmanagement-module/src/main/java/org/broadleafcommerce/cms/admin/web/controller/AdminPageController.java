@@ -21,6 +21,7 @@ package org.broadleafcommerce.cms.admin.web.controller;
 
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -72,10 +73,11 @@ public class AdminPageController extends AdminBasicEntityController {
         
         // Attach the dynamic fields to the form
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-            .withCeilingClassName(PageTemplate.class.getName())
-            .withCriteriaName("constructForm")
-            .withPropertyName("pageTemplate")
-            .withPropertyValue(ef.findField("pageTemplate").getValue());
+                .withCeilingClassName(PageTemplate.class.getName())
+                .withSecurityCeilingClassName(Page.class.getName())
+                .withCriteriaName("constructForm")
+                .withPropertyName("pageTemplate")
+                .withPropertyValue(ef.findField("pageTemplate").getValue());
         EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, null);
         ef.putDynamicFormInfo("pageTemplate", info);
         ef.putDynamicForm("pageTemplate", dynamicForm);
@@ -95,9 +97,10 @@ public class AdminPageController extends AdminBasicEntityController {
             RedirectAttributes ra) throws Exception {
         // Attach the dynamic form info so that the update service will know how to split up the fields
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-            .withCeilingClassName(PageTemplate.class.getName())
-            .withCriteriaName("constructForm")
-            .withPropertyName("pageTemplate");
+                .withCeilingClassName(PageTemplate.class.getName())
+                .withSecurityCeilingClassName(Page.class.getName())
+                .withCriteriaName("constructForm")
+                .withPropertyName("pageTemplate");
         entityForm.putDynamicFormInfo("pageTemplate", info);
         
         String returnPath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
@@ -121,12 +124,17 @@ public class AdminPageController extends AdminBasicEntityController {
             @PathVariable("propertyName") String propertyName,
             @RequestParam("propertyTypeId") String propertyTypeId) throws Exception {
         DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-            .withCeilingClassName(PageTemplate.class.getName())
-            .withCriteriaName("constructForm")
-            .withPropertyName(propertyName)
-            .withPropertyValue(propertyTypeId);
+                .withCeilingClassName(PageTemplate.class.getName())
+                .withSecurityCeilingClassName(Page.class.getName())
+                .withCriteriaName("constructForm")
+                .withPropertyName(propertyName)
+                .withPropertyValue(propertyTypeId);
         
         return super.getDynamicForm(request, response, model, pathVars, info);
     }
-    
+
+    @Override
+    protected void attachSectionSpecificInfo(PersistencePackageRequest ppr, Map<String, String> pathVars) {
+        ppr.setSecurityCeilingEntityClassname(Page.class.getName());
+    }
 }

@@ -32,7 +32,11 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Service exposing several methods for creating a Solr index based on catalog product data.
+ *
+ * @see org.broadleafcommerce.core.search.service.solr.SolrIndexCachedOperation
  * @author Andre Azzolini (apazzolini)
+ * @author Jeff Fischer
  */
 public interface SolrIndexService {
 
@@ -93,15 +97,48 @@ public interface SolrIndexService {
     public List<Locale> getAllLocales();
 
     /**
-     * Given a product or sku, fields that relate to that product, and a list of locales and pricelists, builds a 
+     * Given a product, fields that relate to that product, and a list of locales and pricelists, builds a 
      * SolrInputDocument to be added to the Solr index.
      * 
      * @param product
+     * @param fields
+     * @param locales
+     * @return the document
+     */
+    public SolrInputDocument buildDocument(Product product, List<Field> fields, List<Locale> locales);
+
+    /**
+     * Given a sku, fields that relate to that sku, and a list of locales and pricelists, builds a 
+     * SolrInputDocument to be added to the Solr index.
+     * 
      * @param sku
      * @param fields
      * @param locales
      * @return the document
      */
-    public SolrInputDocument buildDocument(Product product, Sku sku, List<Field> fields, List<Locale> locales);
+    public SolrInputDocument buildDocument(Sku sku, List<Field> fields, List<Locale> locales);
 
+    /**
+     * SolrIndexService exposes {@link #buildIncrementalIndex(int, int, boolean)}.
+     * By wrapping the call to this method inside of a {@link org.broadleafcommerce.core.search.service.solr.SolrIndexCachedOperation.CacheOperation},
+     * a single cache will be used for all the contained calls to buildIncrementalIndex. Here's an example:
+     * {@code
+     *  performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
+     *        @Override
+     *        public void execute() throws ServiceException {
+     *            int page = 0;
+     *            while ((page * pageSize) < numProducts) {
+     *                buildIncrementalIndex(page, pageSize);
+     *                page++;
+     *            }
+     *        }
+     *    });
+     * }
+     * Note {@link #rebuildIndex()} already internally wraps its call using CacheOperation, so it is not necessary to call performCacheOperation
+     * for calls to rebuildIndex().
+     *
+     * @param cacheOperation the block of code to perform using a single cache for best performance
+     * @throws ServiceException
+     */
+    public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
 }

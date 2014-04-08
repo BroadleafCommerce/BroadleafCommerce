@@ -58,20 +58,20 @@ public class CheckoutServiceImpl implements CheckoutService {
     public CheckoutResponse performCheckout(Order order) throws CheckoutException {
         CheckoutSeed seed = null;
         try {
-            seed = new CheckoutSeed(order, new HashMap<String, Object>());
-            
             //Immediately fail if another thread is currently attempting to check out the order
             Object lockObject = putLock(order.getId());
             if (lockObject != null) {
-                throw new CheckoutException("This order is already in the process of being submitted, unable to checkout order -- id: " + order.getId(), seed);
+                throw new CheckoutException("This order is already in the process of being submitted, unable to checkout order -- id: " + order.getId(), new CheckoutSeed(order, new HashMap<String, Object>()));
             }
 
             // Immediately fail if this order has already been checked out previously
             if (hasOrderBeenCompleted(order)) {
-                throw new CheckoutException("This order has already been submitted, unable to checkout order -- id: " + order.getId(), seed);
+                throw new CheckoutException("This order has already been submitted, unable to checkout order -- id: " + order.getId(), new CheckoutSeed(order, new HashMap<String, Object>()));
             }
             
+            // Do a final save of the order before going through with the checkout workflow
             order = orderService.save(order, false);
+            seed = new CheckoutSeed(order, new HashMap<String, Object>());
 
             ProcessContext<CheckoutSeed> context = (ProcessContext<CheckoutSeed>) checkoutWorkflow.doActivities(seed);
 

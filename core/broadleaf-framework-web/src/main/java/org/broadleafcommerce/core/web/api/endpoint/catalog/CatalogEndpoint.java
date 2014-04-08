@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
@@ -33,6 +34,7 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
@@ -42,6 +44,7 @@ import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.InventoryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
@@ -52,6 +55,7 @@ import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -97,6 +101,9 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
 
     @Resource(name = "blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
+    
+    @Resource(name = "blInventoryService")
+    protected InventoryService inventoryService;
 
     /**
      * Search for {@code Product} by product id
@@ -491,6 +498,22 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         }
         throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
                 .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
+    }
+    
+    public List<InventoryWrapper> findInventoryForSkus(HttpServletRequest request, List<Long> ids) {
+        List<Sku> skus = catalogService.findSkusByIds(ids);
+        if (CollectionUtils.isNotEmpty(skus)) {
+            Map<Sku, Integer> quantities = inventoryService.retrieveQuantitiesAvailable(new HashSet<Sku>(skus));
+            List<InventoryWrapper> out = new ArrayList<InventoryWrapper>();
+            for (Map.Entry<Sku, Integer> entry : quantities.entrySet()) {
+                InventoryWrapper wrapper = (InventoryWrapper)context.getBean(InventoryWrapper.class.getName());
+                wrapper.wrapSummary(entry.getKey(), entry.getValue(), request);
+                out.add(wrapper);
+            }
+            return out;
+        }
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, skus.toArray());
     }
 
     public List<MediaWrapper> findMediaForProduct(HttpServletRequest request,

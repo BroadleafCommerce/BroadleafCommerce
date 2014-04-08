@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
@@ -306,9 +307,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     /**
      * @deprecated in favor of the other findSearchResults() method
      */
+    @Deprecated
     protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
             SearchCriteria searchCriteria, String defaultSort) throws ServiceException {
-        return findSearchResults(qualifiedSolrQuery, facets, searchCriteria, defaultSort, null);
+        return findSearchResults(qualifiedSolrQuery, facets, searchCriteria, defaultSort, (String[]) null);
     }
 
     /**
@@ -457,7 +459,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 ORDER order = "desc".equals(sortField.split(" ")[1]) ? ORDER.desc : ORDER.asc;
 
                 if (field != null) {
-                    query.addSortField(field, order);
+                    query.addSort(new SortClause(field, order));
                 }
             }
         }
@@ -593,6 +595,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     protected void sortFacetResults(Map<String, SearchFacetDTO> namedFacetMap) {
         for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
             Collections.sort(entry.getValue().getFacetValues(), new Comparator<SearchFacetResultDTO>() {
+                @Override
                 public int compare(SearchFacetResultDTO o1, SearchFacetResultDTO o2) {
                     if (o1.getValue() != null && o2.getValue() != null) {
                         return o1.getValue().compareTo(o2.getValue());
@@ -638,8 +641,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // We have to sort the products list by the order of the productIds list to maintain sortability in the UI
         if (products != null) {
             Collections.sort(products, new Comparator<Product>() {
+                @Override
                 public int compare(Product o1, Product o2) {
-                    return new Integer(productIds.indexOf(o1.getId())).compareTo(productIds.indexOf(o2.getId()));
+                    Long o1id = shs.getProductId(o1.getId());
+                    Long o2id = shs.getProductId(o2.getId());
+                    return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
                 }
             });
         }
@@ -666,6 +672,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // We have to sort the skus list by the order of the skuIds list to maintain sortability in the UI
         if (skus != null) {
             Collections.sort(skus, new Comparator<Sku>() {
+                @Override
                 public int compare(Sku o1, Sku o2) {
                     return new Integer(skuIds.indexOf(o1.getId())).compareTo(skuIds.indexOf(o2.getId()));
                 }
@@ -799,6 +806,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             final SearchCriteria searchCriteria) {
         return BLCMapUtils.keyedMap(facets, new TypedClosure<String, SearchFacetDTO>() {
 
+            @Override
             public String getKey(SearchFacetDTO facet) {
                 return getSolrFieldKey(facet.getFacet().getField(), searchCriteria);
             }

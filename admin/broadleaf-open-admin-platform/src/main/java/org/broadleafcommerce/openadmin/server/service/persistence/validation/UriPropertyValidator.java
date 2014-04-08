@@ -95,7 +95,7 @@ public class UriPropertyValidator extends ValidationConfigurationBasedPropertyVa
             return new PropertyValidationResult(false, ERROR_KEY_BEGIN_WITH_SLASH);
         }
 
-        if (!getAllowTrailingSlash() && value.endsWith("/")) {
+        if (!getAllowTrailingSlash() && value.endsWith("/") && value.length() > 1) {
             return new PropertyValidationResult(false, ERROR_KEY_CANNOT_END_WITH_SLASH);
         }
 

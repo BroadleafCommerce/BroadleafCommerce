@@ -19,14 +19,18 @@
  */
 package org.broadleafcommerce.common.sandbox;
 
+import org.springframework.stereotype.Component;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import org.springframework.stereotype.Component;
-
 /**
+ * @see org.broadleafcommerce.common.sandbox.SandBoxHelper
  * @author Jeff Fischer
  */
 @Component("blSandBoxHelper")
@@ -38,13 +42,25 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     }
 
     @Override
+    public Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance) {
+        return requestedParent;
+    }
+
+    @Override
     public List<Long> mergeCloneIds(EntityManager em, Class<?> type, Long... originalIds) {
         return Arrays.asList(originalIds);
     }
 
     @Override
-    public Long getOriginalId(EntityManager em, Class<?> type, Long id) {
-        return id;
+    public BiMap<Long, Long> getSandBoxToOriginalMap(EntityManager em, Class<?> type, Long... originalIds) {
+        return HashBiMap.create();
+    }
+
+    @Override
+    public OriginalIdResponse getOriginalId(EntityManager em, Class<?> type, Long id) {
+        OriginalIdResponse response = new OriginalIdResponse();
+        response.setOriginalId(id);
+        return response;
     }
 
     @Override

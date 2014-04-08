@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.site.service;
 
 import org.broadleafcommerce.common.site.dao.SiteDao;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
@@ -41,6 +42,11 @@ public class SiteServiceImpl implements SiteService {
 
     @Resource(name = "blSiteDao")
     protected SiteDao siteDao;
+
+    @Override
+    public Site createSite() {
+        return siteDao.create();
+    }
 
     @Override
     public Site retrieveSiteById(final Long id) {
@@ -94,6 +100,11 @@ public class SiteServiceImpl implements SiteService {
     @Transactional("blTransactionManager")
     public Site save(Site site) {
         return siteDao.save(site).clone();
+    }
+
+    @Override
+    public Catalog findCatalogById(Long id) {
+        return siteDao.retrieveCatalog(id);
     }
 
     @Override

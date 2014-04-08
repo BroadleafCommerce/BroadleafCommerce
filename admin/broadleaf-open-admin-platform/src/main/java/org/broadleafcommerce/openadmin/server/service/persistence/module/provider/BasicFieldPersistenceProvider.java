@@ -54,6 +54,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -92,6 +93,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 metadata.getFieldType() == SupportedFieldType.FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY ||
                 metadata.getFieldType() == SupportedFieldType.STRING ||
+                metadata.getFieldType() == SupportedFieldType.CODE ||
                 metadata.getFieldType() == SupportedFieldType.HTML ||
                 metadata.getFieldType() == SupportedFieldType.HTML_BASIC ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
@@ -234,6 +236,9 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                                 .getRequestedValue()));
                     }
                     break;
+                case CODE:
+                    // **NOTE** We want to fall through in this case, do not break.
+                    setNonDisplayableValues(populateValueRequest);
                 case STRING:
                 case HTML_BASIC:
                 case HTML:
@@ -397,7 +402,19 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     val = extractValueRequest.getDataFormatProvider().getDecimalFormatter().format
                             (extractValueRequest.getRequestedValue());
                 } else if (BigDecimal.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
-                    val = extractValueRequest.getDataFormatProvider().getDecimalFormatter().format(extractValueRequest.getRequestedValue());
+                    BigDecimal decimal = (BigDecimal) extractValueRequest.getRequestedValue();
+                    DecimalFormat format = extractValueRequest.getDataFormatProvider().getDecimalFormatter();
+                    //track all the decimal places in the scale of the BigDecimal - even if they're all zeros
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("0");
+                    if (decimal.scale() > 0) {
+                        sb.append(".");
+                        for (int j=0;j<decimal.scale();j++) {
+                            sb.append("0");
+                        }
+                    }
+                    format.applyPattern(sb.toString());
+                    val = format.format(extractValueRequest.getRequestedValue());
                 } else if (extractValueRequest.getMetadata().getForeignKeyClass() != null) {
                     try {
                         val = extractValueRequest.getFieldManager().getFieldValue

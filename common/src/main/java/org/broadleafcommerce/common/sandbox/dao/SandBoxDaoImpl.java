@@ -19,6 +19,18 @@
  */
 package org.broadleafcommerce.common.sandbox.dao;
 
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxManagement;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,17 +47,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxManagement;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
-import org.broadleafcommerce.common.util.TransactionUtils;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 
 @Repository("blSandBoxDao")
 public class SandBoxDaoImpl implements SandBoxDao {
@@ -82,6 +83,15 @@ public class SandBoxDaoImpl implements SandBoxDao {
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
         criteria.where(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandboxType.getType()));
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<SandBox> retrieveAllUserSandBoxes(Long authorId) {
+        TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sb")
+            .addRestriction("sb.author", "=", authorId)
+            .addRestriction("sb.sandboxType", "=", SandBoxType.USER.getType())
+            .toQuery(sandBoxEntityManager);
         return query.getResultList();
     }
 

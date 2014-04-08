@@ -63,8 +63,10 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.component.MediaField;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
+import org.broadleafcommerce.openadmin.web.form.entity.CodeField;
 import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
+import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
@@ -455,6 +457,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         // We're dealing with fields that should render as drop-downs, so set their possible values
                         f = new ComboField();
                         ((ComboField) f).setOptions(fmd.getEnumerationValues());
+                    } else if (fieldType.equals(SupportedFieldType.CODE.toString())) {
+                        f = new CodeField();
                     } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
                             || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
                         // We're dealing with rule builders, so we'll create those specialized fields
@@ -802,12 +806,29 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
 
-        // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
-        try {
-            adminRemoteSecurityService.securityCheck(entityForm.getCeilingEntityClassname(), EntityOperationType.UPDATE);
-        } catch (ServiceException e) {
-            if (e instanceof SecurityServiceException) {
-                readOnly = true;
+        if (!readOnly) {
+            // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
+            try {
+                String securityEntityClassname = entityForm.getCeilingEntityClassname();
+
+                if (!StringUtils.isEmpty(cmd.getSecurityCeilingType())) {
+                    securityEntityClassname = cmd.getSecurityCeilingType();
+                } else {
+                    if (entityForm.getDynamicFormInfos() != null) {
+                        for (DynamicEntityFormInfo info : entityForm.getDynamicFormInfos().values()) {
+                            if (!StringUtils.isEmpty(info.getSecurityCeilingClassName())) {
+                                securityEntityClassname = info.getSecurityCeilingClassName();
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                adminRemoteSecurityService.securityCheck(securityEntityClassname, EntityOperationType.UPDATE);
+            } catch (ServiceException e) {
+                if (e instanceof SecurityServiceException) {
+                    readOnly = true;
+                }
             }
         }
 

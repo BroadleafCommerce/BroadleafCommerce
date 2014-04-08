@@ -117,7 +117,15 @@
                 <ref bean="blAddWorkflowVerifyFulfillmentGroupItemsActivity" />
             </list>
         </property>
-        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+        <property name="defaultErrorHandler">
+            <bean class="org.broadleafcommerce.core.workflow.DefaultErrorHandler">
+                <property name="unloggedExceptionClasses">
+                    <list>
+                        <value>org.broadleafcommerce.core.inventory.service.InventoryUnavailableException</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
     </bean>
 
     <!-- Update Item Workflow Configuration -->
@@ -144,7 +152,15 @@
                 <ref bean="blUpdateWorkflowVerifyFulfillmentGroupItemsActivity" />
             </list>
         </property>
-        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+        <property name="defaultErrorHandler">
+            <bean class="org.broadleafcommerce.core.workflow.DefaultErrorHandler">
+                <property name="unloggedExceptionClasses">
+                    <list>
+                        <value>org.broadleafcommerce.core.inventory.service.InventoryUnavailableException</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
     </bean>
     
     
@@ -224,7 +240,15 @@
                 <ref bean="blCompleteOrderActivity" />
             </list>
         </property>
-        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+        <property name="defaultErrorHandler">
+            <bean class="org.broadleafcommerce.core.workflow.DefaultErrorHandler">
+                <property name="unloggedExceptionClasses">
+                    <list>
+                        <value>org.broadleafcommerce.core.inventory.service.InventoryUnavailableException</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
     </bean>
 
     <aop:config>

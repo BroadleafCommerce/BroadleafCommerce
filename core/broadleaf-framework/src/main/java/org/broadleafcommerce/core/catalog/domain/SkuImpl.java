@@ -217,6 +217,7 @@ public class SkuImpl implements Sku {
     protected Character available;
 
     @Column(name = "ACTIVE_START_DATE")
+    @Index(name="SKU_ACTIVE_START_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 1000,
         group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
         groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
@@ -224,7 +225,7 @@ public class SkuImpl implements Sku {
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
+    @Index(name="SKU_ACTIVE_END_INDEX")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 2000, 
         group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
         groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
@@ -270,6 +271,7 @@ public class SkuImpl implements Sku {
                             friendlyName = "SkuImpl_Primary_Media")
             )
     })
+    @BatchSize(size = 50)
     @ClonePolicyMap
     protected Map<String, Media> skuMedia = new HashMap<String, Media>();
 
@@ -317,6 +319,7 @@ public class SkuImpl implements Sku {
             joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true),
             inverseJoinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @BatchSize(size = 50)
     @ClonePolicyCollection
     protected List<SkuFee> fees = new ArrayList<SkuFee>();
 
@@ -328,6 +331,7 @@ public class SkuImpl implements Sku {
     @Column(name = "RATE", precision = 19, scale = 5)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @BatchSize(size = 50)
     @ClonePolicyMap
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
 
@@ -341,7 +345,10 @@ public class SkuImpl implements Sku {
     protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
 
     @Column(name = "INVENTORY_TYPE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType", order = 1000,
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType",
+        helpText = "inventoryTypeHelpText",
+        tooltip = "skuInventoryTypeTooltip",
+        order = 1000,
         tab = ProductImpl.Presentation.Tab.Name.Inventory, tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
         group = ProductImpl.Presentation.Group.Name.Inventory, groupOrder = ProductImpl.Presentation.Group.Order.Inventory,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
@@ -650,7 +657,7 @@ public class SkuImpl implements Sku {
             }
             return true;
         }
-        return available == 'Y';
+        return available != 'N';
     }
 
     @Override

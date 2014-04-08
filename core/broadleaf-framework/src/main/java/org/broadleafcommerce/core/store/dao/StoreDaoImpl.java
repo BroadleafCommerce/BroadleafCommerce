@@ -61,6 +61,7 @@ public class StoreDaoImpl implements StoreDao {
     @SuppressWarnings("unchecked")
     public List<Store> readAllStores() {
         Query query = em.createNamedQuery("BC_FIND_ALL_STORES");
+        query.setParameter("archived", 'N');
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
@@ -69,6 +70,7 @@ public class StoreDaoImpl implements StoreDao {
     public List<Store> readAllStoresByState(final String state) {
         Query query = em.createNamedQuery("BC_FIND_ALL_STORES_BY_STATE");
         query.setParameter("state", state);
+        query.setParameter("archived", 'N');
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }

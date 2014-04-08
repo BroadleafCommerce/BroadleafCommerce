@@ -23,7 +23,8 @@
         blcDateFormat : "yy.mm.dd",
         blcTimeFormat : "HH:mm:ss",
         displayDateFormat : 'mm/dd/yy',
-        displayTimeFormat : 'HH:mm:ss'
+        displayTimeFormat : 'HH:mm:ss',
+        displayDateDelimiter : '/'
     };
 
     // Add utility functions for dates to the BLCAdmin object
@@ -33,8 +34,7 @@
          */
         initialize : function($element) {
             // Set the value of this datepicker to be the appropriately formatted one
-            $element.val(this.getDisplayDate($element.val()));
-          
+            $element.val($element.val().indexOf(adminFormats.displayDateDelimiter)>=0?this.getDisplayDate(this.getServerDate($element.val())):this.getDisplayDate($element.val()));
             // Make it a date-time picker
             $element.datetimepicker({
                 showSecond: true,
@@ -68,12 +68,17 @@
         
         postValidationSubmitHandler : function($form) {
             $form.find('.datepicker').each(function(index, element) {
-                var name = $(this).attr('name');
+                var $this = $(this);
+                if ($this.closest('.entityFormTab').data('initialized') != 'true') {
+                    BLCAdmin.dates.initialize($this);
+                }
+
+                var name = $this.attr('name');
 
                 var $hiddenClone = $('<input>', {
                     type: 'hidden',
                     name: name,
-                    value: BLCAdmin.dates.getServerDate($(this).val()),
+                    value: BLCAdmin.dates.getServerDate($this.val()),
                     'class': 'datepicker-clone'
                 });
               

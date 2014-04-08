@@ -140,7 +140,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             path = path.append(entityType).append("/");
         }
 
-        if (entityId != null) {
+        if (entityId != null && !"null".equals(entityId)) {
             path = path.append(entityId).append("/");
         }
 

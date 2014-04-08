@@ -29,4 +29,9 @@ public class FormBuilderExtensionManager extends ExtensionManager<FormBuilderExt
         super(FormBuilderExtensionHandler.class);
     }
 
+    @Override
+    public boolean continueOnHandled() {
+        return true;
+    }
+
 }

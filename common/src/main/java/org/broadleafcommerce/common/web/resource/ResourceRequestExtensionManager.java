@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
@@ -17,21 +17,24 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.order.service.workflow;
+package org.broadleafcommerce.common.web.resource;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-/**
- * Extension manager used for availability operations within the blAddItemWorkflow, blUpdateItemWorkflow and blCheckoutItemWorkflow
- * 
- * @author Phillip Verheyden (phillipuniverse)
- */
-@Component("blWorkflowInventoryExtensionManager")
-public class WorkflowInventoryExtensionManager extends ExtensionManager<WorkflowInventoryExtensionHandler> {
+@Service("blResourceRequestExtensionManager")
+public class ResourceRequestExtensionManager extends ExtensionManager<ResourceRequestExtensionHandler>{
 
-    public WorkflowInventoryExtensionManager() {
-        super(WorkflowInventoryExtensionHandler.class);
+    public ResourceRequestExtensionManager() {
+        super(ResourceRequestExtensionHandler.class);
     }
-    
+
+    /**
+     * The first handler to return a handled status will win
+     */
+    @Override
+    public boolean continueOnHandled() {
+        return false;
+    }
+
 }

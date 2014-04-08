@@ -40,6 +40,7 @@ public class FilterMapping {
     protected Restriction restriction;
     protected FieldPath fieldPath;
     protected Class<?> inheritedFromClass;
+    protected Boolean nullsLast = true;
 
     public FilterMapping withFullPropertyName(String fullPropertyName) {
         setFullPropertyName(fullPropertyName);
@@ -159,5 +160,13 @@ public class FilterMapping {
             vals[j] = vals[j].trim();
         }
         return vals;
+    }
+
+    public Boolean getNullsLast() {
+        return nullsLast;
+    }
+
+    public void setNullsLast(Boolean nullsLast) {
+        this.nullsLast = nullsLast;
     }
 }

@@ -161,6 +161,12 @@ public interface SolrHelperService {
     public String getCategorySortFieldName(Category category);
 
     /**
+     * @param categoryId
+     * @return the default sort field name for this category
+     */
+    public String getCategorySortFieldName(Long categoryId);
+
+    /**
      * Determines if there is a locale prefix that needs to be applied to the given field for this particular request.
      * By default, a locale prefix is not applicable for category, explicitCategory, or fields that have type Price.
      * Also, it is not applicable for non-translatable fields
@@ -196,5 +202,14 @@ public interface SolrHelperService {
      * @return the category id to use
      */
     public Long getCategoryId(Long tentativeCategoryId);
+
+    /**
+     * In certain cases, the product id used for Solr indexing is different than the direct id on the product.
+     * This method provides a hook to substitute the product id if necessary.
+     * 
+     * @param tentativeCategoryId
+     * @return the category id to use
+     */
+    public Long getProductId(Long tentativeProductId);
 
 }

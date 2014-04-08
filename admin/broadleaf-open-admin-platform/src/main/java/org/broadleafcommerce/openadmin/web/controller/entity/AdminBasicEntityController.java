@@ -59,6 +59,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -102,6 +103,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
     @Resource(name="blSandBoxHelper")
     SandBoxHelper sandBoxHelper;
 
+    @Value("${admin.form.validation.errors.hideTopLevelErrors}")
+    protected boolean hideTopLevelErrors = false;
+
     // ******************************************
     // REQUEST-MAPPING BOUND CONTROLLER METHODS *
     // ******************************************
@@ -114,7 +118,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param response
      * @param model
      * @param pathVars
-     * @param criteria a Map of property name -> list critiera values
+     * @param requestParams a Map of property name -> list critiera values
      * @return the return view path
      * @throws Exception
      */
@@ -138,6 +142,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         if (requestParams.containsKey(firstField.getName())) {
             model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
         }
+        
+        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
         
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -288,7 +294,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
-            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(entityForm.getEntityType(), sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+            String sectionClassName = getClassNameForSection(sectionKey);
+            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, entityForm, sectionCrumbs);
 
@@ -297,6 +304,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("viewType", "modal/entityAdd");
             model.addAttribute("currentUrl", request.getRequestURL().toString());
             model.addAttribute("modalHeaderType", "addEntity");
+            model.addAttribute("hideTopLevelErrors", hideTopLevelErrors);
             setModelAttributes(model, sectionKey);
             return "modules/modalContainer";
         }
@@ -313,7 +321,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param model
      * @param pathVars
      * @param id
-     * @param modal - whether or not to show the entity in a read-only modal
      * @return the return view path
      * @throws Exception
      */
@@ -400,6 +407,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("entity", entity);
             model.addAttribute("currentUrl", request.getRequestURL().toString());
 
+            model.addAttribute("hideTopLevelErrors", hideTopLevelErrors);
             setModelAttributes(model, sectionKey);
             
             if (isAjaxRequest(request)) {
@@ -557,7 +565,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param model
      * @param pathVars
      * @param collectionField
-     * @param criteriaForm
+     * @param requestParams
      * @return the return view path
      * @throws Exception
      */
@@ -621,7 +629,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @param request
      * @param response
      * @param model
-     * @param sectionKey
+     * @param pathVars
      * @param id
      * @param collectionField
      * @param requestParams

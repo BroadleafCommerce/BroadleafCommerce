@@ -19,11 +19,20 @@
  */
 package org.broadleafcommerce.common.site.dao;
 
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 
 import java.util.List;
 
 public interface SiteDao {
+
+    /**
+     * Creates an instance of Site based on the class matching the bean id of 
+     * "org.broadleafcommerce.common.site.domain.Site"
+     * 
+     * @return
+     */
+    public Site create();
 
     /**
      * Finds a site by its id.
@@ -59,4 +68,12 @@ public interface SiteDao {
      * @return a List of all sites in the system
      */
     public List<Site> readAllActiveSites();
+
+    /**
+     * Finds a catalog by its id.
+     * 
+     * @param id
+     * @return the catalog
+     */
+    public Catalog retrieveCatalog(Long id);
 }

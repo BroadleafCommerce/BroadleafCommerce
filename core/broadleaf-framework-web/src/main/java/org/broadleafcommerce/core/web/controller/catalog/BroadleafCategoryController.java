@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
@@ -40,6 +41,7 @@ import org.springframework.web.servlet.mvc.Controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +66,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     protected static String FACETS_ATTRIBUTE_NAME = "facets";  
     protected static String PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME = "result";  
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
+    protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
     
     @Resource(name = "blSearchService")
     protected SearchService searchService;
@@ -129,6 +132,9 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             model.addObject(SKUS_ATTRIBUTE_NAME, result.getSkus());
             model.addObject(FACETS_ATTRIBUTE_NAME, result.getFacets());
             model.addObject(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME, result);
+            if (result.getProducts() != null) {
+                model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
+            }
             
             addDeepLink(model, deepLinkService, category);
     

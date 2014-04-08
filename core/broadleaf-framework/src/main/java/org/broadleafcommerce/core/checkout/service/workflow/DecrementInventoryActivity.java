@@ -19,13 +19,12 @@
  */
 package org.broadleafcommerce.core.checkout.service.workflow;
 
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.inventory.service.InventoryService;
+import org.broadleafcommerce.core.inventory.service.ContextualInventoryService;
+import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.core.order.service.workflow.WorkflowInventoryExtensionManager;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
@@ -44,10 +43,7 @@ import javax.annotation.Resource;
 public class DecrementInventoryActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     @Resource(name = "blInventoryService")
-    protected InventoryService inventoryService;
-    
-    @Resource(name = "blWorkflowInventoryExtensionManager")
-    protected WorkflowInventoryExtensionManager extensionManager;
+    protected ContextualInventoryService inventoryService;
     
     public DecrementInventoryActivity() {
         super();
@@ -71,19 +67,28 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
                 } else {
                     quantity += orderItem.getQuantity();
                 }
-                skuInventoryMap.put(sku, quantity);
+                if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                    skuInventoryMap.put(sku, quantity);
+                }
             } else if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
-                skuInventoryMap.put(bundleItem.getSku(), bundleItem.getQuantity());
+                if (InventoryType.CHECK_QUANTITY.equals(bundleItem.getSku().getInventoryType())) {
+                    // add the bundle sku of quantities to decrement
+                    skuInventoryMap.put(bundleItem.getSku(), bundleItem.getQuantity());
+                }
+                
+                // Now add all of the discrete items within the bundl
                 List<DiscreteOrderItem> discreteItems = bundleItem.getDiscreteOrderItems();
                 for (DiscreteOrderItem discreteItem : discreteItems) {
-                    Integer quantity = skuInventoryMap.get(discreteItem.getSku().getId());
-                    if (quantity == null) {
-                        quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
-                    } else {
-                        quantity += (discreteItem.getQuantity() * bundleItem.getQuantity());
+                    if (InventoryType.CHECK_QUANTITY.equals(discreteItem.getSku().getInventoryType())) {
+                        Integer quantity = skuInventoryMap.get(discreteItem.getSku().getId());
+                        if (quantity == null) {
+                            quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
+                        } else {
+                            quantity += (discreteItem.getQuantity() * bundleItem.getQuantity());
+                        }
+                        skuInventoryMap.put(discreteItem.getSku(), quantity);
                     }
-                    skuInventoryMap.put(discreteItem.getSku(), quantity);
                 }
             }
         }
@@ -99,25 +104,21 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
         }
             
         if (!skuInventoryMap.isEmpty()) {
-            ExtensionResultStatusType extensionResult = extensionManager.getProxy().decrementInventory(skuInventoryMap, context, rollbackState);
-            if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
-                inventoryService.decrementInventory(skuInventoryMap);
-                
-                if (getRollbackHandler() != null && !getAutomaticallyRegisterRollbackHandler()) {
-                    rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_INVENTORY_DECREMENTED, skuInventoryMap);
-                    rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_ORDER_ID, seed.getOrder().getId());
-                }
+            Map<String, Object> contextualInfo = new HashMap<String, Object>();
+            contextualInfo.put(ContextualInventoryService.ORDER_KEY, context.getSeedData().getOrder());
+            contextualInfo.put(ContextualInventoryService.ROLLBACK_STATE_KEY, new HashMap<String, Object>());
+            inventoryService.decrementInventory(skuInventoryMap, contextualInfo);
+            
+            if (getRollbackHandler() != null && !getAutomaticallyRegisterRollbackHandler()) {
+                rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_INVENTORY_DECREMENTED, skuInventoryMap);
+                rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_ORDER_ID, seed.getOrder().getId());
             }
+            
+            // add the rollback state that was used in the rollback handler
+            rollbackState.put(DecrementInventoryRollbackHandler.EXTENDED_ROLLBACK_STATE, contextualInfo.get(ContextualInventoryService.ROLLBACK_STATE_KEY));
         }
 
-        
-
         return context;
-
-    }
-
-    public void setInventoryService(InventoryService service) {
-        this.inventoryService = service;
     }
 
 }

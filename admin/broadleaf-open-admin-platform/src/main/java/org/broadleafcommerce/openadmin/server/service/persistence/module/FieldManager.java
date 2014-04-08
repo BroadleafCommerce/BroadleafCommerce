@@ -19,6 +19,16 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.ejb.HibernateEntityManager;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -29,16 +39,6 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.persistence.EntityManager;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
-import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.ejb.HibernateEntityManager;
 
 /**
  * 
@@ -100,6 +100,10 @@ public class FieldManager {
                     }
                     if (matchedClasses.size() > 1) {
                         LOG.warn("Found the property (" + peekAheadToken + ") in more than one class of an inheritance hierarchy. This may lead to unwanted behavior, as the system does not know which class was intended. Do not use the same property name in different levels of the inheritance hierarchy. Defaulting to the first class found (" + matchedClasses.get(0).getName() + ")");
+                    }
+                    if (matchedClasses.isEmpty()) {
+                        //probably an artificial field (i.e. passwordConfirm on AdminUserImpl)
+                        return null;
                     }
                     if (getSingleField(matchedClasses.get(0), peekAheadToken) != null) {
                         clazz = matchedClasses.get(0);

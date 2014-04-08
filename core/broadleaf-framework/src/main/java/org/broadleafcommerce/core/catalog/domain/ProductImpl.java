@@ -240,7 +240,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
         group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
         prominent = true, gridOrder = 2, 
         requiredOverride = RequiredOverride.REQUIRED)
-    @AdminPresentationToOneLookup(enableTypeaheadLookup = true)
+    @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product", orphanRemoval = true)
@@ -253,7 +253,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
         joinEntityClass = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl",
         targetObjectProperty = "category",
         parentObjectProperty = "product",
-        sortProperty = "displayOrder",
         gridVisibleFields = { "name" })
     @ClonePolicyAdornedTargetCollection(unowned = true)
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();

@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
@@ -36,6 +37,7 @@ import org.springframework.ui.Model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +73,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
     protected static String PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME = "result";  
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
     protected static String ORIGINAL_QUERY_ATTRIBUTE_NAME = "originalQuery";  
+    protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
 
     public String search(Model model, HttpServletRequest request, HttpServletResponse response,String query) throws ServletException, IOException, ServiceException {
         try {
@@ -133,6 +136,9 @@ public class BroadleafSearchController extends AbstractCatalogController {
                 model.addAttribute(FACETS_ATTRIBUTE_NAME, result.getFacets());
                 model.addAttribute(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME, result);
                 model.addAttribute(ORIGINAL_QUERY_ATTRIBUTE_NAME, query);
+                if (result.getProducts() != null) {
+                    model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
+                }
             }
             
         }

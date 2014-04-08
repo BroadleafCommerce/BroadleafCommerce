@@ -82,6 +82,17 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(arguments, element));
         addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
         addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
+        addCollectionToExistingSet(arguments, "blcAllProducts", buildProductList(relatedProducts));
+    }
+
+    protected List<Product> buildProductList(List<? extends PromotableProduct> relatedProducts) {
+        List<Product> productList = new ArrayList<Product>();
+        if (relatedProducts != null) {
+            for (PromotableProduct promProduct : relatedProducts) {
+                productList.add(promProduct.getRelatedProduct());
+            }
+        }
+        return productList;
     }
     
     protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {
