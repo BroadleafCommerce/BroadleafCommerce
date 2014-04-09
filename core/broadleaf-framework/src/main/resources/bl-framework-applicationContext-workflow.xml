@@ -30,12 +30,8 @@
     
     <bean id="blTaxProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
-            <list/>
+            <list />
         </property>
-    </bean>
-    
-    <bean id="blTaxModule" class="org.broadleafcommerce.core.pricing.service.module.SimpleTaxModule">
-        <property name="factor" value="0.00"/>
     </bean>
     
     <bean id="blFulfillmentLocationResolver" class="org.broadleafcommerce.core.pricing.service.fulfillment.SimpleFulfillmentLocationResolver" />
