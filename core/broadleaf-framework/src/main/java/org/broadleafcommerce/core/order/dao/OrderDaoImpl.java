@@ -60,6 +60,15 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public Order readOrderById(final Long orderId, boolean refresh) {
+        Order order = readOrderById(orderId);
+        if (refresh) {
+            em.refresh(order);
+        }
+        return order;
+    }
+
+    @Override
     public Order save(final Order order) {
         Order response = em.merge(order);
         //em.flush();

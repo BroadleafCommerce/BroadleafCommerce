@@ -98,6 +98,15 @@ public interface OrderService {
      * @return the requested Order
      */
     public Order findOrderById(Long orderId);
+
+    /**
+     * Looks up an Order by its database id
+     * and optionally calls refresh to ensure that the entity manager pulls the instance from the DB and not from cache
+     *
+     * @param orderId
+     * @return the requested Order
+     */
+    public Order findOrderById(Long orderId, boolean refresh);
     
     /**
      * Looks up the current shopping cart for the customer. Note that a shopping cart is

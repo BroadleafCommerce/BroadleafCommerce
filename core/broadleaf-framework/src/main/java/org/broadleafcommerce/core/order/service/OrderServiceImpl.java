@@ -189,6 +189,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order findOrderById(Long orderId, boolean refresh) {
+        return orderDao.readOrderById(orderId, refresh);
+    }
+
+    @Override
     public Order getNullOrder() {
         return nullOrderFactory.getNullOrder();
     }
