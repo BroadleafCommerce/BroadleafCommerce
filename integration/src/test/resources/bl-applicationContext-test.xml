@@ -62,7 +62,23 @@
         <property name="collectionRef" value="blTestPaymentConfigurationServices"/>
         <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
     </bean>
-
+    
+    <!-- Test pricing with the simple tax provider -->
+    <bean id="blSimpleTaxProvider" class="org.broadleafcommerce.core.pricing.service.tax.provider.SimpleTaxProvider"
+          p:defaultItemTaxRate="0.05" />
+          
+    <bean id="testTaxProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blSimpleTaxProvider" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="testTaxProviders"/>
+        <property name="targetRef" value="blTaxProviders"/>
+    </bean>
+    
     <!-- Configuration used in WorkflowTests -->
     <bean p:order="8080" id="blTotalActivity"
           class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
@@ -197,10 +213,6 @@
     </tx:advice>
 
     <bean id="blOfferTimeZoneProcessor" class="org.broadleafcommerce.core.offer.TestOfferTimeZoneProcessorImpl"/>
-
-    <bean p:order="7000" id="blTaxActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity">
-        <property name="taxModule" ref="blTaxModule"/>
-    </bean>
     
     <bean id="blNamedOperationManager" class="org.broadleafcommerce.cms.file.service.operation.NamedOperationManagerImpl">
         <property name="namedOperationComponents">
