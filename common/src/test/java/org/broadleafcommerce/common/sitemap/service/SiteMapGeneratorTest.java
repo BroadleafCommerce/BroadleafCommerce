@@ -136,6 +136,8 @@ public class SiteMapGeneratorTest {
             line = line.replaceAll("\\s+", "");
             sb.append(line);
         }
+        br.close();
+        fin.close();
         return sb.toString();
     }
 
