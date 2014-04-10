@@ -338,7 +338,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap);
         
-        
+        modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
         
         extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
                 searchCriteria, defaultSort);
