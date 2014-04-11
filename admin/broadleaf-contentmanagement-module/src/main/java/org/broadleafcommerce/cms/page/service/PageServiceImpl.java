@@ -36,6 +36,7 @@ import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -45,6 +46,7 @@ import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.rule.RuleProcessor;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
+import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,6 +85,9 @@ public class PageServiceImpl implements PageService {
 
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
+
+    @Resource(name = "blTemplateOverrideExtensionManager")
+    protected TemplateOverrideExtensionManager templateOverrideManager;
 
     protected Cache pageCache;
     protected final PageDTO NULL_PAGE = new NullPageDTO();
@@ -194,6 +199,13 @@ public class PageServiceImpl implements PageService {
             if (page.getPageTemplate().getLocale() != null) {
                 pageDTO.setLocaleCode(page.getPageTemplate().getLocale().getLocaleCode());
             }
+        }
+        
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
+        
+        if (StringUtils.isNotBlank(erh.getResult())) {
+            pageDTO.setTemplatePath(erh.getResult());
         }
 
         String cmsPrefix = staticAssetPathService.getStaticAssetUrlPrefix();
