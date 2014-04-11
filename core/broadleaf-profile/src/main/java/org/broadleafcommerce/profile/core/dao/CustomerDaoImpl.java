@@ -78,22 +78,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Customer save(Customer customer) {
-        //Copy transient fields
-        String unencodedPassword = customer.getUnencodedPassword();
-        String unencodedChallengeAnswer = customer.getUnencodedChallengeAnswer();
-        boolean anonymous = customer.isAnonymous();
-        boolean cookied = customer.isCookied();
-        boolean loggedIn = customer.isLoggedIn();
-
-        Customer mergedCustomer = em.merge(customer);
-
-        mergedCustomer.setUnencodedPassword(unencodedPassword);
-        mergedCustomer.setUnencodedChallengeAnswer(unencodedChallengeAnswer);
-        mergedCustomer.setAnonymous(anonymous);
-        mergedCustomer.setCookied(cookied);
-        mergedCustomer.setLoggedIn(loggedIn);
-
-        return mergedCustomer;
+        return em.merge(customer);
     }
 
     @Override
