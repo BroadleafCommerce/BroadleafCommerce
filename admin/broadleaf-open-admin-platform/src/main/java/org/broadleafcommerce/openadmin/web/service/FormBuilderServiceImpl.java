@@ -561,11 +561,22 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         extensionManager.getProxy().modifyUnpopulatedEntityForm(ef);
     }
     
+    /**
+     * This method is invoked when EntityForms are created and is meant to provide a hook to add
+     * additional entity form actions for implementors of Broadleaf. Broadleaf modules will typically
+     * leverage {@link FormBuilderExtensionHandler#addAdditionalFormActions(EntityForm)} method.
+     * @param ef
+     */
+    protected void addAdditionalFormActions(EntityForm ef) {
+        
+    }
+    
     @Override
     public EntityForm createEntityForm(ClassMetadata cmd, Entity entity, List<SectionCrumb> sectionCrumbs)
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
         populateEntityForm(cmd, entity, ef, sectionCrumbs);
+        addAdditionalFormActions(ef);
         extensionManager.getProxy().addAdditionalFormActions(ef);
         return ef;
     }
@@ -736,6 +747,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             throws ServiceException {
         EntityForm ef = createStandardEntityForm();
         populateEntityForm(cmd, entity, collectionRecords, ef, sectionCrumbs);
+        addAdditionalFormActions(ef);
         extensionManager.getProxy().addAdditionalFormActions(ef);
         return ef;
     }

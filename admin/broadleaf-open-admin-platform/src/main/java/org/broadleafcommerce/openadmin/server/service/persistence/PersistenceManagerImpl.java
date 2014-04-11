@@ -51,7 +51,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
-import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -175,24 +174,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         for (PersistenceModule module : modules) {
             module.extractProperties(entities, mergedProperties, propertiesList);
         }
-        /*
-         * Insert inherited fields whose order has been specified
-         */
-        for (int i = 0; i < entities.length - 1; i++) {
-            for (Property myProperty : propertiesList) {
-                if (myProperty.getMetadata().getInheritedFromType().equals(entities[i].getName()) && myProperty.getMetadata().getOrder() != null) {
-                    for (Property property : propertiesList) {
-                        if (!property.getMetadata().getInheritedFromType().equals(entities[i].getName()) && property.getMetadata().getOrder() != null && property.getMetadata().getOrder() >= myProperty.getMetadata().getOrder()) {
-                            if (property.getMetadata().getAdditionalMetadata() == null 
-                                    || property.getMetadata().getAdditionalMetadata().get(Field.ALTERNATE_ORDERING) == null
-                                    || ((Boolean) property.getMetadata().getAdditionalMetadata().get(Field.ALTERNATE_ORDERING)) == false) {
-                                property.getMetadata().setOrder(property.getMetadata().getOrder() + 1);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+
         Property[] properties = new Property[propertiesList.size()];
         properties = propertiesList.toArray(properties);
         Arrays.sort(properties, new Comparator<Property>() {

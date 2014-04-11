@@ -177,7 +177,7 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
         Customer customer = CustomerState.getCustomer();
         String firstName = "";
         String lastName = "";
-        String anonymous = "false";
+        boolean anonymous = false;
 
         if (customer != null) {
             if (!StringUtils.isEmpty(customer.getFirstName())) {
@@ -189,7 +189,7 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
             }
 
             if (customer.isAnonymous()) {
-                anonymous = "true";
+                anonymous = true;
             }
         }
         
