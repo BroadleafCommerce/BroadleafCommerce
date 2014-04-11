@@ -104,6 +104,7 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
                         }                       
                     } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
                         customer.setLoggedIn(true);
+                        customer.setAnonymous(false);
                         boolean publishLoggedInEvent = true;
                         if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerLoggedInEvent) {
                             CustomerLoggedInEvent loggedInEvent = (CustomerLoggedInEvent) lastPublishedEvent;
