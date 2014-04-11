@@ -83,68 +83,70 @@ public class SimpleTaxProvider implements TaxProvider {
 
     @Override
     public Order calculateTaxForOrder(Order order, ModuleConfiguration config) throws TaxException {
-        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            // Set taxes on the fulfillment group items
-            for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                if (isItemTaxable(fgItem)) {
-                    BigDecimal factor = determineItemTaxRate(fulfillmentGroup.getAddress());
-                    if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
-                        TaxDetail tax;
-                        checkDetail: {
-                            for (TaxDetail detail : fgItem.getTaxes()) {
-                                if (detail.getType().equals(TaxType.COMBINED)) {
-                                    tax = detail;
-                                    break checkDetail;
+        if (!order.getCustomer().isTaxExempt()) {
+            for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+                // Set taxes on the fulfillment group items
+                for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                    if (isItemTaxable(fgItem)) {
+                        BigDecimal factor = determineItemTaxRate(fulfillmentGroup.getAddress());
+                        if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
+                            TaxDetail tax;
+                            checkDetail: {
+                                for (TaxDetail detail : fgItem.getTaxes()) {
+                                    if (detail.getType().equals(TaxType.COMBINED)) {
+                                        tax = detail;
+                                        break checkDetail;
+                                    }
                                 }
+                                tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
+                                tax.setType(TaxType.COMBINED);
+                                fgItem.getTaxes().add(tax);
                             }
-                            tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
-                            tax.setType(TaxType.COMBINED);
-                            fgItem.getTaxes().add(tax);
+                            tax.setRate(factor);
+                            tax.setAmount(fgItem.getTotalItemTaxableAmount().multiply(factor));
                         }
-                        tax.setRate(factor);
-                        tax.setAmount(fgItem.getTotalItemTaxableAmount().multiply(factor));
                     }
                 }
-            }
-
-            for (FulfillmentGroupFee fgFee : fulfillmentGroup.getFulfillmentGroupFees()) {
-                if (isFeeTaxable(fgFee)) {
-                    BigDecimal factor = determineItemTaxRate(fulfillmentGroup.getAddress());
-                    if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
-                        TaxDetail tax;
-                        checkDetail: {
-                            for (TaxDetail detail : fgFee.getTaxes()) {
-                                if (detail.getType().equals(TaxType.COMBINED)) {
-                                    tax = detail;
-                                    break checkDetail;
+    
+                for (FulfillmentGroupFee fgFee : fulfillmentGroup.getFulfillmentGroupFees()) {
+                    if (isFeeTaxable(fgFee)) {
+                        BigDecimal factor = determineItemTaxRate(fulfillmentGroup.getAddress());
+                        if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
+                            TaxDetail tax;
+                            checkDetail: {
+                                for (TaxDetail detail : fgFee.getTaxes()) {
+                                    if (detail.getType().equals(TaxType.COMBINED)) {
+                                        tax = detail;
+                                        break checkDetail;
+                                    }
                                 }
+                                tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
+                                tax.setType(TaxType.COMBINED);
+                                fgFee.getTaxes().add(tax);
                             }
-                            tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
-                            tax.setType(TaxType.COMBINED);
-                            fgFee.getTaxes().add(tax);
-                        }
-                        tax.setRate(factor);
-                        tax.setAmount(fgFee.getAmount().multiply(factor));
-                    }
-                }
-            }
-
-            BigDecimal factor = determineTaxRateForFulfillmentGroup(fulfillmentGroup);
-            if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
-                TaxDetail tax;
-                checkDetail: {
-                    for (TaxDetail detail : fulfillmentGroup.getTaxes()) {
-                        if (detail.getType().equals(TaxType.COMBINED)) {
-                            tax = detail;
-                            break checkDetail;
+                            tax.setRate(factor);
+                            tax.setAmount(fgFee.getAmount().multiply(factor));
                         }
                     }
-                    tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
-                    tax.setType(TaxType.COMBINED);
-                    fulfillmentGroup.getTaxes().add(tax);
                 }
-                tax.setRate(factor);
-                tax.setAmount(fulfillmentGroup.getFulfillmentPrice().multiply(factor));
+    
+                BigDecimal factor = determineTaxRateForFulfillmentGroup(fulfillmentGroup);
+                if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
+                    TaxDetail tax;
+                    checkDetail: {
+                        for (TaxDetail detail : fulfillmentGroup.getTaxes()) {
+                            if (detail.getType().equals(TaxType.COMBINED)) {
+                                tax = detail;
+                                break checkDetail;
+                            }
+                        }
+                        tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
+                        tax.setType(TaxType.COMBINED);
+                        fulfillmentGroup.getTaxes().add(tax);
+                    }
+                    tax.setRate(factor);
+                    tax.setAmount(fulfillmentGroup.getFulfillmentPrice().multiply(factor));
+                }
             }
         }
 
