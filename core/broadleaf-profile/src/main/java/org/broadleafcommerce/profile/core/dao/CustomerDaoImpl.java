@@ -30,7 +30,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 @Repository("blCustomerDao")
 public class CustomerDaoImpl implements CustomerDao {
@@ -54,7 +54,7 @@ public class CustomerDaoImpl implements CustomerDao {
    
     @Override
     public List<Customer> readCustomersByUsername(String username) {
-        Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME");
+        TypedQuery<Customer> query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME", Customer.class);
         query.setParameter("username", username);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
@@ -69,7 +69,7 @@ public class CustomerDaoImpl implements CustomerDao {
     
     @Override
     public List<Customer> readCustomersByEmail(String emailAddress) {
-        Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL");
+        TypedQuery<Customer> query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL", Customer.class);
         query.setParameter("email", emailAddress);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
@@ -78,7 +78,22 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Customer save(Customer customer) {
-        return em.merge(customer);
+        //Copy transient fields
+        String unencodedPassword = customer.getUnencodedPassword();
+        String unencodedChallengeAnswer = customer.getUnencodedChallengeAnswer();
+        boolean anonymous = customer.isAnonymous();
+        boolean cookied = customer.isCookied();
+        boolean loggedIn = customer.isLoggedIn();
+
+        Customer mergedCustomer = em.merge(customer);
+
+        mergedCustomer.setUnencodedPassword(unencodedPassword);
+        mergedCustomer.setUnencodedChallengeAnswer(unencodedChallengeAnswer);
+        mergedCustomer.setAnonymous(anonymous);
+        mergedCustomer.setCookied(cookied);
+        mergedCustomer.setLoggedIn(loggedIn);
+
+        return mergedCustomer;
     }
 
     @Override
