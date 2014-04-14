@@ -328,7 +328,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     //TODO: this should return something more than just a String
     @Override
     public String initiateCheckout(Long orderId) throws Exception{
-        Order order = orderService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId, true);
         if (order == null || order instanceof NullOrderImpl) {
             throw new IllegalArgumentException("Could not order with id " + orderId);
         }
@@ -345,7 +345,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
     @Override
     public String lookupOrderNumberFromOrderId(PaymentResponseDTO responseDTO) {
-        Order order = orderService.findOrderById(Long.parseLong(responseDTO.getOrderId()));
+        Order order = orderService.findOrderById(Long.parseLong(responseDTO.getOrderId()), true);
         if (order == null) {
             throw new IllegalArgumentException("An order with ID " + responseDTO.getOrderId() + " cannot be found for the" +
             		" given payment response.");

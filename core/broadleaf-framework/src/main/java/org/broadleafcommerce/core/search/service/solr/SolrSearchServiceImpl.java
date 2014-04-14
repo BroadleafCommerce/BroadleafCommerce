@@ -348,7 +348,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap);
         
-        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
+        modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
+        
+        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
+                searchCriteria, defaultSort);
 
         if (LOG.isTraceEnabled()) {
             try {
@@ -396,6 +399,21 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         }
 
         return result;
+    }
+
+    /**
+     * Provides a hook point for implementations to modify all SolrQueries before they're executed.
+     * Modules should leverage the extension manager method of the same name,
+     * {@link SolrSearchServiceExtensionHandler#modifySolrQuery(SolrQuery, String, List, ProductSearchCriteria, String)}
+     * 
+     * @param query
+     * @param qualifiedSolrQuery
+     * @param facets
+     * @param searchCriteria
+     * @param defaultSort
+     */
+    protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
     }
     
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {

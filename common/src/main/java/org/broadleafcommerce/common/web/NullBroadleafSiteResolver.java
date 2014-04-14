@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.web;
 
+import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -40,6 +41,11 @@ public class NullBroadleafSiteResolver implements BroadleafSiteResolver {
     
     @Override
     public Site resolveSite(WebRequest request) {
+        return resolveSite(request, false);
+    }
+
+    @Override
+    public Site resolveSite(WebRequest request, boolean allowNullSite) throws SiteNotFoundException {
         return null;
     }
     

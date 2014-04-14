@@ -40,6 +40,7 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.util.StreamUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
@@ -185,7 +186,6 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
         }
     }
     
-    @SuppressWarnings("deprecation")
     protected void establishThinRequestContext() {
         BroadleafRequestContext oldBrc = BroadleafRequestContext.getBroadleafRequestContext();
         if (oldBrc == null || oldBrc.getSite() == null || oldBrc.getTheme() == null) {
@@ -206,10 +206,11 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             
             BroadleafRequestContext newBrc = new BroadleafRequestContext();
             if (!isGlobalAdmin(req)) {
-                newBrc.setSite(siteResolver.resolveSite(req));
-                newBrc.setSandBox(sbResolver.resolveSandBox(req, newBrc.getSite()));
+                ServletWebRequest swr = new ServletWebRequest(req);
+                newBrc.setSite(siteResolver.resolveSite(swr, true));
+                newBrc.setSandBox(sbResolver.resolveSandBox(swr, newBrc.getSite()));
                 BroadleafRequestContext.setBroadleafRequestContext(newBrc);
-                newBrc.setTheme(themeResolver.resolveTheme(req, newBrc.getSite()));
+                newBrc.setTheme(themeResolver.resolveTheme(swr));
             }
         }
     }

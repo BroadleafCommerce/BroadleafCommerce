@@ -134,6 +134,11 @@ var BLC = (function($) {
                         options.data['csrfToken'] = csrfToken;
                     }
                 }
+            } else if (!options.data) {
+                var csrfToken = getCsrfToken();
+                if (csrfToken) {
+                    options.data = { 'csrfToken': csrfToken }
+                }
             }
         }
         
