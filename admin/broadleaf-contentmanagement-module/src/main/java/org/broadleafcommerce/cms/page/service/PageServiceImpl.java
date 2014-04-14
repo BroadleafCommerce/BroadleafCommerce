@@ -141,7 +141,20 @@ public class PageServiceImpl implements PageService {
             }
         }
         
-        return evaluatePageRules(returnList, locale, ruleDTOs);
+        PageDTO dto = evaluatePageRules(returnList, locale, ruleDTOs);
+        
+        if (dto.getId() != null) {
+            Page page = findPageById(dto.getId());
+
+            ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+            templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
+            
+            if (StringUtils.isNotBlank(erh.getResult())) {
+                dto.setTemplatePath(erh.getResult());
+            }
+        }
+        
+        return dto;
     }
 
     @Override
@@ -199,13 +212,6 @@ public class PageServiceImpl implements PageService {
             if (page.getPageTemplate().getLocale() != null) {
                 pageDTO.setLocaleCode(page.getPageTemplate().getLocale().getLocaleCode());
             }
-        }
-        
-        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
-        templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
-        
-        if (StringUtils.isNotBlank(erh.getResult())) {
-            pageDTO.setTemplatePath(erh.getResult());
         }
 
         String cmsPrefix = staticAssetPathService.getStaticAssetUrlPrefix();
