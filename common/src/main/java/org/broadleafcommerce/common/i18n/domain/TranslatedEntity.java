@@ -47,6 +47,7 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     public static final TranslatedEntity SEARCH_FACET = new TranslatedEntity("org.broadleafcommerce.core.search.domain.SearchFacet", "SearchFacet");
     public static final TranslatedEntity FULFILLMENT_OPTION = new TranslatedEntity("org.broadleafcommerce.core.order.domain.FulfillmentOption", "FulfillmentOption");
     public static final TranslatedEntity OFFER = new TranslatedEntity("org.broadleafcommerce.core.offer.domain.Offer", "Offer");
+    public static final TranslatedEntity STRUCTURED_CONTENT = new TranslatedEntity("org.broadleafcommerce.cms.structure.domain.StructuredContent", "StructuredContent");
 
     public static TranslatedEntity getInstance(final String type) {
         return TYPES.get(type);

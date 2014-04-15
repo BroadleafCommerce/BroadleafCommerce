@@ -63,6 +63,7 @@ public class Field {
     protected String hint;
     protected String tooltip;
     protected String help;
+    protected String translationFieldName;
     protected Map<String, Object> attributes = new HashMap<String, Object>();
 
     /* ************ */
@@ -193,6 +194,11 @@ public class Field {
         setIsTypeaheadEnabled(isTypeaheadEnabled);
         return this;
     }
+    
+    public Field withTranslationFieldName(String translationFieldName) {
+        setTranslationFieldName(translationFieldName);
+        return this;
+    }
 
     /* ************************ */
     /* CUSTOM GETTERS / SETTERS */
@@ -268,6 +274,10 @@ public class Field {
     
     public Boolean getIsTypeaheadEnabled() {
         return isTypeaheadEnabled == null ? false : isTypeaheadEnabled;
+    }
+    
+    public String getTranslationFieldName() {
+        return translationFieldName == null ? name : translationFieldName;
     }
     
     /* ************************** */
@@ -460,6 +470,10 @@ public class Field {
 
     public void setIsTypeaheadEnabled(Boolean isTypeaheadEnabled) {
         this.isTypeaheadEnabled = isTypeaheadEnabled;
+    }
+
+    public void setTranslationFieldName(String translationFieldName) {
+        this.translationFieldName = translationFieldName;
     }
     
 }

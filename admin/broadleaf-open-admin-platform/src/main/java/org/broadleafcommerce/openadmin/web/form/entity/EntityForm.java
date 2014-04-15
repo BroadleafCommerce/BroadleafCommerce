@@ -59,6 +59,10 @@ public class EntityForm {
     protected String mainEntityName;
     protected String sectionKey;
     protected Boolean readOnly = false;
+    
+    protected String translationCeilingEntity;
+    protected String translationId;
+    
     protected Set<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
         @Override
         public int compare(Tab o1, Tab o2) {
@@ -428,6 +432,22 @@ public class EntityForm {
         getTabs().add(newTab);
         
         return newFg;
+    }
+    
+    public String getTranslationCeilingEntity() {
+        return translationCeilingEntity == null ? ceilingEntityClassname : translationCeilingEntity;
+    }
+    
+    public void setTranslationCeilingEntity(String translationCeilingEntity) {
+        this.translationCeilingEntity = translationCeilingEntity;
+    }
+    
+    public String getTranslationId() {
+        return translationId == null ? id : translationId;
+    }
+    
+    public void setTranslationId(String translationId) {
+        this.translationId = translationId;
     }
     
     /* *********************** */
