@@ -341,7 +341,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     /**
-     * This method to read active products utilizes paging to improve performance.
+     * This method to read active skus utilizes paging to improve performance.
      * While not optimal, this will reduce the memory required to load large catalogs.
      * 
      * It could still be improved for specific implementations by only loading fields that will be indexed or by accessing
@@ -351,7 +351,29 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @since 2.2.0
      */
     protected List<Sku> readAllActiveSkus(int page, int pageSize) {
-        return skuDao.readAllActiveSkus(page, pageSize);
+        List<Sku> skus = skuDao.readAllActiveSkus(page, pageSize);
+        ArrayList<Sku> skusToIndex = new ArrayList<Sku>();
+
+        if (skus != null && !skus.isEmpty()) {
+            for (Sku sku : skus) {
+                //If the sku is not active, don't index it...
+                if (!sku.isActive()) {
+                    continue;
+                }
+
+                //If this is the default sku and the product has product options
+                //and is not allowed to be sold without product options
+                if (sku.getDefaultProduct() != null
+                        && !sku.getProduct().getCanSellWithoutOptions()
+                        && !sku.getProduct().getProductOptionXrefs().isEmpty()) {
+                    continue;
+                }
+
+                skusToIndex.add(sku);
+            }
+        }
+
+        return skusToIndex;
     }
 
     @Override
@@ -361,18 +383,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     
     @Override
     public SolrInputDocument buildDocument(final Sku sku, List<Field> fields, List<Locale> locales) {
-        //If the sku is not active, return null...
-        if (!sku.isActive()) {
-            return null;
-        }
-
-        //If this is not the default sku and the sku is not allowed to be sold without product options
-        if (sku.getDefaultProduct() == null
-                && !sku.getProduct().getCanSellWithoutOptions()
-                && sku.getProductOptionValues().isEmpty()) {
-            return null;
-        }
-
         final SolrInputDocument document = new SolrInputDocument();
         
         attachBasicDocumentFields(sku, document);
