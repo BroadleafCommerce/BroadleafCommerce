@@ -272,6 +272,14 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     public void setStructuredContentFields(Map<String, StructuredContentField> structuredContentFields) {
         this.structuredContentFields = structuredContentFields;
     }
+    
+    @Override
+    public String getFieldValue(String fieldName) {
+        if (structuredContentFields.containsKey(fieldName)) {
+            return getStructuredContentFields().get(fieldName).getValue();
+        }
+        return null;
+    }
 
     @Override
     public Boolean getOfflineFlag() {

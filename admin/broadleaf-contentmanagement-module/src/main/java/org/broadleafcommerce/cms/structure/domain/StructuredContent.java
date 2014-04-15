@@ -217,5 +217,14 @@ public interface StructuredContent extends Serializable {
      * @param qualifyingItemCriteria
      */
     public void setQualifyingItemCriteria(@Nullable Set<StructuredContentItemCriteria> qualifyingItemCriteria);
+    
+    /**
+     * Returns the value of the associated {@link StructuredContentField} if the given fieldName
+     * exists in the map returned by {@link #getStructuredContentFields()}, and null otherwise.
+     * 
+     * @param fieldName
+     * @return the value of the given field
+     */
+    public String getFieldValue(String fieldName);
 
 }
