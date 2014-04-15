@@ -99,4 +99,8 @@ public class SearchResult {
         return (products == null || products.size() == 0) ? 1 : (int) Math.ceil(totalResults * 1.0 / pageSize);
     }
 
+    public Integer getTotalSkuPages() {
+        return (skus == null || skus.size() == 0) ? 1 : (int) Math.ceil(totalResults * 1.0 / pageSize);
+    }
+
 }
