@@ -365,7 +365,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 //and is not allowed to be sold without product options
                 if (sku.getDefaultProduct() != null
                         && !sku.getProduct().getCanSellWithoutOptions()
-                        && !sku.getProduct().getProductOptionXrefs().isEmpty()) {
+                        && !sku.getProduct().getAdditionalSkus().isEmpty()) {
                     continue;
                 }
 
