@@ -361,6 +361,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     
     @Override
     public SolrInputDocument buildDocument(final Sku sku, List<Field> fields, List<Locale> locales) {
+        //If the sku is not active, return null...
+        if (!sku.isActive()) {
+            return null;
+        }
+
+        //If this is not the default sku and the sku is not allowed to be sold without product options
+        if (sku.getDefaultProduct() == null
+                && !sku.getProduct().getCanSellWithoutOptions()
+                && sku.getProductOptionValues().isEmpty()) {
+            return null;
+        }
+
         final SolrInputDocument document = new SolrInputDocument();
         
         attachBasicDocumentFields(sku, document);
