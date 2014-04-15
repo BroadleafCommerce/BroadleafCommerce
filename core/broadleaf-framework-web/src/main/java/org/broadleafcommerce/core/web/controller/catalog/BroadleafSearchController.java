@@ -69,7 +69,8 @@ public class BroadleafSearchController extends AbstractCatalogController {
     protected SearchRedirectService searchRedirectService;
     protected static String searchView = "catalog/search";
     
-    protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
+    protected static String PRODUCTS_ATTRIBUTE_NAME = "products";
+    protected static String SKUS_ATTRIBUTE_NAME = "skus";
     protected static String FACETS_ATTRIBUTE_NAME = "facets";  
     protected static String PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME = "result";  
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
@@ -135,6 +136,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
                 facetService.setActiveFacetResults(result.getFacets(), request);
                 
                 model.addAttribute(PRODUCTS_ATTRIBUTE_NAME, result.getProducts());
+                model.addAttribute(SKUS_ATTRIBUTE_NAME, result.getSkus());
                 model.addAttribute(FACETS_ATTRIBUTE_NAME, result.getFacets());
                 model.addAttribute(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME, result);
                 model.addAttribute(ORIGINAL_QUERY_ATTRIBUTE_NAME, query);
