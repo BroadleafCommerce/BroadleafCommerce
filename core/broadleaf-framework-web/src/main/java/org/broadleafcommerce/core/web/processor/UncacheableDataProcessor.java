@@ -127,6 +127,7 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
 
     protected void addProductInventoryData(Map<String, Object> attrMap, Arguments arguments) {
         List<Long> outOfStockProducts = new ArrayList<Long>();
+        List<Long> outOfStockSkus = new ArrayList<Long>();
 
         Set<Product> products = (Set<Product>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get("blcAllDisplayedProducts");
         if (products != null) {
@@ -139,8 +140,19 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
                     }
                 }
             }
+        } else {
+            Set<Sku> skus = (Set<Sku>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get("blcAllDisplayedSkus");
+            if (skus != null) {
+                Map<Sku, Integer> inventoryAvailable = inventoryService.retrieveQuantitiesAvailable(skus);
+                for (Map.Entry<Sku, Integer> entry : inventoryAvailable.entrySet()) {
+                    if (entry.getValue() == null || entry.getValue() < 1) {
+                        outOfStockSkus.add(entry.getKey().getId());
+                    }
+                }
+            }
         }
         attrMap.put("outOfStockProducts", outOfStockProducts);
+        attrMap.put("outOfStockSkus", outOfStockSkus);
     }
 
     protected void addCartData(Map<String, Object> attrMap) {
