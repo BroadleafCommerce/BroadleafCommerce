@@ -35,7 +35,9 @@
 $(document).ready(function() {
     
     $('body').on('click', 'a.show-translations', function() {
-    	BLCAdmin.showLinkAsModal($(this).attr('href'));
+        if ($(this).data('disabled') != 'disabled') {
+            BLCAdmin.showLinkAsModal($(this).attr('href'));
+        }
     	return false;
     });
     

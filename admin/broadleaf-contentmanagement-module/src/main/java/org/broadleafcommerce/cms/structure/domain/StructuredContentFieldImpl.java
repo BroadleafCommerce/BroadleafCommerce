@@ -19,19 +19,6 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -41,6 +28,17 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 
 /**
  * Created by bpolster.
@@ -138,5 +136,20 @@ public class StructuredContentFieldImpl implements StructuredContentField {
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }
-}
+    
+    @Override
+    public StructuredContentField clone() {
+        StructuredContentField clone = null;
 
+        try {
+            clone = (StructuredContentField) Class.forName(this.getClass().getName()).newInstance();
+            clone.setFieldKey(getFieldKey());
+            clone.setValue(getValue());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return clone;
+    }
+        
+}
