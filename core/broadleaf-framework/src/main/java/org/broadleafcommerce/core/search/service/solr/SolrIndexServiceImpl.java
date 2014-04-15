@@ -115,7 +115,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blSolrIndexDao")
     protected SolrIndexDao solrIndexDao;
 
-    public static String ATTR_MAP = "productAttributes";
+    public static String PRODUCT_ATTR_MAP = "productAttributes";
+
+    public static String SKU_ATTR_MAP = "skuAttributes";
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
@@ -231,7 +233,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         try {
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             List<Locale> locales = getAllLocales();
-            List<Field> fields = fieldDao.readAllProductFields();
             
             CatalogStructure cache = SolrIndexCachedOperation.getCache();
             if (cache != null) {
@@ -242,6 +243,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             }
             
             if (useSku) {
+                List<Field> fields = fieldDao.readAllSkuFields();
                 List<Sku> skus = readAllActiveSkus(page, pageSize);
                 List<Long> skuIds = BLCCollectionUtils.collectList(skus, new TypedTransformer<Long>() {
                     @Override
@@ -262,6 +264,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     }
                 }
             } else {
+                List<Field> fields = fieldDao.readAllProductFields();
                 List<Product> products = readAllActiveProducts(page, pageSize);
                 List<Long> productIds = BLCCollectionUtils.collectList(products, new TypedTransformer<Long>() {
                     @Override
@@ -616,8 +619,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
             if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                 Object propertyValue;
-                if (propertyName.contains(ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(sku, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                if (propertyName.contains(SKU_ATTR_MAP)) {
+                    propertyValue = PropertyUtils.getMappedProperty(sku, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
 
                     // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
                     // value field out of it if it exists.
@@ -665,8 +668,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
             if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                 Object propertyValue;
-                if (propertyName.contains(ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                if (propertyName.contains(PRODUCT_ATTR_MAP)) {
+                    propertyValue = PropertyUtils.getMappedProperty(product, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
 
                     // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
                     // value field out of it if it exists.
@@ -760,5 +763,4 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             }
         }
     }
-
 }

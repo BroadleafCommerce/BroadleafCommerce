@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
@@ -74,6 +75,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
     protected static String ORIGINAL_QUERY_ATTRIBUTE_NAME = "originalQuery";  
     protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
+    protected static String ALL_SKUS_ATTRIBUTE_NAME = "blcAllDisplayedSkus";
 
     public String search(Model model, HttpServletRequest request, HttpServletResponse response,String query) throws ServletException, IOException, ServiceException {
         try {
@@ -138,6 +140,10 @@ public class BroadleafSearchController extends AbstractCatalogController {
                 model.addAttribute(ORIGINAL_QUERY_ATTRIBUTE_NAME, query);
                 if (result.getProducts() != null) {
                     model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
+                }
+
+                if (result.getSkus() != null) {
+                    model.addAttribute(ALL_SKUS_ATTRIBUTE_NAME, new HashSet<Sku>(result.getSkus()));
                 }
             }
             

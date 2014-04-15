@@ -67,7 +67,8 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
         return BLCSystemProperty.resolveBooleanSystemProperty("i18n.translation.enabled");
     }
 
-    private static String ATTR_MAP = SolrIndexServiceImpl.ATTR_MAP;
+    private static String PRODUCT_ATTR_MAP = SolrIndexServiceImpl.PRODUCT_ATTR_MAP;
+    private static String SKU_ATTR_MAP = SolrIndexServiceImpl.SKU_ATTR_MAP;
 
     @PostConstruct
     public void init() {
@@ -145,20 +146,21 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                 BroadleafRequestContext.setBroadleafRequestContext(tempContext);
 
                 final Object propertyValue;
-                if (propertyName.contains(ATTR_MAP)) {
-                    if (useSku) {
-                        propertyValue = PropertyUtils.getMappedProperty(sku, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+
+                if (useSku) {
+                    if (propertyName.contains(SKU_ATTR_MAP)) {
+                        propertyValue = PropertyUtils.getMappedProperty(sku, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
                     } else {
-                        propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+                        propertyValue = PropertyUtils.getProperty(sku, propertyName);
                     }
                 } else {
-                    if (useSku) {
-                        propertyValue = PropertyUtils.getProperty(sku, propertyName);
-
+                    if (propertyName.contains(PRODUCT_ATTR_MAP)) {
+                        propertyValue = PropertyUtils.getMappedProperty(product, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
                     } else {
                         propertyValue = PropertyUtils.getProperty(product, propertyName);
                     }
                 }
+
                 values.put(localeCode, propertyValue);
             }
         }

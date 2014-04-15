@@ -32,12 +32,14 @@ import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
+import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,6 +52,10 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+/**
+ * @deprecated Use {@link SolrSearchServiceImpl} 
+ */
+@Deprecated
 @Service("blSearchService")
 public class DatabaseSearchServiceImpl implements SearchService {
     
@@ -118,7 +124,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
         }
         
         if (facets == null) {
-            facets = buildSearchFacetDtos(searchFacetDao.readAllSearchFacets());
+            facets = buildSearchFacetDtos(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
             element = new Element(cacheKey, facets);
             cache.put(element);
         }
@@ -250,6 +256,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
         
         List<SearchFacetRange> ranges = facet.getSearchFacetRanges();
         Collections.sort(ranges, new Comparator<SearchFacetRange>() {
+            @Override
             public int compare(SearchFacetRange o1, SearchFacetRange o2) {
                 return o1.getMinValue().compareTo(o2.getMinValue());
             }

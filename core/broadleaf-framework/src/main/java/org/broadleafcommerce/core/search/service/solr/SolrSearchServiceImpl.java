@@ -52,6 +52,7 @@ import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
@@ -288,7 +289,13 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     protected String buildQueryFieldsString() {
         StringBuilder queryBuilder = new StringBuilder();
-        List<Field> fields = fieldDao.readAllProductFields();
+        List<Field> fields = null;
+        if (useSku) {
+            fields = fieldDao.readAllSkuFields();
+        } else {
+            fields = fieldDao.readAllProductFields();
+        }
+
         for (Field currentField : fields) {
             if (currentField.getSearchable()) {
                 appendFieldToQuery(queryBuilder, currentField);
@@ -438,7 +445,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     @Override
     public List<SearchFacetDTO> getSearchFacets() {
-        return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets());
+        if (useSku) {
+            return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.SKU));
+        }
+        return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
     }
 
     @Override
@@ -852,7 +862,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return a map of abbreviated key to fully qualified solr index field key for all product fields
      */
     protected Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria) {
-        List<Field> fields = fieldDao.readAllProductFields();
+        List<Field> fields = null;
+        if (useSku) {
+            fields = fieldDao.readAllSkuFields();
+        } else {
+            fields = fieldDao.readAllProductFields();
+        }
         Map<String, String> solrFieldKeyMap = new HashMap<String, String>();
         for (Field field : fields) {
             solrFieldKeyMap.put(field.getAbbreviation(), getSolrFieldKey(field, searchCriteria));

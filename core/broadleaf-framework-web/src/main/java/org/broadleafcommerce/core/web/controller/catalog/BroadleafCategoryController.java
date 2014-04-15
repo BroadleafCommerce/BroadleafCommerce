@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
@@ -67,6 +68,7 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     protected static String PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME = "result";  
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
     protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
+    protected static String ALL_SKUS_ATTRIBUTE_NAME = "blcAllDisplayedSkus";
     
     @Resource(name = "blSearchService")
     protected SearchService searchService;
@@ -136,6 +138,10 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
                 model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
             }
             
+            if (result.getSkus() != null) {
+                model.addObject(ALL_SKUS_ATTRIBUTE_NAME, new HashSet<Sku>(result.getSkus()));
+            }
+
             addDeepLink(model, deepLinkService, category);
     
             if (StringUtils.isNotEmpty(category.getDisplayTemplate())) {
