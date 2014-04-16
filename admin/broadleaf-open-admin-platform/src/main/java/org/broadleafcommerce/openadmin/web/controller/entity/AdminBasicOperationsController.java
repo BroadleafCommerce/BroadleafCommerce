@@ -93,6 +93,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ppr.setMaxIndex(getMaxIndex(requestParams));
         ppr.removeFilterAndSortCriteria("requestingEntityId");
         ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
+        ppr.addCustomCriteria("owningClass=" + owningClass);
         
         if (md instanceof BasicFieldMetadata) {
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
