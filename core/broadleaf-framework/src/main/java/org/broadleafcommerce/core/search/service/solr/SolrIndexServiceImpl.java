@@ -173,11 +173,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 LOG.debug("There are at most " + numItemsToIndex + " items to index");
             }
             
-            int page = 0;
-            while ((page * pageSize) < numItemsToIndex) {
-                buildIncrementalIndex(page, pageSize);
-                page++;
-            }
             performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
                 @Override
                 public void execute() throws ServiceException {
@@ -245,14 +240,14 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             if (useSku) {
                 List<Field> fields = fieldDao.readAllSkuFields();
                 List<Sku> skus = readAllActiveSkus(page, pageSize);
-                List<Long> skuIds = BLCCollectionUtils.collectList(skus, new TypedTransformer<Long>() {
+                List<Long> productIds = BLCCollectionUtils.collectList(skus, new TypedTransformer<Long>() {
                     @Override
                     public Long transform(Object input) {
-                        return ((Sku) input).getId();
+                        return ((Sku) input).getProduct().getId();
                     }
                 });
                 
-                solrIndexDao.populateProductCatalogStructure(skuIds, SolrIndexCachedOperation.getCache());
+                solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
                 
                 for (Sku sku : skus) {
                     SolrInputDocument doc = buildDocument(sku, fields, locales);
@@ -513,7 +508,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             } else {
                 cache = new CatalogStructure();
                 SolrIndexCachedOperation.setCache(cache);
-                solrIndexDao.populateProductCatalogStructure(Arrays.asList(sku.getId()), SolrIndexCachedOperation.getCache());
+                solrIndexDao.populateProductCatalogStructure(Arrays.asList(product.getId()), SolrIndexCachedOperation.getCache());
             }
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
