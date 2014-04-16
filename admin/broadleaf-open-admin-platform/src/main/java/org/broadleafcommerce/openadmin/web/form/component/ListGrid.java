@@ -20,12 +20,6 @@
 
 package org.broadleafcommerce.openadmin.web.form.component;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -33,6 +27,12 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class ListGrid {
 
@@ -228,6 +228,15 @@ public class ListGrid {
     
     public void setListGridType(Type listGridType) {
         this.listGridType = listGridType.toString().toLowerCase();
+    }
+    
+    /**
+     * Allows for completely custom types other than the ones defined {@link Type} to assign unique handlers to on the JS
+     * side
+     * @param listGridType
+     */
+    public void setListGridTypeString(String listGridType) {
+        this.listGridType = listGridType;
     }
     
     public Boolean getCanFilterAndSort() {
