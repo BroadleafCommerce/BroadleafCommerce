@@ -105,12 +105,12 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ListGrid listGrid = null;
         // If we're dealing with a lookup from a dynamic field, we need to build the list grid differently
         if (collectionField.contains("|")) {
-            listGrid = formService.buildMainListGrid(drs, mainMetadata, "/fjdklsfjdkls", sectionCrumbs);
+            listGrid = formService.buildMainListGrid(drs, mainMetadata, "/" + owningClass, sectionCrumbs);
             listGrid.setListGridType(ListGrid.Type.TO_ONE);
             listGrid.setSubCollectionFieldName(collectionField);
             listGrid.setPathOverride("/" + owningClass + "/" + collectionField + "/select");
             md = new BasicFieldMetadata();
-            md.setFriendlyName("zjklvjcxl");
+            md.setFriendlyName(mainMetadata.getPolymorphicEntities().getFriendlyName());
             collectionProperty = new Property();
             collectionProperty.setMetadata(md);
         } else if (md instanceof BasicFieldMetadata) {
