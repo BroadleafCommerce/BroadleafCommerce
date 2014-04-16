@@ -170,7 +170,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             }
             
             if (LOG.isDebugEnabled()) {
-                LOG.debug("There are " + numItemsToIndex + " total items to index");
+                LOG.debug("There are at most " + numItemsToIndex + " items to index");
             }
             
             int page = 0;
