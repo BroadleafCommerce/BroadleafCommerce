@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
@@ -39,6 +32,13 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -71,6 +71,7 @@ public class DynamicFieldPersistenceHandlerHelper {
                 BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
                 property.setMetadata(fieldMetadata);
                 fieldMetadata.setFieldType(definition.getFieldType());
+                
                 fieldMetadata.setMutable(true);
                 fieldMetadata.setInheritedFromType(inheritedType.getName());
                 fieldMetadata.setAvailableToTypes(new String[] {inheritedType.getName()});
@@ -110,6 +111,14 @@ public class DynamicFieldPersistenceHandlerHelper {
                     itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
                     fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", itemMap);
                 }
+                
+                
+                if (definition.getFieldType().equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) {
+                    fieldMetadata.setForeignKeyClass(definition.getAdditionalForeignKeyClass());
+                    fieldMetadata.setOwningClass(definition.getAdditionalForeignKeyClass());
+                    fieldMetadata.setForeignKeyDisplayValueProperty("__adminMainEntity");
+                }
+                
                 propertiesList.add(property);
             }
             groupCount++;

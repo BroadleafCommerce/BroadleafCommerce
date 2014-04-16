@@ -93,4 +93,8 @@ public interface FieldDefinition extends Serializable {
 
     public void setFieldOrder(int fieldOrder);
 
+    public String getAdditionalForeignKeyClass();
+
+    public void setAdditionalForeignKeyClass(String className);
+
 }
