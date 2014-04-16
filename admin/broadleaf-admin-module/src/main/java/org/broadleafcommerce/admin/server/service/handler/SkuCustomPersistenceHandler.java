@@ -59,7 +59,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.stereotype.Component;
 
@@ -100,9 +99,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
-
-    @Resource(name = "blSkuRestrictionFactory")
-    protected RestrictionFactory skuRestrictionFactory;
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
@@ -351,8 +347,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
 
             //Pull back the Skus based on the criteria from the client
-            List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps, skuRestrictionFactory);
-
+            List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps);
+            
             //allow subclasses to provide additional criteria before executing the query
             applyProductOptionValueCriteria(filterMappings, cto, persistencePackage, null);
             applyAdditionalFetchCriteria(filterMappings, cto, persistencePackage);
