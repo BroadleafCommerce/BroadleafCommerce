@@ -38,7 +38,8 @@
                LEFT JOIN sku.defaultProduct defaultProduct
                WHERE (defaultProduct.url = :productUrl
                OR (product.url = :productUrl AND sku.urlKey = :skuUrlKey))
-               AND (sku.activeEndDate &gt; :currentDate OR sku.activeEndDate = null)
+               AND (sku.activeStartDate IS NOT NULL AND sku.activeStartDate &lt;= :currentDate)
+               AND (sku.activeEndDate &gt;= :currentDate OR sku.activeEndDate IS NULL)
                AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
         </query>
     </named-query>
