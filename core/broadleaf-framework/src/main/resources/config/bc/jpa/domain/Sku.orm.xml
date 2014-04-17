@@ -36,7 +36,7 @@
                FROM org.broadleafcommerce.core.catalog.domain.Sku sku
                LEFT JOIN sku.product product
                LEFT JOIN sku.defaultProduct defaultProduct
-               WHERE (defaultProduct.url = :productUrl
+               WHERE (defaultProduct.url = :url
                OR (product.url = :productUrl AND sku.urlKey = :skuUrlKey))
                AND (sku.activeStartDate IS NOT NULL AND sku.activeStartDate &lt;= :currentDate)
                AND (sku.activeEndDate &gt;= :currentDate OR sku.activeEndDate IS NULL)

@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,9 @@ import javax.servlet.http.HttpServletRequest;
 public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
     
     private String controllerName="blProductController";
+    
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
 
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;
@@ -52,6 +56,9 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
+        if(useSku) {
+            return null;
+        }
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
             Product product = catalogService.findProductByURI(context.getRequestURIWithoutContext());

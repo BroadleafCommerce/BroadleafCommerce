@@ -245,6 +245,7 @@ public class SkuDaoImpl implements SkuDao {
         Query query;
     
         query = em.createNamedQuery("BC_READ_SKU_BY_OUTGOING_URL");
+        query.setParameter("url", uri);
         query.setParameter("productUrl", productUrl);
         query.setParameter("skuUrlKey", skuUrlKey);
         query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution));
