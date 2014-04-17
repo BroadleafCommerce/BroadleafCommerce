@@ -129,7 +129,7 @@
             <artifactId>commons-collections</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-collections</groupId>
+            <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
         </dependency>
         <dependency>
