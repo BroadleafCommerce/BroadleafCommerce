@@ -174,6 +174,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         SolrContext.setPrimaryServer(primaryServer);
         SolrContext.setReindexServer(reindexServer);
+        //NOTE: There is no reason to set the admin server here as the SolrContext will return the primary server
+        //if the admin server is not set...
     }
 
     public void copyConfigToSolrHome(InputStream configIs, File destFile) throws IOException {
@@ -215,7 +217,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     /**
-     * This constructor serves to mimic the one below this, which takes in two {@link SolrServer} arguments.
+     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
      * By having this and then simply disregarding the second parameter, we can more easily support 2-core
      * Solr configurations that use embedded/standalone per environment.
      * 
@@ -225,13 +227,36 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @throws ParserConfigurationException 
      * @throws IOException 
      */
-    public SolrSearchServiceImpl(String solrServer, String reindexServer) throws IOException, ParserConfigurationException, SAXException {
+    public SolrSearchServiceImpl(String solrServer, String reindexServer)
+            throws IOException, ParserConfigurationException, SAXException {
+        this(solrServer);
+    }
+
+    /**
+     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
+     * By having this and then simply disregarding the second and third parameters, we can more easily support 2-core
+     * Solr configurations that use embedded/standalone per environment, along with an admin server.
+     * 
+     * @param solrServer
+     * @param reindexServer
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     */
+    public SolrSearchServiceImpl(String solrServer, String reindexServer, String adminServer)
+            throws IOException, ParserConfigurationException, SAXException {
         this(solrServer);
     }
 
     public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer) {
         SolrContext.setPrimaryServer(solrServer);
         SolrContext.setReindexServer(reindexServer);
+    }
+
+    public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer, SolrServer adminServer) {
+        SolrContext.setPrimaryServer(solrServer);
+        SolrContext.setReindexServer(reindexServer);
+        SolrContext.setAdminServer(adminServer);
     }
 
     @Override
