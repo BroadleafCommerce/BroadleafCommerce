@@ -367,7 +367,7 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>commons-collections</groupId>
+                <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>4.0</version>
                 <type>jar</type>
