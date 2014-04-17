@@ -32,19 +32,11 @@
         WHERE product.defaultSku.name LIKE :name</query>
     </named-query>
     
-    <named-query name="BC_READ_ACTIVE_PRODUCTS_BY_SKU" >
-        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product, IN(product.additionalSkus) sku
-        WHERE sku.id = :skuId
-            AND product.defaultSku.activeStartDate &lt;= :currentDate
-        AND (product.defaultSku.activeEndDate &gt; :currentDate OR product.defaultSku.activeEndDate = null)
-                AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')</query>
-    </named-query>
-
     <named-query name="BC_READ_AUTOMATIC_PRODUCT_BUNDLES" >
         <query>SELECT productBundle FROM org.broadleafcommerce.core.catalog.domain.ProductBundle productBundle
         WHERE productBundle.autoBundle = :autoBundle
         AND productBundle.defaultSku.activeStartDate &lt;= :currentDate
-        AND (productBundle.defaultSku.activeEndDate &gt; :currentDate OR productBundle.defaultSku.activeEndDate = null)
+        AND (productBundle.defaultSku.activeEndDate &gt; :currentDate OR productBundle.defaultSku.activeEndDate IS NULL)
                 AND (productBundle.archiveStatus.archived IS NULL OR productBundle.archiveStatus.archived = 'N')</query>
     </named-query>
 
@@ -52,7 +44,7 @@
         <query>SELECT categoryProduct.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
         WHERE categoryProduct.category.id = :categoryId
         AND categoryProduct.product.defaultSku.activeStartDate &lt;= :currentDate
-        AND (categoryProduct.product.defaultSku.activeEndDate &gt; :currentDate OR categoryProduct.product.defaultSku.activeEndDate = null)
+        AND (categoryProduct.product.defaultSku.activeEndDate &gt; :currentDate OR categoryProduct.product.defaultSku.activeEndDate IS NULL)
                 AND (categoryProduct.product.archiveStatus.archived IS NULL OR categoryProduct.product.archiveStatus.archived = 'N')
         ORDER BY categoryProduct.displayOrder
         </query>
@@ -69,7 +61,7 @@
         <query>SELECT product
                FROM org.broadleafcommerce.core.catalog.domain.Product product
                WHERE (product.url = :url OR product.urlKey = :urlKey)
-               AND (product.defaultSku.activeEndDate &gt; :currentDate OR product.defaultSku.activeEndDate = null)
+               AND (product.defaultSku.activeEndDate &gt; :currentDate OR product.defaultSku.activeEndDate IS NULL)
                AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
         </query>
     </named-query>
