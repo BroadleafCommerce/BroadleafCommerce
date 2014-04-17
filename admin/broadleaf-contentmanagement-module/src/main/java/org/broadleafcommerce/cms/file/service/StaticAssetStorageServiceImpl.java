@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.cms.file.service;
 
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -188,7 +189,18 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             is.close();
             tos.close();
 
-            FileUtils.moveFile(tmpFile, baseLocalFile);
+            // Adding protection against this file already existing / being written by another thread.
+            // Adding locks would be useless here since another VM could be executing the code. 
+            if (!baseLocalFile.exists()) {
+                try {
+                    FileUtils.moveFile(tmpFile, baseLocalFile);
+                } catch (FileExistsException e) {
+                    // No problem
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("File exists error moving file " + tmpFile.getAbsolutePath(), e);
+                    }
+                }
+            }
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(tos);

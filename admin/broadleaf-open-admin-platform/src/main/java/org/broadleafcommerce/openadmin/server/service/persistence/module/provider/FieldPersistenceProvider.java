@@ -55,8 +55,12 @@ public interface FieldPersistenceProvider extends Ordered {
      * Media DTO
      */
     public static final int MEDIA = 20000;
-    public static final int MAP_FIELD = 30000;
-    public static final int RULE = 40000;
+    /**
+     * The {@link RuleFieldPersistenceProvider} MUST come prior to the normal map field provider. They both deal with map
+     * field types but rules are a special case
+     */
+    public static final int RULE = 30000;
+    public static final int MAP_FIELD = 40000;
     public static final int MONEY = 50000;
 
     /**
