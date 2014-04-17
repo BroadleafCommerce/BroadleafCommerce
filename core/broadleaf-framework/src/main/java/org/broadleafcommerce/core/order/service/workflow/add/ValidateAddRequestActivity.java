@@ -40,6 +40,7 @@ import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,9 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 
 public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
+    
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -140,8 +144,12 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     }
     
     protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) {
-        // Check whether the sku is correct given the product options.
-        Sku sku = findMatchingSku(product, attributeValues, messages);
+        Sku sku = null;
+        
+        if(!useSku) {
+            // Check whether the sku is correct given the product options.
+            sku = findMatchingSku(product, attributeValues, messages);
+        }
 
         if (sku == null && skuId != null) {
             sku = catalogService.findSkuById(skuId);
