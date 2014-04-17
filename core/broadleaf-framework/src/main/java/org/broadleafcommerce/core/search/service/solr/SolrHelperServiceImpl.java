@@ -80,7 +80,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             car.setAction(CoreAdminAction.SWAP);
 
             try {
-                SolrContext.getServer().request(car);
+                SolrContext.getAdminServer().request(car);
             } catch (Exception e) {
                 LOG.error(e);
                 throw new ServiceException("Unable to swap cores", e);
@@ -240,6 +240,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 .toString();
     }
 
+    @Override
     public String getLocalePrefix() {
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
             Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
