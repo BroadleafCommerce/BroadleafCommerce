@@ -151,4 +151,18 @@
         <property name="targetRef" value="blEntityExtensionManagers"/>
     </bean>
 
+    <!-- Add a default implementation for payments of type PaymentGatewayType.PASSTHROUGH -->
+    <bean id="blPassthroughPaymentConfigurationServiceList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blPassthroughPaymentConfigurationService"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blPassthroughPaymentConfigurationServiceList"/>
+        <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
+    </bean>
+
 </beans>

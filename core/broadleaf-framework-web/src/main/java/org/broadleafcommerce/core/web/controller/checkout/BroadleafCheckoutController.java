@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
+import org.broadleafcommerce.core.checkout.service.gateway.PassthroughPaymentConstants;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
@@ -185,6 +186,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         transaction.setRawResponse("Passthrough Payment");
         transaction.setSuccess(true);
         transaction.setType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
+        transaction.getAdditionalFields().put(PassthroughPaymentConstants.PASSTHROUGH_PAYMENT_TYPE, paymentType.getType());
 
         transaction.setOrderPayment(passthroughPayment);
         passthroughPayment.addTransaction(transaction);
