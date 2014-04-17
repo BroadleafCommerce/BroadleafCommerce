@@ -84,23 +84,41 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams, sectionCrumbs, pathVars);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
-        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
-        FieldMetadata md = collectionProperty.getMetadata();
-
-        ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
+        
+        // Only get collection property metadata when there is a non-structured content field that I am looking for
+        Property collectionProperty = null;
+        FieldMetadata md = null;
+        if (!collectionField.contains("|")) {
+            collectionProperty = mainMetadata.getPMap().get(collectionField);
+            md = collectionProperty.getMetadata();
+            ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
+        }
+        
         ppr.addFilterAndSortCriteria(getCriteria(requestParams));
         ppr.setStartIndex(getStartIndex(requestParams));
         ppr.setMaxIndex(getMaxIndex(requestParams));
         ppr.removeFilterAndSortCriteria("requestingEntityId");
         ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
+        ppr.addCustomCriteria("owningClass=" + owningClass);
         
-        if (md instanceof BasicFieldMetadata) {
-            DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
-            ListGrid listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
-
-            model.addAttribute("listGrid", listGrid);
-            model.addAttribute("viewType", "modal/simpleSelectEntity");
+        DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
+        ListGrid listGrid = null;
+        // If we're dealing with a lookup from a dynamic field, we need to build the list grid differently
+        if (collectionField.contains("|")) {
+            listGrid = formService.buildMainListGrid(drs, mainMetadata, "/" + owningClass, sectionCrumbs);
+            listGrid.setListGridType(ListGrid.Type.TO_ONE);
+            listGrid.setSubCollectionFieldName(collectionField);
+            listGrid.setPathOverride("/" + owningClass + "/" + collectionField + "/select");
+            md = new BasicFieldMetadata();
+            md.setFriendlyName(mainMetadata.getPolymorphicEntities().getFriendlyName());
+            collectionProperty = new Property();
+            collectionProperty.setMetadata(md);
+        } else if (md instanceof BasicFieldMetadata) {
+            listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
         }
+        
+        model.addAttribute("listGrid", listGrid);
+        model.addAttribute("viewType", "modal/simpleSelectEntity");
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", "selectCollectionItem");

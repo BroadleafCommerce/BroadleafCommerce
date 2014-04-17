@@ -71,6 +71,7 @@ public class DynamicFieldPersistenceHandlerHelper {
                 BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
                 property.setMetadata(fieldMetadata);
                 fieldMetadata.setFieldType(definition.getFieldType());
+                
                 fieldMetadata.setMutable(true);
                 fieldMetadata.setInheritedFromType(inheritedType.getName());
                 fieldMetadata.setAvailableToTypes(new String[] {inheritedType.getName()});
@@ -113,6 +114,14 @@ public class DynamicFieldPersistenceHandlerHelper {
                     itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
                     fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", itemMap);
                 }
+                
+                
+                if (definition.getFieldType().equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) {
+                    fieldMetadata.setForeignKeyClass(definition.getAdditionalForeignKeyClass());
+                    fieldMetadata.setOwningClass(definition.getAdditionalForeignKeyClass());
+                    fieldMetadata.setForeignKeyDisplayValueProperty("__adminMainEntity");
+                }
+                
                 propertiesList.add(property);
             }
             groupCount++;

@@ -43,7 +43,7 @@ public class ContentDeepLinkServiceImpl extends DeepLinkService<StructuredConten
         links.add(new DeepLink()
             .withAdminBaseUrl(getAdminBaseUrl())
             .withUrlFragment(structuredContentAdminPath + item.getId())
-            .withDisplayText("Content Item")
+            .withDisplayText("Edit")
             .withSourceObject(item));
 
         return links;

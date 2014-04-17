@@ -46,6 +46,10 @@ html {
 	display: none;
 }
 
+a.unclickable { 
+	cursor: default; color: grey; 
+}
+
 .float-left {
     float: left;
 }

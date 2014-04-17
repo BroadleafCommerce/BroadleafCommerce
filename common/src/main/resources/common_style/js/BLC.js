@@ -110,6 +110,22 @@ var BLC = (function($) {
 	    return extractedData;
     }
     
+    function get(options, callback) {
+        if (options == null) {
+            options = {};
+        }
+        options.type = 'GET';
+        return BLC.ajax(options, callback);
+    }
+
+    function post(options, callback) {
+        if (options == null) {
+            options = {};
+        }
+        options.type = 'POST';
+        return BLC.ajax(options, callback);
+    }
+    
     function ajax(options, callback) {
         if (options.type == null) {
             options.type = 'GET';
@@ -254,6 +270,8 @@ var BLC = (function($) {
         addInternalDataHandler : addInternalDataHandler,
         redirectIfNecessary : redirectIfNecessary,
         getExtraData : getExtraData,
+        get : get,
+        post : post,
         ajax : ajax,
         defaultErrorHandler : defaultErrorHandler,
         serializeObject : serializeObject,

@@ -20,6 +20,8 @@
 package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.TemplateTypeAware;
@@ -76,6 +78,9 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
     @Autowired(required = false)
     @Qualifier("blCategoryDeepLinkService")
     protected DeepLinkService<Category> deepLinkService;
+
+    @Resource(name = "blTemplateOverrideExtensionManager")
+    protected TemplateOverrideExtensionManager templateOverrideManager;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -135,8 +140,13 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             }
             
             addDeepLink(model, deepLinkService, category);
-    
-            if (StringUtils.isNotEmpty(category.getDisplayTemplate())) {
+
+            ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+            templateOverrideManager.getProxy().getOverrideTemplate(erh, category);
+
+            if (StringUtils.isNotBlank(erh.getResult())) {
+                model.setViewName(erh.getResult());
+            } else if (StringUtils.isNotEmpty(category.getDisplayTemplate())) {
                 model.setViewName(category.getDisplayTemplate());   
             } else {
                 model.setViewName(getDefaultCategoryView());

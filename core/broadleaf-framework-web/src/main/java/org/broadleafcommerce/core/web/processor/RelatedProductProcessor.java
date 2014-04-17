@@ -151,12 +151,24 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         if (quantityStr != null) {
             Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
                     .parseExpression(args.getConfiguration(), args, quantityStr);
-            int quantity = ((BigDecimal)expression.execute(args.getConfiguration(), args)).intValue();
+            Object quantityExp = expression.execute(args.getConfiguration(), args);
+            int quantity = 0;
+            if (quantityExp instanceof String) {
+                quantity = Integer.parseInt((String)quantityExp);
+            } else {
+                quantity = ((BigDecimal)expression.execute(args.getConfiguration(), args)).intValue();
+            }
             relatedProductDTO.setQuantity(quantity);          
         }       
                 
-        if (typeStr != null && RelatedProductTypeEnum.getInstance(typeStr) != null) {
-            relatedProductDTO.setType(RelatedProductTypeEnum.getInstance(typeStr));         
+        if (typeStr != null ) {
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
+                    .parseExpression(args.getConfiguration(), args, typeStr);
+            Object typeExp = expression.execute(args.getConfiguration(), args);
+            if (typeExp instanceof String && RelatedProductTypeEnum.getInstance((String)typeExp) != null) {
+                relatedProductDTO.setType(RelatedProductTypeEnum.getInstance((String)typeExp));
+            }
+
         }
         
         if ("false".equalsIgnoreCase(element.getAttributeValue("cumulativeResults"))) {
