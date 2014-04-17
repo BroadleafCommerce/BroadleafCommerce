@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.web.controller.catalog;
 
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.TemplateTypeAware;
@@ -26,7 +29,6 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
-import org.hibernate.tool.hbm2x.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,6 +37,7 @@ import org.springframework.web.servlet.mvc.Controller;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -53,6 +56,9 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Autowired(required = false)
     @Qualifier("blProductDeepLinkService")
     protected DeepLinkService<Product> deepLinkService;
+    
+    @Resource(name = "blTemplateOverrideExtensionManager")
+    protected TemplateOverrideExtensionManager templateOverrideManager;
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -66,8 +72,13 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(allProductsSet));
 
         addDeepLink(model, deepLinkService, product);
-
-        if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
+        
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        templateOverrideManager.getProxy().getOverrideTemplate(erh, product);
+        
+        if (StringUtils.isNotBlank(erh.getResult())) {
+            model.setViewName(erh.getResult());
+        } else if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
             model.setViewName(product.getDisplayTemplate());    
         } else {
             model.setViewName(getDefaultProductView());

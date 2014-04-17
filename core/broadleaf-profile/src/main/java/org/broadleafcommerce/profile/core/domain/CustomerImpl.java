@@ -556,4 +556,10 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     public void setTaxExemptionCode(String exemption) {
         this.taxExemptionCode = exemption;
     }
+    
+    @Override
+    public boolean isTaxExempt() {
+        return StringUtils.isNotEmpty(taxExemptionCode);
+    }
+    
 }

@@ -1,0 +1,15 @@
+<div class="entity-edit">
+    <div th:remove="tag" th:if="${entityFormTemplatePath == null}">
+        <blc:form th:include="components/entityForm"
+            th:remove="tag"
+            th:with="additionalTabClasses='entity-form',
+                     showSingleTab='true'" />
+    </div>
+
+    <div th:remove="tag" th:unless="${entityFormTemplatePath == null}">
+        <blc:form th:include="${entityFormTemplatePath}"
+            th:remove="tag"
+            th:with="additionalTabClasses='entity-form',
+                     showSingleTab='true'" />
+    </div>
+</div>

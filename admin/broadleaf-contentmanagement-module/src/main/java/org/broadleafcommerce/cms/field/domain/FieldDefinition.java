@@ -105,4 +105,8 @@ public interface FieldDefinition extends Serializable {
 
     public void setHint(String hint);
 
+    public String getAdditionalForeignKeyClass();
+
+    public void setAdditionalForeignKeyClass(String className);
+
 }

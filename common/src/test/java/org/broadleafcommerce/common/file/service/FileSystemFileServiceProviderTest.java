@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.common.file.service;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -48,10 +51,13 @@ public class FileSystemFileServiceProviderTest extends TestCase {
      */
     public void testBuildFileName() throws Exception {
         FileSystemFileServiceProvider provider = new FileSystemFileServiceProvider();
-        provider.fileSystemBaseDirectory = "/test";
+        String tmpdir = FileUtils.getTempDirectoryPath();
+        provider.fileSystemBaseDirectory = FilenameUtils.concat(tmpdir, "test");
         provider.maxGeneratedDirectoryDepth = 2;
         File file = provider.getResource("/product/myproductimage.jpg");
-        assertTrue(file.getAbsolutePath().equals("/test/35/ec/myproductimage.jpg"));
+        
+        String resultPath = StringUtils.join(new String[] {tmpdir.substring(0, tmpdir.length() - 1), "test", "35", "ec", "myproductimage.jpg"}, File.separator);
+        assertEquals(file.getAbsolutePath(), resultPath);
 
         BroadleafRequestContext brc = new BroadleafRequestContext();
         BroadleafRequestContext.setBroadleafRequestContext(brc);
@@ -62,11 +68,14 @@ public class FileSystemFileServiceProviderTest extends TestCase {
 
         // try with site specific directory
         file = provider.getResource("/product/myproductimage.jpg");
-        assertTrue(file.getAbsolutePath().equals("/test/7f/site-125/35/ec/myproductimage.jpg"));
+        resultPath = StringUtils.join(new String[] {tmpdir.substring(0, tmpdir.length() - 1), "test", "7f", "site-125", "35", "ec", "myproductimage.jpg"}, File.separator);
+        assertEquals(file.getAbsolutePath(), resultPath);
 
         // try with 3 max generated directories
         provider.maxGeneratedDirectoryDepth = 3;
         file = provider.getResource("/product/myproductimage.jpg");
-        assertTrue(file.getAbsolutePath().equals("/test/7f/site-125/35/ec/52/myproductimage.jpg"));
+        resultPath = StringUtils.join(new String[] {tmpdir.substring(0, tmpdir.length() - 1), "test", "7f", "site-125", "35", "ec", "52", "myproductimage.jpg"}, File.separator);
+        assertEquals(file.getAbsolutePath(), resultPath);
     }
+    
 }
