@@ -49,6 +49,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceRes
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -366,7 +367,35 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         if (md instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
-            ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
+            
+            // On a PERSIST with a collection rather than LOOKUP, grab the entity type from the form. If it's not a persist
+            // then it must be a LOOKUP so just use the definition of the collection metadata
+            String entityType = null;
+            if (entityForm.getEntityType() != null) {
+                entityType = entityForm.getEntityType();
+            } else {
+                Class<?> listClass = Class.forName(fmd.getCollectionCeilingEntity());
+                //try to find an override, if available
+                List<Class<?>> testClasses = new ArrayList<Class<?>>();
+                testClasses.add(listClass);
+                if (!listClass.isInterface()) {
+                    testClasses.addAll(Arrays.asList(listClass.getInterfaces()));
+                }
+                String overrideClass = listClass.getName();
+                for (Class<?> clazz : testClasses) {
+                    try {
+                        overrideClass = entityConfiguration.lookupEntityClass(clazz.getName()).getName();
+                        break;
+                    } catch (NoSuchBeanDefinitionException e) {
+                        //no override defined
+                    }
+                }
+                ppr.getEntity().setType(new String[] { overrideClass });
+                
+                
+                entityType = fmd.getCollectionCeilingEntity();
+            }
+            ppr.getEntity().setType(new String[] { entityType });
             
             // If we're looking up an entity instead of trying to create one on the fly, let's make sure 
             // that we're not changing the target entity at all and only creating the association to the id
@@ -414,7 +443,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was" +
                     " not a collection field.", field.getName(), mainMetadata.getCeilingType()));
         }
-
+        
         ppr.setCeilingEntityClassname(ppr.getEntity().getType()[0]);
         String sectionField = field.getName();
         if (sectionField.contains(".")) {
