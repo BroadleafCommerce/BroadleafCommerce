@@ -631,7 +631,7 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.4.0</version>
+                <version>4.7.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
