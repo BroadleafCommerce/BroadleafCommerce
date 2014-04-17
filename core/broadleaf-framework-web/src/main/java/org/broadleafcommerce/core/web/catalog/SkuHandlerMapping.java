@@ -21,42 +21,49 @@ package org.broadleafcommerce.core.web.catalog;
 
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This handler mapping works with the Product entity to determine if a product has been configured for
+ * This handler mapping works with the Sku entity to determine if a sku has been configured for
  * the passed in URL.   
  * 
- * If the URL matches a valid Product then this mapping returns the handler configured via the 
- * controllerName property or blProductController by default. 
+ * If the URL matches a valid Sku then this mapping returns the handler configured via the 
+ * controllerName property or blSkuController by default. 
  *
- * @author bpolster
- * @since 2.0
- * @see org.broadleafcommerce.core.catalog.domain.Product
+ * @author Joshua Skorton (jskorton)
+ * @since 3.2
+ * @see org.broadleafcommerce.core.catalog.domain.Sku
  * @see CatalogService
  */
-public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
+public class SkuHandlerMapping extends BLCAbstractHandlerMapping {
     
-    private String controllerName="blProductController";
+    private String controllerName="blSkuController";
 
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
+    
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;
 
-    protected String defaultTemplateName = "catalog/product";
+    protected String defaultTemplateName = "catalog/sku";
 
-    public static final String CURRENT_PRODUCT_ATTRIBUTE_NAME = "currentProduct";
+    public static final String CURRENT_SKU_ATTRIBUTE_NAME = "currentSku";
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
+        if(!useSku) {
+            return null;
+        }
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
-            Product product = catalogService.findProductByURI(context.getRequestURIWithoutContext());
-            if (product != null) {
-                context.getRequest().setAttribute(CURRENT_PRODUCT_ATTRIBUTE_NAME, product);
+            Sku sku = catalogService.findSkuByURI(context.getRequestURIWithoutContext());
+            if (sku != null) {
+                context.getRequest().setAttribute(CURRENT_SKU_ATTRIBUTE_NAME, sku);
                 return controllerName;
             }
         }

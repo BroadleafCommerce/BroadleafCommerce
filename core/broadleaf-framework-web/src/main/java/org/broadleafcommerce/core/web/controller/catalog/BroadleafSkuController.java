@@ -24,8 +24,8 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.web.catalog.SkuHandlerMapping;
 import org.hibernate.tool.hbm2x.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,65 +39,65 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This class works in combination with the ProductHandlerMapping which finds a product based upon
+ * This class works in combination with the SkuHandlerMapping which finds a category based upon
  * the passed in URL.
  *
- * @author bpolster
+ * @author Joshua Skorton (jskorton)
  */
-public class BroadleafProductController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
+public class BroadleafSkuController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
     
-    protected String defaultProductView = "catalog/product";
-    protected static String MODEL_ATTRIBUTE_NAME = "product";
-    protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
+    protected String defaultSkuView = "catalog/sku";
+    protected static String MODEL_ATTRIBUTE_NAME = "sku";
+    protected static String ALL_SKUS_ATTRIBUTE_NAME = "blcAllDisplayedSkus";
     
     @Autowired(required = false)
-    @Qualifier("blProductDeepLinkService")
-    protected DeepLinkService<Product> deepLinkService;
+    @Qualifier("blSkuDeepLinkService")
+    protected DeepLinkService<Sku> deepLinkService;
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView model = new ModelAndView();
-        Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
-        assert(product != null);
+        Sku sku = (Sku) request.getAttribute(SkuHandlerMapping.CURRENT_SKU_ATTRIBUTE_NAME);
+        assert(sku != null);
         
-        model.addObject(MODEL_ATTRIBUTE_NAME, product);
-        Set<Product> allProductsSet = new HashSet<Product>();
-        allProductsSet.add(product);
-        model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(allProductsSet));
+        model.addObject(MODEL_ATTRIBUTE_NAME, sku);
+        Set<Sku> allSkusSet = new HashSet<Sku>();
+        allSkusSet.add(sku);
+        model.addObject(ALL_SKUS_ATTRIBUTE_NAME, new HashSet<Sku>(allSkusSet));
 
-        addDeepLink(model, deepLinkService, product);
+        addDeepLink(model, deepLinkService, sku);
 
-        if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
-            model.setViewName(product.getDisplayTemplate());    
+        if (StringUtils.isNotEmpty(sku.getDisplayTemplate())) {
+            model.setViewName(sku.getDisplayTemplate());    
         } else {
-            model.setViewName(getDefaultProductView());
+            model.setViewName(getDefaultSkuView());
         }
         return model;
     }
 
-    public String getDefaultProductView() {
-        return defaultProductView;
+    public String getDefaultSkuView() {
+        return defaultSkuView;
     }
 
-    public void setDefaultProductView(String defaultProductView) {
-        this.defaultProductView = defaultProductView;
+    public void setDefaultSkuView(String defaultSkuView) {
+        this.defaultSkuView = defaultSkuView;
     }
     
     @Override
     public String getExpectedTemplateName(HttpServletRequest request) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null) {
-            Product product = (Product) context.getRequest().getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
-            if (product != null && product.getDisplayTemplate() != null) {
-                return product.getDisplayTemplate();
+            Sku sku = (Sku) context.getRequest().getAttribute(SkuHandlerMapping.CURRENT_SKU_ATTRIBUTE_NAME);
+            if (sku != null && sku.getDisplayTemplate() != null) {
+                return sku.getDisplayTemplate();
             }
         }
-        return getDefaultProductView();
+        return getDefaultSkuView();
     }
 
     @Override
     public TemplateType getTemplateType(HttpServletRequest request) {
-        return TemplateType.PRODUCT;
+        return TemplateType.SKU;
     }
 
 }

@@ -17,20 +17,16 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.service;
+package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 /**
- * @author Jeff Fischer
+ * @author Joshua Skorton (jskorton)
  */
-public interface CatalogServiceExtensionHandler extends ExtensionHandler {
-
-    public ExtensionResultStatusType findCategoryByURI(String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findProductByURI(String uri, ExtensionResultHolder resultHolder);
+public interface SkuDaoExtensionHandler extends ExtensionHandler {
 
     public ExtensionResultStatusType findSkuByURI(String uri, ExtensionResultHolder resultHolder);
 

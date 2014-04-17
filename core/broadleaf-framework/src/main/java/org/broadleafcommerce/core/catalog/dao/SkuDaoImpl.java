@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.dao;
 
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.logging.SupportLogManager;
 import org.broadleafcommerce.common.logging.SupportLogger;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -39,6 +41,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -66,6 +69,9 @@ public class SkuDaoImpl implements SkuDao {
 
     @Resource(name = "blDialectHelper")
     protected DialectHelper dialectHelper;
+    
+    @Resource(name = "blSkuDaoExtensionManager")
+    protected SkuDaoExtensionManager extensionManager;
 
     protected Long currentDateResolution = 10000L;
     protected Date cachedDate = SystemTime.asDate();
@@ -223,6 +229,31 @@ public class SkuDaoImpl implements SkuDao {
     @Override
     public void setCurrentDateResolution(Long currentDateResolution) {
         this.currentDateResolution = currentDateResolution;
+    }
+    
+    @Override
+    public List<Sku> findSkuByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findSkuByURI(uri, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<Sku>) holder.getResult();
+            }
+        }
+        String skuUrlKey = uri.substring(uri.lastIndexOf('/'));
+        String productUrl = uri.substring(0, uri.lastIndexOf('/'));
+        Query query;
+    
+        query = em.createNamedQuery("BC_READ_SKU_BY_OUTGOING_URL");
+        query.setParameter("productUrl", productUrl);
+        query.setParameter("skuUrlKey", skuUrlKey);
+        query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution));
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+    
+        @SuppressWarnings("unchecked")
+        List<Sku> results = query.getResultList();
+        return results;
     }
 
 }

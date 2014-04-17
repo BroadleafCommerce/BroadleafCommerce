@@ -140,4 +140,13 @@ public interface SkuDao {
      */
     public void setCurrentDateResolution(Long currentDateResolution);
 
+    /**
+     * Look up a sku that matches the given URI
+     * 
+     * @param uri - the relative URL to look up the sku by
+     * @return List of skus that match the passed in URI.
+     * 
+     */
+    public List<Sku> findSkuByURI(String key);
+    
 }

@@ -61,6 +61,33 @@ public interface Sku extends Serializable {
     public void setId(Long id);
 
     /**
+     * Returns the sku specific portion of a full url used for a sku info page.
+     */ 
+    public String getUrlKey();
+
+    /**
+     * Sets the sku specific portion of a full url used for a sku info page.  
+     * 
+     * @param url
+     */
+    public void setUrlKey(String url);
+
+    /**
+     * Returns the name of a display template that is used to render this sku.  Most implementations have a default
+     * template for all skus.  This allows for the user to define a specific template to be used by this sku.
+     * 
+     * @return
+     */
+    public String getDisplayTemplate();
+
+    /**
+     * Sets the name of a display template that is used to render this sku.  Most implementations have a default
+     * template for all skus.  This allows for the user to define a specific template to be used by this sku.
+     * 
+     * @param displayTemplate
+     */
+    public void setDisplayTemplate(String displayTemplate);
+    /**
      * This is the sum total of the priceAdjustments from the associated ProductOptionValues
      * 
      * @return <b>null</b> if there are no ProductOptionValues associated with this Sku or

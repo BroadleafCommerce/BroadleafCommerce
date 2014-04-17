@@ -236,5 +236,14 @@ public interface CatalogService {
      * @return
      */    
     public Product findProductByURI(String uri);
+    
+    /**
+     * Returns a sku associated with the passed in URI or null if no sku is
+     * mapped to this URI.
+     * 
+     * @param uri
+     * @return
+     */    
+    public Sku findSkuByURI(String uri);
 
 }

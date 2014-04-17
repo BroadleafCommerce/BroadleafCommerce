@@ -17,21 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.service;
+package org.broadleafcommerce.core.catalog.dao;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 /**
- * @author Jeff Fischer
+ * @author Joshua Skorton (jskorton)
  */
-public interface CatalogServiceExtensionHandler extends ExtensionHandler {
+@Service("blSkuDaoExtensionManager")
+public class SkuDaoExtensionManager extends ExtensionManager<SkuDaoExtensionHandler> {
 
-    public ExtensionResultStatusType findCategoryByURI(String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findProductByURI(String uri, ExtensionResultHolder resultHolder);
-
-    public ExtensionResultStatusType findSkuByURI(String uri, ExtensionResultHolder resultHolder);
+    public SkuDaoExtensionManager() {
+        super(SkuDaoExtensionHandler.class);
+    }
 
 }

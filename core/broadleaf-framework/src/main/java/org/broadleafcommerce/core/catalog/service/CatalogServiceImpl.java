@@ -360,4 +360,31 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
     
+    @Override
+    public Sku findSkuByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findSkuByURI(uri, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Sku) holder.getResult();
+            }
+        }
+        List<Sku> skus = skuDao.findSkuByURI(uri);
+        if (skus == null || skus.size() == 0) {
+            return null;
+        } else if (skus.size() == 1) {
+            return skus.get(0);
+        } else {
+            // First check for a direct hit on the url
+            for(Sku sku : skus) {
+                if (uri.equals(sku.getProduct() + sku.getUrlKey())) {
+                    return sku;
+                }
+            }
+            
+            // Otherwise, return the first product
+            return skus.get(0);
+        }
+    }
+    
 }
