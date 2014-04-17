@@ -29,7 +29,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFi
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -248,7 +251,10 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     protected void addSorting(CriteriaBuilder criteriaBuilder, List<Order> sorts, FilterMapping filterMapping, Path path) {
         Expression exp = path;
         if (filterMapping.getNullsLast() != null && filterMapping.getNullsLast()) {
-            exp = criteriaBuilder.coalesce(path, 99999999999L);
+            Object largeValue = getAppropriateLargeSortingValue(path.getJavaType());
+            if (largeValue != null) {
+                exp = criteriaBuilder.coalesce(path, largeValue);
+            }
         }
         if (SortDirection.ASCENDING == filterMapping.getSortDirection()) {
             sorts.add(criteriaBuilder.asc(exp));
@@ -257,4 +263,19 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         }
     }
 
+    protected Object getAppropriateLargeSortingValue(Class<?> javaType) {
+        Object response = null;
+        if (Date.class.isAssignableFrom(javaType)) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.YEAR, 500);
+            response = calendar.getTime();
+        } else if (Long.class.isAssignableFrom(javaType)) {
+            response = Long.MAX_VALUE;
+        } else if (Integer.class.isAssignableFrom(javaType)) {
+            response = Integer.MAX_VALUE;
+        } else if (BigDecimal.class.isAssignableFrom(javaType)) {
+            response = new BigDecimal(String.valueOf(Long.MAX_VALUE));
+        }
+        return response;
+    }
 }
