@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +52,8 @@ import javax.annotation.Resource;
  */
 public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
-
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
 
     @Resource(name = "blProductOptionValidationService")
     protected ProductOptionValidationService productOptionValidationService;
@@ -59,6 +61,9 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
+        if(useSku) {
+            return context;
+        }
         Order order = context.getSeedData().getOrder();
         List<DiscreteOrderItem> orderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem i : order.getOrderItems()) {
