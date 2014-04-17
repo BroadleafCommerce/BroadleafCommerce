@@ -377,7 +377,7 @@ public class CatalogServiceImpl implements CatalogService {
         } else {
             // First check for a direct hit on the url
             for(Sku sku : skus) {
-                if (uri.equals(sku.getProduct() + sku.getUrlKey())) {
+                if (uri.equals(sku.getProduct().getUrl() + sku.getUrlKey())) {
                     return sku;
                 }
             }
