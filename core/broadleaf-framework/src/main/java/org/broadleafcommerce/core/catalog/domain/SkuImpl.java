@@ -158,14 +158,14 @@ public class SkuImpl implements Sku {
     protected Long id;
 
     @Column(name = "URL_KEY")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_UrlKey",
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_UrlKey", order = 4000,
         tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced,
-        group = ProductImpl.Presentation.Group.Name.General, groupOrder = ProductImpl.Presentation.Group.Order.General,
+        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced,
         excluded = true)
     protected String urlKey;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Display_Template",
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Display_Template", order = 5000,
         tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced,
         group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced,
         excluded = true)
