@@ -120,6 +120,8 @@ import javax.persistence.Transient;
 @AdminPresentationMergeOverrides(
     {
         @AdminPresentationMergeOverride(name = "defaultSku.displayTemplate", mergeEntries =
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "defaultSku.urlKey", mergeEntries =
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true))
     }
 )
