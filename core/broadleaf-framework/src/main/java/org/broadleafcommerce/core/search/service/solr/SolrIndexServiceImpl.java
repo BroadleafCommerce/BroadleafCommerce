@@ -513,7 +513,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, sku));
-            document.addField(shs.getSkuIdFieldName(), sku.getId());
+            document.addField(shs.getSkuIdFieldName(), shs.getSkuId(sku.getId()));
             extensionManager.getProxy().attachAdditionalBasicFields(sku, document, shs);
 
             // The explicit categories are the ones defined by the product itself
@@ -558,7 +558,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
-            document.addField(shs.getProductIdFieldName(), product.getId());
+            document.addField(shs.getProductIdFieldName(), shs.getProductId(product.getId()));
             extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
 
             // The explicit categories are the ones defined by the product itself

@@ -189,6 +189,16 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
+    public Long getSkuId(Long tentativeSkuId) {
+        Long[] returnId = new Long[1];
+        ExtensionResultStatusType result = extensionManager.getProxy().getSkuId(tentativeSkuId, returnId);
+        if (result.equals(ExtensionResultStatusType.HANDLED)) {
+            return returnId[0];
+        }
+        return tentativeSkuId;
+    }
+
+    @Override
     public String getSolrDocumentId(SolrInputDocument document, Product product) {
         String[] returnId = new String[1];
         ExtensionResultStatusType result = extensionManager.getProxy().getSolrDocumentId(document, product, returnId);

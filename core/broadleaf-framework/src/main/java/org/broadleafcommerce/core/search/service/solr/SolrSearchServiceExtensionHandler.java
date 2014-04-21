@@ -168,4 +168,15 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getProductId(Long tentativeId, Long[] returnContainer);
     
+    /**
+     * In certain scenarios, the requested sku id might not be the one that should be used in Solr.
+     * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
+     * in the returnContainer should be used.
+     * 
+     * @param tentativeId
+     * @param returnContainer
+     * @return
+     */
+    public ExtensionResultStatusType getSkuId(Long tentativeId, Long[] returnContainer);
+
 }
