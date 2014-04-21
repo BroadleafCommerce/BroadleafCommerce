@@ -60,6 +60,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -85,6 +86,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     private static final Log LOG = LogFactory.getLog(SkuCustomPersistenceHandler.class);
 
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
+    
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
     
     @Resource(name="blAdornedTargetListPersistenceModule")
     protected PersistenceModule adornedPersistenceModule;
@@ -563,7 +567,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     }
 
     /**
-     * Ensures that the given list of {@link ProductOptionValue} IDs is unique for the given {@link Product}
+     * Ensures that the given list of {@link ProductOptionValue} IDs is unique for the given {@link Product}.  
+     * 
+     * If sku browsing is enabled, then it is assumed that a single combination of {@link ProductOptionValue} IDs
+     * is not unique and more than one {@link Sku} could have the exact same combination of {@link ProductOptionValue} IDs.
+     * In this case, the following validation is skipped.
+     * 
      * @param product
      * @param productOptionValueIds
      * @param currentSku - for update operations, this is the current Sku that is being updated; should be excluded from
@@ -571,6 +580,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @return <b>null</b> if successfully validation, the error entity otherwise
      */
     protected Entity validateUniqueProductOptionValueCombination(Product product, List<Property> productOptionProperties, Sku currentSku) {
+        if(useSku) {
+            return null;
+        }
         //do not attempt POV validation if no PO properties were passed in
         if (CollectionUtils.isNotEmpty(productOptionProperties)) {
             List<Long> productOptionValueIds = new ArrayList<Long>();

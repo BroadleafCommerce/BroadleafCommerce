@@ -146,6 +146,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) {
         Sku sku = null;
         
+        //If sku browsing is enabled, product option data will not be available.
         if(!useSku) {
             // Check whether the sku is correct given the product options.
             sku = findMatchingSku(product, attributeValues, messages);

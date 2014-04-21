@@ -47,6 +47,9 @@ import javax.annotation.Resource;
 /**
  * This is an required activity to valiate if required product options are in the order.
  * 
+ * If sku browsing is enabled, product option data will not be available.
+ * In this case, the following validation is skipped.
+ * 
  * @author Priyesh Patel
  *
  */
