@@ -4,12 +4,12 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
     <named-query name="BC_READ_ALL_PRODUCTS" >
-        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product</query>
+        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product ORDER BY product.id</query>
     </named-query>
 
     <named-query name="BC_READ_PRODUCTS_BY_NAME" >
         <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product
-        WHERE product.defaultSku.name LIKE :name</query>
+        WHERE product.defaultSku.name LIKE :name ORDER BY product.id</query>
     </named-query>
     
     <named-query name="BC_READ_AUTOMATIC_PRODUCT_BUNDLES" >

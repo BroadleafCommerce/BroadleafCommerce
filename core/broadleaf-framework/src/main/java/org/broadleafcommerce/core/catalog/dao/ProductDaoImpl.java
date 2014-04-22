@@ -478,7 +478,7 @@ public class ProductDaoImpl implements ProductDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
     
         @SuppressWarnings("unchecked")
-        List<Product> results = (List<Product>) query.getResultList();
+        List<Product> results = query.getResultList();
         return results;
     }
     
@@ -586,6 +586,9 @@ public class ProductDaoImpl implements ProductDao {
         
         // Add the restrictions to the criteria query
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        //Add ordering so that paginated queries are consistent
+        criteria.orderBy(builder.asc(product.get("id")));
         return criteria;
     }
 }

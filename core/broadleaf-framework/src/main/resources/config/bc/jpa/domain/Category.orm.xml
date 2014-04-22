@@ -5,17 +5,17 @@
     version="2.0">
 
     <named-query name="BC_READ_ALL_CATEGORIES">
-        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category</query>
+        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category ORDER BY category.id</query>
     </named-query>
 
     <named-query name="BC_READ_CATEGORY_BY_NAME">
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
-        WHERE category.name = :categoryName</query>
+        WHERE category.name = :categoryName ORDER BY category.id</query>
     </named-query>
 
     <named-query name="BC_READ_ALL_SUBCATEGORIES">
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
-        WHERE category.defaultParentCategory = :defaultParentCategory</query>
+        WHERE category.defaultParentCategory = :defaultParentCategory ORDER BY category.id</query>
     </named-query>
 
     <named-query name="BC_READ_CATEGORY_BY_URL_KEY">
@@ -32,7 +32,8 @@
                 WHERE category.defaultParentCategory.id = :defaultParentCategoryId
                 AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N')           
                 AND (category.activeStartDate &lt; :currentDate)
-                AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; :currentDate)
+                AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; :currentDate) 
+                ORDER BY category.id
         </query>
     </named-query>
 

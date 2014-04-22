@@ -23,11 +23,13 @@ import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
+import org.hibernate.type.SingleColumnType;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -165,6 +167,19 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         if (!isCount) {
             criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
+            //If someone provides a firstResult value, then there is generally pagination going on.
+            //In order to produce correct results, especially with certain databases such as PostgreSQL, 
+            //there has to an order by clause.  We'll add one here if we can.
+            if (firstResult != null && (criteria.getOrderList() == null || criteria.getOrderList().isEmpty())) {
+                Map<String, Object> idMetaData = dynamicEntityDao.getIdMetadata(ceilingClass);
+                if (idMetaData != null) {
+                    Object idFldName = idMetaData.get("name");
+                    Object type = idMetaData.get("type");
+                    if ((idFldName instanceof String) && (type instanceof SingleColumnType)) {
+                        criteria.orderBy(criteriaBuilder.asc(original.get((String) idFldName)));
+                    }
+                }
+            }
         }
         TypedQuery<Serializable> response = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
 
@@ -183,7 +198,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
             response.setMaxResults(maxResults);
         }
     }
-    
+
     /**
      * This method is deprecated in favor of {@link #addRestrictions(String, List, CriteriaBuilder, Root, List, List, CriteriaQuery)}
      * It will be removed in Broadleaf version 3.1.0.
