@@ -625,6 +625,9 @@ public class ProductDaoImpl implements ProductDao {
         
         // Add the restrictions to the criteria query
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        //Add ordering so that paginated queries are consistent
+        criteria.orderBy(builder.asc(product.get("id")));
         return criteria;
     }
 }

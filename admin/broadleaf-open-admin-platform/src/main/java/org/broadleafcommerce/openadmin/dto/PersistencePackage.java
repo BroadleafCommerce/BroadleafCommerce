@@ -127,10 +127,18 @@ public class PersistencePackage implements Serializable, StateDescriptor {
         if (ArrayUtils.isEmpty(customCriteria)) {
             return -1;
         }
-        Arrays.sort(customCriteria);
-        return Arrays.binarySearch(customCriteria, criteria);
-    }
+        
+        for (int i = 0; i < customCriteria.length; i++) {
+            if (customCriteria[i] != null && customCriteria[i].equals(criteria)) {
+                return i;
+            } else if (customCriteria[i] == null && criteria == null) {
+                return i;
+            }
+        }
 
+        return -1;
+    }
+    
     public Entity getEntity() {
         return entity;
     }
