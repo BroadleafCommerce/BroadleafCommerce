@@ -168,9 +168,9 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         if (!isCount) {
             criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
             //If someone provides a firstResult value, then there is generally pagination going on.
-            //In order to produce correct results, especially with certain databases such as PostgreSQL, 
-            //there has to an order by clause.  We'll add one here if we can.
-            if (firstResult != null && (criteria.getOrderList() == null || criteria.getOrderList().isEmpty())) {
+            //In order to produce consistent results, especially with certain databases such as PostgreSQL, 
+            //there has to be an "order by" clause.  We'll add one here if we can.
+            if (firstResult != null && sorts.isEmpty()) {
                 Map<String, Object> idMetaData = dynamicEntityDao.getIdMetadata(ceilingClass);
                 if (idMetaData != null) {
                     Object idFldName = idMetaData.get("name");
