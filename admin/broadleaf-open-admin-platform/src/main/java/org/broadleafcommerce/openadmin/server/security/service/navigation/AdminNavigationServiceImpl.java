@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.security.service.navigation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -41,6 +34,13 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * This service is used to build the left hand navigation for the admin
@@ -175,6 +175,13 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
         }
 
         return response;
+    }
+    
+    @Override
+    public List<AdminSection> findAllAdminSections() {
+        List<AdminSection> sections = adminNavigationDao.readAllAdminSections();
+        Collections.sort(sections, SECTION_COMPARATOR);
+        return sections;
     }
 
     protected boolean checkPermissions(List<AdminPermission> authorizedPermissions, AdminPermission permission) {
