@@ -57,7 +57,7 @@ public class ServiceException extends Exception {
                 return true;
             }
             current = current.getCause();
-        } while (current.getCause() != null);
+        } while (current != null && current.getCause() != null);
 
         return false;
     }
