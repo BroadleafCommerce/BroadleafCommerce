@@ -241,6 +241,26 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     }
 
     @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PersistencePackage{");
+        sb.append("ceilingEntityFullyQualifiedClassname='").append(ceilingEntityFullyQualifiedClassname).append('\'');
+        sb.append(", securityCeilingEntityFullyQualifiedClassname='").append
+                (securityCeilingEntityFullyQualifiedClassname).append('\'');
+        sb.append(", sectionEntityField='").append(sectionEntityField).append('\'');
+        sb.append(", fetchTypeFullyQualifiedClassname='").append(fetchTypeFullyQualifiedClassname).append('\'');
+        sb.append(", persistencePerspective=").append(persistencePerspective);
+        sb.append(", customCriteria=").append(Arrays.toString(customCriteria));
+        sb.append(", entity=").append(entity);
+        sb.append(", csrfToken='").append(csrfToken).append('\'');
+        sb.append(", requestingEntityName='").append(requestingEntityName).append('\'');
+        sb.append(", subPackages=").append(subPackages);
+        sb.append(", validateUnsubmittedProperties=").append(validateUnsubmittedProperties);
+        sb.append(", sectionCrumbs=").append(Arrays.toString(sectionCrumbs));
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PersistencePackage)) return false;
