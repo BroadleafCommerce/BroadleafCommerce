@@ -58,7 +58,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     @Resource(name="blCriteriaTranslatorEventHandlers")
     protected List<CriteriaTranslatorEventHandler> eventHandlers = new ArrayList<CriteriaTranslatorEventHandler>();
     
-    // TODO: make this a bean
+    @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService rowSecurityService;
 
     @Override
@@ -283,12 +283,8 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
             eventHandler.addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, criteria);
         }
         
-        //TODO: remove null check when there's a bean
-        if (rowSecurityService != null) {
-            // add in the row-level security handlers to this as well
-            rowSecurityService.addRestrictions(ceilingEntity, original, criteria, criteriaBuilder);
-        }
-        
+        // add in the row-level security handlers to this as well
+        rowSecurityService.addFetchRestrictions(ceilingEntity, original, criteria, criteriaBuilder);
     }
 
     protected void addSorting(CriteriaBuilder criteriaBuilder, List<Order> sorts, FilterMapping filterMapping, Path path) {

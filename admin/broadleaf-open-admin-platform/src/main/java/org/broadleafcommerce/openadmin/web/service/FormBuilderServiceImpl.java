@@ -57,6 +57,7 @@ import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationTyp
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
+import org.broadleafcommerce.openadmin.server.service.persistence.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -110,6 +111,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
+    
+    @Resource(name = "blRowLevelSecurityService")
+    protected RowLevelSecurityService rowLevelSecurityService;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN 
@@ -794,12 +798,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         
         ef.addAction(DefaultEntityFormActions.DELETE);
         
-        setReadOnlyState(ef, cmd);
+        setReadOnlyState(ef, cmd, entity);
         
         extensionManager.getProxy().modifyDetailEntityForm(ef);
     }
     
-    protected void setReadOnlyState(EntityForm entityForm, ClassMetadata cmd) {
+    protected void setReadOnlyState(EntityForm entityForm, ClassMetadata cmd, Entity entity) {
         boolean readOnly = true;
         
         // If all of the fields are read only, we'll mark the form as such
@@ -842,6 +846,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     readOnly = true;
                 }
             }
+        }
+        
+        // if the normal admin security service has not deemed this readonly and the all of the properties on the entity
+        // are not readonly, then check the row-level security
+        if (!readOnly) {
+            readOnly = !rowLevelSecurityService.canUpdate(entity);
         }
 
         if (readOnly) {

@@ -61,7 +61,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     
     protected ApplicationContext applicationContext;
 
-    //TODO: create the bean for this and inject
+    @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService securityService;
     
     @Override
@@ -101,13 +101,10 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
             isUpdateRequest = true;
         }
         
-        //TODO: remove null check once this is a bean
-        if (securityService != null) {
-            if (isUpdateRequest) {
-                securityService.validateUpdateRequest(entity, instance, propertiesMetadata);
-            } else {
-                securityService.validateAddRequest(entity, instance, propertiesMetadata);
-            }
+        if (isUpdateRequest) {
+            securityService.validateUpdateRequest(entity, instance, propertiesMetadata);
+        } else {
+            securityService.validateAddRequest(entity, instance, propertiesMetadata);
         }
             
         List<String> types = getTypeHierarchy(entity);

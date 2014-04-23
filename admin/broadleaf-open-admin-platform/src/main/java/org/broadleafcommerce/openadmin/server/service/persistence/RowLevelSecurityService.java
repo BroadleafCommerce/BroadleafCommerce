@@ -3,7 +3,10 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslatorImpl;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.service.FormBuilderServiceImpl;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -33,8 +36,19 @@ public interface RowLevelSecurityService {
      * @param entityRoot the JPA root for <b>ceilingEntity</b>
      * @param criteria the built and populated JPA critieria with all {@link FilterMapping}s and 
      * @param criteriaBuilder used to append additional restrictions to the given <b>criteria</b>
+     * @see {@link CriteriaTranslatorImpl#addRestrictions}
      */
-    public void addRestrictions(String ceilingEntity, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder);
+    public void addFetchRestrictions(String ceilingEntity, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder);
+    
+    /**
+     * Hook to determine if the given <b>entity</b> can be updated or not. This is used to drive the form displayed in the
+     * admin frontend to remove modifier actions and set the entire {@link EntityForm} as readonly.
+     * 
+     * @param entity the {@link Entity} DTO that is attempting to be updated
+     * @return <b>true</b> if the given <b>entity</b> can be updated, <b>false</b> otherwise
+     * @see {@link FormBuilderServiceImpl#setReadOnlyState}
+     */
+    public boolean canUpdate(Entity entity);
     
     /**
      * <p>
