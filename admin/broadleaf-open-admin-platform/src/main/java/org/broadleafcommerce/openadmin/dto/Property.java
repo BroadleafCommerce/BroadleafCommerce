@@ -134,7 +134,16 @@ public class Property implements Serializable {
 
     @Override
     public String toString() {
-        return getName() + ": " + getValue();
+        final StringBuilder sb = new StringBuilder("Property{");
+        sb.append("name='").append(name).append('\'');
+        String temp = value;
+        if (temp != null && temp.length() > 200) {
+            temp = temp.substring(0,199) + "...";
+        }
+        sb.append(", value='").append(temp).append('\'');
+        sb.append(", isDirty=").append(isDirty);
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override

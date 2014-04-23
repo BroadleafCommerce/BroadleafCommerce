@@ -257,6 +257,15 @@ public class PersistencePerspective implements Serializable {
     }
 
     @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PersistencePerspective{");
+        sb.append("persistencePerspectiveItems=").append(persistencePerspectiveItems);
+        sb.append(", configurationKey='").append(configurationKey).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof PersistencePerspective)) return false;
