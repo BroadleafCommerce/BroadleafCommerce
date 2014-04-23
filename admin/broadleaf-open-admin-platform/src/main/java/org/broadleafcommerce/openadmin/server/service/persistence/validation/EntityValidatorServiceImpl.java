@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
+import org.broadleafcommerce.openadmin.server.service.persistence.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
@@ -60,6 +61,9 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     
     protected ApplicationContext applicationContext;
 
+    //TODO: create the bean for this and inject
+    protected RowLevelSecurityService securityService;
+    
     @Override
     public void validate(Entity submittedEntity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
             RecordHelper recordHelper, boolean validateUnsubmittedProperties) {
@@ -76,9 +80,11 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
             }
         }
         Entity entity;
+        boolean isUpdateRequest;
         if (idValue == null) {
             //This is for an add, or if the instance variable is null (e.g. PageTemplateCustomPersistenceHandler)
             entity = submittedEntity;
+            isUpdateRequest = false;
         } else {
             //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
             entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
@@ -92,7 +98,18 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                     }
                 }
             }
+            isUpdateRequest = true;
         }
+        
+        //TODO: remove null check once this is a bean
+        if (securityService != null) {
+            if (isUpdateRequest) {
+                securityService.validateUpdateRequest(entity, instance, propertiesMetadata);
+            } else {
+                securityService.validateAddRequest(entity, instance, propertiesMetadata);
+            }
+        }
+            
         List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
         for (Entry<String, FieldMetadata> metadataEntry : propertiesMetadata.entrySet()) {
@@ -174,6 +191,18 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
         }
     }
 
+    /**
+     * <p>
+     * Returns the type hierarchy of the given <b>entity</b> in ascending order of type, stopping at Object
+     * 
+     * <p>
+     * For instance, if this entity's {@link Entity#getType()} is {@link ProductBundleImpl}, then the result will be:
+     * 
+     * [org.broadleafcommerce.core.catalog.domain.ProductBundleImpl, org.broadleafcommerce.core.catalog.domain.ProductImpl]
+     * 
+     * @param entity
+     * @return
+     */
     protected List<String> getTypeHierarchy(Entity entity) {
         List<String> types = new ArrayList<String>();
         Class<?> myType;
