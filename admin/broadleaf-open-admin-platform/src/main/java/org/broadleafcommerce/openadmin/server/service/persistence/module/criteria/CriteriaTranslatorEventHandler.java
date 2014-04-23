@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
+
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -34,6 +36,20 @@ import javax.persistence.criteria.Root;
  */
 public interface CriteriaTranslatorEventHandler {
 
+    /**
+     * Allows the ability to attach additional criteria to the given <b>criteria</b> that has already been created by the
+     * given <b>filterMappings</b>. Since translation has already occurred from the <b>filterMappings</b> into the given
+     * <b>criteria</b>, implementers should attach additiona criteria there.
+     * 
+     * @param ceilingEntity the entity currently being fetched
+     * @param filterMappings the DTO of filters harvested from {@link FieldPersistenceProvider}s
+     * @param criteriaBuilder used for adding additional restrictions
+     * @param original the Hibernate root from which restriction paths start from
+     * @param restrictions existing list of restrictions already added to <b>criteria</b>
+     * @param sorts list of sorts already applied to <b>criteria>
+     * @param criteria what additional restrictions should be added to. This represents the query after all <b>filterMappings</b>,
+     * <b>restrictions</b> and <b>sorts</b> have already been applied
+     */
     void addRestrictions(String ceilingEntity, List<FilterMapping> filterMappings, CriteriaBuilder criteriaBuilder,
                          Root original, List<Predicate> restrictions, List<Order> sorts, CriteriaQuery criteria);
 
