@@ -82,7 +82,7 @@ public interface CatalogService {
     public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, SearchCriteria searchCriteria);
     
     /**
-     * Given a search query and a ProductSearchCriteria, returns the appropriate matching products
+     * Given a search query and a SearchCriteria, returns the appropriate matching products
      * 
      * @param query
      * @param searchCriteria

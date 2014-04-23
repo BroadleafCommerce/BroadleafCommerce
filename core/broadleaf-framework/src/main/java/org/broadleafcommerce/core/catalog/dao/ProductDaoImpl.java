@@ -219,7 +219,7 @@ public class ProductDaoImpl implements ProductDao {
             )
         );
                 
-        attachProductSearchCriteria(searchCriteria, product, sku, restrictions);
+        attachSearchCriteria(searchCriteria, product, sku, restrictions);
         
         attachActiveRestriction(currentDate, product, sku, restrictions);
         
@@ -268,7 +268,7 @@ public class ProductDaoImpl implements ProductDao {
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(category.get("id").in(sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, categoryId)));
         
-        attachProductSearchCriteria(searchCriteria, product, sku, restrictions);
+        attachSearchCriteria(searchCriteria, product, sku, restrictions);
         
         attachActiveRestriction(currentDate, product, sku, restrictions);
         
@@ -340,7 +340,7 @@ public class ProductDaoImpl implements ProductDao {
         }
     }
 
-    protected void attachProductSearchCriteria(SearchCriteria searchCriteria, 
+    protected void attachSearchCriteria(SearchCriteria searchCriteria, 
             From<?, ? extends Product> product, From<?, ? extends Sku> sku, List<Predicate> restrictions) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         

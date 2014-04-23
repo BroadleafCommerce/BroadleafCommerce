@@ -436,7 +436,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     /**
      * Provides a hook point for implementations to modify all SolrQueries before they're executed.
      * Modules should leverage the extension manager method of the same name,
-     * {@link SolrSearchServiceExtensionHandler#modifySolrQuery(SolrQuery, String, List, ProductSearchCriteria, String)}
+     * {@link SolrSearchServiceExtensionHandler#modifySolrQuery(SolrQuery, String, List, SearchCriteria, String)}
      * 
      * @param query
      * @param qualifiedSolrQuery
