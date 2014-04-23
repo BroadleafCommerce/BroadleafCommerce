@@ -33,7 +33,7 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
     }
 
     @Override
-    public boolean validateAddRequest(Entity entity, Serializable instance, Map<String, FieldMetadata> entityFieldMetadata) {
+    public boolean validateDeleteRequest(Entity entity, Serializable instance, Map<String, FieldMetadata> entityFieldMetadata) {
         // TODO Auto-generated method stub
         return true;
     }

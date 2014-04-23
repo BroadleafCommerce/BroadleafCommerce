@@ -103,8 +103,6 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
         
         if (isUpdateRequest) {
             securityService.validateUpdateRequest(entity, instance, propertiesMetadata);
-        } else {
-            securityService.validateAddRequest(entity, instance, propertiesMetadata);
         }
             
         List<String> types = getTypeHierarchy(entity);

@@ -63,9 +63,15 @@ public interface RowLevelSecurityService {
     
     /**
      * <p>
-     * Allows friendly validation errors to occur if the user performed an incorrect update
+     * Allows friendly validation errors to occur if the user performed a disallowed update
      * 
      * <p>
+     * While the form will be marked as readonly via {@link #canUpdate(Entity)} and no save button should show up on the
+     * frontend, it is still possible for the user to submit a manual request or modify other parts in such a way that they
+     * can still submit the update POST request.
+     * 
+     * <p>
+     * Most implementations will just invoke {@link #canUpdate(Entity)} and use that result here.
      * 
      * @param entity the DTO representation of <b>instance</b> that is being added. If your validator cares about specific
      * properties, then you can find out which properties changed with {@link Property#getIsDirty()}
@@ -79,15 +85,14 @@ public interface RowLevelSecurityService {
     
     /**
      * <p>
-     * Validates whether a user has permissions to actually perform an add
+     * Validates whether a user has permissions to actually perform the record deletion
      * 
-     * @param entity the DTO representation of <b>instance</b> that is being added. If your validator cares about specific
-     * properties, then you can find out which properties changed with {@link Property#getIsDirty()}
-     * @param instance the populated instance being saved
+     * @param entity the DTO representation of <b>instance</b> that is attempting to be deleted.
+     * @param instance the populated instance being deleted
      * @param entityFieldMetadata all of the property metadata for <b>entity</b>. Use this map if you need any metadata
      * information about the properties from <b>entity</b>.
      * @return <b>false</b> if validation failed, <b>true</b> otherwise
      */
-    public boolean validateAddRequest(Entity entity, Serializable instance, Map<String, FieldMetadata> entityFieldMetadata);
+    public boolean validateDeleteRequest(Entity entity, Serializable instance, Map<String, FieldMetadata> entityFieldMetadata);
     
 }
