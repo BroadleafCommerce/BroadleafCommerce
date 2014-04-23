@@ -44,4 +44,10 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
         return true;
     }
 
+    @Override
+    public boolean canDelete(Entity entity) {
+        // TODO Auto-generated method stub
+        return true;
+    }
+
 }

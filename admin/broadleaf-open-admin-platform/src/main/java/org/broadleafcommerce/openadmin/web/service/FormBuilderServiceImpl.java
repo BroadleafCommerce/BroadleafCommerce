@@ -796,13 +796,66 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ef.addAction(DefaultEntityFormActions.SAVE);
         }
         
-        ef.addAction(DefaultEntityFormActions.DELETE);
-        
+        addDeleteActionIfAllowed(ef, cmd, entity);
         setReadOnlyState(ef, cmd, entity);
         
         extensionManager.getProxy().modifyDetailEntityForm(ef);
     }
     
+    /**
+     * Adds the {@link DefaultEntityFormActions#DELETE} if the user is allowed to delete the <b>entity</b>. The user can
+     * delete an entity for the following cases:
+     * <ol>
+     *  <li>The user has the security to {@link EntityOperationType#DELETE} the given class name represented by
+     *  the <b>entityForm</b> (determined by {@link #getSecurityClassname(EntityForm, ClassMetadata)})</li>
+     *  <li>The user has the security necessary to delete the given <b>entity</b> according to the
+     *  {@link RowLevelSecurityService#canDelete(Entity)}</li>
+     * </ol>
+     * 
+     * @param entityForm the form being generated
+     * @param cmd the metatadata used to build the <b>entityForm</b> for the <b>entity</b>
+     * @param entity the entity being edited
+     * @see {@link SecurityVerifier#securityCheck(String, EntityOperationType)}
+     * @see {@link #getSecurityClassname(EntityForm, ClassMetadata)}
+     * @see {@link RowLevelSecurityService#canDelete(Entity)}
+     */
+    protected void addDeleteActionIfAllowed(EntityForm entityForm, ClassMetadata cmd, Entity entity) {
+        boolean canDelete = true;
+        try {
+            String securityEntityClassname = getSecurityClassname(entityForm, cmd);
+            adminRemoteSecurityService.securityCheck(securityEntityClassname, EntityOperationType.REMOVE);
+        } catch (ServiceException e) {
+            if (e instanceof SecurityServiceException) {
+                canDelete = false;
+            }
+        }
+        
+        if (canDelete) {
+            canDelete = rowLevelSecurityService.canDelete(entity);
+        }
+        
+        if (canDelete) {
+            entityForm.addAction(DefaultEntityFormActions.DELETE);
+        }
+    }
+    
+    /**
+     * The given <b>entityForm</b> is marked as readonly for the following cases:
+     * <ol>
+     *  <li>All of the properties from <b>cmd</b> are readonly</b></li>
+     *  <li>The user does not have the security to {@link EntityOperationType#UPDATE} the given class name represented by
+     *  the <b>entityForm</b> (determined by {@link #getSecurityClassname(EntityForm, ClassMetadata)})</li>
+     *  <li>The user does not have the security necessary to modify the given <b>entity</b> according to the
+     *  {@link RowLevelSecurityService#canUpdate(Entity)}</li>
+     * </ol>
+     * 
+     * @param entityForm the form being generated
+     * @param cmd the metatadata used to build the <b>entityForm</b> for the <b>entity</b>
+     * @param entity the entity being edited
+     * @see {@link SecurityVerifier#securityCheck(String, EntityOperationType)}
+     * @see {@link #getSecurityClassname(EntityForm, ClassMetadata)}
+     * @see {@link RowLevelSecurityService#canUpdate(Entity)}
+     */
     protected void setReadOnlyState(EntityForm entityForm, ClassMetadata cmd, Entity entity) {
         boolean readOnly = true;
         
@@ -825,21 +878,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (!readOnly) {
             // If the user does not have edit permissions, we will go ahead and make the form read only to prevent confusion
             try {
-                String securityEntityClassname = entityForm.getCeilingEntityClassname();
-
-                if (!StringUtils.isEmpty(cmd.getSecurityCeilingType())) {
-                    securityEntityClassname = cmd.getSecurityCeilingType();
-                } else {
-                    if (entityForm.getDynamicFormInfos() != null) {
-                        for (DynamicEntityFormInfo info : entityForm.getDynamicFormInfos().values()) {
-                            if (!StringUtils.isEmpty(info.getSecurityCeilingClassName())) {
-                                securityEntityClassname = info.getSecurityCeilingClassName();
-                                break;
-                            }
-                        }
-                    }
-                }
-
+                String securityEntityClassname = getSecurityClassname(entityForm, cmd);
                 adminRemoteSecurityService.securityCheck(securityEntityClassname, EntityOperationType.UPDATE);
             } catch (ServiceException e) {
                 if (e instanceof SecurityServiceException) {
@@ -857,6 +896,31 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (readOnly) {
             entityForm.setReadOnly();
         }
+    }
+    
+    /**
+     * Obtains the class name suitable for passing along to the {@link SecurityVerifier}
+     * @param form
+     * @param cmd
+     * @return
+     */
+    protected String getSecurityClassname(EntityForm entityForm, ClassMetadata cmd) {
+        String securityEntityClassname = entityForm.getCeilingEntityClassname();
+
+        if (!StringUtils.isEmpty(cmd.getSecurityCeilingType())) {
+            securityEntityClassname = cmd.getSecurityCeilingType();
+        } else {
+            if (entityForm.getDynamicFormInfos() != null) {
+                for (DynamicEntityFormInfo info : entityForm.getDynamicFormInfos().values()) {
+                    if (!StringUtils.isEmpty(info.getSecurityCeilingClassName())) {
+                        securityEntityClassname = info.getSecurityCeilingClassName();
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return securityEntityClassname;
     }
     
     @Override

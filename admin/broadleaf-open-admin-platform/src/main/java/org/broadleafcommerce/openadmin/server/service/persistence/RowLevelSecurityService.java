@@ -5,6 +5,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslatorImpl;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderServiceImpl;
 
@@ -49,6 +50,16 @@ public interface RowLevelSecurityService {
      * @see {@link FormBuilderServiceImpl#setReadOnlyState}
      */
     public boolean canUpdate(Entity entity);
+    
+    /**
+     * Hook to determine if the given <b>entity</b> can be updated or not. This is used to drive the {@link DefaultEntityFormActions#DELETE}
+     * button from appearing on the admin frontend.
+     * 
+     * @param entity
+     * @return <b>true</b> if the given <b>entity</b> can be deleted, <b>false</b> otherwise
+     * @see {@link FormBuilderServiceImpl#addDeleteActionIfAllowed}
+     */
+    public boolean canDelete(Entity entity);
     
     /**
      * <p>
