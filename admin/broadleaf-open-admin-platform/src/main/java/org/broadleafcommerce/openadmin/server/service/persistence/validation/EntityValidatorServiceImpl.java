@@ -100,10 +100,6 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
             }
             isUpdateRequest = true;
         }
-        
-        if (isUpdateRequest) {
-            securityService.validateUpdateRequest(entity, instance, propertiesMetadata);
-        }
             
         List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration

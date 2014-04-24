@@ -830,8 +830,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
         
+        // If I cannot update a record then I certainly cannot delete it either
         if (canDelete) {
-            canDelete = rowLevelSecurityService.canDelete(entity);
+            canDelete = rowLevelSecurityService.canUpdate(adminRemoteSecurityService.getPersistentAdminUser(), entity);
+        }
+        
+        if (canDelete) {
+            canDelete = rowLevelSecurityService.canRemove(adminRemoteSecurityService.getPersistentAdminUser(), entity);
         }
         
         if (canDelete) {
@@ -890,7 +895,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // if the normal admin security service has not deemed this readonly and the all of the properties on the entity
         // are not readonly, then check the row-level security
         if (!readOnly) {
-            readOnly = !rowLevelSecurityService.canUpdate(entity);
+            readOnly = !rowLevelSecurityService.canUpdate(adminRemoteSecurityService.getPersistentAdminUser(), entity);
         }
 
         if (readOnly) {
