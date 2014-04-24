@@ -183,7 +183,7 @@ public class Entity implements Serializable {
      * property in messages.properties to support different locales
      */
     public void addValidationError(String fieldName, String errorOrErrorKey) {
-        Map<String, List<String>> fieldErrors = getValidationErrors();
+        Map<String, List<String>> fieldErrors = getPropertyValidationErrors();
         List<String> errorMessages = fieldErrors.get(fieldName);
         if (errorMessages == null) {
             errorMessages = new ArrayList<String>();
@@ -211,11 +211,11 @@ public class Entity implements Serializable {
 
     /**
      * 
-     * @return if this entity has failed validation. This will also check the {@link #getValidationErrors()} map and 
+     * @return if this entity has failed validation. This will also check the {@link #getPropertyValidationErrors()} map and 
      * {@link #getGlobalValidationErrors()} if this boolean has not been explicitly set
      */
     public boolean isValidationFailure() {
-        if (MapUtils.isNotEmpty(getValidationErrors()) || CollectionUtils.isNotEmpty(getGlobalValidationErrors())) {
+        if (MapUtils.isNotEmpty(getPropertyValidationErrors()) || CollectionUtils.isNotEmpty(getGlobalValidationErrors())) {
             isValidationFailure = true;
         }
         return isValidationFailure;
@@ -225,6 +225,15 @@ public class Entity implements Serializable {
         isValidationFailure = validationFailure;
     }
 
+    /**
+     * @deprecated use {@link #getPropertyValidationErrors()} instead
+     * @return
+     */
+    @Deprecated
+    public Map<String, List<String>> getValidationErrors() {
+        return getPropertyValidationErrors();
+    }
+    
     /**
      * Validation error map where the key corresponds to the property that failed validation (which could be dot-separated)
      * and the value corresponds to a list of the error messages, in the case of multiple errors on the same field.
@@ -236,10 +245,18 @@ public class Entity implements Serializable {
      * 
      * @return a map keyed by property name to the list of error messages for that property
      */
-    public Map<String, List<String>> getValidationErrors() {
+    public Map<String, List<String>> getPropertyValidationErrors() {
         return validationErrors;
     }
 
+    /**
+     * @deprecated use {@link #setPropertyValidationErrors(Map)} instead
+     */
+    @Deprecated
+    public void setValidationErrors(Map<String, List<String>> validationErrors) {
+        setPropertyValidationErrors(validationErrors);
+    }
+    
     /**
      * Completely reset the validation errors for this Entity. In most cases it is more appropriate to use the convenience
      * method for adding a single error via {@link #addValidationError(String, String)}. This will also set the entire
@@ -248,7 +265,7 @@ public class Entity implements Serializable {
      * @param validationErrors
      * @see #addValidationError(String, String)
      */
-    public void setValidationErrors(Map<String, List<String>> validationErrors) {
+    public void setPropertyValidationErrors(Map<String, List<String>> validationErrors) {
         if (MapUtils.isNotEmpty(validationErrors)) {
             setValidationFailure(true);
         }
@@ -263,6 +280,15 @@ public class Entity implements Serializable {
     public void addGlobalValidationError(String errorOrErrorKey) {
         setValidationFailure(true);
         globalValidationErrors.add(errorOrErrorKey);
+    }
+    
+    /**
+     * Similar to {@link #addGlobalValidationError(String)} except with a list of errors
+     * @param errorOrErrorKeys
+     */
+    public void addGlobalValidationErrors(List<String> errorOrErrorKeys) {
+        setValidationFailure(true);
+        globalValidationErrors.addAll(errorOrErrorKeys);
     }
     
     public List<String> getGlobalValidationErrors() {

@@ -149,9 +149,9 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
         if (globalValidationResult != null) {
             if (!globalValidationResult.isValid()) {
                 if (StringUtils.isEmpty(globalValidationResult.getErrorMessage())) {
-                    entity.addGlobalValidationError("Row level security failed on " + operationType);
+                    entity.addGlobalValidationError("rowLevelSecurityFailed");
                 } else {
-                    entity.addGlobalValidationError(globalValidationResult.getErrorMessage());
+                    entity.addGlobalValidationErrors(globalValidationResult.getErrorMessages());
                 }
                 
                 throw new ValidationException(entity, "Row level security check failed for " + operationType);

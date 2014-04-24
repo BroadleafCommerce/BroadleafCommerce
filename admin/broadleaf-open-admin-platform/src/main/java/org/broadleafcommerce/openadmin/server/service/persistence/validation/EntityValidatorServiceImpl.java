@@ -174,7 +174,9 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                                                                         propertyName,
                                                                         propertyValue);
                         if (!result.isValid()) {
-                            submittedEntity.addValidationError(propertyName, result.getErrorMessage());
+                            for (String message : result.getErrorMessages()) {
+                                submittedEntity.addValidationError(propertyName, message);
+                            }
                         }
                     }
                 }

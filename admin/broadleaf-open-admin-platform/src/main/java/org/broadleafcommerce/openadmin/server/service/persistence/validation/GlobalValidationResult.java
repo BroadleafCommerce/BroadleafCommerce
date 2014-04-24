@@ -1,6 +1,10 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 import org.broadleafcommerce.openadmin.server.service.persistence.RowLevelSecurityService;
+import org.springframework.util.CollectionUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DTO representing a boolean whether or not it passed validation and String error message. An error message is not required
@@ -15,7 +19,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.RowLevelSecuri
 public class GlobalValidationResult {
     
     protected boolean valid;
-    protected String errorMessage;
+    protected List<String> errorMessages = new ArrayList<String>();
     
     public GlobalValidationResult(boolean valid, String errorMessage) {
         setValid(valid);
@@ -43,20 +47,38 @@ public class GlobalValidationResult {
     }
     
     /**
-     *
+     * Convenience method to return the first message 
      * @return the error message (or key in a message bundle) for the validation failure
      */
     public String getErrorMessage() {
-        return errorMessage;
+        return CollectionUtils.isEmpty(errorMessages) ? null : errorMessages.get(0);
     }
 
     /**
      * Sets the error message (or key in a message bundle) for the validation failure. If you have some sort
      * of custom error message for the validation failure it should be set here
      * @param errorMessage
+     * @deprecated - use {@link #addErrorMessage(String)}
      */
+    @Deprecated
     public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+        errorMessages.add(errorMessage);
+    }
+    
+    /**
+     * Adds an error message to the list of error messages
+     * @param errorMessageOrKey
+     */
+    public void addErrorMessage(String errorMessageOrKey) {
+        errorMessages.add(errorMessageOrKey);
+    }
+    
+    public List<String> getErrorMessages() {
+        return errorMessages;
+    }
+    
+    public void setErrorMessages(List<String> errorMessages) {
+        this.errorMessages = errorMessages;
     }
     
 }

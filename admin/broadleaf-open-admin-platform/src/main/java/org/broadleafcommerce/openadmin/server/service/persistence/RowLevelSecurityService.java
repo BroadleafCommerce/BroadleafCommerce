@@ -45,10 +45,10 @@ public interface RowLevelSecurityService {
 
     /**
      * <p>
-     * Used to further restrict a result set in the admin
+     * Used to further restrict a result set in the admin for a particular admin user.
      * 
      * <p>
-     * Existing {@link Predicate} that have already been applied can be retrieved with {@link CriteriaQuery#getRestriction()}
+     * Existing {@link Predicate}s that have already been applied can be retrieved with {@link CriteriaQuery#getRestriction()}
      * and existing sorts that have already been applied can be retrieved with {@link CriteriaQuery#getOrderList()}
      * 
      * @param ceilingEntity the entity currently being queried from
@@ -60,8 +60,13 @@ public interface RowLevelSecurityService {
     public void addFetchRestrictions(AdminUser user, String ceilingEntity, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder);
     
     /**
+     * <p>
      * Hook to determine if the given <b>entity</b> can be updated or not. This is used to drive the form displayed in the
      * admin frontend to remove modifier actions and set the entire {@link EntityForm} as readonly.
+     * 
+     * <p>
+     * If the entity cannot be updated, then by default it can also not be removed. You can change this by explicitly
+     * overriding {@link #canRemove(AdminUser, Entity)}
      * 
      * @param entity the {@link Entity} DTO that is attempting to be updated
      * @return <b>true</b> if the given <b>entity</b> can be updated, <b>false</b> otherwise
@@ -70,8 +75,12 @@ public interface RowLevelSecurityService {
     public boolean canUpdate(AdminUser user, Entity entity);
     
     /**
-     * Hook to determine if the given <b>entity</b> can be updated or not. This is used to drive the {@link DefaultEntityFormActions#DELETE}
+     * <p>
+     * Hook to determine if the given <b>entity</b> can be deleted by a user. This is used to drive the {@link DefaultEntityFormActions#DELETE}
      * button from appearing on the admin frontend.
+     * 
+     * <p>
+     * You might consider tying the remove to {@link #canUpdate(AdminUser, Entity)} and explicitly invoking that action yourself.
      * 
      * @param entity
      * @return <b>true</b> if the given <b>entity</b> can be deleted, <b>false</b> otherwise

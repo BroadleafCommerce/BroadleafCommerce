@@ -127,7 +127,7 @@ public class EntityFormValidator {
      */
     public boolean validate(EntityForm form, Entity entity, Errors errors) {
         if (entity.isValidationFailure()) {
-            return validate(form, entity.getValidationErrors(), entity.getGlobalValidationErrors(), errors);
+            return validate(form, entity.getPropertyValidationErrors(), entity.getGlobalValidationErrors(), errors);
         }
         
         return true;
