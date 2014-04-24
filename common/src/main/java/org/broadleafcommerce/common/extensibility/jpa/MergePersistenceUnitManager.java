@@ -27,29 +27,16 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
-import org.springframework.orm.jpa.persistenceunit.Jpa2PersistenceUnitInfoDecorator;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
-import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
-import org.springframework.util.ClassUtils;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Merges jars, class names and mapping file names from several persistence.xml files. The
@@ -67,7 +54,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     private static final Log LOG = LogFactory.getLog(MergePersistenceUnitManager.class);
 
     protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<String, PersistenceUnitInfo>();
-    protected final boolean jpa2ApiPresent = ClassUtils.hasMethod(PersistenceUnitInfo.class, "getSharedCacheMode");
+
     protected List<BroadleafClassTransformer> classTransformers = new ArrayList<BroadleafClassTransformer>();
 
     @Resource(name="blMergedPersistenceXmlLocations")
@@ -109,12 +96,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     protected PersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
         if (!mergedPus.containsKey(persistenceUnitName)) {
-            PersistenceUnitInfo puiToStore = newPU;
-            if (jpa2ApiPresent) {
-                puiToStore = (PersistenceUnitInfo) Proxy.newProxyInstance(SmartPersistenceUnitInfo.class.getClassLoader(),
-                        new Class[] {SmartPersistenceUnitInfo.class}, new Jpa2PersistenceUnitInfoDecorator(newPU));
-            }
-            mergedPus.put(persistenceUnitName, puiToStore);
+            mergedPus.put(persistenceUnitName, newPU);
         }
         return mergedPus.get(persistenceUnitName);
     }
@@ -194,24 +176,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 persistenceUnitInfoNames.add(name);
 
                 PersistenceUnitInfo puiToStore = mPui;
-                if (jpa2ApiPresent) {
-                    InvocationHandler jpa2PersistenceUnitInfoDecorator = null;
-                    Class<?>[] classes = getClass().getSuperclass().getDeclaredClasses();
-                    for (Class<?> clz : classes){
-                        if ("org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager$Jpa2PersistenceUnitInfoDecorator"
-                                .equals(clz.getName())) {
-                            Constructor<?> constructor =
-                                    clz.getConstructor(Class.forName("org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo"));
-                            constructor.setAccessible(true);
-                            jpa2PersistenceUnitInfoDecorator = (InvocationHandler)constructor.newInstance(mPui);
-                            break;
-                        }
-                    }
-
-                    puiToStore = (PersistenceUnitInfo) Proxy.newProxyInstance(SmartPersistenceUnitInfo.class.getClassLoader(),
-                            new Class[] {SmartPersistenceUnitInfo.class}, jpa2PersistenceUnitInfoDecorator);
-                }
-                persistenceUnitInfos.put(name, puiToStore);
+                persistenceUnitInfos.put(name, mPui);
             }
         } catch (Exception e) {
             throw new RuntimeException("An error occured reflectively invoking methods on " +
@@ -262,15 +227,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         String persistenceUnitName = newPU.getPersistenceUnitName();
         MutablePersistenceUnitInfo temp;
         PersistenceUnitInfo pui = getMergedUnit(persistenceUnitName, newPU);
-        if (pui != null && Proxy.isProxyClass(pui.getClass())) {
-            // JPA 2.0 PersistenceUnitInfo decorator with a SpringPersistenceUnitInfo as target
-            Jpa2PersistenceUnitInfoDecorator dec = (Jpa2PersistenceUnitInfoDecorator) Proxy.getInvocationHandler(pui);
-            temp = (MutablePersistenceUnitInfo) dec.getTarget();
-        }
-        else {
-            // Must be a raw JPA 1.0 SpringPersistenceUnitInfo instance
-            temp = (MutablePersistenceUnitInfo) pui;
-        }
+        temp = (MutablePersistenceUnitInfo) pui;
 
         List<String> managedClassNames = newPU.getManagedClassNames();
         for (String managedClassName : managedClassNames){

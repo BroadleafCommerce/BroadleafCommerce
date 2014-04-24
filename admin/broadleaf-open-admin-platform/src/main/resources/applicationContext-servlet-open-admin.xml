@@ -109,11 +109,11 @@
         </property>
     </bean>
                 
-    <bean id="blAdminWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+    <bean id="blAdminWebTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
         <property name="messageResolvers">
             <set>
                 <ref bean="blAdminMessageResolver" />
-                <bean class="org.thymeleaf.spring3.messageresolver.SpringMessageResolver" />
+                <bean class="org.thymeleaf.spring4.messageresolver.SpringMessageResolver" />
             </set>
         </property>
         <property name="templateResolvers" ref="blAdminWebTemplateResolvers" />

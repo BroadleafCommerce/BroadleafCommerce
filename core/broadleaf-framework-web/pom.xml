@@ -106,7 +106,7 @@
         </dependency>
         <dependency>
             <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf-spring3</artifactId>
+            <artifactId>thymeleaf-spring4</artifactId>
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
@@ -118,7 +118,7 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>

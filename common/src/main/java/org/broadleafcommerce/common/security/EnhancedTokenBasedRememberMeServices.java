@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 /**
@@ -135,6 +136,26 @@ public class EnhancedTokenBasedRememberMeServices extends TokenBasedRememberMeSe
 
         public void setStatus(int arg0, String arg1) {
             //do nothing
+        }
+
+        @Override
+        public int getStatus() {
+            return 0;
+        }
+
+        @Override
+        public String getHeader(String s) {
+            return null;
+        }
+
+        @Override
+        public Collection<String> getHeaders(String s) {
+            return null;
+        }
+
+        @Override
+        public Collection<String> getHeaderNames() {
+            return null;
         }
 
         public void setStatus(int arg0) {

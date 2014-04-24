@@ -24,6 +24,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 /**
@@ -41,6 +42,21 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
     
     public int getStatus() {
         return status;
+    }
+
+    @Override
+    public String getHeader(String s) {
+        return response.getHeader(s);
+    }
+
+    @Override
+    public Collection<String> getHeaders(String s) {
+        return response.getHeaders(s);
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return response.getHeaderNames();
     }
 
     /**
