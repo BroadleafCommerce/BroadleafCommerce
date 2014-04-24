@@ -19,12 +19,17 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.GlobalValidationResult;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -37,31 +42,72 @@ import javax.persistence.criteria.Root;
  */
 @Service("blRowLevelSecurityService")
 public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
-
+    
+    private static final Log LOG = LogFactory.getLog(RowLevelSecurityServiceImpl.class);
+    
+    @Resource(name = "blRowLevelSecurityProviders")
+    List<RowLevelSecurityProvider> providers;
+    
     @Override
     public void addFetchRestrictions(AdminUser user, String ceilingEntity, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder) {
-        // TODO Auto-generated method stub
-        
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            provider.addFetchRestrictions(user, ceilingEntity, entityRoot, criteria, criteriaBuilder);
+        }
     }
 
     @Override
     public boolean canUpdate(AdminUser user, Entity entity) {
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            if (!provider.canUpdate(user, entity)) {
+                return false;
+            }
+        }
         return true;
     }
 
     @Override
     public boolean canRemove(AdminUser user, Entity entity) {
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            if (!provider.canRemove(user, entity)) {
+                return false;
+            }
+        }
         return true;
     }
 
     @Override
     public GlobalValidationResult validateUpdateRequest(AdminUser user, Entity entity, PersistencePackage persistencePackage) {
-        return new GlobalValidationResult(false);
+        GlobalValidationResult validationResult = new GlobalValidationResult(true);
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            GlobalValidationResult providerValidation = provider.validateUpdateRequest(user, entity, persistencePackage);
+            if (providerValidation.isNotValid()) {
+                validationResult.setValid(false);
+                validationResult.addErrorMessage(providerValidation.getErrorMessage());
+            }
+        }
+        return validationResult;
     }
 
     @Override
     public GlobalValidationResult validateRemoveRequest(AdminUser user, Entity entity, PersistencePackage persistencePackage) {
-        return new GlobalValidationResult(true);
+        GlobalValidationResult validationResult = new GlobalValidationResult(true);
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            GlobalValidationResult providerValidation = provider.validateRemoveRequest(user, entity, persistencePackage);
+            if (providerValidation.isNotValid()) {
+                validationResult.setValid(false);
+                validationResult.addErrorMessage(providerValidation.getErrorMessage());
+            }
+        }
+        return validationResult;
+    }
+    
+    @Override
+    public List<RowLevelSecurityProvider> getProviders() {
+        return providers;
+    }
+    
+    public void setProviders(List<RowLevelSecurityProvider> providers) {
+        this.providers = providers;
     }
 
 }
