@@ -21,57 +21,19 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
 
 /**
- * DTO representing a boolean whether or not it passed validation and String error message. An error message is not required
- * if the result is not an error
+ * Empty DTO for now that just denotes that this validation error is from a property
  *
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link PropertyValidator}
  */
-public class PropertyValidationResult {
+public class PropertyValidationResult extends GlobalValidationResult {
 
-    protected boolean valid;
-    protected String errorMessage;
-    
     public PropertyValidationResult(boolean valid, String errorMessage) {
-        setValid(valid);
-        setErrorMessage(errorMessage);
+        super(valid, errorMessage);
     }
     
     public PropertyValidationResult(boolean valid) {
-        setValid(valid);
-    }
-    
-    /**
-     * 
-     * @return Whether or not this property passed validation
-     */
-    public boolean isValid() {
-        return valid;
-    }
-    
-    /**
-     * Set the validation result for this property
-     * @param valid
-     */
-    public void setValid(boolean valid) {
-        this.valid = valid;
-    }
-    
-    /**
-     *
-     * @return the error message (or key in a message bundle) for the validation failure
-     */
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    /**
-     * Sets the error message (or key in a message bundle) for the validation failure. If you have some sort
-     * of custom error message for the validation failure it should be set here
-     * @param errorMessage
-     */
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+        super(valid);
     }
     
 }

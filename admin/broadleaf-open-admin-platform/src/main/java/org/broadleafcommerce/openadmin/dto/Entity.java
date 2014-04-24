@@ -19,6 +19,11 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.TypedClosure;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,10 +32,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.collections.MapUtils;
-import org.broadleafcommerce.common.util.BLCMapUtils;
-import org.broadleafcommerce.common.util.TypedClosure;
 
 /**
  * Generic DTO for a domain object. Each property of the domain object is represented by the 'properties' instance variable
@@ -54,6 +55,7 @@ public class Entity implements Serializable {
     protected boolean multiPartAvailableOnThread = false;
     protected boolean isValidationFailure = false;
     protected Map<String, List<String>> validationErrors = new HashMap<String, List<String>>();
+    protected List<String> globalValidationErrors = new ArrayList<String>();
     
     protected Map<String, Property> pMap = null;
 
@@ -209,11 +211,11 @@ public class Entity implements Serializable {
 
     /**
      * 
-     * @return if this entity has failed validation. This will also check the {@link #getValidationErrors()} map if this
-     * boolean has not been explicitly set
+     * @return if this entity has failed validation. This will also check the {@link #getValidationErrors()} map and 
+     * {@link #getGlobalValidationErrors()} if this boolean has not been explicitly set
      */
     public boolean isValidationFailure() {
-        if (!getValidationErrors().isEmpty()) {
+        if (MapUtils.isNotEmpty(getValidationErrors()) || CollectionUtils.isNotEmpty(getGlobalValidationErrors())) {
             isValidationFailure = true;
         }
         return isValidationFailure;
@@ -251,6 +253,24 @@ public class Entity implements Serializable {
             setValidationFailure(true);
         }
         this.validationErrors = validationErrors;
+    }
+    
+    /**
+     * Adds a validation error to this entity that is not tied to any specific property. If you need to tie this to a
+     * property then you should use {@link #addValidationError(String, String)} instead.
+     * @param errorOrErrorKey
+     */
+    public void addGlobalValidationError(String errorOrErrorKey) {
+        setValidationFailure(true);
+        globalValidationErrors.add(errorOrErrorKey);
+    }
+    
+    public List<String> getGlobalValidationErrors() {
+        return globalValidationErrors;
+    }
+    
+    public void setGlobalValidationErrors(List<String> globalValidationErrors) {
+        this.globalValidationErrors = globalValidationErrors;
     }
 
     public Boolean getActive() {

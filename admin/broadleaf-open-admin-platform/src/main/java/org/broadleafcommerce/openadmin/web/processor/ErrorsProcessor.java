@@ -69,7 +69,7 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
     protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
         String attributeValue = element.getAttributeValue(attributeName);
         
-        BindStatus bindStatus = FieldUtils.getBindStatus(arguments, attributeValue, true);
+        BindStatus bindStatus = FieldUtils.getBindStatus(arguments.getConfiguration(), arguments, attributeValue);
         
         if (bindStatus.isError()) {
             EntityForm form = (EntityForm) ((BindingResult)bindStatus.getErrors()).getTarget();
@@ -112,7 +112,13 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
             }
             
             for (ObjectError err : bindStatus.getErrors().getGlobalErrors()) {
+                Map<String, String> tabErrors = result.get(EntityForm.DEFAULT_TAB_NAME);
+                if (tabErrors == null) {
+                    tabErrors = new HashMap<String, String>();
+                    result.put(EntityForm.DEFAULT_TAB_NAME, tabErrors);
+                }
                 
+                tabErrors.put("General Error", err.getCode());
             }
             
             Map<String,Object> localVariables = new HashMap<String,Object>();
