@@ -10,6 +10,9 @@
     <name>BroadleafCommerce Framework</name>
     <description>BroadleafCommerce Framework</description>
     <url>http://www.broadleafcommerce.org</url>
+    <properties>
+        <project.uri>${project.baseUri}/../../</project.uri>
+    </properties>
     <licenses>
         <license>
             <name>Apache 2</name>
