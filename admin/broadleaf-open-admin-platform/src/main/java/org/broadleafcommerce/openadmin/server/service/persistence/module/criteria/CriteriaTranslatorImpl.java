@@ -25,6 +25,8 @@ import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
+import org.broadleafcommerce.openadmin.server.service.persistence.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.hibernate.type.SingleColumnType;
 import org.springframework.stereotype.Service;
@@ -56,6 +58,12 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
 
     @Resource(name="blCriteriaTranslatorEventHandlers")
     protected List<CriteriaTranslatorEventHandler> eventHandlers = new ArrayList<CriteriaTranslatorEventHandler>();
+    
+    @Resource(name = "blRowLevelSecurityService")
+    protected RowLevelSecurityService rowSecurityService;
+    
+    @Resource(name = "blAdminSecurityRemoteService")
+    protected SecurityVerifier adminSecurityService;
 
     @Override
     public TypedQuery<Serializable> translateCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings) {
@@ -274,7 +282,10 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                 }
             }
         }
-
+        
+        // add in the row-level security handlers to this as well
+        rowSecurityService.addFetchRestrictions(adminSecurityService.getPersistentAdminUser(), ceilingEntity, restrictions, sorts, original, criteria, criteriaBuilder);
+        
         for (CriteriaTranslatorEventHandler eventHandler : eventHandlers) {
             eventHandler.addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, criteria);
         }

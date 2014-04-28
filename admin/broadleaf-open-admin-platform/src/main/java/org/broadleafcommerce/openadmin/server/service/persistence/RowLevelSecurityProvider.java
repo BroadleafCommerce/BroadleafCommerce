@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.service.persistence.validation;
-
+package org.broadleafcommerce.openadmin.server.service.persistence;
 
 /**
- * Empty DTO for now that just denotes that this validation error is from a property
- *
+ * Marker interface that represents a component that can apply security
+ * 
  * @author Phillip Verheyden (phillipuniverse)
- * @see {@link PropertyValidator}
  */
-public class PropertyValidationResult extends GlobalValidationResult {
+public interface RowLevelSecurityProvider extends RowLevelSecurityService {
 
-    public PropertyValidationResult(boolean valid, String errorMessage) {
-        super(valid, errorMessage);
-    }
-    
-    public PropertyValidationResult(boolean valid) {
-        super(valid);
-    }
-    
 }

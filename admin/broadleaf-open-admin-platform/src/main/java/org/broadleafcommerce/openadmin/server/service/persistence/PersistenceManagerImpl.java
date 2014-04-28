@@ -428,12 +428,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             
             //Build up validation errors in all of the subpackages, even those that might not have thrown ValidationExceptions
             for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
-                for (Map.Entry<String, List<String>> error : subPackage.getValue().getEntity().getValidationErrors().entrySet()) {
+                for (Map.Entry<String, List<String>> error : subPackage.getValue().getEntity().getPropertyValidationErrors().entrySet()) {
                     subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
                 }
             }
             
-            response.getValidationErrors().putAll(subPackageValidationErrors);
+            response.getPropertyValidationErrors().putAll(subPackageValidationErrors);
         }
 
         if (response.isValidationFailure()) {
@@ -568,12 +568,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         
         //Build up validation errors in all of the subpackages, even those that might not have thrown ValidationExceptions
         for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
-            for (Map.Entry<String, List<String>> error : subPackage.getValue().getEntity().getValidationErrors().entrySet()) {
+            for (Map.Entry<String, List<String>> error : subPackage.getValue().getEntity().getPropertyValidationErrors().entrySet()) {
                 subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
             }
         }
 
-        response.getValidationErrors().putAll(subPackageValidationErrors);
+        response.getPropertyValidationErrors().putAll(subPackageValidationErrors);
 
         if (response.isValidationFailure()) {
             PersistenceResponse validationResponse = executeValidationProcessors(persistencePackage, new PersistenceResponse().withEntity(response));
