@@ -103,6 +103,7 @@ public class PropertyType {
         public static final String ADDTYPE = "addType";
         public static final String MANYTOFIELD = "manyToField";
         public static final String ORDER = "order";
+        public static final String SORTPROPERTY = "sortProperty";
         public static final String TAB = "tab";
         public static final String TABORDER = "tabOrder";
         public static final String CUSTOMCRITERIA = "customCriteria";

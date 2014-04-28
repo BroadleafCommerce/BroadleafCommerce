@@ -230,7 +230,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             type = ListGrid.Type.TO_ONE;
         } else if (fmd instanceof BasicCollectionMetadata) {
-            readOnly = !((BasicCollectionMetadata) fmd).isMutable();
+            BasicCollectionMetadata bcm = (BasicCollectionMetadata) fmd;
+            readOnly = !bcm.isMutable();
             for (Property p : cmd.getProperties()) {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -244,9 +245,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             type = ListGrid.Type.BASIC;
             
-            if (((BasicCollectionMetadata) fmd).getAddMethodType().equals(AddMethodType.PERSIST)) {
+            if (bcm.getAddMethodType().equals(AddMethodType.PERSIST)) {
                 editable = true;
             }
+
+            sortable = StringUtils.isNotBlank(bcm.getSortProperty());
         } else if (fmd instanceof AdornedTargetCollectionMetadata) {
             readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
