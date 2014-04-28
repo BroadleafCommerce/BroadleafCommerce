@@ -283,12 +283,12 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
             }
         }
         
+        // add in the row-level security handlers to this as well
+        rowSecurityService.addFetchRestrictions(adminSecurityService.getPersistentAdminUser(), ceilingEntity, restrictions, sorts, original, criteria, criteriaBuilder);
+        
         for (CriteriaTranslatorEventHandler eventHandler : eventHandlers) {
             eventHandler.addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, criteria);
         }
-        
-        // add in the row-level security handlers to this as well
-        rowSecurityService.addFetchRestrictions(adminSecurityService.getPersistentAdminUser(), ceilingEntity, original, criteria, criteriaBuilder);
     }
 
     protected void addSorting(CriteriaBuilder criteriaBuilder, List<Order> sorts, FilterMapping filterMapping, Path path) {

@@ -32,6 +32,8 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 
@@ -49,9 +51,12 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
     List<RowLevelSecurityProvider> providers;
     
     @Override
-    public void addFetchRestrictions(AdminUser user, String ceilingEntity, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder) {
+    public void addFetchRestrictions(AdminUser user, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
+            Root entityRoot,
+            CriteriaQuery criteria,
+            CriteriaBuilder criteriaBuilder) {
         for (RowLevelSecurityProvider provider : getProviders()) {
-            provider.addFetchRestrictions(user, ceilingEntity, entityRoot, criteria, criteriaBuilder);
+            provider.addFetchRestrictions(user, ceilingEntity, restrictions, sorts, entityRoot, criteria, criteriaBuilder);
         }
     }
 

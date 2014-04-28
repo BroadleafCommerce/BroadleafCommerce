@@ -22,8 +22,8 @@ package org.broadleafcommerce.openadmin.server.service.persistence;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslatorEventHandler;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslatorImpl;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.GlobalValidationResult;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidator;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
@@ -34,6 +34,7 @@ import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -66,19 +67,36 @@ public interface RowLevelSecurityService {
 
     /**
      * <p>
-     * Used to further restrict a result set in the admin for a particular admin user.
+     * Used to further restrict a result set in the admin for a particular admin user. This can be done by adding additional
+     * {@link Predicate}s to the given list of <b>restrictions</b>. You can also attach additional sorting from the given
+     * list of <b>sorts</b>.
      * 
      * <p>
-     * Existing {@link Predicate}s that have already been applied can be retrieved with {@link CriteriaQuery#getRestriction()}
-     * and existing sorts that have already been applied can be retrieved with {@link CriteriaQuery#getOrderList()}
+     * You should not attach any of these {@link Predicate}s to the given <b>criteria</b>, you should instead modify the
+     * given lists. These lists will be automatically attached to the <b>criteria</b> after execution.
+     * 
+     * <p>
+     * Existing {@link Predicate}s and sorts will already be added into the given <b>restrictions</b> and <b>sorts</b> lists.
+     * 
+     * <p>
+     * This method is executed <i>prior</i> to any {@link CriteriaTranslatorEventHandler}.
      * 
      * @param ceilingEntity the entity currently being queried from
+     * @param restrictions the restrictions that will be applied to the <b>criteria</b> but have not been yet. Additional
+     * {@link Predicate}s to further filter the query should be added to this list
+     * @param sorts the sorts that will be applied to the <b>criteria</b>. Additional sorts should be added to this list
      * @param entityRoot the JPA root for <b>ceilingEntity</b>
-     * @param criteria the built and populated JPA critieria with all {@link FilterMapping}s and 
-     * @param criteriaBuilder used to append additional restrictions to the given <b>criteria</b>
+     * @param criteria the criteria that will be executed. No {@link Predicate}s or {@link Order}s have been applied
+     * to this criteria, and nor should they be. All modifications should instead be to the given <b>restrictions</b> and/or
+     * <b>sorts</b>
+     * @param criteriaBuilder used to create additional {@link Predicate}s or {@link Order}s to add to <b>restrictions</b>
+     * and/or <b>sorts</b>
      * @see {@link CriteriaTranslatorImpl#addRestrictions}
      */
-    public void addFetchRestrictions(AdminUser user, String ceilingEntity, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder);
+    public void addFetchRestrictions(AdminUser user, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
+            Root entityRoot,
+            CriteriaQuery criteria,
+            CriteriaBuilder criteriaBuilder);
     
     /**
      * <p>
