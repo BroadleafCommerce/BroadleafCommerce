@@ -19,18 +19,10 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
@@ -47,6 +39,15 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Brian Polster
@@ -89,10 +90,12 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 if (valueType == null) {
                     valueType = populateValueRequest.getReturnType();
                 }
-            }
+            }                       
 
             if (valueType == null) {
                 throw new IllegalAccessException("Unable to determine the valueType for the rule field (" + populateValueRequest.getProperty().getName() + ")");
+            } else if (Media.class.equals(valueType)) {
+                valueType = MediaImpl.class;
             }
         
             if (Media.class.isAssignableFrom(valueType)) {
