@@ -98,7 +98,7 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
     }
 
     protected String generateUri(SiteMapBuilder smb, Page page) {
-        return BroadleafFileUtils.buildFilePath(smb.getBaseUrl(), page.getFullUrl());
+        return BroadleafFileUtils.appendUnixPaths(smb.getBaseUrl(), page.getFullUrl());
     }
 
     protected Date generateDate(Page page) {

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.file.domain;
 
+import java.io.File;
+
 /**
  * Represents a temporary location on the fileSystem.
  * 
@@ -29,14 +31,26 @@ package org.broadleafcommerce.common.file.domain;
  */
 public class FileWorkArea {
 
-    public String filePathLocation;
+    protected String filePathLocation;
     
+    /**
+     * Gets the file path location representing this work area ending with an appropriate system-specific separator
+     * @return
+     */
     public String getFilePathLocation() {
-        return filePathLocation;
+        if (!filePathLocation.endsWith(File.separator)) {
+            return filePathLocation + File.separator;
+        } else {
+            return filePathLocation;
+        }
     }
     
     public void setFilePathLocation(String filePathLocation) {
-        this.filePathLocation = filePathLocation;
+        if (!filePathLocation.endsWith(File.separator)) {
+            this.filePathLocation = filePathLocation + File.separator;
+        } else {
+            this.filePathLocation = filePathLocation;
+        }
     }
     
 }

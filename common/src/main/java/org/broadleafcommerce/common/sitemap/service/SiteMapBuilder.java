@@ -153,9 +153,9 @@ public class SiteMapBuilder {
             SiteMapWrapper siteMapWrapper = new SiteMapWrapper();
             String fileLoc = null;
             if (gzipSiteMapFiles) {
-                fileLoc = BroadleafFileUtils.buildFilePath(baseUrl, fileName + ".gz");
+                fileLoc = BroadleafFileUtils.appendUnixPaths(baseUrl, fileName + ".gz");
             } else {
-                fileLoc = BroadleafFileUtils.buildFilePath(baseUrl, fileName);
+                fileLoc = BroadleafFileUtils.appendUnixPaths(baseUrl, fileName);
             }
             siteMapWrapper.setLoc(fileLoc)   ;         
             siteMapWrapper.setLastmod(now);
