@@ -414,6 +414,10 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 hiddenField.setValue(e.findProperty(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY).getValue());
                 record.getHiddenFields().add(hiddenField);
             }
+
+            if (e.findProperty(BasicPersistenceModule.ALTERNATE_ID_PROPERTY) != null) {
+                record.setAltId(e.findProperty(BasicPersistenceModule.ALTERNATE_ID_PROPERTY).getValue());
+            }
             
             extensionManager.getProxy().modifyListGridRecord(className, record, e);
 
