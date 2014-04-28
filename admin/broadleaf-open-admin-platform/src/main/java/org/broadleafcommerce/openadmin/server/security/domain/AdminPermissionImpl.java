@@ -26,6 +26,11 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
 import org.hibernate.annotations.BatchSize;
@@ -33,7 +38,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.lang.reflect.Method;
@@ -89,43 +93,63 @@ public class AdminPermissionImpl implements AdminPermission {
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
-    @Index(name="ADMINPERM_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Name", order = 3000, group = "AdminPermissionImpl_Permission")
     protected String name;
 
     @Column(name = "PERMISSION_TYPE", nullable=false)
-    @Index(name="ADMINPERM_TYPE_INDEX", columnNames={"PERMISSION_TYPE"})
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Permission_Type", order = 3000,
+            group = "AdminPermissionImpl_Permission",
+            prominent = true, gridOrder = 2000,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.openadmin.server.security.service.type.PermissionType")
     protected String type;
 
     @Column(name = "DESCRIPTION", nullable=false)
-    @AdminPresentation(friendlyName = "AdminPermissionImpl_Description", order=2, group = "AdminPermissionImpl_Permission", prominent=true)
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Description", order = 1000, group = "AdminPermissionImpl_Permission",
+            prominent = true, gridOrder = 2000)
     protected String description;
     
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)
     @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentation(excluded = true)
     protected Set<AdminRole> allRoles= new HashSet<AdminRole>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminUserImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentation(excluded = true)
     protected Set<AdminUser> allUsers= new HashSet<AdminUser>();
 
     @OneToMany(mappedBy = "adminPermission", targetEntity = AdminPermissionQualifiedEntityImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "entityPermissionsTitle",
+            order = 2000)
     protected List<AdminPermissionQualifiedEntity> qualifiedEntities = new ArrayList<AdminPermissionQualifiedEntity>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "CHILD_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "childPermissionsTitle",
+            order = 1000,
+            manyToField = "allParentPermissions",
+            operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected List<AdminPermission> allChildPermissions = new ArrayList<AdminPermission>();
     
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
+    @JoinTable(name = "BLC_ADMIN_PERMISSION_XREF", joinColumns = @JoinColumn(name = "CHILD_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @BatchSize(size = 50)
+    protected List<AdminPermission> allParentPermissions = new ArrayList<AdminPermission>();
+
     @Column(name = "IS_FRIENDLY")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AdminPermissionImpl_Is_Friendly",
+            order = 4000, group = "AdminPermissionImpl_Permission")
     protected Boolean isFriendly = Boolean.FALSE;
 
     @Override
@@ -243,6 +267,11 @@ public class AdminPermissionImpl implements AdminPermission {
     @Override
     public List<AdminPermission> getAllChildPermissions() {
         return allChildPermissions;
+    }
+
+    @Override
+    public List<AdminPermission> getAllParentPermissions() {
+        return allParentPermissions;
     }
 
     @Override

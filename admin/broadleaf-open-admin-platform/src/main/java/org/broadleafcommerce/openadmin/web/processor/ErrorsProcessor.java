@@ -36,7 +36,9 @@ import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 import org.thymeleaf.spring3.util.FieldUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -56,6 +58,9 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
     
     protected static final Log LOG = LogFactory.getLog(ErrorsProcessor.class);
 
+    public static final String GENERAL_ERRORS_TAB_KEY = "generalErrors";
+    public static final String GENERAL_ERROR_FIELD_KEY = "generalError";
+    
     public ErrorsProcessor() {
         super("errors");
     }
@@ -69,12 +74,13 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
     protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
         String attributeValue = element.getAttributeValue(attributeName);
         
-        BindStatus bindStatus = FieldUtils.getBindStatus(arguments, attributeValue, true);
+        BindStatus bindStatus = FieldUtils.getBindStatus(arguments.getConfiguration(), arguments, attributeValue);
         
         if (bindStatus.isError()) {
             EntityForm form = (EntityForm) ((BindingResult)bindStatus.getErrors()).getTarget();
             
-            Map<String, Map<String, String>> result = new HashMap<String, Map<String, String>>();
+            // Map of tab name -> (Map field Name -> list of error messages)
+            Map<String, Map<String, List<String>>> result = new HashMap<String, Map<String, List<String>>>();
             for (FieldError err : bindStatus.getErrors().getFieldErrors()) {
                 //attempt to look up which tab the field error is on. If it can't be found, just use
                 //the default tab for the group
@@ -84,9 +90,9 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                     tabName = tab.getTitle();
                 }
                 
-                Map<String, String> tabErrors = result.get(tabName);
+                Map<String, List<String>> tabErrors = result.get(tabName);
                 if (tabErrors == null) {
-                    tabErrors = new HashMap<String, String>();
+                    tabErrors = new HashMap<String, List<String>>();
                     result.put(tabName, tabErrors);
                 }
                 if (err.getField().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) {
@@ -94,25 +100,31 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                     String fieldName = err.getField().substring(err.getField().indexOf('[') + 1, err.getField().lastIndexOf(']'));
                     String[] fieldInfo = fieldName.split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
                     Field formField = form.getDynamicForm(fieldInfo[0]).getFields().get(fieldName);
+                    
                     if (formField != null) {
-                        tabErrors.put(formField.getFriendlyName(), err.getCode());
+                        addFieldError(formField.getFriendlyName(), err.getCode(), tabErrors);
                     } else {
                         LOG.warn("Could not find field " + fieldName + " within the dynamic form " + fieldInfo[0]);
-                        tabErrors.put(fieldName, err.getCode());
+                        addFieldError(fieldName, err.getCode(), tabErrors);
                     }
                 } else {
                     Field formField = form.findField(err.getField());
                     if (formField != null) {
-                        tabErrors.put(formField.getFriendlyName(), err.getCode());
+                        addFieldError(formField.getFriendlyName(), err.getCode(), tabErrors);
                     } else {
                         LOG.warn("Could not field field " + err.getField() + " within the main form");
-                        tabErrors.put(err.getField(), err.getCode());
+                        addFieldError(err.getField(), err.getCode(), tabErrors);
                     }
                 }
             }
             
             for (ObjectError err : bindStatus.getErrors().getGlobalErrors()) {
-                
+                Map<String, List<String>> tabErrors = result.get(GENERAL_ERRORS_TAB_KEY);
+                if (tabErrors == null) {
+                    tabErrors = new HashMap<String, List<String>>();
+                    result.put(GENERAL_ERRORS_TAB_KEY, tabErrors);
+                }
+                addFieldError(GENERAL_ERROR_FIELD_KEY, err.getCode(), tabErrors);
             }
             
             Map<String,Object> localVariables = new HashMap<String,Object>();
@@ -121,6 +133,15 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
         }
         return ProcessorResult.OK;
         
+    }
+    
+    protected void addFieldError(String fieldName, String message, Map<String, List<String>> tabErrors) {
+        List<String> messages = tabErrors.get(fieldName);
+        if (messages == null) {
+            messages = new ArrayList<String>();
+            tabErrors.put(fieldName, messages);
+        }
+        messages.add(message);
     }
 
 }

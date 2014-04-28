@@ -107,7 +107,7 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     }
 
     protected String generateUri(SiteMapBuilder siteMapBuilder, Category category) {
-        return BroadleafFileUtils.buildFilePath(siteMapBuilder.getBaseUrl(), category.getUrl());
+        return BroadleafFileUtils.appendUnixPaths(siteMapBuilder.getBaseUrl(), category.getUrl());
     }
 
     protected Date generateDate(Category category) {

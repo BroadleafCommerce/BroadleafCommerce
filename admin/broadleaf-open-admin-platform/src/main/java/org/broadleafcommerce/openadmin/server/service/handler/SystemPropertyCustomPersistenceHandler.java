@@ -79,7 +79,7 @@ public class SystemPropertyCustomPersistenceHandler extends CustomPersistenceHan
             // Verify that the value entered matches up with the type of this property
             Entity errorEntity = validateTypeAndValueCombo(adminInstance);
             if (errorEntity != null) {
-                entity.setValidationErrors(errorEntity.getValidationErrors());
+                entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
             }
 
@@ -105,7 +105,7 @@ public class SystemPropertyCustomPersistenceHandler extends CustomPersistenceHan
             // Verify that the value entered matches up with the type of this property
             Entity errorEntity = validateTypeAndValueCombo(adminInstance);
             if (errorEntity != null) {
-                entity.setValidationErrors(errorEntity.getValidationErrors());
+                entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
             }
             

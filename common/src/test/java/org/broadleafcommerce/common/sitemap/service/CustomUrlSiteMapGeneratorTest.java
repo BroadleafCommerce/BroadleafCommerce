@@ -20,6 +20,11 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
+
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfigurationImpl;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntry;
@@ -28,6 +33,7 @@ import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.junit.Test;
 
 import java.io.File;
@@ -45,7 +51,48 @@ public class CustomUrlSiteMapGeneratorTest extends SiteMapGeneratorTest {
 
     @Test
     public void testCustomUrlSiteMapGenerator() throws SiteMapException, IOException {
+        CustomUrlSiteMapGeneratorConfiguration smgc = getConfiguration();
+        testGenerator(smgc, new CustomUrlSiteMapGenerator());
 
+        File file1 = fileService.getResource("/sitemap_index.xml");
+        File file2 = fileService.getResource("/sitemap1.xml");
+        File file3 = fileService.getResource("/sitemap2.xml");
+
+        compareFiles(file1, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap_index.xml");
+        compareFiles(file2, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap1.xml");
+        compareFiles(file3, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap2.xml");
+
+    }
+    
+    @Test
+    public void testSiteMapsWithSiteContext() throws SiteMapException, IOException {
+        BroadleafRequestContext brc = new BroadleafRequestContext();
+        BroadleafRequestContext.setBroadleafRequestContext(brc);
+
+        Site site = new SiteImpl();
+        site.setId(256L);
+        brc.setSite(site);
+        
+        CustomUrlSiteMapGeneratorConfiguration smgc = getConfiguration();
+        testGenerator(smgc, new CustomUrlSiteMapGenerator());
+
+        File file1 = fileService.getResource("/sitemap_index.xml");
+        File file2 = fileService.getResource("/sitemap1.xml");
+        File file3 = fileService.getResource("/sitemap2.xml");
+        
+        assertThat(file1.getAbsolutePath(), containsString("site-256"));
+        assertThat(file2.getAbsolutePath(), containsString("site-256"));
+        assertThat(file3.getAbsolutePath(), containsString("site-256"));
+
+        compareFiles(file1, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap_index.xml");
+        compareFiles(file2, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap1.xml");
+        compareFiles(file3, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap2.xml");
+        
+        // Remove the request context from thread local so it doesn't get in the way of subsequent tests
+        BroadleafRequestContext.setBroadleafRequestContext(null);
+    }
+    
+    public CustomUrlSiteMapGeneratorConfiguration getConfiguration() {
         SiteMapUrlEntry urlEntry1 = new SiteMapUrlEntryImpl();
         urlEntry1.setLastMod(new Date());
         urlEntry1.setLocation("http://www.heatclinic.com/1");
@@ -73,17 +120,8 @@ public class CustomUrlSiteMapGeneratorTest extends SiteMapGeneratorTest {
         smgc.setDisabled(false);
         smgc.setSiteMapGeneratorType(SiteMapGeneratorType.CUSTOM);
         smgc.setCustomURLEntries(urlEntries);
-
-        testGenerator(smgc, new CustomUrlSiteMapGenerator());
-
-        File file1 = fileService.getResource("/sitemap_index.xml");
-        File file2 = fileService.getResource("/sitemap1.xml");
-        File file3 = fileService.getResource("/sitemap2.xml");
-
-        compareFiles(file1, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap_index.xml");
-        compareFiles(file2, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap1.xml");
-        compareFiles(file3, "src/test/resources/org/broadleafcommerce/sitemap/custom/sitemap2.xml");
-
+        
+        return smgc;
     }
 
 }

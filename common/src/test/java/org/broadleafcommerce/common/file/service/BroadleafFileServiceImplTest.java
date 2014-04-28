@@ -30,10 +30,11 @@ import junit.framework.TestCase;
 
 public class BroadleafFileServiceImplTest extends TestCase {
 
-    private BroadleafFileServiceImpl bfs = new BroadleafFileServiceImpl();
-    private FileSystemFileServiceProvider fsp = new FileSystemFileServiceProvider();
+    private final BroadleafFileServiceImpl bfs = new BroadleafFileServiceImpl();
+    private final FileSystemFileServiceProvider fsp = new FileSystemFileServiceProvider();
     private FileWorkArea baseSystemDirectory;
 
+    @Override
     public void setUp() throws Exception {
         fsp.maxGeneratedDirectoryDepth = 2;
         bfs.defaultFileServiceProvider = fsp;
@@ -42,9 +43,10 @@ public class BroadleafFileServiceImplTest extends TestCase {
 
         // Use the FileServiceProvider to create a temporary directory and use it as the 
         // location to store files.   
-        fsp.fileSystemBaseDirectory = baseSystemDirectory.filePathLocation;
+        fsp.fileSystemBaseDirectory = baseSystemDirectory.getFilePathLocation();
     }
 
+    @Override
     public void tearDown() throws Exception {
         // Close the work area used as the main directory for files. 
         bfs.closeWorkArea(baseSystemDirectory);

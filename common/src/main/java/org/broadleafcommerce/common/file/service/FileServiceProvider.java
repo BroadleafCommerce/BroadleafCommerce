@@ -34,22 +34,24 @@ import java.util.List;
 public interface FileServiceProvider {
     
     /**
-     * Returns a File representing the passed in name.
+     * Returns a File representing the passed in url. All separators in the given <b>url</b> should be in URL-separator form
+     * meaning '/' rather than '\' (like on Windows).
      * 
      * @param name - fully qualified path to the resource
      * @return
      */
-    File getResource(String name);
+    File getResource(String url);
 
     /**
      * Returns a File representing the passed in name and application type.   Providers may choose to 
      * cache certain FileApplicationType(s) locally rather than retrieve them from a remote source.   
      *  
-     * @param name - fully qualified path to the resource
-     * @param fileApplicationType - applicationType
-     * @return
+     * @param url - the URL-representation of the resource. This means that paths should always have / separators rather than
+     * system-specific values
+     * @param fileApplicationType applicationType
+     * @return a File to the 
      */
-    File getResource(String name, FileApplicationType fileApplicationType);
+    File getResource(String url, FileApplicationType fileApplicationType);
 
     /**
      * Takes in a work area and application type and moves all of the files to the configured FileProvider.

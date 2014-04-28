@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
@@ -27,7 +28,6 @@ import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
-import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
@@ -201,7 +201,7 @@ public class SiteMapServiceImpl implements SiteMapService {
     protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames) {
         for (String fileName : fileNames) {
             try {
-                String fileNameWithPath = BroadleafFileUtils.buildFilePath(fileWorkArea.getFilePathLocation(), fileName);
+                String fileNameWithPath = FilenameUtils.normalize(fileWorkArea.getFilePathLocation() + File.separator + fileName);
 
                 FileInputStream fis = new FileInputStream(fileNameWithPath);
                 FileOutputStream fos = new FileOutputStream(fileNameWithPath + ".gz");
