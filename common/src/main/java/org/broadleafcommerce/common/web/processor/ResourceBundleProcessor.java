@@ -52,7 +52,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     
     protected boolean getBundleEnabled() {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled") && brc.getSandBox() == null;
+        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled") && (brc.getSandBox() == null || brc.getAdmin());
     }
 
     public ResourceBundleProcessor() {

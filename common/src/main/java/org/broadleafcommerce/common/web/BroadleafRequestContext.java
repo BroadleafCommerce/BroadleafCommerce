@@ -361,7 +361,7 @@ public class BroadleafRequestContext {
     }
 
     public Boolean getAdmin() {
-        return isAdmin;
+        return isAdmin == null ? false : isAdmin;
     }
 
     public void setAdmin(Boolean admin) {
