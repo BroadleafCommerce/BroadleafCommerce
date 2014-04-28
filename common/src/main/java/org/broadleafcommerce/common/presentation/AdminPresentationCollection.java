@@ -190,4 +190,13 @@ public @interface AdminPresentationCollection {
      */
     String currencyCodeField() default "";
 
+    /**
+     * <p>Optional - only required if the collection
+     * a field used for sorting</p>  Enables the reorder functionality in list grids.
+     * 
+     *
+     * @return the sort field in the adorned target entity
+     */
+    String sortProperty() default "";
+
 }

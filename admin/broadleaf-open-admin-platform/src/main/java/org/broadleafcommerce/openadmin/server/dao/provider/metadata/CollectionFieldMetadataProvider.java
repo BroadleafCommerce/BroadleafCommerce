@@ -19,11 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -54,6 +49,11 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -298,6 +298,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                 fieldMetadataOverride.setSecurityLevel(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SHOWIFPROPERTY)) {
                 fieldMetadataOverride.setShowIfProperty(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SORTPROPERTY)) {
+                fieldMetadataOverride.setSortProperty(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.TAB)) {
                 fieldMetadataOverride.setTab(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.TABORDER)) {
@@ -328,6 +330,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             override.setExcluded(annotColl.excluded());
             override.setFriendlyName(annotColl.friendlyName());
             override.setReadOnly(annotColl.readOnly());
+            override.setSortProperty(annotColl.sortProperty());
             override.setOrder(annotColl.order());
             override.setTab(annotColl.tab());
             override.setTabOrder(annotColl.tabOrder());
@@ -395,6 +398,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         } else {
             persistencePerspective = new PersistencePerspective(dtoOperationTypes, new String[]{}, new ForeignKey[]{});
             metadata.setPersistencePerspective(persistencePerspective);
+        }
+
+        if (!StringUtils.isEmpty(collectionMetadata.getSortProperty())) {
+            metadata.setSortProperty(collectionMetadata.getSortProperty());
         }
 
         String foreignKeyName = null;
@@ -480,6 +487,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         }
         if (collectionMetadata.getTabOrder() != null) {
             metadata.setTabOrder(collectionMetadata.getTabOrder());
+        }
+
+        if (collectionMetadata.getSortProperty() != null) {
+            metadata.setSortProperty(collectionMetadata.getSortProperty());
         }
 
         if (collectionMetadata.getCustomCriteria() != null) {

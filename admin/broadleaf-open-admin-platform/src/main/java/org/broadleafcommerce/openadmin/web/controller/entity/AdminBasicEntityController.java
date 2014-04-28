@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
@@ -1169,7 +1170,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity parentEntity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
         
         ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
-        
+
         if (md instanceof AdornedTargetCollectionMetadata) {
             AdornedTargetCollectionMetadata fmd = (AdornedTargetCollectionMetadata) md;
             AdornedTargetList atl = ppr.getAdornedList();
@@ -1188,6 +1189,36 @@ public class AdminBasicEntityController extends AdminAbstractController {
             
             Map<String, Object> responseMap = new HashMap<String, Object>();
             service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId, sectionCrumbs);
+            responseMap.put("status", "ok");
+            responseMap.put("field", collectionField);
+            return responseMap;
+        } else if (md instanceof BasicCollectionMetadata) {
+            BasicCollectionMetadata cd = (BasicCollectionMetadata) md;
+            Map<String, Object> responseMap = new HashMap<String, Object>();
+            Entity entity = service.getRecord(ppr, collectionItemId, mainMetadata, false).getDynamicResultSet().getRecords()[0];
+
+            ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+            EntityForm entityForm = formService.createEntityForm(collectionMetadata, sectionCrumbs);
+            if (!StringUtils.isEmpty(cd.getSortProperty())) {
+                Field f = new Field()
+                        .withName(cd.getSortProperty())
+                        .withFieldType(SupportedFieldType.HIDDEN.toString());
+                entityForm.addHiddenField(f);
+            }
+            formService.populateEntityFormFields(entityForm, entity);
+
+            if (!StringUtils.isEmpty(cd.getSortProperty())) {
+                int sequenceValue = Integer.parseInt(newSequence) + 1;
+                Field field = entityForm.findField(cd.getSortProperty());
+                field.setValue(String.valueOf(sequenceValue));
+            }
+
+            PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, sectionCrumbs);
+
+            // Next, we must get the new list grid that represents this collection
+            ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);
+            model.addAttribute("listGrid", listGrid);
+
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);
             return responseMap;
