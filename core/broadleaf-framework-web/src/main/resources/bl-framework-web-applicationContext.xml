@@ -161,7 +161,7 @@
         <property name="characterEncoding" value="UTF-8" />
     </bean>  
     
-    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring3.dialect.SpringStandardDialect" />
+    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring4.dialect.SpringStandardDialect" />
     
     <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
 
@@ -180,11 +180,11 @@
     <bean id="blThymeleafStandardTemplateModeHandlers" 
         class="org.broadleafcommerce.common.web.BroadleafThymeleafStandardTemplateModeHandlers" />
     
-    <bean id="blWebTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+    <bean id="blWebTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
         <property name="messageResolvers">
             <set>
                 <ref bean="blMessageResolver" />
-                <bean class="org.thymeleaf.spring3.messageresolver.SpringMessageResolver" />
+                <bean class="org.thymeleaf.spring4.messageresolver.SpringMessageResolver" />
             </set>
         </property>
         <property name="templateResolvers" ref="blWebTemplateResolvers" />
@@ -206,7 +206,7 @@
         </property>
     </bean>
     
-    <bean id="blEmailTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+    <bean id="blEmailTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
         <property name="templateResolvers" ref="blEmailTemplateResolvers" />
         <property name="dialects">
             <set>

@@ -57,8 +57,7 @@ public class BroadleafRobotsController {
     public String getRobotsFile(HttpServletRequest request, HttpServletResponse response) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
 
-        response.setContentType("text/plain");
-        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/plain; charset=UTF-8");
 
         PageDTO page = pageService.findPageByURI(null,
                 "/robots.txt", buildMvelParameters(request), isSecure(request));

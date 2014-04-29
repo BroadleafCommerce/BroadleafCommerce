@@ -62,8 +62,7 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
 
         if (!StringUtils.isEmpty(plainTextStr)) {
             if (Boolean.valueOf(plainTextStr)) {
-                response.setCharacterEncoding("UTF-8");
-                response.setContentType("text/plain");
+                response.setContentType("text/plain; charset=UTF-8");
             }
         }
 

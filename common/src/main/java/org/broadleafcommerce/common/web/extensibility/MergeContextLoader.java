@@ -19,17 +19,19 @@
  */
 package org.broadleafcommerce.common.web.extensibility;
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
 
 /**
- * Performs the actual initialization work for the rootId application context.
- * Called by {@link MergeContextLoaderListener}.
+ * ContextLoaderListener that performs initialization work for the rootId application context.
  *
  * <p>Processes a {@link #CONFIG_LOCATION_PARAM "contextConfigLocation"}
  * context-param and passes its value to the context instance, parsing it into
@@ -61,7 +63,7 @@ import javax.servlet.ServletContext;
  *
  * @author Jeff Fischer
  */
-public class MergeContextLoader extends ContextLoader {
+public class MergeContextLoader extends ContextLoaderListener {
 
     /**
      * Name of servlet context parameter (i.e., "<code>patchConfigLocation</code>")
@@ -136,5 +138,11 @@ public class MergeContextLoader extends ContextLoader {
         //wac.refresh();
 
         return wac;
+    }
+
+    @Override
+    public void contextInitialized(ServletContextEvent event) {
+        super.contextInitialized(event);
+        ThreadLocalManager.remove();
     }
 }
