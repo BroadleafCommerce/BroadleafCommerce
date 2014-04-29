@@ -51,6 +51,6 @@ public class InventoryWrapper extends BaseWrapper {
     }
 
     public void wrapSummary(Sku sku, Integer quantity, HttpServletRequest request) {
-        wrapDetails(sku, quantityAvailable, request);
+        wrapDetails(sku, quantity, request);
     }
 }
