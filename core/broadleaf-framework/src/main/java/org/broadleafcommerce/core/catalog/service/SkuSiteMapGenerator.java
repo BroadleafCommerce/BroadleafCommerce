@@ -111,5 +111,21 @@ public class SkuSiteMapGenerator implements SiteMapGenerator {
     protected Date generateDate(Sku sku) {
         return new Date();
     }
+    
+    public SkuDao getSkuDao() {
+        return skuDao;
+    }
+
+    public void setSkuDao(SkuDao skuDao) {
+        this.skuDao = skuDao;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 
 }
