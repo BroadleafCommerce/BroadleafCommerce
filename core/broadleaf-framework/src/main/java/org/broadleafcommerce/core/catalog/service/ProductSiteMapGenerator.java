@@ -89,7 +89,7 @@ public class ProductSiteMapGenerator implements SiteMapGenerator {
     }
 
     protected String generateUri(SiteMapBuilder smb, Product product) {
-        return BroadleafFileUtils.buildFilePath(smb.getBaseUrl(), product.getUrl());
+        return BroadleafFileUtils.appendUnixPaths(smb.getBaseUrl(), product.getUrl());
     }
 
     protected Date generateDate(Product product) {

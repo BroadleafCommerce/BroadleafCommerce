@@ -118,6 +118,9 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
      * Given contextPath = "myApp"
      *
      * The result should yield: "/myApp/cmsstatic/my_image.jpg"
+     * 
+     * Also, since all paths are intended to be URLs, there should be no system-specific separator characters like '\' for
+     * Windows. All paths should be unix file paths as URLs.
      *
      * @param assetPath     - The path to rewrite if it is a cms managed asset
      * @param contextPath   - The context path of the web application (if applicable)
@@ -139,7 +142,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
             }
             if (envPrefix != null) {
                 // remove the starting "/" if it exists.
-                if (returnValue.startsWith(File.separator)) {
+                if (returnValue.startsWith("/")) {
                     returnValue = returnValue.substring(1);
                 }
 
@@ -148,7 +151,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
                     returnValue = returnValue.substring(getStaticAssetUrlPrefix().trim().length());
 
                     // remove the starting "/" if it exists.
-                    if (returnValue.startsWith(File.separator)) {
+                    if (returnValue.startsWith("/")) {
                         returnValue = returnValue.substring(1);
                     }
                 }                
@@ -156,21 +159,21 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
             }
         } else {
             if (returnValue != null && ! ImportSupport.isAbsoluteUrl(returnValue)) {
-                if (! returnValue.startsWith(File.separator)) {
-                    returnValue = File.separator + returnValue;
+                if (! returnValue.startsWith("/")) {
+                    returnValue = "/" + returnValue;
                 }
 
                 // Add context path
                 if (contextPath != null && ! contextPath.equals("")) {
-                    if (! contextPath.equals(File.separator)) {
+                    if (! contextPath.equals("/")) {
                         // Shouldn't be the case, but let's handle it anyway
-                        if (contextPath.endsWith(File.separator)) {
+                        if (contextPath.endsWith("/")) {
                             returnValue = returnValue.substring(1);
                         }
-                        if (contextPath.startsWith(File.separator)) {
+                        if (contextPath.startsWith("/")) {
                             returnValue = contextPath + returnValue;  // normal case
                         } else {
-                            returnValue = File.separator + contextPath + returnValue;
+                            returnValue = "/" + contextPath + returnValue;
                         }
                     }
                 }

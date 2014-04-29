@@ -161,7 +161,7 @@ public interface PersistenceManagerEventHandler extends Ordered {
      * Called after a validation error. Validations occur on adds, updates and removes. The validation confirms the persistence request is
      * correct and does not have any errors. This event handling hook provides an opportunity to impact and/or modify
      * the results of validation errors. Errors are generally reviewed in this method by looking at
-     * {@link org.broadleafcommerce.openadmin.dto.Entity#getValidationErrors()}
+     * {@link org.broadleafcommerce.openadmin.dto.Entity#getPropertyValidationErrors()}
      *
      * @param persistenceManager the PersistenceManager instance making the call
      * @param entity the results of the persistence request

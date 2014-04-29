@@ -21,6 +21,7 @@ package org.broadleafcommerce.common.file.service;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,14 +64,15 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
     protected String baseDirectory;
 
     @Override
-    public File getResource(String name) {
-        return getResource(name, FileApplicationType.ALL);
+    public File getResource(String url) {
+        return getResource(url, FileApplicationType.ALL);
     }
 
     @Override
-    public File getResource(String name, FileApplicationType applicationType) {
-        String fileName = buildResourceName(name);
-        return new File(getBaseDirectory() + fileName);
+    public File getResource(String url, FileApplicationType applicationType) {
+        String fileName = buildResourceName(url);
+        String filePath = FilenameUtils.normalize(getBaseDirectory() + File.separator + fileName);
+        return new File(filePath);
     }
 
     @Override
@@ -82,9 +84,12 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
             }
 
             String fileName = srcFile.getAbsolutePath().substring(area.getFilePathLocation().length());
-
-            String resourceName = buildResourceName(fileName);
-            File destFile = new File(getBaseDirectory() + resourceName);
+            
+            // before building the resource name, convert the file path to a url-like path
+            String url = FilenameUtils.separatorsToUnix(fileName);
+            String resourceName = buildResourceName(url);
+            String destinationFilePath = FilenameUtils.normalize(getBaseDirectory() + File.separator + resourceName);
+            File destFile = new File(destinationFilePath);
             if (!destFile.getParentFile().exists()) {
                 destFile.getParentFile().mkdirs();
             }
@@ -108,7 +113,8 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
     @Override
     public boolean removeResource(String name) {
         String resourceName = buildResourceName(name);
-        File fileToRemove = new File(getBaseDirectory() + resourceName);
+        String filePathToRemove = FilenameUtils.normalize(getBaseDirectory() + File.separator + resourceName);
+        File fileToRemove = new File(filePathToRemove);
         return fileToRemove.delete();
     }
 
@@ -139,33 +145,27 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
      * @return
      */
     protected String buildResourceName(String url) {
-        StringBuilder resourceName = new StringBuilder();
         // Create directories based on hash
         String fileHash = null;
-        if (!url.startsWith(File.separator)) {
-            fileHash = DigestUtils.md5Hex(File.separator + url);
+        // Intentionally not using File.separator here since URLs should always end with /
+        if (!url.startsWith("/")) {
+            fileHash = DigestUtils.md5Hex("/" + url);
         } else {
             fileHash = DigestUtils.md5Hex(url);
         }
 
+        String resourceName = "";
         for (int i = 0; i < maxGeneratedDirectoryDepth; i++) {
             if (i == 4) {
                 LOG.warn("Property maxGeneratedDirectoryDepth set to high, ignoring values past 4 - value set to" +
                         maxGeneratedDirectoryDepth);
                 break;
             }
-            resourceName = resourceName.append(fileHash.substring(i * 2, (i + 1) * 2)).append(File.separator);
+            resourceName = FilenameUtils.concat(resourceName, fileHash.substring(i * 2, (i + 1) * 2));
         }
 
-        int pos = url.lastIndexOf(File.separator);
-        if (pos >= 0 && (pos < url.length() - 1)) {
-            // Use the fileName as specified if possible.
-            resourceName = resourceName.append(url.substring(pos + 1));
-        } else {
-            // Just use the hash since we didn't find a filename for this one.
-            resourceName = resourceName.append(url);
-        }
-        return resourceName.toString();
+        // use the filename from the URL which is everything after the last slash
+        return FilenameUtils.concat(resourceName, FilenameUtils.getName(url));
     }
 
     /**
@@ -174,14 +174,10 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
      */
     protected String getBaseDirectory() {
         if (baseDirectory == null) {
-            if (StringUtils.isNotEmpty(fileSystemBaseDirectory)) {
+            if (StringUtils.isNotBlank(fileSystemBaseDirectory)) {
                 baseDirectory = fileSystemBaseDirectory;
             } else {
                 baseDirectory = DEFAULT_STORAGE_DIRECTORY;
-            }
-
-            if (!baseDirectory.endsWith(File.separator)) {
-                baseDirectory = baseDirectory.trim() + File.separator;
             }
         }
 
@@ -201,9 +197,10 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
         if (brc != null) {
             Site site = brc.getSite();
             if (site != null) {
-                String siteDirectory = File.separator + "site-" + site.getId();
+                String siteDirectory = "site-" + site.getId();
                 String siteHash = DigestUtils.md5Hex(siteDirectory);
-                return baseDirectory + siteHash.substring(0, 2) + siteDirectory + File.separator;
+                String sitePath = FilenameUtils.concat(siteHash.substring(0, 2), siteDirectory);
+                return FilenameUtils.concat(baseDirectory, sitePath);
             }
         }
 

@@ -21,6 +21,8 @@ package org.broadleafcommerce.common.file.service;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.file.FileServiceException;
@@ -90,7 +92,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
      */
     @Override
     public FileWorkArea initializeWorkArea() {
-        StringBuilder baseDirectory = getBaseDirectory(false);
+        String baseDirectory = getBaseDirectory(false);
         String tempDirectory = getTempDirectory(baseDirectory);
         FileWorkArea fw = new FileWorkArea();
         fw.setFilePathLocation(tempDirectory);
@@ -140,8 +142,12 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     }
 
     protected File getLocalResource(String resourceName, boolean skipSite) {
-        StringBuilder baseDirectory = getBaseDirectory(skipSite);
-        String filePath = BroadleafFileUtils.buildFilePath(baseDirectory.toString(), resourceName);
+        String baseDirectory = getBaseDirectory(skipSite);
+        
+        // convert the separators to the system this is currently run on
+        String systemResourcePath = FilenameUtils.separatorsToSystem(resourceName);
+        
+        String filePath = FilenameUtils.normalize(baseDirectory + File.separator + systemResourcePath);
         return new File(filePath);
     }
 
@@ -152,7 +158,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
 
     @Override
     public File getSharedLocalResource(String resourceName) {
-        return getLocalResource(resourceName, false);
+        return getLocalResource(resourceName, true);
     }
 
     @Override
@@ -182,7 +188,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     protected ClassPathResource lookupResourceOnClassPath(String name) {
         if (fileServiceClasspathDirectory != null && !"".equals(fileServiceClasspathDirectory)) {
             try {
-                String resourceName = BroadleafFileUtils.buildFilePath(fileServiceClasspathDirectory, name);
+                String resourceName = FilenameUtils.separatorsToUnix(FilenameUtils.normalize(fileServiceClasspathDirectory + '/' + name));
                 ClassPathResource resource = new ClassPathResource(resourceName);
                 if (resource.exists()) {
                     return resource;
@@ -293,29 +299,23 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
      * Returns the baseDirectory for writing and reading files as the property assetFileSystemPath if it
      * exists or java.tmp.io if that property has not been set.   
      * 
-     * This method appends a trailing slash to the directory if it does not already have one.  
      */
-    protected StringBuilder getBaseDirectory(boolean skipSite) {
-        StringBuilder path = new StringBuilder();
-        if (tempFileSystemBaseDirectory == null || "".equals(tempFileSystemBaseDirectory.trim())) {
-            path = path.append(DEFAULT_STORAGE_DIRECTORY);
-            if (!DEFAULT_STORAGE_DIRECTORY.endsWith(File.separator)) {
-                path = path.append(File.separator);
-            }
+    protected String getBaseDirectory(boolean skipSite) {
+        String path = "";
+        if (StringUtils.isBlank(tempFileSystemBaseDirectory)) {
+            path = DEFAULT_STORAGE_DIRECTORY;
         } else {
-            path = path.append(tempFileSystemBaseDirectory);
-            if (!tempFileSystemBaseDirectory.endsWith(File.separator)) {
-                path = path.append(File.separator);
-            }
+            path = tempFileSystemBaseDirectory;
         }
 
         if (!skipSite) {
             // Create site specific directory if Multi-site (all site files will be located in the same directory)
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            if (brc.getSite() != null) {
+            if (brc != null && brc.getSite() != null) {
                 String siteDirectory = "site-" + brc.getSite().getId();
                 String siteHash = DigestUtils.md5Hex(siteDirectory);
-                path = path.append(siteHash.substring(0, 2)).append(File.separator).append(siteDirectory);
+                path = FilenameUtils.concat(path, siteHash.substring(0, 2));
+                path = FilenameUtils.concat(path, siteDirectory);
             }
         }
 
@@ -326,7 +326,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
      * Returns a directory that is unique for this work area. 
      *   
      */
-    protected String getTempDirectory(StringBuilder baseDirectory) {
+    protected String getTempDirectory(String baseDirectory) {
         assert baseDirectory != null;
 
         Random random = new Random();
@@ -340,9 +340,9 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
             }
             // check next int value
             int num = random.nextInt(256);
-            baseDirectory = baseDirectory.append(Integer.toHexString(num)).append(File.separator);
+            baseDirectory = FilenameUtils.concat(baseDirectory, Integer.toHexString(num));
         }
-        return baseDirectory.toString();
+        return baseDirectory;
     }
 
     /**

@@ -71,14 +71,17 @@ public class FileSystemFileServiceProviderTest extends TestCase {
 
         // try with site specific directory
         file = provider.getResource("/product/myproductimage.jpg");
-        resultPath = tmpdir + StringUtils.join(new String[] {"test", "7f", "site-125", "35", "ec", "myproductimage.jpg"}, File.separator);
+        resultPath = tmpdir + StringUtils.join(new String[] {"test", "c8", "site-125", "35", "ec", "myproductimage.jpg"}, File.separator);
         assertEquals(file.getAbsolutePath(), resultPath);
 
         // try with 3 max generated directories
         provider.maxGeneratedDirectoryDepth = 3;
         file = provider.getResource("/product/myproductimage.jpg");
-        resultPath = tmpdir + StringUtils.join(new String[] {"test", "7f", "site-125", "35", "ec", "52", "myproductimage.jpg"}, File.separator);
+        resultPath = tmpdir + StringUtils.join(new String[] {"test", "c8", "site-125", "35", "ec", "52", "myproductimage.jpg"}, File.separator);
         assertEquals(file.getAbsolutePath(), resultPath);
+        
+        // Remove the request context from thread local so it doesn't get in the way of subsequent tests
+        BroadleafRequestContext.setBroadleafRequestContext(null);
     }
     
 }

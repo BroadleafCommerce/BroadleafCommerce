@@ -469,7 +469,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                                                                              getProductOptionProperties(entity),
                                                                              null);
             if (errorEntity != null) {
-                entity.setValidationErrors(errorEntity.getValidationErrors());
+                entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
             }
 
@@ -509,7 +509,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                                                                             getProductOptionProperties(entity),
                                                                             adminInstance);
             if (errorEntity != null) {
-                entity.setValidationErrors(errorEntity.getValidationErrors());
+                entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
             }
 

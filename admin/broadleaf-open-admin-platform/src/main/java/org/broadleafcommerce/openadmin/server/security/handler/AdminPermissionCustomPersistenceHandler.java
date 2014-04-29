@@ -66,8 +66,7 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        String[] criteria = persistencePackage.getCustomCriteria();
-        return ArrayUtils.isEmpty(criteria) && AdminPermissionImpl.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return AdminPermissionImpl.class.getName().equals(ceilingEntityFullyQualifiedClassname);
 
     }
 
@@ -134,7 +133,9 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
 
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        addFriendlyRestriction(cto);
+        if (ArrayUtils.contains(persistencePackage.getCustomCriteria(), "includeFriendlyOnly")) {
+            addFriendlyRestriction(cto);
+        }
         addDefaultSort(cto);
 
         PersistenceModule myModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());

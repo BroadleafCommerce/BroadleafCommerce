@@ -96,32 +96,6 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         return staticAsset;
     }
 
-    /**
-     * Removes trailing "/" and ensures that there is a beginning "/"
-     * @param path
-     * @return
-     */
-    protected String appendTrailingSlash(String path) {
-        if (!path.endsWith(File.separator)) {
-            path = File.separator + path;
-        }
-
-        return path;
-    }
-
-    /**
-     * Removes trailing "/" and ensures that there is a beginning "/"
-     * @param path
-     * @return
-     */
-    protected String removeLeadingSlash(String path) {
-        if (path.startsWith(File.separator)) {
-            path = path.substring(1);
-        }
-
-        return path;
-    }
-
     protected boolean shouldUseSharedFile(InputStream is) {
         return (is != null && is instanceof GloballySharedInputStream);
     }
@@ -371,7 +345,8 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             staticAssetStorageDao.save(storage);
         } else if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
             FileWorkArea tempWorkArea = broadleafFileService.initializeWorkArea();
-            String destFileName = tempWorkArea.getFilePathLocation() + removeLeadingSlash(staticAsset.getFullUrl());
+            // Convert the given URL from the asset to a system-specific suitable file path
+            String destFileName = FilenameUtils.normalize(tempWorkArea.getFilePathLocation() + File.separator + FilenameUtils.separatorsToSystem(staticAsset.getFullUrl()));
 
             InputStream input = file.getInputStream();
             byte[] buffer = new byte[fileBufferSize];

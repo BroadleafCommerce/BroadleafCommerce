@@ -317,11 +317,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 List<Serializable> entityList = new ArrayList<Serializable>(1);
                 entityList.add(instance);
                 Entity invalid = getRecords(mergedProperties, entityList, null, null)[0];
-                invalid.setValidationErrors(entity.getValidationErrors());
+                invalid.setPropertyValidationErrors(entity.getPropertyValidationErrors());
                 invalid.overridePropertyValues(entity);
 
                 StringBuilder sb = new StringBuilder();
-                for (Map.Entry<String, List<String>> entry : invalid.getValidationErrors().entrySet()) {
+                for (Map.Entry<String, List<String>> entry : invalid.getPropertyValidationErrors().entrySet()) {
                     Iterator<String> itr = entry.getValue().iterator();
                     while(itr.hasNext()) {
                         sb.append(entry.getKey());
