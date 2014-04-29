@@ -19,16 +19,16 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
-import java.util.Stack;
-
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
+
+import java.util.Stack;
 
 /**
  * @author Jeff Fischer
  */
 public class PersistenceManagerContext {
 
-    private static final ThreadLocal<PersistenceManagerContext> BROADLEAF_PERSISTENCE_MANAGER_CONTEXT = ThreadLocalManager.createThreadLocal(PersistenceManagerContext.class);
+    private static final ThreadLocal<PersistenceManagerContext> BROADLEAF_PERSISTENCE_MANAGER_CONTEXT = ThreadLocalManager.createThreadLocal(PersistenceManagerContext.class, false);
 
     public static PersistenceManagerContext getPersistenceManagerContext() {
         return BROADLEAF_PERSISTENCE_MANAGER_CONTEXT.get();
@@ -49,7 +49,7 @@ public class PersistenceManagerContext {
     }
 
     public PersistenceManager getPersistenceManager() {
-        return persistenceManager.peek();
+        return !persistenceManager.empty()?persistenceManager.peek():null;
     }
 
     public void remove() {

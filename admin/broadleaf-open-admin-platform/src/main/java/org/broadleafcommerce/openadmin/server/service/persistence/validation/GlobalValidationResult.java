@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-import org.broadleafcommerce.openadmin.server.service.persistence.RowLevelSecurityService;
+import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
