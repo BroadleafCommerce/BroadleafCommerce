@@ -126,6 +126,7 @@
             <list>
                 <ref bean="blCategorySiteMapGenerator" />
                 <ref bean="blProductSiteMapGenerator" />
+                <ref bean="blSkuSiteMapGenerator" />
             </list>
         </property>
     </bean>
