@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.hibernate.tool.hbm2x.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,6 +69,9 @@ public class SkuSiteMapGenerator implements SiteMapGenerator {
             for (Sku sku : skus) {
                 Product defaultProduct = sku.getDefaultProduct();
                 if (defaultProduct != null && CollectionUtils.isNotEmpty(defaultProduct.getAdditionalSkus())) {
+                    continue;
+                }
+                if (defaultProduct instanceof ProductBundle) {
                     continue;
                 }
                 if (StringUtils.isEmpty(sku.getProduct().getUrl() + sku.getUrlKey())) {
