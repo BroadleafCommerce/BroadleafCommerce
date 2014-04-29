@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -74,7 +75,7 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
+        PersistenceManager persistenceManager = getPersistenceManager();
         String[] tokens = fieldName.split("\\.");
         Field field = null;
 
@@ -214,7 +215,7 @@ public class FieldManager {
                         value = newEntity;
                     } catch (Exception e) {
                         //Use the most extended type based on the field type
-                        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
+                        PersistenceManager persistenceManager = getPersistenceManager();
                         Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
                         if (!ArrayUtils.isEmpty(entities)) {
                             Object newEntity = entities[entities.length-1].newInstance();
@@ -258,6 +259,16 @@ public class FieldManager {
 
     public EntityConfiguration getEntityConfiguration() {
         return entityConfiguration;
+    }
+
+    protected PersistenceManager getPersistenceManager() {
+        PersistenceManager persistenceManager;
+        try {
+            persistenceManager = PersistenceManagerFactory.getPersistenceManager();
+        } catch (IllegalStateException e) {
+            persistenceManager = PersistenceManagerFactory.getPersistenceManager(TargetModeType.SANDBOX);
+        }
+        return persistenceManager;
     }
     
     private class SortableValue implements Comparable<SortableValue> {
