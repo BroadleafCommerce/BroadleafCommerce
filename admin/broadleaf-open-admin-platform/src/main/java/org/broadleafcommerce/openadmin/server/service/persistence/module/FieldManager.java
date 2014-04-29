@@ -25,9 +25,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.ejb.HibernateEntityManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -75,7 +74,7 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
-        SessionFactory sessionFactory = ((HibernateEntityManager) entityManager).getSession().getSessionFactory();
+        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
         String[] tokens = fieldName.split("\\.");
         Field field = null;
 
@@ -83,7 +82,7 @@ public class FieldManager {
             String propertyName = tokens[j];
             field = getSingleField(clazz, propertyName);
             if (field != null && j < tokens.length - 1) {
-                Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(field.getType(), sessionFactory, true, true);
+                Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
                 if (!ArrayUtils.isEmpty(entities)) {
                     String peekAheadToken = tokens[j+1];
                     List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
@@ -107,7 +106,7 @@ public class FieldManager {
                     }
                     if (getSingleField(matchedClasses.get(0), peekAheadToken) != null) {
                         clazz = matchedClasses.get(0);
-                        Class<?>[] entities2 = helper.getAllPolymorphicEntitiesFromCeiling(clazz, sessionFactory, true, true);
+                        Class<?>[] entities2 = persistenceManager.getUpDownInheritance(clazz);
                         if (!ArrayUtils.isEmpty(entities2) && matchedClasses.size() == 1 && clazz.isInterface()) {
                             try {
                                 clazz = entityConfiguration.lookupEntityClass(field.getType().getName());
@@ -215,10 +214,10 @@ public class FieldManager {
                         value = newEntity;
                     } catch (Exception e) {
                         //Use the most extended type based on the field type
-                        SessionFactory sessionFactory = entityManager.unwrap(Session.class).getSessionFactory();
-                        Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(field.getType(), sessionFactory, true, true);
+                        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
+                        Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
                         if (!ArrayUtils.isEmpty(entities)) {
-                            Object newEntity = entities[0].newInstance();
+                            Object newEntity = entities[entities.length-1].newInstance();
                             SortableValue val = new SortableValue(bean, (Serializable) newEntity, j, sb.toString());
                             middleFields.add(val);
                             field.set(value, newEntity);
