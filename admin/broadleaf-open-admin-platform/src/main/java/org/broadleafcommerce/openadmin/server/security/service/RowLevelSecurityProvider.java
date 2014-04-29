@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.service.persistence;
+package org.broadleafcommerce.openadmin.server.security.service;
 
 /**
  * Marker interface that represents a component that can apply security
