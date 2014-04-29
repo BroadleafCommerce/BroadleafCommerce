@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.service.persistence;
+package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -81,6 +81,7 @@ public interface RowLevelSecurityService {
      * <p>
      * This method is executed <i>prior</i> to any {@link CriteriaTranslatorEventHandler}.
      * 
+     * @param currentUser the currently logged in {@link AdminUser}
      * @param ceilingEntity the entity currently being queried from
      * @param restrictions the restrictions that will be applied to the <b>criteria</b> but have not been yet. Additional
      * {@link Predicate}s to further filter the query should be added to this list
@@ -93,7 +94,7 @@ public interface RowLevelSecurityService {
      * and/or <b>sorts</b>
      * @see {@link CriteriaTranslatorImpl#addRestrictions}
      */
-    public void addFetchRestrictions(AdminUser user, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
+    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
             Root entityRoot,
             CriteriaQuery criteria,
             CriteriaBuilder criteriaBuilder);
@@ -107,11 +108,12 @@ public interface RowLevelSecurityService {
      * If the entity cannot be updated, then by default it can also not be removed. You can change this by explicitly
      * overriding {@link #canRemove(AdminUser, Entity)}
      * 
+     * @param currentUser the currently logged in {@link AdminUser}
      * @param entity the {@link Entity} DTO that is attempting to be updated
      * @return <b>true</b> if the given <b>entity</b> can be updated, <b>false</b> otherwise
      * @see {@link FormBuilderServiceImpl#setReadOnlyState}
      */
-    public boolean canUpdate(AdminUser user, Entity entity);
+    public boolean canUpdate(AdminUser currentUser, Entity entity);
     
     /**
      * <p>
@@ -121,11 +123,12 @@ public interface RowLevelSecurityService {
      * <p>
      * You might consider tying the remove to {@link #canUpdate(AdminUser, Entity)} and explicitly invoking that action yourself.
      * 
+     * @param currentUser the currently logged in {@link AdminUser}
      * @param entity
      * @return <b>true</b> if the given <b>entity</b> can be deleted, <b>false</b> otherwise
      * @see {@link FormBuilderServiceImpl#addDeleteActionIfAllowed}
      */
-    public boolean canRemove(AdminUser user, Entity entity);
+    public boolean canRemove(AdminUser currentUser, Entity entity);
     
     /**
      * <p>
@@ -143,12 +146,13 @@ public interface RowLevelSecurityService {
      * For convenience, this is usually a simple invocation to {@link #canUpdate(Entity)}. However, it might be that you want
      * to allow the user to see certain update fields but not allow the user to save certain fields for update.
      * 
+     * @param currentUser the currently logged in {@link AdminUser}
      * @param entity the DTO representation that is attempting to be deleted. Comes from {@link PersistencePackage#getEntity()}
      * @param persistencePackage the full persiste
      * @return a {@link GlobalValidationResult} with {@link GlobalValidationResult#isValid()} set to denote if the given
      * <b>entity</b> failed row-level security validation or not.
      */
-    public GlobalValidationResult validateUpdateRequest(AdminUser user, Entity entity, PersistencePackage persistencePackage);
+    public GlobalValidationResult validateUpdateRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage);
     
     /**
      * <p>
@@ -165,12 +169,13 @@ public interface RowLevelSecurityService {
      * <p>
      * This is usually a simple invocation to {@link #canDelete(Entity)}.
      * 
+     * @param currentUser the currently logged in {@link AdminUser}
      * @param entity the DTO representation that is attempting to be deleted. Comes from {@link PersistencePackage#getEntity()}
      * @param persistencePackage the full request sent from the frontend through the admin pipeline
      * @return a {@link GlobalValidationResult} with {@link GlobalValidationResult#isValid()} set to denote if the given
      * <b>entity</b> failed row-level security validation or not.
      */
-    public GlobalValidationResult validateRemoveRequest(AdminUser user, Entity entity, PersistencePackage persistencePackage);
+    public GlobalValidationResult validateRemoveRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage);
     
     /**
      * Gets all of the registered providers

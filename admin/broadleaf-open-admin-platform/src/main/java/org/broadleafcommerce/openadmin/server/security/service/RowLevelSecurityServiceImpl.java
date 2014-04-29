@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.service.persistence;
+package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,19 +51,19 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
     List<RowLevelSecurityProvider> providers;
     
     @Override
-    public void addFetchRestrictions(AdminUser user, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
+    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
             Root entityRoot,
             CriteriaQuery criteria,
             CriteriaBuilder criteriaBuilder) {
         for (RowLevelSecurityProvider provider : getProviders()) {
-            provider.addFetchRestrictions(user, ceilingEntity, restrictions, sorts, entityRoot, criteria, criteriaBuilder);
+            provider.addFetchRestrictions(currentUser, ceilingEntity, restrictions, sorts, entityRoot, criteria, criteriaBuilder);
         }
     }
 
     @Override
-    public boolean canUpdate(AdminUser user, Entity entity) {
+    public boolean canUpdate(AdminUser currentUser, Entity entity) {
         for (RowLevelSecurityProvider provider : getProviders()) {
-            if (!provider.canUpdate(user, entity)) {
+            if (!provider.canUpdate(currentUser, entity)) {
                 return false;
             }
         }
@@ -71,9 +71,9 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
     }
 
     @Override
-    public boolean canRemove(AdminUser user, Entity entity) {
+    public boolean canRemove(AdminUser currentUser, Entity entity) {
         for (RowLevelSecurityProvider provider : getProviders()) {
-            if (!provider.canRemove(user, entity)) {
+            if (!provider.canRemove(currentUser, entity)) {
                 return false;
             }
         }
@@ -81,10 +81,10 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
     }
 
     @Override
-    public GlobalValidationResult validateUpdateRequest(AdminUser user, Entity entity, PersistencePackage persistencePackage) {
+    public GlobalValidationResult validateUpdateRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
         GlobalValidationResult validationResult = new GlobalValidationResult(true);
         for (RowLevelSecurityProvider provider : getProviders()) {
-            GlobalValidationResult providerValidation = provider.validateUpdateRequest(user, entity, persistencePackage);
+            GlobalValidationResult providerValidation = provider.validateUpdateRequest(currentUser, entity, persistencePackage);
             if (providerValidation.isNotValid()) {
                 validationResult.setValid(false);
                 validationResult.addErrorMessage(providerValidation.getErrorMessage());
@@ -94,10 +94,10 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
     }
 
     @Override
-    public GlobalValidationResult validateRemoveRequest(AdminUser user, Entity entity, PersistencePackage persistencePackage) {
+    public GlobalValidationResult validateRemoveRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
         GlobalValidationResult validationResult = new GlobalValidationResult(true);
         for (RowLevelSecurityProvider provider : getProviders()) {
-            GlobalValidationResult providerValidation = provider.validateRemoveRequest(user, entity, persistencePackage);
+            GlobalValidationResult providerValidation = provider.validateRemoveRequest(currentUser, entity, persistencePackage);
             if (providerValidation.isNotValid()) {
                 validationResult.setValid(false);
                 validationResult.addErrorMessage(providerValidation.getErrorMessage());
