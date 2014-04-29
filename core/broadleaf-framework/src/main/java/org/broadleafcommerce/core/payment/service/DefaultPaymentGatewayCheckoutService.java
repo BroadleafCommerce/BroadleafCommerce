@@ -21,6 +21,8 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -50,7 +52,6 @@ import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.core.service.StateService;
-import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -69,6 +70,8 @@ import javax.annotation.Resource;
  */
 @Service("blPaymentGatewayCheckoutService")
 public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheckoutService {
+    
+    private static final Log LOG = LogFactory.getLog(DefaultPaymentGatewayCheckoutService.class);
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -325,7 +328,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         orderPaymentService.delete(payment);
     }
 
-    //TODO: this should return something more than just a String
     @Override
     public String initiateCheckout(Long orderId) throws Exception{
         Order order = orderService.findOrderById(orderId, true);
@@ -333,14 +335,20 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             throw new IllegalArgumentException("Could not order with id " + orderId);
         }
         
+        CheckoutResponse response;
+
         try {
-            CheckoutResponse response = checkoutService.performCheckout(order);
+            response = checkoutService.performCheckout(order);
         } catch (CheckoutException e) {
             //TODO: wrap the exception or put CheckoutException in common
             throw new Exception(e);
         }
 
-        return order.getOrderNumber();
+        if (response.getOrder().getOrderNumber() == null) {
+            LOG.error("Order Number for Order ID: " + order.getId() + " is null.");
+        }
+
+        return response.getOrder().getOrderNumber();
     }
 
     @Override
