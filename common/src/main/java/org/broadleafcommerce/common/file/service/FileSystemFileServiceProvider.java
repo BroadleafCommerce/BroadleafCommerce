@@ -84,8 +84,10 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
             }
 
             String fileName = srcFile.getAbsolutePath().substring(area.getFilePathLocation().length());
-
-            String resourceName = buildResourceName(fileName);
+            
+            // before building the resource name, convert the file path to a url-like path
+            String url = FilenameUtils.separatorsToUnix(fileName);
+            String resourceName = buildResourceName(url);
             String destinationFilePath = FilenameUtils.normalize(getBaseDirectory() + File.separator + resourceName);
             File destFile = new File(destinationFilePath);
             if (!destFile.getParentFile().exists()) {
@@ -147,7 +149,7 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
         String fileHash = null;
         // Intentionally not using File.separator here since URLs should always end with /
         if (!url.startsWith("/")) {
-            fileHash = DigestUtils.md5Hex('/' + url);
+            fileHash = DigestUtils.md5Hex("/" + url);
         } else {
             fileHash = DigestUtils.md5Hex(url);
         }
