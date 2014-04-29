@@ -66,14 +66,14 @@ public class SkuSiteMapGenerator implements SiteMapGenerator {
         do {
             skus = skuDao.readAllActiveSkus(pageNum++, pageSize);
             for (Sku sku : skus) {
-                if (StringUtils.isEmpty(sku.getProduct().getUrl() + sku.getUrlKey())) {
-                    continue;
-                }
                 Product defaultProduct = sku.getDefaultProduct();
                 if (defaultProduct != null && CollectionUtils.isNotEmpty(defaultProduct.getAdditionalSkus())) {
                     continue;
                 }
-
+                if (StringUtils.isEmpty(sku.getProduct().getUrl() + sku.getUrlKey())) {
+                    continue;
+                }
+                
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
@@ -95,7 +95,13 @@ public class SkuSiteMapGenerator implements SiteMapGenerator {
     }
 
     protected String generateUri(SiteMapBuilder smb, Sku sku) {
-        return BroadleafFileUtils.appendUnixPaths(smb.getBaseUrl(), sku.getProduct().getUrl() + sku.getUrlKey());
+        String uri = null;
+        if (sku.getUrlKey() != null) {
+            uri = sku.getProduct().getUrl() + sku.getUrlKey();
+        } else {
+            uri = sku.getProduct().getUrl();
+        }
+        return BroadleafFileUtils.appendUnixPaths(smb.getBaseUrl(), uri);
     }
 
     protected Date generateDate(Sku sku) {
