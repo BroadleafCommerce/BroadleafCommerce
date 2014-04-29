@@ -69,9 +69,32 @@ public class CustomerStateRefresher implements ApplicationListener<CustomerPersi
             
             //Update CustomerState if the persisted Customer ID is the same
             if (CustomerState.getCustomer() != null && CustomerState.getCustomer().getId().equals(dbCustomer.getId())) {
-                CustomerState.setCustomer(event.getCustomer());
+                //Copy transient fields from the customer that existed in CustomerState, prior to the DB refresh, 
+                //to the customer that has been saved (merged) in the DB....
+                Customer preMergedCustomer = CustomerState.getCustomer();
+                resetTransientFields(preMergedCustomer, dbCustomer);
+
+                CustomerState.setCustomer(dbCustomer);
             }
         }
     }
     
+    /**
+     * After a JPA merge occurs, there is a new object created representing the merged changes.  The new object does 
+     * not reflect the state of transient fields that may have been set on the object that was merged.
+     * 
+     * This method, by default, resets the state of transient properties. 
+     * and allows the user to override this method to set additional (or different) transient values.
+     * 
+     * @param preMergedCustome
+     * @param postMergedCustomer
+     */
+    protected void resetTransientFields(Customer preMergedCustomer, Customer postMergedCustomer) {
+        postMergedCustomer.setUnencodedPassword(preMergedCustomer.getUnencodedPassword());
+        postMergedCustomer.setUnencodedChallengeAnswer(preMergedCustomer.getUnencodedChallengeAnswer());
+        postMergedCustomer.setAnonymous(preMergedCustomer.isAnonymous());
+        postMergedCustomer.setCookied(preMergedCustomer.isCookied());
+        postMergedCustomer.setLoggedIn(preMergedCustomer.isLoggedIn());
+    }
+
 }

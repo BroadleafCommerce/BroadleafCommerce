@@ -24,6 +24,8 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 
+import java.util.List;
+
 public interface AdminNavigationService {
 
     public AdminMenu buildMenu(AdminUser adminUser);
@@ -39,6 +41,10 @@ public interface AdminNavigationService {
     public AdminSection findAdminSectionByClass(String className);
     public AdminSection findAdminSectionByClass(Class<?> clazz);
 
-
+    /**
+     * Gets all of the {@link AdminSection}s in the system, sorted by the {@link AdminSection#getDisplayOrder()}
+     * @return the list of all {@link AdminSection}s sorted by {@link AdminSection#getDisplayOrder()}
+     */
+    public List<AdminSection> findAllAdminSections();
 
 }

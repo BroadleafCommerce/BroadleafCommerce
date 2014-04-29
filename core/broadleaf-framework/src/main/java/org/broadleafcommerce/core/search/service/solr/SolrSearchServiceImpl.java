@@ -163,6 +163,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         SolrContext.setPrimaryServer(primaryServer);
         SolrContext.setReindexServer(reindexServer);
+        //NOTE: There is no reason to set the admin server here as the SolrContext will return the primary server
+        //if the admin server is not set...
     }
 
     public void copyConfigToSolrHome(InputStream configIs, File destFile) throws IOException {
@@ -204,7 +206,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     /**
-     * This constructor serves to mimic the one below this, which takes in two {@link SolrServer} arguments.
+     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
      * By having this and then simply disregarding the second parameter, we can more easily support 2-core
      * Solr configurations that use embedded/standalone per environment.
      * 
@@ -214,13 +216,36 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @throws ParserConfigurationException 
      * @throws IOException 
      */
-    public SolrSearchServiceImpl(String solrServer, String reindexServer) throws IOException, ParserConfigurationException, SAXException {
+    public SolrSearchServiceImpl(String solrServer, String reindexServer)
+            throws IOException, ParserConfigurationException, SAXException {
+        this(solrServer);
+    }
+
+    /**
+     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
+     * By having this and then simply disregarding the second and third parameters, we can more easily support 2-core
+     * Solr configurations that use embedded/standalone per environment, along with an admin server.
+     * 
+     * @param solrServer
+     * @param reindexServer
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     */
+    public SolrSearchServiceImpl(String solrServer, String reindexServer, String adminServer)
+            throws IOException, ParserConfigurationException, SAXException {
         this(solrServer);
     }
 
     public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer) {
         SolrContext.setPrimaryServer(solrServer);
         SolrContext.setReindexServer(reindexServer);
+    }
+
+    public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer, SolrServer adminServer) {
+        SolrContext.setPrimaryServer(solrServer);
+        SolrContext.setReindexServer(reindexServer);
+        SolrContext.setAdminServer(adminServer);
     }
 
     @Override
@@ -338,6 +363,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap);
         
+        modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
+        
         extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
                 searchCriteria, defaultSort);
 
@@ -381,6 +408,21 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         result.setProducts(products);
         setPagingAttributes(result, numResults, searchCriteria);
         return result;
+    }
+
+    /**
+     * Provides a hook point for implementations to modify all SolrQueries before they're executed.
+     * Modules should leverage the extension manager method of the same name,
+     * {@link SolrSearchServiceExtensionHandler#modifySolrQuery(SolrQuery, String, List, ProductSearchCriteria, String)}
+     * 
+     * @param query
+     * @param qualifiedSolrQuery
+     * @param facets
+     * @param searchCriteria
+     * @param defaultSort
+     */
+    protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
+            List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria, String defaultSort) {
     }
     
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {

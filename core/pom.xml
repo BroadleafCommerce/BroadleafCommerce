@@ -4,13 +4,16 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.1.1-GA</version>
+        <version>3.1.2-GA</version>
     </parent>
     <artifactId>core</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce Core</name>
     <description>BroadleafCommerce Core Mid Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
+    <properties>
+        <project.uri>${project.baseUri}/../</project.uri>
+    </properties>
     <licenses>
         <license>
             <name>Apache 2</name>

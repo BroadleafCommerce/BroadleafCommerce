@@ -10,7 +10,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>3.1.1-GA</version>
+    <version>3.1.2-GA</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -55,7 +55,7 @@
         <spring.security.version>3.1.3.RELEASE</spring.security.version>
         <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
         <thymeleaf.version>2.1.2.RELEASE</thymeleaf.version>
-        <project.uri>${user.dir}</project.uri>
+        <project.uri>${project.baseUri}</project.uri>
     </properties>
     <scm>
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
@@ -140,7 +140,7 @@
                     <organizationName>Broadleaf Commerce</organizationName>
                     <inceptionYear>2009</inceptionYear>
                     <licenseName>blc_apache</licenseName>
-                    <licenseResolver>file:${project.uri}/licenses</licenseResolver>
+                    <licenseResolver>${project.uri}/licenses</licenseResolver>
                     <excludes>
                         <exclude>**/*.sql</exclude>
                         <exclude>**/*.html</exclude>
@@ -419,6 +419,13 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.0</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.8.3</version>
@@ -439,10 +446,16 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
+            <!-- CMYK JPEG processing -->
+            <dependency>
+                <groupId>com.twelvemonkeys.imageio</groupId>
+                <artifactId>imageio-jpeg</artifactId>
+                <version>3.0-rc5</version>
+            </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.1</version>
+                <version>2.4</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -463,7 +476,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.1</version>
+                <version>3.3.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -690,7 +703,7 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.4.0</version>
+                <version>4.7.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>

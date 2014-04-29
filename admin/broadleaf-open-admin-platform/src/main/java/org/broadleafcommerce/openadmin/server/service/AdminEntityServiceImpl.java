@@ -179,6 +179,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             p.setName(entry.getKey());
             p.setValue(entry.getValue().getValue());
             p.setDisplayValue(entry.getValue().getDisplayValue());
+            p.setIsDirty(entry.getValue().getIsDirty());
             properties.add(p);
         }
         
@@ -609,9 +610,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 
                 for (Property property : entity.getProperties()) {
                     if (property.getName().startsWith(tempPrefix)) {
-                        BasicFieldMetadata md = (BasicFieldMetadata) cmd.getPMap().get(property.getName()).getMetadata();
-                        if (md.getFieldType().equals(SupportedFieldType.ID)) {
-                            return property.getValue();
+                        if (cmd.getPMap().containsKey(property.getName())) {
+                            BasicFieldMetadata md = (BasicFieldMetadata) cmd.getPMap().get(property.getName()).getMetadata();
+                            if (md.getFieldType().equals(SupportedFieldType.ID)) {
+                                return property.getValue();
+                            }
                         }
                     }
                 }

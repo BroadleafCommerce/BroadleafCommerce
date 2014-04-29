@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.pricing.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
@@ -48,10 +49,9 @@ public class TaxServiceImpl implements TaxService {
         List<ModuleConfiguration> configurations =
                 moduleConfigService.findActiveConfigurationsByType(ModuleConfigurationType.TAX_CALCULATION);
 
-        if (configurations != null && !configurations.isEmpty()) {
-
-            //Try to find a default configuration
-            ModuleConfiguration config = null;
+        //Try to find a default configuration
+        ModuleConfiguration config = null;
+        if (configurations != null) {
             for (ModuleConfiguration configuration : configurations) {
                 if (configuration.getIsDefault()) {
                     config = configuration;
@@ -59,19 +59,21 @@ public class TaxServiceImpl implements TaxService {
                 }
             }
 
-            if (config == null) {
+            if (config == null && CollectionUtils.isNotEmpty(configurations)) {
                 //if there wasn't a default one, use the first active one...
                 config = configurations.get(0);
             }
+        }
 
-            if (providers != null && !providers.isEmpty()) {
-                for (TaxProvider provider : providers) {
-                    if (provider.canRespond(config)) {
-                        return provider.calculateTaxForOrder(order, config);
-                    }
+        if (CollectionUtils.isNotEmpty(providers)) {
+            for (TaxProvider provider : providers) {
+                if (provider.canRespond(config)) {
+                    return provider.calculateTaxForOrder(order, config);
                 }
             }
         }
+        
+        // haven't returned anything, nothing must have run
         if (!mustCalculate) {
             return order;
         }

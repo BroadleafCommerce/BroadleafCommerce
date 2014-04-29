@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+
 import java.io.Serializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 /**
  * Holds the values for custom fields that are part of a <code>StructuredContent</code> item.
@@ -38,7 +38,7 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditable;
  * @author bpolster
  *
  */
-public interface StructuredContentField extends Serializable {
+public interface StructuredContentField extends Serializable, Cloneable {
 
     /**
      * Gets the primary key.
@@ -107,5 +107,11 @@ public interface StructuredContentField extends Serializable {
      * @param auditable
      */
     public void setAuditable(@Nullable AdminAuditable auditable);
+
+    /**
+     * @return a deep copy of this object. By default, clones the fieldKey and value fields and ignores the auditable
+     * and id fields.
+     */
+    public StructuredContentField clone();
 
 }

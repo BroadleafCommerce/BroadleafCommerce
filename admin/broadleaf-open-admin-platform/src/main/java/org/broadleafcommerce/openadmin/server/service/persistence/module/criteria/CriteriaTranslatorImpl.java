@@ -25,12 +25,19 @@ import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
+import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
+import org.hibernate.type.SingleColumnType;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.Query;
@@ -51,6 +58,12 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
 
     @Resource(name="blCriteriaTranslatorEventHandlers")
     protected List<CriteriaTranslatorEventHandler> eventHandlers = new ArrayList<CriteriaTranslatorEventHandler>();
+    
+    @Resource(name = "blRowLevelSecurityService")
+    protected RowLevelSecurityService rowSecurityService;
+    
+    @Resource(name = "blAdminSecurityRemoteService")
+    protected SecurityVerifier adminSecurityService;
 
     @Override
     public TypedQuery<Serializable> translateCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings) {
@@ -181,6 +194,19 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         if (!isCount) {
             criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
+            //If someone provides a firstResult value, then there is generally pagination going on.
+            //In order to produce consistent results, especially with certain databases such as PostgreSQL, 
+            //there has to be an "order by" clause.  We'll add one here if we can.
+            if (firstResult != null && sorts.isEmpty()) {
+                Map<String, Object> idMetaData = dynamicEntityDao.getIdMetadata(ceilingClass);
+                if (idMetaData != null) {
+                    Object idFldName = idMetaData.get("name");
+                    Object type = idMetaData.get("type");
+                    if ((idFldName instanceof String) && (type instanceof SingleColumnType)) {
+                        criteria.orderBy(criteriaBuilder.asc(original.get((String) idFldName)));
+                    }
+                }
+            }
         }
         TypedQuery<Serializable> response = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
 
@@ -198,6 +224,23 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         if (maxResults != null) {
             response.setMaxResults(maxResults);
         }
+    }
+
+    /**
+     * This method is deprecated in favor of {@link #addRestrictions(String, List, CriteriaBuilder, Root, List, List, CriteriaQuery)}
+     * It will be removed in Broadleaf version 3.1.0.
+     * 
+     * @param ceilingEntity
+     * @param filterMappings
+     * @param criteriaBuilder
+     * @param original
+     * @param restrictions
+     * @param sorts
+     */
+    @Deprecated
+    protected void addRestrictions(String ceilingEntity, List<FilterMapping> filterMappings, CriteriaBuilder criteriaBuilder,
+                                   Root original, List<Predicate> restrictions, List<Order> sorts) {
+        addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, null);
     }
     
     protected void addRestrictions(String ceilingEntity, List<FilterMapping> filterMappings, CriteriaBuilder criteriaBuilder,
@@ -239,7 +282,10 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                 }
             }
         }
-
+        
+        // add in the row-level security handlers to this as well
+        rowSecurityService.addFetchRestrictions(adminSecurityService.getPersistentAdminUser(), ceilingEntity, restrictions, sorts, original, criteria, criteriaBuilder);
+        
         for (CriteriaTranslatorEventHandler eventHandler : eventHandlers) {
             eventHandler.addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, criteria);
         }
@@ -248,7 +294,10 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     protected void addSorting(CriteriaBuilder criteriaBuilder, List<Order> sorts, FilterMapping filterMapping, Path path) {
         Expression exp = path;
         if (filterMapping.getNullsLast() != null && filterMapping.getNullsLast()) {
-            exp = criteriaBuilder.coalesce(path, 99999999999L);
+            Object largeValue = getAppropriateLargeSortingValue(path.getJavaType());
+            if (largeValue != null) {
+                exp = criteriaBuilder.coalesce(path, largeValue);
+            }
         }
         if (SortDirection.ASCENDING == filterMapping.getSortDirection()) {
             sorts.add(criteriaBuilder.asc(exp));
@@ -257,4 +306,19 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         }
     }
 
+    protected Object getAppropriateLargeSortingValue(Class<?> javaType) {
+        Object response = null;
+        if (Date.class.isAssignableFrom(javaType)) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.YEAR, 500);
+            response = calendar.getTime();
+        } else if (Long.class.isAssignableFrom(javaType)) {
+            response = Long.MAX_VALUE;
+        } else if (Integer.class.isAssignableFrom(javaType)) {
+            response = Integer.MAX_VALUE;
+        } else if (BigDecimal.class.isAssignableFrom(javaType)) {
+            response = new BigDecimal(String.valueOf(Long.MAX_VALUE));
+        }
+        return response;
+    }
 }

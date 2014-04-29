@@ -33,6 +33,7 @@ public class ListGridRecord {
 
     protected ListGrid listGrid;
     protected String id;
+    protected String altId;
     protected List<Field> fields = new ArrayList<Field>();
     protected List<Field> hiddenFields = new ArrayList<Field>();
     protected Boolean isDirty;
@@ -201,6 +202,14 @@ public class ListGridRecord {
     
     public Boolean getHasIcon() {
         return icon != null || getIsError() || getIsDirty();
+    }
+    
+    public String getAltId() {
+        return altId;
+    }
+
+    public void setAltId(String altId) {
+        this.altId = altId;
     }
     
 }

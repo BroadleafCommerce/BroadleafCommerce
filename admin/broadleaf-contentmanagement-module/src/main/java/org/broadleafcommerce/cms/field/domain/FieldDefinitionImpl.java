@@ -130,8 +130,35 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Override
     public SupportedFieldType getFieldType() {
-        return fieldType!=null?SupportedFieldType.valueOf(fieldType):null;
+        if (fieldType == null) {
+            return null;
+        }
+        
+        if (fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+            return SupportedFieldType.ADDITIONAL_FOREIGN_KEY;
+        }
+        
+        return SupportedFieldType.valueOf(fieldType);
     }
+    
+    @Override
+    public String getAdditionalForeignKeyClass() {
+        if (fieldType == null || !fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+            return null;
+        }
+        
+        return fieldType.substring(fieldType.indexOf('|') + 1);
+    }
+    
+    @Override
+    public void setAdditionalForeignKeyClass(String className) {
+        if (fieldType == null || !fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+            throw new IllegalArgumentException("Cannot set an additional foreign key class when the field type is not ADDITIONAL_FOREIGN_KEY");
+        }
+        
+        this.fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|' + className;
+    }
+    
 
     @Override
     public void setFieldType(SupportedFieldType fieldType) {

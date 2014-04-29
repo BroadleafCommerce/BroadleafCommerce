@@ -91,7 +91,7 @@ public class BroadleafRobotsController {
         sb.append("# Using default Broadleaf Commerce robots.txt file").append("\n");
         sb.append("User-agent: *").append("\n");
         sb.append("Disallow:").append("\n");
-        String fileLoc = BroadleafFileUtils.buildFilePath(baseUrlResolver.getSiteBaseUrl(), "/sitemap.xml.gz");
+        String fileLoc = BroadleafFileUtils.appendUnixPaths(baseUrlResolver.getSiteBaseUrl(), "/sitemap.xml.gz");
 
         sb.append("Sitemap:").append(fileLoc);
         return sb.toString();

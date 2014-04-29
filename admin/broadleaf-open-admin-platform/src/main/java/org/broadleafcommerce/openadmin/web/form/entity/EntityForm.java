@@ -25,6 +25,7 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
@@ -59,6 +60,10 @@ public class EntityForm {
     protected String mainEntityName;
     protected String sectionKey;
     protected Boolean readOnly = false;
+    
+    protected String translationCeilingEntity;
+    protected String translationId;
+    
     protected Set<Tab> tabs = new TreeSet<Tab>(new Comparator<Tab>() {
         @Override
         public int compare(Tab o1, Tab o2) {
@@ -301,7 +306,16 @@ public class EntityForm {
         groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
         tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
-
+        
+        // Tabs and groups should be looked up by their display, translated name since 2 unique strings can display the same
+        // thing when they are looked up in message bundles after display
+        // When displayed on the form the duplicate groups and tabs look funny
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            groupName = context.getMessageSource().getMessage(groupName, null, groupName, context.getJavaLocale());
+            tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
+        }
+        
         Tab tab = findTab(tabName);
         if (tab == null) {
             tab = new Tab();
@@ -322,6 +336,11 @@ public class EntityForm {
     }
 
     public void addListGrid(ListGrid listGrid, String tabName, Integer tabOrder) {
+        // Tabs should be looked up and referenced by their display name
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
+        }
         Tab tab = findTab(tabName);
         if (tab == null) {
             tab = new Tab();
@@ -428,6 +447,22 @@ public class EntityForm {
         getTabs().add(newTab);
         
         return newFg;
+    }
+    
+    public String getTranslationCeilingEntity() {
+        return translationCeilingEntity == null ? ceilingEntityClassname : translationCeilingEntity;
+    }
+    
+    public void setTranslationCeilingEntity(String translationCeilingEntity) {
+        this.translationCeilingEntity = translationCeilingEntity;
+    }
+    
+    public String getTranslationId() {
+        return translationId == null ? id : translationId;
+    }
+    
+    public void setTranslationId(String translationId) {
+        this.translationId = translationId;
     }
     
     /* *********************** */

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.cms.file.service;
 
+import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -95,32 +96,6 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         return staticAsset;
     }
 
-    /**
-     * Removes trailing "/" and ensures that there is a beginning "/"
-     * @param path
-     * @return
-     */
-    protected String appendTrailingSlash(String path) {
-        if (!path.endsWith(File.separator)) {
-            path = File.separator + path;
-        }
-
-        return path;
-    }
-
-    /**
-     * Removes trailing "/" and ensures that there is a beginning "/"
-     * @param path
-     * @return
-     */
-    protected String removeLeadingSlash(String path) {
-        if (path.startsWith(File.separator)) {
-            path = path.substring(1);
-        }
-
-        return path;
-    }
-
     protected boolean shouldUseSharedFile(InputStream is) {
         return (is != null && is instanceof GloballySharedInputStream);
     }
@@ -188,7 +163,18 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             is.close();
             tos.close();
 
-            FileUtils.moveFile(tmpFile, baseLocalFile);
+            // Adding protection against this file already existing / being written by another thread.
+            // Adding locks would be useless here since another VM could be executing the code. 
+            if (!baseLocalFile.exists()) {
+                try {
+                    FileUtils.moveFile(tmpFile, baseLocalFile);
+                } catch (FileExistsException e) {
+                    // No problem
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("File exists error moving file " + tmpFile.getAbsolutePath(), e);
+                    }
+                }
+            }
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(tos);
@@ -359,7 +345,8 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             staticAssetStorageDao.save(storage);
         } else if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
             FileWorkArea tempWorkArea = broadleafFileService.initializeWorkArea();
-            String destFileName = tempWorkArea.getFilePathLocation() + removeLeadingSlash(staticAsset.getFullUrl());
+            // Convert the given URL from the asset to a system-specific suitable file path
+            String destFileName = FilenameUtils.normalize(tempWorkArea.getFilePathLocation() + File.separator + FilenameUtils.separatorsToSystem(staticAsset.getFullUrl()));
 
             InputStream input = file.getInputStream();
             byte[] buffer = new byte[fileBufferSize];

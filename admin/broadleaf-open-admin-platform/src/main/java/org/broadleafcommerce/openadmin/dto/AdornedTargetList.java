@@ -172,6 +172,25 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
     }
 
     @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("AdornedTargetList{");
+        sb.append("collectionFieldName='").append(collectionFieldName).append('\'');
+        sb.append(", linkedObjectPath='").append(linkedObjectPath).append('\'');
+        sb.append(", targetObjectPath='").append(targetObjectPath).append('\'');
+        sb.append(", adornedTargetEntityClassname='").append(adornedTargetEntityClassname).append('\'');
+        sb.append(", adornedTargetEntityPolymorphicType='").append(adornedTargetEntityPolymorphicType).append('\'');
+        sb.append(", sortField='").append(sortField).append('\'');
+        sb.append(", sortAscending=").append(sortAscending);
+        sb.append(", linkedIdProperty='").append(linkedIdProperty).append('\'');
+        sb.append(", targetIdProperty='").append(targetIdProperty).append('\'');
+        sb.append(", inverse=").append(inverse);
+        sb.append(", joinEntityClass='").append(joinEntityClass).append('\'');
+        sb.append(", mutable=").append(mutable);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
     public PersistencePerspectiveItem clonePersistencePerspectiveItem() {
         AdornedTargetList adornedTargetList = new AdornedTargetList();
         adornedTargetList.collectionFieldName = collectionFieldName;

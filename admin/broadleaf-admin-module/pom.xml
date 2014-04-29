@@ -4,13 +4,16 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.1.1-GA</version>
+        <version>3.1.2-GA</version>
     </parent>
     <artifactId>broadleaf-admin-module</artifactId>
     <packaging>jar</packaging>
     <name>BroadleafCommerce Admin Module</name>
     <description>BroadleafCommerce Admin Module</description>
     <url>http://www.broadleafcommerce.org</url>
+    <properties>
+        <project.uri>${project.baseUri}/../../</project.uri>
+    </properties>
     <licenses>
         <license>
             <name>Apache 2</name>

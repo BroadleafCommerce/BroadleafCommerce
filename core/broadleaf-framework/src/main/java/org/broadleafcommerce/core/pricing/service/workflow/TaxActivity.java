@@ -19,21 +19,22 @@
  */
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.TaxService;
 import org.broadleafcommerce.core.pricing.service.module.TaxModule;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
+import javax.annotation.Resource;
+
 /**
- * @deprecated Use {@link CommitTaxActivity} and the corresponding {@link TaxService} instead
+ * Utilized within the blPricingWorkflow to calculate tax for an {@link Order}
  */
-@Deprecated
 public class TaxActivity extends BaseActivity<ProcessContext<Order>> {
 
     protected TaxModule taxModule;
 
+    @Resource(name = "blTaxService")
     protected TaxService taxService;
 
     @Override

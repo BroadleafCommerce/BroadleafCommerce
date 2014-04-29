@@ -25,28 +25,33 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate .BetweenDatePredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.BetweenDatePredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.BetweenPredicateProvider;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate .CollectionSizeEqualPredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.CollectionSizeEqualPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.EqPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNullPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.LikePredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
-import java.util.List;
 
 /**
  * This class takes into account that filters should be applied on either the root Sku property itself OR the defaultSku
  * for this particular Sku.
  *
  * @author Jeff Fischer
+ * @deprecated this was originally designed to search for Skus by the default Sku property if it was not set on an additional
+ * sku. In practice this led to a lot of performance issues to actually make it work correctly. Rather than filter directly
+ * on Skus then Sku searches/filters should instead go through a Product first
  */
+@Deprecated
 @Component("blSkuRestrictionFactory")
 public class SkuRestrictionFactoryImpl implements RestrictionFactory {
 

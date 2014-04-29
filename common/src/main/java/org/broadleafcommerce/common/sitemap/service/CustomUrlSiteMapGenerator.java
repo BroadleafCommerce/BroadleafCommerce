@@ -89,7 +89,7 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
         if (url.contains("://")) {
             return url;
         } else {
-            return BroadleafFileUtils.buildFilePath(smb.getBaseUrl(), url);
+            return BroadleafFileUtils.appendUnixPaths(smb.getBaseUrl(), url);
         }
     }
 

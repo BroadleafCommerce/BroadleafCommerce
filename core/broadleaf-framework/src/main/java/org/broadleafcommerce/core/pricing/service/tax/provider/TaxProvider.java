@@ -24,10 +24,15 @@ import org.broadleafcommerce.common.config.service.ModuleProvider;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
 
+/**
+ * 
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
+ */
 public interface TaxProvider extends ModuleProvider {
 
     /**
-     * Calculates taxes on an entire order.  Returns the order with taxes included.
+     * Calculates taxes on an entire order. Returns the order with taxes included.
      * @param order
      * @param config
      * @return

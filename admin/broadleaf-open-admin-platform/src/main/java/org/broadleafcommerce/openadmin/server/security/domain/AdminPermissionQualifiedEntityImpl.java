@@ -27,6 +27,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import javax.persistence.Column;
@@ -50,7 +51,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_PERMISSION_ENTITY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualifiedEntity {
+public class AdminPermissionQualifiedEntityImpl implements AdminPermissionQualifiedEntity, Serializable {
 
     private static final Log LOG = LogFactory.getLog(AdminPermissionQualifiedEntityImpl.class);
     private static final long serialVersionUID = 1L;

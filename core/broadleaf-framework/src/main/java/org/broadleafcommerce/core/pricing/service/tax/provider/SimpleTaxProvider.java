@@ -17,14 +17,15 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.pricing.service.module;
+package org.broadleafcommerce.core.pricing.service.tax.provider;
 
+import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.TaxDetail;
-import org.broadleafcommerce.core.order.domain.TaxDetailImpl;
 import org.broadleafcommerce.core.order.domain.TaxType;
 import org.broadleafcommerce.core.pricing.service.exception.TaxException;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -34,25 +35,27 @@ import org.broadleafcommerce.profile.core.domain.State;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
+ * <p>
  * Simple factor-based tax module that can be configured by adding rates for
  * specific postalCodes, city, state, or country.
  *
+ * <p>
  * Through configuration, this module can be used to set a specific tax rate for items and shipping for a given postal code,
  * city, state, or country.
- *
+ * 
+ * <p>
  * Utilizes the fulfillment group's address to determine the tax location.
- *
- * Useful for those with very simple tax needs.
+ * 
+ * <p>
+ * Useful for those with very simple tax needs that want to configure rates programmatically.
  * 
  * @author jfischer, brian polster
+ * @author Phillip Verheyden (phillipuniverse)
  */
-@Deprecated
-public class SimpleTaxModule implements TaxModule {
-
-    public static final String MODULENAME = "simpleTaxModule";
-
-    protected String name = MODULENAME;
+public class SimpleTaxProvider implements TaxProvider {
 
     protected Map<String, Double> itemPostalCodeTaxRateMap;
     protected Map<String, Double> itemCityTaxRateMap;
@@ -64,77 +67,86 @@ public class SimpleTaxModule implements TaxModule {
     protected Map<String, Double> fulfillmentGroupStateTaxRateMap;
     protected Map<String, Double> fulfillmentGroupCountryTaxRateMap;
 
-
     protected Double defaultItemTaxRate;
     protected Double defaultFulfillmentGroupTaxRate;
 
     protected boolean taxFees;
+    
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfig;
+    
+    @Override
+    public boolean canRespond(ModuleConfiguration config) {
+        // this will only be executed with null module configurations
+        return config == null;
+    }
 
     @Override
-    public Order calculateTaxForOrder(Order order) throws TaxException {
-        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            
-            // Set taxes on the fulfillment group items
-            for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                if (isItemTaxable(fgItem)) {
-                    Double factor = determineItemTaxRate(fulfillmentGroup.getAddress());
-                    if (factor != null && factor.compareTo(0d) != 0) {
-                        TaxDetail tax;
-                        checkDetail: {
-                            for (TaxDetail detail : fgItem.getTaxes()) {
-                                if (detail.getType().equals(TaxType.COMBINED)) {
-                                    tax = detail;
-                                    break checkDetail;
+    public Order calculateTaxForOrder(Order order, ModuleConfiguration config) throws TaxException {
+        if (!order.getCustomer().isTaxExempt()) {
+            for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+                // Set taxes on the fulfillment group items
+                for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                    if (isItemTaxable(fgItem)) {
+                        BigDecimal factor = determineItemTaxRate(fulfillmentGroup.getAddress());
+                        if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
+                            TaxDetail tax;
+                            checkDetail: {
+                                for (TaxDetail detail : fgItem.getTaxes()) {
+                                    if (detail.getType().equals(TaxType.COMBINED)) {
+                                        tax = detail;
+                                        break checkDetail;
+                                    }
                                 }
+                                tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
+                                tax.setType(TaxType.COMBINED);
+                                fgItem.getTaxes().add(tax);
                             }
-                            tax = new TaxDetailImpl();
-                            tax.setType(TaxType.COMBINED);
-                            fgItem.getTaxes().add(tax);
+                            tax.setRate(factor);
+                            tax.setAmount(fgItem.getTotalItemTaxableAmount().multiply(factor));
                         }
-                        tax.setRate(new BigDecimal(factor));
-                        tax.setAmount(fgItem.getTotalItemTaxableAmount().multiply(factor));
                     }
                 }
-            }
-
-            for (FulfillmentGroupFee fgFee : fulfillmentGroup.getFulfillmentGroupFees()) {
-                if (isFeeTaxable(fgFee)) {
-                    Double factor = determineItemTaxRate(fulfillmentGroup.getAddress());
-                    if (factor != null && factor.compareTo(0d) != 0) {
-                        TaxDetail tax;
-                        checkDetail: {
-                            for (TaxDetail detail : fgFee.getTaxes()) {
-                                if (detail.getType().equals(TaxType.COMBINED)) {
-                                    tax = detail;
-                                    break checkDetail;
+    
+                for (FulfillmentGroupFee fgFee : fulfillmentGroup.getFulfillmentGroupFees()) {
+                    if (isFeeTaxable(fgFee)) {
+                        BigDecimal factor = determineItemTaxRate(fulfillmentGroup.getAddress());
+                        if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
+                            TaxDetail tax;
+                            checkDetail: {
+                                for (TaxDetail detail : fgFee.getTaxes()) {
+                                    if (detail.getType().equals(TaxType.COMBINED)) {
+                                        tax = detail;
+                                        break checkDetail;
+                                    }
                                 }
+                                tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
+                                tax.setType(TaxType.COMBINED);
+                                fgFee.getTaxes().add(tax);
                             }
-                            tax = new TaxDetailImpl();
-                            tax.setType(TaxType.COMBINED);
-                            fgFee.getTaxes().add(tax);
-                        }
-                        tax.setRate(new BigDecimal(factor));
-                        tax.setAmount(fgFee.getAmount().multiply(factor));
-                    }
-                }
-            }
-
-            Double factor = determineTaxRateForFulfillmentGroup(fulfillmentGroup);
-            if (factor != null && factor.compareTo(0d) != 0) {
-                TaxDetail tax;
-                checkDetail: {
-                    for (TaxDetail detail : fulfillmentGroup.getTaxes()) {
-                        if (detail.getType().equals(TaxType.COMBINED)) {
-                            tax = detail;
-                            break checkDetail;
+                            tax.setRate(factor);
+                            tax.setAmount(fgFee.getAmount().multiply(factor));
                         }
                     }
-                    tax = new TaxDetailImpl();
-                    tax.setType(TaxType.COMBINED);
-                    fulfillmentGroup.getTaxes().add(tax);
                 }
-                tax.setRate(new BigDecimal(factor));
-                tax.setAmount(fulfillmentGroup.getFulfillmentPrice().multiply(factor));
+    
+                BigDecimal factor = determineTaxRateForFulfillmentGroup(fulfillmentGroup);
+                if (factor != null && factor.compareTo(BigDecimal.ZERO) != 0) {
+                    TaxDetail tax;
+                    checkDetail: {
+                        for (TaxDetail detail : fulfillmentGroup.getTaxes()) {
+                            if (detail.getType().equals(TaxType.COMBINED)) {
+                                tax = detail;
+                                break checkDetail;
+                            }
+                        }
+                        tax = entityConfig.createEntityInstance(TaxDetail.class.getName(), TaxDetail.class);
+                        tax.setType(TaxType.COMBINED);
+                        fulfillmentGroup.getTaxes().add(tax);
+                    }
+                    tax.setRate(factor);
+                    tax.setAmount(fulfillmentGroup.getFulfillmentPrice().multiply(factor));
+                }
             }
         }
 
@@ -142,15 +154,15 @@ public class SimpleTaxModule implements TaxModule {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public Order commitTaxForOrder(Order order, ModuleConfiguration config) throws TaxException {
+        // intentionally left blank; no tax needs to be committed as this already has the tax details on the order
+        return order;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public void cancelTax(Order order, ModuleConfiguration config) throws TaxException {
+        // intentionally left blank; tax never got committed so it never gets cancelled
     }
-
 
     /**
      * Returns the taxAmount for the passed in postal code or
@@ -246,30 +258,30 @@ public class SimpleTaxModule implements TaxModule {
      * @param address
      * @return
      */
-    public Double determineItemTaxRate(Address address) {
+    public BigDecimal determineItemTaxRate(Address address) {
         if (address != null) {
             Double postalCodeRate = lookupPostalCodeRate(itemPostalCodeTaxRateMap, address.getPostalCode());
             if (postalCodeRate != null) {
-                return postalCodeRate;
+                return BigDecimal.valueOf(postalCodeRate);
             }
             Double cityCodeRate = lookupCityRate(itemCityTaxRateMap, address.getCity());
             if (cityCodeRate != null) {
-                return cityCodeRate;
+                return BigDecimal.valueOf(cityCodeRate);
             }
             Double stateCodeRate = lookupStateRate(itemStateTaxRateMap, address.getState());
             if (stateCodeRate != null) {
-                return stateCodeRate;
+                return BigDecimal.valueOf(stateCodeRate);
             }
             Double countryCodeRate = lookupCountryRate(itemCountryTaxRateMap, address.getCountry());
             if (countryCodeRate != null) {
-                return countryCodeRate;
+                return BigDecimal.valueOf(countryCodeRate);
             }
         }
 
         if (defaultItemTaxRate != null) {
-            return defaultItemTaxRate;
+            return BigDecimal.valueOf(defaultItemTaxRate);
         } else {
-            return 0d;
+            return BigDecimal.ZERO;
         }
     }
 
@@ -281,7 +293,7 @@ public class SimpleTaxModule implements TaxModule {
      * @param fulfillmentGroup
      * @return
      */
-    public Double determineTaxRateForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+    public BigDecimal determineTaxRateForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         boolean isTaxable = true;
 
         if (fulfillmentGroup.isShippingPriceTaxable() != null) {
@@ -293,27 +305,27 @@ public class SimpleTaxModule implements TaxModule {
             if (address != null) {
                 Double postalCodeRate = lookupPostalCodeRate(fulfillmentGroupPostalCodeTaxRateMap, address.getPostalCode());
                 if (postalCodeRate != null) {
-                    return postalCodeRate;
+                    return BigDecimal.valueOf(postalCodeRate);
                 }
                 Double cityCodeRate = lookupCityRate(fulfillmentGroupCityTaxRateMap, address.getCity());
                 if (cityCodeRate != null) {
-                    return cityCodeRate;
+                    return BigDecimal.valueOf(cityCodeRate);
                 }
                 Double stateCodeRate = lookupStateRate(fulfillmentGroupStateTaxRateMap, address.getState());
                 if (stateCodeRate != null) {
-                    return stateCodeRate;
+                    return BigDecimal.valueOf(stateCodeRate);
                 }
                 Double countryCodeRate = lookupCountryRate(fulfillmentGroupCountryTaxRateMap, address.getCountry());
                 if (countryCodeRate != null) {
-                    return countryCodeRate;
+                    return BigDecimal.valueOf(countryCodeRate);
                 }
             }
 
             if (defaultFulfillmentGroupTaxRate != null) {
-                return defaultFulfillmentGroupTaxRate;
+                return BigDecimal.valueOf(defaultFulfillmentGroupTaxRate);
             }
         }
-        return 0d;
+        return BigDecimal.ZERO;
     }
 
     public Map<String, Double> getItemPostalCodeTaxRateMap() {
@@ -394,26 +406,6 @@ public class SimpleTaxModule implements TaxModule {
 
     public void setDefaultFulfillmentGroupTaxRate(Double defaultFulfillmentGroupTaxRate) {
         this.defaultFulfillmentGroupTaxRate = defaultFulfillmentGroupTaxRate;
-    }
-
-    /**
-     * Use getDefaultItemTaxRate instead.
-     * @deprecated
-     * @return
-     */
-    @Deprecated
-    public Double getFactor() {
-        return getDefaultItemTaxRate();
-    }
-
-    /**
-     * Use setDefaultItemTaxRate instead.
-     * @deprecated
-     * @return
-     */
-    @Deprecated
-    public void setFactor(Double factor) {
-        setDefaultItemTaxRate(factor);
     }
 
 }

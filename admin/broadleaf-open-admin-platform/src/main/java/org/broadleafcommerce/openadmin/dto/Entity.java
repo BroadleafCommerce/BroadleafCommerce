@@ -19,6 +19,11 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.TypedClosure;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,10 +32,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.collections.MapUtils;
-import org.broadleafcommerce.common.util.BLCMapUtils;
-import org.broadleafcommerce.common.util.TypedClosure;
 
 /**
  * Generic DTO for a domain object. Each property of the domain object is represented by the 'properties' instance variable
@@ -54,6 +55,7 @@ public class Entity implements Serializable {
     protected boolean multiPartAvailableOnThread = false;
     protected boolean isValidationFailure = false;
     protected Map<String, List<String>> validationErrors = new HashMap<String, List<String>>();
+    protected List<String> globalValidationErrors = new ArrayList<String>();
     
     protected Map<String, Property> pMap = null;
 
@@ -181,7 +183,7 @@ public class Entity implements Serializable {
      * property in messages.properties to support different locales
      */
     public void addValidationError(String fieldName, String errorOrErrorKey) {
-        Map<String, List<String>> fieldErrors = getValidationErrors();
+        Map<String, List<String>> fieldErrors = getPropertyValidationErrors();
         List<String> errorMessages = fieldErrors.get(fieldName);
         if (errorMessages == null) {
             errorMessages = new ArrayList<String>();
@@ -209,11 +211,11 @@ public class Entity implements Serializable {
 
     /**
      * 
-     * @return if this entity has failed validation. This will also check the {@link #getValidationErrors()} map if this
-     * boolean has not been explicitly set
+     * @return if this entity has failed validation. This will also check the {@link #getPropertyValidationErrors()} map and 
+     * {@link #getGlobalValidationErrors()} if this boolean has not been explicitly set
      */
     public boolean isValidationFailure() {
-        if (!getValidationErrors().isEmpty()) {
+        if (MapUtils.isNotEmpty(getPropertyValidationErrors()) || CollectionUtils.isNotEmpty(getGlobalValidationErrors())) {
             isValidationFailure = true;
         }
         return isValidationFailure;
@@ -223,6 +225,15 @@ public class Entity implements Serializable {
         isValidationFailure = validationFailure;
     }
 
+    /**
+     * @deprecated use {@link #getPropertyValidationErrors()} instead
+     * @return
+     */
+    @Deprecated
+    public Map<String, List<String>> getValidationErrors() {
+        return getPropertyValidationErrors();
+    }
+    
     /**
      * Validation error map where the key corresponds to the property that failed validation (which could be dot-separated)
      * and the value corresponds to a list of the error messages, in the case of multiple errors on the same field.
@@ -234,10 +245,18 @@ public class Entity implements Serializable {
      * 
      * @return a map keyed by property name to the list of error messages for that property
      */
-    public Map<String, List<String>> getValidationErrors() {
+    public Map<String, List<String>> getPropertyValidationErrors() {
         return validationErrors;
     }
 
+    /**
+     * @deprecated use {@link #setPropertyValidationErrors(Map)} instead
+     */
+    @Deprecated
+    public void setValidationErrors(Map<String, List<String>> validationErrors) {
+        setPropertyValidationErrors(validationErrors);
+    }
+    
     /**
      * Completely reset the validation errors for this Entity. In most cases it is more appropriate to use the convenience
      * method for adding a single error via {@link #addValidationError(String, String)}. This will also set the entire
@@ -246,11 +265,38 @@ public class Entity implements Serializable {
      * @param validationErrors
      * @see #addValidationError(String, String)
      */
-    public void setValidationErrors(Map<String, List<String>> validationErrors) {
+    public void setPropertyValidationErrors(Map<String, List<String>> validationErrors) {
         if (MapUtils.isNotEmpty(validationErrors)) {
             setValidationFailure(true);
         }
         this.validationErrors = validationErrors;
+    }
+    
+    /**
+     * Adds a validation error to this entity that is not tied to any specific property. If you need to tie this to a
+     * property then you should use {@link #addValidationError(String, String)} instead.
+     * @param errorOrErrorKey
+     */
+    public void addGlobalValidationError(String errorOrErrorKey) {
+        setValidationFailure(true);
+        globalValidationErrors.add(errorOrErrorKey);
+    }
+    
+    /**
+     * Similar to {@link #addGlobalValidationError(String)} except with a list of errors
+     * @param errorOrErrorKeys
+     */
+    public void addGlobalValidationErrors(List<String> errorOrErrorKeys) {
+        setValidationFailure(true);
+        globalValidationErrors.addAll(errorOrErrorKeys);
+    }
+    
+    public List<String> getGlobalValidationErrors() {
+        return globalValidationErrors;
+    }
+    
+    public void setGlobalValidationErrors(List<String> globalValidationErrors) {
+        this.globalValidationErrors = globalValidationErrors;
     }
 
     public Boolean getActive() {
@@ -283,6 +329,17 @@ public class Entity implements Serializable {
 
     public void setDeployDate(Date deployDate) {
         this.deployDate = deployDate;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Entity{");
+        sb.append("isValidationFailure=").append(isValidationFailure);
+        sb.append(", isDirty=").append(isDirty);
+        sb.append(", properties=").append(Arrays.toString(properties));
+        sb.append(", type=").append(Arrays.toString(type));
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override

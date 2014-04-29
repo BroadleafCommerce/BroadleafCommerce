@@ -19,15 +19,15 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 /**
  * StructuredContent implementations provide a representation of a generic content
@@ -118,6 +118,9 @@ public interface StructuredContent extends Serializable {
     public void setStructuredContentType(@Nonnull StructuredContentType structuredContentType);
 
     /**
+     * <b>NOTE: This method is typically only used when wanting to persist new {@link StructuredContentField}s.
+     * Users trying to get a field to render should typically invoke {@link #getFieldValues()}.</b>
+     * 
      * Gets a map with the custom fields associated with this content item.<br>
      * The map keys are based on the field types.   For example, consider a content
      * item with a <code>StructuredContentType</code> of ad which defined a field
@@ -217,5 +220,17 @@ public interface StructuredContent extends Serializable {
      * @param qualifyingItemCriteria
      */
     public void setQualifyingItemCriteria(@Nullable Set<StructuredContentItemCriteria> qualifyingItemCriteria);
+
+    /**
+     * Sets the transient fieldValues map on this StructuredContent.
+     * 
+     * @param fieldValuesMap
+     */
+    public void setFieldValues(Map<String, String> fieldValuesMap);
+    
+    /**
+     * @return a map of {@link StructuredContentField} field key names to their associated values
+     */
+    public Map<String, String> getFieldValues();
 
 }

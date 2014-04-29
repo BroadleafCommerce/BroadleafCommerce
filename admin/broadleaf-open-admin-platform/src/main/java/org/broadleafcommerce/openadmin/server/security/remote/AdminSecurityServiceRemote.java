@@ -20,18 +20,23 @@
 package org.broadleafcommerce.openadmin.server.security.remote;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.web.SandBoxContext;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
+import org.broadleafcommerce.openadmin.server.service.persistence.validation.GlobalValidationResult;
 import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.cglib.core.Transformer;
 import org.springframework.security.core.Authentication;
@@ -74,6 +79,9 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
 
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
+    
+    @Resource(name = "blRowLevelSecurityService")
+    protected RowLevelSecurityService rowLevelSecurityService;
     
     @Override
     public org.broadleafcommerce.openadmin.server.security.remote.AdminUser getAdminUser() throws ServiceException {
@@ -129,6 +137,27 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
                 }
             }));
         }
+        
+        Entity entity = persistencePackage.getEntity();
+        GlobalValidationResult globalValidationResult = null;
+        if (operationType.equals(EntityOperationType.UPDATE)) {
+            globalValidationResult = rowLevelSecurityService.validateUpdateRequest(getPersistentAdminUser(), entity, persistencePackage);
+        } else if (operationType.equals(EntityOperationType.REMOVE)) {
+            globalValidationResult = rowLevelSecurityService.validateRemoveRequest(getPersistentAdminUser(), entity, persistencePackage);
+        }
+        
+        if (globalValidationResult != null) {
+            if (!globalValidationResult.isValid()) {
+                if (StringUtils.isEmpty(globalValidationResult.getErrorMessage())) {
+                    entity.addGlobalValidationError("rowLevelSecurityFailed");
+                } else {
+                    entity.addGlobalValidationErrors(globalValidationResult.getErrorMessages());
+                }
+                
+                throw new ValidationException(entity, "Row level security check failed for " + operationType);
+            }
+        }
+        
         securityCheck(ceilingNames.toArray(new String[ceilingNames.size()]), operationType);
     }
 

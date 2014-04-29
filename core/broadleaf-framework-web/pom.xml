@@ -3,13 +3,16 @@
     <parent>
         <artifactId>core</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.1.1-GA</version>
+        <version>3.1.2-GA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-framework-web</artifactId>
     <name>BroadleafCommerce Framework Web</name>
     <description>BroadleafCommerce Framework Web</description>
     <url>http://www.broadleafcommerce.org</url>
+    <properties>
+        <project.uri>${project.baseUri}/../../</project.uri>
+    </properties>
     <licenses>
         <license>
             <name>Apache 2</name>
@@ -127,6 +130,10 @@
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

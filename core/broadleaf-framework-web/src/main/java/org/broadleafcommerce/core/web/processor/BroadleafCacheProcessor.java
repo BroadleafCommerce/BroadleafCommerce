@@ -27,8 +27,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.web.service.SimpleCacheKeyResolver;
 import org.broadleafcommerce.core.web.service.TemplateCacheKeyResolverService;
+import org.springframework.web.context.request.WebRequest;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Attribute;
 import org.thymeleaf.dom.Element;
@@ -251,6 +253,20 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
     }
 
     public boolean isCachingEnabled() {
-        return !systemPropertiesService.resolveBooleanSystemProperty("disableThymeleafTemplateCaching");
+        boolean disabled = !systemPropertiesService.resolveBooleanSystemProperty("disableThymeleafTemplateCaching");
+        if (!disabled) {
+            // check for a URL param that overrides caching - useful for testing if this processor is incorrectly
+            // caching a page (possibly due to an bad cacheKey).
+
+            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+            if (brc != null && brc.getWebRequest() != null) {
+                WebRequest request = brc.getWebRequest();
+                String disableCachingParam = request.getParameter("disableThymeleafTemplateCaching");
+                if ("true".equals(disableCachingParam)) {
+                    return false;
+                }
+            }
+        }
+        return disabled;
     }
 }
