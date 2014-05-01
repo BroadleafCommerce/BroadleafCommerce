@@ -21,7 +21,6 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -71,7 +70,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -95,7 +93,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
-
 import javax.annotation.Resource;
 
 /**
@@ -952,6 +949,18 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (primaryKey == null) {
                 Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
+
+                if (foreignKey != null && foreignKey.getSortField() != null) {
+                    CriteriaTransferObject cto = new CriteriaTransferObject();
+                    FilterAndSortCriteria sortCriteria = cto.get(foreignKey.getSortField());
+                    sortCriteria.setSortAscending(foreignKey.getSortAscending());
+                    List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
+                            .getCeilingEntityFullyQualifiedClassname(), mergedProperties);
+                    int totalRecords = getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
+                    Class<?> type = getFieldManager().getField(instance.getClass(), foreignKey.getSortField()).getType();
+                    boolean isBigDecimal = BigDecimal.class.isAssignableFrom(type);
+                    getFieldManager().setFieldValue(instance, foreignKey.getSortField(), isBigDecimal?new BigDecimal(totalRecords + 1):Long.valueOf(totalRecords + 1));
+                }
 
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
                 if (includeRealEntityObject) {
