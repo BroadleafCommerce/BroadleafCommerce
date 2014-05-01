@@ -195,8 +195,17 @@ public @interface AdminPresentationCollection {
      * a field used for sorting</p>  Enables the reorder functionality in list grids.
      * 
      *
-     * @return the sort field in the adorned target entity
+     * @return the sort field in the target entity
      */
     String sortProperty() default "";
 
+    /**
+     * <p>Optional - only required if the sort order should be
+     * descending</p>
+     *
+     * <p>This is the sort direction for the targets</p>
+     *
+     * @return the sort direction
+     */
+    boolean sortAscending() default true;
 }
