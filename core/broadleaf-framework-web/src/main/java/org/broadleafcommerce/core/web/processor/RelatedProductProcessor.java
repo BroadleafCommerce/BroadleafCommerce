@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -79,8 +80,10 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
      * Controller method for the processor that readies the service call and adds the results to the model.
      */
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(arguments, element));
+        RelatedProductDTO relatedProductDTO = buildDTO(arguments, element);
+        List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(relatedProductDTO);
         addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
+        addToModel(arguments, getRelatedSkusResultVar(element), getRelatedSkus(relatedProducts, relatedProductDTO.getQuantity()));
         addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
         addCollectionToExistingSet(arguments, "blcAllProducts", buildProductList(relatedProducts));
     }
@@ -93,6 +96,34 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
             }
         }
         return productList;
+    }
+    
+    protected List<Sku> getRelatedSkus(List<? extends PromotableProduct> relatedProducts, Integer maxQuantity) {
+        List<Sku> relatedSkus = new ArrayList<Sku>();
+        if (relatedProducts != null) {
+            Integer numSkus = 0;
+            for (PromotableProduct promProduct : relatedProducts) {
+                Product relatedProduct = promProduct.getRelatedProduct();
+                List<Sku> additionalSkus = relatedProduct.getAdditionalSkus();
+                if(additionalSkus != null) {
+                    for(Sku additionalSku : additionalSkus) {
+                        if(numSkus == maxQuantity) {
+                            break;
+                        }
+                        relatedSkus.add(additionalSku);
+                        numSkus++;
+                        
+                    }
+                } else {
+                    if(numSkus == maxQuantity) {
+                        break;
+                    }
+                    relatedSkus.add(relatedProduct.getDefaultSku());
+                    numSkus++;
+                }
+            }
+        }
+        return relatedSkus;
     }
     
     protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {
@@ -109,6 +140,14 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         String resultVar = element.getAttributeValue("relatedProductsResultVar");       
         if (resultVar == null) {
             resultVar = "relatedProducts";
+        }
+        return resultVar;
+    }
+    
+    private String getRelatedSkusResultVar(Element element) {
+        String resultVar = element.getAttributeValue("relatedSkusResultVar");       
+        if (resultVar == null) {
+            resultVar = "relatedSkus";
         }
         return resultVar;
     }
