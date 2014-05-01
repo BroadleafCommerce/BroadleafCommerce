@@ -55,7 +55,7 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
         //CacheManager.getInstance() and CacheManager.create() cannot be called in this constructor because it will create two cache manager instances
     }
     
-    private Cache getHeap() {
+    private synchronized Cache getHeap() {
         if (offHeap == null) {
             if (CacheManager.getInstance().cacheExists("hydrated-offheap-cache")) {
                 offHeap = CacheManager.getInstance().getCache("hydrated-offheap-cache");
