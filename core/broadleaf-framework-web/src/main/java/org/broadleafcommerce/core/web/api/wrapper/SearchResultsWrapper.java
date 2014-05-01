@@ -20,8 +20,9 @@
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.search.domain.SearchResult;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.domain.SearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,13 @@ public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<Sear
     @XmlElementWrapper(name = "products")
     @XmlElement(name = "product")
     protected List<ProductWrapper> products;
+    
+    /*
+     * List of products associated with a search
+     */
+    @XmlElementWrapper(name = "skus")
+    @XmlElement(name = "sku")
+    protected List<SkuWrapper> skus;
 
     /*
      * List of available facets to be used for searching
@@ -86,6 +94,15 @@ public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<Sear
                 ProductWrapper productSummary = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
                 productSummary.wrapSummary(product, request);
                 this.products.add(productSummary);
+            }
+        }
+        
+        if (model.getSkus() != null) {
+            skus = new ArrayList<SkuWrapper>();
+            for (Sku sku : model.getSkus()) {
+                SkuWrapper skuSummary = (SkuWrapper) context.getBean(SkuWrapper.class.getName());
+                skuSummary.wrapSummary(sku, request);
+                this.skus.add(skuSummary);
             }
         }
 
