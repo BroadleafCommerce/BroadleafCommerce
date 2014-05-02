@@ -98,7 +98,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
      * This will force the domain to 127.0.0.1 which is useful to determine if the Google Analytics tag is sending
      * a request to Google
      */
-    protected boolean testLocal = true;
+    protected boolean testLocal = false;
     
     public GoogleUniversalAnalyticsProcessor() {
         super("google_universal_analytics");
