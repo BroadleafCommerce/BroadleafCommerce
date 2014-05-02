@@ -39,7 +39,7 @@ import javax.annotation.Resource;
 
 
 /**
- * A Thymeleaf processor that will find related products.    A product or category id must be specified.    If both are specified, only the productId will be used.  
+ * A Thymeleaf processor that will find related products and skus.    A product or category id must be specified.    If both are specified, only the productId will be used.  
  *
  * Takes in the following parameters
  * <ul>
@@ -50,6 +50,7 @@ import javax.annotation.Resource;
  *    <li>qty - if specified, determines the max-number of results that will be returned; otherwise, all results are returned.
  *    <li>productsResultVar - if specified, adds the products to the model keyed by this var.   Otherwise, uses "products" as the model identifier.
  *    <li>relatedProductsResultVar - if specified, adds the RelatedProduct(s) to the model keyed by this var.   Otherwise, uses "relatedProducts" as the model identifier.   
+ *    <li>relatedSkusResultVar - if specified, adds the related skus to the model keyed by this var.   Otherwise, uses "relatedSkus" as the model identifier.   
  * </ul>
  * 
  * The output from this operation returns a list of PromotableProducts which represent the following. 
