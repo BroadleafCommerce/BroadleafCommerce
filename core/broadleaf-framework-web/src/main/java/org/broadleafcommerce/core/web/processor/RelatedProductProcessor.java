@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.Expression;
@@ -61,6 +62,9 @@ import javax.annotation.Resource;
  */
 public class RelatedProductProcessor extends AbstractModelVariableModifierProcessor {
     
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
+    
     @Resource(name = "blRelatedProductsService")
     protected RelatedProductsService relatedProductsService;
 
@@ -83,10 +87,13 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
     protected void modifyModelAttributes(Arguments arguments, Element element) {
         RelatedProductDTO relatedProductDTO = buildDTO(arguments, element);
         List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(relatedProductDTO);
-        addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
-        addToModel(arguments, getRelatedSkusResultVar(element), getRelatedSkus(relatedProducts, relatedProductDTO.getQuantity()));
-        addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
-        addCollectionToExistingSet(arguments, "blcAllProducts", buildProductList(relatedProducts));
+        if (useSku) {
+            addToModel(arguments, getRelatedSkusResultVar(element), getRelatedSkus(relatedProducts, relatedProductDTO.getQuantity()));
+        } else {
+            addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
+            addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
+            addCollectionToExistingSet(arguments, "blcAllProducts", buildProductList(relatedProducts));
+        }
     }
 
     protected List<Product> buildProductList(List<? extends PromotableProduct> relatedProducts) {
