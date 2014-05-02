@@ -50,7 +50,9 @@ import javax.annotation.Resource;
  *  }
  * </pre>
  * @author tleffert
+ * @deprecated use the {@link GoogleUniversalAnalyticsProcessor} instead
  */
+@Deprecated
 @Component("blGoogleAnalyticsProcessor")
 public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProcessor {
 

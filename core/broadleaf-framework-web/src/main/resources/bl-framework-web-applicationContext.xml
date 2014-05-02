@@ -24,6 +24,7 @@
         </aop:aspect>
     </aop:config>
     
+    <bean id="blGoogleUniversalAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleUniversalAnalyticsProcessor" />
     <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
     <!-- own dialect and add your processors there. -->
     <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
@@ -46,6 +47,7 @@
             <ref bean="blToggleFacetLinkProcessor" />
             <ref bean="blUrlRewriteProcessor" />
             <ref bean="blResourceBundleProcessor" />
+            <ref bean="blGoogleUniversalAnalyticsProcessor" />
           </set>
         </property>     
     </bean> 
