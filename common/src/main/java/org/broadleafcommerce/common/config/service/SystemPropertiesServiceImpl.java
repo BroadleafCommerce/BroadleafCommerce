@@ -61,7 +61,15 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     @Autowired
     protected RuntimeEnvironmentPropertiesManager propMgr;
 
-
+    @Override
+    public String resolveSystemProperty(String name, String defaultValue) {
+        String result = resolveSystemProperty(name);
+        if (result == null) {
+            return defaultValue;
+        }
+        return result;
+    }
+    
     @Override
     public String resolveSystemProperty(String name) {
         if (extensionManager != null) {
@@ -177,30 +185,37 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     @Override
     public int resolveIntSystemProperty(String name) {
-        String systemProperty = resolveSystemProperty(name);
-        if (systemProperty == null) {
-            return 0;
-        }
-
+        String systemProperty = resolveSystemProperty(name, "0");
+        return Integer.valueOf(systemProperty).intValue();
+    }
+    
+    @Override
+    public int resolveIntSystemProperty(String name, int defaultValue) {
+        String systemProperty = resolveSystemProperty(name, Integer.toString(0));
         return Integer.valueOf(systemProperty).intValue();
     }
 
     @Override
     public boolean resolveBooleanSystemProperty(String name) {
-        String systemProperty = resolveSystemProperty(name);
-        if (systemProperty == null) {
-            return false;
-        }
+        String systemProperty = resolveSystemProperty(name, "false");
+        return Boolean.valueOf(systemProperty).booleanValue();
+    }
+    
+    @Override
+    public boolean resolveBooleanSystemProperty(String name, boolean defaultValue) {
+        String systemProperty = resolveSystemProperty(name, Boolean.toString(defaultValue));
         return Boolean.valueOf(systemProperty).booleanValue();
     }
 
     @Override
     public long resolveLongSystemProperty(String name) {
-        String systemProperty = resolveSystemProperty(name);
-        if (systemProperty == null) {
-            return 0l;
-        }
-
+        String systemProperty = resolveSystemProperty(name, "0");
+        return Long.valueOf(systemProperty).longValue();
+    }
+    
+    @Override
+    public long resolveLongSystemProperty(String name, long defaultValue) {
+        String systemProperty = resolveSystemProperty(name, Long.toString(defaultValue));
         return Long.valueOf(systemProperty).longValue();
     }
     
