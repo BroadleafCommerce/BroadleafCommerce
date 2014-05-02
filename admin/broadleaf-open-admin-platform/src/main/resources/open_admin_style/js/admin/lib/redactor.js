@@ -105,7 +105,7 @@
 			autosave: false, // false or url
 			autosaveInterval: 60, // seconds
 
-			plugins: false, // array
+            plugins: ['fontcolor'], // array; added to enable font color plugin
 
 			linkAnchor: true,
 			linkEmail: true,
@@ -227,8 +227,6 @@
 					header5: 'Header 5',
 					bold: 'Bold',
 					italic: 'Italic',
-					fontcolor: 'Font Color',
-					backcolor: 'Back Color',
 					unorderedlist: 'Unordered List',
 					orderedlist: 'Ordered List',
 					outdent: 'Outdent',
@@ -573,16 +571,6 @@
 							exec: 'unlink'
 						}
 					}
-				},
-				fontcolor:
-				{
-					title: lang.fontcolor,
-					func: 'show'
-				},
-				backcolor:
-				{
-					title: lang.backcolor,
-					func: 'show'
 				},
 				alignment:
 				{
