@@ -3,9 +3,9 @@
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 <div class="custom-checkbox">
-    <label th:for="${field.name + '-true'}" th:inline="text" style="font-weight: 400; display: inline-block; width: 60px;">
+    <label th:for="${field.name + '-true'}" th:inline="text" style="font-weight: 400; display: inline-block; margin-right: 10px;">
         <input type="radio" th:id="${field.name + '-true'}" th:value="${true}" th:field="*{fields['__${field.name}__'].value}" /> 
-        <span style="margin-right: 10px;" th:text="#{Yes}" />
+        <span th:text="#{Yes}" />
     </label>
         
     <label th:for="${field.name + '-false'}" th:inline="text" style="font-weight: 400; display: inline-block;">

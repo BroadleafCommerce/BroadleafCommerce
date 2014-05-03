@@ -54,7 +54,9 @@ import javax.annotation.Resource;
  *  }
  * </pre>
  * @author tleffert
+ * @deprecated use the {@link GoogleUniversalAnalyticsProcessor} instead
  */
+@Deprecated
 public class GoogleAnalyticsProcessor extends AbstractModelVariableModifierProcessor {
 
     @Resource(name = "blOrderService")
