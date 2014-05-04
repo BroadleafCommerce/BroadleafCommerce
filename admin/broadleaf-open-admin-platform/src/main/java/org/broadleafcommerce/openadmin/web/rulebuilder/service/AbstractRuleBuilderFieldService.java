@@ -214,9 +214,11 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
     @Override
     public void afterPropertiesSet() throws Exception {
         // This bean only is valid when the following bean is active. (admin)
-        if (applicationContext.containsBean(PersistenceManagerFactory.getPersistenceManagerRef())) {
-            PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(PersistenceManagerFactory.getPersistenceManagerRef());
-            persistenceManager.setTargetMode(TargetModeType.SANDBOX);
+        if (applicationContext.containsBean(PersistenceManagerFactory.getPersistenceManagerRef()) && applicationContext.containsBean("blPersistenceManagerFactory")) {
+            //initialize the factory bean
+            applicationContext.getBean("blPersistenceManagerFactory");
+
+            PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(TargetModeType.SANDBOX);
             dynamicEntityDao = persistenceManager.getDynamicEntityDao();
             setFields(new ArrayList<FieldData>());
             
