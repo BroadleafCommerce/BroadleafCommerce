@@ -174,7 +174,12 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
+        
+        Class<Serializable> securityRoot = rowSecurityService.getFetchRestrictionRoot(adminSecurityService.getPersistentAdminUser(), ceilingMarker, filterMappings);
+        if (securityRoot != null) {
+            ceilingMarker = securityRoot;
+        }
+        
         Class<Serializable> ceilingClass = determineRoot(dynamicEntityDao, ceilingMarker, filterMappings);
         CriteriaQuery<Serializable> criteria = criteriaBuilder.createQuery(ceilingMarker);
         Root<Serializable> original = criteria.from(ceilingClass);

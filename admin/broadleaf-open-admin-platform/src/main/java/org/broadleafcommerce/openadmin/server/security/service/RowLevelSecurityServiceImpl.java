@@ -24,9 +24,11 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.GlobalValidationResult;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -48,7 +50,7 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
     private static final Log LOG = LogFactory.getLog(RowLevelSecurityServiceImpl.class);
     
     @Resource(name = "blRowLevelSecurityProviders")
-    List<RowLevelSecurityProvider> providers;
+    protected List<RowLevelSecurityProvider> providers;
     
     @Override
     public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
@@ -58,6 +60,19 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
         for (RowLevelSecurityProvider provider : getProviders()) {
             provider.addFetchRestrictions(currentUser, ceilingEntity, restrictions, sorts, entityRoot, criteria, criteriaBuilder);
         }
+    }
+    
+    @Override
+    public Class<Serializable> getFetchRestrictionRoot(AdminUser currentUser, Class<Serializable> ceilingEntity, List<FilterMapping> filterMappings) {
+        Class<Serializable> root = null;
+        for (RowLevelSecurityProvider provider : getProviders()) {
+            Class<Serializable> providerRoot = provider.getFetchRestrictionRoot(currentUser, ceilingEntity, filterMappings);
+            if (providerRoot != null) {
+                root = providerRoot;
+            }
+        }
+        
+        return root;
     }
 
     @Override

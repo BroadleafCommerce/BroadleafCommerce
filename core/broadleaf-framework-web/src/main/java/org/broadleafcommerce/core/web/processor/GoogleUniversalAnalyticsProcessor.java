@@ -82,15 +82,6 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
     @Value("${googleAnalytics.masterWebPropertyId:}")
     protected String masterWebPropertyId;
     
-    @Value("${:}")
-    protected String affiliation;
-    
-    @Value("${:true}")
-    protected boolean includeLinkAttribution;
-    
-    @Value("${g:false}")
-    protected boolean includeDisplayAdvertising;
-    
     @Resource(name = "blOrderService")
     protected OrderService orderService;
     
@@ -125,10 +116,13 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
             sb.append("})(window,document,'script','//www.google-analytics.com/analytics.js','ga');");
             
             String orderNumberExpression = element.getAttributeValue("ordernumber");
-            final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
-            Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, orderNumberExpression);
-            String orderNumber = (String) expression.execute(arguments.getConfiguration(), arguments);
-
+            String orderNumber = null;
+            if (orderNumberExpression != null) {
+                final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
+                Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, orderNumberExpression);
+                orderNumber = (String) expression.execute(arguments.getConfiguration(), arguments);
+            }
+            
             Order order = null;
             if (orderNumber != null) {
                 order = orderService.findOrderByOrderNumber(orderNumber);
@@ -215,8 +209,8 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
         
         sb.append("ga('" + tracker + ".ecommerce:addTransaction', {");
         sb.append("'id': '" + order.getOrderNumber() + "'");
-        if (StringUtils.isNotBlank(affiliation)) {
-            sb.append(",'affiliation': '" + affiliation + "'");
+        if (StringUtils.isNotBlank(getAffiliation())) {
+            sb.append(",'affiliation': '" + getAffiliation() + "'");
         }
         sb.append(",'revenue': '" + order.getTotal() + "'");
         sb.append(",'shipping':'" + order.getTotalShipping() + "'");
