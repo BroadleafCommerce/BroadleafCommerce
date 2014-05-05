@@ -182,34 +182,36 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
                 Address billAddress = payment.getBillingAddress();
-                String stateAbbr = null;
-                String countryAbbr = null;
-                String phone = null;
+                if (billAddress != null) {
+                    String stateAbbr = null;
+                    String countryAbbr = null;
+                    String phone = null;
 
-                if (billAddress.getState() != null) {
-                    stateAbbr = billAddress.getState().getAbbreviation();
+                    if (billAddress.getState() != null) {
+                        stateAbbr = billAddress.getState().getAbbreviation();
+                    }
+
+                    if (billAddress.getCountry() != null) {
+                        countryAbbr = billAddress.getCountry().getAbbreviation();
+                    }
+
+                    if (billAddress.getPhonePrimary() != null) {
+                        phone = billAddress.getPhonePrimary().getPhoneNumber();
+                    }
+
+                    requestDTO.billTo()
+                            .addressFirstName(billAddress.getFirstName())
+                            .addressLastName(billAddress.getLastName())
+                            .addressCompanyName(billAddress.getCompanyName())
+                            .addressLine1(billAddress.getAddressLine1())
+                            .addressLine2(billAddress.getAddressLine2())
+                            .addressCityLocality(billAddress.getCity())
+                            .addressStateRegion(stateAbbr)
+                            .addressPostalCode(billAddress.getPostalCode())
+                            .addressCountryCode(countryAbbr)
+                            .addressPhone(phone)
+                            .addressEmail(billAddress.getEmailAddress());
                 }
-
-                if (billAddress.getCountry() != null) {
-                    countryAbbr = billAddress.getCountry().getAbbreviation();
-                }
-
-                if (billAddress.getPhonePrimary() != null) {
-                    phone = billAddress.getPhonePrimary().getPhoneNumber();
-                }
-
-                requestDTO.billTo()
-                        .addressFirstName(billAddress.getFirstName())
-                        .addressLastName(billAddress.getLastName())
-                        .addressCompanyName(billAddress.getCompanyName())
-                        .addressLine1(billAddress.getAddressLine1())
-                        .addressLine2(billAddress.getAddressLine2())
-                        .addressCityLocality(billAddress.getCity())
-                        .addressStateRegion(stateAbbr)
-                        .addressPostalCode(billAddress.getPostalCode())
-                        .addressCountryCode(countryAbbr)
-                        .addressPhone(phone)
-                        .addressEmail(billAddress.getEmailAddress());
             }
         }
     }
