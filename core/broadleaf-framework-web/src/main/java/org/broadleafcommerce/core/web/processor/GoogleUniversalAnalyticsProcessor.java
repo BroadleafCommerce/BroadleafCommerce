@@ -82,15 +82,6 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
     @Value("${googleAnalytics.masterWebPropertyId:}")
     protected String masterWebPropertyId;
     
-    @Value("${:}")
-    protected String affiliation;
-    
-    @Value("${:true}")
-    protected boolean includeLinkAttribution;
-    
-    @Value("${g:false}")
-    protected boolean includeDisplayAdvertising;
-    
     @Resource(name = "blOrderService")
     protected OrderService orderService;
     
@@ -215,8 +206,8 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
         
         sb.append("ga('" + tracker + ".ecommerce:addTransaction', {");
         sb.append("'id': '" + order.getOrderNumber() + "'");
-        if (StringUtils.isNotBlank(affiliation)) {
-            sb.append(",'affiliation': '" + affiliation + "'");
+        if (StringUtils.isNotBlank(getAffiliation())) {
+            sb.append(",'affiliation': '" + getAffiliation() + "'");
         }
         sb.append(",'revenue': '" + order.getTotal() + "'");
         sb.append(",'shipping':'" + order.getTotalShipping() + "'");
