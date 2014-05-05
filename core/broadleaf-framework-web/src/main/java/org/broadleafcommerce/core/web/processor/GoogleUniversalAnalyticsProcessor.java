@@ -116,10 +116,13 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
             sb.append("})(window,document,'script','//www.google-analytics.com/analytics.js','ga');");
             
             String orderNumberExpression = element.getAttributeValue("ordernumber");
-            final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
-            Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, orderNumberExpression);
-            String orderNumber = (String) expression.execute(arguments.getConfiguration(), arguments);
-
+            String orderNumber = null;
+            if (orderNumberExpression != null) {
+                final IStandardExpressionParser expressionParser = StandardExpressions.getExpressionParser(arguments.getConfiguration());
+                Expression expression = (Expression) expressionParser.parseExpression(arguments.getConfiguration(), arguments, orderNumberExpression);
+                orderNumber = (String) expression.execute(arguments.getConfiguration(), arguments);
+            }
+            
             Order order = null;
             if (orderNumber != null) {
                 order = orderService.findOrderByOrderNumber(orderNumber);
