@@ -50,7 +50,7 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService {
     private static final Log LOG = LogFactory.getLog(RowLevelSecurityServiceImpl.class);
     
     @Resource(name = "blRowLevelSecurityProviders")
-    List<RowLevelSecurityProvider> providers;
+    protected List<RowLevelSecurityProvider> providers;
     
     @Override
     public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts,
