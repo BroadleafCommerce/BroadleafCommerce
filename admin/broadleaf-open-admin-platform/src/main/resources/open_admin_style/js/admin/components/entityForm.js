@@ -77,11 +77,12 @@ $(document).ready(function() {
     			type: "POST",
     			data: $(this).serialize()
     		}, function(data) {
+    			$('.modal .modal-header .tabs-container').replaceWith($(data).find('.modal-body .tabs-container'));
     			$('.modal .modal-body .tabs-content').replaceWith($(data).find('.modal-body .tabs-content'));
     			var errorDiv = $(data).find('.modal-body .errors');
     			if (errorDiv.length) {
     			    //since we only replaced the content of the modal body, ensure the error div gets there as well
-    			    var currentErrorDiv = BLCAdmin.currentModal().find('.modal-body .errors')
+    			    var currentErrorDiv = BLCAdmin.currentModal().find('.modal-body .errors');
     			    if (currentErrorDiv.length) {
     			        currentErrorDiv.replaceWith(errorDiv)
     			    } else {
