@@ -186,33 +186,37 @@ var BLC = (function($) {
     }
     
     function trackAjaxAnalytics(options, data) {
-        if (typeof _gaq != 'undefined') {
-            _gaq.push(['_trackPageview', options.url]);
-            console.log('Tracked GA pageview: ' + options.url);
-            
-            if (options.additionalAnalyticsEvents) {
-                for (var i = 0; i < options.additionalAnalyticsEvents.length; i++) {
-                    _gaq.push(options.additionalAnalyticsEvents[i]);
-                    console.log('Tracked additional GA event: ' + options.additionalAnalyticsEvents[i]);
-                }
-            }
-        }
-        
-        if (typeof ga != 'undefined') {
-            var trackers = ga.getAll();
-            for (var i = 0; i < trackers.length; i++) {
-                var tracker = trackers[i];
-                console.log('Tracked GA pageview: ' + options.url + ' for tracker: ' + tracker.get('name'));
-                tracker.send('pageview', options.url);
+        try {
+            if (typeof _gaq != 'undefined') {
+                _gaq.push(['_trackPageview', options.url]);
+                console.log('Tracked GA pageview: ' + options.url);
                 
                 if (options.additionalAnalyticsEvents) {
                     for (var i = 0; i < options.additionalAnalyticsEvents.length; i++) {
-                        var event = options.additionalAnalyticsEvents[i];
-                        tracker.send(event)
-                        console.log('Tracked additional GA event: ' + event + ' for tracker: ' + tracker.get('name'));
+                        _gaq.push(options.additionalAnalyticsEvents[i]);
+                        console.log('Tracked additional GA event: ' + options.additionalAnalyticsEvents[i]);
                     }
                 }
             }
+            
+            if (typeof ga != 'undefined') {
+                var trackers = ga.getAll();
+                for (var i = 0; i < trackers.length; i++) {
+                    var tracker = trackers[i];
+                    console.log('Tracked GA pageview: ' + options.url + ' for tracker: ' + tracker.get('name'));
+                    tracker.send('pageview', options.url);
+                    
+                    if (options.additionalAnalyticsEvents) {
+                        for (var i = 0; i < options.additionalAnalyticsEvents.length; i++) {
+                            var event = options.additionalAnalyticsEvents[i];
+                            tracker.send(event)
+                            console.log('Tracked additional GA event: ' + event + ' for tracker: ' + tracker.get('name'));
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            console.log(err);
         }
     }
         
