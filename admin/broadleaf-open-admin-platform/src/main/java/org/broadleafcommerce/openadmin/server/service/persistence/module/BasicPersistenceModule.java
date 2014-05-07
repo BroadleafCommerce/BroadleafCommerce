@@ -664,7 +664,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (!entity.isValidationFailure()) {
 
                 //Re-Balance the list if it is a Foreign Key toMany collection with a sort field property
-                if (foreignKey != null && foreignKey.getSortField() != null && entity.findProperty(foreignKey.getSortField()).getValue() != null) {
+                if (foreignKey != null && foreignKey.getSortField() != null &&
+                        entity.findProperty(foreignKey.getSortField()) != null &&
+                        entity.findProperty(foreignKey.getSortField()).getValue() != null) {
                     Integer requestedSequence = Integer.valueOf(entity.findProperty(foreignKey.getSortField()).getValue());
                     Integer previousSequence = new BigDecimal(String.valueOf(getFieldManager().getFieldValue(instance, foreignKey.getSortField()))).intValue();
                     final String idPropertyName = getIdPropertyName(mergedProperties);
