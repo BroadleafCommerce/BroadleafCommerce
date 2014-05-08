@@ -31,7 +31,7 @@ import java.util.Date;
 
 
 /**
- * This Thymeleaf variable expression class serves to expose elements from the BroadleafRequestContext
+ * Exposes the {@link BroadleafRequestContext} to the Thymeleaf expression context
  * 
  * @author Andre Azzolini (apazzolini)
  */
