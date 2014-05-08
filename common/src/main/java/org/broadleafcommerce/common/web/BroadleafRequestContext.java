@@ -170,11 +170,25 @@ public class BroadleafRequestContext {
         return webRequest;
     }
 
+    /**
+     * Returns a Site instance that is not attached to any Hibernate session
+     * @return
+     */
+    @Deprecated
     public Site getSite() {
-        return site;
+        return getNonPersistentSite();
     }
 
+    @Deprecated
     public void setSite(Site site) {
+        setNonPersistentSite(site);
+    }
+    
+    public Site getNonPersistentSite() {
+        return site;
+    }
+    
+    public void setNonPersistentSite(Site site) {
         this.site = site;
     }
 

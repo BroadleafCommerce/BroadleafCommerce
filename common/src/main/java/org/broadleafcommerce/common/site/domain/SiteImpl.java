@@ -33,7 +33,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.site.domain.extension.SiteNativeMethodEntityExtensionManager;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -112,6 +114,15 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     @Column(name = "DEACTIVATED")
     @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order = 4, gridOrder = 4, group = "SiteImpl_Site", excluded = true)
     protected Boolean deactivated = false;
+    
+    
+    /**************************************************/
+    /**
+     * Adding additional properties to this class or dynamically weaving in properties will have to contribute to the clone()
+     * method below to deal with non-persistent sites
+     */
+    /**************************************************/
+    
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -191,6 +202,11 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
        }
        archiveStatus.setArchived(archived);
     }
+    
+    @Override
+    public ArchiveStatus getArchiveStatus() {
+        return archiveStatus;
+    }
 
     @Override
     public boolean isActive() {
@@ -249,6 +265,12 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
                 cloneCatalog.setId(catalog.getId());
                 cloneCatalog.setName(catalog.getName());
                 clone.getCatalogs().add(cloneCatalog);
+            }
+            
+            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+            if (context != null && context.getAdditionalProperties().containsKey("blSiteNativeMethodEntityExtensionManager")) {
+                SiteNativeMethodEntityExtensionManager extensionManager = (SiteNativeMethodEntityExtensionManager) context.getAdditionalProperties().get("blSiteNativeMethodEntityExtensionManager");
+                extensionManager.getProxy().contributeClone(this, clone);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
