@@ -112,6 +112,15 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     @Column(name = "DEACTIVATED")
     @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order = 4, gridOrder = 4, group = "SiteImpl_Site", excluded = true)
     protected Boolean deactivated = false;
+    
+    
+    /**************************************************/
+    /**
+     * Adding additional properties to this class or dynamically weaving in properties will have to contribute to the extension
+     * manager for {@link SiteServiceImpl}, {@link SiteServiceExtensionHandler}.
+     */
+    /**************************************************/
+    
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -190,6 +199,11 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
            archiveStatus = new ArchiveStatus();
        }
        archiveStatus.setArchived(archived);
+    }
+    
+    @Override
+    public ArchiveStatus getArchiveStatus() {
+        return archiveStatus;
     }
 
     @Override

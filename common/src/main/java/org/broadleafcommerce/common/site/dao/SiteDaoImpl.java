@@ -134,4 +134,9 @@ public class SiteDaoImpl implements SiteDao {
     public Site retrieveDefaultSite() {
         return null;
     }
+    
+    @Override
+    public Catalog save(Catalog catalog) {
+        return em.merge(catalog);
+    }
 }
