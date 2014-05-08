@@ -793,7 +793,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof OrderItemImpl)) {
             return false;
         }
         OrderItemImpl other = (OrderItemImpl) obj;

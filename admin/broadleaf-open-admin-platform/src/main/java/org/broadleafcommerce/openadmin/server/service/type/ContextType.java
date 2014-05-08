@@ -90,7 +90,7 @@ public class ContextType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof ContextType))
             return false;
         ContextType other = (ContextType) obj;
         if (type == null) {

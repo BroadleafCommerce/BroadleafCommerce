@@ -91,7 +91,7 @@ public class TransactionType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof TransactionType))
             return false;
         TransactionType other = (TransactionType) obj;
         if (type == null) {

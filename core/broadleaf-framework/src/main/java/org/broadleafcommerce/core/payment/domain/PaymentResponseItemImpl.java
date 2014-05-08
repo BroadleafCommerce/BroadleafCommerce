@@ -470,7 +470,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof PaymentResponseItemImpl)) {
             return false;
         }
         PaymentResponseItemImpl other = (PaymentResponseItemImpl) obj;

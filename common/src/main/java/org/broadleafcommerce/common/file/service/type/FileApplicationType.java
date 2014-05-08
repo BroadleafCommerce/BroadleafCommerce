@@ -98,7 +98,7 @@ public class FileApplicationType implements Serializable, BroadleafEnumerationTy
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof FileApplicationType))
             return false;
         FileApplicationType other = (FileApplicationType) obj;
         if (type == null) {

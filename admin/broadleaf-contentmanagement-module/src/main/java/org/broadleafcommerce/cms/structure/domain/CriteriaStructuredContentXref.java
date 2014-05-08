@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -26,7 +28,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 /**
  * The purpose of this entity is to simply enforce the not null constraints on the two
@@ -100,7 +101,7 @@ public class CriteriaStructuredContentXref {
                 return true;
             if (obj == null)
                 return false;
-            if (getClass() != obj.getClass())
+            if (!(obj instanceof CriteriaStructuredContentXref))
                 return false;
             CriteriaStructuredContentXrefPK other = (CriteriaStructuredContentXrefPK) obj;
             if (structuredContent == null) {

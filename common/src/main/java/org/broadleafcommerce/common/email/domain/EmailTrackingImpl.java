@@ -183,7 +183,7 @@ public class EmailTrackingImpl implements EmailTracking {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof EmailTrackingImpl))
             return false;
         EmailTrackingImpl other = (EmailTrackingImpl) obj;
 

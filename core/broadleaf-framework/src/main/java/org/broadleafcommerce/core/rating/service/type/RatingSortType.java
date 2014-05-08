@@ -71,7 +71,7 @@ public class RatingSortType implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof RatingSortType))
             return false;
         RatingSortType other = (RatingSortType) obj;
         if (type == null) {

@@ -96,7 +96,7 @@ public class MonthType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof MonthType))
             return false;
         MonthType other = (MonthType) obj;
         if (type == null) {

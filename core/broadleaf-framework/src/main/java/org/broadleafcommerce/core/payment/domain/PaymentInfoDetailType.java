@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.payment.domain;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class PaymentInfoDetailType implements Serializable, BroadleafEnumeration
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof PaymentInfoDetailType))
             return false;
         PaymentInfoDetailType other = (PaymentInfoDetailType) obj;
         if (type == null) {

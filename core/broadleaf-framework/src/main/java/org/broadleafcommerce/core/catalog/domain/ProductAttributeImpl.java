@@ -200,7 +200,7 @@ public class ProductAttributeImpl implements ProductAttribute {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof ProductAttributeImpl))
             return false;
         ProductAttributeImpl other = (ProductAttributeImpl) obj;
 

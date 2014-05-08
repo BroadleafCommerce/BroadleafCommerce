@@ -94,7 +94,7 @@ public class OfferType implements Serializable, BroadleafEnumerationType, Compar
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof OfferType))
             return false;
         OfferType other = (OfferType) obj;
         if (type == null) {

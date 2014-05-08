@@ -142,7 +142,7 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof BankAccountPaymentInfoImpl))
             return false;
         BankAccountPaymentInfoImpl other = (BankAccountPaymentInfoImpl) obj;
 
