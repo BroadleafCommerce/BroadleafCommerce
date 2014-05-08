@@ -19,8 +19,7 @@
  */
 package org.broadleafcommerce.common.web.expression;
 
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -34,26 +33,31 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class PropertiesVariableExpression implements BroadleafVariableExpression {
     
-    @Autowired
-    protected SystemPropertiesService service;
-    
     @Override
     public String getName() {
         return "props";
     }
     
     public String get(String propertyName) {
-        return service.resolveSystemProperty(propertyName);
+        return BLCSystemProperty.resolveSystemProperty(propertyName);
     }
 
     public int getAsInt(String propertyName) {
-        return service.resolveIntSystemProperty(propertyName);
+        return BLCSystemProperty.resolveIntSystemProperty(propertyName);
+    }
+    
+    public boolean getAsBoolean(String propertyName) {
+        return BLCSystemProperty.resolveBooleanSystemProperty(propertyName); 
+    }
+    
+    public long getAsLong(String propertyName) {
+        return BLCSystemProperty.resolveLongSystemProperty(propertyName); 
     }
     
     public boolean getForceShowIdColumns() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
-        boolean forceShow = service.resolveBooleanSystemProperty("listGrid.forceShowIdColumns");
+        boolean forceShow = BLCSystemProperty.resolveBooleanSystemProperty("listGrid.forceShowIdColumns");
         forceShow = forceShow || "true".equals(request.getParameter("showIds"));
         
         return forceShow;
