@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
@@ -244,11 +245,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Override
     public boolean isPasswordChangeRequired() {
-        if (passwordChangeRequired == null) {
-            return false;
-        } else {
-            return passwordChangeRequired.booleanValue();
-        }
+        return BooleanUtils.toBoolean(passwordChangeRequired);
     }
 
     @Override
@@ -318,11 +315,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Override
     public boolean isReceiveEmail() {
-        if (receiveEmail == null) {
-            return false;
-        } else {
-            return receiveEmail.booleanValue();
-        }
+        return BooleanUtils.toBoolean(receiveEmail);
     }
 
     @Override
@@ -332,11 +325,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Override
     public boolean isRegistered() {
-        if (registered == null) {
-            return true;
-        } else {
-            return registered.booleanValue();
-        }
+        return BooleanUtils.toBoolean(registered);
     }
 
     @Override
@@ -428,11 +417,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Override
     public boolean isDeactivated() {
-        if (deactivated == null) {
-            return false;
-        } else {
-            return deactivated.booleanValue();
-        }
+        return BooleanUtils.toBoolean(deactivated);
     }
 
     @Override
