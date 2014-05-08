@@ -34,6 +34,20 @@
         eternal="false"
         overflowToDisk="true"
         timeToLiveSeconds="600"/>
+            
+    <!-- 10 minute cache -->    
+    <cache
+        name="blSystemPropertyElements"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="600"/>
+
+    <cache name="blSystemPropertyNullCheckCache"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="600"/>
         
     <!-- 24 hour cache -->
     <cache

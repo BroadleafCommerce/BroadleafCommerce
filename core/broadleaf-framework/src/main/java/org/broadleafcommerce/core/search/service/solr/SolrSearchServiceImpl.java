@@ -127,8 +127,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
             solrServer = tempDir.getAbsolutePath();
         }
-
-        File solrXml = copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrServer, "solr-default.xml");
+        
+        File solrXml = new File(new File(solrServer), "solr.xml");
+        if (!solrXml.exists()) {
+            copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrXml);
+        }
 
         LOG.debug(String.format("Using [%s] as solrhome", solrServer));
         LOG.debug(String.format("Using [%s] as solr.xml", solrXml.getAbsoluteFile()));
@@ -160,10 +163,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         SolrContext.setPrimaryServer(primaryServer);
         SolrContext.setReindexServer(reindexServer);
+        //NOTE: There is no reason to set the admin server here as the SolrContext will return the primary server
+        //if the admin server is not set...
     }
 
-    public File copyConfigToSolrHome(InputStream configIs, String parentDir, String configFileSimpleName) throws IOException {
-        File destFile = new File(new File(parentDir), configFileSimpleName);
+    public void copyConfigToSolrHome(InputStream configIs, File destFile) throws IOException {
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         try {
@@ -195,8 +199,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 }
             }
         }
-
-        return destFile;
     }
 
     public SolrSearchServiceImpl(SolrServer solrServer) {
@@ -204,7 +206,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     /**
-     * This constructor serves to mimic the one below this, which takes in two {@link SolrServer} arguments.
+     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
      * By having this and then simply disregarding the second parameter, we can more easily support 2-core
      * Solr configurations that use embedded/standalone per environment.
      * 
@@ -214,13 +216,36 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @throws ParserConfigurationException 
      * @throws IOException 
      */
-    public SolrSearchServiceImpl(String solrServer, String reindexServer) throws IOException, ParserConfigurationException, SAXException {
+    public SolrSearchServiceImpl(String solrServer, String reindexServer)
+            throws IOException, ParserConfigurationException, SAXException {
+        this(solrServer);
+    }
+
+    /**
+     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
+     * By having this and then simply disregarding the second and third parameters, we can more easily support 2-core
+     * Solr configurations that use embedded/standalone per environment, along with an admin server.
+     * 
+     * @param solrServer
+     * @param reindexServer
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     */
+    public SolrSearchServiceImpl(String solrServer, String reindexServer, String adminServer)
+            throws IOException, ParserConfigurationException, SAXException {
         this(solrServer);
     }
 
     public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer) {
         SolrContext.setPrimaryServer(solrServer);
         SolrContext.setReindexServer(reindexServer);
+    }
+
+    public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer, SolrServer adminServer) {
+        SolrContext.setPrimaryServer(solrServer);
+        SolrContext.setReindexServer(reindexServer);
+        SolrContext.setAdminServer(adminServer);
     }
 
     @Override
@@ -338,6 +363,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap);
         
+        modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
+        
         extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
                 searchCriteria, defaultSort);
 
@@ -352,9 +379,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Query solr
         QueryResponse response;
         List<SolrDocument> responseDocuments;
+        int numResults = 0;
         try {
             response = SolrContext.getServer().query(solrQuery);
             responseDocuments = getResponseDocuments(response);
+            numResults = (int) response.getResults().getNumFound();
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace(response.toString());
@@ -377,8 +406,23 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         ProductSearchResult result = new ProductSearchResult();
         result.setFacets(facets);
         result.setProducts(products);
-        setPagingAttributes(result, responseDocuments, searchCriteria);
+        setPagingAttributes(result, numResults, searchCriteria);
         return result;
+    }
+
+    /**
+     * Provides a hook point for implementations to modify all SolrQueries before they're executed.
+     * Modules should leverage the extension manager method of the same name,
+     * {@link SolrSearchServiceExtensionHandler#modifySolrQuery(SolrQuery, String, List, ProductSearchCriteria, String)}
+     * 
+     * @param query
+     * @param qualifiedSolrQuery
+     * @param facets
+     * @param searchCriteria
+     * @param defaultSort
+     */
+    protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
+            List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria, String defaultSort) {
     }
     
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {
@@ -598,9 +642,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param response
      * @param searchCriteria
      */
-    public void setPagingAttributes(ProductSearchResult result, List<SolrDocument> responseDocuments,
-            ProductSearchCriteria searchCriteria) {
-        result.setTotalResults(responseDocuments.size());
+    public void setPagingAttributes(ProductSearchResult result, int numResults, ProductSearchCriteria searchCriteria) {
+        result.setTotalResults(numResults);
         result.setPage(searchCriteria.getPage());
         result.setPageSize(searchCriteria.getPageSize());
     }
@@ -625,7 +668,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         if (products != null) {
             Collections.sort(products, new Comparator<Product>() {
                 public int compare(Product o1, Product o2) {
-                    return new Integer(productIds.indexOf(o1.getId())).compareTo(productIds.indexOf(o2.getId()));
+                    Long o1id = shs.getProductId(o1.getId());
+                    Long o2id = shs.getProductId(o2.getId());
+                    return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
                 }
             });
         }

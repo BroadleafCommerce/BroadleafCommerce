@@ -27,22 +27,25 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.search.dao.CatalogStructure;
 import org.broadleafcommerce.core.search.dao.FieldDao;
+import org.broadleafcommerce.core.search.dao.SolrIndexDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,12 +54,15 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,9 +75,11 @@ import javax.annotation.Resource;
  * Responsible for building and rebuilding the Solr index
  * 
  * @author Andre Azzolini (apazzolini)
+ * @author Jeff Fischer
  */
 @Service("blSolrIndexService")
 public class SolrIndexServiceImpl implements SolrIndexService {
+
     private static final Log LOG = LogFactory.getLog(SolrIndexServiceImpl.class);
 
     @Value("${solr.index.product.pageSize}")
@@ -95,7 +103,36 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
 
+    @Resource(name = "blSolrIndexDao")
+    protected SolrIndexDao solrIndexDao;
+
     public static String ATTR_MAP = "productAttributes";
+
+    @Override
+    public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
+        try {
+            CatalogStructure cache = new CatalogStructure();
+            SolrIndexCachedOperation.setCache(cache);
+            cacheOperation.execute();
+        } finally {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Cleaning up Solr index cache from memory - size approx: " + getCacheSizeInMemoryApproximation(SolrIndexCachedOperation.getCache()) + " bytes");
+            }
+            SolrIndexCachedOperation.clearCache();
+        }
+    }
+
+    protected int getCacheSizeInMemoryApproximation(CatalogStructure structure) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(structure);
+            oos.close();
+            return baos.size();
+        } catch (IOException e) {
+            throw ExceptionHelper.refineException(e);
+        }
+    }
 
     @Override
     public void rebuildIndex() throws ServiceException, IOException {
@@ -104,23 +141,26 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         // If we are in single core mode, we have to delete the documents before reindexing
         if (SolrContext.isSingleCoreMode()) {
-            deleteAllDocuments();
+            SolrIndexServiceImpl.this.deleteAllDocuments();
         }
 
         Object[] pack = saveState();
         try {
-            Long numProducts = productDao.readCountAllActiveProducts();
+            final Long numProducts = productDao.readCountAllActiveProducts();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("There are " + numProducts + " total products");
             }
-            int page = 0;
-            while ((page * pageSize) < numProducts) {
-                buildIncrementalIndex(page, pageSize);
-                page++;
-            }
+            performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
+                @Override
+                public void execute() throws ServiceException {
+                    int page = 0;
+                    while ((page * pageSize) < numProducts) {
+                        buildIncrementalIndex(page, pageSize);
+                        page++;
+                    }
+                }
+            });
             optimizeIndex(SolrContext.getReindexServer());
-        } catch (ServiceException e) {
-            throw e;
         } finally {
             restoreState(pack);
         }
@@ -153,20 +193,47 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException {
+        if (SolrIndexCachedOperation.getCache() == null) {
+            LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
+                    "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
+        }
         TransactionStatus status = TransactionUtils.createTransaction("readProducts",
                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (LOG.isDebugEnabled()) {
             LOG.debug(String.format("Building index - page: [%s], pageSize: [%s]", page, pageSize));
         }
         StopWatch s = new StopWatch();
+        boolean cacheOperationManaged = false;
         try {
+            CatalogStructure cache = SolrIndexCachedOperation.getCache();
+            if (cache != null) {
+                cacheOperationManaged = true;
+            } else {
+                cache = new CatalogStructure();
+                SolrIndexCachedOperation.setCache(cache);
+            }
             List<Product> products = readAllActiveProducts(page, pageSize);
+            List<Long> productIds = BLCCollectionUtils.collectList(products, new TypedTransformer<Long>() {
+                @Override
+                public Long transform(Object input) {
+                    return ((Product) input).getId();
+                }
+            });
+            solrIndexDao.populateCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
+
             List<Field> fields = fieldDao.readAllProductFields();
             List<Locale> locales = getAllLocales();
 
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
+
             for (Product product : products) {
-                documents.add(buildDocument(product, fields, locales));
+                SolrInputDocument doc = buildDocument(product, fields, locales);
+                //If someone overrides the buildDocument method and determines that they don't want a product 
+                //indexed, then they can return null. If the document is null it does not get added to 
+                //to the index.
+                if (doc != null) {
+                    documents.add(doc);
+                }
             }
 
             logDocuments(documents);
@@ -186,6 +253,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         } catch (RuntimeException e) {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw e;
+        } finally {
+            if (!cacheOperationManaged) {
+                SolrIndexCachedOperation.clearCache();
+            }
         }
 
         if (LOG.isDebugEnabled()) {
@@ -225,8 +296,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     @Override
-    public SolrInputDocument buildDocument(Product product, List<Field> fields, List<Locale> locales) {
-        SolrInputDocument document = new SolrInputDocument();
+    public SolrInputDocument buildDocument(final Product product, List<Field> fields, List<Locale> locales) {
+        final SolrInputDocument document = new SolrInputDocument();
 
         attachBasicDocumentFields(product, document);
 
@@ -290,39 +361,68 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @param document
      */
     protected void attachBasicDocumentFields(Product product, SolrInputDocument document) {
-        // Add the namespace and ID fields for this product
-        document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
-        document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
-        document.addField(shs.getProductIdFieldName(), product.getId());
-        extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
+        boolean cacheOperationManaged = false;
+        try {
+            CatalogStructure cache = SolrIndexCachedOperation.getCache();
+            if (cache != null) {
+                cacheOperationManaged = true;
+            } else {
+                cache = new CatalogStructure();
+                SolrIndexCachedOperation.setCache(cache);
+                solrIndexDao.populateCatalogStructure(Arrays.asList(product.getId()), SolrIndexCachedOperation.getCache());
+            }
+            // Add the namespace and ID fields for this product
+            document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
+            document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
+            document.addField(shs.getProductIdFieldName(), product.getId());
+            extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
 
-        // The explicit categories are the ones defined by the product itself
-        for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
-            document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryXref.getCategory().getId()));
+            // The explicit categories are the ones defined by the product itself
+            if (cache.getParentCategoriesByProduct().containsKey(product.getId())) {
+                for (Long categoryId : cache.getParentCategoriesByProduct().get(product.getId())) {
+                    document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
-            String categorySortFieldName = shs.getCategorySortFieldName(categoryXref.getCategory());
-            int index = -1;
-            int count = 0;
-            for (CategoryProductXref productXref : categoryXref.getCategory().getAllProductXrefs()) {
-                if (productXref.getProduct().equals(product)) {
-                    index = count;
-                    break;
+                    String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
+                    String displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
+                    BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+                    if (displayOrder == null) {
+                        displayOrderKey = categoryId + "-" + product.getId();
+                        displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+                    }
+
+                    if (document.getField(categorySortFieldName) == null) {
+                        document.addField(categorySortFieldName, displayOrder);
+                    }
+
+                    // This is the entire tree of every category defined on the product
+                    buildFullCategoryHierarchy(document, cache, categoryId);
                 }
-                count++;
             }
-
-            if (document.getField(categorySortFieldName) == null) {
-                document.addField(categorySortFieldName, index);
+        } finally {
+            if (!cacheOperationManaged) {
+                SolrIndexCachedOperation.clearCache();
             }
         }
+    }
 
-        // This is the entire tree of every category defined on the product
-        Set<Category> fullCategoryHierarchy = new HashSet<Category>();
-        for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
-            fullCategoryHierarchy.addAll(categoryXref.getCategory().buildFullCategoryHierarchy(null));
+    /**
+     * Walk the category hierarchy upwards, adding a field for each level to the solr document
+     *
+     * @param document the solr document for the product
+     * @param cache the catalog structure cache
+     * @param categoryId the current category id
+     */
+    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId) {
+        Long catIdToAdd = shs.getCategoryId(categoryId); 
+
+        Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
+        if (existingValues == null || !existingValues.contains(catIdToAdd)) {
+            document.addField(shs.getCategoryFieldName(), catIdToAdd);
         }
-        for (Category category : fullCategoryHierarchy) {
-            document.addField(shs.getCategoryFieldName(), shs.getCategoryId(category.getId()));
+
+        Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
+        for (Long parent : parents) {
+            buildFullCategoryHierarchy(document, cache, parent);
         }
     }
 
@@ -335,8 +435,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * 
      * @param product
      * @param field
-     * @param isPriceField
-     * @param prefix
+     * @param fieldType
+     * @param locales
      * @return the value of the property
      * @throws IllegalAccessException
      * @throws InvocationTargetException

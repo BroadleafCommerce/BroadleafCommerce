@@ -80,7 +80,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             car.setAction(CoreAdminAction.SWAP);
 
             try {
-                SolrContext.getServer().request(car);
+                SolrContext.getAdminServer().request(car);
             } catch (Exception e) {
                 LOG.error(e);
                 throw new ServiceException("Unable to swap cores", e);
@@ -178,7 +178,22 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
+    public Long getProductId(Long tentativeProductId) {
+        Long[] returnId = new Long[1];
+        ExtensionResultStatusType result = extensionManager.getProxy().getProductId(tentativeProductId, returnId);
+        if (result.equals(ExtensionResultStatusType.HANDLED)) {
+            return returnId[0];
+        }
+        return tentativeProductId;
+    }
+
+    @Override
     public String getSolrDocumentId(SolrInputDocument document, Product product) {
+        String[] returnId = new String[1];
+        ExtensionResultStatusType result = extensionManager.getProxy().getSolrDocumentId(document, product, returnId);
+        if (result.equals(ExtensionResultStatusType.HANDLED)) {
+            return returnId[0];
+        }
         return String.valueOf(product.getId());
     }
     
@@ -209,12 +224,23 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getCategorySortFieldName(Category category) {
+        Long categoryId = getCategoryId(category.getId());
         return new StringBuilder()
                 .append(getCategoryFieldName())
-                .append("_").append(category.getId()).append("_").append("sort_i")
+                .append("_").append(categoryId).append("_").append("sort_d")
                 .toString();
     }
 
+    @Override
+    public String getCategorySortFieldName(Long categoryId) {
+        categoryId = getCategoryId(categoryId);
+        return new StringBuilder()
+                .append(getCategoryFieldName())
+                .append("_").append(categoryId).append("_").append("sort_d")
+                .toString();
+    }
+
+    @Override
     public String getLocalePrefix() {
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
             Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();

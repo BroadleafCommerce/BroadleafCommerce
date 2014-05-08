@@ -25,11 +25,11 @@ import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext
 import org.broadleafcommerce.common.i18n.service.TranslationService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -62,8 +62,9 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
 
-    @Value("${i18n.translation.enabled}")
-    protected boolean translationEnabled = false;
+    protected boolean getTranslationEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("i18n.translation.enabled");
+    }
 
     private static String ATTR_MAP = SolrIndexServiceImpl.ATTR_MAP;
 
@@ -118,7 +119,7 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                 
                 processedLocaleCodes.add(localeCode);
                 
-                TranslationConsiderationContext.setTranslationConsiderationContext(translationEnabled);
+                TranslationConsiderationContext.setTranslationConsiderationContext(getTranslationEnabled());
                 TranslationConsiderationContext.setTranslationService(translationService);
                 BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
                 if (tempContext == null) {
