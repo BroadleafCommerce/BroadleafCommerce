@@ -198,7 +198,7 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof DiscreteOrderItemFeePriceImpl)) {
             return false;
         }
         DiscreteOrderItemFeePriceImpl other = (DiscreteOrderItemFeePriceImpl) obj;

@@ -107,7 +107,7 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof TranslatedEntity))
             return false;
         TranslatedEntity other = (TranslatedEntity) obj;
         if (type == null) {

@@ -94,7 +94,7 @@ public class SiteMapGeneratorType implements Serializable, BroadleafEnumerationT
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof SiteMapGeneratorType))
             return false;
         SiteMapGeneratorType other = (SiteMapGeneratorType) obj;
         if (type == null) {

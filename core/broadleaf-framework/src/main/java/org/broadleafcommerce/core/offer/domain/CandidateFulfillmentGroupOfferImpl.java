@@ -138,7 +138,7 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof CandidateFulfillmentGroupOfferImpl)) {
             return false;
         }
         CandidateFulfillmentGroupOfferImpl other = (CandidateFulfillmentGroupOfferImpl) obj;

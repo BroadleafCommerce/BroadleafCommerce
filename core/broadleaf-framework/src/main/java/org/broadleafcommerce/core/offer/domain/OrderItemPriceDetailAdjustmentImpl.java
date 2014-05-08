@@ -255,7 +255,7 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof OrderItemPriceDetailAdjustmentImpl)) {
             return false;
         }
         OrderItemPriceDetailAdjustmentImpl other = (OrderItemPriceDetailAdjustmentImpl) obj;

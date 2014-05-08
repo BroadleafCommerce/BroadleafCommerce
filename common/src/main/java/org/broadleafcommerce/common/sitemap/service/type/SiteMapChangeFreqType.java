@@ -90,7 +90,7 @@ public class SiteMapChangeFreqType implements Serializable, BroadleafEnumeration
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof SiteMapChangeFreqType))
             return false;
         SiteMapChangeFreqType other = (SiteMapChangeFreqType) obj;
         if (type == null) {

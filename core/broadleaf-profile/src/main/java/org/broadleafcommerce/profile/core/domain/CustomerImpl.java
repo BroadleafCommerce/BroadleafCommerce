@@ -63,6 +63,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
@@ -485,7 +486,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof CustomerImpl)) {
             return false;
         }
         CustomerImpl other = (CustomerImpl) obj;

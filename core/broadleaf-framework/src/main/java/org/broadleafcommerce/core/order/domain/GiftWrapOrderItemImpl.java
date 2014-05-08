@@ -24,6 +24,9 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,8 +34,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -80,7 +81,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
             return true;
         if (!super.equals(obj))
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof GiftWrapOrderItemImpl))
             return false;
         GiftWrapOrderItemImpl other = (GiftWrapOrderItemImpl) obj;
 

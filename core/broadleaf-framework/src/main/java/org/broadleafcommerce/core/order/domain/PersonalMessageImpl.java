@@ -136,7 +136,7 @@ public class PersonalMessageImpl implements PersonalMessage {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof PersonalMessageImpl))
             return false;
         PersonalMessageImpl other = (PersonalMessageImpl) obj;
 

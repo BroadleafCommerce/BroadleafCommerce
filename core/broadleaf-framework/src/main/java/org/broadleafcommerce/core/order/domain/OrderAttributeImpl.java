@@ -142,7 +142,7 @@ public class OrderAttributeImpl implements OrderAttribute {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof OrderAttributeImpl))
             return false;
         
         if (value == null) {

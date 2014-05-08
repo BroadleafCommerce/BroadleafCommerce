@@ -99,7 +99,7 @@ public class OfferInfoImpl implements OfferInfo {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof OfferInfoImpl))
             return false;
         OfferInfoImpl other = (OfferInfoImpl) obj;
 

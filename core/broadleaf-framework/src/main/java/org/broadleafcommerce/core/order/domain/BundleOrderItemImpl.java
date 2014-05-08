@@ -342,7 +342,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof BundleOrderItemImpl)) {
             return false;
         }
         BundleOrderItemImpl other = (BundleOrderItemImpl) obj;

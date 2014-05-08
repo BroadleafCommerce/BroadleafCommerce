@@ -94,7 +94,7 @@ public class SiteMapPriorityType implements Serializable, BroadleafEnumerationTy
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof SiteMapPriorityType))
             return false;
         SiteMapPriorityType other = (SiteMapPriorityType) obj;
         if (type == null) {

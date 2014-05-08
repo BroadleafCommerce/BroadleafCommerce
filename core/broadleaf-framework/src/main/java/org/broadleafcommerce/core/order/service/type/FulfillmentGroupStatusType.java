@@ -121,7 +121,7 @@ public class FulfillmentGroupStatusType implements Serializable, BroadleafEnumer
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof FulfillmentGroupStatusType))
             return false;
         FulfillmentGroupStatusType other = (FulfillmentGroupStatusType) obj;
         if (type == null) {

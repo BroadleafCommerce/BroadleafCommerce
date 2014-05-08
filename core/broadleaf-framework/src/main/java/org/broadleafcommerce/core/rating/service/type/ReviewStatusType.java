@@ -69,7 +69,7 @@ public class ReviewStatusType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof ReviewStatusType))
             return false;
         ReviewStatusType other = (ReviewStatusType) obj;
         if (type == null) {

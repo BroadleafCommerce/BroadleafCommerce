@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
@@ -78,6 +79,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     
     @Resource(name="blMergedClassTransformers")
     protected Set<BroadleafClassTransformer> mergedClassTransformers;
+
+    @Resource(name="blEntityMarkerClassTransformer")
+    protected EntityMarkerClassTransformer entityMarkerClassTransformer;
 
     @PostConstruct
     public void configureMergedItems() {
@@ -247,6 +251,16 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                         // Force-load this class so that we are able to ensure our instrumentation happens globally.
                         Class.forName(managedClassName, true, getClass().getClassLoader());
                         managedClassNames.add(managedClassName);
+                    }
+                }
+            }
+            
+            // If a class happened to be loaded by the ClassLoader before we had a chance to set up our instrumentation,
+            // it may not be in a consistent state. We'll detect that here and force the class to be reloaded
+            for (PersistenceUnitInfo pui : mergedPus.values()) {
+                for (String managedClassName : pui.getManagedClassNames()) {
+                    if (!entityMarkerClassTransformer.getTransformedClassNames().contains(managedClassName)) {
+                        LOG.trace("Should have transformed " + managedClassName + " but didn't");
                     }
                 }
             }

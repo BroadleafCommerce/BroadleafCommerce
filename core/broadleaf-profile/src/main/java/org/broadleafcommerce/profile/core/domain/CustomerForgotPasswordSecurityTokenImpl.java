@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -27,7 +29,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.Date;
 
 /**
  * Created by bpolster.
@@ -99,7 +100,8 @@ public class CustomerForgotPasswordSecurityTokenImpl implements CustomerForgotPa
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null) return false;
+        if (!(o instanceof CustomerForgotPasswordSecurityTokenImpl)) return false;
 
         CustomerForgotPasswordSecurityTokenImpl that = (CustomerForgotPasswordSecurityTokenImpl) o;
 

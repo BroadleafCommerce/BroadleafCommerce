@@ -769,7 +769,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof FulfillmentGroupImpl)) {
             return false;
         }
         FulfillmentGroupImpl other = (FulfillmentGroupImpl) obj;

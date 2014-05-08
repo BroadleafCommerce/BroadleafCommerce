@@ -110,7 +110,7 @@ public class CustomerOfferImpl implements CustomerOffer {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof CustomerOfferImpl))
             return false;
         CustomerOfferImpl other = (CustomerOfferImpl) obj;
 

@@ -87,7 +87,7 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof FieldEntity))
             return false;
         FieldEntity other = (FieldEntity) obj;
         if (type == null) {

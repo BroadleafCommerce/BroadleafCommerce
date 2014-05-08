@@ -91,7 +91,7 @@ public class AvailabilityStatusType implements Serializable, BroadleafEnumeratio
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof AvailabilityStatusType))
             return false;
         AvailabilityStatusType other = (AvailabilityStatusType) obj;
         if (type == null) {

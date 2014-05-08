@@ -223,7 +223,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPayment {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof CreditCardPaymentInfoImpl))
             return false;
         CreditCardPaymentInfoImpl other = (CreditCardPaymentInfoImpl) obj;
 

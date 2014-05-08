@@ -84,7 +84,7 @@ public class CheckoutSectionViewType implements Serializable, BroadleafEnumerati
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof CheckoutSectionViewType))
             return false;
         CheckoutSectionViewType other = (CheckoutSectionViewType) obj;
         if (type == null) {

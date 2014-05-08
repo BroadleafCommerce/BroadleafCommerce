@@ -92,7 +92,7 @@ public class TaxType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof TaxType))
             return false;
         TaxType other = (TaxType) obj;
         if (type == null) {

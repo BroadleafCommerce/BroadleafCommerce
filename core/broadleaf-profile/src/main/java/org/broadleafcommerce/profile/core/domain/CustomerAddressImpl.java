@@ -157,7 +157,7 @@ public class CustomerAddressImpl implements CustomerAddress {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof CustomerAddressImpl)) {
             return false;
         }
         CustomerAddressImpl other = (CustomerAddressImpl) obj;

@@ -94,7 +94,7 @@ public class ShippingServiceType implements Serializable, BroadleafEnumerationTy
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof ShippingServiceType))
             return false;
         ShippingServiceType other = (ShippingServiceType) obj;
         if (type == null) {

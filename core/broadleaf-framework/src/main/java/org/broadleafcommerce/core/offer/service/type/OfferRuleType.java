@@ -85,7 +85,7 @@ public class OfferRuleType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof OfferRuleType))
             return false;
         OfferRuleType other = (OfferRuleType) obj;
         if (type == null) {

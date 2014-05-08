@@ -213,7 +213,7 @@ public class SkuAttributeImpl implements SkuAttribute {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof SkuAttributeImpl))
             return false;
         SkuAttributeImpl other = (SkuAttributeImpl) obj;
 

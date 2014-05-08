@@ -95,7 +95,7 @@ public class RestrictionType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof RestrictionType))
             return false;
         RestrictionType other = (RestrictionType) obj;
         if (type == null) {

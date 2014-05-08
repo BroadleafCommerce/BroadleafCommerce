@@ -232,7 +232,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof OrderItemAdjustmentImpl)) {
             return false;
         }
         OrderItemAdjustmentImpl other = (OrderItemAdjustmentImpl) obj;

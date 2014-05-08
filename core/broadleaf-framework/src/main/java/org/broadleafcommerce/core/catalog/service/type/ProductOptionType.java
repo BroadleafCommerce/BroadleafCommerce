@@ -92,7 +92,7 @@ public class ProductOptionType implements Serializable, BroadleafEnumerationType
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof ProductOptionType))
             return false;
         ProductOptionType other = (ProductOptionType) obj;
         if (type == null) {

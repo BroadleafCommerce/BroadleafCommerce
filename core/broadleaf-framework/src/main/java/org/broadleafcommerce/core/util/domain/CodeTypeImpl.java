@@ -149,7 +149,7 @@ public class CodeTypeImpl implements CodeType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof CodeTypeImpl))
             return false;
         CodeTypeImpl other = (CodeTypeImpl) obj;
         if (codeType == null) {

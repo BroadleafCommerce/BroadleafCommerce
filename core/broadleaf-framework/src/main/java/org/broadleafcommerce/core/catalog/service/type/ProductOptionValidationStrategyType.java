@@ -93,7 +93,7 @@ public class ProductOptionValidationStrategyType implements Serializable, Broadl
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof ProductOptionValidationStrategyType))
             return false;
         ProductOptionValidationStrategyType other = (ProductOptionValidationStrategyType) obj;
         if (type == null) {

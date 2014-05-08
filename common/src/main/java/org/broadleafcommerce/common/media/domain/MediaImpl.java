@@ -148,7 +148,7 @@ public class MediaImpl implements Media {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof MediaImpl))
             return false;
         MediaImpl other = (MediaImpl) obj;
 

@@ -140,7 +140,7 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof CandidateOrderOfferImpl)) {
             return false;
         }
         CandidateOrderOfferImpl other = (CandidateOrderOfferImpl) obj;

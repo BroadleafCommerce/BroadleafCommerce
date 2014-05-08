@@ -85,7 +85,7 @@ public class PaymentLogEventType implements Serializable, BroadleafEnumerationTy
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof PaymentLogEventType))
             return false;
         PaymentLogEventType other = (PaymentLogEventType) obj;
         if (type == null) {

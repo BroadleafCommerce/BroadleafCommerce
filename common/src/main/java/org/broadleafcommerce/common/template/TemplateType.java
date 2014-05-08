@@ -98,7 +98,7 @@ public class TemplateType implements Serializable, BroadleafEnumerationType, Com
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof TemplateType))
             return false;
         TemplateType other = (TemplateType) obj;
         if (type == null) {

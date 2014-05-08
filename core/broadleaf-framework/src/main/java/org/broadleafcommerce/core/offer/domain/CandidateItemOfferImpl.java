@@ -172,7 +172,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof CandidateItemOfferImpl)) {
             return false;
         }
         CandidateItemOfferImpl other = (CandidateItemOfferImpl) obj;

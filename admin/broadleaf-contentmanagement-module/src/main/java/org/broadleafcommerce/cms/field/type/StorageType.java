@@ -86,7 +86,7 @@ public class StorageType implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof StorageType))
             return false;
         StorageType other = (StorageType) obj;
         if (type == null) {
