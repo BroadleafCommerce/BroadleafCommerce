@@ -277,7 +277,6 @@
     <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
-                <entry key="blSiteNativeMethodEntityExtensionManager" value-ref="blSiteNativeMethodEntityExtensionManager" />
             </map>
         </property>
     </bean>

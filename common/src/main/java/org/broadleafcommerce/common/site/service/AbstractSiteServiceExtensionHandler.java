@@ -17,33 +17,22 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.site.domain.extension;
+package org.broadleafcommerce.common.site.service;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.site.domain.Site;
 
 /**
- * Default implementation of the {@link SiteNativeMethodEntityExtensionHandler}. Implementors should subclass this class
- * rather than depend on the interface directly
+ * Default implementation of {@link SiteServiceExtensionHandler}
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public abstract class AbstractSiteNativeMethodEntityExtensionHandler extends AbstractExtensionHandler implements SiteNativeMethodEntityExtensionHandler {
+public class AbstractSiteServiceExtensionHandler extends AbstractExtensionHandler implements SiteServiceExtensionHandler {
 
     @Override
-    public void contributeClone(Site original, Site preCloned) {
-        // unimplemented
-    }
-
-    @Override
-    public void contributeEquals(Site original, Site test, ExtensionResultHolder<Boolean> result) {
-        result.setResult(true);
-    }
-
-    @Override
-    public void contributeHashCode(Site entity, int precomputedHashCode, ExtensionResultHolder<Integer> result) {
-        result.setResult(precomputedHashCode);
+    public ExtensionResultStatusType contributeNonPersitentSiteProperties(Site from, Site to) {
+        return ExtensionResultStatusType.NOT_HANDLED;
     }
 
 }

@@ -44,6 +44,9 @@ public class SiteServiceImpl implements SiteService {
     @Resource(name = "blSiteDao")
     protected SiteDao siteDao;
 
+    @Resource(name = "blSiteServiceExtensionManager")
+    protected SiteServiceExtensionManager extensionManager;
+    
     @Override
     public Site createSite() {
         return siteDao.create();
@@ -226,11 +229,13 @@ public class SiteServiceImpl implements SiteService {
           return response;
       }
     
-    protected Site getNonPersistentSite(Site site) {
-        if (site == null) {
+    protected Site getNonPersistentSite(Site persistentSite) {
+        if (persistentSite == null) {
             return null;
         }
-        return site.clone();
+        Site clone = persistentSite.clone();
+        extensionManager.getProxy().contributeNonPersitentSiteProperties(persistentSite, clone);
+        return clone;
     }
     
     @Override

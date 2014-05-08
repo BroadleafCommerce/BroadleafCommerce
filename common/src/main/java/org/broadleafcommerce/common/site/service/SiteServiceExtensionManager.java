@@ -17,18 +17,21 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.site.domain.extension;
+package org.broadleafcommerce.common.site.service;
 
-import org.broadleafcommerce.common.extension.NativeMethodEntityExtensionHandler;
-import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 /**
- * Type-specific {@link Site} implementation of the {@link NativeMethodEntityExtensionHandler}. Implementations should
- * subclass {@link AbstractSiteNativeMethodEntityExtensionHandler}.
+ * Extension manager that holds the list of {@link SiteServiceExtensionHandler}.
  * 
  * @author Phillip Verheyden (phillipuniverse)
- * @see {@link AbstractSiteNativeMethodEntityExtensionHandler}
  */
-public interface SiteNativeMethodEntityExtensionHandler extends NativeMethodEntityExtensionHandler<Site> {
+@Service("blSiteServiceExtensionManager")
+public class SiteServiceExtensionManager extends ExtensionManager<SiteServiceExtensionHandler> {
+
+    public SiteServiceExtensionManager() {
+        super(SiteServiceExtensionHandler.class);
+    }
 
 }
