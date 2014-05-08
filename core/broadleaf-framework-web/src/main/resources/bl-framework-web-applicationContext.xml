@@ -67,9 +67,7 @@
     <bean id="blUncacheableDataProcessor" class="org.broadleafcommerce.core.web.processor.UncacheableDataProcessor"/>
     <bean id="blGoogleUniversalAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleUniversalAnalyticsProcessor" />
 
-    <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
-    <!-- own dialect and add your processors there. -->
-    <bean id="blDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+    <bean id="blDialectFrameworkProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
             <set>
                 <ref bean="blAddSortLinkProcessor" />
@@ -91,15 +89,16 @@
                 <ref bean="blRemoveFacetValuesLinkProcessor" />
                 <ref bean="blToggleFacetLinkProcessor" />
                 <ref bean="blOnePageCheckoutProcessor" />
-                <ref bean="blConfigVariableProcessor" />
-                <ref bean="blResourceBundleProcessor" />
-                <ref bean="blDataDrivenEnumerationProcessor" />
                 <ref bean="blTransparentRedirectCreditCardFormProcessor" />
                 <ref bean="blCreditCardTypesProcessor" />
                 <ref bean="blUncacheableDataProcessor" />
                 <ref bean="blGoogleUniversalAnalyticsProcessor" />
             </set>
         </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blDialectFrameworkProcessors" />
+        <property name="targetRef" value="blDialectProcessors" />
     </bean>
     <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
         <property name="processors" ref="blDialectProcessors" />
