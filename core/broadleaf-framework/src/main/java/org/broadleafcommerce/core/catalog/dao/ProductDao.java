@@ -22,7 +22,7 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 
 import java.util.Date;
 import java.util.List;
@@ -111,7 +111,7 @@ public interface ProductDao {
      * @return the matching products
      */
     @Nonnull
-    public List<Product> readFilteredActiveProductsByCategory(Long categoryId, ProductSearchCriteria searchCriteria);
+    public List<Product> readFilteredActiveProductsByCategory(Long categoryId, SearchCriteria searchCriteria);
 
     /**
      * Find all products whose start and end dates are before and after the passed in 
@@ -123,12 +123,12 @@ public interface ProductDao {
      * @return the matching products
      */
     @Nonnull
-    public List<Product> readFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria);
+    public List<Product> readFilteredActiveProductsByQuery(String query, SearchCriteria searchCriteria);
 
 
 
     /**
-     * @deprecated Use {@link #readFilteredActiveProductsByCategory(Long, ProductSearchCriteria)}
+     * @deprecated Use {@link #readFilteredActiveProductsByCategory(Long, SearchCriteria)}
      * 
      * Find all products whose start and end dates are before and after the passed in
      * date, who are related to the given category, match the given search criteria, and 
@@ -140,7 +140,7 @@ public interface ProductDao {
      * @return the matching products
      */
     @Nonnull
-    public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, ProductSearchCriteria searchCriteria);
+    public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, SearchCriteria searchCriteria);
     
     /**
      * @deprecated Use {@link #readActiveProductsByCategory(Long)}
@@ -156,7 +156,7 @@ public interface ProductDao {
     public List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull Date currentDate);
 
     /**
-     * @deprecated Use {@link #readFilteredActiveProductsByQuery(String, ProductSearchCriteria)}
+     * @deprecated Use {@link #readFilteredActiveProductsByQuery(String, SearchCriteria)}
      * Find all products whose start and end dates are before and after the passed in 
      * date, who match the search string, match the given search criteria, and are not
      * marked as archived.
@@ -167,7 +167,7 @@ public interface ProductDao {
      * @return the matching products
      */
     @Nonnull
-    public List<Product> readFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
+    public List<Product> readFilteredActiveProductsByQuery(String query, Date currentDate, SearchCriteria searchCriteria);
 
     /**
      * @deprecated Use {@link #readActiveProductsByCategory(Long)}

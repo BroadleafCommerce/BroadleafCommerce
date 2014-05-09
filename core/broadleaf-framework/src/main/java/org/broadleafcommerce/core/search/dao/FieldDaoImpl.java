@@ -26,6 +26,8 @@ import org.broadleafcommerce.core.search.domain.FieldImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -33,7 +35,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.List;
 
 @Repository("blFieldDao")
 public class FieldDaoImpl implements FieldDao {
@@ -79,6 +80,25 @@ public class FieldDaoImpl implements FieldDao {
         criteria.where(
             builder.equal(root.get("entityType").as(String.class), FieldEntity.PRODUCT.getType())
         );
+
+        TypedQuery<Field> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Field> readAllSkuFields() {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
+
+        Root<FieldImpl> root = criteria.from(FieldImpl.class);
+
+        criteria.select(root);
+        criteria.where(
+                builder.equal(root.get("entityType").as(String.class), FieldEntity.SKU.getType())
+                );
 
         TypedQuery<Field> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);

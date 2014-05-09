@@ -27,7 +27,7 @@ import java.util.Map;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class ProductSearchCriteria {
+public class SearchCriteria {
     
     public static String PAGE_SIZE_STRING = "pageSize";
     public static String PAGE_NUMBER = "page";

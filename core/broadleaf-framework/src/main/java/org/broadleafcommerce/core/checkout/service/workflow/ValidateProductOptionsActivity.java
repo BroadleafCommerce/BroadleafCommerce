@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +47,16 @@ import javax.annotation.Resource;
 /**
  * This is an required activity to valiate if required product options are in the order.
  * 
+ * If sku browsing is enabled, product option data will not be available.
+ * In this case, the following validation is skipped.
+ * 
  * @author Priyesh Patel
  *
  */
 public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
-
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
 
     @Resource(name = "blProductOptionValidationService")
     protected ProductOptionValidationService productOptionValidationService;
@@ -59,6 +64,9 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
+        if(useSku) {
+            return context;
+        }
         Order order = context.getSeedData().getOrder();
         List<DiscreteOrderItem> orderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem i : order.getOrderItems()) {

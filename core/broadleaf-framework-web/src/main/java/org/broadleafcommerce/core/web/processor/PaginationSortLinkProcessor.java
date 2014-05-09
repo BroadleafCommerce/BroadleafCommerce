@@ -21,7 +21,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -62,14 +62,14 @@ public class PaginationSortLinkProcessor extends AbstractAttributeModifierAttrPr
         String sort = element.getAttributeValue(attributeName);
 
         if (StringUtils.isNotBlank(sort)) {
-            params.put(ProductSearchCriteria.SORT_STRING, new String[]{sort});
+            params.put(SearchCriteria.SORT_STRING, new String[]{sort});
         } else {
-            params.remove(ProductSearchCriteria.SORT_STRING);
+            params.remove(SearchCriteria.SORT_STRING);
         }
 
         // If there is a page number parameter, remove it. This ensures that when the search results refresh the
         // first page of results will be displayed.
-        params.remove(ProductSearchCriteria.PAGE_NUMBER);
+        params.remove(SearchCriteria.PAGE_NUMBER);
 
         String url = ProcessorUtils.getUrl(baseUrl, params);
 

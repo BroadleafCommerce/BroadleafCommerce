@@ -38,10 +38,12 @@ import java.util.Set;
  */
 public class CatalogStructure implements Serializable {
 
-    Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<Long, Set<Long>>();
-    Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
-    Map<Long, List<Long>> productsByCategory = new HashMap<Long, List<Long>>();
-    Map<String, BigDecimal> displayOrdersByCategoryProduct = new HashMap<String, BigDecimal>();
+    private static final long serialVersionUID = 1L;
+
+    protected Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<Long, Set<Long>>();
+    protected Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
+    protected Map<Long, List<Long>> productsByCategory = new HashMap<Long, List<Long>>();
+    protected Map<String, BigDecimal> displayOrdersByCategoryProduct = new HashMap<String, BigDecimal>();
 
     public Map<Long, Set<Long>> getParentCategoriesByProduct() {
         return parentCategoriesByProduct;

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 
 import java.util.List;
@@ -43,11 +44,11 @@ public interface SearchFacetDao {
     public <T> List<T> readDistinctValuesForField(String fieldName, Class<T> fieldValueClass);
 
     /**
-     * Returns all SearchFacets that are tagged with showOnSearch
+     * Returns all SearchFacets that are tagged with showOnSearch for the given entity type
      * 
      * @return the facets to display on searches
      */
-    public List<SearchFacet> readAllSearchFacets();
+    public List<SearchFacet> readAllSearchFacets(FieldEntity entityType);
 
     /**
      * Persist to the data layer.
