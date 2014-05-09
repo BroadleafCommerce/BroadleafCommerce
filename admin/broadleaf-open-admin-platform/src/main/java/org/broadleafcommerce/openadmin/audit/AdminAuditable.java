@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.openadmin.audit;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,9 +29,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
 @Embeddable
 public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, AdminAudit {
@@ -94,7 +94,7 @@ public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, A
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AdminAuditable)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         AdminAuditable that = (AdminAuditable) o;
 

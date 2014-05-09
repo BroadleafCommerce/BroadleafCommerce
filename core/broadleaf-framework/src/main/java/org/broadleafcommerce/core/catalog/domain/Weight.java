@@ -19,15 +19,15 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 
 /**
  * 
@@ -75,7 +75,7 @@ public class Weight implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Weight)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         Weight weight1 = (Weight) o;
 

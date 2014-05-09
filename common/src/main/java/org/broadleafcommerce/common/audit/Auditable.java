@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.audit;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,8 +28,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
 
 @Embeddable
 public class Auditable implements Serializable {
@@ -99,7 +99,7 @@ public class Auditable implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Auditable)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         Auditable auditable = (Auditable) o;
 

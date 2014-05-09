@@ -19,14 +19,14 @@
  */
 package org.broadleafcommerce.common.persistence;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
 /**
  * @author Jeff Fischer
@@ -35,7 +35,7 @@ import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
 
     @Column(name = "ARCHIVED")
-    @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL, group = "ArchiveStatus")
+    @AdminPresentation(friendlyName = "archived", visibility = VisibilityEnum.HIDDEN_ALL, group = "ArchiveStaobjus")
     protected Character archived = 'N';
 
     public Character getArchived() {
@@ -49,7 +49,7 @@ public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ArchiveStatus)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         ArchiveStatus that = (ArchiveStatus) o;
 
