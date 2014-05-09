@@ -60,7 +60,10 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
         CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
+        //Construct SiteMap URL for the "root" category as you can have top level categories without a parent
+        constructSiteMapURL(categorySMGC, siteMapBuilder, categorySMGC.getRootCategory());
 
+        //Recursively construct the sub-category SiteMap URLs
         addCategorySiteMapEntries(categorySMGC.getRootCategory(), 1, categorySMGC, siteMapBuilder);
         
     }
@@ -85,25 +88,29 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
                 if (currentDepth < categorySMGC.getStartingDepth()) {
                     continue;
                 }
-                
-                SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
-                // location
-                siteMapUrl.setLoc(generateUri(siteMapBuilder, category));
-
-                // change frequency
-                siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreq());
-
-                // priority
-                siteMapUrl.setPriorityType(categorySMGC.getSiteMapPriority());
-
-                // lastModDate
-                siteMapUrl.setLastModDate(generateDate(category));
-
-                siteMapBuilder.addUrl(siteMapUrl);
+                constructSiteMapURL(categorySMGC, siteMapBuilder, category);
             }
         } while (categories.size() == rowLimit);
 
+    }
+
+    protected void constructSiteMapURL(CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder, Category category) {
+        SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
+
+        // location
+        siteMapUrl.setLoc(generateUri(siteMapBuilder, category));
+
+        // change frequency
+        siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreq());
+
+        // priority
+        siteMapUrl.setPriorityType(categorySMGC.getSiteMapPriority());
+
+        // lastModDate
+        siteMapUrl.setLastModDate(generateDate(category));
+
+        siteMapBuilder.addUrl(siteMapUrl);
     }
 
     protected String generateUri(SiteMapBuilder siteMapBuilder, Category category) {
