@@ -198,6 +198,7 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
+            if (o == null) return false;
             if (!getClass().isAssignableFrom(o.getClass())) return false;
 
             ProductOptionDTO that = (ProductOptionDTO) o;
@@ -242,6 +243,7 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
+            if (o == null) return false;
             if (!getClass().isAssignableFrom(o.getClass())) return false;
 
             ProductOptionPricingDTO that = (ProductOptionPricingDTO) o;

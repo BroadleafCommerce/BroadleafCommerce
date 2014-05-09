@@ -844,7 +844,7 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     
     @Override
     public boolean equals(Object o) {
-        if (getClass().isAssignableFrom(o.getClass())) {
+        if (o != null && getClass().isAssignableFrom(o.getClass())) {
             OfferImpl that = (OfferImpl) o;
             return new EqualsBuilder()
                 .append(this.id, that.id)

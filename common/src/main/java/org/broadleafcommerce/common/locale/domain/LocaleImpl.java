@@ -138,6 +138,7 @@ public class LocaleImpl implements Locale {
         if (this == o) {
             return true;
         }
+        if (o == null) return false;
         if (!getClass().isAssignableFrom(o.getClass())) {
             return false;
         }

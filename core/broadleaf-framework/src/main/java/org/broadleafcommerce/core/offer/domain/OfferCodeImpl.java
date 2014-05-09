@@ -213,7 +213,7 @@ public class OfferCodeImpl implements OfferCode {
     
     @Override
     public boolean equals(Object o) {
-        if (getClass().isAssignableFrom(o.getClass())) {
+        if (o != null && getClass().isAssignableFrom(o.getClass())) {
             OfferCodeImpl that = (OfferCodeImpl) o;
             return new EqualsBuilder()
                 .append(this.id, that.id)
