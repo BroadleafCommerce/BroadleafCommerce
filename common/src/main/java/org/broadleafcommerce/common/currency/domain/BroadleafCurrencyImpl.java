@@ -102,6 +102,7 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency {
         if (this == o) {
             return true;
         }
+        if (o == null) return false;
         if (!getClass().isAssignableFrom(o.getClass())) {
             return false;
         }

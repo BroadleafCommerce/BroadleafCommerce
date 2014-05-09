@@ -43,7 +43,7 @@ public class EntityFormAction implements Cloneable {
 
     @Override
     public boolean equals(Object obj) {
-        if (getClass().isAssignableFrom(obj.getClass())) {
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             EntityFormAction that = (EntityFormAction) obj;
             return new EqualsBuilder()
                 .append(buttonClass, that.buttonClass)

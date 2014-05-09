@@ -151,7 +151,7 @@ public class OfferAuditImpl implements OfferAudit {
     
     @Override
     public boolean equals(Object o) {
-        if (getClass().isAssignableFrom(o.getClass())) {
+        if (o != null && getClass().isAssignableFrom(o.getClass())) {
             OfferAuditImpl that = (OfferAuditImpl) o;
             
             return new EqualsBuilder()
