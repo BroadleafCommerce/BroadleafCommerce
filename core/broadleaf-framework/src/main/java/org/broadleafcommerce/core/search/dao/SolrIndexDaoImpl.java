@@ -53,7 +53,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
     protected SandBoxHelper sandBoxHelper;
 
     @Override
-    public void populateCatalogStructure(List<Long> productIds, CatalogStructure catalogStructure) {
+    public void populateProductCatalogStructure(List<Long> productIds, CatalogStructure catalogStructure) {
         Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<Long, Set<Long>>();
         Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
 

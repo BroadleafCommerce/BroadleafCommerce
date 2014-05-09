@@ -19,12 +19,13 @@
  */
 package org.broadleafcommerce.core.web.service;
 
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Provides methods that facilitate interactions with SearchFacetDTOs and SearchFacetResultDTOs
@@ -35,14 +36,14 @@ public interface SearchFacetDTOService {
 
     /**
      * Given a servlet request and a list of available facets for this request (could be search or category based),
-     * this method will build out a ProductSearchCriteria object to be used by the ProductSearchService. It will
-     * perform translations from query string parameters to the ProductSearchCriteria.
+     * this method will build out a SearchCriteria object to be used by the ProductSearchService. It will
+     * perform translations from query string parameters to the SearchCriteria.
      * 
      * @param request
      * @param availableFacets
-     * @return the ProductSearchCriteria 
+     * @return the SearchCriteria 
      */
-    public ProductSearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets);
+    public SearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets);
 
     /**
      * Sets the "active" boolean on a given SearchFacetResultDTO as determined by the current request

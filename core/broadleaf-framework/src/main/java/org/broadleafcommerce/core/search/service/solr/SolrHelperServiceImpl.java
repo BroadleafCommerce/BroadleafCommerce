@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
@@ -188,6 +189,16 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
+    public Long getSkuId(Long tentativeSkuId) {
+        Long[] returnId = new Long[1];
+        ExtensionResultStatusType result = extensionManager.getProxy().getSkuId(tentativeSkuId, returnId);
+        if (result.equals(ExtensionResultStatusType.HANDLED)) {
+            return returnId[0];
+        }
+        return tentativeSkuId;
+    }
+
+    @Override
     public String getSolrDocumentId(SolrInputDocument document, Product product) {
         String[] returnId = new String[1];
         ExtensionResultStatusType result = extensionManager.getProxy().getSolrDocumentId(document, product, returnId);
@@ -197,6 +208,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         return String.valueOf(product.getId());
     }
     
+    @Override
+    public String getSolrDocumentId(SolrInputDocument document, Sku sku) {
+        return String.valueOf(sku.getId());
+    }
+
     @Override
     public String getNamespaceFieldName() {
         return "namespace";
@@ -210,6 +226,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public String getProductIdFieldName() {
         return "productId";
+    }
+
+    @Override
+    public String getSkuIdFieldName() {
+        return "skuId";
     }
 
     @Override

@@ -34,7 +34,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.ProductType;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,12 +84,12 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<Product> findFilteredActiveProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
+    public List<Product> findFilteredActiveProductsByCategory(Category category, SearchCriteria searchCriteria) {
         return productDao.readFilteredActiveProductsByCategory(category.getId(), searchCriteria);
     }
 
     @Override
-    public List<Product> findFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria) {
+    public List<Product> findFilteredActiveProductsByQuery(String query, SearchCriteria searchCriteria) {
         return productDao.readFilteredActiveProductsByQuery(query, searchCriteria);
     }
 
@@ -106,13 +106,13 @@ public class CatalogServiceImpl implements CatalogService {
     
     @Override
     @Deprecated
-    public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria) {
+    public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, SearchCriteria searchCriteria) {
         return productDao.readFilteredActiveProductsByCategory(category.getId(), currentDate, searchCriteria);
     }
     
     @Override
     @Deprecated
-    public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria) {
+    public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, SearchCriteria searchCriteria) {
         return productDao.readFilteredActiveProductsByQuery(query, currentDate, searchCriteria);
     }
 
@@ -243,7 +243,7 @@ public class CatalogServiceImpl implements CatalogService {
     
     @Override
     public List<Sku> findSkusByIds(List<Long> ids) {
-        return skuDao.readSkusById(ids);
+        return skuDao.readSkusByIds(ids);
     }
 
     public void setProductDao(ProductDao productDao) {
@@ -357,6 +357,33 @@ public class CatalogServiceImpl implements CatalogService {
             
             // Otherwise, return the first product
             return products.get(0);
+        }
+    }
+    
+    @Override
+    public Sku findSkuByURI(String uri) {
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().findSkuByURI(uri, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Sku) holder.getResult();
+            }
+        }
+        List<Sku> skus = skuDao.findSkuByURI(uri);
+        if (skus == null || skus.size() == 0) {
+            return null;
+        } else if (skus.size() == 1) {
+            return skus.get(0);
+        } else {
+            // First check for a direct hit on the url
+            for(Sku sku : skus) {
+                if (uri.equals(sku.getProduct().getUrl() + sku.getUrlKey())) {
+                    return sku;
+                }
+            }
+            
+            // Otherwise, return the first product
+            return skus.get(0);
         }
     }
     

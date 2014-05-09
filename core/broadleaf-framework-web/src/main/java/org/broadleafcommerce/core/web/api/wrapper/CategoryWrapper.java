@@ -19,6 +19,17 @@
  */
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchResult;
+import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,17 +43,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
-import org.broadleafcommerce.core.search.domain.ProductSearchResult;
-import org.broadleafcommerce.core.search.service.SearchService;
-import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 
 /**
  *  This is a JAXB wrapper for a Broadleaf Category.  There may be several reasons to extend this class.
@@ -133,12 +133,12 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
 
         if (productLimit != null && productOffset != null) {
             SearchService searchService = getSearchService();
-            ProductSearchCriteria searchCriteria = new ProductSearchCriteria();
+            SearchCriteria searchCriteria = new SearchCriteria();
             searchCriteria.setPage(productOffset);
             searchCriteria.setPageSize(productLimit);
             searchCriteria.setFilterCriteria(new HashMap<String, String[]>());
             try {
-                ProductSearchResult result = searchService.findExplicitProductsByCategory(category, searchCriteria);
+                SearchResult result = searchService.findExplicitSearchResultsByCategory(category, searchCriteria);
                 List<Product> productList = result.getProducts();
                 if (productList != null && !productList.isEmpty()) {
                     if (products == null) {

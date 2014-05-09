@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,19 +17,17 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.cache;
+package org.broadleafcommerce.core.catalog.dao;
+
+import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 /**
- * @author Jeff Fischer
+ * @author Joshua Skorton (jskorton)
  */
-public enum CacheStatType {
-    PAGE_CACHE_HIT_RATE,
-    STRUCTURED_CONTENT_CACHE_HIT_RATE,
-    URL_HANDLER_CACHE_HIT_RATE,
-    PRODUCT_URL_MISSING_CACHE_HIT_RATE,
-    CATEGORY_URL_MISSING_CACHE_HIT_RATE,
-    SKU_URL_MISSING_CACHE_HIT_RATE,
-    TRANSLATION_CACHE_HIT_RATE,
-    RESOURCE_BUNDLING_CACHE_HIT_RATE,
-    GENERATED_RESOURCE_CACHE_HIT_RATE
+public interface SkuDaoExtensionHandler extends ExtensionHandler {
+
+    public ExtensionResultStatusType findSkuByURI(String uri, ExtensionResultHolder resultHolder);
+
 }

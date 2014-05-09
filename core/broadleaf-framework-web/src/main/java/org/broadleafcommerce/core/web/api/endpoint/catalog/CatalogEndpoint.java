@@ -35,9 +35,9 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
-import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
@@ -124,7 +124,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
     }
 
     /**
-     * This uses Broadleaf's search service to search for products within a category.
+     * This uses Broadleaf's search service to search for products or skus within a category.
      * @param request
      * @param q
      * @param categoryId
@@ -132,7 +132,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
      * @param page
      * @return
      */
-    public SearchResultsWrapper findProductsByCategoryAndQuery(HttpServletRequest request,
+    public SearchResultsWrapper findSearchResultsByCategoryAndQuery(HttpServletRequest request,
             Long categoryId,
             String q,
             Integer pageSize,
@@ -163,10 +163,10 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         }
 
         List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
-        ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         try {
-            ProductSearchResult result = null;
-            result = getSearchService().findProductsByCategoryAndQuery(category, q, searchCriteria);
+            SearchResult result = null;
+            result = getSearchService().findSearchResultsByCategoryAndQuery(category, q, searchCriteria);
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
@@ -178,7 +178,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
     }
 
     /**
-     * Queries the products. The parameter q, which represents the query, is required. It can be any 
+     * Queries for products or skus. The parameter q, which represents the query, is required. It can be any 
      * string, but is typically a name or keyword, similar to a search engine search.
      * @param request
      * @param q
@@ -186,7 +186,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
      * @param page
      * @return
      */
-    public SearchResultsWrapper findProductsByQuery(HttpServletRequest request,
+    public SearchResultsWrapper findSearchResultsByQuery(HttpServletRequest request,
             String q,
             Integer pageSize,
             Integer page) {
@@ -204,10 +204,10 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         }
 
         List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
-        ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
         try {
-            ProductSearchResult result = null;
-            result = getSearchService().findProductsByQuery(q, searchCriteria);
+            SearchResult result = null;
+            result = getSearchService().findSearchResultsByQuery(q, searchCriteria);
             facetService.setActiveFacetResults(result.getFacets(), request);
 
             SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());

@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.order.domain.SkuAccessor;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Macro;
@@ -68,6 +69,9 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 public class UncacheableDataProcessor extends AbstractElementProcessor {
+    
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
 
     @Resource(name = "blInventoryService")
     protected InventoryService inventoryService;
@@ -127,6 +131,7 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
 
     protected void addProductInventoryData(Map<String, Object> attrMap, Arguments arguments) {
         List<Long> outOfStockProducts = new ArrayList<Long>();
+        List<Long> outOfStockSkus = new ArrayList<Long>();
 
         Set<Product> products = (Set<Product>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get("blcAllDisplayedProducts");
         if (products != null) {
@@ -139,8 +144,19 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
                     }
                 }
             }
+        } else {
+            Set<Sku> skus = (Set<Sku>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get("blcAllDisplayedSkus");
+            if (skus != null) {
+                Map<Sku, Integer> inventoryAvailable = inventoryService.retrieveQuantitiesAvailable(skus);
+                for (Map.Entry<Sku, Integer> entry : inventoryAvailable.entrySet()) {
+                    if (entry.getValue() == null || entry.getValue() < 1) {
+                        outOfStockSkus.add(entry.getKey().getId());
+                    }
+                }
+            }
         }
         attrMap.put("outOfStockProducts", outOfStockProducts);
+        attrMap.put("outOfStockSkus", outOfStockSkus);
     }
 
     protected void addCartData(Map<String, Object> attrMap) {
@@ -156,13 +172,18 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
                 if (item instanceof SkuAccessor) {
                     Sku sku = ((SkuAccessor) item).getSku();
                     if (sku != null && sku.getProduct() != null) {
-                        Product product = sku.getProduct();
-                        List<ProductOptionXref> optionXrefs = product.getProductOptionXrefs();
-                        if (optionXrefs == null || optionXrefs.isEmpty()) {
-                            cartItemIdsWithoutOptions.add(product.getId());
+                        if (useSku) {
+                            cartItemIdsWithoutOptions.add(sku.getId());
                         } else {
-                            cartItemIdsWithOptions.add(product.getId());
+                            Product product = sku.getProduct();
+                            List<ProductOptionXref> optionXrefs = product.getProductOptionXrefs();
+                            if (optionXrefs == null || optionXrefs.isEmpty()) {
+                                cartItemIdsWithoutOptions.add(product.getId());
+                            } else {
+                                cartItemIdsWithOptions.add(product.getId());
+                            } 
                         }
+                        
                     }
                 }
             }

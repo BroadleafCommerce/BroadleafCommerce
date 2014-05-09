@@ -125,6 +125,12 @@ import javax.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
+//multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
+@org.hibernate.annotations.Table(appliesTo = "BLC_SKU", indexes = {
+    @Index(name = "SKU_URL_KEY_INDEX",
+        columnNames = { "URL_KEY" }
+    )
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @AdminPresentationClass(friendlyName = "baseSku")
 @DirectCopyTransform({
@@ -150,6 +156,20 @@ public class SkuImpl implements Sku {
     @Column(name = "SKU_ID")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
+
+    @Column(name = "URL_KEY")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_UrlKey", order = 4000,
+        tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced,
+        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced,
+        excluded = true)
+    protected String urlKey;
+
+    @Column(name = "DISPLAY_TEMPLATE")
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Display_Template", order = 5000,
+        tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced,
+        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced,
+        excluded = true)
+    protected String displayTemplate;
 
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", order = 2000, 
@@ -393,6 +413,26 @@ public class SkuImpl implements Sku {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public String getUrlKey() {
+        return urlKey;
+    }
+
+    @Override
+    public void setUrlKey(String urlKey) {
+        this.urlKey = urlKey;
+    }
+    
+    @Override
+    public String getDisplayTemplate() {
+        return displayTemplate;
+    }
+    
+    @Override
+    public void setDisplayTemplate(String displayTemplate) {
+        this.displayTemplate = displayTemplate;
     }
 
     @Override

@@ -25,8 +25,9 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
@@ -81,6 +82,25 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
     /**
+     * Given the input field, populates the values array with the fields needed for the 
+     * passed in field.   
+     * 
+     * For example, a handler might create multiple fields for the given passed in field.
+     * @param sku
+     * @param field
+     * @param values
+     * @param propertyName
+     * @param locales
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
+    public ExtensionResultStatusType addPropertyValues(Sku sku, Field field, FieldType fieldType,
+            Map<String, Object> values, String propertyName, List<Locale> locales)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+
+    /**
      * Provides an extension point to modify the SolrQuery.
      * 
      * @param context
@@ -92,13 +112,17 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      *      * @return
      */
     public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-            List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria, String defaultSort);
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
 
     /**
      * Allows the extension additional fields to the document that are not configured via the DB.
      */
-    public ExtensionResultStatusType attachAdditionalBasicFields(Product product, SolrInputDocument document,
-            SolrHelperService shs);
+    public ExtensionResultStatusType attachAdditionalBasicFields(Product product, SolrInputDocument document, SolrHelperService shs);
+
+    /**
+     * Allows the extension additional fields to the document that are not configured via the DB.
+     */
+    public ExtensionResultStatusType attachAdditionalBasicFields(Sku sku, SolrInputDocument document, SolrHelperService shs);
     
     /**
      * In certain scenarios, we may want to produce a different Solr document id than the default.
@@ -110,6 +134,17 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return the extension result status type
      */
     public ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Product product, String[] returnContainer);
+
+    /**
+     * In certain scenarios, we may want to produce a different Solr document id than the default.
+     * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
+     * in the returnContainer should be used.
+     * 
+     * @param document
+     * @param sku
+     * @return the extension result status type
+     */
+    public ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Sku sku, String[] returnContainer);
 
     /**
      * In certain scenarios, the requested category id might not be the one that should be used in Solr.
@@ -133,4 +168,15 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getProductId(Long tentativeId, Long[] returnContainer);
     
+    /**
+     * In certain scenarios, the requested sku id might not be the one that should be used in Solr.
+     * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
+     * in the returnContainer should be used.
+     * 
+     * @param tentativeId
+     * @param returnContainer
+     * @return
+     */
+    public ExtensionResultStatusType getSkuId(Long tentativeId, Long[] returnContainer);
+
 }

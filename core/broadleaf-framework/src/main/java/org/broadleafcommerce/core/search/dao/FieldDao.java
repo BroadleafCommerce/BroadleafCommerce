@@ -50,6 +50,15 @@ public interface FieldDao {
     public List<Field> readAllProductFields();
 
     /**
+     * Reads all Field objects that are set to searchable. This is typically used to build an
+     * index for searching. Note that the default Broadleaf implementation returns only fields that
+     * have a FieldEntity equal to SKU
+     * 
+     * @return the product Fields
+     */
+    public List<Field> readAllSkuFields();
+
+    /**
      * Persist an instance to the data layer.
      *
      * @param field the instance to persist

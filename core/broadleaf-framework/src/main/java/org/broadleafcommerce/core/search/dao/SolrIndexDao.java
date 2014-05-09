@@ -36,6 +36,6 @@ public interface SolrIndexDao {
      * @param catalogStructure lightweight container defining product and category hierarchies
      * @see org.broadleafcommerce.core.search.dao.CatalogStructure
      */
-    void populateCatalogStructure(List<Long> productIds, CatalogStructure catalogStructure);
+    void populateProductCatalogStructure(List<Long> productIds, CatalogStructure catalogStructure);
 
 }

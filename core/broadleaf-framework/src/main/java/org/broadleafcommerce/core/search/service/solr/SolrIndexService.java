@@ -24,6 +24,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 
 import java.io.IOException;
@@ -105,6 +106,17 @@ public interface SolrIndexService {
      * @return the document
      */
     public SolrInputDocument buildDocument(Product product, List<Field> fields, List<Locale> locales);
+
+    /**
+     * Given a sku, fields that relate to that sku, and a list of locales and pricelists, builds a 
+     * SolrInputDocument to be added to the Solr index.
+     * 
+     * @param sku
+     * @param fields
+     * @param locales
+     * @return the document
+     */
+    public SolrInputDocument buildDocument(Sku sku, List<Field> fields, List<Locale> locales);
 
     /**
      * SolrIndexService exposes {@link #buildIncrementalIndex(int, int, boolean)}.

@@ -42,7 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This class works in combination with the CategoryHandlerMapping which finds a category based upon
+ * This class works in combination with the ProductHandlerMapping which finds a product based upon
  * the passed in URL.
  *
  * @author bpolster

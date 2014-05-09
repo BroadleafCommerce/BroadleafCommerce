@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,8 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
         return BLCSystemProperty.resolveBooleanSystemProperty("i18n.translation.enabled");
     }
 
-    private static String ATTR_MAP = SolrIndexServiceImpl.ATTR_MAP;
+    private static String PRODUCT_ATTR_MAP = SolrIndexServiceImpl.PRODUCT_ATTR_MAP;
+    private static String SKU_ATTR_MAP = SolrIndexServiceImpl.SKU_ATTR_MAP;
 
     @PostConstruct
     public void init() {
@@ -97,6 +99,21 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
             Map<String, Object> values, String propertyName, List<Locale> locales)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         
+        return addPropertyValues(product, null, false, field, fieldType, values, propertyName, locales);
+    }
+
+    @Override
+    public ExtensionResultStatusType addPropertyValues(Sku sku, Field field, FieldType fieldType,
+            Map<String, Object> values, String propertyName, List<Locale> locales)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        return addPropertyValues(null, sku, true, field, fieldType, values, propertyName, locales);
+    }
+
+    protected ExtensionResultStatusType addPropertyValues(Product product, Sku sku, boolean useSku, Field field, FieldType fieldType,
+            Map<String, Object> values, String propertyName, List<Locale> locales)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
         Set<String> processedLocaleCodes = new HashSet<String>();
 
         ExtensionResultStatusType result = ExtensionResultStatusType.NOT_HANDLED;
@@ -105,7 +122,7 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
 
             for (Locale locale : locales) {
                 String localeCode = locale.getLocaleCode();
-                if (! Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
+                if (!Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
                     int pos = localeCode.indexOf("_");
                     if (pos > 0) {
                         localeCode = localeCode.substring(0, pos);
@@ -116,9 +133,9 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                         }
                     }
                 }
-                
+
                 processedLocaleCodes.add(localeCode);
-                
+
                 TranslationConsiderationContext.setTranslationConsiderationContext(getTranslationEnabled());
                 TranslationConsiderationContext.setTranslationService(translationService);
                 BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
@@ -129,15 +146,26 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                 BroadleafRequestContext.setBroadleafRequestContext(tempContext);
 
                 final Object propertyValue;
-                if (propertyName.contains(ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
+
+                if (useSku) {
+                    if (propertyName.contains(SKU_ATTR_MAP)) {
+                        propertyValue = PropertyUtils.getMappedProperty(sku, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
+                    } else {
+                        propertyValue = PropertyUtils.getProperty(sku, propertyName);
+                    }
                 } else {
-                    propertyValue = PropertyUtils.getProperty(product, propertyName);
+                    if (propertyName.contains(PRODUCT_ATTR_MAP)) {
+                        propertyValue = PropertyUtils.getMappedProperty(product, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
+                    } else {
+                        propertyValue = PropertyUtils.getProperty(product, propertyName);
+                    }
                 }
+
                 values.put(localeCode, propertyValue);
             }
         }
         return result;
+
     }
 
     /**
