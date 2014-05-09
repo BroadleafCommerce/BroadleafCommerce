@@ -151,7 +151,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof EmailTrackingOpensImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         EmailTrackingOpensImpl other = (EmailTrackingOpensImpl) obj;
 

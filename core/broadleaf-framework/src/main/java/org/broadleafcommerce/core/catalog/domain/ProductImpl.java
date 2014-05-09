@@ -807,7 +807,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof ProductImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ProductImpl other = (ProductImpl) obj;
 

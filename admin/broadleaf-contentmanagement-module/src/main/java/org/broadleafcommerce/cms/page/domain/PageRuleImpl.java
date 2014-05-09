@@ -116,7 +116,7 @@ public class PageRuleImpl implements PageRule {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof PageRuleImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PageRuleImpl other = (PageRuleImpl) obj;
         

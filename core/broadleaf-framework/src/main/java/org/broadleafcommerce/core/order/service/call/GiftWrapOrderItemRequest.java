@@ -50,7 +50,7 @@ public class GiftWrapOrderItemRequest extends DiscreteOrderItemRequest {
             return true;
         if (!super.equals(obj))
             return false;
-        if (!(obj instanceof GiftWrapOrderItemRequest))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         GiftWrapOrderItemRequest other = (GiftWrapOrderItemRequest) obj;
         if (wrappedItems == null) {

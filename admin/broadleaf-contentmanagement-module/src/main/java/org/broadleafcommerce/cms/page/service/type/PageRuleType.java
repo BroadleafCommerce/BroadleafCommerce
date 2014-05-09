@@ -114,7 +114,7 @@ public class PageRuleType implements Serializable, BroadleafEnumerationType {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof PageRuleType)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         PageRuleType other = (PageRuleType) obj;

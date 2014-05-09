@@ -101,7 +101,7 @@ public class ForgotPasswordSecurityTokenImpl implements ForgotPasswordSecurityTo
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if (!(o instanceof ForgotPasswordSecurityTokenImpl)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         ForgotPasswordSecurityTokenImpl that = (ForgotPasswordSecurityTokenImpl) o;
 

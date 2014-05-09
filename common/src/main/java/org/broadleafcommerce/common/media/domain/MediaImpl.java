@@ -148,7 +148,7 @@ public class MediaImpl implements Media {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof MediaImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         MediaImpl other = (MediaImpl) obj;
 

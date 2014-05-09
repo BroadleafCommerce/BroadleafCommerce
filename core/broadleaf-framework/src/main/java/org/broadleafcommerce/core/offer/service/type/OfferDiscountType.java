@@ -84,7 +84,7 @@ public class OfferDiscountType implements Serializable, BroadleafEnumerationType
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof OfferDiscountType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OfferDiscountType other = (OfferDiscountType) obj;
         if (type == null) {

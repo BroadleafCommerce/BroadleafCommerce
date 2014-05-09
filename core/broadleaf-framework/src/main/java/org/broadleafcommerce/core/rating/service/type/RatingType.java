@@ -67,7 +67,7 @@ public class RatingType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof RatingType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         RatingType other = (RatingType) obj;
         if (type == null) {

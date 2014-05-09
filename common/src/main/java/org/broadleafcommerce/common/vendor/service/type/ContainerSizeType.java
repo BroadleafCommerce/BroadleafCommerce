@@ -83,7 +83,7 @@ public class ContainerSizeType implements Serializable, BroadleafEnumerationType
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof ContainerSizeType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ContainerSizeType other = (ContainerSizeType) obj;
         if (type == null) {

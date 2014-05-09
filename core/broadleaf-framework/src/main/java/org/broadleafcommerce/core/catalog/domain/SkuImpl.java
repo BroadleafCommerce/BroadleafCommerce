@@ -958,7 +958,7 @@ public class SkuImpl implements Sku {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof SkuImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         SkuImpl other = (SkuImpl) obj;

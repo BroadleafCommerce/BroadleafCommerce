@@ -315,7 +315,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof FulfillmentGroupItemImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         FulfillmentGroupItemImpl other = (FulfillmentGroupItemImpl) obj;

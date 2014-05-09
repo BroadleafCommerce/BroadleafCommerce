@@ -218,7 +218,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof FulfillmentGroupFeeImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         FulfillmentGroupFeeImpl other = (FulfillmentGroupFeeImpl) obj;

@@ -163,7 +163,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof ProductOptionValueImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         ProductOptionValueImpl other = (ProductOptionValueImpl) obj;

@@ -20,13 +20,6 @@
 package org.broadleafcommerce.common.currency.domain;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -34,6 +27,13 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 /**
  * Author: jerryocanas Date: 9/6/12
@@ -102,7 +102,7 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof BroadleafCurrency)) {
+        if (!getClass().isAssignableFrom(o.getClass())) {
             return false;
         }
 

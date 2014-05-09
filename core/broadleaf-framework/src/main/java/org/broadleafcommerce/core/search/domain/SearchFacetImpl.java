@@ -213,7 +213,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof SearchFacetImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         SearchFacet other = (SearchFacet) obj;

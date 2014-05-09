@@ -116,7 +116,7 @@ public class StructuredContentRuleImpl implements StructuredContentRule {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof StructuredContentRuleImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         StructuredContentRuleImpl other = (StructuredContentRuleImpl) obj;
         

@@ -106,7 +106,7 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof FieldType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         FieldType other = (FieldType) obj;
         if (type == null) {

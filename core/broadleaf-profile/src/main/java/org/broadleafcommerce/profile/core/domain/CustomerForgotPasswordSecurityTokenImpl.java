@@ -101,7 +101,7 @@ public class CustomerForgotPasswordSecurityTokenImpl implements CustomerForgotPa
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if (!(o instanceof CustomerForgotPasswordSecurityTokenImpl)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         CustomerForgotPasswordSecurityTokenImpl that = (CustomerForgotPasswordSecurityTokenImpl) o;
 

@@ -241,7 +241,7 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof SandBoxImpl) {
+        if (getClass().isAssignableFrom(obj.getClass())) {
             SandBoxImpl other = (SandBoxImpl) obj;
             return new EqualsBuilder()
                 .append(author, other.author)

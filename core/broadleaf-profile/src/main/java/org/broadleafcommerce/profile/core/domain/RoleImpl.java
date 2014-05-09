@@ -92,7 +92,7 @@ public class RoleImpl implements Role {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof RoleImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         RoleImpl other = (RoleImpl) obj;
 

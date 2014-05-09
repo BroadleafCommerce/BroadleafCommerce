@@ -141,7 +141,7 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof PageItemCriteriaImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PageItemCriteriaImpl other = (PageItemCriteriaImpl) obj;
         

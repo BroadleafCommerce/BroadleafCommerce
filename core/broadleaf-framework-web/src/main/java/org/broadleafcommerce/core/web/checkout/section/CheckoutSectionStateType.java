@@ -83,7 +83,7 @@ public class CheckoutSectionStateType implements Serializable, BroadleafEnumerat
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof CheckoutSectionStateType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         CheckoutSectionStateType other = (CheckoutSectionStateType) obj;
         if (type == null) {

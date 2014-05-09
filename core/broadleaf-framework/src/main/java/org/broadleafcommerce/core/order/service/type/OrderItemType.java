@@ -87,7 +87,7 @@ public class OrderItemType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof OrderItemType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OrderItemType other = (OrderItemType) obj;
         if (type == null) {

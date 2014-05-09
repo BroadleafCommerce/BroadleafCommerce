@@ -110,7 +110,7 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof StructuredContentRuleType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         StructuredContentRuleType other = (StructuredContentRuleType) obj;
         if (type == null) {

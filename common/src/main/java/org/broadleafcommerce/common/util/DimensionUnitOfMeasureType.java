@@ -87,7 +87,7 @@ public class DimensionUnitOfMeasureType implements Serializable, BroadleafEnumer
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof DimensionUnitOfMeasureType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         DimensionUnitOfMeasureType other = (DimensionUnitOfMeasureType) obj;
         if (type == null) {

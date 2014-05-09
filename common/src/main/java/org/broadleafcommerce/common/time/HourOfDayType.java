@@ -108,7 +108,7 @@ public class HourOfDayType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof HourOfDayType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         HourOfDayType other = (HourOfDayType) obj;
         if (type == null) {

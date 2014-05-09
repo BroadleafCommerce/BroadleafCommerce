@@ -103,7 +103,7 @@ public class GeneratedResource extends AbstractResource implements Serializable 
 
     @Override
     public boolean equals(Object res) {
-        if (!(res instanceof InMemoryResource)) {
+        if (!getClass().isAssignableFrom(res.getClass())) {
             return false;
         }
 

@@ -79,7 +79,7 @@ public class SingleTableInheritanceInfo {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof SingleTableInheritanceInfo))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         SingleTableInheritanceInfo other = (SingleTableInheritanceInfo) obj;
         if (className == null) {

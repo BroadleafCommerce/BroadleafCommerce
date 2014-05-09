@@ -174,7 +174,7 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MapStructure)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         MapStructure that = (MapStructure) o;
 

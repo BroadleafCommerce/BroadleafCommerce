@@ -84,7 +84,7 @@ public class SkuFeeType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof SkuFeeType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         SkuFeeType other = (SkuFeeType) obj;
         if (type == null) {

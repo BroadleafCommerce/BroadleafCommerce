@@ -101,7 +101,7 @@ public class CriteriaOfferXref {
                 return true;
             if (obj == null)
                 return false;
-            if (!(obj instanceof CriteriaOfferXref))
+            if (!getClass().isAssignableFrom(obj.getClass()))
                 return false;
             CriteriaOfferXrefPK other = (CriteriaOfferXrefPK) obj;
             if (offer == null) {

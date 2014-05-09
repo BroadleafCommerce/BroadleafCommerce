@@ -223,7 +223,7 @@ public class FieldImpl implements Field,Serializable {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof FieldImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         Field other = (Field) obj;

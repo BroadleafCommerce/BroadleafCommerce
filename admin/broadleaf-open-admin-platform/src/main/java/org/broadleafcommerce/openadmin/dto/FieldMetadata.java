@@ -226,7 +226,7 @@ public abstract class FieldMetadata implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FieldMetadata)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         FieldMetadata that = (FieldMetadata) o;
 

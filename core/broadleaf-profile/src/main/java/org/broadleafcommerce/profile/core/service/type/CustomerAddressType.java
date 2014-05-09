@@ -86,7 +86,7 @@ public class CustomerAddressType implements Serializable, BroadleafEnumerationTy
                 return true;
             if (obj == null)
                 return false;
-            if (!(obj instanceof CustomerAddressType))
+            if (!getClass().isAssignableFrom(obj.getClass()))
                 return false;
             CustomerAddressType other = (CustomerAddressType) obj;
             if (type == null) {

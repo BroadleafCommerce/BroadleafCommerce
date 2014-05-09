@@ -268,7 +268,7 @@ public class PaymentLogImpl implements PaymentLog {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof PaymentLogImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         PaymentLogImpl other = (PaymentLogImpl) obj;

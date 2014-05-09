@@ -86,7 +86,7 @@ public class ModuleConfigurationType implements BroadleafEnumerationType, Serial
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof ModuleConfigurationType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ModuleConfigurationType other = (ModuleConfigurationType) obj;
         if (type == null) {
