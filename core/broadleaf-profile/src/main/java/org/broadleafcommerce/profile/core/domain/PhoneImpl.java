@@ -122,7 +122,7 @@ public class PhoneImpl implements Phone {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof PhoneImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PhoneImpl other = (PhoneImpl) obj;
 

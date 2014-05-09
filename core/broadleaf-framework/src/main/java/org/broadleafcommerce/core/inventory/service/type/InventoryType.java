@@ -88,7 +88,7 @@ public class InventoryType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof InventoryType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         InventoryType other = (InventoryType) obj;
         if (type == null) {

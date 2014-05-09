@@ -396,7 +396,7 @@ public class PaymentInfoImpl implements PaymentInfo, CurrencyCodeIdentifiable {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof PaymentInfoImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         PaymentInfoImpl other = (PaymentInfoImpl) obj;

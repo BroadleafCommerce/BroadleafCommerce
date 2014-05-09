@@ -108,7 +108,7 @@ public class EmailTargetImpl implements EmailTarget {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof EmailTargetImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         EmailTargetImpl other = (EmailTargetImpl) obj;
         if (!Arrays.equals(bccAddresses, other.bccAddresses))

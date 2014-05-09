@@ -91,7 +91,7 @@ public class DayOfWeekType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof DayOfWeekType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         DayOfWeekType other = (DayOfWeekType) obj;
         if (type == null) {

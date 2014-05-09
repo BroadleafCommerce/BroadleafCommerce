@@ -212,7 +212,7 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof BundleOrderItemFeePriceImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         BundleOrderItemFeePriceImpl other = (BundleOrderItemFeePriceImpl) obj;

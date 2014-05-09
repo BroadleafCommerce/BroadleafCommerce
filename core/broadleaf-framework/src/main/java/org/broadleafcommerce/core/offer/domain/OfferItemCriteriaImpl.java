@@ -127,7 +127,7 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof OfferItemCriteriaImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OfferItemCriteriaImpl other = (OfferItemCriteriaImpl) obj;
         

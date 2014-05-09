@@ -92,7 +92,7 @@ public class FulfillmentType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof FulfillmentType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         FulfillmentType other = (FulfillmentType) obj;
         if (type == null) {

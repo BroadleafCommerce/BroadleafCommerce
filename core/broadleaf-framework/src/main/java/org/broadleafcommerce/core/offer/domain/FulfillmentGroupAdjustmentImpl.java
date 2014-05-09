@@ -189,7 +189,7 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof FulfillmentGroupAdjustmentImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         FulfillmentGroupAdjustmentImpl other = (FulfillmentGroupAdjustmentImpl) obj;

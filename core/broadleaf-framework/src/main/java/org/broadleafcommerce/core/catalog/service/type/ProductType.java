@@ -84,7 +84,7 @@ public class ProductType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof ProductType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ProductType other = (ProductType) obj;
         if (type == null) {

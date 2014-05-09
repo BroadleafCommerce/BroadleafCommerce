@@ -90,7 +90,7 @@ public class PermissionType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof PermissionType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PermissionType other = (PermissionType) obj;
         if (type == null) {

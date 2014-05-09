@@ -89,7 +89,7 @@ public class RelatedProductTypeEnum implements Serializable, BroadleafEnumeratio
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof RelatedProductTypeEnum))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         RelatedProductTypeEnum other = (RelatedProductTypeEnum) obj;
         if (type == null) {

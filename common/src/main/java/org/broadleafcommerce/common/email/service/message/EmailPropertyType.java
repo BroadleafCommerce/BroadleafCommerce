@@ -86,7 +86,7 @@ public class EmailPropertyType implements Serializable, BroadleafEnumerationType
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof EmailPropertyType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         EmailPropertyType other = (EmailPropertyType) obj;
         if (type == null) {

@@ -83,7 +83,7 @@ public class TargetModeType implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof TargetModeType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         TargetModeType other = (TargetModeType) obj;
         if (type == null) {

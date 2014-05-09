@@ -86,7 +86,7 @@ public class ProductOptionValidationType implements Serializable, BroadleafEnume
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof ProductOptionValidationType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ProductOptionValidationType other = (ProductOptionValidationType) obj;
         if (type == null) {

@@ -1119,7 +1119,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof CategoryImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         CategoryImpl other = (CategoryImpl) obj;

@@ -139,7 +139,7 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof GiftCardPaymentInfoImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         GiftCardPaymentInfoImpl other = (GiftCardPaymentInfoImpl) obj;
 

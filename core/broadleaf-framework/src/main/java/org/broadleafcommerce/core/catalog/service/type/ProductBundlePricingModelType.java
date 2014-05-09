@@ -86,7 +86,7 @@ public class ProductBundlePricingModelType implements Serializable, BroadleafEnu
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof ProductBundlePricingModelType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ProductBundlePricingModelType other = (ProductBundlePricingModelType) obj;
         if (type == null) {

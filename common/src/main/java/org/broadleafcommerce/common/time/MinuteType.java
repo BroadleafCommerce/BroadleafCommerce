@@ -144,7 +144,7 @@ public class MinuteType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof MinuteType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         MinuteType other = (MinuteType) obj;
         if (type == null) {

@@ -19,6 +19,10 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.collections.MapUtils;
+import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.TypedClosure;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,10 +31,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.collections.MapUtils;
-import org.broadleafcommerce.common.util.BLCMapUtils;
-import org.broadleafcommerce.common.util.TypedClosure;
 
 /**
  * Generic DTO for a domain object. Each property of the domain object is represented by the 'properties' instance variable
@@ -288,7 +288,7 @@ public class Entity implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Entity)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         Entity entity = (Entity) o;
 

@@ -81,7 +81,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
             return true;
         if (!super.equals(obj))
             return false;
-        if (!(obj instanceof GiftWrapOrderItemImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         GiftWrapOrderItemImpl other = (GiftWrapOrderItemImpl) obj;
 

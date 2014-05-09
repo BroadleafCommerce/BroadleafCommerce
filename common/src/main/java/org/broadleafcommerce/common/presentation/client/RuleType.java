@@ -90,7 +90,7 @@ public class RuleType implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof RuleType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         RuleType other = (RuleType) obj;
         if (type == null) {

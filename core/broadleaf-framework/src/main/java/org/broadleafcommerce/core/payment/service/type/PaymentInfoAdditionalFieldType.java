@@ -95,7 +95,7 @@ public class PaymentInfoAdditionalFieldType implements Serializable, BroadleafEn
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof PaymentInfoAdditionalFieldType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PaymentInfoAdditionalFieldType other = (PaymentInfoAdditionalFieldType) obj;
         if (type == null) {

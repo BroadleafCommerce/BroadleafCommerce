@@ -171,7 +171,7 @@ public class ShippingRateImpl implements ShippingRate {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof ShippingRateImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ShippingRateImpl other = (ShippingRateImpl) obj;
 

@@ -111,7 +111,7 @@ public class BundleOrderItemRequest {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof BundleOrderItemRequest))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         BundleOrderItemRequest other = (BundleOrderItemRequest) obj;
         if (category == null) {

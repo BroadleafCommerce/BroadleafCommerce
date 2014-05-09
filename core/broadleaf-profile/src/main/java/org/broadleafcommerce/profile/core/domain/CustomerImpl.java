@@ -501,7 +501,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof CustomerImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         CustomerImpl other = (CustomerImpl) obj;

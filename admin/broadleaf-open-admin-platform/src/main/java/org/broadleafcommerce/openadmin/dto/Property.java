@@ -152,7 +152,7 @@ public class Property implements Serializable {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof Property))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         Property other = (Property) obj;
         if (metadata == null || metadata instanceof CollectionMetadata || ((BasicFieldMetadata) metadata).getMergedPropertyType() == null) {

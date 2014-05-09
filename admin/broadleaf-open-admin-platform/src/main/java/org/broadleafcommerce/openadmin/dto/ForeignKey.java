@@ -19,10 +19,10 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.dto.visitor.PersistencePerspectiveItemVisitor;
+
+import java.io.Serializable;
 
 
 /**
@@ -170,7 +170,7 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ForeignKey)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         ForeignKey that = (ForeignKey) o;
 

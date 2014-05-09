@@ -118,7 +118,7 @@ public class OfferRuleImpl implements OfferRule {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof OfferRuleImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OfferRuleImpl other = (OfferRuleImpl) obj;
         

@@ -91,7 +91,7 @@ public class PaymentActionType implements Serializable, BroadleafEnumerationType
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof PaymentActionType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PaymentActionType other = (PaymentActionType) obj;
         if (type == null) {

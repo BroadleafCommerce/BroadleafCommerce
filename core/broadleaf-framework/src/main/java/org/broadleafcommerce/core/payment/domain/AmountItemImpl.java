@@ -225,7 +225,7 @@ public class AmountItemImpl implements AmountItem, CurrencyCodeIdentifiable {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof AmountItemImpl))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         AmountItemImpl other = (AmountItemImpl) obj;
         

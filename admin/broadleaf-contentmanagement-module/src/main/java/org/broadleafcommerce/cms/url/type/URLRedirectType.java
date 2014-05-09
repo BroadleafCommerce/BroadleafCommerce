@@ -80,7 +80,7 @@ public class URLRedirectType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof URLRedirectType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         URLRedirectType other = (URLRedirectType) obj;
         if (type == null) {

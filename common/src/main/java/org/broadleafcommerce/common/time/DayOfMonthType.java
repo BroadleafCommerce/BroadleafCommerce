@@ -115,7 +115,7 @@ public class DayOfMonthType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof DayOfMonthType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         DayOfMonthType other = (DayOfMonthType) obj;
         if (type == null) {

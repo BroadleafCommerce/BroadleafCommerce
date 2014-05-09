@@ -101,7 +101,7 @@ public class CriteriaStructuredContentXref {
                 return true;
             if (obj == null)
                 return false;
-            if (!(obj instanceof CriteriaStructuredContentXref))
+            if (!getClass().isAssignableFrom(obj.getClass()))
                 return false;
             CriteriaStructuredContentXrefPK other = (CriteriaStructuredContentXrefPK) obj;
             if (structuredContent == null) {

@@ -19,14 +19,14 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 
 public class PersistencePackage implements Serializable, StateDescriptor {
 
@@ -225,7 +225,7 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PersistencePackage)) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         PersistencePackage that = (PersistencePackage) o;
 

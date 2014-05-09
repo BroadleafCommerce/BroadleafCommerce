@@ -137,7 +137,7 @@ public class CustomerAttributeImpl implements CustomerAttribute {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof CustomerAttributeImpl)) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         CustomerAttributeImpl other = (CustomerAttributeImpl) obj;

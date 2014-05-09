@@ -95,7 +95,7 @@ public class PaymentInfoType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (!(obj instanceof PaymentInfoType))
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PaymentInfoType other = (PaymentInfoType) obj;
         if (type == null) {
