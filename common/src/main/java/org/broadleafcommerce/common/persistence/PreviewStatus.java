@@ -49,6 +49,7 @@ public class PreviewStatus implements Serializable, Previewable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        if (o == null) return false;
         if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         PreviewStatus that = (PreviewStatus) o;

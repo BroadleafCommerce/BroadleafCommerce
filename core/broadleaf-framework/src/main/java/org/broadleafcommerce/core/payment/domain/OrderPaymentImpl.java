@@ -328,7 +328,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     
     @Override
     public boolean equals(Object obj) {
-        if (getClass().isAssignableFrom(obj.getClass())) {
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             OrderPaymentImpl that = (OrderPaymentImpl) obj;
             return new EqualsBuilder()
                 .append(this.id, that.id)

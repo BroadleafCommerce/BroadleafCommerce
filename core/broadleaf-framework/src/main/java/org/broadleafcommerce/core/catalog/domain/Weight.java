@@ -75,6 +75,7 @@ public class Weight implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        if (o == null) return false;
         if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         Weight weight1 = (Weight) o;
