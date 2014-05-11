@@ -34,6 +34,7 @@ import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.model.AddToCartItem;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
 import java.io.IOException;
@@ -52,6 +53,9 @@ public class BroadleafCartController extends AbstractCartController {
     
     protected static String cartView = "cart/cart";
     protected static String cartPageRedirect = "redirect:/cart";
+    
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
     
     /**
      * Renders the cart page.
@@ -166,7 +170,11 @@ public class BroadleafCartController extends AbstractCartController {
         
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<String, Object>();
-            extraData.put("productId", itemRequest.getProductId());
+            if(useSku) {
+                extraData.put("skuId", itemRequest.getSkuId());
+            } else {
+                extraData.put("productId", itemRequest.getProductId());
+            }
             extraData.put("cartItemCount", cart.getItemCount());
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
             return getCartView();
@@ -199,7 +207,11 @@ public class BroadleafCartController extends AbstractCartController {
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<String, Object>();
             extraData.put("cartItemCount", cart.getItemCount());
-            extraData.put("productId", itemRequest.getProductId());
+            if(useSku) {
+                extraData.put("skuId", itemRequest.getSkuId());
+            } else {
+                extraData.put("productId", itemRequest.getProductId());
+            }
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
             return getCartView();
         } else {
