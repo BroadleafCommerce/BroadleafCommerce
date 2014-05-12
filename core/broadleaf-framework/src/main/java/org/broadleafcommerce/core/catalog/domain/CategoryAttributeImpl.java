@@ -164,7 +164,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         CategoryAttributeImpl other = (CategoryAttributeImpl) obj;
 

@@ -116,7 +116,7 @@ public class CustomerRoleImpl implements CustomerRole {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         CustomerRoleImpl other = (CustomerRoleImpl) obj;
 

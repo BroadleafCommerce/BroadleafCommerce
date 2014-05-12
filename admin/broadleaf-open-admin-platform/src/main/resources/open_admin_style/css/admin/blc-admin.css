@@ -1556,8 +1556,9 @@ body .redactor_toolbar li a.redactor_btn_selectAssetButton {
 	background-position: -200px; 
 }
 
-body .redactor_toolbar li a.redactor_btn_font {
-    background: url('../../img/admin/font-selection.png') 0;
+body .redactor_toolbar li a.redactor_btn_font { 
+	background-image: url('../../img/admin/font-selection.png');
+	background-position: 0 -5px;
 }
 
 .category-tree {

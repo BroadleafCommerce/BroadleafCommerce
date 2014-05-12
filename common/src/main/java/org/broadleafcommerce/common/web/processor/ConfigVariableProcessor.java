@@ -21,15 +21,24 @@ package org.broadleafcommerce.common.web.processor;
 
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
+import org.broadleafcommerce.common.web.expression.PropertiesVariableExpression;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
 
 /**
- * A Thymeleaf processor that will lookup the value of a configuration variable.
- * Takes in a configuration variable attribute name and returns the value. 
+ * <p>
+ * Looks up the value of a configuration variable and adds the value to the model.
+ * 
+ * <p>
+ * While this adds the configuration value onto the model, you might want to use the value of this in larger expression. In
+ * that instance you may want to use {@link PropertiesVariableExpression} instead with {@code #props.get('property')}.
+ * 
+ * @parameter name (required) the name of the system property to look up
+ * @parameter resultVar (optional) what model variable the system property value is added to, defaults to <b>value</b>
  * 
  * @author bpolster
+ * @see {@link PropertiesVariableExpression}
  */
 public class ConfigVariableProcessor extends AbstractModelVariableModifierProcessor {
 

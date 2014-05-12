@@ -310,7 +310,8 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Money)) {
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) {
             return false;
         }
 

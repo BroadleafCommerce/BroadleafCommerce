@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -99,7 +101,9 @@ public class OrderTest extends OrderBaseTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void addItemToOrder() throws AddToCartException {
         numOrderItems++;
-        Sku sku = skuDao.readFirstSku();
+        // In the database, some Skus are inactive and some are active. This ensures that we pull back an active one
+        // to test a successful cart add
+        Sku sku = getFirstActiveSku();
         Order order = orderService.findOrderById(orderId);
         assert order != null;
         assert sku.getId() != null;
@@ -130,7 +134,9 @@ public class OrderTest extends OrderBaseTest {
     @Rollback(false)
     @Transactional
     public void addAnotherItemToOrder() throws AddToCartException {
-        Sku sku = skuDao.readFirstSku();
+     // In the database, some Skus are inactive and some are active. This ensures that we pull back an active one
+        // to test a successful cart add
+        Sku sku = getFirstActiveSku();
         Order order = orderService.findOrderById(orderId);
         assert order != null;
         assert sku.getId() != null;
@@ -192,6 +198,21 @@ public class OrderTest extends OrderBaseTest {
         for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
             assert fgi.getQuantity() == fgi.getOrderItem().getQuantity();
         }*/
+    }
+    
+    /**
+     * From the list of all Skus in the database, gets a Sku that is active
+     * @return
+     */
+    public Sku getFirstActiveSku() {
+        List<Sku> skus = skuDao.readAllSkus();
+        return CollectionUtils.find(skus, new Predicate<Sku>() {
+
+            @Override
+            public boolean evaluate(Sku sku) {
+                return sku.isActive();
+            }
+        });
     }
     
     @Test(groups = { "testIllegalAddScenarios" }, dependsOnGroups = { "addItemToOrder" })

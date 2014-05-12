@@ -187,7 +187,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         OrderAdjustmentImpl other = (OrderAdjustmentImpl) obj;

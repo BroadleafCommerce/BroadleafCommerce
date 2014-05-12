@@ -85,7 +85,7 @@ public class WeightUnitOfMeasureType implements Serializable, BroadleafEnumerati
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         WeightUnitOfMeasureType other = (WeightUnitOfMeasureType) obj;
         if (type == null) {

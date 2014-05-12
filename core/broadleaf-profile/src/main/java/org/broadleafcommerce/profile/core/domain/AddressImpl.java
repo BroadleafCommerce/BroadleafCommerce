@@ -506,7 +506,7 @@ public class AddressImpl implements Address {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         AddressImpl other = (AddressImpl) obj;
 

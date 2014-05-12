@@ -74,7 +74,7 @@ public class FulfillmentGroupOfferPotential {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         FulfillmentGroupOfferPotential other = (FulfillmentGroupOfferPotential) obj;

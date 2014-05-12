@@ -270,7 +270,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
 
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
+    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @MapKey(name="name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "productAttributesTitle",
@@ -819,7 +819,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ProductImpl other = (ProductImpl) obj;
 

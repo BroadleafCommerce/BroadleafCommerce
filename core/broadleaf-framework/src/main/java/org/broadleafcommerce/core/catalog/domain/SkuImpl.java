@@ -1000,7 +1000,7 @@ public class SkuImpl implements Sku {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         SkuImpl other = (SkuImpl) obj;

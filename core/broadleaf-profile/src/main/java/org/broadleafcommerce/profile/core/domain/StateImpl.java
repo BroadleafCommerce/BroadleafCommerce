@@ -97,7 +97,7 @@ public class StateImpl implements State {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         StateImpl other = (StateImpl) obj;
         if (abbreviation == null) {

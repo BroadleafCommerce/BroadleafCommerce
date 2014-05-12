@@ -36,15 +36,14 @@ import javax.annotation.Resource;
 
 
 /**
- * Processor that returns a list of {@link DataDriveEnumerationValue}s for a particular key
- *  Parameters:
- *  <ul>
- *      <li>key - key for the {@link DataDrivenEnumeration} that the {@link DataDrivenEnumerationValue}s should be apart of</li>
- *      <li>sort - 'ASCENDING' or 'DESCENDING' if the resulting values should be sorted by not. The sort will be on the
- *          display value of the {@link DataDrivenEnumerationValue}</li>
- *  </ul>
- *  
+ * Processor that adds a list of {@link DataDriveEnumerationValue}s onto the model for a particular key.
  *  This will add a new variable on the model called 'enumValues'
+ *
+ * @param key (required) key for the {@link DataDrivenEnumeration} that the {@link DataDrivenEnumerationValue}s should be
+ * apart of. This corresponds to {@link DataDrivenEnumeration#getKey()}.
+ * 
+ * @param sort (optional) <i>ASCENDING</i> or <i>DESCENDING</i> if the resulting values should be sorted by not. The sort will be on
+ *          {@link DataDrivenEnumerationValue#getDisplay()}
  *
  * @author Phillip Verheyden (phillipuniverse)
  */

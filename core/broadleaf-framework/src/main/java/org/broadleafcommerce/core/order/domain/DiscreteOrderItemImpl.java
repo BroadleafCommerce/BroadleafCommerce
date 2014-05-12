@@ -368,7 +368,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         DiscreteOrderItemImpl other = (DiscreteOrderItemImpl) obj;

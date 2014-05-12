@@ -68,7 +68,8 @@ public class BasicCollectionMetadata extends CollectionMetadata {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BasicCollectionMetadata)) return false;
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
         if (!super.equals(o)) return false;
 
         BasicCollectionMetadata that = (BasicCollectionMetadata) o;

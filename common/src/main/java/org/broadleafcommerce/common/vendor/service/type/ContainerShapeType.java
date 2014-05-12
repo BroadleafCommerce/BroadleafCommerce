@@ -83,7 +83,7 @@ public class ContainerShapeType implements Serializable, BroadleafEnumerationTyp
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ContainerShapeType other = (ContainerShapeType) obj;
         if (type == null) {

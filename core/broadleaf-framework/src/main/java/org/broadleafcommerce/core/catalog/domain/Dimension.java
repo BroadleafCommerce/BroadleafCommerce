@@ -19,17 +19,17 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 @Embeddable
 public class Dimension implements Serializable {
@@ -158,7 +158,8 @@ public class Dimension implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Dimension)) return false;
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         Dimension dimension = (Dimension) o;
 

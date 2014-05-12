@@ -88,7 +88,7 @@ public class ServiceStatusType implements Serializable, BroadleafEnumerationType
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ServiceStatusType other = (ServiceStatusType) obj;
         if (type == null) {

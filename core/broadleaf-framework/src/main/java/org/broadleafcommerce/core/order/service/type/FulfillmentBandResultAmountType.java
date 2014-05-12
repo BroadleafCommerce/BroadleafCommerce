@@ -86,7 +86,7 @@ public class FulfillmentBandResultAmountType implements Serializable, BroadleafE
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         FulfillmentBandResultAmountType other = (FulfillmentBandResultAmountType) obj;
         if (type == null) {
