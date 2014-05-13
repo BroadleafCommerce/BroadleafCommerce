@@ -53,7 +53,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        Customer customer = customerService.readCustomerByUsername(username);
+        Customer customer = customerService.readCustomerByUsername(username, false);
         if (customer == null) {
             throw new UsernameNotFoundException("The customer was not found");
         }

@@ -39,6 +39,8 @@ public interface CustomerService {
 
     public Customer readCustomerByUsername(String customerName);
 
+    public Customer readCustomerByUsername(String username, Boolean cacheable);
+
     public Customer readCustomerByEmail(String emailAddress);
 
     public Customer changePassword(PasswordChange passwordChange);

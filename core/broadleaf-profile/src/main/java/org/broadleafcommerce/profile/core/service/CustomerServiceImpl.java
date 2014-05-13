@@ -271,6 +271,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Customer readCustomerByUsername(String username, Boolean cacheable) {
+        return customerDao.readCustomerByUsername(username, cacheable);
+    }
+
+    @Override
     public Customer readCustomerById(Long id) {
         return customerDao.readCustomerById(id);
     }
