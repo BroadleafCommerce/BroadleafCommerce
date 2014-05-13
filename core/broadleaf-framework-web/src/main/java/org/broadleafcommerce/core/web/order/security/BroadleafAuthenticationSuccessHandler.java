@@ -29,11 +29,14 @@ import javax.servlet.http.HttpServletResponse;
 @Component("blAuthenticationSuccessHandler")
 public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
+    protected static final String SESSION_ATTR = "SFP-ActiveID";
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws ServletException, IOException {
         
         String targetUrl = request.getParameter(getTargetUrlParameter());
+        request.getSession().removeAttribute(SESSION_ATTR);
         if (StringUtils.isNotBlank(targetUrl) && targetUrl.contains(":")) {
             getRedirectStrategy().sendRedirect(request, response, getDefaultTargetUrl());
         } else {
