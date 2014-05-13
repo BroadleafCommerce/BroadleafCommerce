@@ -21,6 +21,10 @@ package org.broadleafcommerce.cms.field.domain;
 
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -44,6 +48,10 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FLD_DEF")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
 public class FieldDefinitionImpl implements FieldDefinition {
 
     private static final long serialVersionUID = 1L;
@@ -62,12 +70,17 @@ public class FieldDefinitionImpl implements FieldDefinition {
     protected Long id;
 
     @Column (name = "NAME")
+    @AdminPresentation(fieldType = SupportedFieldType.HIDDEN)
     protected String name;
 
     @Column (name = "FRIENDLY_NAME")
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_friendlyName", order = 2000)
     protected String friendlyName;
 
     @Column (name = "FLD_TYPE")
+    @AdminPresentation(fieldType = SupportedFieldType.EXPLICIT_ENUMERATION, 
+        prominent = true, gridOrder = 2000, order = 1000,
+        friendlyName = "FieldDefinitionImpl_fieldType")
     protected String fieldType;
 
     @Column (name = "SECURITY_LEVEL")
@@ -106,6 +119,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
     protected FieldGroup fieldGroup;
 
     @Column(name="FLD_ORDER")
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_fieldOrder", order = 3000)
     protected int fieldOrder;
 
     @Column (name = "TOOLTIP")
