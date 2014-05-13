@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.web.controller.catalog.BroadleafCategoryController;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -34,8 +35,32 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * A Thymeleaf processor that generates a search query link that will reflect the current 
+ * <p>
+ * A Thymeleaf processor that generates a search query href that will reflect the current 
  * search criteria in addition to the requested sort string
+ * 
+ * <p>
+ * This is intended to be used in an anchor tag:
+ * 
+ * <pre>
+ * {@code
+ *  <a blc:addsortlink="price">Sort By Price</a>
+ * }
+ * </pre>
+ * 
+ * <p>
+ * Produces:
+ * 
+ * <pre>
+ * {@code
+ *  <a class="asc" href="http://mysite.com/category?sort=price+asc">Sort By Price</a>
+ * }
+ * </pre>
+ * 
+ * <p>
+ * This sort link can then be picked up by the {@link BroadleafCategoryController} to actually translate search queries based
+ * on that query parameter. If there is no sort active on the request then this will print out a link to sort ascending.
+ * Otherwise the link will output the non-active sort (so that you can switch between them).
  * 
  * @author apazzolini
  */

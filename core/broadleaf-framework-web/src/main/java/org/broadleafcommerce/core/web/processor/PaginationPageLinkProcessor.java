@@ -34,9 +34,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * <p>
  * A Thymeleaf processor that processes the value attribute on the element it's tied to
  * with a predetermined value based on the SearchFacetResultDTO object that is passed into this
- * processor. 
+ * processor.
+ * 
  * 
  * @author apazzolini
  */

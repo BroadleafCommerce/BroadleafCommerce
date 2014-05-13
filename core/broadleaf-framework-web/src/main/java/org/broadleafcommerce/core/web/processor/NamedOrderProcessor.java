@@ -31,8 +31,21 @@ import org.thymeleaf.dom.Element;
 import javax.annotation.Resource;
 
 /**
+ * <p>
  * A Thymeleaf processor that will add the desired named order to the model
  *
+ * <p>
+ * Example:
+ * 
+ * <pre>
+ *  &lt;blc:named_order orderVar="wishlist" orderName="wishlist" /&gt;
+ *  &lt;span th:text="${wishlist.customer.name}" /&gt; 
+ * </pre>
+ *
+ * @param orderVar the value that the order will be assigned to
+ * @param orderName the name of the order, {@link Order#getName()}
+ * 
+ * @see {@link Order#getName()}
  * @author elbertbautista
  */
 public class NamedOrderProcessor extends AbstractModelVariableModifierProcessor {

@@ -36,8 +36,12 @@ import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the desired categories to the model. It does this by
- * searching for the parentCategory name and adding up to maxResults subcategories under
- * the model attribute specified by resultVar
+ * searching for the <b>parentCategory</b> by name> and adding up to <b>maxResults</b> subcategories under
+ * the model attribute specified by <b>resultVar</b>
+ * 
+ * @param parentCategory (required) the name of the parent category to get subcategories from
+ * @param resultVar (required) the model variable that the resulting list of categories should be set to
+ * @param maxResults (optional) the maximum number of categories to return
  * 
  * @author apazzolini
  */

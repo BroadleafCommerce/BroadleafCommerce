@@ -72,9 +72,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * <p>
  * This is a Thymeleaf Processor that aids in rendering a dynamic One Page Checkout screen.
  * These sections are driven by the state of the order and whether or not certain integrated payment
- * modules are enabled (e.g. PayPal Express Review Page etc...). For example, if there are no shippable fulfillment
+ * modules are enabled (e.g. PayPal Express Review Page etc...).
+ * 
+ * <p>
+ * For example, if there are no shippable fulfillment
  * groups on the order, then the shipping section should not be shown. Or, if the user is redirected
  * back from a Third Party Payment gateway to complete the order (e.g. PayPal Express Checkout), then
  * the billing section will not be shown.

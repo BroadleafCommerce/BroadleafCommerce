@@ -47,18 +47,28 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public Customer readCustomerByUsername(String username) {        
-        List<Customer> customers = readCustomersByUsername(username);
+    public Customer readCustomerByUsername(String username) {
+        return readCustomerByUsername(username, true);
+    }
+
+    @Override
+    public Customer readCustomerByUsername(String username, Boolean cacheable) {
+        List<Customer> customers = readCustomersByUsername(username, cacheable);
         return customers == null || customers.isEmpty() ? null : customers.get(0);
     }
-   
+
     @Override
     public List<Customer> readCustomersByUsername(String username) {
+        return readCustomersByUsername(username, true);
+    }
+
+    @Override
+    public List<Customer> readCustomersByUsername(String username, Boolean cacheable) {
         TypedQuery<Customer> query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME", Customer.class);
         query.setParameter("username", username);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, cacheable);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
-        return query.getResultList();        
+        return query.getResultList();
     }
 
     @Override
