@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
@@ -113,7 +114,7 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
             for (PromotableProduct promProduct : relatedProducts) {
                 Product relatedProduct = promProduct.getRelatedProduct();
                 List<Sku> additionalSkus = relatedProduct.getAdditionalSkus();
-                if(additionalSkus != null) {
+                if(CollectionUtils.isNotEmpty(additionalSkus)) {
                     for(Sku additionalSku : additionalSkus) {
                         if(numSkus == maxQuantity) {
                             break;
