@@ -43,16 +43,20 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 /**
- * A Thymeleaf processor that will on order confirmation page, submit order
- * information via javascript to google analytics.
+ * A Thymeleaf processor that will output Google Analytics tracking Javascript. When used on an order confirmation page
+ * in conjunction with an <b>orderNumber</b> this will also output the ecommerce transaction tracking parameters for
+ * Google Analytics
  * 
  * Example usage on order confirmation page:
  * <pre>
  *  {@code
- *      <blc:googleAnalytics th:attr="orderNumber=${order != null ? order.orderNumber : null}" />
+ *      <blc:googleanalytics th:attr="orderNumber=${order != null ? order.orderNumber : null}" />
  *      <script th:utext="${analytics}" />
  *  }
  * </pre>
+ * 
+ * @param ordernumber the order number of the submitted order
+ * 
  * @author tleffert
  * @deprecated use the {@link GoogleUniversalAnalyticsProcessor} instead
  */
