@@ -62,6 +62,19 @@ public class AdminPageController extends AdminBasicEntityController {
         return SECTION_KEY;
     }
 
+    protected DynamicEntityFormInfo getDynamicForm(EntityForm ef, String id) {
+        return new DynamicEntityFormInfo()
+            .withCeilingClassName(PageTemplate.class.getName())
+            .withSecurityCeilingClassName(Page.class.getName())
+            .withCriteriaName("constructForm")
+            .withPropertyName("pageTemplate")
+            .withPropertyValue(ef.findField("pageTemplate").getValue());
+    }
+    
+    protected void addOnChangeTrigger(EntityForm ef) {
+        ef.findField("pageTemplate").setOnChangeTrigger("dynamicForm-pageTemplate");
+    }
+
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -71,19 +84,13 @@ public class AdminPageController extends AdminBasicEntityController {
         String returnPath = super.viewEntityForm(request, response, model, pathVars, id);
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
         
-        // Attach the dynamic fields to the form
-        DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-                .withCeilingClassName(PageTemplate.class.getName())
-                .withSecurityCeilingClassName(Page.class.getName())
-                .withCriteriaName("constructForm")
-                .withPropertyName("pageTemplate")
-                .withPropertyValue(ef.findField("pageTemplate").getValue());
+        DynamicEntityFormInfo info = getDynamicForm(ef, id);
         EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, null);
         ef.putDynamicFormInfo("pageTemplate", info);
         ef.putDynamicForm("pageTemplate", dynamicForm);
-        
+
         // Mark the field that will drive this dynamic form
-        ef.findField("pageTemplate").setOnChangeTrigger("dynamicForm-pageTemplate");
+        addOnChangeTrigger(ef);
         
         return returnPath;
     }

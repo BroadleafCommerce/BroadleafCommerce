@@ -84,7 +84,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             PageTemplate.class.getName().equals(ceilingEntityFullyQualifiedClassname) &&
             persistencePackage.getCustomCriteria() != null &&
             persistencePackage.getCustomCriteria().length > 0 &&
-            persistencePackage.getCustomCriteria()[0].equals("constructForm");
+            persistencePackage.getCustomCriteria()[0].contains("constructForm");
     }
 
     @Override
@@ -125,7 +125,10 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             String pageId = persistencePackage.getCustomCriteria()[1];
             String pageTemplateId = persistencePackage.getCustomCriteria()[3];
             Page page = pageService.findPageById(Long.valueOf(pageId));
-            PageTemplate template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
+            PageTemplate template = null;
+            if (pageTemplateId != null) {
+                template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
+            }
             ClassMetadata metadata = new ClassMetadata();
             metadata.setCeilingType(PageTemplate.class.getName());
             ClassTree entities = new ClassTree(PageTemplateImpl.class.getName());
@@ -256,6 +259,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                         pageField = new PageFieldImpl();
                         pageField.setFieldKey(property.getName());
                         pageField.setValue(property.getValue());
+                        pageField.setPage(page);
                         dynamicEntityDao.persist(pageField);
                         pageFieldMap.put(property.getName(), pageField);
                         dirtyFields.add(property.getName());
