@@ -19,6 +19,17 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -31,16 +42,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 
 /**
  * Created by bpolster.
@@ -84,6 +85,10 @@ public class PageFieldImpl implements PageField {
     @Type(type = "org.hibernate.type.StringClobType")
     protected String lobValue;
 
+    @ManyToOne(targetEntity = PageImpl.class, optional = false)
+    @JoinColumn(name = "PAGE_ID")
+    protected Page page;
+
     @Override
     public Long getId() {
         return id;
@@ -107,9 +112,9 @@ public class PageFieldImpl implements PageField {
     @Override
     public String getValue() {
         if (stringValue != null && stringValue.length() > 0) {
-            return stringValue;
+            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, stringValue);
         } else {
-            return lobValue;
+            return DynamicTranslationProvider.getValue(page, "pageTemplate|" + fieldKey, lobValue);
         }
     }
 
@@ -138,5 +143,16 @@ public class PageFieldImpl implements PageField {
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }
+
+    @Override
+    public Page getPage() {
+        return page;
+    }
+
+    @Override
+    public void setPage(Page page) {
+        this.page = page;
+    }
+    
 }
 

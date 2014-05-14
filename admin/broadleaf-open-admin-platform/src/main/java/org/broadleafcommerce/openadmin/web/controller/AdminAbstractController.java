@@ -276,6 +276,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             }
         }
 
+        //extensionManager.getProxy().modifyDynamicForm(dynamicForm, );
+
         return dynamicForm;
     }
     
@@ -305,9 +307,9 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         
         // However, when we fetch, the second custom criteria needs to be the id
-                // of this particular structured content entity
-                ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
-                Entity entity = service.getRecord(ppr, entityId, cmd, true).getDynamicResultSet().getRecords()[0];
+        // of this particular structured content entity
+        ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
+        Entity entity = service.getRecord(ppr, entityId, cmd, true).getDynamicResultSet().getRecords()[0];
         
         List<Field> fieldsToMove = new ArrayList<Field>();
         // override the results of the entity with the dynamic form passed in
@@ -346,6 +348,8 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 }
             }
         }
+        
+        extensionManager.getProxy().modifyDynamicForm(dynamicForm, entityId);
     
         return dynamicForm;
     }

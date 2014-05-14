@@ -108,6 +108,7 @@ public class DynamicFieldPersistenceHandlerHelper {
                 fieldMetadata.setHint(definition.getHint());
                 fieldMetadata.setHelpText(definition.getHelpText());
                 fieldMetadata.setTooltip(definition.getTooltip());
+                fieldMetadata.setTranslatable(true);
                 if (definition.getValidationRegEx() != null) {
                     Map<String, String> itemMap = new HashMap<String, String>();
                     itemMap.put("regularExpression", definition.getValidationRegEx());

@@ -66,6 +66,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -136,11 +137,8 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String fullUrl;
 
-    @ManyToMany(targetEntity = PageFieldImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_PAGE_FLD_MAP", 
-        joinColumns = @JoinColumn(name = "PAGE_ID", referencedColumnName = "PAGE_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "PAGE_FLD_ID", referencedColumnName = "PAGE_FLD_ID"))
-    @MapKeyColumn(name = "MAP_KEY")
+    @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @MapKey(name = "fieldKey")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @BatchSize(size = 20)
     @ClonePolicyMap

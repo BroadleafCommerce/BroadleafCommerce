@@ -46,8 +46,16 @@ public interface PageTemplate extends Serializable {
 
     public void setTemplatePath(String templatePath);
 
+    /**
+     * @deprecated in favor of translating individual fields
+     * @return
+     */
     public Locale getLocale();
 
+    /**
+     * @deprecated in favor of translating individual fields
+     * @return
+     */
     public void setLocale(Locale locale);
 
     public List<FieldGroup> getFieldGroups();

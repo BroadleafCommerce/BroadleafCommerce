@@ -19,15 +19,6 @@
  */
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.logging.Log;
@@ -59,6 +50,15 @@ import org.broadleafcommerce.openadmin.server.service.handler.DynamicEntityRetri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Created by jfischer
@@ -110,18 +110,27 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     protected SandBox getSandBox() {
         return sandBoxService.retrieveSandBoxById(SandBoxContext.getSandBoxContext().getSandBoxId());
     }
+    
+    protected List<FieldGroup> getFieldGroups(Page page, PageTemplate template) {
+        if (template != null) {
+            return template.getFieldGroups();
+        }
+        return page.getPageTemplate().getFieldGroups();
+    }
 
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
+            String pageId = persistencePackage.getCustomCriteria()[1];
             String pageTemplateId = persistencePackage.getCustomCriteria()[3];
+            Page page = pageService.findPageById(Long.valueOf(pageId));
             PageTemplate template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
             ClassMetadata metadata = new ClassMetadata();
             metadata.setCeilingType(PageTemplate.class.getName());
             ClassTree entities = new ClassTree(PageTemplateImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(template.getFieldGroups(), PageTemplate.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(getFieldGroups(page, template), PageTemplate.class);
             metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
@@ -163,7 +172,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         Entity entity = new Entity();
         entity.setType(new String[]{PageTemplateImpl.class.getName()});
         List<Property> propertiesList = new ArrayList<Property>();
-        for (FieldGroup fieldGroup : page.getPageTemplate().getFieldGroups()) {
+        for (FieldGroup fieldGroup : getFieldGroups(page, null)) {
             for (FieldDefinition definition : fieldGroup.getFieldDefinitions()) {
                 Property property = new Property();
                 propertiesList.add(property);
@@ -211,7 +220,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             String pageId = persistencePackage.getCustomCriteria()[1];
             Page page = pageService.findPageById(Long.valueOf(pageId));
 
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(page.getPageTemplate().getFieldGroups(), PageTemplate.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(getFieldGroups(page, null), PageTemplate.class);
             Map<String, FieldMetadata> md = new HashMap<String, FieldMetadata>();
             for (Property property : properties) {
                 md.put(property.getName(), property.getMetadata());
@@ -223,7 +232,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             }
 
             List<String> templateFieldNames = new ArrayList<String>(20);
-            for (FieldGroup group : page.getPageTemplate().getFieldGroups()) {
+            for (FieldGroup group : getFieldGroups(page, null)) {
                 for (FieldDefinition definition: group.getFieldDefinitions()) {
                     templateFieldNames.add(definition.getName());
                 }

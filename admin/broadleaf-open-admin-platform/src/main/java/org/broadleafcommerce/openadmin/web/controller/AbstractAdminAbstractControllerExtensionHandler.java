@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.springframework.ui.Model;
 
@@ -52,6 +53,11 @@ public class AbstractAdminAbstractControllerExtensionHandler extends AbstractExt
     @Override
     public ExtensionResultStatusType overrideClassNameForSection(ExtensionResultHolder erh, String sectionKey, 
             AdminSection section) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType modifyDynamicForm(EntityForm form, String parentEntityId) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

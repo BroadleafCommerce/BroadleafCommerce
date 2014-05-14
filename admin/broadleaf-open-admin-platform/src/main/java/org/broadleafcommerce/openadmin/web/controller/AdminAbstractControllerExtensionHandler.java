@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.springframework.ui.Model;
 
@@ -69,4 +70,15 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
      */
     public ExtensionResultStatusType overrideClassNameForSection(ExtensionResultHolder erh, String sectionKey, 
             AdminSection section);
+
+    /**
+     * Invoked whenever {@link AdminAbstractController#getBlankDynamicFieldTemplateForm} or 
+     * {@link AdminAbstractController#getDynamicFieldTemplateForm} is invoked. This method provides the ability to modify
+     * the dynamic form that is created as a result of those two methods.
+     * 
+     * @param form
+     * @param parentEntityId
+     * @return
+     */
+    public ExtensionResultStatusType modifyDynamicForm(EntityForm form, String parentEntityId);
 }
