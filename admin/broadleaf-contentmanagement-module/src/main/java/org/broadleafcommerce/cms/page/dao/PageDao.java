@@ -72,10 +72,13 @@ public interface PageDao {
      * @return all {@link PageTemplate}s configured in the system
      */
     public List<PageTemplate> readAllPageTemplates();
+
+    public List<Page> findPageByURI(String uri);
     
     public List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri);
 
     public List<Page> findPageByURI(Locale locale, String uri);
 
     public void detachPage(Page page);
+
 }

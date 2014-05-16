@@ -19,10 +19,19 @@
  */
 package org.broadleafcommerce.cms.page.dao;
 
+import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageImpl;
+import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -33,18 +42,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageImpl;
-import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
 
 /**
  * Created by bpolster.
@@ -95,6 +92,15 @@ public class PageDaoImpl implements PageDao {
     @Override
     public Page addPage(Page clonedPage) {
         return em.merge(clonedPage);
+    }
+
+    @Override
+    public List<Page> findPageByURI(String uri) {
+        TypedQuery<Page> q = new TypedQueryBuilder<Page>(Page.class, "p")
+            .addRestriction("fullUrl", "=", uri)
+            .toQuery(em);
+        List<Page> pages = q.getResultList();
+        return pages;
     }
 
     @Override

@@ -132,7 +132,7 @@ public class PageServiceImpl implements PageService {
             }
             if (returnList == null) {
                 //TODO does this pull the right sandbox in multitenant?
-                List<Page> pageList = pageDao.findPageByURI(locale, languageOnlyLocale, uri);
+                List<Page> pageList = pageDao.findPageByURI(uri);
                 returnList = buildPageDTOList(pageList, secure);
                 if (context.isProductionSandBox()) {
                     Collections.sort(returnList, new BeanComparator("priority"));
@@ -340,7 +340,8 @@ public class PageServiceImpl implements PageService {
     }
 
     protected String buildKey(SandBox sandBox, Page page) {
-        return buildKey(sandBox, findLanguageOnlyLocale(page.getPageTemplate().getLocale()), page.getFullUrl());
+        Locale locale = page.getPageTemplate() == null ? null : page.getPageTemplate().getLocale();
+        return buildKey(sandBox, findLanguageOnlyLocale(locale), page.getFullUrl());
     }
 
     protected void addPageListToCache(List<PageDTO> pageList, String key) {

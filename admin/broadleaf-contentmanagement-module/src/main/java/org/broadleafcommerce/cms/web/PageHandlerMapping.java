@@ -65,7 +65,7 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
-            PageDTO page = pageService.findPageByURI(null, context.getRequestURIWithoutContext(), buildMvelParameters(request), context.isSecure());
+            PageDTO page = pageService.findPageByURI(context.getLocale(), context.getRequestURIWithoutContext(), buildMvelParameters(request), context.isSecure());
 
             if (page != null && ! (page instanceof NullPageDTO)) {
                 context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, page);

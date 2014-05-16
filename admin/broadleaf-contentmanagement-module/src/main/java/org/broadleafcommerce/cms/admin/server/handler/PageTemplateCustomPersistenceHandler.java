@@ -115,7 +115,10 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         if (template != null) {
             return template.getFieldGroups();
         }
-        return page.getPageTemplate().getFieldGroups();
+        if (page.getPageTemplate() != null) {
+            return page.getPageTemplate().getFieldGroups();
+        }
+        return new ArrayList<FieldGroup>(0);
     }
 
     @Override
@@ -123,7 +126,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
-            String pageTemplateId = persistencePackage.getCustomCriteria()[3];
+            String pageTemplateId = persistencePackage.getCustomCriteria().length > 3 ? persistencePackage.getCustomCriteria()[3] : null;
             Page page = pageService.findPageById(Long.valueOf(pageId));
             PageTemplate template = null;
             if (pageTemplateId != null) {
