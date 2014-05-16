@@ -23,15 +23,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
+import org.broadleafcommerce.openadmin.server.service.persistence.Persistable;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
+
+import java.io.IOException;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Responsible for setting the necessary attributes on the BroadleafRequestContext
@@ -46,8 +50,11 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
     @Resource(name = "blAdminRequestProcessor")
     protected BroadleafWebRequestProcessor requestProcessor;
 
+    @Resource(name="blPersistenceThreadManager")
+    protected PersistenceThreadManager persistenceThreadManager;
+
     @Override
-    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
 
         if (!shouldProcessURL(request, request.getRequestURI())) {
             if (LOG.isTraceEnabled()) {
@@ -58,8 +65,18 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         }
 
         try {
-            requestProcessor.process(new ServletWebRequest(request, response));
-            filterChain.doFilter(request, response);
+            persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable <Void, RuntimeException>() {
+                @Override
+                public Void execute() {
+                    try {
+                        requestProcessor.process(new ServletWebRequest(request, response));
+                        filterChain.doFilter(request, response);
+                        return null;
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
         } catch (SiteNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         } finally {
