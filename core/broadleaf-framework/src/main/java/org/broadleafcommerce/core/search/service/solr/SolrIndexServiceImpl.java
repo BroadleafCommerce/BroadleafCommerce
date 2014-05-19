@@ -540,7 +540,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     }
 
                     // This is the entire tree of every category defined on the product
-                    buildFullCategoryHierarchy(document, cache, categoryId);
+                    buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
                 }
             }
         } finally {
