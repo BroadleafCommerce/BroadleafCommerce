@@ -67,6 +67,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -584,7 +585,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     }
 
                     // This is the entire tree of every category defined on the product
-                    buildFullCategoryHierarchy(document, cache, categoryId);
+                    buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
                 }
             }
         } finally {
@@ -601,7 +602,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @param cache the catalog structure cache
      * @param categoryId the current category id
      */
-    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId) {
+    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId, Set<Long> indexedParents) {
         Long catIdToAdd = shs.getCategoryId(categoryId); 
 
         Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
@@ -611,7 +612,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         Set<Long> parents = cache.getParentCategoriesByCategory().get(categoryId);
         for (Long parent : parents) {
-            buildFullCategoryHierarchy(document, cache, parent);
+            if (!indexedParents.contains(parent)) {
+                indexedParents.add(parent);
+                buildFullCategoryHierarchy(document, cache, parent, indexedParents);
+            }
         }
     }
 
