@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionTyp
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -84,7 +85,11 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         return response;
     }
 
-    protected boolean detectBasicType(BasicFieldMetadata metadata, Property property) {
+    protected boolean detectBasicType(FieldMetadata md, Property property) {
+        if (!(md instanceof BasicFieldMetadata)) {
+            return false;
+        }
+        BasicFieldMetadata metadata = (BasicFieldMetadata) md;
         return (metadata.getFieldType() == SupportedFieldType.BOOLEAN ||
                 metadata.getFieldType() == SupportedFieldType.DATE ||
                 metadata.getFieldType() == SupportedFieldType.INTEGER ||
@@ -96,12 +101,17 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 metadata.getFieldType() == SupportedFieldType.CODE ||
                 metadata.getFieldType() == SupportedFieldType.HTML ||
                 metadata.getFieldType() == SupportedFieldType.HTML_BASIC ||
+                metadata.getFieldType() == SupportedFieldType.MONEY ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
                 (property == null ||
                         !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
     }
     
-    protected boolean detectAdditionalSearchTypes(BasicFieldMetadata metadata, Property property) {
+    protected boolean detectAdditionalSearchTypes(FieldMetadata md, Property property) {
+        if (!(md instanceof BasicFieldMetadata)) {
+            return false;
+        }
+        BasicFieldMetadata metadata = (BasicFieldMetadata) md;
         return (metadata.getFieldType() == SupportedFieldType.BROADLEAF_ENUMERATION ||
                 metadata.getFieldType() == SupportedFieldType.EXPLICIT_ENUMERATION ||
                 metadata.getFieldType() == SupportedFieldType.DATA_DRIVEN_ENUMERATION) &&
@@ -116,15 +126,11 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
 
     protected boolean canHandleSearchMapping(AddSearchMappingRequest addSearchMappingRequest,
                                              List<FilterMapping> filterMappings) {
-        BasicFieldMetadata metadata = (BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get
+        FieldMetadata metadata = addSearchMappingRequest.getMergedProperties().get
                 (addSearchMappingRequest.getPropertyName());
         Property property = null;
         //don't handle map fields here - we'll get them in a separate provider
         boolean response = detectBasicType(metadata, property) || detectAdditionalSearchTypes(metadata, property);
-        if (!response) {
-            //we'll allow this provider to handle money filter mapping for searches
-            response = metadata.getFieldType() == SupportedFieldType.MONEY;
-        }
 
         return response;
     }

@@ -725,16 +725,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                                  String ceilingEntityFullyQualifiedClassname,
                                                  Map<String, FieldMetadata> mergedUnfilteredProperties,
                                                  RestrictionFactory customRestrictionFactory) {
-        Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         List<FilterMapping> filterMappings = new ArrayList<FilterMapping>();
         for (String propertyId : cto.getCriteriaMap().keySet()) {
-            if (mergedProperties.containsKey(propertyId)) {
+            if (mergedUnfilteredProperties.containsKey(propertyId)) {
                 boolean handled = false;
                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                     FieldProviderResponse response = fieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedProperties,
-                                    propertyId, getFieldManager(), this, customRestrictionFactory==null?restrictionFactory
+                                    ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties,
+                                    propertyId, getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
                                     :customRestrictionFactory), filterMappings);
                     if (FieldProviderResponse.NOT_HANDLED != response) {
                         handled = true;
@@ -746,8 +745,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (!handled) {
                     defaultFieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedProperties, propertyId,
-                                    getFieldManager(), this, customRestrictionFactory==null?restrictionFactory
+                                    ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties, propertyId,
+                                    getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
                                                                         :customRestrictionFactory), filterMappings);
                 }
             }
