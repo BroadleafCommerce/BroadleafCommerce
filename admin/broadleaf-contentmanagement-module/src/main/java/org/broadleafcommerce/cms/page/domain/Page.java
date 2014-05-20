@@ -19,13 +19,14 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
-
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 /**
  * Created by bpolster.
@@ -137,5 +138,29 @@ public interface Page extends Serializable {
      * @param excludeFromSiteMap
      */
     public void setExcludeFromSiteMap(boolean excludeFromSiteMap);
+
+    public Map<String, String> getAdditionalFields();
+
+    public void setAdditionalFields(Map<String, String> additionalFields);
+
+    public Boolean getOverrideUrl();
+
+    public void setOverrideUrl(Boolean overrideUrl);
+    
+    public Date getActiveStartDate();
+    
+    public void setActiveStartDate(Date activeStartDate);
+    
+    public Date getActiveEndDate();
+    
+    public void setActiveEndDate(Date activeEndDate);
+    
+    public String getMetaTitle();
+    
+    public void setMetaTitle(String metaTitle);
+    
+    public String getMetaDescription();
+    
+    public void setMetaDescription(String metaDescription);
 
 }
