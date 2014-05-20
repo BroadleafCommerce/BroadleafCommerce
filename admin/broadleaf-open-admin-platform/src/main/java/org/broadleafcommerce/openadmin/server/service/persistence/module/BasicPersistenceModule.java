@@ -939,21 +939,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
             switch (persistencePerspective.getOperationTypes().getRemoveType()) {
                 case NONDESTRUCTIVEREMOVE:
-                    for (Property property : entity.getProperties()) {
-                        String originalPropertyName = property.getName();
-                        FieldManager fieldManager = getFieldManager();
-                        if (fieldManager.getField(instance.getClass(), property.getName()) == null) {
-                            LOG.debug("Unable to find a bean property for the reported property: " + originalPropertyName + ". Ignoring property.");
-                            continue;
-                        }
-                        if (SupportedFieldType.FOREIGN_KEY == ((BasicFieldMetadata) mergedProperties.get(originalPropertyName)).getFieldType()) {
-                            String value = property.getValue();
-                            Serializable foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(foreignKey.getForeignKeyClass()), Long.valueOf(value));
-                            Collection collection = (Collection) fieldManager.getFieldValue(foreignInstance, foreignKey.getOriginatingField());
-                            collection.remove(instance);
-                            break;
-                        }
+                    FieldManager fieldManager = getFieldManager();
+                    FieldMetadata md = mergedUnfilteredProperties.get(foreignKey.getManyToField());
+                    Object foreignKeyValue = entity.getPMap().get(foreignKey.getManyToField()).getValue();
+                    try {
+                        foreignKeyValue = Long.valueOf((String) foreignKeyValue);
+                    } catch (NumberFormatException e) {
+                        LOG.warn("Foreign primary key is not of type Long, assuming String for remove lookup");
                     }
+                    Serializable foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(foreignKey.getForeignKeyClass()), foreignKeyValue);
+                    Collection collection = (Collection) fieldManager.getFieldValue(foreignInstance, foreignKey.getOriginatingField());
+                    collection.remove(instance);
                     break;
                 case BASIC:
                     persistenceManager.getDynamicEntityDao().remove(instance);
