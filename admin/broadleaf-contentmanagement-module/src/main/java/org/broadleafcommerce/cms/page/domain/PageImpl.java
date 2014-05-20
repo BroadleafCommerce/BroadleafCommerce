@@ -184,10 +184,9 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Column(name = "OVERRIDE_URL")
-    /*
     @AdminPresentation(friendlyName = "PageImpl_overrideUrl", order = 2000,
-            group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
-    */
+        tooltip = "PageImpl_overrideUrl_tooltip",
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
     protected Boolean overrideUrl = false;
 
     @Column(name = "ACTIVE_START_DATE")

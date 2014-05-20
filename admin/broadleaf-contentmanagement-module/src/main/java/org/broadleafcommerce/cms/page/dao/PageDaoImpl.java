@@ -107,6 +107,9 @@ public class PageDaoImpl implements PageDao {
             .addRestriction(new TQRestriction(Mode.OR)
                 .addChildRestriction(new TQRestriction("p.activeEndDate", "IS NULL"))
                 .addChildRestriction(new TQRestriction("p.activeEndDate", ">=", SystemTime.asDate())))
+            .addRestriction(new TQRestriction(Mode.OR)
+                .addChildRestriction(new TQRestriction("p.overrideUrl", "IS NULL"))
+                .addChildRestriction(new TQRestriction("p.overrideUrl", "=", false)))
             .toQuery(em);
         List<Page> pages = q.getResultList();
         return pages;
