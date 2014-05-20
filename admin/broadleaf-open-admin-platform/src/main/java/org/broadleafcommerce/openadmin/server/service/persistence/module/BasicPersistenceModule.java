@@ -29,13 +29,13 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
-import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -55,6 +55,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslator;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.extension.BasicPersistenceModuleExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
@@ -70,6 +71,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -93,6 +95,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
+
 import javax.annotation.Resource;
 
 /**
@@ -127,6 +130,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name="blRestrictionFactory")
     protected RestrictionFactory restrictionFactory;
+
+    @Resource(name = "blBasicPersistenceModuleExtensionManager")
+    protected BasicPersistenceModuleExtensionManager extensionManager;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -662,53 +668,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             Assert.isTrue(instance != null, "Entity not found");
 
             if (!entity.isValidationFailure()) {
-
                 //Re-Balance the list if it is a Foreign Key toMany collection with a sort field property
                 if (foreignKey != null && foreignKey.getSortField() != null &&
                         entity.findProperty(foreignKey.getSortField()) != null &&
                         entity.findProperty(foreignKey.getSortField()).getValue() != null) {
-                    Integer requestedSequence = Integer.valueOf(entity.findProperty(foreignKey.getSortField()).getValue());
-                    Integer previousSequence = new BigDecimal(String.valueOf(getFieldManager().getFieldValue(instance, foreignKey.getSortField()))).intValue();
-                    final String idPropertyName = getIdPropertyName(mergedProperties);
-                    final Object pKey = primaryKey;
-
-                    instance = createPopulatedInstance(instance, entity, mergedProperties, false, persistencePackage.isValidateUnsubmittedProperties());
-                    if (!previousSequence.equals(requestedSequence)) {
-                        // Sequence has changed. Rebalance the list
-                        Serializable manyToField = (Serializable) getFieldManager().getFieldValue(instance, foreignKey.getManyToField());
-                        List<Serializable> records = (List<Serializable>) getFieldManager().getFieldValue(manyToField, foreignKey.getOriginatingField());
-
-                        Serializable myRecord = (Serializable) CollectionUtils.find(records, new TypedPredicate<Serializable>() {
-
-                            @Override
-                            public boolean eval(Serializable record) {
-                                try {
-                                    return (pKey.equals(getFieldManager().getFieldValue(record, idPropertyName)));
-                                } catch (IllegalAccessException e) {
-                                    return false;
-                                } catch (FieldNotAvailableException e) {
-                                    return false;
-                                }
-
-                            }
-
-                        });
-
-                        records.remove(myRecord);
-                        if (CollectionUtils.isEmpty(records)) {
-                            records.add(myRecord);
-                        } else {
-                            records.add(requestedSequence - 1, myRecord);
-                        }
-
-                        int index = 1;
-                        Class<?> type = getFieldManager().getField(myRecord.getClass(), foreignKey.getSortField()).getType();
-                        boolean isBigDecimal = BigDecimal.class.isAssignableFrom(type);
-                        for (Serializable record : records) {
-                            getFieldManager().setFieldValue(record, foreignKey.getSortField(), isBigDecimal ? new BigDecimal(index) : Long.valueOf(index));
-                            index++;
-                        }
-                    }
+                    ExtensionResultHolder<Serializable> result = new ExtensionResultHolder<Serializable>();
+                    extensionManager.getProxy().rebalanceForUpdate(this, persistencePackage, instance,
+                            mergedProperties, primaryKey, result);
+                    instance = result.getResult();
                 } else {
                     instance = createPopulatedInstance(instance, entity, mergedProperties, false, persistencePackage.isValidateUnsubmittedProperties());
                 }
@@ -733,7 +700,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
     }
 
-    protected String getIdPropertyName(Map<String, FieldMetadata> mergedUnfilteredProperties) {
+    public String getIdPropertyName(Map<String, FieldMetadata> mergedUnfilteredProperties) {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         for (String property : mergedProperties.keySet()) {
             BasicFieldMetadata temp = (BasicFieldMetadata) mergedProperties.get(property);
@@ -953,15 +920,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
 
                 if (foreignKey != null && foreignKey.getSortField() != null) {
-                    CriteriaTransferObject cto = new CriteriaTransferObject();
-                    FilterAndSortCriteria sortCriteria = cto.get(foreignKey.getSortField());
-                    sortCriteria.setSortAscending(foreignKey.getSortAscending());
-                    List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
-                            .getCeilingEntityFullyQualifiedClassname(), mergedProperties);
-                    int totalRecords = getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
-                    Class<?> type = getFieldManager().getField(instance.getClass(), foreignKey.getSortField()).getType();
-                    boolean isBigDecimal = BigDecimal.class.isAssignableFrom(type);
-                    getFieldManager().setFieldValue(instance, foreignKey.getSortField(), isBigDecimal?new BigDecimal(totalRecords + 1):Long.valueOf(totalRecords + 1));
+                    ExtensionResultHolder<Serializable> result = new ExtensionResultHolder<Serializable>();
+                    extensionManager.getProxy().rebalanceForAdd(this, persistencePackage, instance, mergedProperties, result);
+                    instance = result.getResult();
                 }
 
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
