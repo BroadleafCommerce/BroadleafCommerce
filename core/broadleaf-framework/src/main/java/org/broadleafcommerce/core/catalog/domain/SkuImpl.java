@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,13 +66,17 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.springframework.util.ClassUtils;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -312,7 +317,8 @@ public class SkuImpl implements Sku {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
     @ClonePolicyCollection(deepClone = false)
-    protected List<ProductOptionValue> productOptionValues = new ArrayList<ProductOptionValue>();
+    //Use a Set instead of a List - see https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917
+    protected Set<ProductOptionValue> productOptionValues = new HashSet<ProductOptionValue>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuFeeImpl.class)
     @JoinTable(name = "BLC_SKU_FEE_XREF",
@@ -802,13 +808,33 @@ public class SkuImpl implements Sku {
     }
 
     @Override
-    public List<ProductOptionValue> getProductOptionValues() {
+    public Set<ProductOptionValue> getProductOptionValuesCollection() {
         return productOptionValues;
     }
 
     @Override
-    public void setProductOptionValues(List<ProductOptionValue> productOptionValues) {
+    public void setProductOptionValuesCollection(Set<ProductOptionValue> productOptionValues) {
         this.productOptionValues = productOptionValues;
+    }
+
+    @Override
+    @Deprecated
+    public List<ProductOptionValue> getProductOptionValues() {
+        //Changing this API to Set is ill-advised (especially in a patch release). The tendrils are widespread. Instead
+        //we just migrate the call from the List to the internal Set representation. This is in response
+        //to https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917.
+        return (List<ProductOptionValue>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{List.class}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                return MethodUtils.invokeMethod(productOptionValues, method.getName(), args, method.getParameterTypes());
+            }
+        });
+    }
+
+    @Override
+    @Deprecated
+    public void setProductOptionValues(List<ProductOptionValue> productOptionValues) {
+        this.productOptionValues = new HashSet<ProductOptionValue>(productOptionValues);
     }
 
     @Override

@@ -35,6 +35,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as
@@ -335,7 +337,9 @@ public interface Sku extends Serializable {
      * 
      * @return the ProductOptionValues for this Sku
      * @see {@link ProductOptionValue}, {@link ProductOption}
+     * @deprecated use {@link #getProductOptionValuesCollection()} instead
      */
+    @Deprecated
     public List<ProductOptionValue> getProductOptionValues();
 
     /**
@@ -343,8 +347,27 @@ public interface Sku extends Serializable {
      * 
      * @param productOptionValues
      * @see {@link ProductOptionValue}, {@link ProductOption}
+     * @deprecated use {@link #setProductOptionValuesCollection(java.util.Set)} instead
      */
+    @Deprecated
     public void setProductOptionValues(List<ProductOptionValue> productOptionValues);
+
+    /**
+     * Gets the ProductOptionValues used to map to this Sku. For instance, this Sku could hold specific
+     * inventory, price and image information for a "Blue" "Extra-Large" shirt
+     *
+     * @return the ProductOptionValues for this Sku
+     * @see {@link ProductOptionValue}, {@link ProductOption}
+     */
+    Set<ProductOptionValue> getProductOptionValuesCollection();
+
+    /**
+     * Sets the ProductOptionValues that should be mapped to this Sku
+     *
+     * @param productOptionValues
+     * @see {@link ProductOptionValue}, {@link ProductOption}
+     */
+    void setProductOptionValuesCollection(Set<ProductOptionValue> productOptionValues);
 
     /**
      * This will be a value if and only if this Sku is the defaultSku of a Product (and thus has a @OneToOne relationship with a Product).
