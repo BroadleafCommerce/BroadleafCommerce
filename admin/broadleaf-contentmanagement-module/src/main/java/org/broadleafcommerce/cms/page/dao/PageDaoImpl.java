@@ -27,6 +27,9 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.dao.TQRestriction;
+import org.broadleafcommerce.common.util.dao.TQRestriction.Mode;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.springframework.stereotype.Repository;
 
@@ -97,7 +100,13 @@ public class PageDaoImpl implements PageDao {
     @Override
     public List<Page> findPageByURI(String uri) {
         TypedQuery<Page> q = new TypedQueryBuilder<Page>(Page.class, "p")
-            .addRestriction("fullUrl", "=", uri)
+            .addRestriction("p.fullUrl", "=", uri)
+            .addRestriction(new TQRestriction(Mode.OR)
+                .addChildRestriction(new TQRestriction("p.activeStartDate", "IS NULL"))
+                .addChildRestriction(new TQRestriction("p.activeStartDate", "<=", SystemTime.asDate())))
+            .addRestriction(new TQRestriction(Mode.OR)
+                .addChildRestriction(new TQRestriction("p.activeEndDate", "IS NULL"))
+                .addChildRestriction(new TQRestriction("p.activeEndDate", ">=", SystemTime.asDate())))
             .toQuery(em);
         List<Page> pages = q.getResultList();
         return pages;
