@@ -453,7 +453,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             Property fp = new Property();
             fp.setName(ppr.getForeignKey().getManyToField());
             fp.setValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName()));
-            properties.add(fp);
+            if (!properties.contains(fp)) {
+                properties.add(fp);
+            }
         } else if (md instanceof AdornedTargetCollectionMetadata) {
             ppr.getEntity().setType(new String[] { ppr.getAdornedList().getAdornedTargetEntityClassname() });
             for (Property property : properties) {
