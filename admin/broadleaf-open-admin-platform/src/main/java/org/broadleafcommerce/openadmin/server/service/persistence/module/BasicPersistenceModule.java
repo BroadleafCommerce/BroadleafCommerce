@@ -36,6 +36,8 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
+import org.broadleafcommerce.common.util.dao.TQJoin;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -52,7 +54,9 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaConversionException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslator;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.extension.BasicPersistenceModuleExtensionManager;
@@ -754,16 +758,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                                  String ceilingEntityFullyQualifiedClassname,
                                                  Map<String, FieldMetadata> mergedUnfilteredProperties,
                                                  RestrictionFactory customRestrictionFactory) {
-        Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         List<FilterMapping> filterMappings = new ArrayList<FilterMapping>();
         for (String propertyId : cto.getCriteriaMap().keySet()) {
-            if (mergedProperties.containsKey(propertyId)) {
+            if (mergedUnfilteredProperties.containsKey(propertyId)) {
                 boolean handled = false;
                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                     FieldProviderResponse response = fieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedProperties,
-                                    propertyId, getFieldManager(), this, customRestrictionFactory==null?restrictionFactory
+                                    ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties,
+                                    propertyId, getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
                                     :customRestrictionFactory), filterMappings);
                     if (FieldProviderResponse.NOT_HANDLED != response) {
                         handled = true;
@@ -775,8 +778,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (!handled) {
                     defaultFieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedProperties, propertyId,
-                                    getFieldManager(), this, customRestrictionFactory==null?restrictionFactory
+                                    ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties, propertyId,
+                                    getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
                                                                         :customRestrictionFactory), filterMappings);
                 }
             }
@@ -974,21 +977,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
             switch (persistencePerspective.getOperationTypes().getRemoveType()) {
                 case NONDESTRUCTIVEREMOVE:
-                    for (Property property : entity.getProperties()) {
-                        String originalPropertyName = property.getName();
-                        FieldManager fieldManager = getFieldManager();
-                        if (fieldManager.getField(instance.getClass(), property.getName()) == null) {
-                            LOG.debug("Unable to find a bean property for the reported property: " + originalPropertyName + ". Ignoring property.");
-                            continue;
-                        }
-                        if (SupportedFieldType.FOREIGN_KEY == ((BasicFieldMetadata) mergedProperties.get(originalPropertyName)).getFieldType()) {
-                            String value = property.getValue();
-                            Serializable foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(foreignKey.getForeignKeyClass()), Long.valueOf(value));
-                            Collection collection = (Collection) fieldManager.getFieldValue(foreignInstance, foreignKey.getOriginatingField());
-                            collection.remove(instance);
-                            break;
-                        }
+                    FieldManager fieldManager = getFieldManager();
+                    FieldMetadata md = mergedUnfilteredProperties.get(foreignKey.getManyToField());
+                    Object foreignKeyValue = entity.getPMap().get(foreignKey.getManyToField()).getValue();
+                    try {
+                        foreignKeyValue = Long.valueOf((String) foreignKeyValue);
+                    } catch (NumberFormatException e) {
+                        LOG.warn("Foreign primary key is not of type Long, assuming String for remove lookup");
                     }
+                    Serializable foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(foreignKey.getForeignKeyClass()), foreignKeyValue);
+                    Collection collection = (Collection) fieldManager.getFieldValue(foreignInstance, foreignKey.getOriginatingField());
+                    collection.remove(instance);
                     break;
                 case BASIC:
                     persistenceManager.getDynamicEntityDao().remove(instance);
@@ -1054,9 +1053,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 filterMappings.addAll(cto.getAdditionalFilterMappings());
             }
 
-            List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
+            List<Serializable> records;
+            try {
+                records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
+                totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
+            } catch (CriteriaConversionException e) {
+                TypedQueryBuilder builder = getSpecialCaseQueryBuilder(e.getFieldPath(), filterMappings, Class.forName(persistencePackage.getFetchTypeFullyQualifiedClassname()));
+                records = builder.toQuery(getPersistenceManager().getDynamicEntityDao().getStandardEntityManager()).getResultList();
+                totalRecords = ((Long) builder.toCountQuery(getPersistenceManager().getDynamicEntityDao().getStandardEntityManager()).getSingleResult()).intValue();
+            }
             payload = getRecords(mergedProperties, records, null, null);
-            totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
+
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
@@ -1147,4 +1154,43 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return persistenceManager;
     }
 
+    /**
+     * Use an alternate approach to generating a fetch query for a collection located inside of an @Embeddable object. Related
+     * to https://hibernate.atlassian.net/browse/HHH-8802. The alternate approach leverages HQL rather than JPA criteria,
+     * which seems to alleviate the problem.
+     *
+     * @param embeddedCollectionPath the path to the collection field itself
+     * @param filterMappings all the fetch restrictions for this request
+     * @param collectionClass the type of the collection members
+     * @return the builder capable of generating an appropriate HQL query
+     */
+    protected TypedQueryBuilder getSpecialCaseQueryBuilder(FieldPath embeddedCollectionPath, List<FilterMapping> filterMappings, Class<?> collectionClass) {
+        Long embeddedCollectionPathValue = null;
+        String specialPath = embeddedCollectionPath.getTargetProperty();
+        for (FilterMapping mapping : filterMappings) {
+            if (mapping.getFieldPath().getTargetProperty().equals(embeddedCollectionPath.getTargetProperty())) {
+                embeddedCollectionPathValue = Long.parseLong(mapping.getFilterValues().get(0));
+                break;
+            }
+        }
+        if (embeddedCollectionPathValue == null) {
+            throw new CriteriaConversionException(String.format("Expected to find a filter value for the embedded collection path (%s)", specialPath), embeddedCollectionPath);
+        }
+        String[] pieces = specialPath.split("\\.");
+        if (pieces.length != 3) {
+            throw new CriteriaConversionException(String.format("Expected to find a target property of format [embedded field].[collection field].[property] for the embedded collection path (%s)", specialPath), embeddedCollectionPath);
+        }
+        String expression = specialPath.substring(0, specialPath.lastIndexOf("."));
+        String property = specialPath.substring(specialPath.lastIndexOf(".") + 1, specialPath.length());
+        TypedQueryBuilder builder = new TypedQueryBuilder(collectionClass, "specialEntity")
+                .addJoin(new TQJoin("specialEntity." + expression, "embeddedCollection"))
+                .addRestriction("embeddedCollection." + property, "=", embeddedCollectionPathValue);
+        for (FilterMapping mapping : filterMappings) {
+            if (!mapping.getFieldPath().getTargetProperty().equals(embeddedCollectionPath.getTargetProperty())) {
+                LOG.warn(String.format("Unable to filter the embedded collection (%s) on an additional property (%s)", specialPath, mapping.getFieldPath().getTargetProperty()));
+            }
+        }
+
+        return builder;
+    }
 }
