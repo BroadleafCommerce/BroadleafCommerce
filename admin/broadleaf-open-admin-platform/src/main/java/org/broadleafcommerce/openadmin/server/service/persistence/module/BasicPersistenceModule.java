@@ -37,6 +37,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.dao.TQJoin;
+import org.broadleafcommerce.common.util.dao.TQOrder;
 import org.broadleafcommerce.common.util.dao.TQRestriction;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -51,6 +52,7 @@ import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -1151,6 +1153,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
         for (TQRestriction restriction : buildStandardRestrictions(embeddedCollectionPath, filterMappings)) {
             builder = builder.addRestriction(restriction);
+        }
+        for (FilterMapping mapping : filterMappings) {
+            if (mapping.getSortDirection() != null) {
+                String mappingProperty = mapping.getFieldPath()==null?null:mapping.getFieldPath().getTargetProperty();
+                if (StringUtils.isEmpty(mappingProperty)) {
+                    mappingProperty = mapping.getFullPropertyName();
+                }
+                builder = builder.addOrder(new TQOrder("specialEntity." + mappingProperty, SortDirection.ASCENDING == mapping.getSortDirection()));
+            }
         }
 
         return builder;

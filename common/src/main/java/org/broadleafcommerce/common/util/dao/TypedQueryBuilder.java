@@ -44,6 +44,7 @@ public class TypedQueryBuilder<T> {
     protected String rootAlias;
     protected List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
     protected List<TQJoin> joins = new ArrayList<TQJoin>();
+    protected List<TQOrder> orders = new ArrayList<TQOrder>();
     protected Map<String, Object> paramMap = new HashMap<String, Object>();
 
     /**
@@ -84,6 +85,11 @@ public class TypedQueryBuilder<T> {
 
     public TypedQueryBuilder<T> addJoin(TQJoin join) {
         joins.add(join);
+        return this;
+    }
+
+    public TypedQueryBuilder<T> addOrder(TQOrder order) {
+        orders.add(order);
         return this;
     }
     
@@ -129,6 +135,16 @@ public class TypedQueryBuilder<T> {
                 sb.append(r.toQl("p" + i, paramMap));
                 if (i != restrictions.size() - 1) {
                     sb.append(" AND ");
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(orders)) {
+            sb.append(" ORDER BY");
+            for (int j=0;j<orders.size();j++){
+                sb.append(" ");
+                sb.append(orders.get(j).toQl());
+                if (j < orders.size() - 1) {
+                    sb.append(",");
                 }
             }
         }
