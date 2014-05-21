@@ -29,7 +29,6 @@ import org.hibernate.ejb.criteria.path.SingularAttributePath;
 import org.hibernate.internal.SessionFactoryImpl;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -141,17 +140,20 @@ public class FieldPathBuilder {
             }
             
             if (path.getParentPath() != null && path.getParentPath().getJavaType().isAnnotationPresent(Embeddable.class) && path instanceof PluralAttributePath) {
-                //TODO this code should work, but there still appear to be bugs in Hibernate's JPA criteria handling for lists
-                //inside Embeddables
-                Class<?> myClass = ((PluralAttributePath) path).getAttribute().getClass().getInterfaces()[0];
-                //we don't know which version of "join" to call, so we'll let reflection figure it out
-                try {
-                    From embeddedJoin = myRoot.join(((SingularAttributePath) path.getParentPath()).getAttribute());
-                    Method join = embeddedJoin.getClass().getMethod("join", myClass);
-                    path = (Path) join.invoke(embeddedJoin, ((PluralAttributePath) path).getAttribute());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                //We need a workaround for this problem until it is resolved in Hibernate (loosely related to and likely resolved by https://hibernate.atlassian.net/browse/HHH-8802)
+                //We'll throw a specialized exception (and handle in an alternate flow for calls from BasicPersistenceModule)
+                throw new CriteriaConversionException(String.format("Unable to create a JPA criteria Path through an @Embeddable object to a collection that resides therein (%s)", fieldPath.getTargetProperty()), fieldPath);
+//                //TODO this code should work, but there still appear to be bugs in Hibernate's JPA criteria handling for lists
+//                //inside Embeddables
+//                Class<?> myClass = ((PluralAttributePath) path).getAttribute().getClass().getInterfaces()[0];
+//                //we don't know which version of "join" to call, so we'll let reflection figure it out
+//                try {
+//                    From embeddedJoin = myRoot.join(((SingularAttributePath) path.getParentPath()).getAttribute());
+//                    Method join = embeddedJoin.getClass().getMethod("join", myClass);
+//                    path = (Path) join.invoke(embeddedJoin, ((PluralAttributePath) path).getAttribute());
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
             }
         }
 
