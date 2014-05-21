@@ -21,6 +21,7 @@ package org.broadleafcommerce.cms.admin.server.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
@@ -31,6 +32,7 @@ import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.service.SandBoxService;
@@ -154,6 +156,26 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             Entity entity = fetchEntityBasedOnId(pageId, null);
             DynamicResultSet results = new DynamicResultSet(new Entity[]{entity}, 1);
 
+            // Some of the values in this entity might be foreign key lookups. In this case, we need to set the display
+            // value appropriately
+            for (Property prop : entity.getProperties()) {
+                if (StringUtils.isNotBlank(prop.getValue()) && StringUtils.isNotBlank(prop.getMetadata().getOwningClass())) {
+                    Class<?> clazz = Class.forName(prop.getMetadata().getOwningClass());
+                    Class<?>[] lookupClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(clazz);
+
+                    int i = 0;
+                    Object foreignEntity = null;
+                    while (foreignEntity == null && i < lookupClasses.length) {
+                        foreignEntity = dynamicEntityDao.find(lookupClasses[i++], Long.parseLong(prop.getValue()));
+                    }
+
+                    if (foreignEntity instanceof AdminMainEntity) {
+                        prop.setDisplayValue(((AdminMainEntity) foreignEntity).getMainEntityName());
+                    }
+                    prop.getMetadata().setOwningClass(null);
+                }
+            }
+
             return results;
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
@@ -195,6 +217,9 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 property.setValue(value);
                 if (!CollectionUtils.isEmpty(dirtyFields) && dirtyFields.contains(property.getName())) {
                     property.setIsDirty(true);
+                }
+                if (StringUtils.isNotBlank(definition.getAdditionalForeignKeyClass())) {
+                    property.getMetadata().setOwningClass(definition.getAdditionalForeignKeyClass());
                 }
             }
         }

@@ -43,7 +43,7 @@ public class StructuredContentDTO implements Serializable {
     protected String contentType;
     protected String localeCode;
     protected Integer priority;
-    protected Map values = new HashMap<String,String>();
+    protected Map<String, Object> values = new HashMap<String,Object>();
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
 
@@ -106,11 +106,11 @@ public class StructuredContentDTO implements Serializable {
         this.priority = priority;
     }
 
-    public Map getValues() {
+    public Map<String, Object> getValues() {
         return values;
     }
 
-    public void setValues(Map values) {
+    public void setValues(Map<String, Object> values) {
         this.values = values;
     }
 

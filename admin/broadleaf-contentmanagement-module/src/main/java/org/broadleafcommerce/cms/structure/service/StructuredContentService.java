@@ -204,4 +204,27 @@ public interface StructuredContentService {
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key);
 
     public void removeItemFromCache(String nameKey, String typeKey);
+
+    /**
+     * {@link StructuredContentDTO} objects are sometimes cached in the StructuredContentService. Furthermore, this cached
+     * version contains information about the kind of value the DTO might hold. In the cases where the value is a foreign
+     * key lookup, we want to get the object that it represents and set that as the internal value. However, since these
+     * DTOs are not Hibernate entities and are possibly stored in a cache, we need to load the target object on each request
+     * to avoid lazy initialization exceptions. This method performs that hydration.
+     * 
+     * @param dtos
+     * @return the same list that was passed in
+     */
+    public List<StructuredContentDTO> hydrateForeignLookups(List<StructuredContentDTO> dtos);
+
+    /**
+     * Converts a list of StructuredContent objects into their corresponding {@link StructuredContentDTO}s. This method 
+     * will utilize a cache in production mode, and it will additionally hydrate the returned {@link StructuredContentDTO}
+     * objects via the {@link #hydrateForeignLookups(List)} method.
+     * 
+     * @param scs
+     * @return the list of {@link StructuredContentDTO}s
+     */
+    public List<StructuredContentDTO> convertToDtos(List<StructuredContent> scs, boolean isSecure);
+
 }

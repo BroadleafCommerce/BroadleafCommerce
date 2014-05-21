@@ -58,7 +58,7 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
 
         model.addObject(MODEL_ATTRIBUTE_NAME, page);
 
-        String plainTextStr = page.getPageFields().get("plainText");
+        String plainTextStr = (String) page.getPageFields().get("plainText");
 
         if (!StringUtils.isEmpty(plainTextStr)) {
             if (Boolean.valueOf(plainTextStr)) {

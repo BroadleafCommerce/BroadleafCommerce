@@ -27,6 +27,8 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.field.domain.FieldDefinition;
+import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
@@ -36,13 +38,16 @@ import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.page.dto.NullPageDTO;
 import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.rule.RuleProcessor;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
@@ -55,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -67,6 +73,7 @@ public class PageServiceImpl implements PageService {
     protected static final Log LOG = LogFactory.getLog(PageServiceImpl.class);
     
     protected static String AND = " && ";
+    protected static final String FOREIGN_LOOKUP = "BLC_FOREIGN_LOOKUP";
 
     @Resource(name="blPageDao")
     protected PageDao pageDao;
@@ -88,6 +95,12 @@ public class PageServiceImpl implements PageService {
 
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
+    
+    @Resource(name = "blPageServiceExtensionManager")
+    protected PageServiceExtensionManager extensionManager;
+    
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericDao;
 
     protected Cache pageCache;
     protected final PageDTO NULL_PAGE = new NullPageDTO();
@@ -219,7 +232,12 @@ public class PageServiceImpl implements PageService {
         for (String fieldKey : page.getPageFields().keySet()) {
             PageField pf = page.getPageFields().get(fieldKey);
             String originalValue = pf.getValue();
-            if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
+            
+            FieldDefinition fd = getFieldDefinition(page, fieldKey);
+            
+            if (fd != null && fd.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
+                pageDTO.getPageFields().put(fieldKey, FOREIGN_LOOKUP + '|' + fd.getAdditionalForeignKeyClass() + '|' + originalValue);
+            } else if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
                 //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
                 //If there is an environment prefix configured (e.g. a CDN), then we must replace the cmsPrefix with this one.
                 String fldValue = staticAssetPathService.convertAllAssetPathsInContent(originalValue, secure);
@@ -237,7 +255,25 @@ public class PageServiceImpl implements PageService {
 
         return pageDTO;
     }
-
+    
+    protected FieldDefinition getFieldDefinition(Page page, String fieldKey) {
+        ExtensionResultHolder<FieldDefinition> erh = new ExtensionResultHolder<FieldDefinition>();
+        ExtensionResultStatusType result = extensionManager.getProxy().getFieldDefinition(erh, page, fieldKey);
+        
+        if (result == ExtensionResultStatusType.HANDLED) {
+            return erh.getResult();
+        }
+        
+        for (FieldGroup fg : page.getPageTemplate().getFieldGroups()) {
+            for (FieldDefinition fd : fg.getFieldDefinitions()) {
+                if (fd.getName().equals(fieldKey)) {
+                    return fd;
+                }
+            }
+        }
+        
+        return null;
+    }
 
     protected String buildRuleExpression(Page page) {
        StringBuffer ruleExpression = null;
@@ -280,6 +316,7 @@ public class PageServiceImpl implements PageService {
             if (locale != null && locale.getLocaleCode() != null) {
                 if (locale.getLocaleCode().equals(page.getLocaleCode())) {
                     if (passesPageRules(page, ruleDTOs)) {
+                        hydrateForeignLookups(page);
                         return page;
                     }
                 }
@@ -289,11 +326,23 @@ public class PageServiceImpl implements PageService {
         // Otherwise, we look for a match using just the language.
         for (PageDTO page : pageDTOList) {
             if (passesPageRules(page, ruleDTOs)) {
+                hydrateForeignLookups(page);
                 return page;
             }
         }
 
         return NULL_PAGE;
+    }
+    
+    protected void hydrateForeignLookups(PageDTO page) {
+        for (Entry<String, Object> entry : page.getPageFields().entrySet()) {
+            if (entry.getValue() instanceof String && ((String) entry.getValue()).startsWith(FOREIGN_LOOKUP)) {
+                String clazz = ((String) entry.getValue()).split("\\|")[1];
+                String id = ((String) entry.getValue()).split("\\|")[2];
+                Object newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
+                entry.setValue(newValue);
+            }
+        }
     }
 
     protected boolean passesPageRules(PageDTO page, Map<String, Object> ruleDTOs) {

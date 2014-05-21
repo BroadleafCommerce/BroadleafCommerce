@@ -37,6 +37,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -61,6 +62,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -73,6 +75,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     protected static final Log LOG = LogFactory.getLog(StructuredContentServiceImpl.class);
 
     protected static String AND = " && ";
+    protected static final String FOREIGN_LOOKUP = "BLC_FOREIGN_LOOKUP";
 
     @Resource(name="blStructuredContentDao")
     protected StructuredContentDao structuredContentDao;
@@ -97,6 +100,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
+
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericDao;
 
     protected Cache structuredContentCache;
 
@@ -230,6 +236,22 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     @Override
+    public List<StructuredContentDTO> hydrateForeignLookups(List<StructuredContentDTO> dtos) {
+        for (StructuredContentDTO dto : dtos) {
+            for (Entry<String, Object> entry : dto.getValues().entrySet()) {
+                if (entry.getValue() instanceof String && ((String) entry.getValue()).startsWith(FOREIGN_LOOKUP)) {
+                    String clazz = ((String) entry.getValue()).split("\\|")[1];
+                    String id = ((String) entry.getValue()).split("\\|")[2];
+                    Object newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
+                    entry.setValue(newValue);
+                }
+            }
+        }
+
+        return dtos;
+    }
+
+    @Override
     public List<StructuredContentDTO> lookupStructuredContentItemsByType(StructuredContentType contentType, Locale locale,
                                                              Integer count, Map<String, Object> ruleDTOs, boolean secure) {
         List<StructuredContentDTO> contentDTOList = null;
@@ -249,7 +271,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             }
         }
 
-        return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
+        return hydrateForeignLookups(evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs));
     }
 
     @Override
@@ -273,7 +295,33 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             }
         }
 
-        return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
+        return hydrateForeignLookups(evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs));
+    }
+    
+    @Override
+    public List<StructuredContentDTO> convertToDtos(List<StructuredContent> scs, boolean isSecure) {
+        List<StructuredContentDTO> contentDTOList = new ArrayList<StructuredContentDTO>();
+
+        for (StructuredContent sc : scs) {
+            String cacheKey = "SC|" + sc.getId();
+            StructuredContentDTO dto = null;
+            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+
+            if (context.isProductionSandBox()) {
+                dto = getSingleStructuredContentFromCache(cacheKey);
+            }
+
+            if (dto == null) {
+                dto = buildStructuredContentDTO(sc, isSecure);
+                if (context.isProductionSandBox()) {
+                    addSingleStructuredContentToCache(cacheKey, dto);
+                }
+            }
+            
+            contentDTOList.add(dto);
+        }
+
+        return hydrateForeignLookups(contentDTOList);
     }
 
     @Override
@@ -296,7 +344,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             }
         }
 
-        return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
+        return hydrateForeignLookups(evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs));
     }
 
     public List<RuleProcessor<StructuredContentDTO>> getContentRuleProcessors() {
@@ -461,6 +509,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                             case MONEY:
                                 value = new Money(originalValue);
                                 break;
+                            case ADDITIONAL_FOREIGN_KEY:
+                                value = FOREIGN_LOOKUP + '|' + definition.getAdditionalForeignKeyClass() + '|' + originalValue;
+                                break;
                             default:
                                 value = originalValue;
                                 break;
@@ -560,6 +611,20 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Override
     public void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList) {
         getStructuredContentCache().put(new Element(key, scDTOList));
+    }
+
+    protected void addSingleStructuredContentToCache(String key, StructuredContentDTO scDTO) {
+        getStructuredContentCache().put(new Element(key, scDTO));
+    }
+
+    protected StructuredContentDTO getSingleStructuredContentFromCache(String key) {
+        Element scElement =  getStructuredContentCache().get(key);
+        if (scElement != null) {
+            statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
+            return (StructuredContentDTO) scElement.getValue();
+        }
+        statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
+        return null;
     }
 
     @Override

@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.common.page.dto;
 
+import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 
 /**
  * Page fields must be pre-processed (for example to fix image paths).
@@ -42,7 +42,7 @@ public class PageDTO implements Serializable {
     protected String templatePath;
     protected String url;
     protected Integer priority;
-    protected Map<String, String> pageFields = new HashMap<String,String>();
+    protected Map<String, Object> pageFields = new HashMap<String, Object>();
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
 
@@ -86,11 +86,11 @@ public class PageDTO implements Serializable {
         this.url = url;
     }
 
-    public Map<String, String> getPageFields() {
+    public Map<String, Object> getPageFields() {
         return pageFields;
     }
 
-    public void setPageFields(Map<String, String> pageFields) {
+    public void setPageFields(Map<String, Object> pageFields) {
         this.pageFields = pageFields;
     }
     
