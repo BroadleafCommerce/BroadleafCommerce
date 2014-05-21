@@ -285,6 +285,10 @@ public class PersistencePackageRequest {
     }
 
     public PersistencePackageRequest addCustomCriteria(String customCriteria) {
+        if (this.customCriteria == null) {
+            this.customCriteria = new ArrayList<String>();
+        }
+        
         if (StringUtils.isNotBlank(customCriteria)) {
             this.customCriteria.add(customCriteria);
         }
@@ -344,7 +348,11 @@ public class PersistencePackageRequest {
     }
 
     public void setCustomCriteria(String[] customCriteria) {
-        this.customCriteria.addAll(Arrays.asList(customCriteria));
+        if (customCriteria == null) {
+            this.customCriteria = new ArrayList<String>();
+        } else {
+            this.customCriteria.addAll(Arrays.asList(customCriteria));
+        }
     }
 
     public FilterAndSortCriteria[] getFilterAndSortCriteria() {
