@@ -139,9 +139,9 @@ public interface Page extends Serializable {
      */
     public void setExcludeFromSiteMap(boolean excludeFromSiteMap);
 
-    public Map<String, String> getAdditionalFields();
+    public Map<String, PageAttribute> getAdditionalAttributes();
 
-    public void setAdditionalFields(Map<String, String> additionalFields);
+    public void setAdditionalAttributes(Map<String, PageAttribute> additionalAttributes);
 
     public Boolean getOverrideUrl();
 

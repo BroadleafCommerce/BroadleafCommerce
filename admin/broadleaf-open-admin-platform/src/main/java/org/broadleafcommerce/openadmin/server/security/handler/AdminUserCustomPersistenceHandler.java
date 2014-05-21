@@ -118,7 +118,6 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminUser.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            dynamicEntityDao.detach(adminInstance);
             
             Entity errorEntity = validateLegalUsernameAndEmail(entity, adminInstance, false);
             if (errorEntity != null) {

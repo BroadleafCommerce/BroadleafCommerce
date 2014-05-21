@@ -9,7 +9,7 @@
 
     <blc_admin:admin_user resultVar="adminUser" />
     <script th:with="adminUser=${adminUser}" th:inline="javascript">
-        var BLC_USER_PREFS = /*[[${adminUser.additionalFields}]]*/ {};
+        var BLC_USER_PREFS = /*[[${adminUser.flatAdditionalFields}]]*/ {};
     </script>
     
     <blc:bundle name="adminlib.js" 

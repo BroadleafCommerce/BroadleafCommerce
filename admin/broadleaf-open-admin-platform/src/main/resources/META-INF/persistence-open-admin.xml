@@ -30,6 +30,7 @@
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminPermissionQualifiedEntityImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl</class>
+        <class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserAttributeImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl</class>
         <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>

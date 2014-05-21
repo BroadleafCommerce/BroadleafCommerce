@@ -32,6 +32,7 @@
         <class>org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldGroupImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageAttributeImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageFieldImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageTemplateImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageRuleImpl</class>

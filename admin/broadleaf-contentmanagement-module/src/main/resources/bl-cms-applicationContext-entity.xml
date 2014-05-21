@@ -25,6 +25,7 @@
     
     <!-- Entity mappings - override for extensibility -->
     <bean id="org.broadleafcommerce.cms.page.domain.Page" class="org.broadleafcommerce.cms.page.domain.PageImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.cms.page.domain.PageAttribute" class="org.broadleafcommerce.cms.page.domain.PageAttributeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.page.domain.PageRule" class="org.broadleafcommerce.cms.page.domain.PageRuleImpl" scope="prototype"/>
 
     <bean id="org.broadleafcommerce.cms.page.domain.PageTemplate" class="org.broadleafcommerce.cms.page.domain.PageTemplateImpl" scope="prototype"/>

@@ -28,5 +28,6 @@
     <bean id="org.broadleafcommerce.openadmin.server.security.domain.AdminRole" class="org.broadleafcommerce.openadmin.server.security.domain.AdminRoleImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.openadmin.server.security.domain.AdminUser" class="org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken" class="org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.openadmin.server.security.domain.AdminUserAttribute" class="org.broadleafcommerce.openadmin.server.security.domain.AdminUserAttributeImpl" scope="prototype"/>
     
 </beans>

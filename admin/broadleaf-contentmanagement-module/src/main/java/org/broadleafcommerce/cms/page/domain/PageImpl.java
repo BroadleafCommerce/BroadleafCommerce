@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -50,9 +51,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -175,13 +174,14 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
         group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
     protected Boolean excludeFromSiteMap;
 
-    @ElementCollection
-    @MapKeyColumn(name = "FIELD_NAME")
-    @Column(name = "FIELD_VALUE")
-    @CollectionTable(name = "BLC_PAGE_ADDTL_FIELDS", joinColumns = @JoinColumn(name="PAGE_ID"))
+    @OneToMany(mappedBy = "page", targetEntity = PageAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @MapKey(name = "name")
     @BatchSize(size = 50)
+    @AdminPresentationMap(friendlyName = "pageAttributesTitle",
+        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "PageAttributeImpl_Name"
+    )
     @ClonePolicyMap
-    protected Map<String, String> additionalFields = new HashMap<String, String>();
+    protected Map<String, PageAttribute> additionalAttributes = new HashMap<String, PageAttribute>();
 
     @Column(name = "OVERRIDE_URL")
     @AdminPresentation(friendlyName = "PageImpl_overrideUrl", order = 2000,
@@ -374,13 +374,13 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     }
 
     @Override
-    public Map<String, String> getAdditionalFields() {
-        return additionalFields;
+    public Map<String, PageAttribute> getAdditionalAttributes() {
+        return additionalAttributes;
     }
 
     @Override
-    public void setAdditionalFields(Map<String, String> additionalFields) {
-        this.additionalFields = additionalFields;
+    public void setAdditionalAttributes(Map<String, PageAttribute> additionalAttributes) {
+        this.additionalAttributes = additionalAttributes;
     }
 
     @Override

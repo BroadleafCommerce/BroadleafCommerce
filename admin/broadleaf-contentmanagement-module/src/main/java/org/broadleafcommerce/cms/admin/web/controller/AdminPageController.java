@@ -92,6 +92,8 @@ public class AdminPageController extends AdminBasicEntityController {
         // Mark the field that will drive this dynamic form
         addOnChangeTrigger(ef);
         
+        ef.removeListGrid("additionalAttributes");
+        
         return returnPath;
     }
     
@@ -120,6 +122,8 @@ public class AdminPageController extends AdminBasicEntityController {
             
             EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, inputDynamicForm);
             entityForm.putDynamicForm("pageTemplate", dynamicForm);
+
+            entityForm.removeListGrid("additionalAttributes");
         }
         
         return returnPath;

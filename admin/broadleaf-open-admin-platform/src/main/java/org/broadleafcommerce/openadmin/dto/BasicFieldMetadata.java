@@ -171,7 +171,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     }
 
     public Boolean getForeignKeyCollection() {
-        return foreignKeyCollection;
+        return foreignKeyCollection == null ? false : foreignKeyCollection;
     }
 
     public void setForeignKeyCollection(Boolean foreignKeyCollection) {
