@@ -236,7 +236,10 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             billingAddress.setCity(billToDTO.getAddressCityLocality());
 
             //TODO: what happens if State and Country cannot be found?
-            State state = stateService.findStateByAbbreviation(billToDTO.getAddressStateRegion());
+            State state = null;
+            if(billToDTO.getAddressStateRegion() != null) {
+                state = stateService.findStateByAbbreviation(billToDTO.getAddressStateRegion());
+            }
             if (state == null) {
                 LOG.warn("The given state from the response: " + billToDTO.getAddressStateRegion() + " could not be found"
                         + " as a state abbreviation in BLC_STATE");
@@ -274,8 +277,11 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             shippingAddress.setAddressLine1(shipToDTO.getAddressLine1());
             shippingAddress.setAddressLine2(shipToDTO.getAddressLine2());
             shippingAddress.setCity(shipToDTO.getAddressCityLocality());
-
-            State state = stateService.findStateByAbbreviation(shipToDTO.getAddressStateRegion());
+            
+            State state = null;
+            if(shipToDTO.getAddressStateRegion() != null) {
+                state = stateService.findStateByAbbreviation(shipToDTO.getAddressStateRegion());
+            }
             if (state == null) {
                 LOG.warn("The given state from the response: " + shipToDTO.getAddressStateRegion() + " could not be found"
                         + " as a state abbreviation in BLC_STATE");
