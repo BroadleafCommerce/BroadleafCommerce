@@ -22,7 +22,7 @@ package org.broadleafcommerce.common.web.util;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.Arguments;
-import org.thymeleaf.spring3.context.SpringWebContext;
+import org.thymeleaf.spring4.context.SpringWebContext;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -21,7 +21,7 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
     <!-- The following beans are for API Wrappers.  They must be prototype scoped..  Override for extensibility.  Unlike the other Broadleaf classes that are keyed by their interface name,
                these are keyed by their base implementation name. JAXB doesn't like interfaces too much, so we use a base wrapper class that can be extended and overwritten here. -->

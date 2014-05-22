@@ -23,7 +23,6 @@ package org.broadleafcommerce.openadmin.web.processor;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,7 +30,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.spring3.context.SpringWebContext;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the appropriate AdminUser to the model.
@@ -42,7 +42,9 @@ import org.thymeleaf.spring3.context.SpringWebContext;
 public class AdminUserProcessor extends AbstractModelVariableModifierProcessor {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
-    private AdminSecurityService securityService;
+    
+    @Resource(name = "blAdminSecurityService")
+    protected AdminSecurityService securityService;
 
     public AdminUserProcessor() {
         super("admin_user");
@@ -51,7 +53,6 @@ public class AdminUserProcessor extends AbstractModelVariableModifierProcessor {
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
         String resultVar = element.getAttributeValue("resultVar");
-        initServices(arguments);
 
         AdminUser user = getPersistentAdminUser();
         if (user != null) {
@@ -62,13 +63,6 @@ public class AdminUserProcessor extends AbstractModelVariableModifierProcessor {
     @Override
     public int getPrecedence() {
         return 10000;
-    }
-
-    protected void initServices(Arguments arguments) {
-        if (securityService == null) {
-            final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();
-            securityService = (AdminSecurityService) applicationContext.getBean("blAdminSecurityService");
-        }
     }
 
     protected AdminUser getPersistentAdminUser() {
