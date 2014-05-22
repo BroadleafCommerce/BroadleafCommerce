@@ -142,7 +142,7 @@
      <!-- This is required by Hibernate to ensure that query caches return 
           corrrect results. It must contain at least as many entries as there are 
           DB tables. -->
-     <cache name="org.hibernate.cache.UpdateTimestampsCache" 
+     <cache name="org.hibernate.cache.spi.UpdateTimestampsCache" 
         maxElementsInMemory="5000" 
         eternal="true" 
         overflowToDisk="true"/>

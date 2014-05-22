@@ -27,6 +27,7 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -37,6 +38,8 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.dao.TQJoin;
+import org.broadleafcommerce.common.util.dao.TQOrder;
+import org.broadleafcommerce.common.util.dao.TQRestriction;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -51,6 +54,7 @@ import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -60,6 +64,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.extension.BasicPersistenceModuleExtensionManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.converter.FilterValueConverter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.EqPredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.LikePredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
@@ -1053,15 +1061,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 filterMappings.addAll(cto.getAdditionalFilterMappings());
             }
 
-            List<Serializable> records;
-            try {
-                records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
-                totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
-            } catch (CriteriaConversionException e) {
-                TypedQueryBuilder builder = getSpecialCaseQueryBuilder(e.getFieldPath(), filterMappings, Class.forName(persistencePackage.getFetchTypeFullyQualifiedClassname()));
-                records = builder.toQuery(getPersistenceManager().getDynamicEntityDao().getStandardEntityManager()).getResultList();
-                totalRecords = ((Long) builder.toCountQuery(getPersistenceManager().getDynamicEntityDao().getStandardEntityManager()).getSingleResult()).intValue();
-            }
+            List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
+            totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
             payload = getRecords(mergedProperties, records, null, null);
 
         } catch (Exception e) {
@@ -1073,8 +1074,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings) {
-        return ((Long) criteriaTranslator.translateCountQuery(persistenceManager.getDynamicEntityDao(),
-                ceilingEntity, filterMappings).getSingleResult()).intValue();
+        try {
+            return ((Long) criteriaTranslator.translateCountQuery(persistenceManager.getDynamicEntityDao(),
+                    ceilingEntity, filterMappings).getSingleResult()).intValue();
+        } catch (CriteriaConversionException e) {
+            TypedQueryBuilder builder = getSpecialCaseQueryBuilder(e.getFieldPath(), filterMappings, ceilingEntity);
+            return ((Long) builder.toCountQuery(getPersistenceManager().getDynamicEntityDao().getStandardEntityManager()).getSingleResult()).intValue();
+        }
     }
 
     @Override
@@ -1085,7 +1091,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public List<Serializable> getPersistentRecords(String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults) {
-        return criteriaTranslator.translateQuery(persistenceManager.getDynamicEntityDao(), ceilingEntity, filterMappings, firstResult, maxResults).getResultList();
+        try {
+            return criteriaTranslator.translateQuery(persistenceManager.getDynamicEntityDao(), ceilingEntity, filterMappings, firstResult, maxResults).getResultList();
+        } catch (CriteriaConversionException e) {
+            TypedQueryBuilder builder = getSpecialCaseQueryBuilder(e.getFieldPath(), filterMappings, ceilingEntity);
+            return builder.toQuery(getPersistenceManager().getDynamicEntityDao().getStandardEntityManager()).getResultList();
+        }
     }
 
     @Override
@@ -1164,33 +1175,99 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
      * @param collectionClass the type of the collection members
      * @return the builder capable of generating an appropriate HQL query
      */
-    protected TypedQueryBuilder getSpecialCaseQueryBuilder(FieldPath embeddedCollectionPath, List<FilterMapping> filterMappings, Class<?> collectionClass) {
-        Long embeddedCollectionPathValue = null;
+    protected TypedQueryBuilder getSpecialCaseQueryBuilder(FieldPath embeddedCollectionPath, List<FilterMapping> filterMappings, String collectionClass) {
         String specialPath = embeddedCollectionPath.getTargetProperty();
-        for (FilterMapping mapping : filterMappings) {
-            if (mapping.getFieldPath().getTargetProperty().equals(embeddedCollectionPath.getTargetProperty())) {
-                embeddedCollectionPathValue = Long.parseLong(mapping.getFilterValues().get(0));
-                break;
-            }
-        }
-        if (embeddedCollectionPathValue == null) {
-            throw new CriteriaConversionException(String.format("Expected to find a filter value for the embedded collection path (%s)", specialPath), embeddedCollectionPath);
-        }
         String[] pieces = specialPath.split("\\.");
         if (pieces.length != 3) {
             throw new CriteriaConversionException(String.format("Expected to find a target property of format [embedded field].[collection field].[property] for the embedded collection path (%s)", specialPath), embeddedCollectionPath);
         }
         String expression = specialPath.substring(0, specialPath.lastIndexOf("."));
-        String property = specialPath.substring(specialPath.lastIndexOf(".") + 1, specialPath.length());
-        TypedQueryBuilder builder = new TypedQueryBuilder(collectionClass, "specialEntity")
-                .addJoin(new TQJoin("specialEntity." + expression, "embeddedCollection"))
-                .addRestriction("embeddedCollection." + property, "=", embeddedCollectionPathValue);
+        TypedQueryBuilder builder;
+        try {
+            builder = new TypedQueryBuilder(Class.forName(collectionClass), "specialEntity")
+                    .addJoin(new TQJoin("specialEntity." + expression, "embeddedCollection"));
+        } catch (Exception e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        for (TQRestriction restriction : buildSpecialRestrictions(expression, filterMappings)) {
+            builder = builder.addRestriction(restriction);
+        }
+        for (TQRestriction restriction : buildStandardRestrictions(embeddedCollectionPath, filterMappings)) {
+            builder = builder.addRestriction(restriction);
+        }
         for (FilterMapping mapping : filterMappings) {
-            if (!mapping.getFieldPath().getTargetProperty().equals(embeddedCollectionPath.getTargetProperty())) {
-                LOG.warn(String.format("Unable to filter the embedded collection (%s) on an additional property (%s)", specialPath, mapping.getFieldPath().getTargetProperty()));
+            if (mapping.getSortDirection() != null) {
+                String mappingProperty = mapping.getFieldPath()==null?null:mapping.getFieldPath().getTargetProperty();
+                if (StringUtils.isEmpty(mappingProperty)) {
+                    mappingProperty = mapping.getFullPropertyName();
+                }
+                builder = builder.addOrder(new TQOrder("specialEntity." + mappingProperty, SortDirection.ASCENDING == mapping.getSortDirection()));
             }
         }
 
         return builder;
+    }
+
+    /**
+     * Generate LIKE or EQUALS restrictions for any filter property specified on the root entity (not the collection field in the @Embeddable object)
+     *
+     * @see #getSpecialCaseQueryBuilder(org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath, java.util.List, String)
+     * @param embeddedCollectionPath the path for the collection field in the @Embeddable object - this is what caused the whole thing
+     * @param filterMappings all the fetch restrictions for this request
+     * @return the list of restrictions on the root entity
+     */
+    protected List<TQRestriction> buildStandardRestrictions(FieldPath embeddedCollectionPath, List<FilterMapping> filterMappings) {
+        String expression = embeddedCollectionPath.getTargetProperty().substring(0, embeddedCollectionPath.getTargetProperty().lastIndexOf("."));
+        List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
+        for (FilterMapping mapping : filterMappings) {
+            checkProperty: {
+                String mappingProperty = mapping.getFieldPath()==null?null:mapping.getFieldPath().getTargetProperty();
+                if (StringUtils.isEmpty(mappingProperty)) {
+                    mappingProperty = mapping.getFullPropertyName();
+                }
+                if (!embeddedCollectionPath.getTargetProperty().equals(mappingProperty) && !StringUtils.isEmpty(mappingProperty)) {
+                    PredicateProvider predicateProvider = mapping.getRestriction().getPredicateProvider();
+                    if (predicateProvider != null) {
+                        FilterValueConverter converter = mapping.getRestriction().getFilterValueConverter();
+                        if (converter != null && CollectionUtils.isNotEmpty(mapping.getFilterValues())) {
+                            Object val = converter.convert(mapping.getFilterValues().get(0));
+                            if (predicateProvider instanceof LikePredicateProvider) {
+                                restrictions.add(new TQRestriction("specialEntity." + mappingProperty, "LIKE", val + "%"));
+                                break checkProperty;
+                            } else if (predicateProvider instanceof EqPredicateProvider) {
+                                restrictions.add(new TQRestriction("specialEntity." + mappingProperty, "=", val));
+                                break checkProperty;
+                            }
+                        }
+                    }
+                    LOG.warn(String.format("Unable to filter the embedded collection (%s) on an additional property (%s)", expression, mappingProperty));
+                }
+            }
+        }
+
+        return restrictions;
+    }
+
+    /**
+     * Generate EQUALS restrictions for any filter property specified on the entity member of the collection field in the @Embeddable object
+     *
+     * @see #getSpecialCaseQueryBuilder(org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath, java.util.List, String)
+     * @param specialExpression the String representation of the path for the collection field in the @Embeddable object
+     * @param filterMappings all the fetch restrictions for this request
+     * @return the list of restrictions on the collection in the @Embeddable object
+     */
+    protected List<TQRestriction> buildSpecialRestrictions(String specialExpression, List<FilterMapping> filterMappings) {
+        List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
+        for (FilterMapping mapping : filterMappings) {
+            if (mapping.getFieldPath() != null && mapping.getFieldPath().getTargetProperty() != null && mapping.getFieldPath().getTargetProperty().startsWith(specialExpression)) {
+                FilterValueConverter converter = mapping.getRestriction().getFilterValueConverter();
+                if (converter != null && CollectionUtils.isNotEmpty(mapping.getFilterValues())) {
+                    Object val = converter.convert(mapping.getFilterValues().get(0));
+                    String property = mapping.getFieldPath().getTargetProperty().substring(mapping.getFieldPath().getTargetProperty().lastIndexOf(".") + 1, mapping.getFieldPath().getTargetProperty().length());
+                    restrictions.add(new TQRestriction("embeddedCollection." + property, "=", val));
+                }
+            }
+        }
+        return restrictions;
     }
 }
