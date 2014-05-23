@@ -45,6 +45,7 @@ public class PageDTO implements Serializable {
     protected Map<String, Object> pageFields = new HashMap<String, Object>();
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
+    protected Map<String, String> pageAttributes = new HashMap<String, String>();
 
     public Long getId() {
         return id;
@@ -116,7 +117,14 @@ public class PageDTO implements Serializable {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+    
+    public Map<String, String> getPageAttributes() {
+        return pageAttributes;
+    }
+    
+    public void setPageAttributes(Map<String, String> pageAttributes) {
+        this.pageAttributes = pageAttributes;
     }   
     
 }
-
