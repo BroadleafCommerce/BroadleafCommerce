@@ -70,6 +70,7 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         Set<Product> allProductsSet = new HashSet<Product>();
         allProductsSet.add(product);
         model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(allProductsSet));
+        model.addObject("BLC_PAGE_TYPE", "product");
 
         addDeepLink(model, deepLinkService, product);
         
