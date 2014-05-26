@@ -98,7 +98,8 @@ public class SimpleValueMapStructure extends MapStructure {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SimpleValueMapStructure)) return false;
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
         if (!super.equals(o)) return false;
 
         SimpleValueMapStructure that = (SimpleValueMapStructure) o;

@@ -19,23 +19,26 @@
  */
 package org.broadleafcommerce.common.web.expression;
 
-import org.broadleafcommerce.common.config.service.SystemPropertiesService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.broadleafcommerce.common.config.domain.SystemProperty;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.processor.ConfigVariableProcessor;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * <p>
  * This Thymeleaf variable expression class provides access to runtime configuration properties that are configured
  * in development.properties, development-shared.properties, etc, for the current environment.
  * 
+ * <p>
+ * This also includes properties that have been saved/overwritten in the database via {@link SystemProperty}.
+ * 
  * @author Andre Azzolini (apazzolini)
+ * @see {@link ConfigVariableProcessor}
  */
 public class PropertiesVariableExpression implements BroadleafVariableExpression {
-    
-    @Autowired
-    protected SystemPropertiesService service;
     
     @Override
     public String getName() {
@@ -43,17 +46,29 @@ public class PropertiesVariableExpression implements BroadleafVariableExpression
     }
     
     public String get(String propertyName) {
-        return service.resolveSystemProperty(propertyName);
+        return BLCSystemProperty.resolveSystemProperty(propertyName);
     }
 
     public int getAsInt(String propertyName) {
-        return service.resolveIntSystemProperty(propertyName);
+        return BLCSystemProperty.resolveIntSystemProperty(propertyName);
     }
     
+    public boolean getAsBoolean(String propertyName) {
+        return BLCSystemProperty.resolveBooleanSystemProperty(propertyName); 
+    }
+    
+    public long getAsLong(String propertyName) {
+        return BLCSystemProperty.resolveLongSystemProperty(propertyName); 
+    }
+    
+    /**
+     * Returns true if the <b>listGrid.forceShowIdColumns</b> system property or a <b>showIds</b> request parameter is set
+     * to true. Used in the admin to show ID columns when displaying list grids.
+     */
     public boolean getForceShowIdColumns() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
-        boolean forceShow = service.resolveBooleanSystemProperty("listGrid.forceShowIdColumns");
+        boolean forceShow = BLCSystemProperty.resolveBooleanSystemProperty("listGrid.forceShowIdColumns");
         forceShow = forceShow || "true".equals(request.getParameter("showIds"));
         
         return forceShow;

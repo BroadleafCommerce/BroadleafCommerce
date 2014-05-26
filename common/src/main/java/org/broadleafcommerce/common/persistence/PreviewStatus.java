@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.common.persistence;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
-import org.broadleafcommerce.common.presentation.AdminPresentation;
 
 /**
  * @author Jeff Fischer
@@ -49,7 +49,8 @@ public class PreviewStatus implements Serializable, Previewable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PreviewStatus)) return false;
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         PreviewStatus that = (PreviewStatus) o;
 

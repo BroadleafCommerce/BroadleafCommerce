@@ -141,7 +141,7 @@ public class CustomerPhoneImpl implements CustomerPhone{
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         CustomerPhoneImpl other = (CustomerPhoneImpl) obj;
 

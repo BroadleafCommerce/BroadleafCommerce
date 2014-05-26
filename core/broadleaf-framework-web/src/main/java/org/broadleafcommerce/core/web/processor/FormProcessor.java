@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.handler.CsrfFilter;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
@@ -32,10 +33,11 @@ import org.thymeleaf.standard.expression.StandardExpressions;
 import javax.annotation.Resource;
 
 /**
- * A Thymeleaf processor that adds a CSRF token to forms that are not going to be submitted
- * via GET
+ * Used as a replacement to the HTML {@code <form>} element which adds a CSRF token input field to forms that are submitted
+ * via anything but GET. This is required to properly bypass the {@link CsrfFilter}.
  * 
  * @author apazzolini
+ * @see {@link CsrfFilter}
  */
 @Component("blFormProcessor")
 public class FormProcessor extends AbstractElementProcessor {

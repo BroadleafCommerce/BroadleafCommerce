@@ -147,7 +147,7 @@ public class BankAccountPaymentImpl implements BankAccountPayment {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         BankAccountPaymentImpl other = (BankAccountPaymentImpl) obj;
 

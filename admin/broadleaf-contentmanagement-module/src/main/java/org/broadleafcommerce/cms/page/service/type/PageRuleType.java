@@ -109,22 +109,22 @@ public class PageRuleType implements Serializable, BroadleafEnumerationType {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
-        return true;
-    }
+            return true;
+        }
         if (obj == null) {
-        return false;
-    }
-        if (getClass() != obj.getClass()) {
-        return false;
-    }
+            return false;
+        }
+        if (!getClass().isAssignableFrom(obj.getClass())) {
+            return false;
+        }
         PageRuleType other = (PageRuleType) obj;
         if (type == null) {
             if (other.type != null) {
-        return false;
-        }
+                return false;
+            }
         } else if (!type.equals(other.type)) {
-        return false;
-    }
+            return false;
+        }
         return true;
     }
 

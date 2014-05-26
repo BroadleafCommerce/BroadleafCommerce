@@ -255,7 +255,7 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         OrderItemPriceDetailAdjustmentImpl other = (OrderItemPriceDetailAdjustmentImpl) obj;

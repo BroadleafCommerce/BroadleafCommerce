@@ -37,7 +37,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -329,7 +328,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof OrderPaymentImpl) {
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             OrderPaymentImpl that = (OrderPaymentImpl) obj;
             return new EqualsBuilder()
                 .append(this.id, that.id)

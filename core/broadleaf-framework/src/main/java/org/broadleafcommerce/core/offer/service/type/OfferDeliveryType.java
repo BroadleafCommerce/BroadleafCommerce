@@ -99,7 +99,7 @@ public class OfferDeliveryType implements Serializable, BroadleafEnumerationType
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OfferDeliveryType other = (OfferDeliveryType) obj;
         if (type == null) {

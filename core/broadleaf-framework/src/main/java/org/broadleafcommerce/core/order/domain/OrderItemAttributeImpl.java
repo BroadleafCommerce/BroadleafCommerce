@@ -167,7 +167,7 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         
         if (value == null) {

@@ -19,13 +19,14 @@
  */
 package org.broadleafcommerce.core.social.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 /**
  * This class creates the following BLC domain object for the Spring Social User Connection.
@@ -219,7 +220,7 @@ public class UserConnectionImpl implements UserConnection {
         @Override
         public boolean equals(Object obj) {
             if (obj == null) return false;
-            else if (!(obj instanceof UserConnectionPK)) return false;
+            else if (!getClass().isAssignableFrom(obj.getClass())) return false;
 
             return userId.equals(((UserConnectionPK) obj).getUserId()) &&
                     providerId.equals(((UserConnectionPK) obj).getProviderId()) &&

@@ -23,6 +23,7 @@ package org.broadleafcommerce.openadmin.web.form.component;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.codehaus.jettison.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -140,9 +141,9 @@ public class ListGridRecord {
         for (int j=0;j<hiddenFields.size();j++) {
             sb.append("{\"name\":\"");
             sb.append(hiddenFields.get(j).getName());
-            sb.append("\",\"val\":\"");
-            sb.append(hiddenFields.get(j).getValue());
-            sb.append("\"}");
+            sb.append("\",\"val\":");
+            sb.append(JSONObject.quote(hiddenFields.get(j).getValue()));
+            sb.append("}");
             if (j < hiddenFields.size()-1) {
                 sb.append(",");
             }

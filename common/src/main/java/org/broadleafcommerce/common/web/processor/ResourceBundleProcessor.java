@@ -21,6 +21,7 @@ package org.broadleafcommerce.common.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
+import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
@@ -41,9 +42,68 @@ import javax.annotation.Resource;
 
 
 /**
- * A Thymeleaf processor that will take in a list of resource files to merge.
+ * <p>
+ * Takes a list of resources and optionally minifies (using the Yahoo YUI minifier) and combines them together to present a
+ * single file in the response. This will also automatically version the file name when minifying so that changes to bundles
+ * will not be cached by the browser. Most of the heavy lifting of this processor is done in {@link ResourceBundlingService}
+ * which uses {@link ResourceMinificationService}.
+ * 
+ * <p>
+ * The operation of this processor is dependent upon the {@code bundle.enabled} system property. If bundling is disabled
+ * via this system property then each file is individually linked in the HTML source
+ * 
+ * <p>
+ * For example, given this bundle:
+ * 
+ * <pre>
+ * {@code
+ * <blc:bundle name="lib.js" 
+ *             mapping-prefix="/js/"
+ *             files="plugins.js,
+ *                    libs/jquery.MetaData.js,
+ *                    libs/jquery.rating.pack.js,
+ *                    libs/jquery.dotdotdot-1.5.1.js" />
+ *  }
+ * </pre>                  
+ * 
+ * <p>
+ * With bundling enabled this will turn into:
+ * 
+ * <pre>
+ * {@code
+ *  <script type="text/javascript" src="/js/lib-123412.js" />
+ * }
+ * </pre>
+ * 
+ * <p>
+ * Where <b>lib-123412.js</b> is the result of minifying and combining all of the referenced <b>files</b> together.
+ * 
+ * <p>
+ * With bundling disabled this turns into:
+ * 
+ * <pre>
+ * {@code
+ *  <script type="text/javascript" src="/js/plugins.js" />
+ *  <script type="text/javascript" src="/js/jquery.MetaData.js" />
+ *  <script type="text/javascript" src="/js/jquery.rating.pack.js.js" />
+ *  <script type="text/javascript" src="/js/jquery.dotdotdot-1.5.1.js" />
+ * }
+ * </pre>
+ * 
+ * <p>
+ * The files are presented without any additional processing done on them. This 
+ * 
+ * <p>
+ * This processor only supports files that end in <b>.js</b> and <b>.css</b>
+ * 
+ * @param name (required) the final name of the minified bundle
+ * @param <b>mapping-prefix</b> (required) the prefix appended to the final tag output whether that be the list of <b>files</b>
+ * or the single minified file
+ * @param files (required) a comma-separated list of files that should be bundled together
  * 
  * @author apazzolini
+ * @see {@link ResourceBundlingService}
+ * @see {@link ResourceMinificationService}
  */
 public class ResourceBundleProcessor extends AbstractElementProcessor {
     

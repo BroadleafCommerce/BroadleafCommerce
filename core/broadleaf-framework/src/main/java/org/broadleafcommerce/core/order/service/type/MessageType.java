@@ -87,7 +87,7 @@ public class MessageType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         MessageType other = (MessageType) obj;
         if (type == null) {

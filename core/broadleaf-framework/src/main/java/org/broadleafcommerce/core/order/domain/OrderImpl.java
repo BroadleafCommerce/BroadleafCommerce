@@ -739,7 +739,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         OrderImpl other = (OrderImpl) obj;

@@ -24,6 +24,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.CacheStatType;
@@ -175,21 +176,23 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                 }
             }
         }
+        
         BufferedOutputStream out = null;
+        InputStream ris = null;
         try {
+            ris = resource.getInputStream();
             out = new BufferedOutputStream(new FileOutputStream(tempFile));
-            StreamUtils.copy(resource.getInputStream(), out);
+            StreamUtils.copy(ris, out);
+            
+            ris.close();
+            out.close();
+            
             fileService.addOrUpdateResource(tempWorkArea, tempFile, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            IOUtils.closeQuietly(ris);
+            IOUtils.closeQuietly(out);
             fileService.closeWorkArea(tempWorkArea);
         }
     }

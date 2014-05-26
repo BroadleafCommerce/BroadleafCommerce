@@ -97,7 +97,7 @@ public class OfferTimeZoneType implements Serializable, BroadleafEnumerationType
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OfferTimeZoneType other = (OfferTimeZoneType) obj;
         if (type == null) {

@@ -108,7 +108,7 @@ public class OrderStatus implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OrderStatus other = (OrderStatus) obj;
         if (type == null) {

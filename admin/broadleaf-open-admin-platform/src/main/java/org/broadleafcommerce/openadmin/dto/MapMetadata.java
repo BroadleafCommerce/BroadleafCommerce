@@ -137,7 +137,8 @@ public class MapMetadata extends CollectionMetadata {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof MapMetadata)) return false;
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
         if (!super.equals(o)) return false;
 
         MapMetadata metadata = (MapMetadata) o;

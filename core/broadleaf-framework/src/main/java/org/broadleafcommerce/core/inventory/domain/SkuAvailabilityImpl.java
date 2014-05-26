@@ -226,7 +226,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         SkuAvailabilityImpl other = (SkuAvailabilityImpl) obj;
 

@@ -70,7 +70,7 @@ public class CountryImpl implements Country {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         CountryImpl other = (CountryImpl) obj;
         if (abbreviation == null) {

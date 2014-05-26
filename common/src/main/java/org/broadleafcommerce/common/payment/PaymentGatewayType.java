@@ -20,11 +20,11 @@
 
 package org.broadleafcommerce.common.payment;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 
 /**
@@ -107,7 +107,7 @@ public class PaymentGatewayType implements Serializable, BroadleafEnumerationTyp
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         PaymentGatewayType other = (PaymentGatewayType) obj;
         if (type == null) {

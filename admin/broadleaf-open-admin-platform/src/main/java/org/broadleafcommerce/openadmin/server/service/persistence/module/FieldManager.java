@@ -315,7 +315,7 @@ public class FieldManager {
                 return true;
             if (obj == null)
                 return false;
-            if (getClass() != obj.getClass())
+            if (!getClass().isAssignableFrom(obj.getClass()))
                 return false;
             SortableValue other = (SortableValue) obj;
             if (!getOuterType().equals(other.getOuterType()))

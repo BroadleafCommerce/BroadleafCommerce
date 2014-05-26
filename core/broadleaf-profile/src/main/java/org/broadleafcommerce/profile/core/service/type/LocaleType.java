@@ -114,7 +114,7 @@ public class LocaleType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         LocaleType other = (LocaleType) obj;
         if (type == null) {

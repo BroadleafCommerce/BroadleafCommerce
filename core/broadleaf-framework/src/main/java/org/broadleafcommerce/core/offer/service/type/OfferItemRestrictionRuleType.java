@@ -89,7 +89,7 @@ public class OfferItemRestrictionRuleType implements Serializable, BroadleafEnum
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OfferItemRestrictionRuleType other = (OfferItemRestrictionRuleType) obj;
         if (type == null) {

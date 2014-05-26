@@ -28,20 +28,40 @@ public interface CustomerDao {
     public Customer readCustomerById(Long id);
 
     /**
-     * Returns the first customer that match the passed in username.
+     * Returns the first customer that match the passed in username, with caching defaulted.
      * 
      * @param username
      * @return
      */
     public Customer readCustomerByUsername(String username);
-    
+
     /**
-     * Returns all customers that match the passed in username.
+     * Returns the first customer that match the passed in username, and caches according to
+     * cacheable.
+     * 
+     * @param username
+     * @param cacheable
+     * @return
+     */
+    public Customer readCustomerByUsername(String username, Boolean cacheable);
+
+    /**
+     * Returns all customers that match the passed in username, with caching defaulted.
      * 
      * @param username
      * @return
      */
     public List<Customer> readCustomersByUsername(String username);
+
+    /**
+     * Returns all customers that match the passed in username, and caches according to
+     * cacheable.
+     * 
+     * @param username
+     * @param cacheable
+     * @return
+     */
+    public List<Customer> readCustomersByUsername(String username, Boolean cacheable);
 
     public Customer save(Customer customer);
 

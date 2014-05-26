@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
@@ -62,6 +63,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
@@ -242,11 +244,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Override
     public boolean isPasswordChangeRequired() {
-        if (passwordChangeRequired == null) {
-            return false;
-        } else {
-            return passwordChangeRequired.booleanValue();
-        }
+        return BooleanUtils.toBoolean(passwordChangeRequired);
     }
 
     @Override
@@ -316,11 +314,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Override
     public boolean isReceiveEmail() {
-        if (receiveEmail == null) {
-            return false;
-        } else {
-            return receiveEmail.booleanValue();
-        }
+        return BooleanUtils.toBoolean(receiveEmail);
     }
 
     @Override
@@ -330,11 +324,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Override
     public boolean isRegistered() {
-        if (registered == null) {
-            return true;
-        } else {
-            return registered.booleanValue();
-        }
+        return BooleanUtils.toBoolean(registered);
     }
 
     @Override
@@ -426,11 +416,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Override
     public boolean isDeactivated() {
-        if (deactivated == null) {
-            return false;
-        } else {
-            return deactivated.booleanValue();
-        }
+        return BooleanUtils.toBoolean(deactivated);
     }
 
     @Override
@@ -500,7 +486,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         CustomerImpl other = (CustomerImpl) obj;
