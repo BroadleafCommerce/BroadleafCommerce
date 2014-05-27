@@ -171,7 +171,8 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
                 other = CurrencyConversionContext.getCurrencyConversionService().convertCurrency(other, getCurrency(), amount.scale());
             } else {
                 if (this == Money.ZERO) {
-                    return other;
+                    return new Money(amount.add(other.amount), other.currency, amount.scale() == 0
+                            ? BankersRounding.getScaleForCurrency(other.currency) : amount.scale());
                 } else if (other == Money.ZERO) {
                     return this;
                 }
@@ -195,8 +196,8 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
                 if (other == Money.ZERO) {
                     return this;
                 } else if (this == Money.ZERO) {
-                    return new Money(amount.subtract(other.amount), other.getCurrency(), amount.scale() == 0
-                            ? BankersRounding.getScaleForCurrency(other.getCurrency()) : amount.scale());
+                    return new Money(amount.subtract(other.amount), other.currency, amount.scale() == 0
+                            ? BankersRounding.getScaleForCurrency(other.currency) : amount.scale());
                 }
                 throw new UnsupportedOperationException("No currency conversion service is registered, cannot subtract different currency " +
                         "types (" + getCurrency().getCurrencyCode() + ", " + other.getCurrency().getCurrencyCode() + ")");
@@ -440,6 +441,7 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
             assert brc.getBroadleafCurrency().getCurrencyCode()!=null;
             return Currency.getInstance(brc.getBroadleafCurrency().getCurrencyCode());
         }
+
         if (System.getProperty("currency.default") != null) {
             return Currency.getInstance(System.getProperty("currency.default"));
         }
