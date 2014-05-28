@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -28,7 +29,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.hibernate.tool.hbm2x.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
