@@ -31,6 +31,11 @@ public class CartState {
      * @return the current customer's cart
      */
     public static Order getCart() {
+        if (BroadleafRequestContext.getBroadleafRequestContext() == null ||
+                BroadleafRequestContext.getBroadleafRequestContext().getWebRequest() == null) {
+            return null;
+        }
+
         WebRequest request = BroadleafRequestContext.getBroadleafRequestContext().getWebRequest();
         return (Order) request.getAttribute(CartStateRequestProcessor.getCartRequestAttributeName(), WebRequest.SCOPE_REQUEST);
     }
