@@ -392,7 +392,7 @@ nav > ul.blc-accordion > li:last-child .title {
 	border-bottom: 1px solid #CCC;
 }
 
-nav > ul.blc-accordion > li .title::after {
+nav > ul.blc-accordion > li .title:after {
     content: "";
     display: block;
     width: 0;
@@ -404,7 +404,7 @@ nav > ul.blc-accordion > li .title::after {
     top: 21px;
 }
 
-nav > ul.blc-accordion > li.active .title::after {
+nav > ul.blc-accordion > li.active .title:after {
     content: "";
     display: block;
     width: 0;

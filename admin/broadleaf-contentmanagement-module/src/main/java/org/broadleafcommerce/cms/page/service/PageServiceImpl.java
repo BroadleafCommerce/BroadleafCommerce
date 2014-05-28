@@ -32,6 +32,7 @@ import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageAttribute;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.cms.page.domain.PageRule;
@@ -252,6 +253,12 @@ public class PageServiceImpl implements PageService {
         if (page.getQualifyingItemCriteria() != null && page.getQualifyingItemCriteria().size() > 0) {
             pageDTO.setItemCriteriaDTOList(buildItemCriteriaDTOList(page));
         }
+        
+        for (Entry<String, PageAttribute> entry : page.getAdditionalAttributes().entrySet()) {
+            pageDTO.getPageAttributes().put(entry.getKey(), entry.getValue().getValue());
+        }
+        pageDTO.getPageAttributes().put("title", page.getMetaTitle());
+        pageDTO.getPageAttributes().put("metaDescription", page.getMetaDescription());
 
         return pageDTO;
     }
