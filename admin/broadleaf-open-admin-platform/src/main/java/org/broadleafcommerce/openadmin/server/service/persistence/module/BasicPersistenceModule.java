@@ -986,7 +986,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             switch (persistencePerspective.getOperationTypes().getRemoveType()) {
                 case NONDESTRUCTIVEREMOVE:
                     FieldManager fieldManager = getFieldManager();
-                    FieldMetadata md = mergedUnfilteredProperties.get(foreignKey.getManyToField());
+                    FieldMetadata manyToFieldMetadata = mergedUnfilteredProperties.get(foreignKey.getManyToField());
                     Object foreignKeyValue = entity.getPMap().get(foreignKey.getManyToField()).getValue();
                     try {
                         foreignKeyValue = Long.valueOf((String) foreignKeyValue);
@@ -996,6 +996,19 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     Serializable foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(foreignKey.getForeignKeyClass()), foreignKeyValue);
                     Collection collection = (Collection) fieldManager.getFieldValue(foreignInstance, foreignKey.getOriginatingField());
                     collection.remove(instance);
+                    // if this is a bi-directional @OneToMany/@ManyToOne and there is no @JoinTable (just a foreign key on
+                    // the @ManyToOne side) then it will not be updated. In that instance, we have to explicitly
+                    // set the manyTo field to null so that subsequent lookups will not find it
+                    if (manyToFieldMetadata instanceof BasicFieldMetadata) {
+                        if (((BasicFieldMetadata) manyToFieldMetadata).getRequired()) {
+                            throw new ServiceException("Could not remove from the collection as the ManyToOne side is a"
+                                    + " non-optional relationship. Consider changing 'optional=true' in the @ManyToOne annotation"
+                                    + " or nullable=true within the @JoinColumn annotation");
+                        }
+                        Field manyToField = fieldManager.getField(instance.getClass(), foreignKey.getManyToField());
+                        manyToField.set(instance, null);
+                        instance = persistenceManager.getDynamicEntityDao().merge(instance);
+                    }
                     break;
                 case BASIC:
                     persistenceManager.getDynamicEntityDao().remove(instance);

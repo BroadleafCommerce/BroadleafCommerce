@@ -19,10 +19,12 @@
  */
 package org.broadleafcommerce.openadmin.test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 
 /**
@@ -30,8 +32,9 @@ import junit.framework.TestCase;
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class PropertyValidatorTest extends TestCase {
+public class PropertyValidatorTest {
 
+    @Test
     public void testRequiredValidator() {
         RequiredPropertyValidator validator = new RequiredPropertyValidator();
         BasicFieldMetadata md = new BasicFieldMetadata();
