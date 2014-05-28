@@ -48,6 +48,10 @@ public class CustomerState {
      * @return
      */
     public static Customer getCustomer() {
+        if (BroadleafRequestContext.getBroadleafRequestContext() == null
+                || BroadleafRequestContext.getBroadleafRequestContext().getWebRequest() == null) {
+            return null;
+        }
         WebRequest request = BroadleafRequestContext.getBroadleafRequestContext().getWebRequest();
         return (Customer) request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(), WebRequest.SCOPE_REQUEST);
     }
