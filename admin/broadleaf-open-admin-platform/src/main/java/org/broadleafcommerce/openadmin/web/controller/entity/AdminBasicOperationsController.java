@@ -100,6 +100,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ppr.removeFilterAndSortCriteria("requestingEntityId");
         ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
         ppr.addCustomCriteria("owningClass=" + owningClass);
+        ppr.addCustomCriteria("requestingField=" + collectionField);
         
         DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
         ListGrid listGrid = null;
