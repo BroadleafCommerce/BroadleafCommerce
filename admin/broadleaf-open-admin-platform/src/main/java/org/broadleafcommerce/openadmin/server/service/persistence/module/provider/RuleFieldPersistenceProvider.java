@@ -19,18 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
@@ -56,11 +44,24 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 /**
  * @author Jeff Fischer
@@ -430,7 +431,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     protected DataWrapper convertJsonToDataWrapper(String json) {
         ObjectMapper mapper = new ObjectMapper();
         DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
-        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null));
+        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null, null, null));
         module.addDeserializer(DataDTO.class, dtoDeserializer);
         mapper.registerModule(module);
         if (json == null || "[]".equals(json)){

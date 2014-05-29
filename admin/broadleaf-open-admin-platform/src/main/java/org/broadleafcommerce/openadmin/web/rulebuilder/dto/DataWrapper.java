@@ -19,9 +19,11 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -94,5 +96,18 @@ public class DataWrapper implements Serializable {
 
     public String serialize() throws JsonGenerationException, JsonMappingException, IOException {
         return new ObjectMapper().writeValueAsString(this);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
+            DataWrapper that = (DataWrapper) obj;
+            return new EqualsBuilder()
+                .append(error, that.error)
+                .append(rawMvel, that.rawMvel)
+                .append(data.toArray(), that.data.toArray())
+                .build();
+        }
+        return false;
     }
 }

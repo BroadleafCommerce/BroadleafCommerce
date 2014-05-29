@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.common.web;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
