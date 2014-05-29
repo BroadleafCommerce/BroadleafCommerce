@@ -120,7 +120,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Column(name="FLD_ORDER")
     @AdminPresentation(friendlyName = "FieldDefinitionImpl_fieldOrder", order = 3000)
-    protected int fieldOrder;
+    protected Integer fieldOrder;
 
     @Column (name = "TOOLTIP")
     protected String tooltip;
