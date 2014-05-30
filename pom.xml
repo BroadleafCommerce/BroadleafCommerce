@@ -592,13 +592,6 @@
 
             <!-- JAX-RS Libraries -->
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-json</artifactId>
-                <version>1.17.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
                 <artifactId>jersey-spring</artifactId>
                 <version>1.17.1</version>
@@ -618,6 +611,16 @@
                 <version>1.17.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <version>2.3.3</version>
             </dependency>
 
             <!-- JMS Libraries -->
@@ -1122,11 +1125,6 @@
                 <artifactId>ant</artifactId>
                 <version>1.7.1</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <version>2.3.3</version>
             </dependency>
             <dependency>
                 <groupId>eu.medsea.mimeutil</groupId>
