@@ -572,6 +572,16 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     protected void attachSectionSpecificInfo(PersistencePackageRequest ppr) {
         
     }
+    
+    /**
+     * This method is invoked whenever an assembled EntityForm is rendered. This typically occurs when viewing an entity
+     * in the admin or viewing an error state on a POST for that entity.
+     * 
+     * @param entityForm
+     */
+    protected void modifyEntityForm(EntityForm entityForm, Map<String, String> pathVars) {
+        
+    }
 
     /**
      * A hook method that is invoked every time the {@link #getSectionPersistencePackageRequest(String)} method is invoked.

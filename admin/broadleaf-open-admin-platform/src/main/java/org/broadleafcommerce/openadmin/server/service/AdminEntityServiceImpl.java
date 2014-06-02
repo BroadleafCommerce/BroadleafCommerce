@@ -129,7 +129,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 customCriteria = info.getCustomCriteriaOverride();
             } else {
                 String propertyName = info.getPropertyName();
-                String propertyValue = entityForm.getFields().get(propertyName).getValue();
+                String propertyValue;
+                if (entityForm.getFields().containsKey(propertyName)) {
+                    propertyValue = entityForm.getFields().get(propertyName).getValue();
+                } else {
+                    propertyValue = info.getPropertyValue();
+                }
                 customCriteria = new String[] {info.getCriteriaName(), entityForm.getId(), propertyName, propertyValue};
             }
 

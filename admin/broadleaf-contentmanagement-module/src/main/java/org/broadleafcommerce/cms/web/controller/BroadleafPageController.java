@@ -57,6 +57,7 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
         assert page != null;
 
         model.addObject(MODEL_ATTRIBUTE_NAME, page);
+        model.addObject("pageFields", page.getPageFields()); // For convenience
         model.addObject("BLC_PAGE_TYPE", "page");
 
         String plainTextStr = (String) page.getPageFields().get("plainText");

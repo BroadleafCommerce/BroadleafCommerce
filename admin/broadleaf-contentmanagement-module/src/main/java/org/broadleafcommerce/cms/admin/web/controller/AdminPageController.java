@@ -25,6 +25,7 @@ import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,7 +36,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -105,20 +109,32 @@ public class AdminPageController extends AdminBasicEntityController {
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
             RedirectAttributes ra) throws Exception {
         // Attach the dynamic form info so that the update service will know how to split up the fields
-        DynamicEntityFormInfo info = new DynamicEntityFormInfo()
-                .withCeilingClassName(PageTemplate.class.getName())
-                .withSecurityCeilingClassName(Page.class.getName())
-                .withCriteriaName("constructForm")
-                .withPropertyName("pageTemplate");
+        DynamicEntityFormInfo info = getDynamicForm(entityForm, null);
         entityForm.putDynamicFormInfo("pageTemplate", info);
         
         String returnPath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
         if (result.hasErrors()) {
             info = entityForm.getDynamicFormInfo("pageTemplate");
-            info.setPropertyValue(entityForm.findField("pageTemplate").getValue());
+            if (entityForm.getFields().containsKey("pageTemplate")) {
+                info.setPropertyValue(entityForm.getFields().get("pageTemplate").getValue());
+            }
             
             //grab back the dynamic form that was actually put in
             EntityForm inputDynamicForm = entityForm.getDynamicForm("pageTemplate");
+            if (inputDynamicForm != null) {
+                List<Field> fieldsToChange = new ArrayList<Field>();
+                String prefix = "pageTemplate" + DynamicEntityFormInfo.FIELD_SEPARATOR;
+                for (Entry<String, Field> entry : inputDynamicForm.getFields().entrySet()) {
+                    if (entry.getKey().startsWith(prefix)) {
+                        fieldsToChange.add(entry.getValue());
+                    }
+                }
+                for (Field f : fieldsToChange) {
+                    inputDynamicForm.getFields().remove(f.getName());
+                    f.setName(f.getName().substring(prefix.length()));
+                    inputDynamicForm.getFields().put(f.getName(), f);
+                }
+            }
             
             EntityForm dynamicForm = getDynamicFieldTemplateForm(info, id, inputDynamicForm);
             entityForm.putDynamicForm("pageTemplate", dynamicForm);

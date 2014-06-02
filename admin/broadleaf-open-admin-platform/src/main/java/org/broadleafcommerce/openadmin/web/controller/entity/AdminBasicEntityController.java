@@ -341,6 +341,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
         
+        modifyEntityForm(entityForm, pathVars);
+        
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -404,6 +406,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, subRecordsMap, entityForm, sectionCrumbs);
+            
+            modifyEntityForm(entityForm, pathVars);
             
             model.addAttribute("entity", entity);
             model.addAttribute("currentUrl", request.getRequestURL().toString());

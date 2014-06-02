@@ -112,33 +112,43 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     protected SandBox getSandBox() {
         return sandBoxService.retrieveSandBoxById(SandBoxContext.getSandBoxContext().getSandBoxId());
     }
-    
+
     protected List<FieldGroup> getFieldGroups(Page page, PageTemplate template) {
         if (template != null) {
             return template.getFieldGroups();
         }
+
         if (page.getPageTemplate() != null) {
             return page.getPageTemplate().getFieldGroups();
         }
+
         return new ArrayList<FieldGroup>(0);
     }
 
+    protected List<FieldGroup> getFieldGroups(PersistencePackage pp, DynamicEntityDao dynamicEntityDao) {
+        String pageId = pp.getCustomCriteria()[1];
+        String pageTemplateId = pp.getCustomCriteria().length > 3 ? pp.getCustomCriteria()[3] : null;
+
+        Page page = pageService.findPageById(Long.valueOf(pageId));
+        PageTemplate template = null;
+        if (pageTemplateId != null) {
+            template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
+        }
+        
+        return getFieldGroups(page, template);
+    }
+    
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            String pageId = persistencePackage.getCustomCriteria()[1];
-            String pageTemplateId = persistencePackage.getCustomCriteria().length > 3 ? persistencePackage.getCustomCriteria()[3] : null;
-            Page page = pageService.findPageById(Long.valueOf(pageId));
-            PageTemplate template = null;
-            if (pageTemplateId != null) {
-                template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
-            }
+            List<FieldGroup> fieldGroups = getFieldGroups(persistencePackage, dynamicEntityDao);
+
             ClassMetadata metadata = new ClassMetadata();
             metadata.setCeilingType(PageTemplate.class.getName());
             ClassTree entities = new ClassTree(PageTemplateImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(getFieldGroups(page, template), PageTemplate.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(fieldGroups, PageTemplate.class);
             metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
@@ -249,6 +259,11 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
+            
+            if (StringUtils.isBlank(pageId)) {
+                return persistencePackage.getEntity();
+            }
+            
             Page page = pageService.findPageById(Long.valueOf(pageId));
 
             Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(getFieldGroups(page, null), PageTemplate.class);
