@@ -39,6 +39,7 @@
         <class>org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl</class>
         <class>org.broadleafcommerce.common.site.domain.SiteImpl</class>
         <class>org.broadleafcommerce.common.site.domain.CatalogImpl</class>
+        <class>org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl</class>
         <class>org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl</class>
         <class>org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl</class>
         <class>org.broadleafcommerce.common.config.domain.SystemPropertyImpl</class>

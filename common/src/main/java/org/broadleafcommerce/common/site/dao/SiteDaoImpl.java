@@ -119,7 +119,7 @@ public class SiteDaoImpl implements SiteDao {
             }
             
             // We need to forcefully load this collection.
-            currentSite.getCatalogs().size();
+            currentSite.getCatalogXrefs().size();
         }
 
         return null;
