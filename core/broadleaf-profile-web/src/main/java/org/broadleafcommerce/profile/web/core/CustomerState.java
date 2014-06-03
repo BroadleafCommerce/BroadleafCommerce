@@ -45,6 +45,10 @@ public class CustomerState {
     }
     
     public static Customer getCustomer() {
+        if (BroadleafRequestContext.getBroadleafRequestContext() == null
+                || BroadleafRequestContext.getBroadleafRequestContext().getWebRequest() == null) {
+            return null;
+        }
         return (Customer) BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer();
     }
     

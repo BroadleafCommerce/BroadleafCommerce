@@ -232,6 +232,11 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     public void setDeactivated(boolean deactivated) {
         this.deactivated = deactivated;
     }
+    
+    @Override
+    public boolean isTemplateSite() {
+        return false;
+    }
 
     public void checkCloneable(Site site) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = site.getClass().getMethod("clone", new Class[]{});
