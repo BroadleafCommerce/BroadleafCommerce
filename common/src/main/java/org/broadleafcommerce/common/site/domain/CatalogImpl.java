@@ -79,7 +79,7 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     protected Long id;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "Catalog_Name", order=1, prominent = true)
+    @AdminPresentation(friendlyName = "Catalog_Name", gridOrder = 1, order=1, prominent = true)
     protected String name;
 
     @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "siteCatalogXrefPK.catalog", orphanRemoval = true)
