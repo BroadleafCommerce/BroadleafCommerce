@@ -50,19 +50,19 @@ public class SecureOrderPaymentDaoImpl implements SecureOrderPaymentDao {
     }
 
     public BankAccountPayment createBankAccountPayment() {
-        BankAccountPayment response = (BankAccountPayment) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.payment.domain.secure.BankAccountPayment");
+        BankAccountPayment response = entityConfiguration.createEntityInstance(BankAccountPayment.class.getName(), BankAccountPayment.class);
         response.setEncryptionModule(encryptionModule);
         return response;
     }
 
     public GiftCardPayment createGiftCardPayment() {
-        GiftCardPayment response = (GiftCardPayment) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.payment.domain.secure.GiftCardPayment");
+        GiftCardPayment response = entityConfiguration.createEntityInstance(GiftCardPayment.class.getName(), GiftCardPayment.class);
         response.setEncryptionModule(encryptionModule);
         return response;
     }
 
     public CreditCardPayment createCreditCardPayment() {
-        CreditCardPayment response = (CreditCardPayment) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment");
+        CreditCardPayment response = entityConfiguration.createEntityInstance(CreditCardPayment.class.getName(), CreditCardPayment.class);
         response.setEncryptionModule(encryptionModule);
         return response;
     }
