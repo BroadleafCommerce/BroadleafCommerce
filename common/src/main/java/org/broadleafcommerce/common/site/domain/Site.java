@@ -143,4 +143,11 @@ public interface Site extends Serializable {
     public boolean isDeactivated();
 
     public void setDeactivated(boolean deactivated);
+    
+    /**
+     * This method will return true when the given site was created based on a template.
+     * 
+     * @return whether or not this site is a TemplateSite
+     */
+    public boolean isTemplateSite();
 }
