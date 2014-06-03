@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.web.core;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Component;
