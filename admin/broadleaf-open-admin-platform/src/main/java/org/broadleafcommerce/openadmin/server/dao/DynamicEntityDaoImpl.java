@@ -830,7 +830,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             ceilingEntityFullyQualifiedClassname,
             parentClasses,
             prefix,
-            isParentExcluded
+            isParentExcluded,
+            false
         );
         BasicFieldMetadata presentationAttribute = new BasicFieldMetadata();
         presentationAttribute.setExplicitFieldType(SupportedFieldType.STRING);
@@ -892,7 +893,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         String ceilingEntityFullyQualifiedClassname,
         List<Class<?>> parentClasses,
         String prefix,
-        Boolean isParentExcluded
+        Boolean isParentExcluded,
+        Boolean isComponentPrefix
     ) {
         int j = 0;
         Comparator<String> propertyComparator = new Comparator<String>() {
@@ -948,7 +950,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                             additionalNonPersistentProperties, mergedPropertyType, presentationAttributes,
                             componentProperties, fields, idProperty, populateManyToOneFields, includeFields,
                             excludeFields, configurationKey, ceilingEntityFullyQualifiedClassname, parentClasses,
-                            prefix, isParentExcluded, propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition);
+                            prefix, isParentExcluded, propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition, isComponentPrefix);
                     }
                 }
             }
@@ -975,9 +977,11 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     protected Boolean testPropertyRecursion(String prefix, List<Class<?>> parentClasses, String propertyName, Class<?> targetClass,
-                                                String ceilingEntityFullyQualifiedClassname) {
+                                                String ceilingEntityFullyQualifiedClassname, Boolean isComponentPrefix) {
         Boolean includeField = true;
-        if (!StringUtils.isEmpty(prefix)) {
+        //don't want to shun a self-referencing property in an @Embeddable
+        boolean shouldTest = !StringUtils.isEmpty(prefix) && (!isComponentPrefix || prefix.split(".").length > 1);
+        if (shouldTest) {
             Field testField = getFieldManager().getField(targetClass, propertyName);
             if (testField == null) {
                 Class<?>[] entities;
@@ -1043,11 +1047,12 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             String propertyName,
             Type type,
             boolean propertyForeignKey,
-            int additionalForeignKeyIndexPosition) {
+            int additionalForeignKeyIndexPosition,
+            Boolean isComponentPrefix) {
         FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
         Boolean amIExcluded = isParentExcluded || !testPropertyInclusion(presentationAttribute);
         Boolean includeField = testPropertyRecursion(prefix, parentClasses, propertyName, targetClass,
-            ceilingEntityFullyQualifiedClassname);
+            ceilingEntityFullyQualifiedClassname, isComponentPrefix);
 
         SupportedFieldType explicitType = null;
         if (presentationAttribute != null && presentationAttribute instanceof BasicFieldMetadata) {
@@ -1278,7 +1283,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             ceilingEntityFullyQualifiedClassname,
             parentClasses,
             propertyName + ".",
-            isParentExcluded
+            isParentExcluded,
+            true
         );
         Map<String, FieldMetadata> convertedFields = new HashMap<String, FieldMetadata>();
         for (String key : newFields.keySet()) {
