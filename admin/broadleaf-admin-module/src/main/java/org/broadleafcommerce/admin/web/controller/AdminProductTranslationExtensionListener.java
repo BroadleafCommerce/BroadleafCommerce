@@ -16,14 +16,15 @@
 
 package org.broadleafcommerce.admin.web.controller;
 
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.openadmin.server.service.JSCompatibilityHelper;
 import org.broadleafcommerce.openadmin.web.controller.AdminTranslationControllerExtensionListener;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -40,11 +41,13 @@ public class AdminProductTranslationExtensionListener implements AdminTranslatio
      */
     @Override
     public boolean applyTransformation(TranslationForm form) {
-        if (form.getCeilingEntity().equals(Product.class.getName()) && form.getPropertyName().startsWith("defaultSku.")) {
+        String defaultSkuPrefix = "defaultSku.";
+        String unencodedPropertyName = JSCompatibilityHelper.unencode(form.getPropertyName());
+        if (form.getCeilingEntity().equals(Product.class.getName()) && unencodedPropertyName.startsWith(defaultSkuPrefix)) {
             Product p = catalogService.findProductById(Long.parseLong(form.getEntityId()));
             form.setCeilingEntity(Sku.class.getName());
             form.setEntityId(String.valueOf(p.getDefaultSku().getId()));
-            form.setPropertyName(form.getPropertyName().substring("defaultSku.".length()));
+            form.setPropertyName(unencodedPropertyName.substring(defaultSkuPrefix.length()));
             return true;
         }
         
