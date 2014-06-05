@@ -88,10 +88,6 @@
                 <groupId>org.codehaus.gmaven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <groupId>org.spockframework</groupId>
-                <artifactId>spock-maven</artifactId>
-            </plugin>
             <!-- Include Spock specifications, exclude the browser tests by default -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

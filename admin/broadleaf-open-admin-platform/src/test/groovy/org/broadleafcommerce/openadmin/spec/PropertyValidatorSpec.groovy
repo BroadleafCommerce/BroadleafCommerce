@@ -45,7 +45,7 @@ class PropertyValidatorSpec extends Specification {
     
     def "null values are not valid when required"() {
         when:
-        md.setRequired(true)
+        md.required = true
             
         then:
         validator.validate(null, null, null, md, null, null).isNotValid()
@@ -53,7 +53,7 @@ class PropertyValidatorSpec extends Specification {
     
     def "empty strings are not valid when required"() {
         when:
-        md.setRequired(true)
+        md.required = true
             
         then:
         validator.validate(null, null, null, md, null, "").isNotValid()
@@ -61,7 +61,7 @@ class PropertyValidatorSpec extends Specification {
     
     def "any values are valid when required"() {
         when:
-        md.setRequired(true)
+        md.required = true
             
         then:
         validator.validate(null, null, null, md, null, "testest").isValid()
@@ -70,7 +70,7 @@ class PropertyValidatorSpec extends Specification {
     
     def "non-required metadata should allos nulls and empty strings"() {
         when:
-        md.setRequired(false)
+        md.required = false
             
         then:
         validator.validate(null, null, null, md, null, null).isValid()
@@ -79,10 +79,10 @@ class PropertyValidatorSpec extends Specification {
     
     def "required overrides should always take precedence"() {
         when: "required is true"
-        md.setRequired(true)
+        md.required = true
             
         and: "required override is false"
-        md.setRequiredOverride(false)
+        md.requiredOverride = false
             
         then: "empty strings and nulls and values should be allowed"
         validator.validate(null, null, null, md, null, null).isValid()
@@ -90,10 +90,10 @@ class PropertyValidatorSpec extends Specification {
         validator.validate(null, null, null, md, null, "testtest").isValid()
             
         when: "required is false"
-        md.setRequired(false)
+        md.required = false
             
         and: "required override is true"
-        md.setRequiredOverride(true)
+        md.requiredOverride = true
             
         then: "empty strings and null values should not be allowed"
         validator.validate(null, null, null, md, null, null).isNotValid()
