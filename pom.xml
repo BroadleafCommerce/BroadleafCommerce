@@ -157,9 +157,9 @@
                         <exclude>**/*responsive-tables*</exclude>
                         <exclude>**/spectrum.css</exclude>
                         <exclude>**/spectrum.js</exclude>
-                        <exclude>**/redactor.js</exclude>   
+                        <exclude>**/redactor.js</exclude>
                         <exclude>**/fontcolor.js</exclude>
-                        <exclude>**/typeahead.bundle.js</exclude>
+                        <exclude>**/typeahead.bundle.js</exclude>   
                         <exclude>**/sitemap/**/*.xml</exclude>                       
                     </excludes>
                 </configuration>
