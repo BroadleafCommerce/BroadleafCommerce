@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.core.checkout.service.workflow;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -29,6 +30,7 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
@@ -41,11 +43,14 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -272,13 +277,31 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
 
     /**
      * Default expiration date construction.
-     * Some Payment Gateways may require a different format. Override if necessary.
+     * Some Payment Gateways may require a different format. Override if necessary or set the property
+     * "gateway.config.global.expDateFormat" with a format string to provide the correct format for the configured gateway.
      * @param expMonth
      * @param expYear
      * @return
      */
     protected String constructExpirationDate(Integer expMonth, Integer expYear) {
-        return expMonth+"/"+expYear;
+        SimpleDateFormat sdf = new SimpleDateFormat(getGatewayExpirationDateFormat());
+        DateTime exp = new DateTime()
+                .withYear(expYear)
+                .withMonthOfYear(expMonth);
+
+        return sdf.format(exp.toDate());
+    }
+
+    protected String getGatewayExpirationDateFormat(){
+        String format = BLCSystemProperty.resolveSystemProperty("gateway.config.global.expDateFormat");
+        if (StringUtils.isBlank(format)) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("The System Property 'gateway.config.global.expDateFormat' is not set. " +
+                        "Defaulting to the format 'MM/YY' for the configured gateway.");
+            }
+            format = "MM/YY";
+        }
+        return format;
     }
 
 }
