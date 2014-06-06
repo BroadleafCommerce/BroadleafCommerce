@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -103,6 +104,11 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
                 LOG.trace("Locale set to default locale " + locale);
             }
         }
+        
+        // Set the default locale to override Spring's cookie resolver
+        request.setAttribute(LOCALE_VAR, locale, WebRequest.SCOPE_REQUEST);
+        java.util.Locale javaLocale = BroadleafRequestContext.convertLocaleToJavaLocale(locale);
+        request.setAttribute(CookieLocaleResolver.LOCALE_REQUEST_ATTRIBUTE_NAME, javaLocale, WebRequest.SCOPE_REQUEST);
 
         if (BLCRequestUtils.isOKtoUseSession(request)) {
             request.setAttribute(LOCALE_VAR, locale, WebRequest.SCOPE_GLOBAL_SESSION);
