@@ -159,6 +159,7 @@
                         <exclude>**/spectrum.js</exclude>
                         <exclude>**/redactor.js</exclude>
                         <exclude>**/fontcolor.js</exclude>
+                        <exclude>**/fontsize.js</exclude>
                         <exclude>**/typeahead.bundle.js</exclude>   
                         <exclude>**/sitemap/**/*.xml</exclude>                       
                     </excludes>
