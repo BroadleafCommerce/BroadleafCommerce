@@ -234,7 +234,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity {
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "allParentCategoriesTitle", order = 3000,
         tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
-        joinEntityClass = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl",
+        sortProperty = "displayOrder",
         targetObjectProperty = "categoryProductXref.category",
         parentObjectProperty = "categoryProductXref.product",
         gridVisibleFields = { "name" })
