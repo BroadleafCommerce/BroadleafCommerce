@@ -272,6 +272,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             targetObjectProperty = "category",
             parentObjectProperty = "subCategory",
             friendlyName = "allParentCategoriesTitle",
+            sortProperty = "displayOrder",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             gridVisibleFields = { "name" })
     @ClonePolicyAdornedTargetCollection(unowned = true)
