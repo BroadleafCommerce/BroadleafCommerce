@@ -337,6 +337,16 @@ var BLCAdmin = (function($) {
     	        return;
     	    }
     	    
+    	    //TODO: this chunk needs to be global, so that redactor can see it
+    	    if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
+
+    	    RedactorPlugins.selectAssetButton = {
+    	        init: function()
+    	        {
+    	            this.buttonAdd('selectAssetButton', BLCAdmin.messages.selectUploadAsset, BLCAdmin.asset.selectButtonClickedRedactor);
+    	        }
+    	    };
+    	    
     	    // Set up rich-text HTML editors
             $container.find('.redactor').redactor({
                 buttons : ['html', '|', 'formatting', '|', 'bold', 'italic', 'deleted', '|', 
@@ -353,9 +363,10 @@ var BLCAdmin = (function($) {
                         dropdown: oFontDropdown
                     }
                 },
+                plugins: ['selectAssetButton'],
                 convertDivs : false,
                 xhtml       : true,
-                paragraphy  : false
+                paragraphy  : true
             });
             
             $container.find('textarea.autosize').autosize();
