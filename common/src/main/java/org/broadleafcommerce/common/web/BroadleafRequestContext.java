@@ -252,7 +252,13 @@ public class BroadleafRequestContext {
         if (locale == null || locale.getLocaleCode() == null) {
             return java.util.Locale.getDefault();
         } else {
-            String localeString = locale.getLocaleCode();
+            return BroadleafRequestContext.convertLocaleToJavaLocale(locale);
+        }
+    }
+    
+    public static java.util.Locale convertLocaleToJavaLocale(Locale broadleafLocale) {
+        if (broadleafLocale != null) {
+            String localeString = broadleafLocale.getLocaleCode();
             String[] components = localeString.split("_");
             if (components.length == 1) {
                 return new java.util.Locale(components[0]);
@@ -261,8 +267,8 @@ public class BroadleafRequestContext {
             } else if (components.length == 3) {
                 return new java.util.Locale(components[0], components[1], components[2]);
             }
-            return null;            
         }
+        return null;
     }
     
     public boolean isSecure() {
