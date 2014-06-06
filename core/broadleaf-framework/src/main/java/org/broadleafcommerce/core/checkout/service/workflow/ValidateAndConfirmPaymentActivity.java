@@ -160,6 +160,12 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                             LOG.trace("Transaction Confirmation Raw Response: " +  responseDTO.getRawResponse());
                         }
 
+                        if (responseDTO.getAmount() == null || responseDTO.getPaymentTransactionType() == null) {
+                            //Log an error, an exception will get thrown later as the payments won't add up.
+                            LOG.error("The ResponseDTO returned from the Gateway does not contain either an Amount or Payment Transaction Type. " +
+                                    "Please check your implementation");
+                        }
+
                         // Create a new transaction that references its parent UNCONFIRMED transaction.
                         PaymentTransaction transaction = orderPaymentService.createTransaction();
                         transaction.setAmount(responseDTO.getAmount());
