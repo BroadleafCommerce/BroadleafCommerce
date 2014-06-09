@@ -316,7 +316,8 @@ var BLCAdmin = (function($) {
                 plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
                 convertDivs : false,
                 xhtml       : true,
-                paragraphy  : false
+                paragraphy  : false,
+                deniedTags: []
             });
             
             $container.find('textarea.autosize').autosize();

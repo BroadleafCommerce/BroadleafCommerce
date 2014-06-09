@@ -1765,7 +1765,7 @@
 			var current = this.getCurrent();
 
 			// replace to p before / after the table or body
-			if (!this.opts.linebreaks && current.nodeType == 3 && (parent == false || parent.tagName == 'BODY'))
+			if (!this.opts.linebreaks && current.nodeType == 3 && ((parent == false || parent.tagName == 'BODY') && this.opts.paragraphy))
 			{
 				var node = $('<p>').append($(current).clone());
 				$(current).replaceWith(node);
