@@ -21,8 +21,6 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.payment.PaymentType;
-import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
@@ -53,8 +51,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     public PaymentRequestDTO translateOrder(Order order) {
         if (order != null) {
             PaymentRequestDTO requestDTO = new PaymentRequestDTO()
-                    .orderId(order.getId().toString())
-                    .orderCurrencyCode(order.getCurrency().getCurrencyCode());
+                    .orderId(order.getId().toString());
+            if (order.getCurrency() != null) {
+                requestDTO.orderCurrencyCode(order.getCurrency().getCurrencyCode());
+            }
 
             populateCustomerInfo(order, requestDTO);
             populateShipTo(order, requestDTO);
