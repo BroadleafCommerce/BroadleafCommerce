@@ -47,7 +47,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -273,15 +275,35 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     fieldManager.setFieldValue(instance, "id", null);
                 }
                 if (adornedTargetList.getSortField() != null) {
+                    // Construct a query that gets the last element in the join list ordered by the sort property. This will
+                    // ensure that the new record is always the last element in the list
                     CriteriaTransferObject cto = new CriteriaTransferObject();
                     FilterAndSortCriteria filterCriteria = cto.get(adornedTargetList.getCollectionFieldName());
                     filterCriteria.setFilterValue(entity.findProperty(adornedTargetList.getInverse() ? targetPath : linkedPath).getValue());
                     FilterAndSortCriteria sortCriteria = cto.get(adornedTargetList.getSortField());
-                    sortCriteria.setSortAscending(adornedTargetList.getSortAscending());
+                    // criteria for which way to sort should be the opposite of how it is normally sorted so that it is
+                    // always inserted at the end
+                    sortCriteria.setSortAscending(!adornedTargetList.getSortAscending());
                     List<FilterMapping> filterMappings = getAdornedTargetFilterMappings(persistencePerspective, cto,
                             mergedProperties, adornedTargetList);
-                    int totalRecords = getTotalRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings);
-                    fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), Long.valueOf(totalRecords + 1));
+                    List<Serializable> joinList = getPersistentRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings, 0, 1);
+                    
+                    Object adornedLastOrdering = null;
+                    if (CollectionUtils.isNotEmpty(joinList)) {
+                        adornedLastOrdering = fieldManager.getFieldValue(joinList.get(0), adornedTargetList.getSortField());
+                    }
+                    Field sortFieldDef = fieldManager.getField(instance.getClass(), adornedTargetList.getSortField());
+                    int add = (adornedLastOrdering == null) ? 0 : 1;
+                    if (sortFieldDef.getType().isAssignableFrom(Long.class)) {
+                        adornedLastOrdering = (adornedLastOrdering == null) ? new Long(0) : adornedLastOrdering;
+                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), new Long(((Long) adornedLastOrdering).longValue() + add));
+                    } else if (sortFieldDef.getType().isAssignableFrom(Integer.class)) {
+                        adornedLastOrdering = (adornedLastOrdering == null) ? new Integer(0) : adornedLastOrdering;
+                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), new Integer(((Integer) adornedLastOrdering).intValue() + add));
+                    } else if (sortFieldDef.getType().isAssignableFrom(BigDecimal.class)) {
+                        adornedLastOrdering = (adornedLastOrdering == null) ? BigDecimal.ZERO : adornedLastOrdering;
+                        fieldManager.setFieldValue(instance, adornedTargetList.getSortField(), ((BigDecimal) adornedLastOrdering).add(new BigDecimal(add)));
+                    }
                 }
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
                 persistenceManager.getDynamicEntityDao().clear();
@@ -455,15 +477,15 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
     }
 
     public class AdornedTargetRetrieval {
-        private PersistencePackage persistencePackage;
-        private PersistencePerspective persistencePerspective;
+        private final PersistencePackage persistencePackage;
+        private final PersistencePerspective persistencePerspective;
         private Entity entity;
-        private AdornedTargetList adornedTargetList;
+        private final AdornedTargetList adornedTargetList;
         private Map<String, FieldMetadata> mergedProperties;
         private List<Serializable> records;
         private int index;
         private List<FilterMapping> filterMappings;
-        private CriteriaTransferObject cto;
+        private final CriteriaTransferObject cto;
 
         // This constructor is used by the update method
         public AdornedTargetRetrieval(PersistencePackage persistencePackage, Entity entity, AdornedTargetList adornedTargetList) {
