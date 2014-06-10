@@ -40,5 +40,6 @@
     <bean id="org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfiguration" class="org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfigurationImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.sandbox.domain.SandBoxManagement" class="org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.site.domain.Site" class="org.broadleafcommerce.common.site.domain.SiteImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.site.domain.Catalog" class="org.broadleafcommerce.common.site.domain.CatalogImpl" scope="prototype" />
 
 </beans>

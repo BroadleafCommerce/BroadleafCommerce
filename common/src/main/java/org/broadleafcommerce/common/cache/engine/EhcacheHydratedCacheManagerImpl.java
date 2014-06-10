@@ -57,14 +57,14 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
         //CacheManager.getInstance() and CacheManager.create() cannot be called in this constructor because it will create two cache manager instances
     }
     
-    private Cache getHeap() {
+    private synchronized Cache getHeap() {
         if (heap == null) {
             if (CacheManager.getInstance().cacheExists("hydrated-cache")) {
                 heap = CacheManager.getInstance().getCache("hydrated-cache");
             } else {
                 CacheConfiguration config = new CacheConfiguration("hydrated-cache", 0).eternal(true).overflowToDisk(false).maxElementsInMemory(100000);
                 Cache cache = new Cache(config);
-            CacheManager.create().addCache(cache);
+                CacheManager.create().addCache(cache);
                 heap = cache;
             }
         }

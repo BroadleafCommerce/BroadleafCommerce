@@ -40,6 +40,8 @@ public interface SystemPropertiesService {
      */
     String resolveSystemProperty(String name);
 
+    String resolveSystemProperty(String name, String defaultValue);
+    
     /**
      * Resolves an int system property.  Returns 0 when no matching property
      * is found.
@@ -48,6 +50,8 @@ public interface SystemPropertiesService {
      * @return
      */
     int resolveIntSystemProperty(String name);
+    
+    int resolveIntSystemProperty(String name, int defaultValue);
 
     /**
      * Resolves a boolean system property.   Returns false when no matching
@@ -57,6 +61,11 @@ public interface SystemPropertiesService {
      * @return
      */
     boolean resolveBooleanSystemProperty(String name);
+    
+    /**
+     * 
+     */
+    boolean resolveBooleanSystemProperty(String name, boolean defaultValue);
 
     /**
      * Resolves an long system property. Returns 0 when no matching property
@@ -65,6 +74,8 @@ public interface SystemPropertiesService {
      * @return
      */
     long resolveLongSystemProperty(String name);
+    
+    long resolveLongSystemProperty(String name, long defaultValue);
 
     /**
      * Determines if the given value is valid for the specified type

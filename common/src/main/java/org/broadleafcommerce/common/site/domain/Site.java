@@ -19,10 +19,11 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 
 /**
  * Created by bpolster.
@@ -60,6 +61,7 @@ public interface Site extends Serializable {
      *
      * @return
      */
+    @Deprecated
     public String getSiteIdentifierType();
 
     /**
@@ -68,6 +70,7 @@ public interface Site extends Serializable {
      * @see #getSiteIdentifierType()
      * @param siteIdentifierType
      */
+    @Deprecated
     public void setSiteIdentifierType(String siteIdentifierType);
 
     /**
@@ -123,8 +126,17 @@ public interface Site extends Serializable {
      * @return a deep copy of this site
      */
     public Site clone();
+    
+    public ArchiveStatus getArchiveStatus();
 
     public boolean isDeactivated();
 
     public void setDeactivated(boolean deactivated);
+    
+    /**
+     * This method will return true when the given site was created based on a template.
+     * 
+     * @return whether or not this site is a TemplateSite
+     */
+    public boolean isTemplateSite();
 }

@@ -28,7 +28,7 @@ $(document).ready(function() {
 	});
 	
 	$('body').on('hide', '.modal', function () {
-		$("html").css({ overflow: 'inherit' });
+		$("html").css({ overflow: 'auto' });
 	});
 	
 	$('body').on('click', 'a.modal-view', function() {

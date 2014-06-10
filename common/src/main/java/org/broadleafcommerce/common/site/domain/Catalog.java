@@ -38,5 +38,5 @@ public interface Catalog extends Serializable {
     List<Site> getSites();
 
     void setSites(List<Site> sites);
-
+    
 }

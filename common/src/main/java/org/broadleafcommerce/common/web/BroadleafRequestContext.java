@@ -170,11 +170,25 @@ public class BroadleafRequestContext {
         return webRequest;
     }
 
+    /**
+     * Returns a Site instance that is not attached to any Hibernate session
+     * @return
+     */
+    @Deprecated
     public Site getSite() {
-        return site;
+        return getNonPersistentSite();
     }
 
+    @Deprecated
     public void setSite(Site site) {
+        setNonPersistentSite(site);
+    }
+    
+    public Site getNonPersistentSite() {
+        return site;
+    }
+    
+    public void setNonPersistentSite(Site site) {
         this.site = site;
     }
 
@@ -270,17 +284,16 @@ public class BroadleafRequestContext {
         if (locale == null || locale.getLocaleCode() == null) {
             return java.util.Locale.getDefault();
         } else {
-            String localeString = locale.getLocaleCode();
-            String[] components = localeString.split("_");
-            if (components.length == 1) {
-                return new java.util.Locale(components[0]);
-            } else if (components.length == 2) {
-                return new java.util.Locale(components[0], components[1]);
-            } else if (components.length == 3) {
-                return new java.util.Locale(components[0], components[1], components[2]);
-            }
-            return null;            
+            return BroadleafRequestContext.convertLocaleToJavaLocale(locale);
         }
+    }
+    
+    public static java.util.Locale convertLocaleToJavaLocale(Locale broadleafLocale) {
+        if (broadleafLocale != null) {
+            String localeString = broadleafLocale.getLocaleCode();
+            return org.springframework.util.StringUtils.parseLocaleString(localeString);
+        }
+        return null;
     }
     
     public boolean isSecure() {

@@ -37,7 +37,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -291,6 +290,23 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
 
     @Override
+    public boolean isConfirmed() {
+        for (PaymentTransaction tx : getTransactions()){
+            if ((PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType()) ||
+                    PaymentTransactionType.AUTHORIZE.equals(tx.getType()))
+                    && tx.getSuccess()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isFinalPayment() {
+        return PaymentType.CREDIT_CARD.equals(getType()) || PaymentType.THIRD_PARTY_ACCOUNT.equals(getType());
+    }
+
+    @Override
     public BroadleafCurrency getCurrency() {
         if (order != null) {
             return order.getCurrency();
@@ -329,7 +345,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof OrderPaymentImpl) {
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             OrderPaymentImpl that = (OrderPaymentImpl) obj;
             return new EqualsBuilder()
                 .append(this.id, that.id)

@@ -21,10 +21,14 @@ package org.broadleafcommerce.common.site.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -56,7 +60,8 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER)
 })
-public class CatalogImpl implements Catalog {
+@AdminPresentationClass(friendlyName = "CatalogImpl")
+public class CatalogImpl implements Catalog, AdminMainEntity {
 
     private static final Log LOG = LogFactory.getLog(CatalogImpl.class);
 
@@ -74,15 +79,16 @@ public class CatalogImpl implements Catalog {
     protected Long id;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "Catalog_Name", order=1, prominent = true)
+    @AdminPresentation(friendlyName = "Catalog_Name", gridOrder = 1, order=1, prominent = true)
     protected String name;
-
+    
     @ManyToMany(targetEntity = SiteImpl.class)
     @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "CATALOG_ID"), inverseJoinColumns = @JoinColumn(name = "SITE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "sitesTitle", manyToField = "catalogs")
     protected List<Site> sites = new ArrayList<Site>();
-
+    
     @Override
     public Long getId() {
         return id;
@@ -138,6 +144,11 @@ public class CatalogImpl implements Catalog {
         }
 
         return clone;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getName();
     }
 
 }

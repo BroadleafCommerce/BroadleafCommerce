@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.web.core;
 
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,10 @@ public class CustomerState {
     }
     
     public static Customer getCustomer() {
+        if (BroadleafRequestContext.getBroadleafRequestContext() == null
+                || BroadleafRequestContext.getBroadleafRequestContext().getWebRequest() == null) {
+            return null;
+        }
         return (Customer) BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer();
     }
     

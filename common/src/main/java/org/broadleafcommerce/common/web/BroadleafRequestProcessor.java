@@ -46,6 +46,7 @@ import java.util.TimeZone;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+
 /**
  * 
  * @author Phillip Verheyden
@@ -93,9 +94,10 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     
     @Override
     public void process(WebRequest request) {
-        Site site = siteResolver.resolveSite(request);
-
         BroadleafRequestContext brc = new BroadleafRequestContext();
+        brc.getAdditionalProperties().putAll(entityExtensionManagers);
+        
+        Site site = siteResolver.resolveSite(request);
         
         brc.setSite(site);
         brc.setWebRequest(request);
@@ -178,7 +180,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             brc.setAdminUserId(Long.parseLong(adminUserId));
         }
 
-        brc.getAdditionalProperties().putAll(entityExtensionManagers);
     }
 
     @Override

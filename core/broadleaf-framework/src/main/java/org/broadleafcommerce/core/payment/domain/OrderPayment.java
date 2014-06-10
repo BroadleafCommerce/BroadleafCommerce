@@ -195,6 +195,28 @@ public interface OrderPayment extends Serializable, Status {
     public Money getSuccessfulTransactionAmountForType(PaymentTransactionType type);
 
     /**
+     * Looks through all of the transactions for this payment and returns whether or not
+     * it contains a transaction of type {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE} or
+     * {@link PaymentTransactionType#AUTHORIZE}
+     *
+     * @return
+     */
+    public boolean isConfirmed();
+
+    /**
+     * Returns whether or not this payment is considered to be the final payment on the order.
+     * The default implementation considers those payment of type {@link PaymentType#THIRD_PARTY_ACCOUNT}
+     * and {@link PaymentType#CREDIT_CARD} final payments because integrations with external Payment Gateways require it.
+     *
+     * For example, a THIRD_PARTY_ACCOUNT payment's (e.g. PayPal Express Checkout) amount to charge
+     * to the customer will be automatically calculated based on other payments that have already been applied
+     * to the order, such as GIFT_CARDs or ACCOUNT_CREDITs. This final amount (OrderPayment) will be sent to the gateway.
+     *
+     * @return
+     */
+    public boolean isFinalPayment();
+
+    /**
      * The currency that this payment should be taken in. This is a delegate to {@link #getOrder()#getCurrency()}.
      */
     public BroadleafCurrency getCurrency();

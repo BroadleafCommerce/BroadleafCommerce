@@ -99,7 +99,7 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ChallengeQuestionImpl other = (ChallengeQuestionImpl) obj;
 

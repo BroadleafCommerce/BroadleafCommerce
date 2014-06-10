@@ -23,7 +23,7 @@
             <button th:each="action : ${mainActions}" 
                 class="button small radius dark right" 
                 th:type="${action.buttonType}"
-                th:attr="data-url=@{${sectionKey + action.urlPostfix}}"
+                th:attr="data-url=@{${'/' + sectionKey + action.urlPostfix}}"
                 th:classappend="${action.buttonClass}"
                 th:inline="text">
                 <div th:unless="${#strings.isEmpty(action.iconClass)}" th:remove="tag">

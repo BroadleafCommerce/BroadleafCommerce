@@ -142,36 +142,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // If the gateway sends back Shipping Information, we will save that to the first shippable fulfillment group.
         populateShippingInfo(responseDTO, order);
 
-        // If this gateway does not support multiple payments then mark all of the existing payments
-        // as invalid before adding the new one
-        List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
-        Address tempBillingAddress = null;
-        if (!config.handlesMultiplePayments()) {
-            PaymentGatewayType gateway = config.getGatewayType();
-            for (OrderPayment payment : order.getPayments()) {
-                // There may be a temporary Order Payment on the Order (e.g. to save the billing address)
-                // This will be marked as invalid, as the billing address that will be saved on the order will be parsed off the
-                // Response DTO sent back from the Gateway as it may have Address Verification or Standardization.
-                // If you do not wish to use the Billing Address coming back from the Gateway, you can override the
-                // populateBillingInfo() method
-                if (PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType()) ||
-                        (payment.getGatewayType() != null && payment.getGatewayType().equals(gateway))) {
-
-                    paymentsToInvalidate.add(payment);
-
-                    if (PaymentType.CREDIT_CARD.equals(payment.getType()) &&
-                            PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType()) ) {
-                        tempBillingAddress = payment.getBillingAddress();
-                    }
-                }
-            }
-        }
-
-        for (OrderPayment payment : paymentsToInvalidate) {
-            order.getPayments().remove(payment);
-            markPaymentAsInvalid(payment.getId());
-        }
-
         // ALWAYS create a new order payment for the payment that comes in. Invalid payments should be cleaned up by
         // invoking {@link #markPaymentAsInvalid}.
         OrderPayment payment = orderPaymentService.create();
@@ -179,6 +149,40 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         payment.setPaymentGatewayType(responseDTO.getPaymentGatewayType());
         payment.setAmount(responseDTO.getAmount());
 
+        // If this gateway does not support multiple payments then mark all of the existing payments
+        // as invalid before adding the new one
+        List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
+        Address tempBillingAddress = null;
+        if (!config.handlesMultiplePayments()) {
+            PaymentGatewayType gateway = config.getGatewayType();
+            for (OrderPayment p : order.getPayments()) {
+                // A Payment on the order will be invalidated if:
+                // - It's a temporary order payment: There may be a temporary Order Payment on the Order (e.g. to save the billing address)
+                // - The payment being added is a Final Payment and there already exists a Final Payment
+                // - The payment being added has the same gateway type of an existing one.
+                if (PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ||
+                        (p.isFinalPayment() && payment.isFinalPayment()) ||
+                        (p.getGatewayType() != null && p.getGatewayType().equals(gateway))) {
+
+                    paymentsToInvalidate.add(p);
+
+                    if (PaymentType.CREDIT_CARD.equals(p.getType()) &&
+                            PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ) {
+                        tempBillingAddress = p.getBillingAddress();
+                    }
+                }
+            }
+        }
+
+        for (OrderPayment invalid : paymentsToInvalidate) {
+            order.getPayments().remove(invalid);
+            markPaymentAsInvalid(invalid.getId());
+        }
+
+        // The billing address that will be saved on the order will be parsed off the
+        // Response DTO sent back from the Gateway as it may have Address Verification or Standardization.
+        // If you do not wish to use the Billing Address coming back from the Gateway, you can override the
+        // populateBillingInfo() method or set the useBillingAddressFromGateway property.
         populateBillingInfo(responseDTO, payment, tempBillingAddress);
         
         // Create the transaction for the payment
@@ -236,7 +240,10 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             billingAddress.setCity(billToDTO.getAddressCityLocality());
 
             //TODO: what happens if State and Country cannot be found?
-            State state = stateService.findStateByAbbreviation(billToDTO.getAddressStateRegion());
+            State state = null;
+            if(billToDTO.getAddressStateRegion() != null) {
+                state = stateService.findStateByAbbreviation(billToDTO.getAddressStateRegion());
+            }
             if (state == null) {
                 LOG.warn("The given state from the response: " + billToDTO.getAddressStateRegion() + " could not be found"
                         + " as a state abbreviation in BLC_STATE");
@@ -245,7 +252,10 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
             billingAddress.setPostalCode(billToDTO.getAddressPostalCode());
 
-            Country country = countryService.findCountryByAbbreviation(billToDTO.getAddressCountryCode());
+            Country country = null;
+            if (billToDTO.getAddressCountryCode() != null) {
+                country = countryService.findCountryByAbbreviation(billToDTO.getAddressCountryCode());
+            }
             if (country == null) {
                 LOG.warn("The given country from the response: " + billToDTO.getAddressCountryCode() + " could not be found"
                         + " as a country abbreviation in BLC_COUNTRY");
@@ -274,8 +284,11 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             shippingAddress.setAddressLine1(shipToDTO.getAddressLine1());
             shippingAddress.setAddressLine2(shipToDTO.getAddressLine2());
             shippingAddress.setCity(shipToDTO.getAddressCityLocality());
-
-            State state = stateService.findStateByAbbreviation(shipToDTO.getAddressStateRegion());
+            
+            State state = null;
+            if(shipToDTO.getAddressStateRegion() != null) {
+                state = stateService.findStateByAbbreviation(shipToDTO.getAddressStateRegion());
+            }
             if (state == null) {
                 LOG.warn("The given state from the response: " + shipToDTO.getAddressStateRegion() + " could not be found"
                         + " as a state abbreviation in BLC_STATE");
@@ -284,7 +297,10 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
             shippingAddress.setPostalCode(shipToDTO.getAddressPostalCode());
 
-            Country country = countryService.findCountryByAbbreviation(shipToDTO.getAddressCountryCode());
+            Country country = null;
+            if (shipToDTO.getAddressCountryCode() != null) {
+                country = countryService.findCountryByAbbreviation(shipToDTO.getAddressCountryCode());
+            }
             if (country == null) {
                 LOG.warn("The given country from the response: " + shipToDTO.getAddressCountryCode() + " could not be found"
                         + " as a country abbreviation in BLC_COUNTRY");

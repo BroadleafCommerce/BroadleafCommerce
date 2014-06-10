@@ -70,11 +70,14 @@
         <property name="templateTokens" ref="blDirectCopyTransformTokenMap"/>
     </bean>
 
+    <bean id="blEntityMarkerClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer" />
+
     <!-- to be overriden by 3rd party modules -->
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <ref bean="blAnnotationDirectCopyClassTransformer"/>
+                <ref bean="blEntityMarkerClassTransformer"/>
             </list>
         </property>
     </bean>
@@ -253,7 +256,19 @@
     <bean id="blVariableExpressionEvaluator" class="org.broadleafcommerce.common.web.expression.BroadleafVariableExpressionEvaluator" />
     <bean id="blDataDrivenEnumerationProcessor" class="org.broadleafcommerce.common.web.processor.DataDrivenEnumerationProcessor" />
     <bean id="blResourceBundleProcessor" class="org.broadleafcommerce.common.web.processor.ResourceBundleProcessor" />
-    <bean id="blConfigVariableProcessor" class="org.broadleafcommerce.common.web.processor.ConfigVariableProcessor" />    
+    <bean id="blConfigVariableProcessor" class="org.broadleafcommerce.common.web.processor.ConfigVariableProcessor" />
+    
+    <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
+    <!-- own dialect and add your processors there. -->
+    <bean id="blDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blDataDrivenEnumerationProcessor" />
+                <ref bean="blResourceBundleProcessor" />
+                <ref bean="blConfigVariableProcessor" />
+            </set>
+        </property>
+    </bean>
     
     <bean id="blSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">

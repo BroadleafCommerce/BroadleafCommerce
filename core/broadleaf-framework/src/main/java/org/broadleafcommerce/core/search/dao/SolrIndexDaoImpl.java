@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
@@ -45,6 +47,7 @@ import javax.persistence.TypedQuery;
  */
 @Repository("blSolrIndexDao")
 public class SolrIndexDaoImpl implements SolrIndexDao {
+    protected static final Log LOG = LogFactory.getLog(SolrIndexDaoImpl.class);
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -125,7 +128,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
             count++;
             pos = (count * batchSize) < products.length ? (count * batchSize) : products.length;
         }
-        readFullCategoryHierarchy(parentCategoriesByCategory);
+        readFullCategoryHierarchy(parentCategoriesByCategory, new HashSet<Long>());
         catalogStructure.getParentCategoriesByProduct().putAll(parentCategoriesByProduct);
         catalogStructure.getParentCategoriesByCategory().putAll(parentCategoriesByCategory);
     }
@@ -141,7 +144,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
      *
      * @param categoryHierarchy
      */
-    protected void readFullCategoryHierarchy(Map<Long, Set<Long>> categoryHierarchy) {
+    protected void readFullCategoryHierarchy(Map<Long, Set<Long>> categoryHierarchy, Set<Long> builtCategories) {
         Map<Long, Set<Long>> nextLevel = new HashMap<Long, Set<Long>>();
         Long[] categoryIds = categoryHierarchy.keySet().toArray(new Long[categoryHierarchy.keySet().size()]);
         int batchSize = 800;
@@ -161,6 +164,14 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                 if (childSandBoxVal == null) {
                     childSandBoxVal = item.getChild();
                 }
+                
+                if (builtCategories.contains(childSandBoxVal)) {
+                    LOG.warn("Category circular reference identified for category id " + childSandBoxVal);
+                    continue;
+                } else {
+                    builtCategories.add(childSandBoxVal);
+                }
+                
                 Set<Long> hierarchy = categoryHierarchy.get(childSandBoxVal);
                 if (item.getParent() != null) {
                     //We only want the sandbox parent - if applicable
@@ -189,7 +200,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
             pos = (count * batchSize) < categoryIds.length ? (count * batchSize) : categoryIds.length;
         }
         if (!nextLevel.isEmpty()) {
-            readFullCategoryHierarchy(nextLevel);
+            readFullCategoryHierarchy(nextLevel, builtCategories);
         }
         categoryHierarchy.putAll(nextLevel);
     }

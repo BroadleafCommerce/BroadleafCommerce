@@ -96,6 +96,9 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                     if (myProperty != null) {
                         entity.addProperty(myProperty);
                     }
+                } else if (submittedEntity.findProperty(entry.getKey()) != null ){
+                    // Set the dirty state of the property
+                    entity.findProperty(entry.getKey()).setIsDirty(submittedEntity.findProperty(entry.getKey()).getIsDirty());
                 }
             }
             isUpdateRequest = true;
@@ -107,7 +110,9 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
             FieldMetadata metadata = metadataEntry.getValue();
 
             //Don't test this field if it was not inherited from our polymorphic type (or supertype)
-            if (types.contains(metadata.getInheritedFromType())) {
+            if (types.contains(metadata.getInheritedFromType())
+                    || instance.getClass().getName().equals(metadata.getInheritedFromType())) {
+                
                 Property property = entity.getPMap().get(metadataEntry.getKey());
 
                 // This property should be set to false only in the case where we are adding a member to a collection

@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
+import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
@@ -46,6 +47,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.annotation.Resource;
@@ -91,6 +93,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     
     @Value("${" + ADMIN_ENFORCE_PRODUCTION_WORKFLOW_KEY + ":true}")
     protected boolean enforceProductionWorkflowUpdate = true;
+    
+    @Resource(name="blEntityExtensionManagers")
+    protected Map<String, ExtensionManager> entityExtensionManagers;
 
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
@@ -99,6 +104,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             brc = new BroadleafRequestContext();
             BroadleafRequestContext.setBroadleafRequestContext(brc);
         }
+        
+        brc.getAdditionalProperties().putAll(entityExtensionManagers);
+        
         if (brc.getSite() == null) {
             Site site = siteResolver.resolveSite(request);
             brc.setSite(site);

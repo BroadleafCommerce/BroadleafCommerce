@@ -126,7 +126,7 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
+        if (!getClass().isAssignableFrom(obj.getClass())) return false;
         OrderItemQualifierImpl other = (OrderItemQualifierImpl) obj;
         if (id == null) {
             if (other.id != null) return false;

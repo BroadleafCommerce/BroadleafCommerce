@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -72,9 +73,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * <p>
  * This is a Thymeleaf Processor that aids in rendering a dynamic One Page Checkout screen.
  * These sections are driven by the state of the order and whether or not certain integrated payment
- * modules are enabled (e.g. PayPal Express Review Page etc...). For example, if there are no shippable fulfillment
+ * modules are enabled (e.g. PayPal Express Review Page etc...).
+ * 
+ * <p>
+ * For example, if there are no shippable fulfillment
  * groups on the order, then the shipping section should not be shown. Or, if the user is redirected
  * back from a Third Party Payment gateway to complete the order (e.g. PayPal Express Checkout), then
  * the billing section will not be shown.
@@ -288,11 +293,19 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         }
 
         boolean orderContainsThirdPartyPayment = false;
+        boolean orderContainsUnconfirmedCreditCard = false;
+        OrderPayment unconfirmedCC = null;
         if (CartState.getCart().getPayments() != null) {
             for (OrderPayment payment : CartState.getCart().getPayments()) {
-                if (PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())
-                        && payment.isActive()) {
+                if (payment.isActive() &&
+                        PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
                     orderContainsThirdPartyPayment = true;
+                }
+                if (payment.isActive() &&
+                        (PaymentType.CREDIT_CARD.equals(payment.getType()) &&
+                                !PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType()))) {
+                    orderContainsUnconfirmedCreditCard = true;
+                    unconfirmedCC = payment;
                 }
             }
         }
@@ -300,7 +313,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         //Toggle the Payment Info Section based on what payments were applied to the order
         //(e.g. Third Party Account (i.e. PayPal Express) or Gift Cards/Customer Credit)
         Money orderTotalAfterAppliedPayments = CartState.getCart().getTotalAfterAppliedPayments();
-        if (orderContainsThirdPartyPayment) {
+        if (orderContainsThirdPartyPayment || orderContainsUnconfirmedCreditCard) {
             showBillingInfoSection = false;
             showAllPaymentMethods = false;
         } else if (orderTotalAfterAppliedPayments != null
@@ -313,6 +326,8 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         localVars.put("showBillingInfoSection", showBillingInfoSection);
         localVars.put("showAllPaymentMethods", showAllPaymentMethods);
         localVars.put("orderContainsThirdPartyPayment", orderContainsThirdPartyPayment);
+        localVars.put("orderContainsUnconfirmedCreditCard", orderContainsUnconfirmedCreditCard);
+        localVars.put("unconfirmedCC", unconfirmedCC);
 
         //The Sections are all initialized to INACTIVE view
         List<CheckoutSectionDTO> drawnSections = new LinkedList<CheckoutSectionDTO>();

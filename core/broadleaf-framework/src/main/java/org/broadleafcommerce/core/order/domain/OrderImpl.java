@@ -33,6 +33,8 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
 import org.broadleafcommerce.common.persistence.Previewable;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -342,7 +344,10 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         }
         Money totalPayments = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderPayment payment : getPayments()) {
-            if (payment.isActive() && payment.getAmount() != null) {
+            //add up all active payments that are not UNCONFIRMED Final Payments
+            if (payment.isActive() && payment.getAmount() != null && !payment.isFinalPayment()) {
+                totalPayments = totalPayments.add(payment.getAmount());
+            } else if (payment.isActive() && payment.getAmount() != null && payment.isFinalPayment() && payment.isConfirmed()) {
                 totalPayments = totalPayments.add(payment.getAmount());
             }
         }
@@ -739,7 +744,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         OrderImpl other = (OrderImpl) obj;

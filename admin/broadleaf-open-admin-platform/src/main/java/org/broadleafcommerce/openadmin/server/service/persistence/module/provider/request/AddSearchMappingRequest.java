@@ -24,6 +24,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
 
 import java.util.Map;
@@ -42,12 +43,14 @@ public class AddSearchMappingRequest {
     private final String propertyName;
     private final FieldManager fieldManager;
     private final DataFormatProvider dataFormatProvider;
+    private final RecordHelper recordHelper;
     private final RestrictionFactory restrictionFactory;
 
     public AddSearchMappingRequest(PersistencePerspective persistencePerspective, CriteriaTransferObject
             requestedCto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties,
                                    String propertyName, FieldManager fieldManager,
-                                   DataFormatProvider dataFormatProvider, RestrictionFactory restrictionFactory) {
+                                   DataFormatProvider dataFormatProvider, RecordHelper recordHelper,
+                                   RestrictionFactory restrictionFactory) {
         this.persistencePerspective = persistencePerspective;
         this.requestedCto = requestedCto;
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
@@ -55,6 +58,7 @@ public class AddSearchMappingRequest {
         this.propertyName = propertyName;
         this.fieldManager = fieldManager;
         this.dataFormatProvider = dataFormatProvider;
+        this.recordHelper = recordHelper;
         this.restrictionFactory = restrictionFactory;
     }
 
@@ -84,6 +88,10 @@ public class AddSearchMappingRequest {
     
     public DataFormatProvider getDataFormatProvider() {
         return dataFormatProvider;
+    }
+    
+    public RecordHelper getRecordHelper() {
+        return recordHelper;
     }
 
     public RestrictionFactory getRestrictionFactory() {

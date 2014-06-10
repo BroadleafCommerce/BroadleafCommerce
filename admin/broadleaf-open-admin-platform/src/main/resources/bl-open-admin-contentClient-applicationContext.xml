@@ -115,7 +115,7 @@
                 <ref bean="blRuleFieldPersistenceProvider"/>                
                 <ref bean="blMapFieldPersistenceProvider"/>
                 <ref bean="blMoneyFieldPersistenceProvider"/>
-                <ref bean="blMediaFieldPersistenceProvider"/>                
+                <ref bean="blMediaFieldPersistenceProvider"/>
             </list>
         </property>
     </bean>

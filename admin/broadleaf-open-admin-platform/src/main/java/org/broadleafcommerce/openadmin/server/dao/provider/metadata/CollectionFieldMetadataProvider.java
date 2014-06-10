@@ -19,11 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -55,6 +50,11 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Jeff Fischer
  */
@@ -85,7 +85,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
         FieldMetadataOverride override = constructBasicCollectionMetadataOverride(annot);
         buildCollectionMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(),
-                metadata, info, override);
+                metadata, info, override, addMetadataRequest.getPrefix());
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
         return FieldProviderResponse.HANDLED;
     }
@@ -141,7 +141,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                                             (fieldMetadataOverride.getExcluded() == null || fieldMetadataOverride.getExcluded())) {
                                         continue;
                                     }
-                                    buildCollectionMetadata(parentClass, targetClass, temp, info, fieldMetadataOverride);
+                                    buildCollectionMetadata(parentClass, targetClass, temp, info, fieldMetadataOverride, overrideViaAnnotationRequest.getPrefix());
                                     serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
                                     metadata.put(entry.getKey(), serverMetadata);
                                 } catch (Exception e) {
@@ -179,7 +179,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                                     Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                                     temp.put(field.getName(), serverMetadata);
                                     FieldInfo info = buildFieldInfo(field);
-                                    buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata);
+                                    buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata, overrideViaXmlRequest.getPrefix());
                                     serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
                                     metadata.put(key, serverMetadata);
                                     if (overrideViaXmlRequest.getParentExcluded()) {
@@ -240,7 +240,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                         //do not include the previous metadata - we want to construct a fresh metadata from the override annotation
                         Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
                         FieldInfo info = buildFieldInfo(field);
-                        buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata);
+                        buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata, prefix);
                         BasicCollectionMetadata result = (BasicCollectionMetadata) temp.get(field.getName());
                         result.setInheritedFromType(serverMetadata.getInheritedFromType());
                         result.setAvailableToTypes(serverMetadata.getAvailableToTypes());
@@ -344,7 +344,12 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         throw new IllegalArgumentException("AdminPresentationCollection annotation not found on Field");
     }
 
-    protected void buildCollectionMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, FieldInfo field, FieldMetadataOverride collectionMetadata) {
+    protected void buildCollectionMetadata(Class<?> parentClass, 
+            Class<?> targetClass,
+            Map<String, FieldMetadata> attributes,
+            FieldInfo field,
+            FieldMetadataOverride collectionMetadata,
+            String prefix) {
         BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) attributes.get(field.getName());
 
         Class<?> resolvedClass = parentClass==null?targetClass:parentClass;
@@ -420,12 +425,12 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             foreignKey.setManyToField(foreignKeyName);
             foreignKey.setForeignKeyClass(resolvedClass.getName());
             foreignKey.setMutable(metadata.isMutable());
-            foreignKey.setOriginatingField(field.getName());
+            foreignKey.setOriginatingField(prefix + field.getName());
         } else {
             ForeignKey foreignKey = new ForeignKey(foreignKeyName, resolvedClass.getName(), null, ForeignKeyRestrictionType.ID_EQ);
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
             foreignKey.setMutable(metadata.isMutable());
-            foreignKey.setOriginatingField(field.getName());
+            foreignKey.setOriginatingField(prefix + field.getName());
         }
 
         String ceiling = null;

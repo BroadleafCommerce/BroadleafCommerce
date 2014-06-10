@@ -98,7 +98,7 @@ public class SiteResolutionType implements Serializable, BroadleafEnumerationTyp
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         SiteResolutionType other = (SiteResolutionType) obj;
         if (type == null) {

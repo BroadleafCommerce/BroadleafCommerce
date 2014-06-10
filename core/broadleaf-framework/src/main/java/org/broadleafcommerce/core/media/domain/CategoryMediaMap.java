@@ -19,11 +19,12 @@
  */
 package org.broadleafcommerce.core.media.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "BLC_CATEGORY_MEDIA_MAP")
@@ -78,7 +79,7 @@ public class CategoryMediaMap implements Serializable {
         @Override
         public boolean equals(Object obj) {
             if (obj == null) return false;
-            else if (!(obj instanceof CategoryMediaMapPK)) return false;
+            else if (!getClass().isAssignableFrom(obj.getClass())) return false;
 
             return categoryId.equals(((CategoryMediaMapPK) obj).getCategoryId()) &&
             mediaId.equals(((CategoryMediaMapPK) obj).getMediaId());

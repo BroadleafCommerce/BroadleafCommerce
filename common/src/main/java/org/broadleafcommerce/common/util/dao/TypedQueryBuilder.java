@@ -43,6 +43,8 @@ public class TypedQueryBuilder<T> {
     protected Class<T> rootClass;
     protected String rootAlias;
     protected List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
+    protected List<TQJoin> joins = new ArrayList<TQJoin>();
+    protected List<TQOrder> orders = new ArrayList<TQOrder>();
     protected Map<String, Object> paramMap = new HashMap<String, Object>();
 
     /**
@@ -80,6 +82,16 @@ public class TypedQueryBuilder<T> {
         restrictions.add(restriction);
         return this;
     }
+
+    public TypedQueryBuilder<T> addJoin(TQJoin join) {
+        joins.add(join);
+        return this;
+    }
+
+    public TypedQueryBuilder<T> addOrder(TQOrder order) {
+        orders.add(order);
+        return this;
+    }
     
     /**
      * Generates the query string based on the current contents of this builder. As the string is generated, this method
@@ -109,6 +121,13 @@ public class TypedQueryBuilder<T> {
     public String toQueryString(boolean count) {
         StringBuilder sb = getSelectClause(new StringBuilder(), count)
                 .append(" FROM ").append(rootClass.getName()).append(" ").append(rootAlias);
+        if (CollectionUtils.isNotEmpty(joins)) {
+            sb.append(" JOIN");
+            for (TQJoin join : joins) {
+                sb.append(" ");
+                sb.append(join.toQl());
+            }
+        }
         if (CollectionUtils.isNotEmpty(restrictions)) {
             sb.append(" WHERE ");
             for (int i = 0; i < restrictions.size(); i++) {
@@ -116,6 +135,16 @@ public class TypedQueryBuilder<T> {
                 sb.append(r.toQl("p" + i, paramMap));
                 if (i != restrictions.size() - 1) {
                     sb.append(" AND ");
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(orders)) {
+            sb.append(" ORDER BY");
+            for (int j=0;j<orders.size();j++){
+                sb.append(" ");
+                sb.append(orders.get(j).toQl());
+                if (j < orders.size() - 1) {
+                    sb.append(",");
                 }
             }
         }

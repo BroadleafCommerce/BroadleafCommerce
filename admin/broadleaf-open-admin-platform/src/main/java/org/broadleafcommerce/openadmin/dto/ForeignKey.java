@@ -172,7 +172,8 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ForeignKey)) return false;
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         ForeignKey that = (ForeignKey) o;
 

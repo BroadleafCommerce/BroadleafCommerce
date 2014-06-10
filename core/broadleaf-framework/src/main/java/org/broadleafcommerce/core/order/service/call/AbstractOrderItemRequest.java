@@ -131,7 +131,8 @@ public abstract class AbstractOrderItemRequest {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof AbstractOrderItemRequest)) return false;
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) return false;
 
         AbstractOrderItemRequest that = (AbstractOrderItemRequest) o;
 

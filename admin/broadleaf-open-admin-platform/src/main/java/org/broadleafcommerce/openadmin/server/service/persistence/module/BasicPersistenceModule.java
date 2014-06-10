@@ -27,6 +27,7 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
@@ -35,6 +36,10 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
+import org.broadleafcommerce.common.util.dao.TQJoin;
+import org.broadleafcommerce.common.util.dao.TQOrder;
+import org.broadleafcommerce.common.util.dao.TQRestriction;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -47,12 +52,20 @@ import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SortDirection;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.AdvancedCollectionFieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaConversionException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaTranslator;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.converter.FilterValueConverter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.EqPredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.LikePredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
@@ -163,8 +176,16 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
         Map<String, FieldMetadata> newMap = new HashMap<String, FieldMetadata>();
         for (Map.Entry<String, FieldMetadata> entry : metadata.entrySet()) {
+            String fieldName = entry.getKey();
+            FieldMetadata md = entry.getValue();
+            // Detect instances where the actual metadata for the field is some sort of CollectionMetadata but also corresponds
+            // to a ForeignKey and ensure that gets included in the filtered map. That way the {@link BasicPersistenceModule}
+            // can appropriate handle filtration and population
             if (entry.getValue() instanceof BasicFieldMetadata) {
-                newMap.put(entry.getKey(), entry.getValue());
+                newMap.put(fieldName, md);
+            } else if (md.getAdditionalMetadata().containsKey(AdvancedCollectionFieldMetadataProvider.FOREIGN_KEY_ADDITIONAL_METADATA_KEY)) {
+                newMap.put(fieldName,
+                        (BasicFieldMetadata) md.getAdditionalMetadata().get(AdvancedCollectionFieldMetadataProvider.FOREIGN_KEY_ADDITIONAL_METADATA_KEY));
             }
         }
 
@@ -734,7 +755,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     FieldProviderResponse response = fieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
                                     ceilingEntityFullyQualifiedClassname, mergedProperties,
-                                    propertyId, getFieldManager(), this, customRestrictionFactory==null?restrictionFactory
+                                    propertyId, getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
                                     :customRestrictionFactory), filterMappings);
                     if (FieldProviderResponse.NOT_HANDLED != response) {
                         handled = true;
@@ -747,7 +768,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     defaultFieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
                                     ceilingEntityFullyQualifiedClassname, mergedProperties, propertyId,
-                                    getFieldManager(), this, customRestrictionFactory==null?restrictionFactory
+                                    getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
                                                                         :customRestrictionFactory), filterMappings);
                 }
             }
@@ -939,20 +960,29 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
             switch (persistencePerspective.getOperationTypes().getRemoveType()) {
                 case NONDESTRUCTIVEREMOVE:
-                    for (Property property : entity.getProperties()) {
-                        String originalPropertyName = property.getName();
-                        FieldManager fieldManager = getFieldManager();
-                        if (fieldManager.getField(instance.getClass(), property.getName()) == null) {
-                            LOG.debug("Unable to find a bean property for the reported property: " + originalPropertyName + ". Ignoring property.");
-                            continue;
+                    FieldManager fieldManager = getFieldManager();
+                    FieldMetadata manyToFieldMetadata = mergedUnfilteredProperties.get(foreignKey.getManyToField());
+                    Object foreignKeyValue = entity.getPMap().get(foreignKey.getManyToField()).getValue();
+                    try {
+                        foreignKeyValue = Long.valueOf((String) foreignKeyValue);
+                    } catch (NumberFormatException e) {
+                        LOG.warn("Foreign primary key is not of type Long, assuming String for remove lookup");
+                    }
+                    Serializable foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(foreignKey.getForeignKeyClass()), foreignKeyValue);
+                    Collection collection = (Collection) fieldManager.getFieldValue(foreignInstance, foreignKey.getOriginatingField());
+                    collection.remove(instance);
+                    // if this is a bi-directional @OneToMany/@ManyToOne and there is no @JoinTable (just a foreign key on
+                    // the @ManyToOne side) then it will not be updated. In that instance, we have to explicitly
+                    // set the manyTo field to null so that subsequent lookups will not find it
+                    if (manyToFieldMetadata instanceof BasicFieldMetadata) {
+                        if (((BasicFieldMetadata) manyToFieldMetadata).getRequired()) {
+                            throw new ServiceException("Could not remove from the collection as the ManyToOne side is a"
+                                    + " non-optional relationship. Consider changing 'optional=true' in the @ManyToOne annotation"
+                                    + " or nullable=true within the @JoinColumn annotation");
                         }
-                        if (SupportedFieldType.FOREIGN_KEY == ((BasicFieldMetadata) mergedProperties.get(originalPropertyName)).getFieldType()) {
-                            String value = property.getValue();
-                            Serializable foreignInstance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(foreignKey.getForeignKeyClass()), Long.valueOf(value));
-                            Collection collection = (Collection) fieldManager.getFieldValue(foreignInstance, foreignKey.getOriginatingField());
-                            collection.remove(instance);
-                            break;
-                        }
+                        Field manyToField = fieldManager.getField(instance.getClass(), foreignKey.getManyToField());
+                        manyToField.set(instance, null);
+                        instance = persistenceManager.getDynamicEntityDao().merge(instance);
                     }
                     break;
                 case BASIC:
@@ -1014,8 +1044,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
 
             List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
-            payload = getRecords(mergedProperties, records, null, null);
             totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
+            payload = getRecords(mergedProperties, records, null, null);
+
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
@@ -1025,8 +1056,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings) {
-        return ((Long) criteriaTranslator.translateCountQuery(persistenceManager.getDynamicEntityDao(),
-                ceilingEntity, filterMappings).getSingleResult()).intValue();
+        try {
+            return ((Long) criteriaTranslator.translateCountQuery(persistenceManager.getDynamicEntityDao(),
+                    ceilingEntity, filterMappings).getSingleResult()).intValue();
+        } catch (CriteriaConversionException e) {
+            TypedQueryBuilder builder = getSpecialCaseQueryBuilder(e.getFieldPath(), filterMappings, ceilingEntity);
+            return ((Long) builder.toCountQuery(getPersistenceManager().getDynamicEntityDao().getStandardEntityManager()).getSingleResult()).intValue();
+        }
     }
 
     @Override
@@ -1037,7 +1073,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public List<Serializable> getPersistentRecords(String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults) {
-        return criteriaTranslator.translateQuery(persistenceManager.getDynamicEntityDao(), ceilingEntity, filterMappings, firstResult, maxResults).getResultList();
+        try {
+            return criteriaTranslator.translateQuery(persistenceManager.getDynamicEntityDao(), ceilingEntity, filterMappings, firstResult, maxResults).getResultList();
+        } catch (CriteriaConversionException e) {
+            TypedQueryBuilder builder = getSpecialCaseQueryBuilder(e.getFieldPath(), filterMappings, ceilingEntity);
+            return builder.toQuery(getPersistenceManager().getDynamicEntityDao().getStandardEntityManager()).getResultList();
+        }
     }
 
     @Override
@@ -1106,4 +1147,109 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return persistenceManager;
     }
 
+    /**
+     * Use an alternate approach to generating a fetch query for a collection located inside of an @Embeddable object. Related
+     * to https://hibernate.atlassian.net/browse/HHH-8802. The alternate approach leverages HQL rather than JPA criteria,
+     * which seems to alleviate the problem.
+     *
+     * @param embeddedCollectionPath the path to the collection field itself
+     * @param filterMappings all the fetch restrictions for this request
+     * @param collectionClass the type of the collection members
+     * @return the builder capable of generating an appropriate HQL query
+     */
+    protected TypedQueryBuilder getSpecialCaseQueryBuilder(FieldPath embeddedCollectionPath, List<FilterMapping> filterMappings, String collectionClass) {
+        String specialPath = embeddedCollectionPath.getTargetProperty();
+        String[] pieces = specialPath.split("\\.");
+        if (pieces.length != 3) {
+            throw new CriteriaConversionException(String.format("Expected to find a target property of format [embedded field].[collection field].[property] for the embedded collection path (%s)", specialPath), embeddedCollectionPath);
+        }
+        String expression = specialPath.substring(0, specialPath.lastIndexOf("."));
+        TypedQueryBuilder builder;
+        try {
+            builder = new TypedQueryBuilder(Class.forName(collectionClass), "specialEntity")
+                    .addJoin(new TQJoin("specialEntity." + expression, "embeddedCollection"));
+        } catch (Exception e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        for (TQRestriction restriction : buildSpecialRestrictions(expression, filterMappings)) {
+            builder = builder.addRestriction(restriction);
+        }
+        for (TQRestriction restriction : buildStandardRestrictions(embeddedCollectionPath, filterMappings)) {
+            builder = builder.addRestriction(restriction);
+        }
+        for (FilterMapping mapping : filterMappings) {
+            if (mapping.getSortDirection() != null) {
+                String mappingProperty = mapping.getFieldPath()==null?null:mapping.getFieldPath().getTargetProperty();
+                if (StringUtils.isEmpty(mappingProperty)) {
+                    mappingProperty = mapping.getFullPropertyName();
+                }
+                builder = builder.addOrder(new TQOrder("specialEntity." + mappingProperty, SortDirection.ASCENDING == mapping.getSortDirection()));
+            }
+        }
+
+        return builder;
+    }
+
+    /**
+     * Generate LIKE or EQUALS restrictions for any filter property specified on the root entity (not the collection field in the @Embeddable object)
+     *
+     * @see #getSpecialCaseQueryBuilder(org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath, java.util.List, String)
+     * @param embeddedCollectionPath the path for the collection field in the @Embeddable object - this is what caused the whole thing
+     * @param filterMappings all the fetch restrictions for this request
+     * @return the list of restrictions on the root entity
+     */
+    protected List<TQRestriction> buildStandardRestrictions(FieldPath embeddedCollectionPath, List<FilterMapping> filterMappings) {
+        String expression = embeddedCollectionPath.getTargetProperty().substring(0, embeddedCollectionPath.getTargetProperty().lastIndexOf("."));
+        List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
+        for (FilterMapping mapping : filterMappings) {
+            checkProperty: {
+                String mappingProperty = mapping.getFieldPath()==null?null:mapping.getFieldPath().getTargetProperty();
+                if (StringUtils.isEmpty(mappingProperty)) {
+                    mappingProperty = mapping.getFullPropertyName();
+                }
+                if (!embeddedCollectionPath.getTargetProperty().equals(mappingProperty) && !StringUtils.isEmpty(mappingProperty)) {
+                    PredicateProvider predicateProvider = mapping.getRestriction().getPredicateProvider();
+                    if (predicateProvider != null) {
+                        FilterValueConverter converter = mapping.getRestriction().getFilterValueConverter();
+                        if (converter != null && CollectionUtils.isNotEmpty(mapping.getFilterValues())) {
+                            Object val = converter.convert(mapping.getFilterValues().get(0));
+                            if (predicateProvider instanceof LikePredicateProvider) {
+                                restrictions.add(new TQRestriction("specialEntity." + mappingProperty, "LIKE", val + "%"));
+                                break checkProperty;
+                            } else if (predicateProvider instanceof EqPredicateProvider) {
+                                restrictions.add(new TQRestriction("specialEntity." + mappingProperty, "=", val));
+                                break checkProperty;
+                            }
+                        }
+                    }
+                    LOG.warn(String.format("Unable to filter the embedded collection (%s) on an additional property (%s)", expression, mappingProperty));
+                }
+            }
+        }
+
+        return restrictions;
+    }
+
+    /**
+     * Generate EQUALS restrictions for any filter property specified on the entity member of the collection field in the @Embeddable object
+     *
+     * @see #getSpecialCaseQueryBuilder(org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath, java.util.List, String)
+     * @param specialExpression the String representation of the path for the collection field in the @Embeddable object
+     * @param filterMappings all the fetch restrictions for this request
+     * @return the list of restrictions on the collection in the @Embeddable object
+     */
+    protected List<TQRestriction> buildSpecialRestrictions(String specialExpression, List<FilterMapping> filterMappings) {
+        List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
+        for (FilterMapping mapping : filterMappings) {
+            if (mapping.getFieldPath() != null && mapping.getFieldPath().getTargetProperty() != null && mapping.getFieldPath().getTargetProperty().startsWith(specialExpression)) {
+                FilterValueConverter converter = mapping.getRestriction().getFilterValueConverter();
+                if (converter != null && CollectionUtils.isNotEmpty(mapping.getFilterValues())) {
+                    Object val = converter.convert(mapping.getFilterValues().get(0));
+                    String property = mapping.getFieldPath().getTargetProperty().substring(mapping.getFieldPath().getTargetProperty().lastIndexOf(".") + 1, mapping.getFieldPath().getTargetProperty().length());
+                    restrictions.add(new TQRestriction("embeddedCollection." + property, "=", val));
+                }
+            }
+        }
+        return restrictions;
+    }
 }

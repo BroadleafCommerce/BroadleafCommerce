@@ -1552,13 +1552,13 @@ form.custom div.conditional div.custom.dropdown {
 	padding-bottom: 0;
 }
 
-body .redactor_toolbar li a.redactor_btn_selectAssetButton { 
+body .redactor_toolbar li a.re-selectasset { 
 	background-position: -200px; 
 }
 
 body .redactor_toolbar li a.redactor_btn_font { 
 	background-image: url('../../img/admin/font-selection.png');
-	background-position-x: 0;
+	background-position: 0 -5px;
 }
 
 .category-tree {

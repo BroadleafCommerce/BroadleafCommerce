@@ -583,7 +583,10 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof BasicFieldMetadata)) {
+        if (o == null) {
+            return false;
+        }
+        if (!getClass().isAssignableFrom(o.getClass())) {
             return false;
         }
         if (!super.equals(o)) {

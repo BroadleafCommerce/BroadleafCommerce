@@ -116,7 +116,7 @@ public class IdGenerationImpl implements IdGeneration {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         IdGenerationImpl other = (IdGenerationImpl) obj;
         if (batchSize == null) {

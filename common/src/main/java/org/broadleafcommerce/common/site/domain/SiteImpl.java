@@ -102,20 +102,26 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
-    @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "SITE_ID"), inverseJoinColumns = @JoinColumn(name = "CATALOG_ID"))
-    @BatchSize(size = 50)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "siteCatalogTitle", manyToField = "sites")
-    protected List<Catalog> catalogs = new ArrayList<Catalog>();
-
     @Column(name = "DEACTIVATED")
     @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order = 4, gridOrder = 4, group = "SiteImpl_Site", excluded = true)
     protected Boolean deactivated = false;
+    
+    @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "SITE_ID"), inverseJoinColumns = @JoinColumn(name = "CATALOG_ID"))
+    @BatchSize(size = 50)
+    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "siteCatalogTitle", manyToField = "sites")
+    protected List<Catalog> catalogs = new ArrayList<Catalog>();
+
+    /**************************************************/
+    /**
+     * Adding additional properties to this class or dynamically weaving in properties will have to contribute to the extension
+     * manager for {@link SiteServiceImpl}, {@link SiteServiceExtensionHandler}.
+     */
+    /**************************************************/
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-
+    
     @Override
     public Long getId() {
         return id;
@@ -175,7 +181,7 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     public void setCatalogs(List<Catalog> catalogs) {
         this.catalogs = catalogs;
     }
-
+    
     @Override
     public Character getArchived() {
        if (archiveStatus == null) {
@@ -190,6 +196,11 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
            archiveStatus = new ArchiveStatus();
        }
        archiveStatus.setArchived(archived);
+    }
+    
+    @Override
+    public ArchiveStatus getArchiveStatus() {
+        return archiveStatus;
     }
 
     @Override
@@ -217,6 +228,11 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     @Override
     public void setDeactivated(boolean deactivated) {
         this.deactivated = deactivated;
+    }
+    
+    @Override
+    public boolean isTemplateSite() {
+        return false;
     }
 
     public void checkCloneable(Site site) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
@@ -246,10 +262,12 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
 
             for (Catalog catalog : getCatalogs()) {
                 Catalog cloneCatalog = new CatalogImpl();
+
                 cloneCatalog.setId(catalog.getId());
                 cloneCatalog.setName(catalog.getName());
                 clone.getCatalogs().add(cloneCatalog);
             }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
