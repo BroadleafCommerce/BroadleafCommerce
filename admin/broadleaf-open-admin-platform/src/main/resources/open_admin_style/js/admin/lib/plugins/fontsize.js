@@ -18,6 +18,7 @@ RedactorPlugins.fontsize = {
 	},
 	setFontsize: function(size)
 	{
+		this.resetFontsize();
 		this.inlineSetStyle('font-size', size + 'px');
 	},
 	resetFontsize: function()
