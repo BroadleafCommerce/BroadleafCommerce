@@ -191,12 +191,14 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
 
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "PageImpl_activeStartDate", order = 5000,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+        excluded = true)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
     @AdminPresentation(friendlyName = "PageImpl_activeEndDate", order = 6000, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+        excluded = true)
     protected Date activeEndDate;
 
     @Column (name = "META_TITLE")
