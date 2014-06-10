@@ -345,7 +345,8 @@ var BLCAdmin = (function($) {
                 convertDivs : false,
                 xhtml       : true,
                 paragraphy  : false,
-                minHeight   : 140
+                minHeight   : 140,
+                deniedTags  : []
             });
             
             $container.find('textarea.autosize').autosize();
