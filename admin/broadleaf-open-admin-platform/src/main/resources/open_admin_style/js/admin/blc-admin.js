@@ -344,7 +344,7 @@ var BLCAdmin = (function($) {
                 plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
                 convertDivs : false,
                 xhtml       : true,
-                paragraphy  : false
+                paragraphy  : false,
                 minHeight   : 140,
                 deniedTags  : []
             });
