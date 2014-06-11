@@ -30,6 +30,7 @@
     <bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.config.domain.SystemProperty" class="org.broadleafcommerce.common.config.domain.SystemPropertyImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.config.domain.MessageSource" class="org.broadleafcommerce.common.config.domain.MessageSourceImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.i18n.domain.Translation" class="org.broadleafcommerce.common.i18n.domain.TranslationImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" class="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" scope="prototype" />
     <bean id="org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO" class="org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO" scope="prototype" />

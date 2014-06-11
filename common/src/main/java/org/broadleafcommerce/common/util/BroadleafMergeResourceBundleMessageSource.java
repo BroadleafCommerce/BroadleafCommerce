@@ -20,9 +20,15 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.config.service.MessageSourceService;
+import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ResourceLoader;
+import java.text.MessageFormat;
+import java.util.Locale;
+import javax.annotation.Resource;
 
 
 /**
@@ -39,6 +45,10 @@ import org.springframework.core.io.ResourceLoader;
  * <p>The basenames in this implementation are Spring path resources so if you need to refer to a resource on the classpath,
  * these should be prefixed with classpath:. This is slightly different from the {@link ResourceBundleMessageSource}; see
  * {@link ReloadableResourceBundleMessageSource#setBasenames(String...)} for more information.</p>
+ *
+ * <p>The default logic will look in the DB (cache) first and if it's not found will delegate to
+ * super.resolveCode() to resolve the message.
+ * </p>
  * 
  * @author Phillip Verheyden
  * @see {@link ReloadableResourceBundleMessageSource}
@@ -46,6 +56,12 @@ import org.springframework.core.io.ResourceLoader;
  * @see {@link #setBasenames(String...)}
  */
 public class BroadleafMergeResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
+
+    @Resource(name = "blMessageSourceService")
+    protected MessageSourceService messageSourceService;
+
+    @Resource(name = "blLocaleService")
+    protected LocaleService localeService;
 
     /**
      * The super implementation ensures the basenames defined at the beginning take precedence. We require the opposite in
@@ -63,4 +79,29 @@ public class BroadleafMergeResourceBundleMessageSource extends ReloadableResourc
         super.setBasenames(basenames);
     }
 
+    @Override
+    protected MessageFormat resolveCode(String code, Locale locale) {
+        org.broadleafcommerce.common.locale.domain.Locale blcLocale = localeService.findLocaleByCode(locale.toString());
+        if (blcLocale != null) {
+            String message = messageSourceService.resolveMessageSource(code, blcLocale);
+            if (StringUtils.isNotBlank(message)) {
+                return createMessageFormat(message, locale);
+            }
+        }
+
+        return super.resolveCode(code, locale);
+    }
+
+    @Override
+    protected String resolveCodeWithoutArguments(String code, Locale locale) {
+        org.broadleafcommerce.common.locale.domain.Locale blcLocale = localeService.findLocaleByCode(locale.toString());
+        if (blcLocale != null) {
+            String message = messageSourceService.resolveMessageSource(code, blcLocale);
+            if (StringUtils.isNotBlank(message)) {
+                return message;
+            }
+        }
+
+        return super.resolveCodeWithoutArguments(code, locale);
+    }
 }
