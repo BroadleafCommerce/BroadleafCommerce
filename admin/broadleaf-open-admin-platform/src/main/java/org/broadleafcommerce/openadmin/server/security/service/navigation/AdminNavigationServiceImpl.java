@@ -34,6 +34,7 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +58,17 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
 
     @Resource(name="blAdditionalSectionAuthorizations")
     protected List<SectionAuthorization> additionalSectionAuthorizations = new ArrayList<SectionAuthorization>();
+
+    @Override
+    @Transactional("blTransactionManager")
+    public AdminSection save(AdminSection adminSection) {
+        return adminNavigationDao.save(adminSection);
+    }
+
+    @Override
+    public void remove(AdminSection adminSection) {
+        adminNavigationDao.remove(adminSection);
+    }
 
     @Override
     public AdminMenu buildMenu(AdminUser adminUser) {
