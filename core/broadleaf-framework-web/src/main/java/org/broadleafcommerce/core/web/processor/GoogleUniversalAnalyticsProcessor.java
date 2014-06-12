@@ -177,7 +177,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
      */
     protected Map<String, String> getTrackers() {
         Map<String, String> trackers = new HashMap<String, String>();
-        if (StringUtils.isNotBlank(getMasterWebPropertyId())) {
+        if (shouldShowMasterTracker()) {
             trackers.put("master", getMasterWebPropertyId());
         }
         if (StringUtils.isNotBlank(getWebPropertyId())) {
@@ -187,6 +187,11 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
         return trackers;
     }
     
+    protected boolean shouldShowMasterTracker() {
+        String masterWebPropertyId = getMasterWebPropertyId();
+        return (StringUtils.isNotBlank(masterWebPropertyId) && (!"UA-XXXXXXX-X".equals(masterWebPropertyId)));
+    }
+
     /**
      * Builds the linke attribution Javascript
      * @param tracker the name of the tracker that is using the link attribution
