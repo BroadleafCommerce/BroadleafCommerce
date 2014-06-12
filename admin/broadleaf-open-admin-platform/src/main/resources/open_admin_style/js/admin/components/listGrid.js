@@ -583,8 +583,7 @@ $(document).ready(function() {
         if (onChangeTrigger) {
             var trigger = onChangeTrigger.split("-");
             if (trigger[0] == 'dynamicForm') {
-                var $fieldSet = $("fieldset[data-dynamicpropertyname='" + trigger[1] + "']");
-                $fieldSet.hide();
+                $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "'] fieldset").remove();
             }
         }
         

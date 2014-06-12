@@ -101,10 +101,9 @@ var BLCAdmin = (function($) {
 			// If this wasn't the only modal, take the last modal and put it above the backdrop
 			if (modals.length > 0) {
 				modals.last().css('z-index', '1050');
+				BLCAdmin.currentModal().find('.submit-button').show();
+				BLCAdmin.currentModal().find('img.ajax-loader').hide();
 			}
-			
-    	    BLCAdmin.currentModal().find('.submit-button').show();
-    	    BLCAdmin.currentModal().find('img.ajax-loader').hide();
 		});
 		
 		BLCAdmin.initializeModalTabs($data);
