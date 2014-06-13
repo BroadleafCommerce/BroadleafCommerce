@@ -53,8 +53,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     public PaymentRequestDTO translateOrder(Order order) {
         if (order != null) {
             PaymentRequestDTO requestDTO = new PaymentRequestDTO()
-                    .orderId(order.getId().toString())
-                    .orderCurrencyCode(order.getCurrency().getCurrencyCode());
+                    .orderId(order.getId().toString());
+            if (order.getCurrency() != null) {
+                requestDTO.orderCurrencyCode(order.getCurrency().getCurrencyCode());
+            }
 
             populateCustomerInfo(order, requestDTO);
             populateShipTo(order, requestDTO);

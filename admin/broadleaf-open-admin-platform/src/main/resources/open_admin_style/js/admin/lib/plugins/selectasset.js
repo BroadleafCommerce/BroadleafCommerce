@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,12 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.site.domain;
+if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
 
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * @author Jeff Fischer
- */
-public interface Catalog extends Serializable {
-
-    Long getId();
-
-    void setId(Long id);
-
-    String getName();
-
-    void setName(String name);
-
-    List<Site> getSites();
-
-    void setSites(List<Site> sites);
-    
-}
+RedactorPlugins.selectasset = {
+    init: function()
+    {
+        this.buttonAddBefore('video', 'selectasset', BLCAdmin.messages.selectUploadAsset, BLCAdmin.asset.selectButtonClickedRedactor);
+        this.buttonAwesome('selectasset', 'icon-picture');
+    }
+};

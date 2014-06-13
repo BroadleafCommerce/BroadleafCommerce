@@ -40,13 +40,17 @@ import java.math.BigDecimal;
  * is unconfirmed, we need to adjust the amount on this order payment before
  * we complete checkout and confirm the payment with PayPal again.
  *
+ * Another scenario this handles is if there is an unconfirmed Credit Card applied to the order.
+ * This can happen if the implementation is PCI-Compliant and the Credit Card number is sent to Broadleaf
+ * and will make a server to server call to the configured Payment Gateway.
+ *
  * For this default implementation,
  * This algorithm will add up all the active applied payments to the order that are not of type
- * 'UNCONFIRMED' and payment type 'THIRD_PARTY_ACCOUNT'
+ * 'UNCONFIRMED' AND (payment type 'THIRD_PARTY_ACCOUNT' OR 'CREDIT_CARD')
  * The order.getTotal() minus all the applied payments that are NOT Unconfirmed and of a Third Party account
  * will then be set as the new amount that should be processed by the Third Party Account.
  *
- * Example:
+ * Third Party Account Example:
  * 1) Initial Checkout Step
  * Order - Total = $30
  * - Order Payment (PayPal Express Checkout) - [Unconfirmed] $10
@@ -73,26 +77,22 @@ public class AdjustOrderPaymentsActivity extends BaseActivity<ProcessContext<Ord
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
 
-        OrderPayment unconfirmedThirdParty = null;
-        Money appliedPaymentsWithoutThirdParty = Money.ZERO;
+        OrderPayment unconfirmedThirdPartyOrCreditCard = null;
+        Money appliedPaymentsWithoutThirdPartyOrCC = Money.ZERO;
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
-                PaymentTransaction initialTransaction = payment.getInitialTransaction();
-
-                if (initialTransaction != null &&
-                        PaymentTransactionType.UNCONFIRMED.equals(initialTransaction.getType()) &&
-                        PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType()))  {
-                    unconfirmedThirdParty = payment;
+                if (!payment.isConfirmed() && payment.isFinalPayment())  {
+                    unconfirmedThirdPartyOrCreditCard = payment;
                 } else if (payment.getAmount() != null) {
-                    appliedPaymentsWithoutThirdParty = appliedPaymentsWithoutThirdParty.add(payment.getAmount());
+                    appliedPaymentsWithoutThirdPartyOrCC = appliedPaymentsWithoutThirdPartyOrCC.add(payment.getAmount());
                 }
             }
 
         }
 
-        if (unconfirmedThirdParty != null) {
-            Money difference = order.getTotal().subtract(appliedPaymentsWithoutThirdParty);
-            unconfirmedThirdParty.setAmount(difference);
+        if (unconfirmedThirdPartyOrCreditCard != null) {
+            Money difference = order.getTotal().subtract(appliedPaymentsWithoutThirdPartyOrCC);
+            unconfirmedThirdPartyOrCreditCard.setAmount(difference);
         }
 
         context.setSeedData(order);

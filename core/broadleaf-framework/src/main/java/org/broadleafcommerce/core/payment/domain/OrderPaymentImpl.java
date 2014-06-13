@@ -290,6 +290,23 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     }
 
     @Override
+    public boolean isConfirmed() {
+        for (PaymentTransaction tx : getTransactions()){
+            if ((PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType()) ||
+                    PaymentTransactionType.AUTHORIZE.equals(tx.getType()))
+                    && tx.getSuccess()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isFinalPayment() {
+        return PaymentType.CREDIT_CARD.equals(getType()) || PaymentType.THIRD_PARTY_ACCOUNT.equals(getType());
+    }
+
+    @Override
     public BroadleafCurrency getCurrency() {
         if (order != null) {
             return order.getCurrency();

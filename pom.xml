@@ -11,7 +11,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>3.1.3-SNAPSHOT</version>
+    <version>3.1.4-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -177,9 +177,11 @@
                         <exclude>**/*responsive-tables*</exclude>
                         <exclude>**/spectrum.css</exclude>
                         <exclude>**/spectrum.js</exclude>
-                        <exclude>**/redactor.js</exclude>
-                        <exclude>**/typeahead.bundle.js</exclude>
-                        <exclude>**/sitemap/**/*.xml</exclude>
+                        <exclude>**/redactor.js</exclude>   
+                        <exclude>**/fontcolor.js</exclude>   
+                        <exclude>**/fontsize.js</exclude>
+                        <exclude>**/typeahead.bundle.js</exclude>   
+                        <exclude>**/sitemap/**/*.xml</exclude>                       
                     </excludes>
                 </configuration>
                 <executions>

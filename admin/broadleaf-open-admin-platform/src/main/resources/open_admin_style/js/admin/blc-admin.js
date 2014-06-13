@@ -37,36 +37,6 @@ var BLCAdmin = (function($) {
                          '.asset-selector-container img, select, div.custom-checkbox, div.small-enum-container, ' + 
                          'textarea';
 	
-	/**
-	 * Initialize necessary font mappings for Redactor
-	 */
-	var oFontMap = {
-	    arial: ["Arial", "Arial, Helvetica, sans-serif"],
-	    arialblack: ["Arial Black", '"Arial Black", Gadget, sans-serif'],
-	    comicsans: ["Courier New", '"Courier New", Courier, monospace'],
-	    courier: ["Comic Sans", '"Comic Sans MS", cursive, sans-serif'],
-	    impact: ["Impact", 'Impact, Charcoal, sans-serif'],
-	    lucida: ["Lucida", '"Lucida Sans Unicode", "Lucida Grande", sans-serif'],
-	    lucidaconsole: ["Lucida Console", '"Lucida Console", Monaco, monospace'],
-	    georgia: ["Georgia", "Georgia, serif"],
-	    palatino: ["Palatino Linotype", '"Palatino Linotype", "Book Antiqua", Palatino, serif'],
-	    tahoma: ["Tahoma", "Tahoma, Geneva, sans-serif"],
-	    times: ["Times New Roman", "Times, serif"],
-	    trebuchet: ["Trebuchet", '"Trebuchet MS", Helvetica, sans-serif'],
-	    verdana: ["Verdana", "Verdana, Geneva, sans-serif"] 
-	};
-    var oFontDropdown = {}
-    $.each(oFontMap, function(iIndex, oFont){
-        var sFontName = oFont[0];
-        var sFontFace = oFont[1];
-        oFontDropdown[iIndex] = {
-            title: "<font face='"+sFontFace+"'>"+sFontName+"</font>",
-            callback: function(sFont, e, obj){
-                this.execCommand("fontname", sFontFace);
-            }
-        }
-    });
-    
     function getModalSkeleton() {
         var $modal = $('<div>', { 'class' : 'modal' });
         
@@ -367,24 +337,16 @@ var BLCAdmin = (function($) {
     	    
     	    // Set up rich-text HTML editors
             $container.find('.redactor').redactor({
-                buttons : ['html', '|', 'formatting', '|', 'bold', 'italic', 'deleted', '|', 
-                           'unorderedlist', 'orderedlist', 'outdent', 'indent', '|',
-                           'selectAssetButton', 'video', 'file', 'table', 'link', '|',
-                           'font', 'fontcolor', 'backcolor', '|', 'alignment', '|', 'horizontalrule'],
-                buttonsCustom : {
-                    selectAssetButton : {
-                        title : BLCAdmin.messages.selectUploadAsset,
-                        callback : BLCAdmin.asset.selectButtonClickedRedactor
-                    },
-                    font : {
-                        title: "Advanced Font List",
-                        dropdown: oFontDropdown
-                    }
-                },
+                buttons : ['html', 'formatting', 'bold', 'italic', 'deleted', 
+                           'unorderedlist', 'orderedlist', 'outdent', 'indent',
+                           'video', 'file', 'table', 'link',
+                           'fontfamily', 'fontcolor', 'alignment', 'horizontalrule'],
+                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
                 convertDivs : false,
                 xhtml       : true,
                 paragraphy  : false,
-                minHeight   : 140
+                minHeight   : 140,
+                deniedTags  : []
             });
             
             $container.find('textarea.autosize').autosize();

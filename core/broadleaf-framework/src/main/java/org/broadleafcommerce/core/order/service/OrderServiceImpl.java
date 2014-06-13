@@ -153,6 +153,9 @@ public class OrderServiceImpl implements OrderService {
     @Value("${automatically.merge.like.items}")
     protected boolean automaticallyMergeLikeItems;
 
+    @Resource(name = "blOrderMultishipOptionService")
+    protected OrderMultishipOptionService orderMultishipOptionService;
+
     @Override
     @Transactional("blTransactionManager")
     public Order createNewCartForCustomer(Customer customer) {
@@ -334,6 +337,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public void deleteOrder(Order order) {
+        orderMultishipOptionService.deleteAllOrderMultishipOptions(order);
         orderDao.delete(order);
     }
 

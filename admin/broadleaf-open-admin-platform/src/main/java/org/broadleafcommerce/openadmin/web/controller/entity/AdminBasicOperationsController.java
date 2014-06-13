@@ -101,6 +101,8 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
         ppr.addCustomCriteria("owningClass=" + owningClass);
         
+        modifyFetchPersistencePackageRequest(ppr, pathVars);
+        
         DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
         ListGrid listGrid = null;
         // If we're dealing with a lookup from a dynamic field, we need to build the list grid differently
@@ -176,5 +178,13 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         return responses;
     }
 
-    
+    /**
+     * Hook method to allow a user to modify the persistence package request for a fetch on a select lookup.
+     * 
+     * @param ppr
+     * @param pathVars
+     */
+    protected void modifyFetchPersistencePackageRequest(PersistencePackageRequest ppr, Map<String, String> pathVars) {
+        
+    }
 }
