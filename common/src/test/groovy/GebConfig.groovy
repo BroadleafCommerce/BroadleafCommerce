@@ -17,25 +17,33 @@
  * limitations under the License.
  * #L%
  */
+import org.apache.commons.lang.SystemUtils
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeDriverService
 import org.openqa.selenium.firefox.FirefoxDriver
 
 
-driver = { new ChromeDriver() }
-
+println("Loaded up GebConfig")
 environments {
 
-    // run as “groovy -Dgeb.env=chrome test-app”
     // See: http://code.google.com/p/selenium/wiki/ChromeDriver
     chrome {
-        def chromeDriver = new File('drivers/chrome/chromedriver')
-        downloadDriver(chromeDriver, "http://chromedriver.googlecode.com/files/chromedriver_mac_23.0.1240.0.zip")
-        System.setProperty('webdriver.chrome.driver', chromeDriver.absolutePath)
-
+        def chromeDriver = new File(System.getProperty('java.io.tmpdir') + '/chromedriver')
+        def system = ''
+        if (SystemUtils.IS_OS_MAC) {
+            system = 'mac32'
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            system = 'win32'
+        } else if (SystemUtils.IS_OS_LINUX) {
+            system = 'linux64'
+        }
+        
+        downloadDriver(chromeDriver, "http://chromedriver.storage.googleapis.com/2.10/chromedriver_${system}.zip")
+        System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY, chromeDriver.absolutePath)
+        
         driver = { new ChromeDriver() }
     }
 
-    // run as “grails -Dgeb.env=firefox test-app”
     // See: http://code.google.com/p/selenium/wiki/FirefoxDriver
     firefox {
         driver = { new FirefoxDriver() }
@@ -45,6 +53,7 @@ environments {
 
 private void downloadDriver(File file, String path) {
     if (!file.exists()) {
+        println("Downloading Chrome driver to " + file.absolutePath + " from " + path)
         def ant = new AntBuilder()
         ant.get(src: path, dest: 'driver.zip')
         ant.unzip(src: 'driver.zip', dest: file.parent)
