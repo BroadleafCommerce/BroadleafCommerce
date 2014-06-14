@@ -17,16 +17,28 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.browsertest.page
+package org.broadleafcommerce.browsertest.spec
 
-import geb.Page
+import org.broadleafcommerce.browsertest.page.AdminLoginPage
+import org.broadleafcommerce.browsertest.page.AdminPage
+
+import geb.spock.GebSpec
 
 
-class GoogleHomePage extends Page {
- 
-    // pages can define their location, either absolutely or relative to a base
-    static url = "http://google.com/ncr"
- 
-    // “at checkers” allow verifying that the browser is at the expected page
-    static at = { title == "Google" }
+class OpenAdminSpec extends GebSpec {
+
+   def "can succesfully login to the admin"() {
+       given:
+       to AdminLoginPage
+       
+       when:
+       username = "admin"
+       password = "admin"
+       
+       and:
+       submitButton.click()
+          
+       then:
+       at AdminPage
+   }
 }

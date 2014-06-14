@@ -24,6 +24,7 @@ import org.openqa.selenium.firefox.FirefoxDriver
 
 
 println("Loaded up GebConfig")
+driver = { new FirefoxDriver() }
 environments {
 
     // See: http://code.google.com/p/selenium/wiki/ChromeDriver

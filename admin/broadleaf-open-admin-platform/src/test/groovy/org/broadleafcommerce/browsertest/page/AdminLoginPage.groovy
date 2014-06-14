@@ -17,33 +17,24 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.browsertest.spec
+package org.broadleafcommerce.browsertest.page
 
-import org.broadleafcommerce.browsertest.page.GoogleHomePage
+import geb.Page
 
-import geb.spock.GebSpec
 
-class GoogleWikipediaSpec extends GebSpec {
-
-   def "first result for wikipedia search should be wikipedia"() {
-       given:
-           to GoogleHomePage
-       
-       expect:
-           at GoogleHomePage
-//       when:
-//       search.field.value("wikipedia")
-//
-//       then:
-//       waitFor { at GoogleResultsPage }
-//
-//       and:
-//       firstResultLink.text() == "Wikipedia"
-//
-//       when:
-//       firstResultLink.click()
-//
-//       then:
-//       waitFor { at WikipediaPage }
-   }
+class AdminLoginPage extends Page {
+ 
+    // “at checkers” allow verifying that the browser is at the expected page
+    static at = { title == "Broadleaf Admin" }
+    
+    static content = {
+        loginForm { $('form') }
+        
+        username { $('#username') }
+        password { $('#password') }
+        
+        submitButton(to: AdminPage) {
+            loginForm.find('input', type: 'submit')
+        }
+    }
 }

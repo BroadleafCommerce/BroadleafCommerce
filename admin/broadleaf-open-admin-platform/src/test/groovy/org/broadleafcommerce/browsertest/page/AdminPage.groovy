@@ -21,9 +21,18 @@ package org.broadleafcommerce.browsertest.page
 
 import geb.Page
 
-
-class WikipediaPage extends Page {
-
-    static at = { title == "Wikipedia" }
-
+/**
+ * Root admin page
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
+ */
+class AdminPage extends Page {
+    
+    static at = {
+        header.find('.logout')
+    }
+    
+    static content = {
+        header { $('header.top-bar') }
+    }
 }
