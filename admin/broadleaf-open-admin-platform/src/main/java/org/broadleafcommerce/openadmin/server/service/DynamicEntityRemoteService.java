@@ -123,14 +123,13 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
         } catch (CleanStringException e) {
             StringBuilder sb = new StringBuilder();
             for (int j=0;j<e.getCleanResults().getNumberOfErrors();j++){
+                sb.append("\n");
                 sb.append(j+1);
                 sb.append(") ");
                 sb.append((String) e.getCleanResults().getErrorMessages().get(j));
                 sb.append("\n");
             }
-            sb.append("\nNote - ");
-            sb.append(exploitProtectionService.getAntiSamyPolicyFileLocation());
-            sb.append(" policy in effect. Set a new policy file to modify validation behavior/strictness.");
+            sb.append("\nNote - Antisamy policy in effect. Set a new policy file to modify validation behavior/strictness.");
             entity.addValidationError(currentProperty.getName(), sb.toString());
         }
     }

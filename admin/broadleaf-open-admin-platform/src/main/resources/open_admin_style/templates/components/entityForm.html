@@ -24,7 +24,7 @@
         <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
             <b>[[#{__${tab.key}__}]]</b>
             <span class="fieldError error" th:each="field : ${tab.value.entrySet()}">
-                [[#{__${field.key}__}]]: [[#{__${field.value}__}]]
+                <span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:remove="tag" th:text="#{${field.value}}"></span>
             </span>
             <br />
         </div>
