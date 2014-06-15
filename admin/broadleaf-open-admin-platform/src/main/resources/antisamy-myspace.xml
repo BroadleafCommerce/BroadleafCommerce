@@ -31,6 +31,7 @@ http://www.w3.org/TR/html401/struct/global.html
             <literal value="embed"/>
             <literal value="basefont"/>
             <literal value="col"/>
+            <literal value="span"/>
         </literal-list>
     </allowed-empty-tags>
 
