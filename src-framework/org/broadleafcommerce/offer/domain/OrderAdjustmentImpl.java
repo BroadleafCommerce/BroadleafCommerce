@@ -15,7 +15,12 @@
  */
 package org.broadleafcommerce.offer.domain;
 
-import java.math.BigDecimal;
+import org.broadleafcommerce.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.OrderImpl;
+import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,13 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.broadleafcommerce.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.OrderImpl;
-import org.broadleafcommerce.util.money.Money;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "BLC_ORDER_ADJUSTMENT")
@@ -54,7 +53,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional=true)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
