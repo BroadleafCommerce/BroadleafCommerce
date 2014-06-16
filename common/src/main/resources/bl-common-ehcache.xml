@@ -48,19 +48,6 @@
         eternal="false"
         overflowToDisk="false"
         timeToLiveSeconds="600"/>
-
-    <cache
-        name="blMessageSourceElements"
-        maxElementsInMemory="1000"
-        eternal="false"
-        overflowToDisk="false"
-        timeToLiveSeconds="600"/>
-
-    <cache name="blMessageSourceNullCheckCache"
-       maxElementsInMemory="1000"
-       eternal="false"
-       overflowToDisk="false"
-       timeToLiveSeconds="600"/>
         
     <!-- 24 hour cache -->
     <cache
