@@ -20,11 +20,9 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ResourceLoader;
-import javax.annotation.Resource;
 
 
 /**
@@ -48,9 +46,6 @@ import javax.annotation.Resource;
  * @see {@link #setBasenames(String...)}
  */
 public class BroadleafMergeResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
-
-    @Resource(name = "blLocaleService")
-    protected LocaleService localeService;
 
     /**
      * The super implementation ensures the basenames defined at the beginning take precedence. We require the opposite in
