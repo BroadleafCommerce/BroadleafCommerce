@@ -19,22 +19,7 @@
  */
 package org.broadleafcommerce.cms.structure.dao;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
@@ -44,6 +29,19 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * Created by bpolster.
@@ -75,6 +73,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
     @Override
     public List<StructuredContentType> retrieveAllStructuredContentTypes() {
         Query query = em.createNamedQuery("BC_READ_ALL_STRUCTURED_CONTENT_TYPES");
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
     
@@ -87,7 +86,9 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         criteria.select(sc);
 
         try {
-            return em.createQuery(criteria).getResultList();
+            TypedQuery<StructuredContent> query = em.createQuery(criteria);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            return query.getResultList();
         } catch (NoResultException e) {
             return new ArrayList<StructuredContent>();
         }
@@ -127,6 +128,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         query.setParameter("contentType", type);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }
@@ -146,6 +148,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         query.setParameter("contentName", name);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }
@@ -166,6 +169,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         query.setParameter("contentName", name);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }
