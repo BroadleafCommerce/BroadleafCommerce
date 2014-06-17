@@ -39,6 +39,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -73,6 +74,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
     @Override
     public List<StructuredContentType> retrieveAllStructuredContentTypes() {
         Query query = em.createNamedQuery("BC_READ_ALL_STRUCTURED_CONTENT_TYPES");
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
     
@@ -85,7 +87,9 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         criteria.select(sc);
 
         try {
-            return em.createQuery(criteria).getResultList();
+            TypedQuery<StructuredContent> query = em.createQuery(criteria);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            return query.getResultList();
         } catch (NoResultException e) {
             return new ArrayList<StructuredContent>();
         }
