@@ -34,6 +34,7 @@ public class USShippingInfoFormValidator extends ShippingInfoFormValidator {
 
     public void validate(Object obj, Errors errors) {
         super.validate(obj, errors);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.state", "state.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.stateProvinceRegion", "state.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.postalCode", "postalCode.required");
     }
 }

@@ -27,6 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 
+/**
+ * @deprecated - use {@link org.broadleafcommerce.profile.core.service.CountrySubdivisionServiceImpl} instead.
+ */
+@Deprecated
 @Service("blStateService")
 public class StateServiceImpl implements StateService {
 

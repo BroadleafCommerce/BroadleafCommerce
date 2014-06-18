@@ -60,11 +60,28 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
     @XmlElement
     protected String city;
 
+    /**
+     * Deprecated. Use "isoCountrySubdivision" and/or "stateProvinceRegion" instead.
+     */
     @XmlElement
+    @Deprecated
     protected StateWrapper state;
 
+    /**
+     * Deprecated. Use "isoCountryAlpha2" instead.
+     */
     @XmlElement
+    @Deprecated
     protected CountryWrapper country;
+
+    @XmlElement
+    protected String isoCountrySubdivision;
+
+    @XmlElement
+    protected String stateProvinceRegion;
+
+    @XmlElement
+    protected ISOCountryWrapper isoCountryAlpha2;
 
     @XmlElement
     protected String postalCode;
@@ -101,6 +118,8 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         this.companyName = model.getCompanyName();
         this.isBusiness = model.isBusiness();
         this.isDefault = model.isDefault();
+        this.isoCountrySubdivision = model.getIsoCountrySubdivision();
+        this.stateProvinceRegion = model.getStateProvinceRegion();
 
         if (model.getState() != null) {
             StateWrapper stateWrapper = (StateWrapper) context.getBean(StateWrapper.class.getName());
@@ -112,6 +131,12 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
             CountryWrapper countryWrapper = (CountryWrapper) context.getBean(CountryWrapper.class.getName());
             countryWrapper.wrapDetails(model.getCountry(), request);
             this.country = countryWrapper;
+        }
+
+        if (model.getIsoCountryAlpha2() != null) {
+            ISOCountryWrapper isoCountryWrapper = (ISOCountryWrapper) context.getBean(ISOCountryWrapper.class.getName());
+            isoCountryWrapper.wrapDetails(model.getIsoCountryAlpha2(), request);
+            this.isoCountryAlpha2 = isoCountryWrapper;
         }
 
         if (model.getPhonePrimary() != null) {
@@ -152,6 +177,8 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         address.setCity(this.city);
         address.setPostalCode(this.postalCode);
         address.setCompanyName(this.companyName);
+        address.setIsoCountrySubdivision(this.isoCountrySubdivision);
+        address.setStateProvinceRegion(this.stateProvinceRegion);
 
         if (this.isBusiness != null) {
             address.setBusiness(this.isBusiness);
@@ -167,6 +194,10 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
 
         if (this.country != null) {
             address.setCountry(this.country.unwrap(request, appContext));
+        }
+
+        if (this.isoCountryAlpha2 != null) {
+            address.setIsoCountryAlpha2(this.isoCountryAlpha2.unwrap(request, appContext));
         }
 
         if (this.phonePrimary != null) {

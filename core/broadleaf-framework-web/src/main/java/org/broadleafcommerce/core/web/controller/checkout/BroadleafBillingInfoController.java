@@ -119,8 +119,11 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
                 billing.setAddressLine2(shipping.getAddressLine2());
                 billing.setCity(shipping.getCity());
                 billing.setState(shipping.getState());
+                billing.setIsoCountrySubdivision(shipping.getIsoCountrySubdivision());
+                billing.setStateProvinceRegion(shipping.getStateProvinceRegion());
                 billing.setPostalCode(shipping.getPostalCode());
                 billing.setCountry(shipping.getCountry());
+                billing.setIsoCountryAlpha2(shipping.getIsoCountryAlpha2());
                 billing.setPrimaryPhone(shipping.getPrimaryPhone());
                 billing.setEmailAddress(shipping.getEmailAddress());
                 billingInfoForm.setAddress(billing);

@@ -164,8 +164,11 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                         shipping.setAddressLine2(billing.getAddressLine2());
                         shipping.setCity(billing.getCity());
                         shipping.setState(billing.getState());
+                        shipping.setIsoCountrySubdivision(billing.getIsoCountrySubdivision());
+                        shipping.setStateProvinceRegion(billing.getStateProvinceRegion());
                         shipping.setPostalCode(billing.getPostalCode());
                         shipping.setCountry(billing.getCountry());
+                        shipping.setIsoCountryAlpha2(billing.getIsoCountryAlpha2());
                         shipping.setPrimaryPhone(billing.getPrimaryPhone());
                         shipping.setEmailAddress(billing.getEmailAddress());
                         shippingInfoForm.setAddress(shipping);
@@ -234,6 +237,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
     public String showMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
         model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
+        model.addAttribute("countrySubdivisions", countrySubdivisionService.findSubdivisions());
         return getMultishipAddAddressView();
     }
 

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -110,6 +112,10 @@ public class AddressImpl implements Address {
     @Column(name = "ADDRESS_ID")
     protected Long id;
 
+    @Column(name = "FULL_NAME")
+    @AdminPresentation(friendlyName = "AddressImpl_Full_Name", order=10, group = "AddressImpl_Address")
+    protected String fullName;
+
     @Column(name = "FIRST_NAME")
     @AdminPresentation(friendlyName = "AddressImpl_First_Name", order=10, group = "AddressImpl_Address")
     protected String firstName;
@@ -145,27 +151,39 @@ public class AddressImpl implements Address {
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
     @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
-    @AdminPresentation(friendlyName = "AddressImpl_State", order=80, group = "AddressImpl_Address")
-    @AdminPresentationToOneLookup()
+    @Deprecated
     protected State state;
 
+    @Column(name = "ISO_COUNTRY_SUB")
+    @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order=80, group = "AddressImpl_Address")
+    protected String isoCountrySubdivision;
+
+    @Column(name = "SUB_STATE_PROV_REG")
+    @AdminPresentation(friendlyName = "AddressImpl_State_Province_Region", order=90, group = "AddressImpl_Address")
+    protected String stateProvinceRegion;
+
     @Column(name = "COUNTY")
-    @AdminPresentation(friendlyName = "AddressImpl_County", order=90, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_County", order=100, group = "AddressImpl_Address")
     protected String county;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class)
     @JoinColumn(name = "COUNTRY")
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
-    @AdminPresentation(friendlyName = "AddressImpl_Country", order=100, group = "AddressImpl_Address")
-    @AdminPresentationToOneLookup()
+    @Deprecated
     protected Country country;
 
-    @Column(name = "POSTAL_CODE", nullable = false)
-    @AdminPresentation(friendlyName = "AddressImpl_Postal_Code", order=110, group = "AddressImpl_Address")
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class, optional = false)
+    @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
+    @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
+    @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=110, group = "AddressImpl_Address")
+    protected ISOCountry isoCountryAlpha2;
+
+    @Column(name = "POSTAL_CODE")
+    @AdminPresentation(friendlyName = "AddressImpl_Postal_Code", order=120, group = "AddressImpl_Address")
     protected String postalCode;
 
     @Column(name = "ZIP_FOUR")
-    @AdminPresentation(friendlyName = "AddressImpl_Four_Digit_Zip", order=120, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Four_Digit_Zip", order=130, group = "AddressImpl_Address")
     protected String zipFour;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -194,6 +212,20 @@ public class AddressImpl implements Address {
     @Column(name = "IS_BUSINESS")
     @AdminPresentation(friendlyName = "AddressImpl_Business_Address", order=180, group = "AddressImpl_Address")
     protected boolean isBusiness = false;
+
+    /**
+     * Intended to be used to differentiate whether this address is a physical address (e.g. street/house) or a mailing address (e.g. P.O. Box etc..)
+     */
+    @Column(name = "IS_STREET")
+    @AdminPresentation(friendlyName = "AddressImpl_Street_Address", order=220, group = "AddressImpl_Address")
+    protected boolean isStreet = false;
+
+    /**
+     * Intended to be used to differentiate whether this address is a physical address (e.g. street/house) or a mailing address (e.g. P.O. Box etc..)
+     */
+    @Column(name = "IS_MAILING")
+    @AdminPresentation(friendlyName = "AddressImpl_Mailing_Address", order=230, group = "AddressImpl_Address")
+    protected boolean isMailing = false;
 
     /**
      * This is intented to be used for address verification integrations and should not be modifiable in the admin
@@ -279,13 +311,45 @@ public class AddressImpl implements Address {
     }
 
     @Override
+    @Deprecated
     public Country getCountry() {
         return country;
     }
 
     @Override
+    @Deprecated
     public void setCountry(Country country) {
         this.country = country;
+    }
+
+    @Override
+    public String getIsoCountrySubdivision() {
+        return isoCountrySubdivision;
+    }
+
+    @Override
+    public void setIsoCountrySubdivision(String isoCountrySubdivision) {
+        this.isoCountrySubdivision = isoCountrySubdivision;
+    }
+
+    @Override
+    public String getStateProvinceRegion() {
+        return stateProvinceRegion;
+    }
+
+    @Override
+    public void setStateProvinceRegion(String stateProvinceRegion) {
+        this.stateProvinceRegion = stateProvinceRegion;
+    }
+
+    @Override
+    public ISOCountry getIsoCountryAlpha2() {
+        return isoCountryAlpha2;
+    }
+
+    @Override
+    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2) {
+        this.isoCountryAlpha2 = isoCountryAlpha2;
     }
 
     @Override
@@ -309,11 +373,13 @@ public class AddressImpl implements Address {
     }
 
     @Override
+    @Deprecated
     public State getState() {
         return state;
     }
 
     @Override
+    @Deprecated
     public void setState(State state) {
         this.state = state;
     }
@@ -376,6 +442,16 @@ public class AddressImpl implements Address {
     @Override
     public void setActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    @Override
+    public String getFullName() {
+        return fullName;
+    }
+
+    @Override
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     @Override
@@ -481,6 +557,26 @@ public class AddressImpl implements Address {
     }
 
     @Override
+    public boolean isStreet() {
+        return isStreet;
+    }
+
+    @Override
+    public void setStreet(boolean isStreet) {
+        this.isStreet = isStreet;
+    }
+
+    @Override
+    public boolean isMailing() {
+        return isMailing;
+    }
+
+    @Override
+    public void setMailing(boolean isMailing) {
+        this.isMailing = isMailing;
+    }
+
+    @Override
     public String getVerificationLevel() {
         return verificationLevel;
     }
@@ -539,10 +635,20 @@ public class AddressImpl implements Address {
                 return false;
         } else if (!country.equals(other.country))
             return false;
+        if (isoCountryAlpha2 == null) {
+            if (other.isoCountryAlpha2 != null)
+                return false;
+        } else if (!isoCountryAlpha2.equals(other.isoCountryAlpha2))
+            return false;
         if (county == null) {
             if (other.county != null)
                 return false;
         } else if (!county.equals(other.county))
+            return false;
+        if (fullName == null) {
+            if (other.fullName != null)
+                return false;
+        } else if (!fullName.equals(other.fullName))
             return false;
         if (firstName == null) {
             if (other.firstName != null)
@@ -564,6 +670,16 @@ public class AddressImpl implements Address {
                 return false;
         } else if (!state.equals(other.state))
             return false;
+        if (isoCountrySubdivision == null) {
+            if (other.isoCountrySubdivision != null)
+                return false;
+        } else if (!isoCountrySubdivision.equals(other.isoCountrySubdivision))
+            return false;
+        if (stateProvinceRegion == null) {
+            if (other.stateProvinceRegion != null)
+                return false;
+        } else if (!stateProvinceRegion.equals(other.stateProvinceRegion))
+            return false;
         return true;
     }
 
@@ -576,11 +692,15 @@ public class AddressImpl implements Address {
         result = prime * result + ((city == null) ? 0 : city.hashCode());
         result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
         result = prime * result + ((country == null) ? 0 : country.hashCode());
+        result = prime * result + ((isoCountryAlpha2 == null) ? 0 : isoCountryAlpha2.hashCode());
         result = prime * result + ((county == null) ? 0 : county.hashCode());
+        result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
         result = prime * result + ((postalCode == null) ? 0 : postalCode.hashCode());
         result = prime * result + ((state == null) ? 0 : state.hashCode());
+        result = prime * result + ((isoCountrySubdivision == null) ? 0 : isoCountrySubdivision.hashCode());
+        result = prime * result + ((stateProvinceRegion == null) ? 0 : stateProvinceRegion.hashCode());
         return result;
     }
 }

@@ -54,16 +54,24 @@ public class PhoneImpl implements Phone {
     @Column(name = "PHONE_ID")
     protected Long id;
 
+    @Column(name = "COUNTRY_CODE")
+    @AdminPresentation(friendlyName = "PhoneImpl_Country_Code", order=1, group = "PhoneImpl_Phone")
+    protected String countryCode;
+
     @Column(name = "PHONE_NUMBER", nullable=false)
-    @AdminPresentation(friendlyName = "PhoneImpl_Phone_Number", order=1, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Phone_Number", order=2, group = "PhoneImpl_Phone")
     protected String phoneNumber;
 
+    @Column(name = "EXTENSION")
+    @AdminPresentation(friendlyName = "PhoneImpl_Extension", order=3, group = "PhoneImpl_Phone")
+    protected String extension;
+
     @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName = "PhoneImpl_Default_Phone", order=2, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Default_Phone", order=4, group = "PhoneImpl_Phone")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order=3, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order=5, group = "PhoneImpl_Phone")
     protected boolean isActive = true;
 
     @Override
@@ -77,6 +85,16 @@ public class PhoneImpl implements Phone {
     }
 
     @Override
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    @Override
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    @Override
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -84,6 +102,16 @@ public class PhoneImpl implements Phone {
     @Override
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public String getExtension() {
+        return extension;
+    }
+
+    @Override
+    public void setExtension(String extension) {
+        this.extension = extension;
     }
 
     @Override
@@ -112,7 +140,10 @@ public class PhoneImpl implements Phone {
         int result = 1;
         result = prime * result + (isActive ? 1231 : 1237);
         result = prime * result + (isDefault ? 1231 : 1237);
+        result = prime * result + ((countryCode == null) ? 0 : countryCode.hashCode());
         result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
+        result = prime * result + ((extension == null) ? 0 : extension.hashCode());
+
         return result;
     }
 
@@ -134,10 +165,20 @@ public class PhoneImpl implements Phone {
             return false;
         if (isDefault != other.isDefault)
             return false;
+        if (countryCode == null) {
+            if (other.countryCode != null)
+                return false;
+        } else if (!countryCode.equals(other.countryCode))
+            return false;
         if (phoneNumber == null) {
             if (other.phoneNumber != null)
                 return false;
         } else if (!phoneNumber.equals(other.phoneNumber))
+            return false;
+        if (extension == null) {
+            if (other.extension != null)
+                return false;
+        } else if (!extension.equals(other.extension))
             return false;
         return true;
     }

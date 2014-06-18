@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.checkout.validator;
 
+import org.broadleafcommerce.common.web.validator.BroadleafCommonAddressValidator;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -26,7 +27,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component("blShippingInfoFormValidator")
-public class ShippingInfoFormValidator implements Validator {
+public class ShippingInfoFormValidator extends BroadleafCommonAddressValidator implements Validator {
 
     @SuppressWarnings("rawtypes")
     public boolean supports(Class clazz) {
@@ -35,17 +36,7 @@ public class ShippingInfoFormValidator implements Validator {
 
     public void validate(Object obj, Errors errors) {
         ShippingInfoForm shippingInfoForm = (ShippingInfoForm) obj;
-
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.addressLine1", "addressLine1.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.city", "city.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.postalCode", "postalCode.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.firstName", "firstName.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.lastName", "lastName.required");
-
-        if (shippingInfoForm.getAddress().getCountry() == null) {
-            errors.rejectValue("address.country", "country.required", null, null);
-        }
-
+        super.validate(shippingInfoForm.getAddress(), errors);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fulfillmentOptionId", "fulfillmentOptionId.required");
     }
 }

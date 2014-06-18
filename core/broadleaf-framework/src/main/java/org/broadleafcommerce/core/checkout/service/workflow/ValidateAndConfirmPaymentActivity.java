@@ -295,8 +295,20 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 addressLine2 = addressLine2 + " " + address.getAddressLine3();
             }
 
-            String state = address.getState() != null ? address.getState().getAbbreviation() : null;
-            String country = address.getCountry() != null ? address.getCountry().getAbbreviation() : null;
+            String state = null;
+            if (StringUtils.isNotBlank(address.getStateProvinceRegion())) {
+                state = address.getStateProvinceRegion();
+            } else if (address.getState() != null) {
+                state = address.getState().getAbbreviation();
+            }
+
+            String country = null;
+            if (address.getIsoCountryAlpha2() != null) {
+                country = address.getIsoCountryAlpha2().getAlpha2();
+            } else if (address.getCountry() != null) {
+                country = address.getCountry().getAbbreviation();
+            }
+
             String phone = address.getPhonePrimary() != null ? address.getPhonePrimary().getPhoneNumber() : null;
 
             requestDTO.billTo()

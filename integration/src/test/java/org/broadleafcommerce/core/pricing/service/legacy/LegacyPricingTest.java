@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.pricing.service.legacy;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
+import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -96,6 +99,9 @@ public class LegacyPricingTest extends BaseTest {
     @Resource
     private StateService stateService;
 
+    @Resource
+    private ISOService isoService;
+
     @Test(groups =  {"testShippingInsertLegacy"}, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
     @Rollback(false)
     public void testShippingInsert(ShippingRate shippingRate, ShippingRate sr2) throws Exception {
@@ -116,6 +122,12 @@ public class LegacyPricingTest extends BaseTest {
 
         country = countryService.save(country);
 
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("US");
+        isoCountry.setName("UNITED STATES");
+
+        isoCountry = isoService.save(isoCountry);
+
         State state = new StateImpl();
         state.setAbbreviation("TX");
         state.setName("Texas");
@@ -132,6 +144,8 @@ public class LegacyPricingTest extends BaseTest {
         address.setPrimaryPhone("972-978-9067");
         address.setState(state);
         address.setCountry(country);
+        address.setIsoCountrySubdivision("US-TX");
+        address.setIsoCountryAlpha2(isoCountry);
         
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);
@@ -229,6 +243,12 @@ public class LegacyPricingTest extends BaseTest {
 
         country = countryService.save(country);
 
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("US");
+        isoCountry.setName("UNITED STATES");
+
+        isoCountry = isoService.save(isoCountry);
+
         State state = new StateImpl();
         state.setAbbreviation("TX");
         state.setName("Texas");
@@ -246,6 +266,8 @@ public class LegacyPricingTest extends BaseTest {
 
         address.setState(state);
         address.setCountry(country);
+        address.setIsoCountrySubdivision("US-TX");
+        address.setIsoCountryAlpha2(isoCountry);
         group1.setAddress(address);
         group1.setOrder(order);
 
