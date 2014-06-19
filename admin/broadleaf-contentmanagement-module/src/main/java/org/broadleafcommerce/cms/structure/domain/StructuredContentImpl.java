@@ -43,6 +43,8 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationOverr
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
@@ -97,6 +99,7 @@ import javax.persistence.Transient;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
+@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 public class StructuredContentImpl implements StructuredContent, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
@@ -190,6 +193,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         }
     )
     @ClonePolicyMap
+    @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
     Map<String, StructuredContentRule> structuredContentMatchRules = new HashMap<String, StructuredContentRule>();
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade={CascadeType.ALL})
@@ -201,6 +205,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM)
     @ClonePolicyCollection
+    @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
@@ -217,6 +222,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @BatchSize(size = 20)
     @ClonePolicyMap
+    @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
     protected Map<String,StructuredContentField> structuredContentFields = new HashMap<String,StructuredContentField>();
 
     @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4, 
