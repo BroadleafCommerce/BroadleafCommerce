@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.i18n.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.i18n.service.type.ISOCodeStatusType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -39,7 +40,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_ISO_COUNTRY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "ISOCountryImpl_baseCountry")
-public class ISOCountryImpl implements ISOCountry {
+public class ISOCountryImpl implements ISOCountry, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -159,4 +160,8 @@ public class ISOCountryImpl implements ISOCountry {
         return result;
     }
 
+    @Override
+    public String getMainEntityName() {
+        return getName();
+    }
 }
