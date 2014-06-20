@@ -186,7 +186,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         }
         populateValueRequest.getProperty().setIsDirty(dirty);
 
-        return FieldProviderResponse.HANDLED;
+        return FieldProviderResponse.HANDLED_BREAK;
     }
 
     @Override
