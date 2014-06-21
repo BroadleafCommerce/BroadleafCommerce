@@ -1,3 +1,7 @@
+target/
+.classpath
+.project
+.settings
 .idea
 .idea/*
 build/stage
@@ -6,3 +10,5 @@ BroadleafCommerce.iml
 BroadleafCommerce.iws
 BroadleafCommerce.ipr
 out/*
+.metadata
+bin/

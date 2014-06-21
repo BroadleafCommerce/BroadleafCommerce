@@ -21,20 +21,24 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
 
-public abstract class AjaxFormController extends SimpleFormController {
+@Controller
+public abstract class AjaxFormController {
 
     protected abstract void populateAjax(Map<String,Object> model, Object object);
     protected abstract void populateStandard(Map<String,Object> model, Object object);
 
     private String ajaxView;
-    @Override
+
+    @RequestMapping(method=RequestMethod.POST)
     protected ModelAndView onSubmit(HttpServletRequest request,
             HttpServletResponse response, Object command, BindException errors)
-    throws Exception {
+                    throws Exception {
         Map<String,Object> map = new HashMap<String,Object>();
         String view;
         if (((AjaxFormCommandObject)command).isAjaxRequest()) {
@@ -42,7 +46,7 @@ public abstract class AjaxFormController extends SimpleFormController {
             view = getAjaxView();
         } else {
             populateStandard(map, command);
-            view = getSuccessView();
+            view = "";
         }
         return new ModelAndView(view, map);
     }
@@ -53,11 +57,6 @@ public abstract class AjaxFormController extends SimpleFormController {
 
     public void setAjaxView(String ajaxView) {
         this.ajaxView = ajaxView;
-    }
-
-    @Override
-    protected boolean isFormSubmission(HttpServletRequest request) {
-        return true;
     }
 
 

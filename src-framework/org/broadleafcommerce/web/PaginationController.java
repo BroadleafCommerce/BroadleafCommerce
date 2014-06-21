@@ -17,9 +17,6 @@ package org.broadleafcommerce.web;
 
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Pagination Controller's default implementation assumes that successView points to a JSP that contains
  * a div whose sole contents are a <jsp:include/> that includes the same JSP as ajaxView. Inside ajaxView
@@ -64,16 +61,16 @@ public abstract class PaginationController extends AjaxFormController {
      */
     protected abstract void populatePaginatedList(Map<String, Object> model, PaginationCommandObject object);
 
-    @Override
-    protected Object formBackingObject(HttpServletRequest request)throws ServletException {
-        PaginationCommandObject object = new PaginationCommandObject();
-        object.setPageNumber(0);
-        object.setPageSize(25);
-        String requestURI = request.getRequestURI();
-        object.setDataSource(requestURI.substring(request.getContextPath().length()));
-        object.setContainerId("listContainer");
-        return object;
-    }
+    //    @Override
+    //    protected Object formBackingObject(HttpServletRequest request)throws ServletException {
+    //        PaginationCommandObject object = new PaginationCommandObject();
+    //        object.setPageNumber(0);
+    //        object.setPageSize(25);
+    //        String requestURI = request.getRequestURI();
+    //        object.setDataSource(requestURI.substring(request.getContextPath().length()));
+    //        object.setContainerId("listContainer");
+    //        return object;
+    //    }
 
     @Override
     protected void populateAjax(Map<String, Object> model, Object object) {
