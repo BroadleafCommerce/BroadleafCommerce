@@ -17,7 +17,6 @@ package org.broadleafcommerce.util;
 
 import java.util.Properties;
 
-import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.event.CacheManagerEventListener;
 import net.sf.ehcache.event.CacheManagerEventListenerFactory;
 
@@ -29,7 +28,7 @@ public class HydratedCacheManagerEventListenerFactory extends CacheManagerEventL
     private static final Log LOG = LogFactory.getLog(HydratedCacheManagerEventListenerFactory.class);
 
     @Override
-    public CacheManagerEventListener createCacheManagerEventListener(CacheManager arg0, Properties props) {
+    public CacheManagerEventListener createCacheManagerEventListener(Properties props) {
         String cacheNames = props.getProperty("cacheNames");
         if (cacheNames == null) {
             throw new RuntimeException("Must specify a cacheNames property with a semi-colon delimitted list of cache names.");
