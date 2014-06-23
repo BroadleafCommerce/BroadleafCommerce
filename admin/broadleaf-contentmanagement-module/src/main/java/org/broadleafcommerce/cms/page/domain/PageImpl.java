@@ -147,7 +147,8 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     protected Integer priority;
     
     @Column(name = "OFFLINE_FLAG")
-    @Deprecated
+    @AdminPresentation(friendlyName = "PageImpl_Offline", order = 3500,
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
     protected Boolean offlineFlag = false;     
 
     @ManyToMany(targetEntity = PageRuleImpl.class, cascade = {CascadeType.ALL})
@@ -182,12 +183,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     )
     @ClonePolicyMap
     protected Map<String, PageAttribute> additionalAttributes = new HashMap<String, PageAttribute>();
-
-    @Column(name = "OVERRIDE_URL")
-    @AdminPresentation(friendlyName = "PageImpl_overrideUrl", order = 2000,
-        tooltip = "PageImpl_overrideUrl_tooltip",
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
-    protected Boolean overrideUrl = false;
 
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "PageImpl_activeStartDate", order = 5000,
@@ -279,16 +274,12 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     
     @Override
     public Boolean getOfflineFlag() {
-        if (offlineFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return offlineFlag;
-        }
+        return offlineFlag == null ? false : offlineFlag;
     }
 
     @Override
     public void setOfflineFlag(Boolean offlineFlag) {
-        this.offlineFlag = offlineFlag;
+        this.offlineFlag = offlineFlag == null ? false : offlineFlag;
     }
 
     @Override
@@ -383,16 +374,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     @Override
     public void setAdditionalAttributes(Map<String, PageAttribute> additionalAttributes) {
         this.additionalAttributes = additionalAttributes;
-    }
-
-    @Override
-    public Boolean getOverrideUrl() {
-        return overrideUrl == null ? false : overrideUrl;
-    }
-
-    @Override
-    public void setOverrideUrl(Boolean overrideUrl) {
-        this.overrideUrl = overrideUrl;
     }
 
     @Override
