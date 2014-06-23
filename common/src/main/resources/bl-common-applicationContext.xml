@@ -228,6 +228,7 @@
         <property name="sourceList">
             <list>
                 <ref bean="blBLCJSResourceHandler" />
+                <ref bean="blBLCJSSystemPropertyResourceHandler" />
             </list>
         </property>
     </bean>
