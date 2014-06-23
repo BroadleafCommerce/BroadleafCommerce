@@ -26,7 +26,6 @@ import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
@@ -159,10 +158,6 @@ public class PersistencePackageRequest {
             }
         });
         
-        if (md instanceof CollectionMetadata) {
-            request.setCustomCriteria(((CollectionMetadata) md).getCustomCriteria());
-        }
-
         if (sectionCrumbs != null) {
             request.setSectionCrumbs(sectionCrumbs.toArray(new SectionCrumb[sectionCrumbs.size()]));
         }
