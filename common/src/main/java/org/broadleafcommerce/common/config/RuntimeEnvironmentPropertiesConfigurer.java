@@ -126,7 +126,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         if (!CollectionUtils.isEmpty(overridableProperyLocations)) {
             combinedLocations.addAll(overridableProperyLocations);
         }
-        combinedLocations.addAll(defaultPropertyLocations);
+
         if (!CollectionUtils.isEmpty(propertyLocations)) {
             combinedLocations.addAll(propertyLocations);
         }
@@ -150,37 +150,42 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
          * [environment].properties
          * -Dproperty-override-shared specified value, if any
          * -Dproperty-override specified value, if any  */
-        
+        Set<Set<Resource>> testLocations = new LinkedHashSet<Set<Resource>>();
+        testLocations.add(propertyLocations);
+        testLocations.add(defaultPropertyLocations);
+
         for (Resource resource : createBroadleafResource()) {
             if (resource.exists()) {
                 allLocations.add(resource);
             }
         }
-        
-        for (Resource resource : createSharedCommonResource()) {
-            if (resource.exists()) {
-                allLocations.add(resource);
+
+        for (Set<Resource> locations : testLocations) {
+            for (Resource resource : createSharedCommonResource(locations)) {
+                if (resource.exists()) {
+                    allLocations.add(resource);
+                }
+            }
+
+            for (Resource resource : createSharedPropertiesResource(environment, locations)) {
+                if (resource.exists()) {
+                    allLocations.add(resource);
+                }
+            }
+
+            for (Resource resource : createCommonResource(locations)) {
+                if (resource.exists()) {
+                    allLocations.add(resource);
+                }
+            }
+
+            for (Resource resource : createPropertiesResource(environment, locations)) {
+                if (resource.exists()) {
+                    allLocations.add(resource);
+                }
             }
         }
 
-        for (Resource resource : createSharedPropertiesResource(environment)) {
-            if (resource.exists()) {
-                allLocations.add(resource);
-            }
-        }
-
-        for (Resource resource : createCommonResource()) {
-            if (resource.exists()) {
-                allLocations.add(resource);
-            }
-        }
-
-        for (Resource resource : createPropertiesResource(environment)) {
-            if (resource.exists()) {
-                allLocations.add(resource);
-            }
-        }
-        
         Resource sharedPropertyOverride = createSharedOverrideResource();
         if (sharedPropertyOverride != null) {
             allLocations.add(sharedPropertyOverride);
@@ -215,11 +220,11 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         setLocations(allLocations.toArray(new Resource[] {}));
     }
     
-    protected Resource[] createSharedPropertiesResource(String environment) throws IOException {
+    protected Resource[] createSharedPropertiesResource(String environment, Set<Resource> locations) throws IOException {
         String fileName = environment.toString().toLowerCase() + "-shared.properties";
-        Resource[] resources = new Resource[propertyLocations.size()];
+        Resource[] resources = new Resource[locations.size()];
         int index = 0;
-        for (Resource resource : propertyLocations) {
+        for (Resource resource : locations) {
             resources[index] = resource.createRelative(fileName);
             index++;
         }
@@ -236,31 +241,31 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         return resources;
     }
 
-    protected Resource[] createSharedCommonResource() throws IOException {
-        Resource[] resources = new Resource[propertyLocations.size()];
+    protected Resource[] createSharedCommonResource(Set<Resource> locations) throws IOException {
+        Resource[] resources = new Resource[locations.size()];
         int index = 0;
-        for (Resource resource : propertyLocations) {
+        for (Resource resource : locations) {
             resources[index] = resource.createRelative("common-shared.properties");
             index++;
         }
         return resources;
     }
 
-    protected Resource[] createPropertiesResource(String environment) throws IOException {
+    protected Resource[] createPropertiesResource(String environment, Set<Resource> locations) throws IOException {
         String fileName = environment.toString().toLowerCase() + ".properties";
-        Resource[] resources = new Resource[propertyLocations.size()];
+        Resource[] resources = new Resource[locations.size()];
         int index = 0;
-        for (Resource resource : propertyLocations) {
+        for (Resource resource : locations) {
             resources[index] = resource.createRelative(fileName);
             index++;
         }
         return resources;
     }
 
-    protected Resource[] createCommonResource() throws IOException {
-        Resource[] resources = new Resource[propertyLocations.size()];
+    protected Resource[] createCommonResource(Set<Resource> locations) throws IOException {
+        Resource[] resources = new Resource[locations.size()];
         int index = 0;
-        for (Resource resource : propertyLocations) {
+        for (Resource resource : locations) {
             resources[index] = resource.createRelative("common.properties");
             index++;
         }
