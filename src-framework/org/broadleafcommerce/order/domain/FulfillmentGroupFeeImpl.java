@@ -35,7 +35,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
-@DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP_FEE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
