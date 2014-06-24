@@ -40,6 +40,7 @@ import javax.persistence.MapKeyClass;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -135,7 +136,7 @@ public class OrderImpl implements Order {
 
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-    @OrderBy("id")
+    @OrderColumn(name = "ID")
     protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
     @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL })

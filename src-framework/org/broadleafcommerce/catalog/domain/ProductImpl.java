@@ -55,6 +55,7 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -141,7 +142,7 @@ public class ProductImpl implements Product {
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OrderBy(value = "sequence")
+    @OrderColumn(name = "SEQUENCE")
     protected List<RelatedProduct> upSaleProducts = new ArrayList<RelatedProduct>();
 
     /** The all skus. */

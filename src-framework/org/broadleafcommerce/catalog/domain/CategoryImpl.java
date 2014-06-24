@@ -15,6 +15,17 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.util.HydratedCache;
+import org.broadleafcommerce.util.HydratedCacheManager;
+import org.broadleafcommerce.util.UrlUtil;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.OrderBy;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,20 +48,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.util.DateUtil;
-import org.broadleafcommerce.util.HydratedCache;
-import org.broadleafcommerce.util.HydratedCacheManager;
-import org.broadleafcommerce.util.UrlUtil;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.OrderBy;
 
 /**
  * The Class CategoryImpl is the default implementation of {@link Category}. A
@@ -120,7 +121,7 @@ public class CategoryImpl implements Category {
     /** The all child categories. */
     @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
-    @OrderBy(clause = "DISPLAY_ORDER")
+    @OrderColumn(name = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
     protected List<Category> allChildCategories = new ArrayList<Category>();
@@ -128,7 +129,7 @@ public class CategoryImpl implements Category {
     /** The all parent categories. */
     @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
-    @OrderBy(clause = "DISPLAY_ORDER")
+    @OrderColumn(name = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
     protected List<Category> allParentCategories = new ArrayList<Category>();
