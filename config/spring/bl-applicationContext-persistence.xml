@@ -16,7 +16,7 @@
            http://www.springframework.org/schema/util
            http://www.springframework.org/schema/util/spring-util-4.0.xsd">
 
-    <bean class="org.springframework.jmx.export.MBeanExporter">
+    <!--<bean class="org.springframework.jmx.export.MBeanExporter">
         <property name="autodetect" value="false" />
         <property name="assembler">
             <bean id="jmxAssembler"
@@ -40,7 +40,7 @@
                 </entry>
             </map>
         </property>
-    </bean>
+    </bean>-->
 
 	<bean id="blCacheManager" class="org.broadleafcommerce.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
 		<property name="shared" value="true"/>
