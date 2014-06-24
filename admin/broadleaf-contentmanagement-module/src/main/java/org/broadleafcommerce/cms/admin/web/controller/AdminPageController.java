@@ -109,7 +109,11 @@ public class AdminPageController extends AdminBasicEntityController {
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
             RedirectAttributes ra) throws Exception {
         // Attach the dynamic form info so that the update service will know how to split up the fields
-        DynamicEntityFormInfo info = getDynamicForm(entityForm, null);
+        DynamicEntityFormInfo info = new DynamicEntityFormInfo()
+                .withCeilingClassName(PageTemplate.class.getName())
+                .withSecurityCeilingClassName(Page.class.getName())
+                .withCriteriaName("constructForm")
+                .withPropertyName("pageTemplate");
         entityForm.putDynamicFormInfo("pageTemplate", info);
         
         String returnPath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
