@@ -40,12 +40,18 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
-			<dependency>
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.0-api</artifactId>
+                <version>1.0.0.Final</version>
+                <scope>compile</scope>
+            </dependency>
+			<!--<dependency>
 				<groupId>org.hibernate</groupId>
 				<artifactId>ejb3-persistence</artifactId>
 				<version>1.0.2.GA</version>
 				<scope>compile</scope>
-			</dependency>
+			</dependency>-->
 			<dependency>
 				<groupId>commons-logging</groupId>
 				<artifactId>commons-logging</artifactId>
@@ -502,7 +508,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-acl</artifactId>
-                <version>3.1.0.RELEASE</version>
+                <version>3.2.4.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -531,7 +537,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
-                <version>3.1.0.RELEASE</version>
+                <version>3.2.4.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -560,7 +566,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-web</artifactId>
-                <version>3.1.0.RELEASE</version>
+                <version>3.2.4.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -589,7 +595,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-taglibs</artifactId>
-                <version>3.1.0.RELEASE</version>
+                <version>3.2.4.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -618,7 +624,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-ldap</artifactId>
-                <version>3.1.0.RELEASE</version>
+                <version>3.2.4.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>

@@ -18,7 +18,9 @@ package org.broadleafcommerce.offer.domain;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,12 +28,11 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -46,10 +47,11 @@ public class OfferInfoImpl implements OfferInfo {
     @Column(name = "OFFER_INFO_ID")
     protected Long id;
 
-    @CollectionOfElements
-    @JoinTable(name = "BLC_OFFER_INFO_FIELDS", joinColumns = @JoinColumn(name = "OFFER_INFO_FIELDS_ID"))
-    @MapKey(columns = { @Column(name = "FIELD_NAME", length = 150) })
-    @Column(name = "FIELD_VALUE")
+    @ElementCollection
+    @MapKeyColumn(name="FIELD_NAME", length = 150)
+    @Column(name="FIELD_VALUE")
+    @CollectionTable(name="BLC_OFFER_INFO_FIELDS", joinColumns=@JoinColumn(name="OFFER_INFO_FIELDS_ID"))
+    @BatchSize(size = 50)
     protected Map<String, String> fieldValues = new HashMap<String, String>();
 
     public Long getId() {

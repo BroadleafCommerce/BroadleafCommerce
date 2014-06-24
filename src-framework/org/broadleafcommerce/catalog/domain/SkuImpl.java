@@ -15,6 +15,17 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.util.money.Money;
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,7 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -33,19 +46,9 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.util.DateUtil;
-import org.broadleafcommerce.util.money.Money;
-import org.compass.annotations.Searchable;
-import org.compass.annotations.SearchableId;
-import org.compass.annotations.SearchableProperty;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.CollectionOfElements;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -124,10 +127,11 @@ public class SkuImpl implements Sku {
     protected Date activeEndDate;
 
     /** The sku images. */
-    @CollectionOfElements
-    @JoinTable(name = "BLC_SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
-    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
-    @Column(name = "URL")
+    @ElementCollection
+    @MapKeyColumn(name="NAME", length = 5)
+    @Column(name="URL")
+    @CollectionTable(name="BLC_SKU_IMAGE", joinColumns=@JoinColumn(name="SKU_ID"))
+    @BatchSize(size = 50)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, String> skuImages = new HashMap<String, String>();
 

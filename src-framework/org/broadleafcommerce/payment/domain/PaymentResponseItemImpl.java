@@ -20,7 +20,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,8 +30,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -40,8 +42,7 @@ import org.broadleafcommerce.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;
-import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -108,10 +109,11 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Column(name = "TRANSACTION_TYPE", nullable = false)
     protected String transactionType;
 
-    @CollectionOfElements
-    @JoinTable(name = "BLC_PAYMENT_ADDITIONAL_FIELDS", joinColumns = @JoinColumn(name = "PAYMENT_RESPONSE_ITEM_ID"))
-    @MapKey(columns = { @Column(name = "FIELD_NAME", length = 150) })
-    @Column(name = "FIELD_VALUE")
+    @ElementCollection
+    @MapKeyColumn(name="FIELD_NAME", length = 150)
+    @Column(name="FIELD_VALUE")
+    @CollectionTable(name="BLC_PAYMENT_ADDITIONAL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_RESPONSE_ITEM_ID"))
+    @BatchSize(size = 50)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Column(name = "ORDER_PAYMENT_ID")

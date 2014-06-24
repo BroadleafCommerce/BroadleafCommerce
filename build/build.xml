@@ -47,7 +47,12 @@
 		<ant antfile="${internal.build.file}" target="publish-jars" />
 	</target>
 
-	<target name="9. Run Tests with Coverage" description="Runs all tests, and provides Code Coverage reports">
+    <target name="9. Publish Binaries and Source Jars To Maven" description="Publish production build to Maven">
+        <property name="hibernate.hbm2ddl.auto" value="false" />
+        <ant antfile="${internal.build.file}" target="publish-jars-maven" />
+    </target>
+
+	<target name="10. Run Tests with Coverage" description="Runs all tests, and provides Code Coverage reports">
 		<property name="code.coverage" value="true" />
 		<ant antfile="${test.build.file}" target="runall" />
 	</target>

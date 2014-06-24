@@ -244,6 +244,24 @@
     	<copy file="${stage.dir}/broadleaf-profile-web-sources.jar" tofile="${cache.lib.dir}/org.broadleafcommerce/profile-web/sources/broadleaf-profile-web-sources-${build.version}.jar" overwrite="true"/>
     </target>
 
+    <target name="publish-jars-maven"
+            depends="build-jars, build-source-jars"
+            description="Publishes all artifacts from this build to the shared repository">
+        <copy file="${stage.dir}/broadleaf-framework.jar" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-framework/${build.version}/broadleaf-framework-${build.version}.jar" overwrite="true"/>
+        <copy file="${stage.dir}/broadleaf-framework-sources.jar" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-framework/${build.version}/broadleaf-framework-${build.version}-sources.jar" overwrite="true"/>
+        <copy file="${stage.dir}/broadleaf-framework-web.jar" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-framework-web/${build.version}/broadleaf-framework-web-${build.version}.jar" overwrite="true"/>
+        <copy file="${stage.dir}/broadleaf-framework-web-sources.jar" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-framework-web/${build.version}/broadleaf-framework-web-${build.version}-sources.jar" overwrite="true"/>
+        <copy file="${stage.dir}/broadleaf-profile.jar" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-profile/${build.version}/broadleaf-profile-${build.version}.jar" overwrite="true"/>
+        <copy file="${stage.dir}/broadleaf-profile-sources.jar" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-profile/${build.version}/broadleaf-profile-${build.version}-sources.jar" overwrite="true"/>
+        <copy file="${stage.dir}/broadleaf-profile-web.jar" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-profile-web/${build.version}/broadleaf-profile-web-${build.version}.jar" overwrite="true"/>
+        <copy file="${stage.dir}/broadleaf-profile-web-sources.jar" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-profile-web/${build.version}/broadleaf-profile-web-${build.version}-sources.jar" overwrite="true"/>
+        <copy file="${basedir}/poms/BroadleafCommerce.pom" tofile="${maven.repo}/org/broadleafcommerce/BroadleafCommerce/${build.version}/BroadleafCommerce-${build.version}.pom"/>
+        <copy file="${basedir}/poms/broadleaf-framework.pom" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-framework/${build.version}/broadleaf-framework-${build.version}.pom"/>
+        <copy file="${basedir}/poms/broadleaf-framework-web.pom" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-framework-web/${build.version}/broadleaf-framework-${build.version}.pom"/>
+        <copy file="${basedir}/poms/broadleaf-profile.pom" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-profile/${build.version}/broadleaf-profile-${build.version}.pom"/>
+        <copy file="${basedir}/poms/broadleaf-profile-web.pom" tofile="${maven.repo}/org/broadleafcommerce/broadleaf-profile-web/${build.version}/broadleaf-profile-web-${build.version}.pom"/>
+    </target>
+
 	<target name="clean">
 		<delete dir="${stage.dir}" />
 		<delete dir="${test.output.dir}" />
