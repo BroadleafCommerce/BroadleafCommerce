@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -47,6 +48,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -146,6 +148,19 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
                     sb.append("'cookieDomain': 'none'");
                 }
                 sb.append("});");
+
+                if ("webProperty".equals(trackerName)) {
+                    HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+                    if (request != null) {
+                        Map<String, String> setValuesMap = (Map<String, String>) request.getAttribute("blGAValuesMap");
+                        if (setValuesMap != null) {
+                            for (Map.Entry<String, String> entry : setValuesMap.entrySet()) {
+                                sb.append("ga('" + trackerPrefix + "set',").append(entry.getKey()).append(",")
+                                        .append(entry.getValue()).append(");");
+                            }
+                        }
+                    }
+                }
 
                 sb.append("ga('" + trackerPrefix + "send', 'pageview');");
                 
