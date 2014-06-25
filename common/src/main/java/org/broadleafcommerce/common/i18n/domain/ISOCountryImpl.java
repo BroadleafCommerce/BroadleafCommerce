@@ -20,6 +20,9 @@
 package org.broadleafcommerce.common.i18n.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.type.ISOCodeStatusType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -40,16 +43,20 @@ import javax.persistence.Table;
 @Table(name = "BLC_ISO_COUNTRY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "ISOCountryImpl_baseCountry")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
 public class ISOCountryImpl implements ISOCountry, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "ALPHA_2")
+    @AdminPresentation(friendlyName = "ISOCountryImpl_Alpha2", order=1, group = "ISOCountryImpl_Details", prominent = true)
     protected String alpha2;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "ISOCountryImpl_Country", order=1, group = "ISOCountryImpl_Address", prominent = true)
+    @AdminPresentation(friendlyName = "ISOCountryImpl_Name", order=2, group = "ISOCountryImpl_Details", prominent = true)
     protected String name;
 
     @Column(name = "ALPHA_3")
