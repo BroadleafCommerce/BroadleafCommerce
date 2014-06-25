@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.offer.domain.Adjustment;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -306,14 +307,68 @@ public class OfferServiceImpl implements OfferService {
                 }
             }
             orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
+            
+            verifyAdjustments(order, true);
+            
             order.setSubTotal(order.calculateSubTotal());
             order.finalizeItemPrices();
-
-            return orderService.save(order, false);
+            
+            order = orderService.save(order, false);
+            
+            boolean madeChange = verifyAdjustments(order, false);
+            if (madeChange) {
+                order = orderService.save(order, false);
+            }
         }
 
         return order;
     }
+    
+    protected boolean verifyAdjustments(Order order, boolean beforeSave) {
+        boolean madeChange = false;
+        
+        if (order.getOrderItems() == null) {
+            return madeChange;
+        }
+
+        for (OrderItem oi : order.getOrderItems()) {
+            if (oi.getOrderItemPriceDetails() == null) {
+                continue;
+            }
+
+            for (OrderItemPriceDetail pd : oi.getOrderItemPriceDetails()) {
+                if (pd.getOrderItemPriceDetailAdjustments() == null) {
+                    continue;
+                }
+
+                Map<Long, OrderItemPriceDetailAdjustment> adjs = new HashMap<Long, OrderItemPriceDetailAdjustment>();
+                List<OrderItemPriceDetailAdjustment> adjustmentsToRemove = new ArrayList<OrderItemPriceDetailAdjustment>();
+                for (OrderItemPriceDetailAdjustment adj : pd.getOrderItemPriceDetailAdjustments()) {
+                    if (adjs.containsKey(adj.getOffer().getId())) {
+                        adjustmentsToRemove.add(adj);
+                        if (LOG.isDebugEnabled()) {
+                            StringBuilder sb = new StringBuilder("Detected collisions ")
+                                .append(beforeSave ? "before saving" : "after saving")
+                                .append(" with ids ")
+                                .append(adjs.get(adj.getOffer().getId()).getId())
+                                .append(" and ")
+                                .append(adj.getId());
+                            LOG.debug(sb.toString());
+                        }
+                    } else {
+                        adjs.put(adj.getOffer().getId(), adj);
+                    }
+                }
+                
+                for (OrderItemPriceDetailAdjustment adj : adjustmentsToRemove) {
+                    pd.getOrderItemPriceDetailAdjustments().remove(adj);
+                    madeChange = true;
+                }
+            }
+        }
+
+        return madeChange;
+     }
 
     @Override
     @Transactional("blTransactionManager")
