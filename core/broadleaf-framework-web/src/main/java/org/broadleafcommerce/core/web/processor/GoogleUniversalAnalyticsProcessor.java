@@ -149,13 +149,15 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
                 }
                 sb.append("});");
 
-                HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-                if (request != null) {
-                    Map<String, String> setValuesMap = (Map<String, String>) request.getAttribute("blGAValuesMap");
-                    if (setValuesMap != null) {
-                        for (Map.Entry<String, String> entry : setValuesMap.entrySet()) {
-                            sb.append("ga('" + trackerPrefix + "set',").append(entry.getKey()).append(",")
-                                    .append(entry.getValue()).append(");");
+                if ("webProperty".equals(trackerName)) {
+                    HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+                    if (request != null) {
+                        Map<String, String> setValuesMap = (Map<String, String>) request.getAttribute("blGAValuesMap");
+                        if (setValuesMap != null) {
+                            for (Map.Entry<String, String> entry : setValuesMap.entrySet()) {
+                                sb.append("ga('" + trackerPrefix + "set',").append(entry.getKey()).append(",")
+                                        .append(entry.getValue()).append(");");
+                            }
                         }
                     }
                 }
