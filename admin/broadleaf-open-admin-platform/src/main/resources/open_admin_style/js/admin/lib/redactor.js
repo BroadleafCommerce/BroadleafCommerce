@@ -1028,6 +1028,7 @@
 			html = html.replace(/\u2026/gi, '&hellip;');
 			html = html.replace(/\u2014/gi, '&mdash;');
 			html = html.replace(/\u2010/gi, '&dash;');
+			html = html.replace(/\u00AE/gi, '&reg;');
 
 			html = this.cleanReConvertProtected(html);
 
