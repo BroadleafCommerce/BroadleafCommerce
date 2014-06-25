@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 
@@ -107,8 +108,10 @@ public interface Site extends Serializable {
      * Retrieve a list of product, category and offer groupings that
      * this site has access to
      *
-     * @return a list of catalog groupings
+     * @return a {@link CollectionUtils#unmodifiableCollection} list of catalog groupings
+     * @deprecated use {@link #getCatalogXrefs()} instead
      */
+    @Deprecated
     public List<Catalog> getCatalogs();
 
     /**
@@ -116,8 +119,26 @@ public interface Site extends Serializable {
      * this site has access to
      *
      * @param catalogs a list of catalog groupings
+     * @deprecated use {@link #setCatalogXrefs(List)} instead
      */
+    @Deprecated
     public void setCatalogs(List<Catalog> catalogs);
+
+    /**
+     * Retrieve a list of product, category and offer groupings that
+     * this site has access to
+     *
+     * @return a list of catalog groupings
+     */
+    public List<SiteCatalogXref> getCatalogXrefs();
+
+    /**
+     * Set the list of product, category and offer groupings that
+     * this site has access to
+     *
+     * @param catalogs a list of catalog groupings
+     */
+    public void setCatalogXrefs(List<SiteCatalogXref> catalogXrefs);
 
     /**
      * Retrieve an deep copy of this site. Not bound by

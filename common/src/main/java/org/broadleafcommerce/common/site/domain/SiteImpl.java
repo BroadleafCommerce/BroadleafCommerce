@@ -28,15 +28,15 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -44,9 +44,9 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -54,10 +54,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Created by bpolster.
@@ -102,16 +101,19 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
+    @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "siteCatalogXrefPK.site", orphanRemoval = true)
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(
+            targetObjectProperty = "siteCatalogXrefPK.catalog",
+            friendlyName = "siteCatalogTitle")
+    protected List<SiteCatalogXref> catalogXrefs = new ArrayList<SiteCatalogXref>();
+
     @Column(name = "DEACTIVATED")
     @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order = 4, gridOrder = 4, group = "SiteImpl_Site", excluded = true)
     protected Boolean deactivated = false;
     
-    @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "SITE_ID"), inverseJoinColumns = @JoinColumn(name = "CATALOG_ID"))
-    @BatchSize(size = 50)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "siteCatalogTitle", manyToField = "sites")
-    protected List<Catalog> catalogs = new ArrayList<Catalog>();
 
     /**************************************************/
     /**
@@ -120,9 +122,13 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
      */
     /**************************************************/
 
+
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-    
+
+    @Transient
+    protected List<Catalog> catalogs = new ArrayList<Catalog>();
+
     @Override
     public Long getId() {
         return id;
@@ -175,14 +181,29 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
 
     @Override
     public List<Catalog> getCatalogs() {
-        return catalogs;
+        if (catalogs.isEmpty()) {
+            for (SiteCatalogXref xref : catalogXrefs) {
+                catalogs.add(xref.getCatalog());
+            }
+        }
+        return Collections.unmodifiableList(catalogs);
     }
 
     @Override
     public void setCatalogs(List<Catalog> catalogs) {
-        this.catalogs = catalogs;
+        throw new UnsupportedOperationException("Not Supported - Use setCatalogXrefs()");
     }
     
+    @Override
+    public List<SiteCatalogXref> getCatalogXrefs() {
+        return catalogXrefs;
+    }
+
+    @Override
+    public void setCatalogXrefs(List<SiteCatalogXref> catalogXrefs) {
+        this.catalogXrefs = catalogXrefs;
+    }
+
     @Override
     public Character getArchived() {
        if (archiveStatus == null) {
@@ -261,14 +282,15 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
             clone.setSiteIdentifierValue(getSiteIdentifierValue());
             ((Status) clone).setArchived(getArchived());
 
-            for (Catalog catalog : getCatalogs()) {
+            for (SiteCatalogXref xref : getCatalogXrefs()) {
                 Catalog cloneCatalog = new CatalogImpl();
-
-                cloneCatalog.setId(catalog.getId());
-                cloneCatalog.setName(catalog.getName());
-                clone.getCatalogs().add(cloneCatalog);
+                cloneCatalog.setId(xref.getCatalog().getId());
+                cloneCatalog.setName(xref.getCatalog().getName());
+                SiteCatalogXref cloneXref = new SiteCatalogXrefImpl();
+                cloneXref.setSite(this);
+                cloneXref.setCatalog(cloneCatalog);
+                clone.getCatalogXrefs().add(cloneXref);
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

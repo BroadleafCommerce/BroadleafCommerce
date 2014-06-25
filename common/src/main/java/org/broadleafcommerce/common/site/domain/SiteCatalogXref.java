@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,30 +19,27 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
-import java.io.Serializable;
-import java.util.List;
+import org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl.SiteCatalogXrefPK;
 
 /**
- * @author Jeff Fischer
+ * Defines the explicit join between a {@link Site} and {@link Catalog}
+ * 
+ * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link Site#getCatalogXrefs()}
+ * @see {@link Catalog#getSiteXrefs()}
  */
-public interface Catalog extends Serializable {
+public interface SiteCatalogXref {
 
-    Long getId();
+    public SiteCatalogXrefPK getSiteCatalogXrefPK();
 
-    void setId(Long id);
-
-    String getName();
-
-    void setName(String name);
-
-    @Deprecated
-    List<Site> getSites();
-
-    @Deprecated
-    void setSites(List<Site> sites);
+    public void setSiteCatalogXrefPK(SiteCatalogXrefPK siteCatalogXrefPK);
     
-    public List<SiteCatalogXref> getSiteXrefs();
-
-    public void setSiteXrefs(List<SiteCatalogXref> siteXrefs);
+    public Site getSite();
+    
+    public void setSite(Site site);
+    
+    public Catalog getCatalog();
+    
+    public void setCatalog(Catalog catalog);
 
 }
