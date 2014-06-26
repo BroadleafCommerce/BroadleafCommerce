@@ -415,7 +415,70 @@ var BLCAdmin = (function($) {
     	
     	getFieldSelectors : function getFieldSelectors() {
     	    return fieldSelectors.concat();
-    	}
+    	},
+
+        /**
+         * Adds an initialization handler that is responsible for toggling the visiblity of a child field based on the
+         * current value of the associated parent field.
+         * 
+         * @param className - The class name that this handler should be bound to
+         * @param parentFieldName - A jQuery selector to use to find the div.field-box for the parent field
+         * @param childFieldName - A jQuery selector to use to find the div.field-box for the child field
+         * @param showIfValue - Either a function that takes one argument (the parentValue) and returns true if the
+         *                      child field should be visible or a string to directly match against the parentValue
+         */
+        addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldName, childFieldName, showIfValue) {
+            BLCAdmin.addInitializationHandler(function($container) {
+                var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
+                if (thisClass != null && thisClass.indexOf(className) >= 0) {
+                    var toggleFunction = function(event) {
+                        // Extract the parent and child field DOM elements from the data
+                        var $parentField = event.data.$parentField;
+                        var $childField = event.data.$childField;
+                        
+                        // Figure out what the current value of the parent field is
+                        var parentValue = $parentField.find('input[type="radio"]:checked').val();
+                        if (parentValue == null) {
+                            parentValue = $parentField.find('select').val();
+                        }
+                        if (parentValue == null) {
+                            parentValue = $parentField.find('input[type="text"]').val();
+                        }
+                        
+                        // Either match the string or execute a function to figure out if the child field should be shown
+                        // Additionally, if the parent field is not visible, we'll assume that the child field shouldn't
+                        // render either.
+                        var shouldShow = false;
+                        if ($parentField.is(':visible')) {
+                            if (typeof showIfValue == "function") {
+                                shouldShow = showIfValue(parentValue);
+                            } else {
+                                shouldShow = (parentValue == showIfValue);
+                            }
+                        }
+                        
+                        // Toggle the visiblity of the child field appropriately
+                        $childField.toggle(shouldShow);
+                        $childField.trigger('change');
+                    };
+                    
+                    var $parentField = $container.find(parentFieldName);
+                    var $childField = $container.find(childFieldName);
+                    
+                    var data = {
+                        '$parentField' : $parentField,
+                        '$childField' : $childField
+                    };
+                    
+                    // Bind the change event for the parent field
+                    $parentField.on('change', data, toggleFunction);
+    
+                    // Run the toggleFunction immediately to set initial states appropriately
+                    toggleFunction({ data : data });
+                }
+            })
+        }
+
 	};
 	
 })(jQuery);
