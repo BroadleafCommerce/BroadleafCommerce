@@ -85,6 +85,7 @@ public class BroadleafRequestContext {
     protected HttpServletResponse response;
     protected WebRequest webRequest;
     protected SandBox sandBox;
+    protected ProductionState productionState = ProductionState.UNDEFINED;
     protected Locale locale;
     protected TimeZone timeZone;
     protected BroadleafCurrency broadleafCurrency;
@@ -205,6 +206,10 @@ public class BroadleafRequestContext {
 
     public boolean isProductionSandBox() {
         return sandBox == null || SandBoxType.PRODUCTION == sandBox.getSandBoxType();
+    }
+
+    public boolean useSandBoxStateInProduction() {
+        return ProductionState.SANDBOX==productionState;
     }
 
     public void setSandBox(SandBox sandBox) {
@@ -401,5 +406,13 @@ public class BroadleafRequestContext {
      */
     public void setInternalIgnoreFilters(Boolean internalIgnoreFilters) {
         this.internalIgnoreFilters = internalIgnoreFilters;
+    }
+
+    public ProductionState getProductionState() {
+        return productionState;
+    }
+
+    public void setProductionState(ProductionState productionState) {
+        this.productionState = productionState;
     }
 }
