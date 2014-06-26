@@ -67,14 +67,14 @@ var BLCAdmin = (function($) {
 	function showModal($data, onModalHide, onModalHideArgs) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals
 		$data.modal({
-			backdrop: (modals.length < 1)
+			backdrop: (modals.length < 1),
+			keyboard: false  // disable default keyboard behavior; wasn't intended to work with layered modals
 		});
 		
 		// If we already have an active modal, we need to modify its z-index so that it will be
 		// hidden by the current backdrop
 		if (modals.length > 0) {
 			modals.last().css('z-index', '1040');
-			
 			var $backdrop = $('.modal-backdrop');
 			$backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
 			
@@ -85,7 +85,6 @@ var BLCAdmin = (function($) {
 		
 		// Save our new modal into our stack
 		modals.push($data);
-		
 		// Bind a callback for the modal hidden event...
 		$data.on('hidden', function() {
 			
@@ -555,6 +554,13 @@ $(document).ready(function() {
     // Ensure that the breadcrumb will render behind the entity form actions
     var $bcc = $('.sticky-container');
     $bcc.find('ul.breadcrumbs').outerWidth($bcc.outerWidth() - $bcc.find('.entity-form-actions').outerWidth() - 30);
+});
+
+// Close current modal on escape key
+$('body').on('keyup', function(event) {
+    if (event.keyCode == 27) {  // if key is escape
+        BLCAdmin.hideCurrentModal();
+    }
 });
 
 $('body').on('click', '.disabled', function(e) {
