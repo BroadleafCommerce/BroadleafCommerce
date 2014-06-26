@@ -103,7 +103,7 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
 
     @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "siteCatalogXrefPK.site", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(
             targetObjectProperty = "siteCatalogXrefPK.catalog",
