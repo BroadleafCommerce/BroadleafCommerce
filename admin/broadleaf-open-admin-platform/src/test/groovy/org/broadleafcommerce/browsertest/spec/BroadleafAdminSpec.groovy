@@ -17,24 +17,25 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.browsertest.page
+package org.broadleafcommerce.browsertest.spec
 
-import geb.Page
+import geb.spock.GebReportingSpec
+
 
 /**
- * Root page that other admin pages should extend from; basically all admin pages have these properties
+ * Root spec that other specs should derive from. This gives all of the tests login functionality
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-class AdminPage extends Page {
-    
-    static at = { header.find('.logout') }
-    
-    static content = {
-        // Not required as this does not display in a modal
-        header(required: false) { $('header.top-bar') }
-        leftNavItems(required: false) { $('#sideMenu .blc-module') }
-        breadcrumbs(required: false) { $('ul.breadcrumbs li') }
-    }
+abstract class BroadleafAdminSpec extends GebReportingSpec {
 
+    def setupSpec() {
+        getBrowser().drive {
+            go ""
+            $('form').j_username = 'admin'
+            $('form').j_password = 'admin'
+            $('input[type=submit]').click()
+        }
+    }
+    
 }

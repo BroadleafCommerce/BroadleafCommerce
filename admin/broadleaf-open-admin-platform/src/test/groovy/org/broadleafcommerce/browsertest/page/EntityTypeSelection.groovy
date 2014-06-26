@@ -22,19 +22,17 @@ package org.broadleafcommerce.browsertest.page
 import geb.Page
 
 /**
- * Root page that other admin pages should extend from; basically all admin pages have these properties
+ * The list of entity types that can show up when hitting the 'Add' button on a top-level entity. For instance, when you
+ * add a new Product you can select a Product or a ProductBundle to add
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-class AdminPage extends Page {
+class EntityTypeSelection extends Page {
     
-    static at = { header.find('.logout') }
+    static at = { waitFor { typeList.displayed } }
     
     static content = {
-        // Not required as this does not display in a modal
-        header(required: false) { $('header.top-bar') }
-        leftNavItems(required: false) { $('#sideMenu .blc-module') }
-        breadcrumbs(required: false) { $('ul.breadcrumbs li') }
+        typeList { $('.modal-body .entity-type-selection li a') }
     }
 
 }

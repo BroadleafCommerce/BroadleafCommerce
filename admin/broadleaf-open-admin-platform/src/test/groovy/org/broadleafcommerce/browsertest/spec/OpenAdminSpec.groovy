@@ -27,18 +27,18 @@ import geb.spock.GebSpec
 
 class OpenAdminSpec extends GebSpec {
 
-   def "can succesfully login to the admin"() {
-       given:
-       to AdminLoginPage
-       
-       when:
-       username = "admin"
-       password = "admin"
-       
-       and:
-       submitButton.click()
-          
-       then:
-       at AdminPage
-   }
+    def "can succesfully login to the admin"() {
+        given:
+        to AdminLoginPage
+
+        when:
+        username = "admin"
+        password = "admin"
+
+        and:
+        submitButton.click()
+
+        then:
+        at AdminPage
+    }
 }

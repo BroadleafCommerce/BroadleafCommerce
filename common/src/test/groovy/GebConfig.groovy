@@ -24,7 +24,10 @@ import org.openqa.selenium.firefox.FirefoxDriver
 
 
 println("Loaded up GebConfig")
+// Use the FirefoxDriver by default
 driver = { new FirefoxDriver() }
+baseUrl = 'http://demo99bk4m.broadleafcommerce.org/admin/'
+reportsDir = 'target/gebreports'
 environments {
 
     // See: http://code.google.com/p/selenium/wiki/ChromeDriver
