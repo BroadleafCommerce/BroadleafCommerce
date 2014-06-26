@@ -78,7 +78,8 @@ public class FieldDefinitionImpl implements FieldDefinition {
     protected String friendlyName;
 
     @Column (name = "FLD_TYPE")
-    @AdminPresentation(fieldType = SupportedFieldType.EXPLICIT_ENUMERATION, 
+    @AdminPresentation(fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        broadleafEnumeration = "org.broadleafcommerce.common.presentation.client.DynamicSupportedFieldType",
         prominent = true, gridOrder = 2000, order = 1000,
         friendlyName = "FieldDefinitionImpl_fieldType")
     protected String fieldType;
