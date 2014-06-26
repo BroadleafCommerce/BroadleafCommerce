@@ -44,7 +44,7 @@ var BLCAdmin = (function($) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals
 		$data.modal({
 			backdrop: (modals.length < 1),
-            keyboard: false	// disable default keyboard behavior; wasn't intended to work with layered modals
+			keyboard: false  // disable default keyboard behavior; wasn't intended to work with layered modals
 		});
 		
 		// If we already have an active modal, we need to modify its z-index so that it will be
@@ -459,9 +459,9 @@ $(document).ready(function() {
 
 // Close current modal on escape key
 $('body').on('keyup', function(event) {
-	if(event.keyCode == 27) { // if key is escape
-		BLCAdmin.hideCurrentModal();
-	}
+    if (event.keyCode == 27) {  // if key is escape
+        BLCAdmin.hideCurrentModal();
+    }
 });
 
 $('body').on('click', '.disabled', function(e) {
