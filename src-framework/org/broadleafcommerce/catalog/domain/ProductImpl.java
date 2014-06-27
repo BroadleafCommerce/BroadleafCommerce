@@ -142,7 +142,7 @@ public class ProductImpl implements Product {
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OrderColumn(name = "SEQUENCE")
+    @OrderBy(value = "sequence")
     protected List<RelatedProduct> upSaleProducts = new ArrayList<RelatedProduct>();
 
     /** The all skus. */

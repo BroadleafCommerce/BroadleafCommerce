@@ -24,7 +24,6 @@ import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.OrderBy;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,12 +42,10 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -119,20 +116,17 @@ public class CategoryImpl implements Category {
     protected String displayTemplate;
 
     /** The all child categories. */
-    @ManyToMany(targetEntity = CategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
-    @OrderColumn(name = "DISPLAY_ORDER")
+    @OneToMany(targetEntity = CategoryXref.class, mappedBy = "categoryXrefPK.category")
+    @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
-    protected List<Category> allChildCategories = new ArrayList<Category>();
+    protected List<CategoryXref> allChildCategories = new ArrayList<CategoryXref>();
 
-    /** The all parent categories. */
-    @ManyToMany(targetEntity = CategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
-    @OrderColumn(name = "DISPLAY_ORDER")
+    @OneToMany(targetEntity = CategoryXref.class, mappedBy = "categoryXrefPK.subCategory")
+    @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
-    protected List<Category> allParentCategories = new ArrayList<Category>();
+    protected List<CategoryXref> allParentCategories = new ArrayList<CategoryXref>();
 
     /** The category images. */
     @ElementCollection
@@ -153,6 +147,12 @@ public class CategoryImpl implements Category {
     /** The child categories. */
     @Transient
     protected List<Category> childCategories = new ArrayList<Category>();
+
+    @Transient
+    protected List<Category> tempAllChildCategories = new ArrayList<Category>();
+
+    @Transient
+    protected List<Category> parentCategories = new ArrayList<Category>();
 
     /*
      * (non-Javadoc)
@@ -362,13 +362,22 @@ public class CategoryImpl implements Category {
      */
     public List<Category> getChildCategories() {
         if (childCategories.size() == 0) {
-            for (Category category : allChildCategories) {
-                if (category.isActive()) {
-                    childCategories.add(category);
+            for (CategoryXref category : allChildCategories) {
+                if (category.getSubCategory().isActive()) {
+                    childCategories.add(category.getSubCategory());
                 }
             }
         }
         return childCategories;
+    }
+
+    public List<Category> getAllChildCategories() {
+        if (tempAllChildCategories.size() == 0) {
+            for (CategoryXref category : allChildCategories) {
+                tempAllChildCategories.add(category.getSubCategory());
+            }
+        }
+        return tempAllChildCategories;
     }
 
     /*
@@ -386,7 +395,7 @@ public class CategoryImpl implements Category {
      * .util.List)
      */
     public void setChildCategories(List<Category> allChildCategories) {
-        this.allChildCategories = allChildCategories;
+        throw new UnsupportedOperationException("Setting child categories via API is not supported");
     }
 
     /*
@@ -482,11 +491,16 @@ public class CategoryImpl implements Category {
     }
 
     public List<Category> getAllParentCategories() {
-        return allParentCategories;
+        if (parentCategories.size() == 0) {
+            for (CategoryXref category : allParentCategories) {
+                parentCategories.add(category.getCategory());
+            }
+        }
+        return parentCategories;
     }
 
     public void setAllParentCategories(List<Category> allParentCategories) {
-        this.allParentCategories = allParentCategories;
+        throw new UnsupportedOperationException("Setting parent categories via API is not supported");
     }
 
     public List<FeaturedProduct> getFeaturedProducts() {

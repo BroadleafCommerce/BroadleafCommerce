@@ -191,6 +191,8 @@ public interface Category extends Serializable {
      */
     public List<Category> getChildCategories();
 
+    List<Category> getAllChildCategories();
+
     /**
      * Checks for child categories.
      * 

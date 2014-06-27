@@ -20,6 +20,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -38,66 +40,85 @@ public class CategoryXref implements Serializable {
 
     /** The category id. */
     @EmbeddedId
-    CategoryXrefPK categoryXrefPK;
+    CategoryXrefPK categoryXrefPK = new CategoryXrefPK();
 
     public CategoryXrefPK getCategoryXrefPK() {
         return categoryXrefPK;
     }
 
-    public void setCategoryXrefPK(CategoryXrefPK categoryXrefPK) {
+    public void setCategoryXrefPK(final CategoryXrefPK categoryXrefPK) {
         this.categoryXrefPK = categoryXrefPK;
     }
 
     @Column(name = "DISPLAY_ORDER")
-    private int displayOrder;
+    private Long displayOrder;
 
-    public int getDisplayOrder() {
+    public Long getDisplayOrder() {
         return displayOrder;
     }
 
-    public void setDisplayOrder(int displayOrder) {
+    public void setDisplayOrder(final Long displayOrder) {
         this.displayOrder = displayOrder;
     }
 
+    public Category getCategory() {
+        return categoryXrefPK.getCategory();
+    }
+
+    public void setCategory(Category category) {
+        categoryXrefPK.setCategory(category);
+    }
+
+    public Category getSubCategory() {
+        return categoryXrefPK.getSubCategory();
+    }
+
+    public void setSubCategory(Category subCategory) {
+        categoryXrefPK.setSubCategory(subCategory);
+    }
+
     public static class CategoryXrefPK implements Serializable {
+
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        @Column(name = "CATEGORY_ID", nullable = false)
-        private Long categoryId;
+        @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+        @JoinColumn(name = "CATEGORY_ID")
+        protected Category category = new CategoryImpl();
 
-        /** The sub-category id. */
-        @Column(name = "SUB_CATEGORY_ID", nullable = false)
-        private Long subCategoryId;
+        @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+        @JoinColumn(name = "SUB_CATEGORY_ID")
+        protected Category subCategory = new CategoryImpl();
 
-        public Long getCategoryId() {
-            return categoryId;
+        public Category getCategory() {
+            return category;
         }
 
-        public void setCategoryId(Long categoryId) {
-            this.categoryId = categoryId;
+        public void setCategory(final Category category) {
+            this.category = category;
         }
 
-        public Long getSubCategoryId() {
-            return subCategoryId;
+        public Category getSubCategory() {
+            return subCategory;
         }
 
-        public void setSubCategoryId(Long subCategoryId) {
-            this.subCategoryId = subCategoryId;
+        public void setSubCategory(final Category subCategory) {
+            this.subCategory = subCategory;
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (obj == null) return false;
             else if (!(obj instanceof CategoryXrefPK)) return false;
 
-            return categoryId.equals(((CategoryXrefPK) obj).getCategoryId())
-            && subCategoryId.equals(((CategoryXrefPK) obj).getSubCategoryId());
+            return category.getId().equals(((CategoryXrefPK) obj).getCategory().getId())
+            && subCategory.getId().equals(((CategoryXrefPK) obj).getSubCategory().getId());
         }
+
 
         @Override
         public int hashCode() {
-            return categoryId.hashCode() + subCategoryId.hashCode();
+            return category.hashCode() + subCategory.hashCode();
         }
 
 
