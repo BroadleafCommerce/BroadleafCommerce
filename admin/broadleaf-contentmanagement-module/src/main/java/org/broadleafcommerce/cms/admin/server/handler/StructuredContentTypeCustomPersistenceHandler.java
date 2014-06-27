@@ -213,7 +213,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                 md.put(property.getName(), property.getMetadata());
             }
             
-            boolean validated = helper.validate(persistencePackage.getEntity(), null, md);
+            boolean validated = helper.validate(persistencePackage.getEntity(), structuredContent.getStructuredContentType(), md);
             if (!validated) {
                 throw new ValidationException(persistencePackage.getEntity(), "Structured Content dynamic fields failed validation");
             }
