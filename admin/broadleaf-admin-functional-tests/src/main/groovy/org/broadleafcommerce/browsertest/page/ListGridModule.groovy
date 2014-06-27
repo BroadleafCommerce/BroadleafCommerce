@@ -41,6 +41,10 @@ class ListGridModule extends Module {
             moduleList Row, $('.listgrid-body-wrapper table tr:not(.width-control-header)'), index
         }
     }
+    
+    def boolean isEmpty() {
+        return rows.size() == 0 || rows[0].cells[0].hasClass('list-grid-no-results')
+    }
 }
 
 /**

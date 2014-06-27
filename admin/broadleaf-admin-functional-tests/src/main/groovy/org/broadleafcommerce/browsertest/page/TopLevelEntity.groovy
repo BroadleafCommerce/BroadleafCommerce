@@ -34,7 +34,8 @@ class TopLevelEntity extends AdminPage {
     static at = { addButton.displayed }
         
     static content = {
-        addButton(to: [EntityTypeSelection, EntityFormPage]) { $("button.add-main-entity") }
+        // cannot use multi-page for EntityTypeSelection and EntityFormPage since both require modal waiting
+        addButton { $("button.add-main-entity") }
         mainGrid { module ListGridModule, $('.listgrid-container') }
     }
     

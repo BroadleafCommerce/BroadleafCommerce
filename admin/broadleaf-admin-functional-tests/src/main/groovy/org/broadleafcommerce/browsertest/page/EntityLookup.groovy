@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Admin Functional Tests
  * %%
  * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
@@ -19,23 +19,19 @@
  */
 package org.broadleafcommerce.browsertest.page
 
-import geb.Page
+
 
 /**
- * Root page that other admin pages should extend from; basically all admin pages have these properties
+ * Represents {@link AddMethodType#LOOKUP} related entity controls
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-class AdminPage extends Page {
-    
-    static at = { header.find('.logout') }
+class EntityLookup extends AdminPage {
+
+    static at = { grid.displayed }
     
     static content = {
-        // Not required as this does not display in a modal
-        header(required: false) { $('header.top-bar') }
-        logoutLink(to: AdminLoginPage, required: false) { header.find('.logout a') }
-        leftNavItems(required: false) { $('#sideMenu .blc-module') }
-        breadcrumbs(required: false) { $('ul.breadcrumbs li') }
+        grid { module ListGridModule, $('.modal listgrid-container') }
     }
-
+    
 }
