@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 
 
@@ -54,7 +55,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     protected ApplicationContext applicationContext;
 
     @Override
-    public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata, 
+    public void validate(Entity entity, @Nullable Serializable instance, Map<String, FieldMetadata> propertiesMetadata, 
             boolean validateUnsubmittedProperties) {
         List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
@@ -63,7 +64,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
 
             //Don't test this field if it was not inherited from our polymorphic type (or supertype)
             if (types.contains(metadata.getInheritedFromType())
-                    || instance.getClass().getName().equals(metadata.getInheritedFromType())) {
+                    || (instance != null && instance.getClass().getName().equals(metadata.getInheritedFromType()))) {
                 
                 Property property = entity.getPMap().get(metadataEntry.getKey());
                 
