@@ -225,8 +225,12 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
         binder.registerCustomEditor(ISOCountry.class, "address.isoCountryAlpha2", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code(text);
-                setValue(isoCountry);
+                if (StringUtils.isNotEmpty(text)) {
+                    ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code(text);
+                    setValue(isoCountry);
+                } else {
+                    setValue(null);
+                }
             }
         });
 
