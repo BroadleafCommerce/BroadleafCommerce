@@ -1,87 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src-framework"/>
-	<classpathentry kind="src" path="src-profile"/>
-	<classpathentry kind="src" path="src-test"/>
-	<classpathentry kind="src" path="config/spring"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/ejb3-persistence.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-beanutils-1.7.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-chain-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-collections-3.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-digester-1.8.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-lang-2.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-logging-1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-validator-1.3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/test/bin/testng-5.8-jdk15.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/dom4j-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/log4j-1.2.15.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/mail-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/velocity-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-annotations.jar" sourcepath="lib/common/source/hibernate-annotations-3.4.0.CR1-sources.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-commons-annotations.jar" sourcepath="lib/common/source/hibernate-commons-annotations-3.1.0.CR1-sources.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-entitymanager.jar" sourcepath="/Users/jfischer/Downloads/hibernate-entitymanager-3.4.0.GA-src"/>
-	<classpathentry kind="lib" path="lib/common/bin/jms.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/velocity-tools-1.4.jar"/>
-	<classpathentry kind="lib" path="lib/test/bin/greenmail.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/mvel2-2.0.7.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/asm.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/aspectjweaver.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/drools-compiler-4.0.7.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/drools-core-4.0.7.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/compass-2.2.0.jar" sourcepath="C:/dev/lib/compass-2.2.0/src/main/src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/common/bin/cglib-2.1.3.jar"/>
-	<classpathentry kind="lib" path="lib/test/bin/easymock.jar" sourcepath="lib/test/sources/easymock-src.zip"/>
-	<classpathentry kind="lib" path="lib/test/bin/easymockclassextension.jar" sourcepath="lib/test/sources/easymockclassextension-src.zip"/>
-	<classpathentry kind="lib" path="lib/test/bin/junit-4.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/compile/bin/jsp-api-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/hibernate-3.3.1.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/activation.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/jsr250-api-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/ehcache-1.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/slf4j-api-1.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/slf4j-log4j12-1.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/antlr-2.7.6.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/antlr-runtime-3.0.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/axis.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/backport-util-concurrent-3.1.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/commons-codec.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/jakarta-oro-2.0.8.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/javassist.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/jsr107cache-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/jsr173_1.0_api.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/jta.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/lucene-analyzers.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/lucene-core-2.4.0.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/mysql-connector-java-5.1.7-bin.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/oro.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/quartz-1.6.5.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/resolver.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/USPSV2ShippingRates.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/USPSV3ShippingRates.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/xmlbeans-qname.jar"/>
-	<classpathentry kind="lib" path="lib/compile/bin/servlet-api-2.5.jar"/>
-	<classpathentry kind="lib" path="lib/test/bin/spring-test.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-acl-3.0.3.jar" sourcepath="lib/common/source/spring-security-acl-sources-3.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-config-3.0.3.jar" sourcepath="lib/common/source/spring-security-config-sources-3.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-core-3.0.3.jar" sourcepath="lib/common/source/spring-security-core-sources-3.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-taglibs-3.0.3.jar" sourcepath="lib/common/source/spring-security-taglibs-sources-3.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-web-3.0.3.jar" sourcepath="lib/common/source/spring-security-web-sources-3.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-aop-3.0.3.jar" sourcepath="lib/common/source/spring-aop-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-asm-3.0.3.jar" sourcepath="lib/common/source/spring-asm-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-beans-3.0.3.jar" sourcepath="lib/common/source/spring-beans-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-context-3.0.3.jar" sourcepath="lib/common/source/spring-context-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-context-support-3.0.3.jar" sourcepath="lib/common/source/spring-context-support-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-core-3.0.3.jar" sourcepath="lib/common/source/spring-core-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-expression-3.0.3.jar" sourcepath="lib/common/source/spring-expression-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-jdbc-3.0.3.jar" sourcepath="lib/common/source/spring-jdbc-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-jms-3.0.3.jar" sourcepath="lib/common/source/spring-jms-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-orm-3.0.3.jar" sourcepath="lib/common/source/spring-orm-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-tx-3.0.3.jar" sourcepath="lib/common/source/spring-tx-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-web-3.0.3.jar" sourcepath="lib/common/source/spring-web-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-webmvc-3.0.3.jar" sourcepath="lib/common/source/spring-webmvc-sources-3.0.2.jar"/>
-	<classpathentry kind="output" path="bin"/>
+    <classpathentry kind="src" path="src-framework"/>
+    <classpathentry kind="src" path="src-profile"/>
+    <classpathentry kind="src" path="src-test"/>
+    <classpathentry kind="src" path="config/spring"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/ejb3-persistence.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/commons-beanutils-1.7.0.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/commons-collections-3.2.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/commons-digester-1.8.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/commons-lang-2.2.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/commons-logging-1.1.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/commons-validator-1.3.1.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/dom4j-1.6.1.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/log4j-1.2.15.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/mail-1.4.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/velocity-1.6.1.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-annotations.jar" sourcepath="lib/common/source/hibernate-annotations-3.4.0.CR1-sources.zip"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-commons-annotations.jar" sourcepath="lib/common/source/hibernate-commons-annotations-3.1.0.CR1-sources.zip"/>
+    <classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-entitymanager.jar" sourcepath="/Users/jfischer/Downloads/hibernate-entitymanager-3.4.0.GA-src"/>
+    <classpathentry kind="lib" path="lib/common/bin/jms.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/velocity-tools-1.4.jar"/>
+    <classpathentry kind="lib" path="lib/test/bin/greenmail.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/mvel2-2.0.7.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/asm.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/aspectjweaver.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/drools-compiler-4.0.7.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/drools-core-4.0.7.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/compass-2.2.0.jar" sourcepath="C:/dev/lib/compass-2.2.0/src/main/src"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+    <classpathentry kind="lib" path="lib/common/bin/cglib-2.1.3.jar"/>
+    <classpathentry kind="lib" path="lib/test/bin/easymock.jar" sourcepath="lib/test/sources/easymock-src.zip"/>
+    <classpathentry kind="lib" path="lib/test/bin/easymockclassextension.jar" sourcepath="lib/test/sources/easymockclassextension-src.zip"/>
+    <classpathentry kind="lib" path="lib/test/bin/junit-4.5.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/compile/bin/jsp-api-2.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/hibernate-3.3.1.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/activation.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jsr250-api-1.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/slf4j-api-1.5.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/slf4j-log4j12-1.5.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/antlr-2.7.6.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/antlr-runtime-3.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/axis.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/backport-util-concurrent-3.1.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/commons-codec.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jakarta-oro-2.0.8.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/javassist.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jsr107cache-1.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jsr173_1.0_api.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jta.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/lucene-analyzers.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/lucene-core-2.4.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/mysql-connector-java-5.1.7-bin.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/oro.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/quartz-1.6.5.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/resolver.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/USPSV2ShippingRates.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/USPSV3ShippingRates.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/xmlbeans-qname.jar"/>
+    <classpathentry kind="lib" path="lib/compile/bin/servlet-api-2.5.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/activation.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/antlr-2.7.6.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/antlr-runtime-3.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/aopalliance-1.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/asm.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/aspectjweaver.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/axis.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/backport-util-concurrent-3.1.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/cglib-2.1.3.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/commons-beanutils-1.7.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/commons-chain-1.1.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/commons-codec.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/commons-collections-3.2.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/commons-digester-1.8.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/commons-lang-2.2.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/commons-logging-1.1.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/commons-validator-1.3.1.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/compass-2.2.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/dom4j-1.6.1.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/drools-compiler-4.0.7.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/drools-core-4.0.7.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/ehcache-2.8.3.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/ejb3-persistence.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/hibernate-3.3.1.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/hibernate-annotations.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/hibernate-commons-annotations.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/hibernate-entitymanager.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jakarta-oro-2.0.8.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/javassist.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jms.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jsr107cache-1.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jsr173_1.0_api.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jsr250-api-1.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/jta.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/log4j-1.2.15.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/lucene-analyzers.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/lucene-core-2.4.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/mail-1.4.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/mvel2-2.0.7.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/mysql-connector-java-5.1.7-bin.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/oro.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/quartz-1.6.5.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/resolver.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/slf4j-api-1.5.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/slf4j-log4j12-1.5.0.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-aop-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-beans-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-context-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-context-support-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-core-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-expression-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-jdbc-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-jms-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-orm-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-oxm-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-acl-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-aspects-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-cas-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-config-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-core-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-crypto-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-ldap-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-openid-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-remoting-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-taglibs-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-security-web-3.1.1.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-test-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-tx-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-web-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-webmvc-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/testng-6.8.8.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/USPSV2ShippingRates.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/USPSV3ShippingRates.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/velocity-1.6.1.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/velocity-tools-1.4.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/xmlbeans-qname.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/hibernate-annotations-3.4.0.GA.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+    <classpathentry kind="output" path="bin"/>
 </classpath>
