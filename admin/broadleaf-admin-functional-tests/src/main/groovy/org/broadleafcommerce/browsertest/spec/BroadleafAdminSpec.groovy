@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.browsertest.spec
 
+import geb.Browser
 import geb.spock.GebReportingSpec
 
 
@@ -30,7 +31,7 @@ import geb.spock.GebReportingSpec
 abstract class BroadleafAdminSpec extends GebReportingSpec {
 
     def setupSpec() {
-        getBrowser().drive {
+        Browser.drive(getBrowser()) {
             go ""
             $('form').j_username = 'admin'
             $('form').j_password = 'admin'
