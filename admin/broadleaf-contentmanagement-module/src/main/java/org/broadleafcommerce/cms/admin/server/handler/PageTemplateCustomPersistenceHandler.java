@@ -217,7 +217,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 md.put(property.getName(), property.getMetadata());
             }
             
-            boolean validated = helper.validate(persistencePackage.getEntity(), page.getPageTemplate(), md);
+            boolean validated = helper.validate(persistencePackage.getEntity(), null, md);
             if (!validated) {
                 throw new ValidationException(persistencePackage.getEntity(), "Page dynamic fields failed validation");
             }

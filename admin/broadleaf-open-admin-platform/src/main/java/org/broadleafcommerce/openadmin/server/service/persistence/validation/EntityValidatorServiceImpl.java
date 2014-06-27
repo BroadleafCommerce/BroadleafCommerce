@@ -29,6 +29,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -66,16 +67,24 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
     @Override
     public void validate(Entity submittedEntity, Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
             RecordHelper recordHelper, boolean validateUnsubmittedProperties) {
-        String idField = null;
+        Object idValue = null;
         if (instance != null) {
-            idField = (String) ((BasicPersistenceModule) recordHelper.getCompatibleModule(OperationType.BASIC)).
+            String idField = (String) ((BasicPersistenceModule) recordHelper.getCompatibleModule(OperationType.BASIC)).
                 getPersistenceManager().getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name");
+            try {
+                idValue = recordHelper.getFieldManager().getFieldValue(instance, idField);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (FieldNotAvailableException e) {
+                throw new RuntimeException(e);
+            }
         }
-        
         Entity entity;
-        if (idField != null && submittedEntity.getPMap().get(idField) != null) {
+        boolean isUpdateRequest;
+        if (idValue == null) {
             //This is for an add, or if the instance variable is null (e.g. PageTemplateCustomPersistenceHandler)
             entity = submittedEntity;
+            isUpdateRequest = false;
         } else {
             //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
             entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
@@ -92,8 +101,9 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
                     entity.findProperty(entry.getKey()).setIsDirty(submittedEntity.findProperty(entry.getKey()).getIsDirty());
                 }
             }
+            isUpdateRequest = true;
         }
-
+            
         List<String> types = getTypeHierarchy(entity);
         //validate each individual property according to their validation configuration
         for (Entry<String, FieldMetadata> metadataEntry : propertiesMetadata.entrySet()) {
@@ -101,7 +111,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
 
             //Don't test this field if it was not inherited from our polymorphic type (or supertype)
             if (types.contains(metadata.getInheritedFromType())
-                    || (instance != null && instance.getClass().getName().equals(metadata.getInheritedFromType()))) {
+                    || instance.getClass().getName().equals(metadata.getInheritedFromType())) {
                 
                 Property property = entity.getPMap().get(metadataEntry.getKey());
 
