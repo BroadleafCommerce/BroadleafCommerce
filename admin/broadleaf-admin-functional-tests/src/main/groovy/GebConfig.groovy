@@ -23,7 +23,7 @@ import org.openqa.selenium.chrome.ChromeDriverService
 import org.openqa.selenium.firefox.FirefoxDriver
 
 
-println("Loaded up GebConfig")
+println 'Loading default Broadleaf GebConfig'
 // Use the FirefoxDriver by default
 driver = { new FirefoxDriver() }
 baseUrl = 'http://demo99bk4m.broadleafcommerce.org/admin/'
@@ -57,7 +57,7 @@ environments {
 
 private void downloadDriver(File file, String path) {
     if (!file.exists()) {
-        println("Downloading Chrome driver to " + file.absolutePath + " from " + path)
+        println 'Downloading Chrome driver to ' + file.absolutePath + ' from ' + path
         def ant = new AntBuilder()
         ant.get(src: path, dest: 'driver.zip')
         ant.unzip(src: 'driver.zip', dest: file.parent)

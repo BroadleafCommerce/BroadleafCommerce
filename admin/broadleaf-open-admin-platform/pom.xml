@@ -96,16 +96,17 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
             </plugin>
-            <!-- Include Spock specifications, exclude the browser tests by default -->
+            <!-- Include Spock specifications, exclude the browser tests 
+                by default -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <includes>
-                        <include>**/*Spec.java</include>
+                        <include>**/*Spec*</include>
                     </includes>
                     <excludes>
                         <exclude>**/browsertest/**</exclude>
@@ -234,8 +235,12 @@
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-jpeg</artifactId>
         </dependency>
-
         <!-- Tests -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-common</artifactId>
@@ -243,33 +248,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.gebish</groupId>
-            <artifactId>geb-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.gebish</groupId>
-            <artifactId>geb-spock</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-support</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

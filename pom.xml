@@ -120,17 +120,20 @@
                     <version>2.3.2</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.codehaus.gmaven</groupId>
-                    <artifactId>gmaven-plugin</artifactId>
-                    <version>1.5</version>
-                    <configuration>
-                        <providerSelection>2.0</providerSelection>
-                    </configuration>
+                    <groupId>org.codehaus.gmavenplus</groupId>
+                    <artifactId>gmavenplus-plugin</artifactId>
+                    <version>1.2</version>
                     <executions>
                         <execution>
                             <goals>
+                                <goal>addSources</goal>
+                                <goal>addTestSources</goal>
+                                <goal>generateStubs</goal>
                                 <goal>compile</goal>
+                                <goal>testGenerateStubs</goal>
                                 <goal>testCompile</goal>
+                                <goal>removeStubs</goal>
+                                <goal>removeTestStubs</goal>
                             </goals>
                         </execution>
                     </executions>
@@ -178,11 +181,11 @@
                         <exclude>**/*responsive-tables*</exclude>
                         <exclude>**/spectrum.css</exclude>
                         <exclude>**/spectrum.js</exclude>
-                        <exclude>**/redactor.js</exclude>   
-                        <exclude>**/fontcolor.js</exclude>   
+                        <exclude>**/redactor.js</exclude>
+                        <exclude>**/fontcolor.js</exclude>
                         <exclude>**/fontsize.js</exclude>
-                        <exclude>**/typeahead.bundle.js</exclude>   
-                        <exclude>**/sitemap/**/*.xml</exclude>                       
+                        <exclude>**/typeahead.bundle.js</exclude>
+                        <exclude>**/sitemap/**/*.xml</exclude>
                     </excludes>
                 </configuration>
                 <executions>
