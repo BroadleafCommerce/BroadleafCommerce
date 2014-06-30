@@ -495,7 +495,6 @@ public class OrderServiceImpl implements OrderService {
         // Don't allow overrides from this method.
         orderItemRequestDTO.setOverrideRetailPrice(null);
         orderItemRequestDTO.setOverrideSalePrice(null);
-        ThreadUtils.sleepUntil(2014, 5, 30, 14, 40, 20);
         return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
     }
 
