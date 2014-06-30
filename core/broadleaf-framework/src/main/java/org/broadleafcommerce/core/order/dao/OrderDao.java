@@ -19,16 +19,18 @@
  */
 package org.broadleafcommerce.core.order.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.util.Date;
+import java.util.List;
+
 public interface OrderDao {
 
     Order readOrderById(Long orderId);
+    
+    Order readOrderById(Long orderId, boolean refresh);
 
     List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
 

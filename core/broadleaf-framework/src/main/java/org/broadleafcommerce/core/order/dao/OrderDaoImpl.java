@@ -19,6 +19,16 @@
  */
 package org.broadleafcommerce.core.order.dao;
 
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.profile.core.dao.CustomerDao;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -34,16 +44,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.profile.core.dao.CustomerDao;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.springframework.stereotype.Repository;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -63,6 +63,15 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order readOrderById(final Long orderId) {
         return em.find(OrderImpl.class, orderId);
+    }
+    
+    @Override
+    public Order readOrderById(final Long orderId, boolean refresh) {
+        Order order = readOrderById(orderId);
+        if (refresh) {
+            em.refresh(order);
+        }
+        return order;
     }
 
     @Override
@@ -236,4 +245,5 @@ public class OrderDaoImpl implements OrderDao {
         TypedQuery<Order> query = em.createQuery(criteria);
         return query.getResultList();
     }
+
 }

@@ -99,6 +99,15 @@ public interface OrderService {
      * @return the requested Order
      */
     public Order findOrderById(Long orderId);
+
+    /**
+     * Looks up an Order by its database id
+     * and optionally calls refresh to ensure that the entity manager pulls the instance from the DB and not from cache
+     *
+     * @param orderId
+     * @return the requested Order
+     */
+    public Order findOrderById(Long orderId, boolean refresh);
     
     /**
      * Looks up the current shopping cart for the customer. Note that a shopping cart is
@@ -522,4 +531,13 @@ public interface OrderService {
      * @return the number of deleted carts
      */
     List<Order> findCarts(String[] names, OrderStatus[] statuses, Date dateCreatedMinThreshold);
+
+    /**
+     * Detaches the given order from the current entity manager and then reloads a fresh version from
+     * the database.
+     * 
+     * @param order
+     * @return the newly read order
+     */
+    public Order reloadOrder(Order order);
 }
