@@ -524,5 +524,14 @@ public interface OrderService {
      * @param cart
      */
     public void preValidateCartOperation(Order cart);
+    
+    /**
+     * Detaches the given order from the current entity manager and then reloads a fresh version from
+     * the database.
+     * 
+     * @param order
+     * @return the newly read order
+     */
+    public Order reloadOrder(Order order);
 
 }
