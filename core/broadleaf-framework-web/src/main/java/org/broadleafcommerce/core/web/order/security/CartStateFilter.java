@@ -22,11 +22,14 @@ import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.springframework.core.Ordered;
+import org.springframework.security.web.util.AntPathRequestMatcher;
+import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
@@ -66,6 +69,8 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
+    protected List<String> excludedOrderLockRequestPatterns;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
             throws IOException, ServletException {        
@@ -82,13 +87,14 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
             LOG.trace("Thread[" + Thread.currentThread().getId() + "] attempting to lock order[" + order.getId() + "]");
         }
 
-        Object lockObject = orderLockManager.acquireLock(order);
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Thread[" + Thread.currentThread().getId() + "] grabbed lock for order[" + order.getId() + "]");
-        }
-
+        Object lockObject = null;
         try {
+            lockObject = orderLockManager.acquireLock(order);
+    
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Thread[" + Thread.currentThread().getId() + "] grabbed lock for order[" + order.getId() + "]");
+            }
+
             // When we have a hold of the lock for the order, we want to reload the order from the database.
             // This is because a different thread could have modified the order in between the time we initially
             // read it for this thread and now, resulting in the order being stale. Additionally, we want to make
@@ -105,12 +111,34 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
         }
     }
 
-    protected boolean requestRequiresLock(ServletRequest request) {
-        if (request instanceof HttpServletRequest) {
-            return ((HttpServletRequest) request).getMethod().equalsIgnoreCase("post");
+    /**
+     * By default, all POST requests that are not matched by the {@link #getExcludedOrderLockRequestPatterns()} list
+     * (using the {@link AntPathRequestMatcher}) will be marked as requiring a lock on the Order.
+     * 
+     * @param req
+     * @return whether or not the current request requires a lock on the order
+     */
+    protected boolean requestRequiresLock(ServletRequest req) {
+        if (!(req instanceof HttpServletRequest)) {
+               return false;
+        }
+        
+        HttpServletRequest request = (HttpServletRequest) req;
+
+        if (!((HttpServletRequest) request).getMethod().equalsIgnoreCase("post")) {
+            return false;
+        }
+        
+        if (excludedOrderLockRequestPatterns != null && excludedOrderLockRequestPatterns.size() > 0) {
+            for (String pattern : excludedOrderLockRequestPatterns) {
+                RequestMatcher matcher = new AntPathRequestMatcher(pattern);
+                if (matcher.matches(request)){
+                    return false;
+                }
+            }
         }
 
-        return false;
+        return true;
     }
 
     @Override
@@ -120,5 +148,24 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
         return 1502;
     }
 
+    public List<String> getExcludedOrderLockRequestPatterns() {
+        return excludedOrderLockRequestPatterns;
+    }
+
+    /**
+     * This allows you to declaratively set a list of excluded Request Patterns
+     *
+     * <bean id="blCartStateFilter" class="org.broadleafcommerce.core.web.order.security.CartStateFilter">
+     *     <property name="excludedOrderLockRequestPatterns">
+     *         <list>
+     *             <value>/exclude-me/**</value>
+     *         </list>
+     *     </property>
+     * </bean>
+     *
+     **/
+    public void setExcludedOrderLockRequestPatterns(List<String> excludedOrderLockRequestPatterns) {
+        this.excludedOrderLockRequestPatterns = excludedOrderLockRequestPatterns;
+    }
 
 }

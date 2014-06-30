@@ -23,9 +23,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
+import org.springframework.context.ApplicationListener;
+import org.springframework.security.web.session.HttpSessionDestroyedEvent;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,11 +42,17 @@ import javax.servlet.http.HttpSession;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class SessionOrderLockManager implements OrderLockManager {
+public class SessionOrderLockManager implements OrderLockManager, ApplicationListener<HttpSessionDestroyedEvent> {
 
     private static final Log LOG = LogFactory.getLog(SessionOrderLockManager.class);
     private static final Object LOCK = new Object();
-    private static final String LOCK_SESSION_ATTR_NAME = "SESSION_LOCK";
+    private static final ConcurrentMap<String, ReentrantLock> SESSION_LOCKS;
+    
+    static {
+        SESSION_LOCKS = new ConcurrentLinkedHashMap.Builder<String, ReentrantLock>()
+            .maximumWeightedCapacity(10000)
+            .build();
+    }
 
     /**
      * Note that although this method accepts an {@link Order} parameter, it does not use it in any way. This 
@@ -61,6 +72,14 @@ public class SessionOrderLockManager implements OrderLockManager {
         ReentrantLock lock = (ReentrantLock) lockObject;
         lock.unlock();
     }
+    
+    @Override
+    public void onApplicationEvent(HttpSessionDestroyedEvent event) {
+        ReentrantLock lock = SESSION_LOCKS.remove(event.getSession().getId());
+        if (lock != null && LOG.isDebugEnabled()) {
+            LOG.debug("Destroyed lock due to session invalidation: " + lock.toString());
+        }
+    }
 
     protected HttpServletRequest getRequest() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -68,28 +87,29 @@ public class SessionOrderLockManager implements OrderLockManager {
 
     protected ReentrantLock getSessionLock() {
         HttpSession session = getRequest().getSession();
-        ReentrantLock result = (ReentrantLock) session.getAttribute(LOCK_SESSION_ATTR_NAME);
+        ReentrantLock lock = SESSION_LOCKS.get(session.getId());
 
-        if (result == null) {
+        if (lock == null) {
             // There was no session lock object. We'll need to create one. To do this, we have to synchronize the
             // creation globally, so that two threads don't create the session lock at the same time.
             synchronized (LOCK) {
-                result = (ReentrantLock) session.getAttribute(LOCK_SESSION_ATTR_NAME);
-                if (result == null) {
-                    result = new ReentrantLock();
-                    session.setAttribute(LOCK_SESSION_ATTR_NAME, result);
+                lock = SESSION_LOCKS.get(session.getId());
+                if (lock == null) {
+                    lock = new ReentrantLock();
+                    SESSION_LOCKS.put(session.getId(), lock);
                 }
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Created new lock object: " + result.toString());
+                LOG.debug("Created new lock object: " + lock.toString());
             }
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Returning previously created lock object: " + result.toString());
+                LOG.debug("Returning previously created lock object: " + lock.toString());
             }
         }
 
-        return result;
+        return lock;
     }
+
 
 }
