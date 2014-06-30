@@ -43,7 +43,9 @@
             <aop:around method="processOrderRetrieval" pointcut-ref="orderRetrievalMethod"/>
         </aop:aspect>
     </aop:config>
-    
+
+    <bean id="blOrderLockManager" class="org.broadleafcommerce.core.web.order.SessionOrderLockManager"/>
+
     <bean id="blAddSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
     <bean id="blCategoriesProcessor" class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
     <bean id="blFormProcessor" class="org.broadleafcommerce.core.web.processor.FormProcessor" />

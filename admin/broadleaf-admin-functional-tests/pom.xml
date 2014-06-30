@@ -109,8 +109,8 @@
     </profiles>
     <dependencies>
         <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-common</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
