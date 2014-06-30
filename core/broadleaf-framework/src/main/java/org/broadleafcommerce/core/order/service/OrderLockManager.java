@@ -37,8 +37,9 @@ public interface OrderLockManager {
      * <b>NOTE</b>: Callers of this method MUST call {@link #releaseLock(Object)}, passing in the Object returned
      * from this call once their critical section has executed. The suggested idiom for this operation is:
      * 
-     * Object lockObject = orderLockManager.acquireLock(order);
+     * Object lockObject = null;
      * try {
+     *     lockObject = orderLockManager.acquireLock(order);
      *     // Do something 
      * } finally {
      *     orderLockManager.releaseLock(lockObject);

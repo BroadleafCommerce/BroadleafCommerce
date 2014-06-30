@@ -807,7 +807,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order reloadOrder(Order order) {
-        if (order instanceof NullOrderImpl || order.getId() == null) {
+        if (order == null || order instanceof NullOrderImpl || order.getId() == null) {
             return order;
         }
 
