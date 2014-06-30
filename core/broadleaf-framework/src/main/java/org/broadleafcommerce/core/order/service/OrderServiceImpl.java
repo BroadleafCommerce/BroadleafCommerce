@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.TableCreator;
+import org.broadleafcommerce.common.util.ThreadUtils;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -33,6 +34,7 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
@@ -174,6 +176,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findOrderById(Long orderId) {
         return orderDao.readOrderById(orderId);
+    }
+
+    @Override
+    public Order findOrderById(Long orderId, boolean refresh) {
+        return orderDao.readOrderById(orderId, refresh);
     }
 
     @Override
@@ -488,6 +495,7 @@ public class OrderServiceImpl implements OrderService {
         // Don't allow overrides from this method.
         orderItemRequestDTO.setOverrideRetailPrice(null);
         orderItemRequestDTO.setOverrideSalePrice(null);
+        ThreadUtils.sleepUntil(2014, 5, 30, 14, 40, 20);
         return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
     }
 
@@ -730,6 +738,15 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Order reloadOrder(Order order) {
+        if (order instanceof NullOrderImpl || order.getId() == null) {
+            return order;
+        }
+
+        return orderDao.readOrderById(order.getId(), true);
     }
 
     @Override

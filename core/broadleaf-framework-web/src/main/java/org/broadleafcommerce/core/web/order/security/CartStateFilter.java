@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderLockManager;
+import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.web.order.CartState;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.GenericFilterBean;
+
+import java.io.IOException;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
@@ -30,31 +35,82 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-@Component("blCartStateFilter")
 /**
  * <p>
  * This filter should be configured after the BroadleafCommerce CustomerStateFilter listener from Spring Security.
  * Retrieves the cart for the current BroadleafCommerce Customer based using the authenticated user OR creates an empty non-modifiable cart and
  * stores it in the request.
  * </p>
+ * 
+ * <p>
+ * This filter is also responsible for establishing a session-wide lock for operations that require a lock, indicated
+ * by {@link #requestRequiresLock(ServletRequest)}. By default, this is configured for all POST requests. Requests that
+ * are marked as requiring a lock will execute strictly serially as defined by the configured {@link OrderLockManager}.
+ * </p>
  *
  * @author bpolster
+ * @author Andre Azzolini (apazzolini)
  */
+@Component("blCartStateFilter")
 public class CartStateFilter extends GenericFilterBean implements  Ordered {
 
-    /** Logger for this class and subclasses */
-    protected final Log LOG = LogFactory.getLog(getClass());
+    protected static final Log LOG = LogFactory.getLog(CartStateFilter.class);
 
     @Resource(name = "blCartStateRequestProcessor")
     protected CartStateRequestProcessor cartStateProcessor;
 
+    @Resource(name = "blOrderLockManager")
+    protected OrderLockManager orderLockManager;
+    
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
+
     @Override
-    @SuppressWarnings("unchecked")
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {        
-        cartStateProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse)response));
-        chain.doFilter(request, response);
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+            throws IOException, ServletException {        
+        cartStateProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
+        
+        if (!requestRequiresLock(request)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        Order order = CartState.getCart();
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Thread[" + Thread.currentThread().getId() + "] attempting to lock order[" + order.getId() + "]");
+        }
+
+        Object lockObject = orderLockManager.acquireLock(order);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Thread[" + Thread.currentThread().getId() + "] grabbed lock for order[" + order.getId() + "]");
+        }
+
+        try {
+            // When we have a hold of the lock for the order, we want to reload the order from the database.
+            // This is because a different thread could have modified the order in between the time we initially
+            // read it for this thread and now, resulting in the order being stale. Additionally, we want to make
+            // sure we detach the order from the EntityManager and forcefully reload the order.
+            CartState.setCart(orderService.reloadOrder(order));
+
+            chain.doFilter(request, response);
+        } finally {
+            orderLockManager.releaseLock(lockObject);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + order.getId() +"]");
+            }
+        }
+    }
+
+    protected boolean requestRequiresLock(ServletRequest request) {
+        if (request instanceof HttpServletRequest) {
+            return ((HttpServletRequest) request).getMethod().equalsIgnoreCase("post");
+        }
+
+        return false;
     }
 
     @Override
@@ -63,5 +119,6 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
         //return FilterChainOrder.REMEMBER_ME_FILTER+1;
         return 1502;
     }
+
 
 }

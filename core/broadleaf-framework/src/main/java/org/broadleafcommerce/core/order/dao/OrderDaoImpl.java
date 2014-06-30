@@ -53,6 +53,15 @@ public class OrderDaoImpl implements OrderDao {
     public Order readOrderById(final Long orderId) {
         return em.find(OrderImpl.class, orderId);
     }
+    
+    @Override
+    public Order readOrderById(final Long orderId, boolean refresh) {
+        Order order = readOrderById(orderId);
+        if (refresh) {
+            em.refresh(order);
+        }
+        return order;
+    }
 
     @Override
     public Order save(final Order order) {
