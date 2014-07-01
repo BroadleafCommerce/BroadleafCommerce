@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
-import org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl.SiteCatalogXrefPK;
-
 /**
  * Defines the explicit join between a {@link Site} and {@link Catalog}
  * 
