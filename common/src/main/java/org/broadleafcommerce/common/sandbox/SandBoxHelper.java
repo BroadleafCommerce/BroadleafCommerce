@@ -82,6 +82,8 @@ public interface SandBoxHelper {
      */
     Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent);
 
+    Long getProdSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent);
+
     /**
      * Return the sandbox version id for the requested original id. Will return null
      * if no sandbox version is available.
@@ -93,6 +95,12 @@ public interface SandBoxHelper {
      * @return the sandbox version, or null
      */
     Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
+
+    Long getProdSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
+
+    Long getCombinedSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent);
+
+    Long getCombinedSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
 
     /**
      * Return the original id for the requested id. Will return the passed in id if

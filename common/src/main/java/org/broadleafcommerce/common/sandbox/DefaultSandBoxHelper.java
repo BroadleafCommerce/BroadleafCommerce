@@ -47,6 +47,28 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     }
 
     @Override
+    public Long getProdSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent) {
+        return requestedParent;
+    }
+
+    @Override
+    public Long getProdSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent, Boolean
+            includeSandBoxInheritance) {
+        return requestedParent;
+    }
+
+    @Override
+    public Long getCombinedSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent) {
+        return requestedParent;
+    }
+
+    @Override
+    public Long getCombinedSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent,
+                                            Boolean includeSandBoxInheritance) {
+        return requestedParent;
+    }
+
+    @Override
     public List<Long> mergeCloneIds(EntityManager em, Class<?> type, Long... originalIds) {
         return Arrays.asList(originalIds);
     }

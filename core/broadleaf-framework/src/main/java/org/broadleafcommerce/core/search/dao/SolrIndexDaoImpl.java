@@ -85,7 +85,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                         parentCategoriesByProduct.put(sandBoxProductVal, new HashSet<Long>());
                     }
                     //We only want the sandbox parent - if applicable
-                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(em, CategoryImpl.class, item.getParent());
+                    Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(em, CategoryImpl.class, item.getParent());
                     if (sandBoxVal == null) {
                         sandBoxVal = item.getParent();
                     }
@@ -160,7 +160,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
             List<ParentCategoryByCategory> results = query.getResultList();
             for (ParentCategoryByCategory item : results) {
                 //only the sandbox child
-                Long childSandBoxVal = sandBoxHelper.getSandBoxVersionId(em, CategoryImpl.class, item.getChild());
+                Long childSandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(em, CategoryImpl.class, item.getChild());
                 if (childSandBoxVal == null) {
                     childSandBoxVal = item.getChild();
                 }
@@ -175,7 +175,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                 Set<Long> hierarchy = categoryHierarchy.get(childSandBoxVal);
                 if (item.getParent() != null) {
                     //We only want the sandbox parent - if applicable
-                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(em, CategoryImpl.class, item.getParent());
+                    Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(em, CategoryImpl.class, item.getParent());
                     if (sandBoxVal == null) {
                         sandBoxVal = item.getParent();
                     }
@@ -186,7 +186,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                 }
                 if (item.getDefaultParent() != null) {
                     //We only want the sandbox parent - if applicable
-                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(em, CategoryImpl.class, item.getDefaultParent());
+                    Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(em, CategoryImpl.class, item.getDefaultParent());
                     if (sandBoxVal == null) {
                         sandBoxVal = item.getDefaultParent();
                     }

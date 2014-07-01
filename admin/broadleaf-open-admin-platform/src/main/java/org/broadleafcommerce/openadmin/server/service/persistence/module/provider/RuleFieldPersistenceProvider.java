@@ -356,7 +356,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             //Update Existing Criteria
                             for (QuantityBasedRule quantityBasedRule : criteriaList) {
                                 //make compatible with enterprise module
-                                Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(em, quantityBasedRule.getClass(), dto.getId());
+                                Long sandBoxVersionId = sandBoxHelper.getCombinedSandBoxVersionId(em, quantityBasedRule.getClass(), dto.getId());
                                 if (sandBoxVersionId == null) {
                                     sandBoxVersionId = dto.getId();
                                 }
