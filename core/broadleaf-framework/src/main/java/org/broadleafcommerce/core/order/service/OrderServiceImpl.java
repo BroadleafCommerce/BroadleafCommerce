@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.TableCreator;
+import org.broadleafcommerce.common.util.ThreadUtils;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -511,6 +512,7 @@ public class OrderServiceImpl implements OrderService {
         // Don't allow overrides from this method.
         orderItemRequestDTO.setOverrideRetailPrice(null);
         orderItemRequestDTO.setOverrideSalePrice(null);
+        ThreadUtils.sleepUntil(2014, 6, 1, 17, 1, 25);
         return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
     }
 
@@ -812,6 +814,18 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return orderDao.readOrderById(order.getId(), true);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public boolean acquireLock(Order order) {
+        return orderDao.acquireLock(order);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public boolean releaseLock(Order order) {
+        return orderDao.releaseLock(order);
     }
 
     @Override

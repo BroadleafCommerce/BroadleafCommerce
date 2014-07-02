@@ -21,12 +21,16 @@ package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -37,6 +41,7 @@ import java.util.ListIterator;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -44,6 +49,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.sql.DataSource;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -59,6 +65,9 @@ public class OrderDaoImpl implements OrderDao {
     
     @Resource(name = "blOrderDaoExtensionManager")
     protected OrderDaoExtensionManager extensionManager;
+    
+    @Resource(name = "webDS")
+    protected DataSource dataSource;
 
     @Override
     public Order readOrderById(final Long orderId) {
@@ -244,6 +253,39 @@ public class OrderDaoImpl implements OrderDao {
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         TypedQuery<Order> query = em.createQuery(criteria);
         return query.getResultList();
+    }
+
+    @Override
+    public boolean acquireLock(Order order) {
+        TypedQuery<OrderLock> q = new TypedQueryBuilder<OrderLock>(OrderLock.class, "ol")
+                .addRestriction("ol.orderId", "=", order.getId())
+                .toQuery(em);
+        q.setHint(QueryHints.HINT_CACHEABLE, false);
+        
+        // First, we need to create a record to use for locking if one hasn't been created yet
+        OrderLock lock;
+        try {
+            lock = q.getSingleResult();
+        } catch (NoResultException e) {
+            lock = (OrderLock) entityConfiguration.createEntityInstance(OrderLock.class.getName());
+            lock.setOrderId(order.getId());
+            lock.setLocked(false);
+            lock = em.merge(lock);
+        }
+        
+        // Now we can attempt to be the ones to grab the lock
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        int rowsAffected = template.update("UPDATE BLC_ORDER_LOCK SET LOCKED = ? WHERE ORDER_ID = ? AND LOCKED = ?", 
+                "Y", order.getId().toString(), "N");
+        return rowsAffected == 1;
+    }
+
+    @Override
+    public boolean releaseLock(Order order) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        int rowsAffected = template.update("UPDATE BLC_ORDER_LOCK SET LOCKED = ? WHERE ORDER_ID = ?",
+                "N", order.getId().toString());
+        return rowsAffected == 1;
     }
 
 }
