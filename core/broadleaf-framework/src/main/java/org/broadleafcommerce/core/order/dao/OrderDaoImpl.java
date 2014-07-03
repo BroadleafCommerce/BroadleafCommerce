@@ -21,15 +21,13 @@ package org.broadleafcommerce.core.order.dao;
 
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -41,7 +39,6 @@ import java.util.ListIterator;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -257,26 +254,35 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public boolean acquireLock(Order order) {
-        TypedQuery<OrderLock> q = new TypedQueryBuilder<OrderLock>(OrderLock.class, "ol")
-                .addRestriction("ol.orderId", "=", order.getId())
-                .toQuery(em);
-        q.setHint(QueryHints.HINT_CACHEABLE, false);
-        
-        // First, we need to create a record to use for locking if one hasn't been created yet
-        OrderLock lock;
-        try {
-            lock = q.getSingleResult();
-        } catch (NoResultException e) {
-            lock = (OrderLock) entityConfiguration.createEntityInstance(OrderLock.class.getName());
-            lock.setOrderId(order.getId());
-            lock.setLocked(false);
-            lock = em.merge(lock);
-        }
-        
-        // Now we can attempt to be the ones to grab the lock
         JdbcTemplate template = new JdbcTemplate(dataSource);
+        
+        // First, we'll see if there's a record of a lock for this order
+        boolean lockExists = template.queryForObject("SELECT COUNT(ORDER_ID) FROM BLC_ORDER_LOCK WHERE ORDER_ID = ?", 
+                new Object[] { order.getId() }, Integer.class) == 1;
+        
+        if (!lockExists) {
+            // If there wasn't a lock, we'll try to create one. It's possible that another thread is attempting the
+            // same thing at the same time, so we might get a constraint violation exception here. That's ok. If we 
+            // successfully inserted a record, that means that we are the owner of the lock right now.
+            int rowsAffected;
+            try {
+                rowsAffected = template.update("INSERT INTO BLC_ORDER_LOCK(ORDER_ID, LOCKED) VALUES (?, ?)",
+                        order.getId(), "Y");
+            } catch (ConstraintViolationException e) {
+                rowsAffected = 0;
+            }
+            
+            if (rowsAffected == 1) {
+                return true;
+            }
+        }
+
+        // We weren't successful in creating a lock, which means that there was some previously created lock
+        // for this order. We'll attempt to update the status from unlocked to locked. If that is succesful,
+        // we acquired the lock. 
         int rowsAffected = template.update("UPDATE BLC_ORDER_LOCK SET LOCKED = ? WHERE ORDER_ID = ? AND LOCKED = ?", 
                 "Y", order.getId().toString(), "N");
+
         return rowsAffected == 1;
     }
 

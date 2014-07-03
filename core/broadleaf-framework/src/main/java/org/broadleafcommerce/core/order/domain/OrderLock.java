@@ -29,18 +29,6 @@ import java.io.Serializable;
 public interface OrderLock extends Serializable {
 
     /**
-     * @return the internal id
-     */
-    public Long getId();
-
-    /**
-     * Sets the internal id
-     * 
-     * @param id
-     */
-    public void setId(Long id);
-
-    /**
      * @return the id of the {@link Order} associated with this OrderLock
      */
     public Long getOrderId();

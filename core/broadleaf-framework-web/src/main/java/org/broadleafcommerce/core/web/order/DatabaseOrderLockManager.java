@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
+import org.springframework.dao.CannotAcquireLockException;
 
 import javax.annotation.Resource;
 
@@ -48,7 +49,7 @@ public class DatabaseOrderLockManager implements OrderLockManager {
     public Object acquireLock(Order order) {
         if (order instanceof NullOrderImpl) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Attempted to grab a lock for a NullOrderImpl. Not blocking");
+                LOG.debug("Thread[" + Thread.currentThread().getId() + "] Attempted to grab a lock for a NullOrderImpl. ");
             }
             return order;
         }
@@ -56,14 +57,21 @@ public class DatabaseOrderLockManager implements OrderLockManager {
         boolean lockAcquired = false;
         
         while (!lockAcquired) {
-            lockAcquired = orderService.acquireLock(order);
+            try {
+                lockAcquired = orderService.acquireLock(order);
+            } catch (CannotAcquireLockException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Couldn't acquire lock - that's ok, we'll retry shortly", e);
+                }
+            }
+
             if (!lockAcquired) {
                 try {
                     int msToSleep = getDatabaseLockPollingIntervalMs();
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Could not acquire order lock for order[" + order.getId() + 
-                                "] - sleeping for " + msToSleep + " ms");
+                        LOG.debug("Thread[" + Thread.currentThread().getId() + "] Could not acquire order lock for order[" +
+                                order.getId() + "] - sleeping for " + msToSleep + " ms");
                     }
 
                     Thread.sleep(msToSleep);
@@ -78,6 +86,13 @@ public class DatabaseOrderLockManager implements OrderLockManager {
 
     @Override
     public Object acquireLockIfAvailable(Order order) {
+        if (order instanceof NullOrderImpl) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Attempted to grab a lock for a NullOrderImpl. Not blocking");
+            }
+            return order;
+        }
+
         boolean lockAcquired = orderService.acquireLock(order); 
         return lockAcquired ? order : null;
     }
@@ -87,9 +102,12 @@ public class DatabaseOrderLockManager implements OrderLockManager {
         Order order = (Order) lockObject;
         if (order instanceof NullOrderImpl) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Attempted to release a lock for a NullOrderImpl. Doing nothing");
+                LOG.debug("Thread[" + Thread.currentThread().getId() + "] Attempted to release a lock for a NullOrderImpl");
             }
         } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Thread[" + Thread.currentThread().getId() + "] releasing lock for order[" + order.getId() + "]");
+            }
             orderService.releaseLock(order);
         }
     }

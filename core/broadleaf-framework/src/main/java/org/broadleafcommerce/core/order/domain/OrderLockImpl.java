@@ -19,12 +19,8 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -38,34 +34,12 @@ public class OrderLockImpl implements OrderLock {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OrderLockId")
-    @GenericGenerator(
-        name="OrderLockId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="OrderLockImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderLockImpl")
-        }
-    )
-    @Column(name = "ORDER_LOCK_ID")
-    protected Long id;
-
-    @Column(name = "ORDER_ID", unique = true)
+    @Column(name = "ORDER_ID")
     protected Long orderId;
     
     @Column(name = "LOCKED")
     protected Character locked = 'N';
 
-    @Override
-    public Long getId() {
-        return id;
-    }
-    
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     @Override
     public Long getOrderId() {
         return orderId;
