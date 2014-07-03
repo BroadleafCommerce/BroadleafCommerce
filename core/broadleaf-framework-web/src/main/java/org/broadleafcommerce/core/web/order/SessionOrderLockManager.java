@@ -68,6 +68,13 @@ public class SessionOrderLockManager implements OrderLockManager, ApplicationLis
     }
 
     @Override
+    public Object acquireLockIfAvailable(Order order) {
+        ReentrantLock lockObject = getSessionLock();
+        boolean locked = lockObject.tryLock();
+        return locked ? lockObject : null;
+    }
+
+    @Override
     public void releaseLock(Object lockObject) {
         ReentrantLock lock = (ReentrantLock) lockObject;
         lock.unlock();
@@ -110,6 +117,5 @@ public class SessionOrderLockManager implements OrderLockManager, ApplicationLis
 
         return lock;
     }
-
 
 }
