@@ -44,7 +44,7 @@
         </aop:aspect>
     </aop:config>
 
-    <bean id="blOrderLockManager" class="org.broadleafcommerce.core.web.order.SessionOrderLockManager"/>
+    <bean id="blOrderLockManager" class="org.broadleafcommerce.core.web.order.DatabaseOrderLockManager"/>
 
     <bean id="blAddSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
     <bean id="blCategoriesProcessor" class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />

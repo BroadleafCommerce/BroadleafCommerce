@@ -91,6 +91,7 @@
         <class>org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl</class>
         <class>org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderLockImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderAttributeImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderItemImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl</class>

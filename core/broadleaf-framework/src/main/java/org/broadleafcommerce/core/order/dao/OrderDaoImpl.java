@@ -30,14 +30,18 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.ejb.QueryHints;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.ListIterator;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
-import java.util.ListIterator;
+import javax.sql.DataSource;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -53,6 +57,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blOrderDaoExtensionManager")
     protected OrderDaoExtensionManager extensionManager;
+    
+    @Resource(name = "webDS")
+    protected DataSource dataSource;
 
     @Override
     public Order readOrderById(final Long orderId) {
@@ -231,4 +238,45 @@ public class OrderDaoImpl implements OrderDao {
         return order;
     }
 
+    @Override
+    public boolean acquireLock(Order order) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        
+        // First, we'll see if there's a record of a lock for this order
+        boolean lockExists = template.queryForObject("SELECT COUNT(ORDER_ID) FROM BLC_ORDER_LOCK WHERE ORDER_ID = ?", 
+                new Object[] { order.getId() }, Integer.class) == 1;
+        
+        if (!lockExists) {
+            // If there wasn't a lock, we'll try to create one. It's possible that another thread is attempting the
+            // same thing at the same time, so we might get a constraint violation exception here. That's ok. If we 
+            // successfully inserted a record, that means that we are the owner of the lock right now.
+            int rowsAffected;
+            try {
+                rowsAffected = template.update("INSERT INTO BLC_ORDER_LOCK(ORDER_ID, LOCKED) VALUES (?, ?)",
+                        order.getId(), "Y");
+            } catch (ConstraintViolationException e) {
+                rowsAffected = 0;
+            }
+            
+            if (rowsAffected == 1) {
+                return true;
+            }
+        }
+
+        // We weren't successful in creating a lock, which means that there was some previously created lock
+        // for this order. We'll attempt to update the status from unlocked to locked. If that is succesful,
+        // we acquired the lock. 
+        int rowsAffected = template.update("UPDATE BLC_ORDER_LOCK SET LOCKED = ? WHERE ORDER_ID = ? AND LOCKED = ?", 
+                "Y", order.getId().toString(), "N");
+
+        return rowsAffected == 1;
+    }
+
+    @Override
+    public boolean releaseLock(Order order) {
+        JdbcTemplate template = new JdbcTemplate(dataSource);
+        int rowsAffected = template.update("UPDATE BLC_ORDER_LOCK SET LOCKED = ? WHERE ORDER_ID = ?",
+                "N", order.getId().toString());
+        return rowsAffected == 1;
+    }
 }
