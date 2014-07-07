@@ -188,7 +188,8 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     protected Date endDate;
 
     @Column(name = "STACKABLE")
-    protected Boolean stackable = true;
+    @AdminPresentation(excluded = true)
+    protected Boolean stackable = false;
 
     @Column(name = "TARGET_SYSTEM")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Target_System",
