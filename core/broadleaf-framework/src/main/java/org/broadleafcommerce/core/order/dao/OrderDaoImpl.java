@@ -267,7 +267,7 @@ public class OrderDaoImpl implements OrderDao {
         // for this order. We'll attempt to update the status from unlocked to locked. If that is succesful,
         // we acquired the lock. 
         int rowsAffected = template.update("UPDATE BLC_ORDER_LOCK SET LOCKED = ? WHERE ORDER_ID = ? AND LOCKED = ?", 
-                "Y", order.getId().toString(), "N");
+                "Y", order.getId(), "N");
 
         return rowsAffected == 1;
     }
@@ -276,7 +276,7 @@ public class OrderDaoImpl implements OrderDao {
     public boolean releaseLock(Order order) {
         JdbcTemplate template = new JdbcTemplate(dataSource);
         int rowsAffected = template.update("UPDATE BLC_ORDER_LOCK SET LOCKED = ? WHERE ORDER_ID = ?",
-                "N", order.getId().toString());
+                "N", order.getId());
         return rowsAffected == 1;
     }
 }
