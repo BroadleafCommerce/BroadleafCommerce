@@ -27,7 +27,6 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.springframework.dao.CannotAcquireLockException;
 
 import javax.annotation.Resource;
 
@@ -59,7 +58,7 @@ public class DatabaseOrderLockManager implements OrderLockManager {
         while (!lockAcquired) {
             try {
                 lockAcquired = orderService.acquireLock(order);
-            } catch (CannotAcquireLockException e) {
+            } catch (Exception e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Couldn't acquire lock - that's ok, we'll retry shortly", e);
                 }

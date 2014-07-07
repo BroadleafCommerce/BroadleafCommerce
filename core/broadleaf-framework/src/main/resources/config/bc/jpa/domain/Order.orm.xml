@@ -73,4 +73,28 @@
         </query>
     </named-query>
 
+    <named-query name="BC_ORDER_LOCK_READ">
+        <query>
+            SELECT orderLock FROM org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            WHERE  orderLock.orderId = :orderId
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_ACQUIRE">
+        <query>
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            SET orderLock.locked = 'Y'
+            WHERE orderLock.orderId = :orderId
+              AND orderLock.locked = 'N'
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_RELEASE">
+        <query>
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            SET orderLock.locked = 'N'
+            WHERE orderLock.orderId = :orderId
+        </query>
+    </named-query>
+
 </entity-mappings>
