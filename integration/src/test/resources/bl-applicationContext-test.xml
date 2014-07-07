@@ -239,6 +239,4 @@
         </property>
     </bean>
 
-    <bean id="webDS" class="org.apache.commons.dbcp.BasicDataSource"/>
-
 </beans>
