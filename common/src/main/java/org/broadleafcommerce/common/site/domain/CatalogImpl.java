@@ -86,9 +86,6 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationAdornedTargetCollection(
-            targetObjectProperty = "siteCatalogXrefPK.site",
-            friendlyName = "sitesTitle")
     protected List<SiteCatalogXref> siteXrefs = new ArrayList<SiteCatalogXref>();
 
     @Transient
