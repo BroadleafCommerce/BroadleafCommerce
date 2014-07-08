@@ -16,6 +16,13 @@
 
 package org.broadleafcommerce.cms.web;
 
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.broadleafcommerce.cms.page.dto.NullPageDTO;
 import org.broadleafcommerce.cms.page.dto.PageDTO;
 import org.broadleafcommerce.cms.page.service.PageService;
@@ -25,11 +32,7 @@ import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * This handler mapping works with the Page entity to determine if a page has been configured for
@@ -55,13 +58,18 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
     @Resource(name = "blPageService")
     private PageService pageService;
     
-    public static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";        
+    public static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";
+
+    @Value("${request.uri.encoding}")
+    public String charEncoding;
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
-            PageDTO page = pageService.findPageByURI(context.getSandbox(), context.getLocale(), context.getRequestURIWithoutContext(), buildMvelParameters(request), context.isSecure());
+            String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
+            PageDTO page = pageService.findPageByURI(context.getSandbox(), context.getLocale(),
+                    requestUri, buildMvelParameters(request), context.isSecure());
 
             if (page != null && ! (page instanceof NullPageDTO)) {
                 context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, page);
