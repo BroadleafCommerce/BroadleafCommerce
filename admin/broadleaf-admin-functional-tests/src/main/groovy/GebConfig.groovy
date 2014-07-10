@@ -22,12 +22,19 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeDriverService
 import org.openqa.selenium.firefox.FirefoxDriver
 
+import geb.buildadapter.SystemPropertiesBuildAdapter
+
 
 println 'Loading default Broadleaf GebConfig'
 // Use the FirefoxDriver by default
 driver = { new FirefoxDriver() }
-baseUrl = 'http://demo75ip6w.broadleafcommerce.org/admin/'
-reportsDir = 'target/gebreports'
+if (!System.getProperty(SystemPropertiesBuildAdapter.BASE_URL_PROPERTY_NAME)) {
+    baseUrl = 'http://demo75ip6w.broadleafcommerce.org/admin/'
+}
+
+if (!System.getProperty(SystemPropertiesBuildAdapter.REPORTS_DIR_PROPERTY_NAME)) {
+    reportsDir = 'target/gebreports'
+}
 environments {
 
     // See: http://code.google.com/p/selenium/wiki/ChromeDriver
