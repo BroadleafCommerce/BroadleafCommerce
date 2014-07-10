@@ -131,6 +131,8 @@ public interface CatalogService {
 
     public Category findCategoryById(Long categoryId);
 
+    public Category findCategoryByExternalId(String externalId);
+
     /**
      * Retrieve a {@code Category} instance based on its name property.
      *
@@ -184,6 +186,8 @@ public interface CatalogService {
     public List<Sku> findSkusByIds(List<Long> ids);
 
     public Sku findSkuById(Long skuId);
+
+    public Sku findSkuByExternalId(String externalId);
 
     /**
      * Get a hierarchical map of all child categories keyed on the url
