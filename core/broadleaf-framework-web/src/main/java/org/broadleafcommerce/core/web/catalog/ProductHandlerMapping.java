@@ -19,13 +19,16 @@
  */
 package org.broadleafcommerce.core.web.catalog;
 
+import java.net.URLDecoder;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * This handler mapping works with the Category entity to determine if a category has been configured for
@@ -50,11 +53,15 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
 
     public static final String CURRENT_PRODUCT_ATTRIBUTE_NAME = "currentProduct";
 
+    @Value("${request.uri.encoding}")
+    public String charEncoding;
+
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
-            Product product = catalogService.findProductByURI(context.getRequestURIWithoutContext());
+            String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
+            Product product = catalogService.findProductByURI(requestUri);
             if (product != null) {
                 context.getRequest().setAttribute(CURRENT_PRODUCT_ATTRIBUTE_NAME, product);
                 return controllerName;
