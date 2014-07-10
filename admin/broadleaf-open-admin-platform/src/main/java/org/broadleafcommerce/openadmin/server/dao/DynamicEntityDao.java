@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.dao;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -38,6 +31,14 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.persistence.EntityManager;
 
 /**
  * 
@@ -57,6 +58,14 @@ public interface DynamicEntityDao {
     public abstract Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType);
     
     public abstract Map<String, FieldMetadata> getMergedProperties(String ceilingEntityFullyQualifiedClassname, Class<?>[] entities, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, String[] includeManyToOneFields, String[] excludeManyToOneFields, String configurationKey, String prefix);
+
+    /**
+     * Convenience method that obtains all of the {@link MergedPropertyType#PRIMARY} properties for a given class. Delegates to
+     * {@link #getMergedProperties(String, Class[], ForeignKey, String[], ForeignKey[], MergedPropertyType, Boolean, String[], String[], String, String)}
+     * @param cls
+     * @return
+     */
+    public Map<String, FieldMetadata> getMergedProperties(@Nonnull Class<?> cls);
     
     public abstract <T> T persist(T entity);
     
