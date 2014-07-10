@@ -191,6 +191,13 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
 
+    @Column(name = "EXTERNAL_ID")
+    @Index(name="CATEGORY_E_ID_INDEX", columnNames={"EXTERNAL_ID"})
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_ExternalID",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+    protected String externalId;
+
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key",
@@ -1325,6 +1332,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     public String getLocation() {
         return getUrl();
+    }
+
+    @Override
+    public String getExternalId() {
+        return externalId;
+    }
+
+    @Override
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
 }

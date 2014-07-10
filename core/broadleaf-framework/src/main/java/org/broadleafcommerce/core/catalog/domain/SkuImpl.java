@@ -162,6 +162,13 @@ public class SkuImpl implements Sku {
     @AdminPresentation(friendlyName = "SkuImpl_Sku_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
+    @Column(name = "EXTERNAL_ID")
+    @Index(name="SKU_EXTERNAL_ID_INDEX", columnNames={"EXTERNAL_ID"})
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_ExternalID",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+    protected String externalId;
+
     @Column(name = "URL_KEY")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_UrlKey", order = 4000,
         tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced,
@@ -1068,5 +1075,15 @@ public class SkuImpl implements Sku {
     @Override
     public void setTaxCode(String taxCode) {
         this.taxCode = taxCode;
+    }
+
+    @Override
+    public String getExternalId() {
+        return externalId;
+    }
+
+    @Override
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 }
