@@ -569,6 +569,10 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     ""
             );
             filterMappings = getAdornedTargetFilterMappings(persistencePerspective, cto, mergedProperties, adornedTargetList);
+
+            if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
+                filterMappings.addAll(cto.getAdditionalFilterMappings());
+            }
             
             String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
             Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
