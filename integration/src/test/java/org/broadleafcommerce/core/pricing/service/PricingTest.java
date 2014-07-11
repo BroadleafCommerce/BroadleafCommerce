@@ -28,6 +28,8 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -63,11 +65,13 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class PricingTest extends BaseTest {
@@ -356,7 +360,12 @@ public class PricingTest extends BaseTest {
         offer.setValue(BigDecimal.valueOf(value));
         offer.setDeliveryType(OfferDeliveryType.CODE);
         offer.setStackable(true);
-        offer.setAppliesToOrderRules(orderRule);
+
+        OfferItemCriteria oic = new OfferItemCriteriaImpl();
+        oic.setQuantity(1);
+        oic.setMatchRule(orderRule);
+        offer.setTargetItemCriteria(Collections.singleton(oic));
+
         offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(true);
         offer = offerService.save(offer);

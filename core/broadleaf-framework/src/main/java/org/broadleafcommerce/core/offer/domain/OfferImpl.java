@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -54,6 +55,7 @@ import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -703,6 +705,11 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
 
     @Override
     public Set<OfferItemCriteria> getTargetItemCriteria() {
+        if (OfferType.ORDER_ITEM.equals(getType()) && CollectionUtils.isEmpty(targetItemCriteria)) {
+            OfferItemCriteria oic = new OfferItemCriteriaImpl();
+            oic.setQuantity(1);
+            return Collections.unmodifiableSet(Collections.singleton(oic));
+        }
         return targetItemCriteria;
     }
 

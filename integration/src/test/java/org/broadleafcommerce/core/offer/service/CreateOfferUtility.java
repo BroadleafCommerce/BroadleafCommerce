@@ -21,12 +21,16 @@ import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collections;
 
 @SuppressWarnings("deprecation")
 public class CreateOfferUtility {
@@ -68,7 +72,16 @@ public class CreateOfferUtility {
         offer.setValue(BigDecimal.valueOf(value));
         offer.setDeliveryType(OfferDeliveryType.CODE);
         offer.setStackable(stackable);
-        offer.setAppliesToOrderRules(orderRule);
+        if (stackable) {
+            offer.setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
+            offer.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
+        }
+        
+        OfferItemCriteria oic = new OfferItemCriteriaImpl();
+        oic.setQuantity(1);
+        oic.setMatchRule(orderRule);
+        offer.setTargetItemCriteria(Collections.singleton(oic));
+        
         offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(combinable);
         offer.setPriority(priority);
