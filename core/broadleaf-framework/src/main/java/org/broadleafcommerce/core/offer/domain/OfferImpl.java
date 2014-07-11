@@ -252,7 +252,7 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     @AdminPresentation(friendlyName = "OfferImpl_Item_Qualifier_Rule", 
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, tooltip = "OfferItemRestrictionRuleType_tooltip",
         broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
     protected String offerItemQualifierRuleType;
     
@@ -260,7 +260,7 @@ public class OfferImpl implements Offer, Status, AdminMainEntity {
     @AdminPresentation(friendlyName = "OfferImpl_Item_Target_Rule", 
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
-        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, tooltip = "OfferItemRestrictionRuleType_tooltip",
         broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
     protected String offerItemTargetRuleType;
     
