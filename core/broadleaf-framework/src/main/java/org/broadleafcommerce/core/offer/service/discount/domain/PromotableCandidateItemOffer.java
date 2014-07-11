@@ -42,6 +42,10 @@ public interface PromotableCandidateItemOffer extends Serializable {
 
     public void setPotentialSavings(Money savings);
 
+    public Money getPotentialSavingsQtyOne();
+
+    public void setPotentialSavingsQtyOne(Money potentialSavingsQtyOne);
+
     public boolean hasQualifyingItemCriteria();
 
     /**
@@ -90,4 +94,5 @@ public interface PromotableCandidateItemOffer extends Serializable {
     public List<PromotableOrderItem> getLegacyCandidateTargets();
 
     public void setLegacyCandidateTargets(List<PromotableOrderItem> candidateTargets);
+
 }

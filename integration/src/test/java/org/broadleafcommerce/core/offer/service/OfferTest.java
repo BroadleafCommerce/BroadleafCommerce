@@ -66,10 +66,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * This integration test class is kept to guarantee backwards
@@ -177,26 +178,7 @@ public class OfferTest extends CommonSetupBaseTest {
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
 
-    @Test(groups =  {"testOfferNotStackableItemOffers"}, dependsOnGroups = { "offerUsedForPricing"})
-    @Transactional
-    public void testOfferNotStackableItemOffers() throws Exception {
-        Order order = orderService.createNewCartForCustomer(createCustomer());
-      
-        order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
-        order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
-
-        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, false, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == " + sku1, true, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, false, true, 1));
-        
-        List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
-
-        assert (order.getSubTotal().equals(new Money(252D)));
-    }
-
-    @Test(groups =  {"testOfferNotCombinableItemOffers"}, dependsOnGroups = { "testOfferNotStackableItemOffers"})
+    @Test(groups =  {"testOfferNotCombinableItemOffers"}, dependsOnGroups = { "offerUsedForPricing"})
     @Transactional
     public void testOfferNotCombinableItemOffers() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -212,29 +194,10 @@ public class OfferTest extends CommonSetupBaseTest {
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
 
-        assert (order.getSubTotal().equals(new Money(280D)));
+        assert (order.getSubTotal().equals(new Money(300D)));
     }
 
-    @Test(groups =  {"testOfferLowerSalePrice"}, dependsOnGroups = { "testOfferNotCombinableItemOffers"})
-    @Transactional
-    public void testOfferLowerSalePrice() throws Exception {
-        Order order = orderService.createNewCartForCustomer(createCustomer());
-        
-        order.addOrderItem(createDiscreteOrderItem(sku1, 100D, 50D, true, 2, order));
-        order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
-
-        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, true, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == " + sku1, true, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
-        
-        List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
-
-        assert (order.getSubTotal().equals(new Money(212D)));
-    }
-
-    @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOffer"}, dependsOnGroups = { "testOfferLowerSalePrice"})
+    @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOffer"}, dependsOnGroups = { "testOfferNotCombinableItemOffers"})
     @Transactional
     public void testOfferLowerSalePriceWithNotCombinableOffer() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -288,15 +251,15 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, 50D, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, 50D, true, 2, order));
 
-        order.addOfferCode(createOfferUtility.createOfferCode("25 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 25, null, null, true, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("35 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 35, null, null, true, true, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("25 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 25, null, null, true, false, 1));
+        order.addOfferCode(createOfferUtility.createOfferCode("35 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 35, null, null, true, false, 1));
         order.addOfferCode(createOfferUtility.createOfferCode("45 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 45, null, null, true, false, 1));
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
 
-        assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(130D));
+        assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(170D));
     }
 
     @Test(groups =  {"testOfferNotStackableOrderOffers"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer2"})
