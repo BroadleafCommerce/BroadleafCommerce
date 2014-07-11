@@ -19,9 +19,6 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
@@ -58,29 +55,6 @@ public class SiteCatalogXrefPK implements Serializable {
 
     public void setCatalog(Catalog catalog) {
         this.catalog = catalog;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (SiteCatalogXrefPK.class.isAssignableFrom(obj.getClass())) {
-            SiteCatalogXrefPK that = (SiteCatalogXrefPK) obj;
-            return new EqualsBuilder()
-                    .append(catalog, that.catalog)
-                    .append(site, that.site)
-                    .build();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .append(catalog)
-            .append(site)
-            .build();
     }
 
 }
