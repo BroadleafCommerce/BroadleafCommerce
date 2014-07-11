@@ -191,7 +191,8 @@ public class ItemOfferProcessorTest extends TestCase {
 
         //test that the valid order item offer is included - legacy format - no qualifier
         //since there's no qualifier, both items can apply
-        assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(0).getOffer().equals(offers.get(0)) && qualifiedOffers.get(1).getOffer().equals(offers.get(0)));
+        // This line is commented out because we are no longer creating legacy offers.
+        //assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(0).getOffer().equals(offers.get(0)) && qualifiedOffers.get(1).getOffer().equals(offers.get(0)));
 
         qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
         offers = dataProvider.createItemBasedOfferWithItemCriteria(
@@ -352,7 +353,7 @@ public class ItemOfferProcessorTest extends TestCase {
         int count = 0;
         for (OrderItem item : order.getOrderItems()) {
             for (OrderItemPriceDetail detail : item.getOrderItemPriceDetails()) {
-                count = count + detail.getOrderItemPriceDetailAdjustments().size();
+                count = count + (detail.getOrderItemPriceDetailAdjustments().size() * detail.getQuantity());
             }
         }
         return count;
