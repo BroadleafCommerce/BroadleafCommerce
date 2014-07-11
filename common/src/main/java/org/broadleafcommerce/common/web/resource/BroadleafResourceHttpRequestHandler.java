@@ -205,29 +205,29 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             }
             
             BroadleafRequestContext newBrc = new BroadleafRequestContext();
-            if (!isGlobalAdmin(req)) {
+            //if (!isGlobalAdmin(req)) {
                 ServletWebRequest swr = new ServletWebRequest(req);
                 newBrc.setSite(siteResolver.resolveSite(swr, true));
                 newBrc.setSandBox(sbResolver.resolveSandBox(swr, newBrc.getSite()));
                 BroadleafRequestContext.setBroadleafRequestContext(newBrc);
                 newBrc.setTheme(themeResolver.resolveTheme(swr));
-            }
+            //}
         }
     }
     
-    protected boolean isGlobalAdmin(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        if (!StringUtils.isEmpty(globalAdminPrefix)) {
-            if (globalAdminPrefix.equals(getContextName(request))) {
-                return true;
-            } else {
-                if (!StringUtils.isEmpty(globalAdminUrl)) {
-                    return uri.startsWith(globalAdminUrl);
-                }
-            }
-        }
-        return false;
-    }
+//    protected boolean isGlobalAdmin(HttpServletRequest request) {
+//        String uri = request.getRequestURI();
+//        if (!StringUtils.isEmpty(globalAdminPrefix)) {
+//            if (globalAdminPrefix.equals(getContextName(request))) {
+//                return true;
+//            } else {
+//                if (!StringUtils.isEmpty(globalAdminUrl)) {
+//                    return uri.startsWith(globalAdminUrl);
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
     protected String getContextName(HttpServletRequest request) {
         String contextName = request.getServerName();
