@@ -19,16 +19,18 @@
  */
 package org.broadleafcommerce.core.order.dao;
 
-import java.util.List;
-
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.util.Date;
+import java.util.List;
 
 public interface OrderDao {
 
     Order readOrderById(Long orderId);
-
+    
     Order readOrderById(Long orderId, boolean refresh);
 
     List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
@@ -52,5 +54,25 @@ public interface OrderDao {
     Order readOrderByOrderNumber(String orderNumber);
     
     Order updatePrices(Order order);
+
+    /**
+     * This method will attempt to update the {@link OrderLock} object table for the given order to mark it as
+     * locked, provided the OrderLock record for the given order was not already locked. It will return true or
+     * false depending on whether or not the lock was able to be acquired.
+     * 
+     * @param order
+     * @return true if the lock was acquired, false otherwise
+     */
+    public boolean acquireLock(Order order);
+
+    /**
+     * Releases the lock for the given order. Note that this method will release the lock for the order whether or not
+     * the caller was the current owner of the lock. As such, callers of this method should take care to ensure they
+     * hold the lock before attempting to release it.
+     * 
+     * @param order
+     * @return true if the lock was successfully released, false otherwise
+     */
+    public boolean releaseLock(Order order);
 
 }

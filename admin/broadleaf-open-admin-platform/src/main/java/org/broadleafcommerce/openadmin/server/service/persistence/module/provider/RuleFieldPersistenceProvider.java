@@ -19,18 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
@@ -61,6 +49,18 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 /**
  * @author Jeff Fischer

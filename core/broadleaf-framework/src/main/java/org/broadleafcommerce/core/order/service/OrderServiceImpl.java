@@ -39,6 +39,7 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.NullOrderFactory;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
@@ -805,6 +806,27 @@ public class OrderServiceImpl implements OrderService {
         } catch (WorkflowException e) {
             throw new UpdateCartException("Could not product options", getCartOperationExceptionRootCause(e));
         }
+    }
+
+    @Override
+    public Order reloadOrder(Order order) {
+        if (order == null || order instanceof NullOrderImpl || order.getId() == null) {
+            return order;
+        }
+
+        return orderDao.readOrderById(order.getId(), true);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public boolean acquireLock(Order order) {
+        return orderDao.acquireLock(order);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public boolean releaseLock(Order order) {
+        return orderDao.releaseLock(order);
     }
 
     @Override

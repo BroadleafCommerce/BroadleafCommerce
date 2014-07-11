@@ -45,7 +45,6 @@ import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.State;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,7 +52,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,11 +104,22 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // changed, the order payments need to be adjusted to reflect this and must add up to the order total.
         // This can happen in the case of PayPal Express or other hosted gateways where the unconfirmed payment comes back
         // to a review page, the customer selects shipping and the order total is adjusted.
+        
+        /**
+         * This list contains the additional transactions that were created to confirm previously unconfirmed transactions
+         * which can occur if you send credit card data directly to Broadlaef and rely on this activity to confirm
+         * that transaction
+         */
         Map<OrderPayment, PaymentTransaction> additionalTransactions = new HashMap<OrderPayment, PaymentTransaction>();
         List<PaymentResponseDTO> failedTransactions = new ArrayList<PaymentResponseDTO>();
         // Used for the rollback handler; we want to make sure that we roll back transactions that have already been confirmed
         // as well as transctions that we are about to confirm here
         List<PaymentTransaction> confirmedTransactions = new ArrayList<PaymentTransaction>();
+        /**
+         * This is a subset of the additionalTransactions that contains the transactions that were confirmed in this activity
+         */
+        Map<OrderPayment, PaymentTransactionType> additionalConfirmedTransactions = new HashMap<OrderPayment, PaymentTransactionType>();
+
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
                 for (PaymentTransaction tx : payment.getTransactions()) {
@@ -183,7 +192,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         additionalTransactions.put(payment, transaction);
 
                         if (responseDTO.isSuccessful()) {
-                            confirmedTransactions.add(transaction);
+                            additionalConfirmedTransactions.put(payment, transaction.getType());
                         } else {
                             failedTransactions.add(responseDTO);
                         }
@@ -200,19 +209,35 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
             }
         }
         
+        // Add the new transactions to this payment (failed and confirmed) These need to be saved on the order payment
+        // regardless of an error in the workflow later.
+        for (OrderPayment payment : order.getPayments()) {
+            if (additionalTransactions.containsKey(payment)) {
+                PaymentTransactionType confirmedType = null;
+                if (additionalConfirmedTransactions.containsKey(payment)) {
+                    confirmedType = additionalConfirmedTransactions.get(payment);
+                }
+
+                payment.addTransaction(additionalTransactions.get(payment));
+                payment = orderPaymentService.save(payment);
+
+                if (confirmedType != null) {
+                    List<PaymentTransaction> types = payment.getTransactionsForType(confirmedType);
+                    if (types.size() == 1) {
+                        confirmedTransactions.add(types.get(0));
+                    } else {
+                        throw new IllegalArgumentException("There should only be one AUTHORIZE or AUTHORIZE_AND_CAPTURE transaction." +
+                                "There are more than one confirmed payment transactions for Order Payment:" + payment.getId() );
+                    }
+                }
+            }
+        }
+
         // Once all transactions have been confirmed, add them to the rollback state.
         // If an exception is thrown after this, the confirmed transactions will need to be voided or reversed
         // (based on the implementation requirements of the Gateway)
         rollbackState.put(CONFIRMED_TRANSACTIONS, confirmedTransactions);
         ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
-
-        // Add the new transactions to this payment
-        for (OrderPayment payment : order.getPayments()) {
-            if (additionalTransactions.containsKey(payment)) {
-                payment.addTransaction(additionalTransactions.get(payment));
-                orderPaymentService.save(payment);
-            }
-        }
 
         //Handle the failed transactions (default implementation is to throw a new CheckoutException)
         if (!failedTransactions.isEmpty()) {

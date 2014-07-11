@@ -59,7 +59,8 @@
         <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
         WHERE order.customer.id = :customerId            
         AND order.status = :orderStatus
-        AND order.name is null</query>
+        AND order.name is null
+        ORDER BY order.id desc</query>
     </named-query>
 
     <named-query name="BC_READ_NAMED_ORDER_FOR_CUSTOMER">
@@ -69,6 +70,30 @@
             WHERE order.customer.id = :customerId
                  AND order.name = :orderName
                  AND order.status = :orderStatus
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_READ">
+        <query>
+            SELECT orderLock FROM org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            WHERE  orderLock.orderId = :orderId
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_ACQUIRE">
+        <query>
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            SET orderLock.locked = 'Y'
+            WHERE orderLock.orderId = :orderId
+              AND orderLock.locked = 'N'
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_RELEASE">
+        <query>
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            SET orderLock.locked = 'N'
+            WHERE orderLock.orderId = :orderId
         </query>
     </named-query>
 

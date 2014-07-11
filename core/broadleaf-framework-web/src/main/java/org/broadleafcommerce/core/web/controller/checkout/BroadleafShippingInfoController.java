@@ -158,6 +158,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                     Address billing = payment.getBillingAddress();
                     if (billing != null) {
                         Address shipping = addressService.create();
+                        shipping.setFullName(billing.getFullName());
                         shipping.setFirstName(billing.getFirstName());
                         shipping.setLastName(billing.getLastName());
                         shipping.setAddressLine1(billing.getAddressLine1());

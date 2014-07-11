@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
+import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
@@ -524,5 +525,28 @@ public interface OrderService {
      * @param cart
      */
     public void preValidateCartOperation(Order cart);
+    
+    /**
+     * Detaches the given order from the current entity manager and then reloads a fresh version from
+     * the database.
+     * 
+     * @param order
+     * @return the newly read order
+     */
+    public Order reloadOrder(Order order);
 
+
+    /**
+     * @see OrderDao#acquireLock(Order)
+     * @param order
+     * @return whether or not the lock was acquired
+     */
+    public boolean acquireLock(Order order);
+
+    /**
+     * @see OrderDao#releaseLock(Order)
+     * @param order
+     * @return whether or not the lock was released
+     */
+    public boolean releaseLock(Order order);
 }

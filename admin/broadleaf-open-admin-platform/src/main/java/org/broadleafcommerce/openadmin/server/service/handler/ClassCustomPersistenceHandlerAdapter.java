@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.handler;
 
+import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 
 import java.util.ArrayList;
@@ -51,5 +52,8 @@ public class ClassCustomPersistenceHandlerAdapter extends CustomPersistenceHandl
         return false;
     }
     
+    protected boolean isMapOperation(PersistencePackage persistencePackage) {
+        return persistencePackage.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.MAP);
+    }
 
 }

@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
@@ -32,12 +33,15 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.util.List;
 import java.util.ListIterator;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -53,7 +57,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blOrderDaoExtensionManager")
     protected OrderDaoExtensionManager extensionManager;
-
+    
     @Override
     public Order readOrderById(final Long orderId) {
         return em.find(OrderImpl.class, orderId);
@@ -231,4 +235,51 @@ public class OrderDaoImpl implements OrderDao {
         return order;
     }
 
+    @Override
+    public boolean acquireLock(Order order) {
+        // First, we'll see if there's a record of a lock for this order
+        Query q = em.createNamedQuery("BC_ORDER_LOCK_READ");
+        q.setParameter("orderId", order.getId());
+        q.setHint(QueryHints.HINT_CACHEABLE, false);
+        OrderLock ol;
+        try {
+            ol = (OrderLock) q.getSingleResult();
+        } catch (NoResultException e) {
+            ol = null;
+        }
+        
+        if (ol == null) {
+            // If there wasn't a lock, we'll try to create one. It's possible that another thread is attempting the
+            // same thing at the same time, so we might get a constraint violation exception here. That's ok. If we 
+            // successfully inserted a record, that means that we are the owner of the lock right now.
+            try {
+                ol = (OrderLock) entityConfiguration.createEntityInstance(OrderLock.class.getName());
+                ol.setOrderId(order.getId());
+                ol.setLocked(true);
+                em.persist(ol);
+                return true;
+            } catch (EntityExistsException e) {
+                return false;
+            }
+        }
+
+        // We weren't successful in creating a lock, which means that there was some previously created lock
+        // for this order. We'll attempt to update the status from unlocked to locked. If that is succesful,
+        // we acquired the lock. 
+        q = em.createNamedQuery("BC_ORDER_LOCK_ACQUIRE");
+        q.setParameter("orderId", order.getId());
+        q.setHint(QueryHints.HINT_CACHEABLE, false);
+        int rowsAffected = q.executeUpdate();
+
+        return rowsAffected == 1;
+    }
+
+    @Override
+    public boolean releaseLock(Order order) {
+        Query q = em.createNamedQuery("BC_ORDER_LOCK_RELEASE");
+        q.setParameter("orderId", order.getId());
+        q.setHint(QueryHints.HINT_CACHEABLE, false);
+        int rowsAffected = q.executeUpdate();
+        return rowsAffected == 1;
+    }
 }
