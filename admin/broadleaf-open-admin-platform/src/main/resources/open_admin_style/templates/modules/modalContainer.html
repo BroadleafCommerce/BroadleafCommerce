@@ -14,19 +14,27 @@
             </span>
             
             <span th:case="'addCollectionItem'" th:remove="tag">
-                [[#{modal.title.add}]] [[#{${collectionProperty.metadata.friendlyName}}]]
+                [[#{modal.title.add}]] 
+                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" />
+                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" />
             </span>
             
             <span th:case="'selectCollectionItem'" th:remove="tag">
-                [[#{modal.title.select}]] [[#{${collectionProperty.metadata.friendlyName}}]]
+                [[#{modal.title.select}]]
+                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" />
+                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" />
             </span>
             
             <span th:case="'updateCollectionItem'" th:remove="tag">
-                [[#{modal.title.update}]] [[#{${collectionProperty.metadata.friendlyName}}]]
+                [[#{modal.title.update}]]
+                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" />
+                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" />
             </span>
 
             <span th:case="'viewCollectionItem'" th:remove="tag">
-                [[#{modal.title.view}]] [[#{${collectionProperty.metadata.friendlyName}}]]
+                [[#{modal.title.view}]]
+                <span th:remove="tag" th:if="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.name}}" />
+                <span th:remove="tag" th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}" th:text="#{${collectionProperty.metadata.friendlyName}}" />
             </span>
             
             <span th:case="'translation'" th:remove="tag">
