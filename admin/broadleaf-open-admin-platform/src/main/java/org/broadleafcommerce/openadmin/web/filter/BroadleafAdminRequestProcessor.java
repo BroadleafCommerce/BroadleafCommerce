@@ -38,7 +38,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafTimeZoneResolver;
-import org.broadleafcommerce.common.web.ProductionState;
+import org.broadleafcommerce.common.web.DeployBehavior;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
@@ -191,7 +191,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
 
             request.setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, sandBox.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
             brc.setSandBox(sandBox);
-            brc.setProductionState(isProductionSandBoxMode? ProductionState.SANDBOX:ProductionState.NON_SANDBOX);
+            brc.setDeployBehavior(isProductionSandBoxMode ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
             brc.getAdditionalProperties().put("adminUser", adminUser);
         }
     }

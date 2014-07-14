@@ -159,7 +159,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         brc.setLocale(locale);
         brc.setBroadleafCurrency(currency);
         brc.setSandBox(currentSandbox);
-        brc.setProductionState(isProductionSandBoxMode? ProductionState.SANDBOX:ProductionState.NON_SANDBOX);
+        brc.setDeployBehavior(isProductionSandBoxMode ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
 
         // Note that this must happen after the request context is set up as resolving a theme is dependent on site
         Theme theme = themeResolver.resolveTheme(request);

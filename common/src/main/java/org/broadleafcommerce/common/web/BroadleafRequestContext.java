@@ -85,7 +85,6 @@ public class BroadleafRequestContext {
     protected HttpServletResponse response;
     protected WebRequest webRequest;
     protected SandBox sandBox;
-    protected ProductionState productionState = ProductionState.UNDEFINED;
     protected Locale locale;
     protected TimeZone timeZone;
     protected BroadleafCurrency broadleafCurrency;
@@ -101,6 +100,8 @@ public class BroadleafRequestContext {
     protected Boolean isAdmin = false;
     protected Long adminUserId;
 
+    protected DeployState deployState = DeployState.UNDEFINED;
+    protected DeployBehavior deployBehavior = DeployBehavior.UNDEFINED;
     protected Boolean internalIgnoreFilters = false;
 
     /**
@@ -206,10 +207,6 @@ public class BroadleafRequestContext {
 
     public boolean isProductionSandBox() {
         return sandBox == null || SandBoxType.PRODUCTION == sandBox.getSandBoxType();
-    }
-
-    public boolean useSandBoxStateInProduction() {
-        return ProductionState.SANDBOX==productionState;
     }
 
     public void setSandBox(SandBox sandBox) {
@@ -408,11 +405,19 @@ public class BroadleafRequestContext {
         this.internalIgnoreFilters = internalIgnoreFilters;
     }
 
-    public ProductionState getProductionState() {
-        return productionState;
+    public DeployState getDeployState() {
+        return deployState;
     }
 
-    public void setProductionState(ProductionState productionState) {
-        this.productionState = productionState;
+    public void setDeployState(DeployState deployState) {
+        this.deployState = deployState;
+    }
+
+    public DeployBehavior getDeployBehavior() {
+        return deployBehavior;
+    }
+
+    public void setDeployBehavior(DeployBehavior deployBehavior) {
+        this.deployBehavior = deployBehavior;
     }
 }
