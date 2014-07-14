@@ -28,10 +28,11 @@ import java.util.List;
 
 
 /**
- * 
+ * Deprecated - Use {@link org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionHandler}
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
+@Deprecated
 public interface MainEntityActionsExtensionHandler extends ExtensionHandler {
 
     /**

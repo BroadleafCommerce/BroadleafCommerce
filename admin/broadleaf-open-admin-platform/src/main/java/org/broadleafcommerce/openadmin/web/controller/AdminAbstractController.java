@@ -102,7 +102,11 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
-    
+
+    /**
+     * Deprecated in favor of {@link org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionManager}
+     */
+    @Deprecated
     @Resource(name = "blMainEntityActionsExtensionManager")
     protected MainEntityActionsExtensionManager mainEntityActionsExtensionManager;
 
