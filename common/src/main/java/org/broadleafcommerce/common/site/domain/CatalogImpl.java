@@ -82,7 +82,7 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     @AdminPresentation(friendlyName = "Catalog_Name", gridOrder = 1, order=1, prominent = true)
     protected String name;
 
-    @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "siteCatalogXrefPK.catalog", orphanRemoval = true)
+    @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "catalog", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)

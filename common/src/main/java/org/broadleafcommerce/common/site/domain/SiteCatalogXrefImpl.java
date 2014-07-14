@@ -21,13 +21,20 @@ package org.broadleafcommerce.common.site.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 
@@ -39,35 +46,55 @@ public class SiteCatalogXrefImpl implements Serializable, SiteCatalogXref {
 
     private static final long serialVersionUID = 1L;
 
-    @EmbeddedId
-    protected SiteCatalogXrefPK siteCatalogXrefPK = new SiteCatalogXrefPK();
-    
-    public SiteCatalogXrefPK getSiteCatalogXrefPK() {
-        return siteCatalogXrefPK;
+    @Id
+    @GeneratedValue(generator = "SiteCatalogXrefId")
+    @GenericGenerator(
+        name="SiteCatalogXrefId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SiteCatalogXrefImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl")
+        }
+    )
+    @Column(name = "SITE_CATALOG_XREF_ID")
+    protected Long id;
+
+    @ManyToOne(targetEntity = SiteImpl.class, optional = false)
+    @JoinColumn(name = "SITE_ID")
+    protected Site site = new SiteImpl();
+
+    @ManyToOne(targetEntity = CatalogImpl.class, optional = false)
+    @JoinColumn(name = "CATALOG_ID")
+    protected Catalog catalog = new CatalogImpl();
+
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public void setSiteCatalogXrefPK(SiteCatalogXrefPK siteCatalogXrefPK) {
-        this.siteCatalogXrefPK = siteCatalogXrefPK;
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
-    
+
     @Override
     public Site getSite() {
-        return getSiteCatalogXrefPK().getSite();
+        return site;
     }
-    
+
     @Override
     public void setSite(Site site) {
-        getSiteCatalogXrefPK().setSite(site);
+        this.site = site;
     }
-    
+
     @Override
     public Catalog getCatalog() {
-        return getSiteCatalogXrefPK().getCatalog();
+        return catalog;
     }
-    
+
     @Override
     public void setCatalog(Catalog catalog) {
-        getSiteCatalogXrefPK().setCatalog(catalog);
+        this.catalog = catalog;
     }
     
 }

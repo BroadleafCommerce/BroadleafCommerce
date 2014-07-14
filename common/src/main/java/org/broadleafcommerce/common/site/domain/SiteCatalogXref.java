@@ -27,10 +27,6 @@ package org.broadleafcommerce.common.site.domain;
  * @see {@link Catalog#getSiteXrefs()}
  */
 public interface SiteCatalogXref {
-
-    public SiteCatalogXrefPK getSiteCatalogXrefPK();
-
-    public void setSiteCatalogXrefPK(SiteCatalogXrefPK siteCatalogXrefPK);
     
     public Site getSite();
     
@@ -39,5 +35,9 @@ public interface SiteCatalogXref {
     public Catalog getCatalog();
     
     public void setCatalog(Catalog catalog);
+
+    Long getId();
+
+    void setId(Long id);
 
 }

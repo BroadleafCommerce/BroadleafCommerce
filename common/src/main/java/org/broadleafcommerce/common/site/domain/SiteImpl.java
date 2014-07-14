@@ -101,12 +101,12 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
-    @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "siteCatalogXrefPK.site", orphanRemoval = true)
+    @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "site", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(
-            targetObjectProperty = "siteCatalogXrefPK.catalog",
+            targetObjectProperty = "catalog",
             friendlyName = "siteCatalogTitle")
     protected List<SiteCatalogXref> catalogXrefs = new ArrayList<SiteCatalogXref>();
 
