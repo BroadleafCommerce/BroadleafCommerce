@@ -172,6 +172,26 @@ public class Entity implements Serializable {
         setProperties(newProps);
     }
 
+    public Property removeProperty(String name) {
+        boolean exists = findProperty(name) != null;
+        Property response = null;
+        if (exists) {
+            Property[] allProps = getProperties();
+            Property[] newProps = new Property[allProps.length - 1];
+            int count = 0;
+            for (int j = 0; j < allProps.length; j++) {
+                if (!allProps[j].getName().equals(name)) {
+                    newProps[count] = allProps[j];
+                    count++;
+                } else {
+                    response = allProps[j];
+                }
+            }
+            setProperties(newProps);
+        }
+        return response;
+    }
+
     /**
      * Adds a single validation error to this entity. This will also set the entire
      * entity in an error state by invoking {@link #setValidationFailure(boolean)}.
