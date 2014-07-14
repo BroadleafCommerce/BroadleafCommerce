@@ -42,10 +42,14 @@ import javax.persistence.Table;
 @Table(name = "BLC_SITE_CATALOG")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-public class SiteCatalogXrefImpl implements Serializable, SiteCatalogXref {
+public class SiteCatalogXrefImpl implements SiteCatalogXref {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Use a separate primary key (rather than a composite key with @Embeddedid) to prevent
+     * ConcurrentModificationException from Ehcache
+     */
     @Id
     @GeneratedValue(generator = "SiteCatalogXrefId")
     @GenericGenerator(
