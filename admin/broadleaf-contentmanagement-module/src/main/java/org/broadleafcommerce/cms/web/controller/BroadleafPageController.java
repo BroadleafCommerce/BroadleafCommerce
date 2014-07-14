@@ -21,6 +21,8 @@ package org.broadleafcommerce.cms.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.cms.web.PageHandlerMapping;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -32,6 +34,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,6 +51,9 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
     @Autowired(required = false)
     @Qualifier("blPageDeepLinkService")
     protected DeepLinkService<PageDTO> deepLinkService;
+    
+    @Resource(name = "blBroadleafPageControllerExtensionManager")
+    protected BroadleafPageControllerExtensionManager extensionManager;
 
 
     @Override
@@ -68,8 +74,15 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
                 response.setContentType("text/plain");
             }
         }
+        
+        String templatePath = page.getTemplatePath();
+        
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        if (ExtensionResultStatusType.NOT_HANDLED != extensionManager.getProxy().getTemplate(erh, page)) {
+            templatePath = erh.getResult();
+        }
 
-        model.setViewName(page.getTemplatePath());
+        model.setViewName(templatePath);
         addDeepLink(model, deepLinkService, page);
         return model;
     }
