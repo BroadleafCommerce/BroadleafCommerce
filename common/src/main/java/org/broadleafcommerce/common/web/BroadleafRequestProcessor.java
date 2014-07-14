@@ -60,7 +60,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     private static String REQUEST_DTO_PARAM_NAME = BroadleafRequestFilter.REQUEST_DTO_PARAM_NAME;
     public static String REPROCESS_PARAM_NAME = "REPROCESS_BLC_REQUEST";
     
-    public static final String SITE_ENFORCE_PRODUCTION_WORKFLOW_KEY = "site.enforce.production.workflow.update";
+    private static final String SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "site.strict.validate.production.changes";
 
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
@@ -86,8 +86,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     @Value("${thymeleaf.threadLocalCleanup.enabled}")
     protected boolean thymeleafThreadLocalCleanupEnabled = true;
 
-    @Value("${" + SITE_ENFORCE_PRODUCTION_WORKFLOW_KEY + ":false}")
-    protected boolean enforceSiteProductionWorkflowUpdate = false;
+    @Value("${" + SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":false}")
+    protected boolean siteStrictValidateProductionChanges = false;
 
     @Value("${enterprise.use.production.sandbox.mode}")
     protected boolean isProductionSandBoxMode;
@@ -109,8 +109,10 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
         brc.setAdmin(false);
 
-        if (enforceSiteProductionWorkflowUpdate) {
-            brc.getAdditionalProperties().put(SITE_ENFORCE_PRODUCTION_WORKFLOW_KEY, enforceSiteProductionWorkflowUpdate);
+        if (siteStrictValidateProductionChanges) {
+            brc.setValidateProductionChangesState(ValidateProductionChangesState.SITE);
+        } else {
+            brc.setValidateProductionChangesState(ValidateProductionChangesState.UNDEFINED);
         }
 
         BroadleafRequestContext.setBroadleafRequestContext(brc);

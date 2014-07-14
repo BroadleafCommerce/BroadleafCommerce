@@ -39,6 +39,7 @@ import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafTimeZoneResolver;
 import org.broadleafcommerce.common.web.DeployBehavior;
+import org.broadleafcommerce.common.web.ValidateProductionChangesState;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
@@ -63,8 +64,7 @@ import javax.annotation.Resource;
 public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestProcessor {
 
     public static final String SANDBOX_REQ_PARAM = "blSandBoxId";
-    
-    public static final String ADMIN_ENFORCE_PRODUCTION_WORKFLOW_KEY = "admin.enforce.production.workflow.update";
+    private static final String ADMIN_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "admin.strict.validate.production.changes";
 
     protected final Log LOG = LogFactory.getLog(getClass());
 
@@ -92,8 +92,8 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     @Resource(name = "blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
     
-    @Value("${" + ADMIN_ENFORCE_PRODUCTION_WORKFLOW_KEY + ":true}")
-    protected boolean enforceProductionWorkflowUpdate = true;
+    @Value("${" + ADMIN_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":true}")
+    protected boolean adminStrictValidateProductionChanges = true;
 
     @Value("${enterprise.use.production.sandbox.mode}")
     protected boolean isProductionSandBoxMode;
@@ -108,9 +108,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             brc = new BroadleafRequestContext();
             BroadleafRequestContext.setBroadleafRequestContext(brc);
         }
-        
+
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
-        
+
         if (brc.getSite() == null) {
             Site site = siteResolver.resolveSite(request);
             brc.setSite(site);
@@ -119,7 +119,11 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         brc.setIgnoreSite(brc.getSite() == null);
         brc.setAdmin(true);
 
-        brc.getAdditionalProperties().put(ADMIN_ENFORCE_PRODUCTION_WORKFLOW_KEY, enforceProductionWorkflowUpdate);
+        if (adminStrictValidateProductionChanges) {
+            brc.setValidateProductionChangesState(ValidateProductionChangesState.ADMIN);
+        } else {
+            brc.setValidateProductionChangesState(ValidateProductionChangesState.UNDEFINED);
+        }
         
         Locale locale = localeResolver.resolveLocale(request);
         brc.setLocale(locale);

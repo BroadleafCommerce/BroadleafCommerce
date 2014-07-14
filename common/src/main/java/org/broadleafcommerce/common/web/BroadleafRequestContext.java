@@ -103,6 +103,7 @@ public class BroadleafRequestContext {
     protected DeployState deployState = DeployState.UNDEFINED;
     protected DeployBehavior deployBehavior = DeployBehavior.UNDEFINED;
     protected Boolean internalIgnoreFilters = false;
+    protected ValidateProductionChangesState validateProductionChangesState = ValidateProductionChangesState.UNDEFINED;
 
     /**
      * Gets the current request on the context
@@ -419,5 +420,13 @@ public class BroadleafRequestContext {
 
     public void setDeployBehavior(DeployBehavior deployBehavior) {
         this.deployBehavior = deployBehavior;
+    }
+
+    public ValidateProductionChangesState getValidateProductionChangesState() {
+        return validateProductionChangesState;
+    }
+
+    public void setValidateProductionChangesState(ValidateProductionChangesState validateProductionChangesState) {
+        this.validateProductionChangesState = validateProductionChangesState;
     }
 }
