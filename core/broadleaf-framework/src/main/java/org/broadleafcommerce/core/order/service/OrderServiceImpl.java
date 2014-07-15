@@ -48,6 +48,7 @@ import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
+import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -587,6 +588,9 @@ public class OrderServiceImpl implements OrderService {
         preValidateCartOperation(findOrderById(orderId));
         try {
             OrderItem oi = orderItemService.readOrderItemById(orderItemId);
+            if (oi == null) {
+                throw new WorkflowException(new ItemNotFoundException());
+            }
             if (CollectionUtils.isNotEmpty(oi.getChildOrderItems())) {
                 List<Long> childrenToRemove = new ArrayList<Long>();
                 for (OrderItem childOrderItem : oi.getChildOrderItems()) {
