@@ -112,7 +112,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             metadata.setCeilingType(StructuredContentType.class.getName());
             ClassTree entities = new ClassTree(StructuredContentTypeImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContentType.getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentType.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContentType.getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentTypeImpl.class);
             metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
