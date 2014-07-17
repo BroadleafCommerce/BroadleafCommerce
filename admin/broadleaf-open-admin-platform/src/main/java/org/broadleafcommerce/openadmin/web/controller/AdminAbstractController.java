@@ -313,7 +313,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         // However, when we fetch, the second custom criteria needs to be the id
         // of this particular structured content entity
         ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
-        Entity entity = service.getRecord(ppr, entityId, cmd, true).getDynamicResultSet().getRecords()[0];
+        Entity entity = service.getRecord(ppr, info.getPropertyValue(), cmd, true).getDynamicResultSet().getRecords()[0];
         
         List<Field> fieldsToMove = new ArrayList<Field>();
         // override the results of the entity with the dynamic form passed in

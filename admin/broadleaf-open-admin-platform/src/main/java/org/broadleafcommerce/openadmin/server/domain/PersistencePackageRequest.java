@@ -343,10 +343,10 @@ public class PersistencePackageRequest {
     }
 
     public void setCustomCriteria(String[] customCriteria) {
-        if (customCriteria == null) {
+        if (customCriteria == null || customCriteria.length == 0) {
             this.customCriteria = new ArrayList<String>();
         } else {
-            this.customCriteria.addAll(Arrays.asList(customCriteria));
+            this.customCriteria = Arrays.asList(customCriteria);
         }
     }
 
