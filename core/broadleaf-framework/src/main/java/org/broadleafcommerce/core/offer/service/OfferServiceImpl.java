@@ -52,6 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -182,6 +183,14 @@ public class OfferServiceImpl implements OfferService {
         ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
         if (extensionManager != null) {
             extensionManager.getProxy().buildOfferCodeListForCustomer(customer, offerCodes);
+        }
+        if (!offerCodes.isEmpty()) {
+            Iterator<OfferCode> itr = offerCodes.iterator();
+            while (itr.hasNext()) {
+                if (!verifyMaxCustomerUsageThreshold(customer, itr.next())) {
+                    itr.remove();
+                }
+            }
         }
         return offerCodes;
     }
