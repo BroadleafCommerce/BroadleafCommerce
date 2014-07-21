@@ -251,8 +251,8 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
             sb.append(",'currency': '" + order.getCurrency().getCurrencyCode() + "'");
         }
         sb.append("});");
-        
-        getItemJs(order, trackerPrefix);
+
+        sb.append(getItemJs(order, trackerPrefix));
         
         sb.append("ga('" + trackerPrefix + "ecommerce:send');");
         return sb.toString();

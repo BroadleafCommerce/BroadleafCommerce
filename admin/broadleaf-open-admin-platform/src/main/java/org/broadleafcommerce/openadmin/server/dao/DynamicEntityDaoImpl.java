@@ -81,6 +81,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 
@@ -378,6 +379,24 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
             return mergedProperties;
         }
+    }
+    
+    @Override
+    public Map<String, FieldMetadata> getMergedProperties(@Nonnull Class<?> cls) {
+        Class<?>[] polymorphicTypes = getAllPolymorphicEntitiesFromCeiling(cls);
+        return getMergedProperties(
+                cls.getName(),
+                polymorphicTypes,
+                null,
+                new String[] {},
+                new ForeignKey[] {},
+                MergedPropertyType.PRIMARY,
+                true,
+                new String[] {},
+                new String[] {},
+                null,
+                ""
+                );
     }
 
     @Override

@@ -614,4 +614,19 @@ public interface Sku extends Serializable {
      */
     public void setTaxCode(String taxCode);
 
+    /**
+     * Intended to hold any unique identifier not tied to the Broadleaf Database Sequence Identifier.
+     * For example, many implementations may integrate or import/export
+     * data from other systems that manage their own unique identifiers.
+     *
+     * @return external ID
+     */
+    public String getExternalId();
+
+    /**
+     * Sets a unique external ID
+     * @param externalId
+     */
+    public void setExternalId(String externalId);
+
 }

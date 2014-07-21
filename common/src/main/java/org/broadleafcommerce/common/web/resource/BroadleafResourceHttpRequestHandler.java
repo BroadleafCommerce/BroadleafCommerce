@@ -214,7 +214,7 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             //}
         }
     }
-    
+
 //    protected boolean isGlobalAdmin(HttpServletRequest request) {
 //        String uri = request.getRequestURI();
 //        if (!StringUtils.isEmpty(globalAdminPrefix)) {

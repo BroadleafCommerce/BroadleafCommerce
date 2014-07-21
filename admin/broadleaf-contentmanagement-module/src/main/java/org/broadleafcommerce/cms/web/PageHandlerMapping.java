@@ -28,7 +28,9 @@ import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.springframework.beans.factory.annotation.Value;
 
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +52,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class PageHandlerMapping extends BLCAbstractHandlerMapping {
     
-    private String controllerName="blPageController";
+    private final String controllerName="blPageController";
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
     // The following attribute is set in BroadleafProcessURLFilter
@@ -59,13 +61,17 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
     @Resource(name = "blPageService")
     private PageService pageService;
     
-    public static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";        
+    public static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";
+
+    @Value("${request.uri.encoding}")
+    public String charEncoding;
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
-            PageDTO page = pageService.findPageByURI(context.getLocale(), context.getRequestURIWithoutContext(), buildMvelParameters(request), context.isSecure());
+            String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
+            PageDTO page = pageService.findPageByURI(context.getLocale(), requestUri, buildMvelParameters(request), context.isSecure());
 
             if (page != null && ! (page instanceof NullPageDTO)) {
                 context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, page);

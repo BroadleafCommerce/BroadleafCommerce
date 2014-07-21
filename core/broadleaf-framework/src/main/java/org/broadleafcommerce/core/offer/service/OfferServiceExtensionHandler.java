@@ -23,11 +23,13 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,14 @@ import java.util.Map;
 public interface OfferServiceExtensionHandler extends ExtensionHandler {
     
     public ExtensionResultStatusType applyAdditionalFilters(List<Offer> offers);
+
+    /**
+     * Allows module extension to add additional offer codes to the list, given the customer
+     * @param customer
+     * @param offerCodes
+     * @return
+     */
+    public ExtensionResultStatusType buildOfferCodeListForCustomer(Customer customer, List<OfferCode> offerCodes);
 
     /**
      * Modules may extend the calculatePotentialSavings method.   Once the handlers run, the 
@@ -103,6 +113,6 @@ public interface OfferServiceExtensionHandler extends ExtensionHandler {
      * @param resultHolder
      * @return
      */
-    ExtensionResultStatusType createOrderItemPriceDetailAdjustment(ExtensionResultHolder resultHolder,
+    ExtensionResultStatusType createOrderItemPriceDetailAdjustment(ExtensionResultHolder<?> resultHolder,
             OrderItemPriceDetail itemDetail);
 }

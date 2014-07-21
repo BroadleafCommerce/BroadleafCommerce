@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.server.domain;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -343,10 +344,10 @@ public class PersistencePackageRequest {
     }
 
     public void setCustomCriteria(String[] customCriteria) {
-        if (customCriteria == null) {
+        if (customCriteria == null || customCriteria.length == 0) {
             this.customCriteria = new ArrayList<String>();
         } else {
-            this.customCriteria.addAll(Arrays.asList(customCriteria));
+            this.customCriteria = BLCArrayUtils.asList(customCriteria);
         }
     }
 

@@ -40,6 +40,14 @@ public interface SkuDao {
     public Sku readSkuById(Long skuId);
 
     /**
+     * Retrieve a {@link Sku} instance by its external id
+     *
+     * @param externalId the external id of the sku
+     * @return the sku with this external id
+     */
+    public Sku readSkuByExternalId(String externalId);
+
+    /**
      * Persist a {@code Sku} instance to the datastore
      *
      * @param sku the sku to persist

@@ -168,8 +168,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
         if (isAddActionAllowed(sectionClassName, cmd)) {
             mainActions.add(DefaultMainActions.ADD);
         }
-        
+
         mainEntityActionsExtensionManager.getProxy().modifyMainActions(cmd, mainActions);
+        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
     }
     
     protected boolean isAddActionAllowed(String sectionClassName, ClassMetadata cmd) {
