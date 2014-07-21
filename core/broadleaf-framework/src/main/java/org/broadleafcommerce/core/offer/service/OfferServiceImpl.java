@@ -177,6 +177,15 @@ public class OfferServiceImpl implements OfferService {
         return offers;
     }
 
+    @Override
+    public List<OfferCode> buildOfferCodeListForCustomer(Customer customer) {
+        ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
+        if (extensionManager != null) {
+            extensionManager.getProxy().buildOfferCodeListForCustomer(customer, offerCodes);
+        }
+        return offerCodes;
+    }
+
     /**
      * Private method used to retrieve all offers assigned to this customer.  These offers
      * have a DeliveryType of MANUAL and are programmatically assigned to the customer.

@@ -99,6 +99,18 @@ public interface OfferService {
      */
     public List<Offer> buildOfferListForOrder(Order order);
 
+    /**
+     * Attempts to resolve a list of offer codes associated explicitly with the customer. 
+     * For example, an implementation may choose to associate a specific offer code with a customer 
+     * in a custom table or in customer attributes.  This allows you to associate one or more offer codes 
+     * with a customer without necessarily having them type it in (e.g. on a URL), or by allowing them to 
+     * type it in, but before it has been actually applied to an order.
+     * 
+     * @param customer
+     * @return
+     */
+    public List<OfferCode> buildOfferCodeListForCustomer(Customer customer);
+
     public CustomerOfferDao getCustomerOfferDao();
 
     public void setCustomerOfferDao(CustomerOfferDao customerOfferDao);

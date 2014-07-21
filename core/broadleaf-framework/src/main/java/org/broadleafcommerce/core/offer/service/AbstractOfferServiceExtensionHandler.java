@@ -23,10 +23,12 @@ import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
+import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,11 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     
     @Override
     public ExtensionResultStatusType applyAdditionalFilters(List<Offer> offers) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType buildOfferCodeListForCustomer(Customer customer, List<OfferCode> offerCodes) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -70,7 +77,7 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     }
 
     @Override
-    public ExtensionResultStatusType createOrderItemPriceDetailAdjustment(ExtensionResultHolder resultHolder,
+    public ExtensionResultStatusType createOrderItemPriceDetailAdjustment(ExtensionResultHolder<?> resultHolder,
             OrderItemPriceDetail itemDetail) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }

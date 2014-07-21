@@ -192,7 +192,7 @@ public interface OrderService {
     public void cancelOrder(Order order);
     
     /**
-     * Adds the given OfferCode to the order. Optionally prices the order as well
+     * Adds the given OfferCode to the order. Optionally prices the order as well.
      * 
      * @param order
      * @param offerCode
@@ -203,6 +203,18 @@ public interface OrderService {
      */
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
     
+    /**
+     * Adds the given OfferCodes to the order. Optionally prices the order as well.
+     * 
+     * @param order
+     * @param offerCodes
+     * @param priceOrder
+     * @return
+     * @throws PricingException
+     * @throws OfferMaxUseExceededException
+     */
+    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
+
     /**
      * Remove the given OfferCode for the order. Optionally prices the order as well.
      * 
