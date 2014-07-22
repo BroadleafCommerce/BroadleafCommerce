@@ -44,11 +44,11 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
         Order order = context.getSeedData();
         List<OfferCode> offerCodes = offerService.buildOfferCodeListForCustomer(order.getCustomer());
         if (offerCodes != null && !offerCodes.isEmpty()) {
-            order = orderService.addOfferCodes(order, offerCodes, true);
+            order = orderService.addOfferCodes(order, offerCodes, false);
         }
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        order = offerService.applyOffersToOrder(offers, order);
         context.setSeedData(order);
 
         return context;
