@@ -274,7 +274,7 @@ public class OfferServiceImpl implements OfferService {
      */
     @Override
     @Transactional("blTransactionManager")
-    public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+    public Order applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         /*
         TODO rather than a threadlocal, we should update the "shouldPrice" boolean on the service API to
         use a richer object to describe the parameters of the pricing call. This object would include
@@ -308,13 +308,15 @@ public class OfferServiceImpl implements OfferService {
             order.setSubTotal(order.calculateSubTotal());
             order.finalizeItemPrices();
 
-            orderService.save(order, false);
+            return orderService.save(order, false);
         }
+
+        return order;
     }
 
     @Override
     @Transactional("blTransactionManager")
-    public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+    public Order applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
             PromotableOrder promotableOrder =
@@ -336,8 +338,9 @@ public class OfferServiceImpl implements OfferService {
                 orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
             }
 
-            orderService.save(order, false);
+            return orderService.save(order, false);
         }
+        return order;
     }
     
     @Override

@@ -89,8 +89,9 @@ public interface OfferService {
      * Apply offers to order.
      * @param offers the offers
      * @param order the order
+     * @return
      */
-    public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+    public Order applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     /**
      * Create a list of offers that applies to this order
@@ -135,7 +136,7 @@ public interface OfferService {
 
     public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor);
     
-    public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+    public Order applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     public PromotableItemFactory getPromotableItemFactory();
 
