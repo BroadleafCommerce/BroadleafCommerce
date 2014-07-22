@@ -48,7 +48,7 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
         }
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        order = offerService.applyOffersToOrder(offers, order);
+        order = offerService.applyAndSaveOffersToOrder(offers, order);
         context.setSeedData(order);
 
         return context;
