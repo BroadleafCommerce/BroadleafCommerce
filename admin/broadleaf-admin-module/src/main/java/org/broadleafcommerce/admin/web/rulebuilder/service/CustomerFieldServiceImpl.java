@@ -38,6 +38,20 @@ public class CustomerFieldServiceImpl extends AbstractRuleBuilderFieldService {
     @Override
     public void init() {
         fields.add(new FieldData.Builder()
+                .label("rule_customerLoggedIn")
+                .name("loggedIn")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .build());
+        fields.add(new FieldData.Builder()
+                .label("rule_customerRegistered")
+                .name("registered")
+                .operators("blcOperators_Boolean")
+                .options("[]")
+                .type(SupportedFieldType.BOOLEAN)
+                .build());
+        fields.add(new FieldData.Builder()
                 .label("rule_customerDeactivated")
                 .name("deactivated")
                 .operators("blcOperators_Boolean")
@@ -54,13 +68,6 @@ public class CustomerFieldServiceImpl extends AbstractRuleBuilderFieldService {
         fields.add(new FieldData.Builder()
                 .label("rule_customerReceiveEmail")
                 .name("receiveEmail")
-                .operators("blcOperators_Boolean")
-                .options("[]")
-                .type(SupportedFieldType.BOOLEAN)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_customerRegistered")
-                .name("registered")
                 .operators("blcOperators_Boolean")
                 .options("[]")
                 .type(SupportedFieldType.BOOLEAN)
