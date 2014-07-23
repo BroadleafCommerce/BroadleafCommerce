@@ -174,7 +174,7 @@ public abstract class AbstractCacheMissAware {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         String key = buildKey(params);
         T response = null;
-        if (context.isProductionSandBox()) {
+        if (context.isProductionSandBox() || (context.getAdditionalProperties().containsKey("allowLevel2Cache") && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"))) {
             response = getObjectFromCache(key, cacheName);
         }
         if (response == null) {
@@ -183,7 +183,7 @@ public abstract class AbstractCacheMissAware {
                 response = nullResponse;
             }
             //only handle null, non-hits. Otherwise, let level 2 cache handle it
-            if (context.isProductionSandBox() && response.equals(nullResponse)) {
+            if ((context.isProductionSandBox() || (context.getAdditionalProperties().containsKey("allowLevel2Cache") && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"))) && response.equals(nullResponse)) {
                 statisticsService.addCacheStat(statisticsName, false);
                 getCache(cacheName).put(new Element(key, response));
                 if (getLogger().isTraceEnabled()) {
