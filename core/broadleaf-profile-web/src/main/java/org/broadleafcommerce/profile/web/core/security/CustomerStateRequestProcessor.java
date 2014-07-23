@@ -161,11 +161,11 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
     protected Customer mergeCustomerIfRequired(WebRequest request, Customer customer) {
         //Don't call this if it has already been called
         if (request.getAttribute(getAnonymousCustomerMergedSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION) == null) {
-            Customer anonymousCustomer = getAnonymousCustomer(request);
-            customer = copyAnonymousCustomerInfoToCustomer(request, anonymousCustomer, customer);
-
             //Set this so we don't do this every time.
             request.setAttribute(getAnonymousCustomerMergedSessionAttributeName(), Boolean.TRUE, WebRequest.SCOPE_GLOBAL_SESSION);
+
+            Customer anonymousCustomer = getAnonymousCustomer(request);
+            customer = copyAnonymousCustomerInfoToCustomer(request, anonymousCustomer, customer);
         }
 
         return customer;
