@@ -271,10 +271,12 @@ public class PageServiceImpl implements PageService {
             return erh.getResult();
         }
         
-        for (FieldGroup fg : page.getPageTemplate().getFieldGroups()) {
-            for (FieldDefinition fd : fg.getFieldDefinitions()) {
-                if (fd.getName().equals(fieldKey)) {
-                    return fd;
+        if (page.getPageTemplate() != null) {
+            for (FieldGroup fg : page.getPageTemplate().getFieldGroups()) {
+                for (FieldDefinition fd : fg.getFieldDefinitions()) {
+                    if (fd.getName().equals(fieldKey)) {
+                        return fd;
+                    }
                 }
             }
         }
