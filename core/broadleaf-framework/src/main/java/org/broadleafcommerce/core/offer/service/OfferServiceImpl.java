@@ -187,7 +187,8 @@ public class OfferServiceImpl implements OfferService {
         if (!offerCodes.isEmpty()) {
             Iterator<OfferCode> itr = offerCodes.iterator();
             while (itr.hasNext()) {
-                if (!verifyMaxCustomerUsageThreshold(customer, itr.next())) {
+                OfferCode offerCode = itr.next();
+                if (!offerCode.isActive() || !verifyMaxCustomerUsageThreshold(customer, offerCode)) {
                     itr.remove();
                 }
             }
