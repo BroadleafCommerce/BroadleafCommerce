@@ -156,7 +156,7 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("20.5 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20.5, null, null, true, true, 10));
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         // 20% results in $240.  20.5% off results in $238.50
         assert ( order.getSubTotal().equals(new Money(238.50D) ));
@@ -175,7 +175,7 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
@@ -194,7 +194,7 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(300D)));
     }
@@ -211,7 +211,7 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, false, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(240D)));
     }
@@ -259,7 +259,7 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(170D));
     }
@@ -278,7 +278,7 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, "order.subTotal.getAmount() < 400", false, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         //     assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(240D));
     }
@@ -296,7 +296,7 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, false, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(290D));
     }
@@ -316,7 +316,7 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         // Item offers (10+15 are combinable resulting in $100 off for the item.   Plus $90 as the best offer for the order).
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(210D));
@@ -339,7 +339,7 @@ public class OfferTest extends CommonSetupBaseTest {
         offer = offerService.save(offer);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
@@ -364,7 +364,7 @@ public class OfferTest extends CommonSetupBaseTest {
         customerOffer = customerOfferDao.save(customerOffer);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
@@ -396,7 +396,7 @@ public class OfferTest extends CommonSetupBaseTest {
         customerOfferDao.save(customerOffer2);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(33D)));
     }
@@ -418,8 +418,8 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("3 Dollars Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.AMOUNT_OFF, 3, null, null, true, true, 10));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
-        offerService.applyFulfillmentGroupOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
+        offerService.applyAndSaveFulfillmentGroupOffersToOrder(offers, order);
 
         assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(1.6D)));
     }

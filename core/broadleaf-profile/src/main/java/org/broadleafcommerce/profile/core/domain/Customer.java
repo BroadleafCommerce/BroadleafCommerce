@@ -163,4 +163,12 @@ public interface Customer extends Serializable {
      */
     public boolean isTaxExempt();
     
+    /**
+     * This returns a non-null map of transient properties that are not 
+     * persisted to the database.
+     * 
+     * @return
+     */
+    public Map<String, Object> getTransientProperties();
+
 }

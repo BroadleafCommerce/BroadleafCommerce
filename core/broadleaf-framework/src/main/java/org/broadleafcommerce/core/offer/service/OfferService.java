@@ -86,12 +86,25 @@ public interface OfferService {
     public OfferCode lookupOfferCodeByCode(String code);
 
     /**
-     * Apply offers to order.
+     * Apply offers to order. By default this does not re-price the order.
      * @param offers the offers
      * @param order the order
      * @return
      */
-    public Order applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+    public Order applyAndSaveOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+
+    /**
+     * Apply offers to order. By default this does not re-price the order. This method is deprecated and 
+     * should not be used.  The saved order should be returned from this method, which is the case in 
+     * applyAndSaveOffersToOrder.
+     * @param offers
+     * @param order
+     * 
+     * @throws PricingException
+     * @{@link Deprecated} see applyAndSaveOffersToOrder
+     */
+    @Deprecated
+    public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     /**
      * Create a list of offers that applies to this order
@@ -136,7 +149,10 @@ public interface OfferService {
 
     public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor);
     
-    public Order applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+    public Order applyAndSaveFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+
+    @Deprecated
+    public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     public PromotableItemFactory getPromotableItemFactory();
 

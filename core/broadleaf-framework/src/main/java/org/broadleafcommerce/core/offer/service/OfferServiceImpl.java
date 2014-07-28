@@ -187,7 +187,8 @@ public class OfferServiceImpl implements OfferService {
         if (!offerCodes.isEmpty()) {
             Iterator<OfferCode> itr = offerCodes.iterator();
             while (itr.hasNext()) {
-                if (!verifyMaxCustomerUsageThreshold(customer, itr.next())) {
+                OfferCode offerCode = itr.next();
+                if (!offerCode.isActive() || !verifyMaxCustomerUsageThreshold(customer, offerCode)) {
                     itr.remove();
                 }
             }
@@ -274,7 +275,7 @@ public class OfferServiceImpl implements OfferService {
      */
     @Override
     @Transactional("blTransactionManager")
-    public Order applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+    public Order applyAndSaveOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         /*
         TODO rather than a threadlocal, we should update the "shouldPrice" boolean on the service API to
         use a richer object to describe the parameters of the pricing call. This object would include
@@ -316,7 +317,21 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     @Transactional("blTransactionManager")
-    public Order applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+    @Deprecated
+    public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+        applyAndSaveOffersToOrder(offers, order);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    @Deprecated
+    public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+        applyAndSaveFulfillmentGroupOffersToOrder(offers, order);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public Order applyAndSaveFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
             PromotableOrder promotableOrder =

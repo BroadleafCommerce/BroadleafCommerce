@@ -235,7 +235,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
             "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))",
             "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
         ));
-        offerService.applyOffersToOrder(offers, promotableOrder.getOrder());
+        offerService.applyAndSaveOffersToOrder(offers, promotableOrder.getOrder());
 
         offers.get(0).setTotalitarianOffer(true);
         offerService.applyFulfillmentGroupOffersToOrder(offers, promotableOrder.getOrder());
@@ -253,7 +253,7 @@ public class FulfillmentGroupOfferProcessorTest extends TestCase {
         myOrder.set(promotableOrder.getOrder());
         offers.get(2).setValue(new BigDecimal("1"));
 
-        offerService.applyOffersToOrder(offers, promotableOrder.getOrder());
+        offerService.applyAndSaveOffersToOrder(offers, promotableOrder.getOrder());
         offerService.applyFulfillmentGroupOffersToOrder(offers, promotableOrder.getOrder());
 
         fgAdjustmentCount = 0;
