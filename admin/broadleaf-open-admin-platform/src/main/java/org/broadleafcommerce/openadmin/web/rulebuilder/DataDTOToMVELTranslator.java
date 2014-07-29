@@ -539,6 +539,9 @@ public class DataDTOToMVELTranslator {
             }
         } else {
             for (int j=0;j<value.length;j++){
+                if (StringUtils.isBlank(value[j].toString())) {
+                    break;
+                }
                 switch(type) {
                     case BOOLEAN:
                         response.append(value[j]);
@@ -592,11 +595,7 @@ public class DataDTOToMVELTranslator {
                         break;
                     case MONEY:
                         try {
-                        	if (StringUtils.isNotBlank(value[j].toString())) {
-                        		Double.parseDouble(value[j].toString());
-                        	} else {
-                        		value[j] = "0.00";
-                        	} 
+                            Double.parseDouble(value[j].toString());
                         } catch (Exception e) {
                             throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE, "Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Money, " +
