@@ -122,9 +122,6 @@
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
                     <version>1.2</version>
-                    <configuration>
-                        <testStubsOutputDirectory>${project.build.directory}/generated-test-sources/groovy-stubs/test</testStubsOutputDirectory>
-                    </configuration>
                     <executions>
                         <execution>
                             <goals>
