@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
@@ -591,7 +592,11 @@ public class DataDTOToMVELTranslator {
                         break;
                     case MONEY:
                         try {
-                            Double.parseDouble(value[j].toString());
+                        	if (StringUtils.isNotBlank(value[j].toString())) {
+                        		Double.parseDouble(value[j].toString());
+                        	} else {
+                        		value[j] = "0.00";
+                        	} 
                         } catch (Exception e) {
                             throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE, "Cannot format value for the field (" +
                                     fieldName + ") based on field type. The type of field is Money, " +
