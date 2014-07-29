@@ -1418,6 +1418,10 @@ body .redactor_toolbar li a.redactor_btn_font {
 	background-position-x: 0;
 }
 
+body .redactor_redactor {
+    max-width: 934px;
+}
+
 .category-tree {
 	display: none;
 }
