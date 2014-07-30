@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.web.order.security;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.crossapp.service.CrossAppAuthService;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -125,6 +126,7 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         request.setAttribute(cartRequestAttributeName, cart, WebRequest.SCOPE_REQUEST);
 
         // Setup cart for content rule processing
+        @SuppressWarnings("unchecked")
         Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM, WebRequest.SCOPE_REQUEST);
         if (ruleMap == null) {
             ruleMap = new HashMap<String, Object>();
@@ -139,7 +141,10 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
     }
     
     public Order getOverrideCart(WebRequest request) {
-        Long orderId = (Long) request.getAttribute(OVERRIDE_CART_ATTR_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
+        Long orderId = null;
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            orderId = (Long) request.getAttribute(OVERRIDE_CART_ATTR_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
         Order cart = null;
         if (orderId != null) {
             cart = orderService.findOrderById(orderId);
@@ -176,13 +181,15 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
             throw new RuntimeException(e);
         }
         
-        // The anonymous customer from session is no longer needed; it can be safely removed
-        request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerSessionAttributeName(),
-                WebRequest.SCOPE_GLOBAL_SESSION);
-        request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerIdSessionAttributeName(),
-                WebRequest.SCOPE_GLOBAL_SESSION);
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            // The anonymous customer from session is no longer needed; it can be safely removed
+            request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerSessionAttributeName(),
+                    WebRequest.SCOPE_GLOBAL_SESSION);
+            request.removeAttribute(CustomerStateRequestProcessor.getAnonymousCustomerIdSessionAttributeName(),
+                    WebRequest.SCOPE_GLOBAL_SESSION);
 
-        request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_GLOBAL_SESSION);
+            request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
         return mergeCartResponse.getOrder();
     }
 

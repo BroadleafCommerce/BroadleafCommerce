@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.web.core;
 
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPersistedEvent;
@@ -59,12 +60,14 @@ public class CustomerStateRefresher implements ApplicationListener<CustomerPersi
         if (request != null) {
             String customerAttribute = CustomerStateRequestProcessor.getAnonymousCustomerSessionAttributeName();
             String customerIdAttribute = CustomerStateRequestProcessor.getAnonymousCustomerIdSessionAttributeName();
-            Customer sessionCustomer = (Customer) request.getAttribute(customerAttribute, WebRequest.SCOPE_GLOBAL_SESSION);
-            //invalidate the session-based customer if it's there and the ID is the same as the Customer that has been
-            //persisted
-            if (sessionCustomer != null && sessionCustomer.getId().equals(dbCustomer.getId())) {
-                request.removeAttribute(customerAttribute, WebRequest.SCOPE_GLOBAL_SESSION);
-                request.setAttribute(customerIdAttribute, dbCustomer.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+            if (BLCRequestUtils.isOKtoUseSession(request)) {
+                Customer sessionCustomer = (Customer) request.getAttribute(customerAttribute, WebRequest.SCOPE_GLOBAL_SESSION);
+                //invalidate the session-based customer if it's there and the ID is the same as the Customer that has been
+                //persisted
+                if (sessionCustomer != null && sessionCustomer.getId().equals(dbCustomer.getId())) {
+                    request.removeAttribute(customerAttribute, WebRequest.SCOPE_GLOBAL_SESSION);
+                    request.setAttribute(customerIdAttribute, dbCustomer.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+                }
             }
             
             //Update CustomerState if the persisted Customer ID is the same

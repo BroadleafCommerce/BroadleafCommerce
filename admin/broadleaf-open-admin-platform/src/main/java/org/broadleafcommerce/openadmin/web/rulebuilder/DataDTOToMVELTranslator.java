@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
@@ -538,6 +539,9 @@ public class DataDTOToMVELTranslator {
             }
         } else {
             for (int j=0;j<value.length;j++){
+                if (StringUtils.isBlank(value[j].toString())) {
+                    break;
+                }
                 switch(type) {
                     case BOOLEAN:
                         response.append(value[j]);
