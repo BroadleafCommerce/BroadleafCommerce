@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.web.order.security;
 
 import org.broadleafcommerce.common.security.MergeCartProcessor;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.MergeCartService;
 import org.broadleafcommerce.core.order.service.OrderService;
@@ -66,6 +67,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
         execute(new ServletWebRequest(request, response), authResult);
     }
     
+    @Override
     public void execute(WebRequest request, Authentication authResult) {
         Customer loggedInCustomer = customerService.readCustomerByUsername(authResult.getName());
         Customer anonymousCustomer = customerStateRequestProcessor.getAnonymousCustomer(request);
@@ -83,7 +85,9 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
             throw new RuntimeException(e);
         }
 
-        request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_GLOBAL_SESSION);
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            request.setAttribute(mergeCartResponseKey, mergeCartResponse, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
     }
 
     public String getMergeCartResponseKey() {
