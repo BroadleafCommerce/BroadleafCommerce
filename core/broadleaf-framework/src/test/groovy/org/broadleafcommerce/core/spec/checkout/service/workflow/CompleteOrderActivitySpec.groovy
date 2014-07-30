@@ -31,11 +31,11 @@ class CompleteOrderActivitySpec extends BaseCheckoutActivitySpec {
         activity = new CompleteOrderActivity()
     }
 
-    def "status is submitted, order number and submit date are set"() {
-        when:
+    def "Test that the properties on the Order are properly set"() {
+        when: "I execute the CompleteOrderActivity"
         context = activity.execute(context);
 
-        then:
+        then: "The status on the order is submitted, and the order number and submit date are set"
         context.seedData.order.id == 1
         context.seedData.order.status == OrderStatus.SUBMITTED
         context.seedData.order.orderNumber != null
