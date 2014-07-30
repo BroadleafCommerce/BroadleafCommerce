@@ -81,7 +81,20 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+            </plugin>
+            <!-- Include Spock specifications -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Spec*</include>
+                    </includes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -165,6 +178,17 @@
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
+        </dependency>
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
