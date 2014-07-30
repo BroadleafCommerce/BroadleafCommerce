@@ -19,17 +19,20 @@
  */
 package org.broadleafcommerce.core.offer.dao;
 
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blOfferCodeDao")
 public class OfferCodeDaoImpl implements OfferCodeDao {
@@ -40,10 +43,15 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @Resource(name = "blOfferCodeDaoExtensionManager")
+    protected OfferCodeDaoExtensionManager extensionManager;
+
+    @Override
     public OfferCode create() {
         return ((OfferCode) entityConfiguration.createEntityInstance(OfferCode.class.getName()));
     }
 
+    @Override
     public void delete(OfferCode offerCode) {
         if (!em.contains(offerCode)) {
             offerCode = readOfferCodeById(offerCode.getId());
@@ -51,25 +59,40 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
         em.remove(offerCode);
     }
 
+    @Override
     public OfferCode save(OfferCode offerCode) {
         return em.merge(offerCode);
     }
 
+    @Override
     public OfferCode readOfferCodeById(Long offerCodeId) {
-        return (OfferCode) em.find(OfferCodeImpl.class, offerCodeId);
+        return em.find(OfferCodeImpl.class, offerCodeId);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public OfferCode readOfferCodeByCode(String code) {
         OfferCode offerCode = null;
-        Query query = em.createNamedQuery("BC_READ_OFFER_CODE_BY_CODE");
-        query.setParameter("code", code);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Offer");
+        Query query = null;
+
+        ExtensionResultHolder<Query> resultHolder = new ExtensionResultHolder<Query>();
+        ExtensionResultStatusType extensionResult =
+                extensionManager.getProxy().createReadOfferCodeByCodeQuery(em, resultHolder, code, true, "query.Offer");
+
+        if (extensionResult != null && ExtensionResultStatusType.HANDLED.equals(extensionResult)) {
+            query = resultHolder.getResult();
+        } else {
+            query = em.createNamedQuery("BC_READ_OFFER_CODE_BY_CODE");
+            query.setParameter("code", code);
+            query.setHint(QueryHints.HINT_CACHEABLE, true);
+            query.setHint(QueryHints.HINT_CACHE_REGION, "query.Offer");
+        }
+
         List<OfferCode> result = query.getResultList();
         if (result.size() > 0) {
             offerCode = result.get(0);
         }
+
         return offerCode;
     }
 

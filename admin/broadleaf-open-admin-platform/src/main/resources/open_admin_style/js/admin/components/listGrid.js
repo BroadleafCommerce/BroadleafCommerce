@@ -401,7 +401,16 @@ $(document).ready(function() {
             BLCAdmin.hideCurrentModal();
         });
         
-        BLCAdmin.showLinkAsModal($(this).data('select-url'), function() {
+        var url = $(this).data('select-url');
+        var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
+        var thisField = $(this).closest('.field-box').attr('id');
+        var handler = BLCAdmin.getDependentFieldFilterHandler(thisClass, thisField);
+        if (handler != null) {
+            var $parentField = $container.closest('form').find(handler['parentFieldSelector']);
+            url = url + '&' + handler['childFieldPropertyName'] + '=' + BLCAdmin.extractFieldValue($parentField);
+        }
+
+        BLCAdmin.showLinkAsModal(url, function() {
             $('div.additional-foreign-key-container').unbind('valueSelected');
         });
         
@@ -573,7 +582,7 @@ $(document).ready(function() {
         $this.prev().html($(this).prev().prev().html());
         
         // Remove the criteria input val
-        $container.find('.value').val('');
+        $container.find('.value').val('').trigger('change');
         $this.toggle();
         
         $container.find('.external-link-container').hide();

@@ -27,6 +27,7 @@ var BLCAdmin = (function($) {
 	var postValidationFormSubmitHandlers = [];
 	var initializationHandlers = [];
 	var updateHandlers = [];
+	var initializationDelay = 0;
 	var stackedModalOptions = {
 	    left: 20,
 	    top: 20
@@ -100,6 +101,9 @@ var BLCAdmin = (function($) {
 			// If this wasn't the only modal, take the last modal and put it above the backdrop
 			if (modals.length > 0) {
 				modals.last().css('z-index', '1050');
+			}
+			
+			if (BLCAdmin.currentModal()) {
 				BLCAdmin.currentModal().find('.submit-button').show();
 				BLCAdmin.currentModal().find('img.ajax-loader').hide();
 			}
@@ -139,10 +143,18 @@ var BLCAdmin = (function($) {
 	        initializationHandlers.push(fn);
 	    },
 	    
+	    addInitializationDelay : function() {
+	        initializationDelay++;
+	    },
+
+	    removeInitializationDelay : function() {
+	        initializationDelay--;
+	    },
+	    
 	    addUpdateHandler : function(fn) {
 	        updateHandlers.push(fn);
 	    },
-	    
+
     	runPreValidationSubmitHandlers : function($form) {
             for (var i = 0; i < preValidationFormSubmitHandlers.length; i++) {
                 preValidationFormSubmitHandlers[i]($form);
@@ -323,58 +335,67 @@ var BLCAdmin = (function($) {
     	},
     	
     	initializeFields : function($container) {
-    	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
-    	    if ($container == null) {
-    	        $container = this.getActiveTab();
-    	    }
+    	    $.doTimeout(10, function() {
+    	        // Pause initialization until we're ready for it
+    	        if (initializationDelay > 0) {
+    	            return true;
+    	        }
     	    
-    	    // If we've already initialized this container, we'll skip it.
-    	    if ($container.data('initialized') == 'true') {
-    	        return;
-    	    }
-    	    
-    	    // Set up rich-text HTML editors
-            $container.find('.redactor').redactor({
-                buttons : ['html', 'formatting', 'bold', 'italic', 'deleted', 
-                           'unorderedlist', 'orderedlist', 'outdent', 'indent',
-                           'video', 'file', 'table', 'link',
-                           'fontfamily', 'fontcolor', 'alignment', 'horizontalrule'],
-                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
-                convertDivs : false,
-                xhtml       : true,
-                paragraphy  : false,
-                minHeight   : 140,
-                deniedTags  : []
-            });
-            
-            $container.find('textarea.autosize').autosize();
-            
-            $container.find(".color-picker").spectrum({
-                showButtons: false,
-                preferredFormat: "hex6",
-                change: function(color) {
-                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
-                },
-                move: function(color) {
-                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
+        	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
+        	    if ($container == null) {
+        	        $container = BLCAdmin.getActiveTab();
+        	    }
+        	    
+        	    // If we've already initialized this container, we'll skip it.
+        	    if ($container.data('initialized') == 'true') {
+        	        return;
+        	    }
+        	    
+        	    // Set up rich-text HTML editors
+                $container.find('.redactor').redactor({
+                    buttons : ['html', 'formatting', 'bold', 'italic', 'deleted', 
+                               'unorderedlist', 'orderedlist', 'outdent', 'indent',
+                               'video', 'file', 'table', 'link',
+                               'fontfamily', 'fontcolor', 'alignment', 'horizontalrule'],
+                    plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
+                    convertDivs : false,
+                    xhtml       : true,
+                    paragraphy  : false,
+                    minHeight   : 140,
+                    deniedTags  : []
+                });
+                
+                $container.find('textarea.autosize').autosize();
+                
+                $container.find(".color-picker").spectrum({
+                    showButtons: false,
+                    preferredFormat: "hex6",
+                    change: function(color) {
+                        $(this).closest('.field-box').find('input.color-picker-value').val(color);
+                    },
+                    move: function(color) {
+                        $(this).closest('.field-box').find('input.color-picker-value').val(color);
+                    }
+                });
+                
+                // Set the blank value for foreign key lookups
+                $container.find('.foreign-key-value-container').each(function(index, element) {
+                    var $displayValue = $(this).find('span.display-value');
+                    if ($displayValue.text() == '') {
+                        $displayValue.text($(this).find('span.display-value-none-selected').text());
+                    }
+                });
+                
+                // Run any additionally configured initialization handlers
+                for (var i = 0; i < initializationHandlers.length; i++) {
+                    initializationHandlers[i]($container);
                 }
-            });
-            
-            // Set the blank value for foreign key lookups
-            $container.find('.foreign-key-value-container').each(function(index, element) {
-                var $displayValue = $(this).find('span.display-value');
-                if ($displayValue.text() == '') {
-                    $displayValue.text($(this).find('span.display-value-none-selected').text());
-                }
-            });
-            
-            // Run any additionally configured initialization handlers
-            for (var i = 0; i < initializationHandlers.length; i++) {
-                initializationHandlers[i]($container);
-            }
-            
-            // Mark this container as initialized
-    	    $container.data('initialized', 'true');
+                
+                // Mark this container as initialized
+        	    $container.data('initialized', 'true');
+    
+        	    return false;
+    	    });
     	},
     	
     	updateFields : function($container) {
@@ -414,18 +435,46 @@ var BLCAdmin = (function($) {
     	getFieldSelectors : function getFieldSelectors() {
     	    return fieldSelectors.concat();
     	},
+    	
+    	extractFieldValue : function extractFieldValue($field) {
+            var value = $field.find('input[type="radio"]:checked').val();
+            if (value == null) {
+                value = $field.find('select').val();
+            }
+            if (value == null) {
+                value = $field.find('input[type="text"]').val();
+            }
+            if (value == null) {
+                value = $field.find('input[type="hidden"].value').val();
+            }
+            return value;
+    	},
+    	
+    	setFieldValue : function setFieldValue($field, value) {
+            $field.find('input[type="radio"]:checked').val(value);
+            $field.find('select').val(value);
+            $field.find('input[type="text"]').val(value);
+            
+            if ($field.find('button.clear-foreign-key')) {
+                $field.find('button.clear-foreign-key').click();
+            }
+    	},
 
         /**
          * Adds an initialization handler that is responsible for toggling the visiblity of a child field based on the
          * current value of the associated parent field.
          * 
          * @param className - The class name that this handler should be bound to
-         * @param parentFieldName - A jQuery selector to use to find the div.field-box for the parent field
-         * @param childFieldName - A jQuery selector to use to find the div.field-box for the child field
+         * @param parentFieldSelector - A jQuery selector to use to find the div.field-box for the parent field
+         * @param childFieldSelector - A jQuery selector to use to find the div.field-box for the child field
          * @param showIfValue - Either a function that takes one argument (the parentValue) and returns true if the
          *                      child field should be visible or a string to directly match against the parentValue
+         * @param options - Additional options:
+         *   clearChildData (boolean) - if true, will null out the data of the child field if the parent field's
+         *                              value becomes null
          */
-        addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldName, childFieldName, showIfValue) {
+        addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldSelector, childFieldSelector, 
+                showIfValue, options) {
             BLCAdmin.addInitializationHandler(function($container) {
                 var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
                 if (thisClass != null && thisClass.indexOf(className) >= 0) {
@@ -433,15 +482,8 @@ var BLCAdmin = (function($) {
                         // Extract the parent and child field DOM elements from the data
                         var $parentField = event.data.$parentField;
                         var $childField = event.data.$childField;
-                        
-                        // Figure out what the current value of the parent field is
-                        var parentValue = $parentField.find('input[type="radio"]:checked').val();
-                        if (parentValue == null) {
-                            parentValue = $parentField.find('select').val();
-                        }
-                        if (parentValue == null) {
-                            parentValue = $parentField.find('input[type="text"]').val();
-                        }
+                        var options = event.data.options;
+                        var parentValue = BLCAdmin.extractFieldValue($parentField);
                         
                         // Either match the string or execute a function to figure out if the child field should be shown
                         // Additionally, if the parent field is not visible, we'll assume that the child field shouldn't
@@ -455,17 +497,23 @@ var BLCAdmin = (function($) {
                             }
                         }
                         
+                        // Clear the data in the child field if that option was set and the parent value is null
+                        if (options != null && options['clearChildData']) {
+                            BLCAdmin.setFieldValue($childField, null);
+                        }
+                        
                         // Toggle the visiblity of the child field appropriately
                         $childField.toggle(shouldShow);
                         $childField.trigger('change');
                     };
                     
-                    var $parentField = $container.find(parentFieldName);
-                    var $childField = $container.find(childFieldName);
+                    var $parentField = $container.find(parentFieldSelector);
+                    var $childField = $container.find(childFieldSelector);
                     
                     var data = {
                         '$parentField' : $parentField,
-                        '$childField' : $childField
+                        '$childField' : $childField,
+                        'options' : options
                     };
                     
                     // Bind the change event for the parent field
@@ -475,7 +523,7 @@ var BLCAdmin = (function($) {
                     toggleFunction({ data : data });
                 }
             })
-        }
+        },
 
 	};
 	

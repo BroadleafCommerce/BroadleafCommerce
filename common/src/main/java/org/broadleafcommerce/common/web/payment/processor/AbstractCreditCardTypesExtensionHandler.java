@@ -21,8 +21,10 @@ package org.broadleafcommerce.common.web.payment.processor;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayResolver;
 import java.util.Map;
+import javax.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -30,9 +32,22 @@ import java.util.Map;
 public abstract class AbstractCreditCardTypesExtensionHandler extends AbstractExtensionHandler
         implements CreditCardTypesExtensionHandler {
 
+    @Resource(name = "blPaymentGatewayResolver")
+    protected PaymentGatewayResolver paymentGatewayResolver;
+
     @Override
     public ExtensionResultStatusType populateCreditCardMap(Map<String, String> creditCardTypes) {
+
+        if (paymentGatewayResolver.isHandlerCompatible(getHandlerType())) {
+            setCardTypes(creditCardTypes);
+            return ExtensionResultStatusType.HANDLED;
+        }
+
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    public abstract PaymentGatewayType getHandlerType();
+
+    public abstract void setCardTypes(Map<String, String> creditCardTypes);
 
 }

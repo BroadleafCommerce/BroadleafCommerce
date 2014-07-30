@@ -122,9 +122,6 @@
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
                     <version>1.2</version>
-                    <configuration>
-                        <testStubsOutputDirectory>${project.build.directory}/generated-test-sources/groovy-stubs/test</testStubsOutputDirectory>
-                    </configuration>
                     <executions>
                         <execution>
                             <goals>
@@ -139,6 +136,46 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>
+                                            org.codehaus.gmavenplus
+                                        </groupId>
+                                        <artifactId>
+                                            gmavenplus-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [1.2,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>addTestSources</goal>
+                                            <goal>testCompile</goal>
+                                            <goal>
+                                                testGenerateStubs
+                                            </goal>
+                                            <goal>removeTestStubs</goal>
+                                            <goal>compile</goal>
+                                            <goal>removeStubs</goal>
+                                            <goal>addSources</goal>
+                                            <goal>generateStubs</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
