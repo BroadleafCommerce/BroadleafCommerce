@@ -115,4 +115,9 @@ public class DatabaseOrderLockManager implements OrderLockManager {
         return BLCSystemProperty.resolveIntSystemProperty("order.lock.databaseLockPollingIntervalMs");
     }
 
+    @Override
+    public boolean isActive() {
+        return true;
+    }
+
 }
