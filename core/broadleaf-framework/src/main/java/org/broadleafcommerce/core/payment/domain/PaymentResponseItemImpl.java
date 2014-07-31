@@ -34,8 +34,10 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CollectionTable;
@@ -47,6 +49,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
@@ -175,9 +178,9 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @AdminPresentation(friendlyName = "PaymentResponseItemImpl_currency", order = 2, group = "PaymentLogImpl_Payment_Log", readOnly = true)
     protected BroadleafCurrency currency;
     
-    @ManyToOne(targetEntity = PaymentInfoImpl.class)
+    @ManyToMany(targetEntity = PaymentInfoImpl.class)
     @JoinColumn(name = "PAYMENT_INFO_REFERENCE_NUMBER", referencedColumnName = "REFERENCE_NUMBER", insertable = false, updatable = false)
-    protected PaymentInfo paymentInfo;
+    protected List<PaymentInfo> paymentInfo = new ArrayList<PaymentInfo>();
     
     @Override
     public String getAuthorizationCode() {
@@ -425,12 +428,15 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     
     @Override
     public PaymentInfo getPaymentInfo() {
-        return paymentInfo;
+        return paymentInfo == null ? null : paymentInfo.get(0);
     }
     
     @Override
     public void setPaymentInfo(PaymentInfo paymentInfo) {
-        this.paymentInfo = paymentInfo;
+        if (paymentInfo == null) {
+            this.paymentInfo = new ArrayList<PaymentInfo>();
+        }
+        this.paymentInfo.add(paymentInfo);
     }
 
     @Override
