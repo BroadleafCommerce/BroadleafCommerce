@@ -24,6 +24,8 @@ import org.broadleafcommerce.core.order.domain.Order
 import org.broadleafcommerce.core.order.domain.OrderImpl
 import org.broadleafcommerce.core.workflow.BaseActivity
 import org.broadleafcommerce.core.workflow.ProcessContext
+import org.broadleafcommerce.profile.core.domain.Customer
+import org.broadleafcommerce.profile.core.domain.CustomerImpl
 import spock.lang.Specification
 
 /**
@@ -35,8 +37,11 @@ class BaseCheckoutActivitySpec extends Specification {
     ProcessContext<CheckoutSeed> context;
 
     def setup() {
+        Customer customer = new CustomerImpl()
+        customer.id = 1
         Order order = new OrderImpl()
         order.id = 1
+        order.customer = customer
         context = new ProcessContext<CheckoutSeed>() {
 
             CheckoutSeed seed = new CheckoutSeed(order, null)

@@ -19,6 +19,26 @@
  */
 package org.broadleafcommerce.cms.web;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.RequestDTOImpl;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.sandbox.service.SandBoxService;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.time.FixedTimeSource;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.util.StatusExposingServletResponse;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,26 +62,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.RequestDTOImpl;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.service.LocaleService;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
-import org.broadleafcommerce.common.sandbox.service.SandBoxService;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.time.FixedTimeSource;
-import org.broadleafcommerce.common.time.SystemTime;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.util.StatusExposingServletResponse;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-
 /**
  * @deprecated In favor of org.broadleafcommerce.common.web.BroadleafRequestFilter.
  * formally component name "blProcessURLFilter"
@@ -80,6 +80,7 @@ import com.google.common.cache.CacheLoader;
  *
  * @author bpolster
  */
+@Deprecated
 public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     private final Log LOG = LogFactory.getLog(BroadleafProcessURLFilter.class);
 
@@ -148,6 +149,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
      *
      * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
      */
+    @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         if (!shouldProcessURL(request, request.getRequestURI())) {
@@ -250,6 +252,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
                    .concurrencyLevel(maxCacheConcurrency)
                    .expireAfterWrite(cacheExpirationSeconds, TimeUnit.SECONDS)
                    .build(new CacheLoader<String,URLProcessor>() {
+                        @Override
                         public URLProcessor load(String key) throws IOException, ServletException {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Loading URL processor into Cache");

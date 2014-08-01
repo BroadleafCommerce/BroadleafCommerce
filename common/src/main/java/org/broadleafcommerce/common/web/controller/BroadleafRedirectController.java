@@ -19,7 +19,9 @@
  */
 package org.broadleafcommerce.common.web.controller;
 
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.ui.Model;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,7 +54,11 @@ import javax.servlet.http.HttpServletResponse;
 public class BroadleafRedirectController {
     
     public String redirect(HttpServletRequest request, HttpServletResponse response, Model model) {
-        String path = (String) request.getSession().getAttribute("BLC_REDIRECT_URL");
+        String path = null;
+        if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+            path = (String) request.getSession().getAttribute("BLC_REDIRECT_URL");
+        }
+
         if (path == null) {
             path = request.getContextPath();
         }

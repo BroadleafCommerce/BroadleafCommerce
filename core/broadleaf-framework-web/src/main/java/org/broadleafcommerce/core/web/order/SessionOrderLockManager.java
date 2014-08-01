@@ -21,12 +21,15 @@ package org.broadleafcommerce.core.web.order;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.web.session.HttpSessionDestroyedEvent;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 
@@ -89,10 +92,18 @@ public class SessionOrderLockManager implements OrderLockManager, ApplicationLis
     }
 
     protected HttpServletRequest getRequest() {
+        if (RequestContextHolder.getRequestAttributes() == null) {
+            return null;
+        }
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
     }
 
     protected ReentrantLock getSessionLock() {
+        if (!isActive()) {
+            throw new IllegalStateException("This is currently a sessionless environment and session cannot be used " +
+                    "to obtain a lock. Consider using a different implementation of OrderLockManager.");
+        }
+
         HttpSession session = getRequest().getSession();
         ReentrantLock lock = SESSION_LOCKS.get(session.getId());
 
@@ -118,4 +129,19 @@ public class SessionOrderLockManager implements OrderLockManager, ApplicationLis
         return lock;
     }
 
+    @Override
+    public boolean isActive() {
+        if (getRequest() == null) {
+            return false;
+        }
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null
+                && BroadleafRequestContext.getBroadleafRequestContext().getWebRequest() != null) {
+            if (!BLCRequestUtils.isOKtoUseSession(BroadleafRequestContext.getBroadleafRequestContext().getWebRequest())) {
+                return false;
+            }
+        } else if (!BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(getRequest()))) {
+            return false;
+        }
+        return true;
+    }
 }

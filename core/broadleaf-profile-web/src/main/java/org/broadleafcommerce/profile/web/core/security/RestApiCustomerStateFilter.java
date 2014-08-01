@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -36,7 +37,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is a basic filter for finding the customer ID on the request and setting the customer object on the request.  This should come after any security filters.
+ * This is a basic filter for finding the customer ID on the request and setting the customer object on the request.  
+ * This must come after the BroadleafRequestFilter (blRequestFilter). This should come after any security filters.
  * This filter DOES NOT provide any security.  It simply looks for a "customerId" parameter on the request or in the request header.  If it finds 
  * this parameter it looks up the customer and makes it available as a request attribute.  This is generally for use in a filter chain for RESTful web services, 
  * allowing the client consuming services to specify the customerId on whos behalf they are invoking the service.  It is assumed that services are invoked either 
@@ -88,13 +90,15 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
                 //If we found it, look up the customer and put it on the request.
                 Customer customer = customerService.readCustomerById(Long.valueOf(customerId));
                 if (customer != null) {
-                    servletRequest.setAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName(), customer);
+                    CustomerState.setCustomer(customer);
                 }
             }
             
             if (customerId == null) {
-                LOG.warn("No customer ID was found for the API request. In order to look up a customer for the request" +
-                         " send a request parameter or request header for the '" + customerIdAttributeName + "' attribute");
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("No customer ID was found for the API request. In order to look up a customer for the request" +
+                            " send a request parameter or request header for the '" + customerIdAttributeName + "' attribute");
+                }
             }
         }
 

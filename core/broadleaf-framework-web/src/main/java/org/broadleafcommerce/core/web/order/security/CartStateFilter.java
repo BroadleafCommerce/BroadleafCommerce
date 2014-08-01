@@ -141,9 +141,13 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
                return false;
         }
         
+        if (!orderLockManager.isActive()) {
+            return false;
+        }
+
         HttpServletRequest request = (HttpServletRequest) req;
 
-        if (!((HttpServletRequest) request).getMethod().equalsIgnoreCase("post")) {
+        if (!request.getMethod().equalsIgnoreCase("post")) {
             return false;
         }
         

@@ -82,8 +82,12 @@ public class FieldImpl implements Field,Serializable {
     @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
     protected String entityType;
     
+    @Column(name = "FRIENDLY_NAME")
+    @AdminPresentation(friendlyName = "FieldImpl_friendlyName", group = "FieldImpl_descrpition", order = 1, prominent = true)
+    protected String friendlyName;
+
     @Column(name = "PROPERTY_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 1, prominent = true)
+    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 2, prominent = true)
     protected String propertyName;
     
     @Column(name = "ABBREVIATION")
@@ -155,6 +159,16 @@ public class FieldImpl implements Field,Serializable {
     @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
+    }
+
+    @Override
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    @Override
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
     }
 
     @Override
