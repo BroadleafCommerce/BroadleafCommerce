@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.server.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -82,6 +83,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
@@ -710,6 +714,22 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         CriteriaTransferObject cto = new CriteriaTransferObject();
         cto.setMaxResults(50);
         return cto;
+    }
+    
+    @Override
+    public String getForeignEntityName(String owningClass, String id) {
+        if (owningClass == null || id == null) {
+            return null;
+        }
+        
+        Class<?> clazz = genericEntityDao.getImplClass(owningClass);
+        Object foreignEntity = genericEntityDao.readGenericEntity(clazz, id);
+
+        if (foreignEntity instanceof AdminMainEntity) {
+            return ((AdminMainEntity) foreignEntity).getMainEntityName();
+        }
+        
+        return null;
     }
 
 }

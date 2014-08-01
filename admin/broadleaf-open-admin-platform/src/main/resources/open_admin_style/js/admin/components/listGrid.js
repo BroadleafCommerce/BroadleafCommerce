@@ -409,6 +409,9 @@ $(document).ready(function() {
             var $parentField = $container.closest('form').find(handler['parentFieldSelector']);
             url = url + '&' + handler['childFieldPropertyName'] + '=' + BLCAdmin.extractFieldValue($parentField);
         }
+        if ($(this).data('dynamic-field')) {
+            url = url + '&dynamicField=true';
+        }
 
         BLCAdmin.showLinkAsModal(url, function() {
             $('div.additional-foreign-key-container').unbind('valueSelected');
