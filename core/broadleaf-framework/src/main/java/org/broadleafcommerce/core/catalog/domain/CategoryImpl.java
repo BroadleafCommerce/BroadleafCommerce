@@ -191,6 +191,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
 
+    @Column(name = "OVERRIDE_GENERATED_URL")
+    @AdminPresentation(group = Presentation.Group.Name.General, order = 2010)
+    protected Boolean overrideGeneratedUrl = false;
+
     @Column(name = "EXTERNAL_ID")
     @Index(name="CATEGORY_E_ID_INDEX", columnNames={"EXTERNAL_ID"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_ExternalID",
@@ -499,6 +503,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Override
+    public Boolean getOverrideGeneratedUrl() {
+        return overrideGeneratedUrl == null ? false : overrideGeneratedUrl;
+    }
+
+    @Override
+    public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl) {
+        this.overrideGeneratedUrl = overrideGeneratedUrl == null ? false : overrideGeneratedUrl;
     }
 
     @Override

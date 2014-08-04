@@ -25,7 +25,8 @@
         th:required="${field.required}" 
         th:placeholder="${field.hint}"
         th:field="*{fields['__${field.name}__'].value}"
-        th:attr="data-prefix=*{fields['__${field.name}__'].attributes[prefix]}"
-        th:disabled="${!overriddenUrl}" />
+        th:attr="data-prefix=*{fields['__${field.name}__'].attributes[prefix]},
+                 data-prefix-selector=*{fields['__${field.name}__'].attributes['prefix-selector']}"
+        th:readonly="${!overriddenUrl}" />
     
 </div>

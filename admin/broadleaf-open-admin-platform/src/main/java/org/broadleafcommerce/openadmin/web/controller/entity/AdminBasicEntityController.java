@@ -261,6 +261,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             // fields that are not applicable for this given entity type.
             formService.removeNonApplicableFields(cmd, entityForm, entityType);
 
+            modifyAddEntityForm(entityForm, pathVars);
+
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/entityAdd");
         }
@@ -302,6 +304,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             formService.populateEntityForm(cmd, entity, entityForm, sectionCrumbs);
 
             formService.removeNonApplicableFields(cmd, entityForm, entityForm.getEntityType());
+
+            modifyAddEntityForm(entityForm, pathVars);
 
             model.addAttribute("viewType", "modal/entityAdd");
             model.addAttribute("currentUrl", request.getRequestURL().toString());

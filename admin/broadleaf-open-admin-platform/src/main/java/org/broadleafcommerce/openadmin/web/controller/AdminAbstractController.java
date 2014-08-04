@@ -588,6 +588,15 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     }
 
     /**
+     * This method is invoked whenever an assembled EntityForm is rendered for the add entity screen.
+     * 
+     * @param entityForm
+     */
+    protected void modifyAddEntityForm(EntityForm entityForm, Map<String, String> pathVars) {
+        
+    }
+
+    /**
      * A hook method that is invoked every time the {@link #getSectionPersistencePackageRequest(String)} method is invoked.
      * This allows specialized controllers to hook into every request and manipulate the persistence package request as
      * desired.

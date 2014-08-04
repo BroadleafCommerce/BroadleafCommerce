@@ -114,6 +114,18 @@ public interface Category extends Serializable {
     public void setUrl(@Nullable String url);
 
     /**
+     * @return the flag for whether or not the URL should not be generated in the admin
+     */
+    public Boolean getOverrideGeneratedUrl();
+
+    /**
+     * Sets the flag for whether or not the URL should not be generated in the admin
+     * 
+     * @param overrideGeneratedUrl
+     */
+    public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl);
+
+    /**
      * Gets the url key. The url key is used as part of SEO url generation for this
      * category. Each segment of the url leading to a category is comprised of the url
      * keys of the various associated categories in a hierarchy leading to this one. If

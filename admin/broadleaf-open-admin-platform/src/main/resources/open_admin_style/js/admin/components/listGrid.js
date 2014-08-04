@@ -397,7 +397,8 @@ $(document).ready(function() {
                 }
             }
             
-            $valueField.trigger('change');
+            $valueField.trigger('change', fields);
+            $valueField.closest('.field-box').trigger('change');
             BLCAdmin.hideCurrentModal();
         });
         

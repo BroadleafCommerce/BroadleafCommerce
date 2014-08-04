@@ -640,6 +640,18 @@ public interface Product extends Serializable {
      * @param url
      */
     public void setUrl(String url);
+
+    /**
+     * @return the flag for whether or not the URL should not be generated in the admin
+     */
+    public Boolean getOverrideGeneratedUrl();
+
+    /**
+     * Sets the flag for whether or not the URL should not be generated in the admin
+     * 
+     * @param overrideGeneratedUrl
+     */
+    public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl);
     
     /**
      * Sets a url-fragment.  By default, the system will attempt to create a unique url-fragment for 

@@ -34,8 +34,27 @@
         },
         
         setGeneratedUrl : function setGeneratedUrl($sourceField, $targetField) {
-            var generatedUrl = $targetField.data('prefix') + BLCAdmin.generatedUrl.convertToUrlFragment($sourceField.val());
-            $targetField.val(generatedUrl);
+            var generatedPrefix;
+            
+            if ($targetField.data('prefix-selector')) {
+                var $field = $($targetField.data('prefix-selector'));
+                generatedPrefix = $field.find('input.generated-url-prefix').val();
+                
+                $field.on('change', function() {
+                    BLCAdmin.generatedUrl.setGeneratedUrl($sourceField, $targetField);
+                });
+                
+                if (generatedPrefix == null || generatedPrefix == "") {
+                    generatedPrefix = $targetField.data('prefix');
+                }
+                generatedPrefix += '/';
+            } else if ($targetField.data('prefix')) {
+                generatedPrefix = $targetField.data('prefix');
+            } else {
+                generatedPrefix = '/';
+            }
+
+            $targetField.val(generatedPrefix + BLCAdmin.generatedUrl.convertToUrlFragment($sourceField.val()));
         },
         
         unregisterUrlGenerator : function unregisterUrlGenrator($generatedUrlContainer) {
@@ -67,11 +86,11 @@ $('body').on('click', 'a.override-generated-url', function(event) {
 	var $container = $this.closest('div.generated-url-container');
 	
 	if (enabled) {
-	    $container.find('input').attr('disabled', 'disabled');
+	    $container.find('input').attr('readonly', 'readonly');
 	    $this.text($this.data('disabled-text'));
 	    BLCAdmin.generatedUrl.registerUrlGenerator($container);
 	} else {
-	    $container.find('input').removeAttr('disabled');
+	    $container.find('input').removeAttr('readonly');
 	    $this.text($this.data('enabled-text'));
 	    BLCAdmin.generatedUrl.unregisterUrlGenerator($container);
 	}
