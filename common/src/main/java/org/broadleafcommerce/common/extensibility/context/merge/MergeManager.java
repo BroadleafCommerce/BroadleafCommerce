@@ -108,38 +108,73 @@ public class MergeManager {
         }
     }
 
-    private void removeSkippedMergeComponents(Properties props) {
-        InputStream inputStream = this.getClass().getClassLoader()
-                .getResourceAsStream("/broadleaf-commmerce/skipMergeComponents.txt");
+    private void removeSkippedMergeComponents(Properties props)
+	        throws UnsupportedEncodingException {
+		InputStream inputStream = null;
+		InputStreamReader inputStreamReader = null;
+		BufferedReader bufferedReader = null;
+		try {
+			inputStream =
+			        this.getClass()
+			                .getClassLoader()
+			                .getResourceAsStream(
+			                        "/broadleaf-commmerce/skipMergeComponents.txt");
 
-        if (inputStream != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("mergeClassOverrides file found.");
-            }
+			if (inputStream == null) {
+				return;
+			}
 
-            final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("mergeClassOverrides file found.");
+			}
 
-            try {
-                while (bufferedReader.ready())
-                {
-                    String line = bufferedReader.readLine();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("mergeComponentOverrides - overridding " + line);
-                    }
-                    removeSkipMergeComponents(props, line);
-                }
-            } catch (IOException e) {
-                LOG.error("Error reading resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
-            } finally {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ioe) {
-                    LOG.error("Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt", ioe);
-                }
-            }
-        }
-    }
+			inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+			bufferedReader = new BufferedReader(inputStreamReader);
+
+			try {
+				String line;
+				while ((line = bufferedReader.readLine()) != null) {
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("mergeComponentOverrides - overridding "
+						        + line);
+					}
+					removeSkipMergeComponents(props, line);
+				}
+			} catch (IOException e) {
+				LOG.error(
+				        "Error reading resource - /broadleaf-commmerce/skipMergeComponents.txt",
+				        e);
+			}
+		} finally {
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					LOG.error(
+					        "Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt",
+					        e);
+				}
+			}
+			if (inputStreamReader != null) {
+				try {
+					inputStreamReader.close();
+				} catch (IOException e) {
+					LOG.error(
+					        "Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt",
+					        e);
+				}
+			}
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException e) {
+					LOG.error(
+					        "Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt",
+					        e);
+				}
+			}
+		}
+	}
 
     /**
      * Examines the properties file for an entry with an id equal to the component that we want
