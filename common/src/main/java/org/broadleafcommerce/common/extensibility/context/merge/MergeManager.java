@@ -108,34 +108,56 @@ public class MergeManager {
         }
     }
 
-    private void removeSkippedMergeComponents(Properties props) {
-        InputStream inputStream = this.getClass().getClassLoader()
-                .getResourceAsStream("/broadleaf-commmerce/skipMergeComponents.txt");
+    private void removeSkippedMergeComponents(Properties props)
+            throws UnsupportedEncodingException {
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        try {
+            inputStream = this.getClass().getClassLoader()
+                    .getResourceAsStream("/broadleaf-commmerce/skipMergeComponents.txt");
 
-        if (inputStream != null) {
+            if (inputStream == null) {
+                return;
+            }
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("mergeClassOverrides file found.");
             }
 
-            final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+            bufferedReader = new BufferedReader(inputStreamReader);
 
-            try {
-                while (bufferedReader.ready())
-                {
-                    String line = bufferedReader.readLine();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("mergeComponentOverrides - overridding " + line);
-                    }
-                    removeSkipMergeComponents(props, line);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("mergeComponentOverrides - overridding "
+                            + line);
                 }
-            } catch (IOException e) {
-                LOG.error("Error reading resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
-            } finally {
+                removeSkipMergeComponents(props, line);
+            }
+        } catch (IOException e) {
+            LOG.error("Error reading resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    LOG.error("Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
+                }
+            }
+            if (inputStreamReader != null) {
+                try {
+                    inputStreamReader.close();
+                } catch (IOException e) {
+                    LOG.error("Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
+                }
+            }
+            if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
-                } catch (IOException ioe) {
-                    LOG.error("Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt", ioe);
+                } catch (IOException e) {
+                    LOG.error("Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
                 }
             }
         }
