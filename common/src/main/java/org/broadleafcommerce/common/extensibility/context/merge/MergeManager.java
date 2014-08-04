@@ -124,10 +124,12 @@ public class MergeManager {
                 while (bufferedReader.ready())
                 {
                     String line = bufferedReader.readLine();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("mergeComponentOverrides - overridding " + line);
+                    if (line != null) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("mergeComponentOverrides - overridding " + line);
+                        }
+                        removeSkipMergeComponents(props, line);
                     }
-                    removeSkipMergeComponents(props, line);
                 }
             } catch (IOException e) {
                 LOG.error("Error reading resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
