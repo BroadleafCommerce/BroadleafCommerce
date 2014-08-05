@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -108,35 +110,45 @@ public class MergeManager {
         }
     }
 
-    private void removeSkippedMergeComponents(Properties props) throws UnsupportedEncodingException {
-        InputStream inputStream = this.getClass().getClassLoader()
-                .getResourceAsStream("/broadleaf-commmerce/skipMergeComponents.txt");
+    private void removeSkippedMergeComponents(Properties props)
+            throws UnsupportedEncodingException {
+        InputStream inputStream = null;
+        InputStreamReader inputStreamReader = null;
+        BufferedReader bufferedReader = null;
+        try {
+            inputStream = this.getClass().getClassLoader()
+                    .getResourceAsStream("/broadleaf-commmerce/skipMergeComponents.txt");
 
-        if (inputStream != null) {
+            if (inputStream == null) {
+                return;
+            }
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("mergeClassOverrides file found.");
             }
 
-            final InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
-            final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
+            bufferedReader = new BufferedReader(inputStreamReader);
 
-            try {
-                while (bufferedReader.ready())
-                {
-                    String line = bufferedReader.readLine();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("mergeComponentOverrides - overridding " + line);
-                    }
-                    removeSkipMergeComponents(props, line);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("mergeComponentOverrides - overridding "
+                            + line);
                 }
-            } catch (IOException e) {
-                LOG.error("Error reading resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
-            } finally {
-                try {
-                    bufferedReader.close();
-                } catch (IOException ioe) {
-                    LOG.error("Error closing resource - /broadleaf-commmerce/skipMergeComponents.txt", ioe);
-                }
+                removeSkipMergeComponents(props, line);
+            }
+        } catch (IOException e) {
+            LOG.error("Error reading resource - /broadleaf-commmerce/skipMergeComponents.txt", e);
+        } finally {
+            if (inputStream != null) {
+                IOUtils.closeQuietly(inputStream);
+            }
+            if (inputStreamReader != null) {
+                IOUtils.closeQuietly(inputStreamReader);
+            }
+            if (bufferedReader != null) {
+                IOUtils.closeQuietly(bufferedReader);
             }
         }
     }
@@ -284,6 +296,7 @@ public class MergeManager {
         MergeHandler[] explodedView = {};
         explodedView = handlers.toArray(explodedView);
         Comparator<Object> nameCompare = new Comparator<Object>() {
+            @Override
             public int compare(Object arg0, Object arg1) {
                 return ((MergeHandler) arg0).getName().compareTo(((MergeHandler) arg1).getName());
             }
