@@ -65,10 +65,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * This integration test class is kept to guarantee backwards
@@ -149,7 +150,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("20.5 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20.5, null, null, true, true, 10));
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         // 20% results in $240.  20.5% off results in $238.50
         assert ( order.getSubTotal().equals(new Money(238.50D) ));
@@ -168,7 +169,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
@@ -187,7 +188,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, false, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(252D)));
     }
@@ -207,7 +208,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(280D)));
     }
@@ -226,7 +227,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(212D)));
     }
@@ -243,7 +244,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, false, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(240D)));
     }
@@ -294,7 +295,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(130D));
     }
@@ -313,7 +314,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, false, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(290D));
     }
@@ -333,7 +334,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(210D));
     }
@@ -355,7 +356,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         offer = offerService.save(offer);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
@@ -380,7 +381,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         customerOffer = customerOfferDao.save(customerOffer);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
@@ -412,7 +413,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         customerOfferDao.save(customerOffer2);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(33D)));
     }
@@ -431,8 +432,8 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("3 Dollars Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.AMOUNT_OFF, 3, null, null, true, true, 10));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
-        offerService.applyFulfillmentGroupOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
+        offerService.applyAndSaveFulfillmentGroupOffersToOrder(offers, order);
 
         assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(1.6D)));
     }

@@ -48,6 +48,7 @@ import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
+import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
@@ -345,16 +346,30 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional("blTransactionManager")
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
+        ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
+        offerCodes.add(offerCode);
+        return addOfferCodes(order, offerCodes, priceOrder);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
         preValidateCartOperation(order);
         Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
-        //TODO: give some sort of notification that adding the offer code to the order was unsuccessful
-        if (!order.getAddedOfferCodes().contains(offerCode) && !addedOffers.contains(offerCode.getOffer())) {
-            if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
-                throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
+
+        if (offerCodes != null && !offerCodes.isEmpty()) {
+            for (OfferCode offerCode : offerCodes) {
+                //TODO: give some sort of notification that adding the offer code to the order was unsuccessful
+                if (!order.getAddedOfferCodes().contains(offerCode) && !addedOffers.contains(offerCode.getOffer())) {
+                    if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
+                        throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
+                    }
+                    order.getAddedOfferCodes().add(offerCode);
+                }
             }
-            order.getAddedOfferCodes().add(offerCode);
             order = save(order, priceOrder);
         }
+
         return order;
     }
 
@@ -587,6 +602,9 @@ public class OrderServiceImpl implements OrderService {
         preValidateCartOperation(findOrderById(orderId));
         try {
             OrderItem oi = orderItemService.readOrderItemById(orderItemId);
+            if (oi == null) {
+                throw new WorkflowException(new ItemNotFoundException());
+            }
             if (CollectionUtils.isNotEmpty(oi.getChildOrderItems())) {
                 List<Long> childrenToRemove = new ArrayList<Long>();
                 for (OrderItem childOrderItem : oi.getChildOrderItems()) {

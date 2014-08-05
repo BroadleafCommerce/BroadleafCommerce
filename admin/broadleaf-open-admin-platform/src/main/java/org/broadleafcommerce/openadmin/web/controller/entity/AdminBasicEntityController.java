@@ -773,6 +773,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
             Model model, String id, String collectionField, String sectionKey, Property collectionProperty,
             FieldMetadata md, PersistencePackageRequest ppr, EntityForm entityForm, Entity entity) throws ServiceException {
         
+        // For requests to add a new collection item include the main class that the subsequent request comes from.
+        // For instance, with basic collections we know the main associated class for a fetch through the ForeignKey
+        // persistence item but map and adorned target lookups make a standard persistence request. This solution
+        // fixes all cases.
+        String mainClassName = getClassNameForSection(sectionKey);
+        ppr.addCustomCriteria("owningClass=" + mainClassName);
+        
         if (entityForm != null) {
             entityForm.clearFieldsMap();
         }

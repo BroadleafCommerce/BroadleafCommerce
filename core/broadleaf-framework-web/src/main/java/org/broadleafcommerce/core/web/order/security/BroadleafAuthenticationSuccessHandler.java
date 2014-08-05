@@ -20,9 +20,11 @@
 package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.IOException;
 
@@ -40,7 +42,9 @@ public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuth
             Authentication authentication) throws ServletException, IOException {
         
         String targetUrl = request.getParameter(getTargetUrlParameter());
-        request.getSession().removeAttribute(SESSION_ATTR);
+        if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+            request.getSession().removeAttribute(SESSION_ATTR);
+        }
         if (StringUtils.isNotBlank(targetUrl) && targetUrl.contains(":")) {
             getRedirectStrategy().sendRedirect(request, response, getDefaultTargetUrl());
         } else {

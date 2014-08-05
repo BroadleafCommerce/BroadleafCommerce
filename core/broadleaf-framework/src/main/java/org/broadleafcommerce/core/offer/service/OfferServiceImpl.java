@@ -52,6 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -177,6 +178,24 @@ public class OfferServiceImpl implements OfferService {
         return offers;
     }
 
+    @Override
+    public List<OfferCode> buildOfferCodeListForCustomer(Customer customer) {
+        ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
+        if (extensionManager != null) {
+            extensionManager.getProxy().buildOfferCodeListForCustomer(customer, offerCodes);
+        }
+        if (!offerCodes.isEmpty()) {
+            Iterator<OfferCode> itr = offerCodes.iterator();
+            while (itr.hasNext()) {
+                OfferCode offerCode = itr.next();
+                if (!offerCode.isActive() || !verifyMaxCustomerUsageThreshold(customer, offerCode)) {
+                    itr.remove();
+                }
+            }
+        }
+        return offerCodes;
+    }
+
     /**
      * Private method used to retrieve all offers assigned to this customer.  These offers
      * have a DeliveryType of MANUAL and are programmatically assigned to the customer.
@@ -256,7 +275,7 @@ public class OfferServiceImpl implements OfferService {
      */
     @Override
     @Transactional("blTransactionManager")
-    public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+    public Order applyAndSaveOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         /*
         TODO rather than a threadlocal, we should update the "shouldPrice" boolean on the service API to
         use a richer object to describe the parameters of the pricing call. This object would include
@@ -290,13 +309,29 @@ public class OfferServiceImpl implements OfferService {
             order.setSubTotal(order.calculateSubTotal());
             order.finalizeItemPrices();
 
-            orderService.save(order, false);
+            return orderService.save(order, false);
         }
+
+        return order;
     }
 
     @Override
     @Transactional("blTransactionManager")
+    @Deprecated
+    public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+        applyAndSaveOffersToOrder(offers, order);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    @Deprecated
     public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
+        applyAndSaveFulfillmentGroupOffersToOrder(offers, order);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public Order applyAndSaveFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
             PromotableOrder promotableOrder =
@@ -318,8 +353,9 @@ public class OfferServiceImpl implements OfferService {
                 orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
             }
 
-            orderService.save(order, false);
+            return orderService.save(order, false);
         }
+        return order;
     }
     
     @Override

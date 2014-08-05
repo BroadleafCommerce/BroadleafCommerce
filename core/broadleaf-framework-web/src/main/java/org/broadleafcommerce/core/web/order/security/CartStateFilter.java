@@ -21,10 +21,12 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.core.web.order.security.exception.OrderLockAcquisitionFailureException;
 import org.springframework.core.Ordered;
 import org.springframework.security.web.util.AntPathRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
@@ -93,7 +95,17 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 
         Object lockObject = null;
         try {
-            lockObject = orderLockManager.acquireLock(order);
+            if (getErrorInsteadOfQueue()) {
+                lockObject = orderLockManager.acquireLockIfAvailable(order);
+                if (lockObject == null) {
+                    // We weren't able to acquire the lock immediately because some other thread has it. Because the
+                    // order.lock.errorInsteadOfQueue property was set to true, we're going to throw an exception now.
+                    throw new OrderLockAcquisitionFailureException("Thread[" + Thread.currentThread().getId() + 
+                            "] could not acquire lock for order[" + order.getId() + "]");
+                }
+            } else {
+                lockObject = orderLockManager.acquireLock(order);
+            }
     
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Thread[" + Thread.currentThread().getId() + "] grabbed lock for order[" + order.getId() + "]");
@@ -107,7 +119,9 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
 
             chain.doFilter(request, response);
         } finally {
-            orderLockManager.releaseLock(lockObject);
+            if (lockObject != null) {
+                orderLockManager.releaseLock(lockObject);
+            }
 
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + order.getId() +"]");
@@ -127,9 +141,13 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
                return false;
         }
         
+        if (!orderLockManager.isActive()) {
+            return false;
+        }
+
         HttpServletRequest request = (HttpServletRequest) req;
 
-        if (!((HttpServletRequest) request).getMethod().equalsIgnoreCase("post")) {
+        if (!request.getMethod().equalsIgnoreCase("post")) {
             return false;
         }
         
@@ -170,6 +188,10 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
      **/
     public void setExcludedOrderLockRequestPatterns(List<String> excludedOrderLockRequestPatterns) {
         this.excludedOrderLockRequestPatterns = excludedOrderLockRequestPatterns;
+    }
+
+    protected boolean getErrorInsteadOfQueue() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("order.lock.errorInsteadOfQueue");
     }
 
 }

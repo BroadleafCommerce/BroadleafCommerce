@@ -191,7 +191,8 @@ public class ItemOfferProcessorTest extends TestCase {
 
         //test that the valid order item offer is included - legacy format - no qualifier
         //since there's no qualifier, both items can apply
-        assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(0).getOffer().equals(offers.get(0)) && qualifiedOffers.get(1).getOffer().equals(offers.get(0)));
+        // This line is commented out because we are no longer creating legacy offers.
+        //assertTrue(qualifiedOffers.size() == 2 && qualifiedOffers.get(0).getOffer().equals(offers.get(0)) && qualifiedOffers.get(1).getOffer().equals(offers.get(0)));
 
         qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
         offers = dataProvider.createItemBasedOfferWithItemCriteria(
@@ -352,7 +353,7 @@ public class ItemOfferProcessorTest extends TestCase {
         int count = 0;
         for (OrderItem item : order.getOrderItems()) {
             for (OrderItemPriceDetail detail : item.getOrderItemPriceDetails()) {
-                count = count + detail.getOrderItemPriceDetailAdjustments().size();
+                count = count + (detail.getOrderItemPriceDetailAdjustments().size() * detail.getQuantity());
             }
         }
         return count;
@@ -400,7 +401,7 @@ public class ItemOfferProcessorTest extends TestCase {
         offers.add(offer1);
 
         List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assertTrue(order.getTotalAdjustmentsValue().getAmount().doubleValue() > 0);
 
@@ -410,7 +411,7 @@ public class ItemOfferProcessorTest extends TestCase {
         offer1.setApplyDiscountToSalePrice(false);
         order.getOrderItems().get(0).setSalePrice(new Money(1D));
         order.getOrderItems().get(1).setSalePrice(new Money(1D));
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assertTrue(order.getTotalAdjustmentsValue().getAmount().doubleValue() == 0);
 
@@ -446,13 +447,13 @@ public class ItemOfferProcessorTest extends TestCase {
         offerListWithTwoOffers.add(offer1);
         offerListWithTwoOffers.add(offer2);
 
-        offerService.applyOffersToOrder(offerListWithOneOffer, order);
+        offerService.applyAndSaveOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 1);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 1);
 
         // Add the second offer.   The first was nonCombinable so it should still be 1
         order = dataProvider.createBasicOrder();
-        offerService.applyOffersToOrder(offerListWithTwoOffers, order);
+        offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 2);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 2);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 0);
@@ -461,7 +462,7 @@ public class ItemOfferProcessorTest extends TestCase {
         // Reset offer1 to combinable.   Now both should be applied.
         offer1.setCombinableWithOtherOffers(true);
         order = dataProvider.createBasicOrder();
-        offerService.applyOffersToOrder(offerListWithTwoOffers, order);
+        offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 2);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 2);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 0);
@@ -472,11 +473,11 @@ public class ItemOfferProcessorTest extends TestCase {
         offer1.setApplyDiscountToSalePrice(false);
         order = dataProvider.createBasicOrder();
         order.getOrderItems().get(1).setSalePrice(new Money(10D));
-        offerService.applyOffersToOrder(offerListWithOneOffer, order);
+        offerService.applyAndSaveOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 0);
 
         // Try again with two offers.   The second should be applied.   
-        offerService.applyOffersToOrder(offerListWithTwoOffers, order);
+        offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 2);
 
         // Trying with 2nd offer as nonCombinable.
@@ -484,10 +485,10 @@ public class ItemOfferProcessorTest extends TestCase {
         order.getOrderItems().get(1).setSalePrice(null);
         offer2.setCombinableWithOtherOffers(false);
 
-        offerService.applyOffersToOrder(offerListWithOneOffer, order);
+        offerService.applyAndSaveOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 1);
 
-        offerService.applyOffersToOrder(offerListWithTwoOffers, order);
+        offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 2);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 0);
 
@@ -496,7 +497,7 @@ public class ItemOfferProcessorTest extends TestCase {
         order = dataProvider.createBasicOrder();
         offer1.getQualifyingItemCriteria().iterator().next().setQuantity(1);
         offer1.getTargetItemCriteria().iterator().next().setQuantity(2);
-        offerService.applyOffersToOrder(offerListWithOneOffer, order);
+        offerService.applyAndSaveOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 2);
 
         // Reset both offers to combinable and the qualifiers as allowing duplicate QUALIFIERs
@@ -508,7 +509,7 @@ public class ItemOfferProcessorTest extends TestCase {
         offer2.setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
         offer2.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
         order = dataProvider.createBasicOrder();
-        offerService.applyOffersToOrder(offerListWithTwoOffers, order);
+        offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 4);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 2);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 2);
@@ -559,7 +560,7 @@ public class ItemOfferProcessorTest extends TestCase {
         Order order = dataProvider.createBasicOrder();
         List<Offer> offerList = new ArrayList<Offer>();
         offerList.add(offer2);
-        offerService.applyOffersToOrder(offerList, order);
+        offerService.applyAndSaveOffersToOrder(offerList, order);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 4);
         assertTrue(countPriceDetails(order) == 3);
 
@@ -568,7 +569,7 @@ public class ItemOfferProcessorTest extends TestCase {
         order = dataProvider.createBasicOrder();
         offerList.add(offer1); // add in second offer (which happens to be offer1)
 
-        offerService.applyOffersToOrder(offerList, order);
+        offerService.applyAndSaveOffersToOrder(offerList, order);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 4);
         assertTrue(countPriceDetails(order) == 3);
 
@@ -576,7 +577,7 @@ public class ItemOfferProcessorTest extends TestCase {
         order = dataProvider.createBasicOrder();
         offerList.add(offer3); // add in second offer (which happens to be offer1)  
         offer3.setPriority(-1);
-        offerService.applyOffersToOrder(offerList, order);
+        offerService.applyAndSaveOffersToOrder(offerList, order);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer3) == 2);
         assertTrue(countPriceDetails(order) == 4);
 

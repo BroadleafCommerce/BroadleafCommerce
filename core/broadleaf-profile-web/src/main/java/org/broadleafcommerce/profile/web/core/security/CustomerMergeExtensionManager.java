@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Profile
+ * BroadleafCommerce Profile Web
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,16 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.profile.core.dao;
+package org.broadleafcommerce.profile.web.core.security;
 
-import org.broadleafcommerce.profile.core.domain.CustomerRole;
-import org.broadleafcommerce.profile.core.domain.Role;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+@Component("blCustomerMergeExtensionManager")
+public class CustomerMergeExtensionManager extends ExtensionManager<CustomerMergeExtensionHandler> {
 
-public interface RoleDao {
+    public CustomerMergeExtensionManager() {
+        super(CustomerMergeExtensionHandler.class);
+    }
 
-    public List<CustomerRole> readCustomerRolesByCustomerId(Long customerId);
-    
-    public Role readRoleByName(String name);
-    
-    public void addRoleToCustomer(CustomerRole customerRole);
-    
-    public void removeCustomerRolesByCustomerId(Long customerId);
 }

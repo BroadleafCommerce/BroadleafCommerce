@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafCurrencyResolver;
 import org.broadleafcommerce.common.web.BroadleafLocaleResolver;
@@ -95,7 +96,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     protected boolean enforceProductionWorkflowUpdate = true;
     
     @Resource(name="blEntityExtensionManagers")
-    protected Map<String, ExtensionManager> entityExtensionManagers;
+    protected Map<String, ExtensionManager<?>> entityExtensionManagers;
 
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
@@ -135,7 +136,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
         if (adminUser == null) {
             //clear any sandbox
-            request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            if (BLCRequestUtils.isOKtoUseSession(request)) {
+                request.removeAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            }
         } else {
             SandBox sandBox = null;
             if (StringUtils.isNotBlank(request.getParameter(SANDBOX_REQ_PARAM))) {
@@ -152,8 +155,11 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             }
 
             if (sandBox == null) {
-                Long previouslySetSandBoxId = (Long) request.getAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR,
+                Long previouslySetSandBoxId = null;
+                if (BLCRequestUtils.isOKtoUseSession(request)) {
+                    previouslySetSandBoxId = (Long) request.getAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR,
                         WebRequest.SCOPE_GLOBAL_SESSION);
+                }
                 if (previouslySetSandBoxId != null) {
                     sandBox = sandBoxService.retrieveSandBoxById(previouslySetSandBoxId);
                 }
@@ -179,13 +185,18 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             }
 
             // If the user just changed sandboxes, we want to update the database record.
-            Long previouslySetSandBoxId = (Long) request.getAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            Long previouslySetSandBoxId = null;
+            if (BLCRequestUtils.isOKtoUseSession(request)) {
+                previouslySetSandBoxId = (Long) request.getAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            }
             if (previouslySetSandBoxId != null && !sandBox.getId().equals(previouslySetSandBoxId)) {
                 adminUser.setLastUsedSandBoxId(sandBox.getId());
                 adminUser = adminSecurityService.saveAdminUser(adminUser);
             }
 
-            request.setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, sandBox.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+            if (BLCRequestUtils.isOKtoUseSession(request)) {
+                request.setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, sandBox.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+            }
             brc.setSandBox(sandBox);
             brc.getAdditionalProperties().put("adminUser", adminUser);
         }

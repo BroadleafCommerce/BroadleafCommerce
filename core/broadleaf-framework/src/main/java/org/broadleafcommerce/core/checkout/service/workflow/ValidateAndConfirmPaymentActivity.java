@@ -45,7 +45,6 @@ import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.State;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,7 +52,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,12 +104,21 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // changed, the order payments need to be adjusted to reflect this and must add up to the order total.
         // This can happen in the case of PayPal Express or other hosted gateways where the unconfirmed payment comes back
         // to a review page, the customer selects shipping and the order total is adjusted.
+        
+        /**
+         * This list contains the additional transactions that were created to confirm previously unconfirmed transactions
+         * which can occur if you send credit card data directly to Broadlaef and rely on this activity to confirm
+         * that transaction
+         */
         Map<OrderPayment, PaymentTransaction> additionalTransactions = new HashMap<OrderPayment, PaymentTransaction>();
         List<PaymentResponseDTO> failedTransactions = new ArrayList<PaymentResponseDTO>();
         // Used for the rollback handler; we want to make sure that we roll back transactions that have already been confirmed
         // as well as transctions that we are about to confirm here
         List<PaymentTransaction> confirmedTransactions = new ArrayList<PaymentTransaction>();
-        Map<OrderPayment, PaymentTransactionType> confirmedRollback = new HashMap<OrderPayment, PaymentTransactionType>();
+        /**
+         * This is a subset of the additionalTransactions that contains the transactions that were confirmed in this activity
+         */
+        Map<OrderPayment, PaymentTransactionType> additionalConfirmedTransactions = new HashMap<OrderPayment, PaymentTransactionType>();
 
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
@@ -185,7 +192,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         additionalTransactions.put(payment, transaction);
 
                         if (responseDTO.isSuccessful()) {
-                            confirmedRollback.put(payment, transaction.getType());
+                            additionalConfirmedTransactions.put(payment, transaction.getType());
                         } else {
                             failedTransactions.add(responseDTO);
                         }
@@ -196,7 +203,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         // advantage of being able to invoke the rollback handler if there is an exception thrown at some point while confirming multiple
                         // transactions. This is outside of the transaction confirmation block in order to capture transactions
                         // that were already confirmed prior to this activity running
-                        confirmedRollback.put(payment, tx.getType());
+                        confirmedTransactions.add(tx);
                     }
                 }
             }
@@ -207,8 +214,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         for (OrderPayment payment : order.getPayments()) {
             if (additionalTransactions.containsKey(payment)) {
                 PaymentTransactionType confirmedType = null;
-                if (confirmedRollback.containsKey(payment)) {
-                    confirmedType = confirmedRollback.get(payment);
+                if (additionalConfirmedTransactions.containsKey(payment)) {
+                    confirmedType = additionalConfirmedTransactions.get(payment);
                 }
 
                 payment.addTransaction(additionalTransactions.get(payment));
@@ -225,8 +232,6 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                 }
             }
         }
-
-        //
 
         // Once all transactions have been confirmed, add them to the rollback state.
         // If an exception is thrown after this, the confirmed transactions will need to be voided or reversed

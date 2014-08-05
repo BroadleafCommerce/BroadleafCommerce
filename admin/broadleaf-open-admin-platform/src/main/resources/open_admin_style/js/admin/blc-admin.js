@@ -102,8 +102,10 @@ var BLCAdmin = (function($) {
 				modals.last().css('z-index', '1050');
 			}
 			
-    	    BLCAdmin.currentModal().find('.submit-button').show();
-    	    BLCAdmin.currentModal().find('img.ajax-loader').hide();
+			if (BLCAdmin.currentModal()) {
+				BLCAdmin.currentModal().find('.submit-button').show();
+				BLCAdmin.currentModal().find('img.ajax-loader').hide();
+			}
 		});
 		
 		BLCAdmin.initializeModalTabs($data);

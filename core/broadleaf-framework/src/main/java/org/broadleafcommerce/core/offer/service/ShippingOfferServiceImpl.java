@@ -24,8 +24,9 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * 
@@ -38,9 +39,10 @@ public class ShippingOfferServiceImpl implements ShippingOfferService {
     @Resource(name="blOfferService")
     protected OfferService offerService;
 
+    @Override
     public void reviewOffers(Order order) throws PricingException {
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyFulfillmentGroupOffersToOrder(offers, order);
+        offerService.applyAndSaveFulfillmentGroupOffersToOrder(offers, order);
     }
 
 }

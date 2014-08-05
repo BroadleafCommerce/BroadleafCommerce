@@ -216,7 +216,7 @@ public class OfferServiceTest extends TestCase {
         myOrder.set(order);
         List<Offer> offers = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>126", OfferDiscountType.PERCENT_OFF);
 
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         int adjustmentCount = order.getOrderAdjustments().size();
 
@@ -234,7 +234,7 @@ public class OfferServiceTest extends TestCase {
         );
         offers.addAll(offers2);
 
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         //with the item offers in play, the subtotal restriction for the order offer is no longer valid
         adjustmentCount = countItemAdjustments(order);
@@ -253,7 +253,7 @@ public class OfferServiceTest extends TestCase {
         orderRule.setMatchRule("order.subTotal.getAmount()>100");
         offers.get(0).getOfferMatchRules().put(OfferRuleType.ORDER.getType(), orderRule);
 
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         //now that the order restriction has been lessened, even with the item level discounts applied, 
         // the order offer still qualifies
@@ -273,7 +273,7 @@ public class OfferServiceTest extends TestCase {
         List<Offer> offers3 = dataProvider.createOrderBasedOffer("order.subTotal.getAmount()>20", OfferDiscountType.AMOUNT_OFF);
         offers.addAll(offers3);
 
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         adjustmentCount = order.getOrderAdjustments().size();
         assertTrue(adjustmentCount == 2);
@@ -282,7 +282,7 @@ public class OfferServiceTest extends TestCase {
         myOrder.set(order);
         offers.get(0).setCombinableWithOtherOffers(false);
 
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         //there is a non combinable order offer now
         adjustmentCount = countItemAdjustments(order);
@@ -299,7 +299,7 @@ public class OfferServiceTest extends TestCase {
         myOrder.set(order);
         offers.get(0).setTotalitarianOffer(true);
 
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         //there is a totalitarian order offer now - it is better than the item offers - the item offers are removed
         adjustmentCount = countItemAdjustments(order);
@@ -318,7 +318,7 @@ public class OfferServiceTest extends TestCase {
         offers.get(2).setValue(new BigDecimal(".01"));
         offers.get(2).setDiscountType(OfferDiscountType.PERCENT_OFF);
 
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         //even though the first order offer is totalitarian, it is worth less than the order item offer, so it is removed.
         //the other order offer is still valid, however, and is included.
@@ -410,7 +410,7 @@ public class OfferServiceTest extends TestCase {
             "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
         );
 
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         int adjustmentCount = countItemAdjustments(order);
 
@@ -426,7 +426,7 @@ public class OfferServiceTest extends TestCase {
             "([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
         );
 
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         adjustmentCount = countItemAdjustments(order);
 
