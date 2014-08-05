@@ -108,7 +108,7 @@ public class MergeManager {
         }
     }
 
-    private void removeSkippedMergeComponents(Properties props) {
+    private void removeSkippedMergeComponents(Properties props) throws UnsupportedEncodingException {
         InputStream inputStream = this.getClass().getClassLoader()
                 .getResourceAsStream("/broadleaf-commmerce/skipMergeComponents.txt");
 
@@ -117,7 +117,7 @@ public class MergeManager {
                 LOG.debug("mergeClassOverrides file found.");
             }
 
-            final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            final InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
             final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
             try {
@@ -250,7 +250,7 @@ public class MergeManager {
 
             DOMSource source = new DOMSource(doc1);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baos));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baos, "UTF-8"));
             StreamResult result = new StreamResult(writer);
             xmlTransformer.transform(source, result);
 
