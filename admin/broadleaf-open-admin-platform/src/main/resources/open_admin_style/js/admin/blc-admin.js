@@ -499,7 +499,7 @@ var BLCAdmin = (function($) {
                         var shouldShow = false;
                         if ($parentField.is(':visible')) {
                             if (typeof showIfValue == "function") {
-                                shouldShow = showIfValue(parentValue);
+                                shouldShow = showIfValue(parentValue, event.data.$container);
                             } else {
                                 shouldShow = (parentValue == showIfValue);
                             }
