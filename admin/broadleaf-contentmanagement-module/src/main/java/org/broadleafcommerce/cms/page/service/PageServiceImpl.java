@@ -27,13 +27,10 @@ import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.cms.field.domain.FieldDefinition;
-import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageAttribute;
-import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
@@ -41,14 +38,11 @@ import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.page.dto.NullPageDTO;
 import org.broadleafcommerce.common.page.dto.PageDTO;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.rule.RuleProcessor;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
@@ -88,20 +82,20 @@ public class PageServiceImpl implements PageService {
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
-    @Resource(name="blStaticAssetPathService")
-    protected StaticAssetPathService staticAssetPathService;
-
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
 
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
     
-    @Resource(name = "blPageServiceExtensionManager")
-    protected PageServiceExtensionManager extensionManager;
-    
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericDao;
+
+    @Resource(name = "blPageServiceUtility")
+    protected PageServiceUtility pageServiceUtility;
+
+    @Resource(name = "blPageServiceExtensionManager")
+    protected PageServiceExtensionManager extensionManager;
 
     protected Cache pageCache;
     protected final PageDTO NULL_PAGE = new NullPageDTO();
@@ -166,6 +160,12 @@ public class PageServiceImpl implements PageService {
             if (StringUtils.isNotBlank(erh.getResult())) {
                 dto.setTemplatePath(erh.getResult());
             }
+
+            ExtensionResultHolder<PageDTO> newDTO = new ExtensionResultHolder<PageDTO>();
+            extensionManager.getProxy().overridePageDto(newDTO, dto, page);
+            if (newDTO.getResult() != null) {
+                dto = newDTO.getResult();
+            }
         }
         
         return dto;
@@ -228,24 +228,8 @@ public class PageServiceImpl implements PageService {
             }
         }
 
-        String cmsPrefix = staticAssetPathService.getStaticAssetUrlPrefix();
-
         for (String fieldKey : page.getPageFields().keySet()) {
-            PageField pf = page.getPageFields().get(fieldKey);
-            String originalValue = pf.getValue();
-            
-            FieldDefinition fd = getFieldDefinition(page, fieldKey);
-            
-            if (fd != null && fd.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
-                pageDTO.getPageFields().put(fieldKey, FOREIGN_LOOKUP + '|' + fd.getAdditionalForeignKeyClass() + '|' + originalValue);
-            } else if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
-                //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
-                //If there is an environment prefix configured (e.g. a CDN), then we must replace the cmsPrefix with this one.
-                String fldValue = staticAssetPathService.convertAllAssetPathsInContent(originalValue, secure);
-                pageDTO.getPageFields().put(fieldKey, fldValue);
-            } else {
-                pageDTO.getPageFields().put(fieldKey, originalValue);
-            }
+            pageServiceUtility.addPageFieldToDTO(page, secure, pageDTO, fieldKey);
         }
 
         pageDTO.setRuleExpression(buildRuleExpression(page));
@@ -261,27 +245,6 @@ public class PageServiceImpl implements PageService {
         pageDTO.getPageAttributes().put("metaDescription", page.getMetaDescription());
 
         return pageDTO;
-    }
-    
-    protected FieldDefinition getFieldDefinition(Page page, String fieldKey) {
-        ExtensionResultHolder<FieldDefinition> erh = new ExtensionResultHolder<FieldDefinition>();
-        ExtensionResultStatusType result = extensionManager.getProxy().getFieldDefinition(erh, page, fieldKey);
-        
-        if (result == ExtensionResultStatusType.HANDLED) {
-            return erh.getResult();
-        }
-        
-        if (page.getPageTemplate() != null) {
-            for (FieldGroup fg : page.getPageTemplate().getFieldGroups()) {
-                for (FieldDefinition fd : fg.getFieldDefinitions()) {
-                    if (fd.getName().equals(fieldKey)) {
-                        return fd;
-                    }
-                }
-            }
-        }
-        
-        return null;
     }
 
     protected String buildRuleExpression(Page page) {

@@ -19,29 +19,19 @@
  */
 package org.broadleafcommerce.cms.page.service;
 
-import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.page.dto.PageDTO;
-
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * @author bpolster
  */
-public abstract class AbstractPageServiceExtensionHandler extends AbstractExtensionHandler 
-        implements PageServiceExtensionHandler {
+public abstract class AbstractPageHandlerExtensionHandler extends AbstractExtensionHandler 
+        implements PageHandlerExtensionHandler {
     
     @Override
-    public ExtensionResultStatusType getFieldDefinition(ExtensionResultHolder<FieldDefinition> erh, Page page, 
-            String fieldKey) {
+    public ExtensionResultStatusType replacePage(Page page, ExtensionResultHolder<Page> resultHolder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-
-    @Override
-    public ExtensionResultStatusType overridePageDto(ExtensionResultHolder<PageDTO> erh, PageDTO pageDto, Page page) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
 }
