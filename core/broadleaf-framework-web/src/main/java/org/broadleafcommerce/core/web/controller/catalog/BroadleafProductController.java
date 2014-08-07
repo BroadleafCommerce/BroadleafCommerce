@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -60,6 +61,9 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
 
+    @Resource(name = "blBroadleafCatalogControllerExtensionManager")
+    protected BroadleafCatalogControllerExtensionManager catalogExtensionManager;
+
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView model = new ModelAndView();
@@ -74,16 +78,36 @@ public class BroadleafProductController extends BroadleafAbstractController impl
 
         addDeepLink(model, deepLinkService, product);
         
+        String templatePath = null;
+
+        // The highest priority resolution is a direct template on the product from modules
         ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
-        templateOverrideManager.getProxy().getOverrideTemplate(erh, product);
-        
-        if (StringUtils.isNotBlank(erh.getResult())) {
-            model.setViewName(erh.getResult());
-        } else if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
-            model.setViewName(product.getDisplayTemplate());    
-        } else {
-            model.setViewName(getDefaultProductView());
+        ExtensionResultStatusType extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, product);
+        if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
+            templatePath = erh.getResult();
         }
+
+        // After that, we want the standard String on the product
+        if (templatePath == null) {
+            if (StringUtils.isNotBlank(product.getDisplayTemplate())) {
+                templatePath = product.getDisplayTemplate();
+            }
+        }
+        
+        // Next, we want the default product template for the theme
+        if (templatePath == null) {
+            extResult = catalogExtensionManager.getProxy().getProductTemplate(erh, product);
+            if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
+                templatePath = erh.getResult();
+            }
+        }
+        
+        // If none of those matched, we'll go with the controller default
+        if (templatePath == null) {
+            templatePath = getDefaultProductView();
+        }
+        
+        model.setViewName(templatePath);
         return model;
     }
 
