@@ -321,6 +321,8 @@ h2#mainEntityName {
 	margin-top: 0;
 }
 
+input[type="text"][readonly], input[type="password"][readonly], input[type="date"][readonly], input[type="datetime"][readonly], input[type="email"][readonly], input[type="number"][readonly], input[type="search"][readonly], input[type="tel"][readonly], input[type="time"][readonly], input[type="url"][readonly], textarea[readonly] { background-color: #ddd; }
+
 /* --------------------------------------------------
   Top Bar
 ----------------------------------------------------- */

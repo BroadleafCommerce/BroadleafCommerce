@@ -451,13 +451,19 @@ var BLCAdmin = (function($) {
     	},
     	
     	setFieldValue : function setFieldValue($field, value) {
-            $field.find('input[type="radio"]:checked').val(value);
+    	    if (value == null) {
+    	        $field.find('input[type="radio"]:checked').removeAttr('checked')
+    	    } else {
+    	        $field.find('input[type="radio"][value="' + value + '"]').attr('checked', 'checked');
+    	    }
+
             $field.find('select').val(value);
             $field.find('input[type="text"]').val(value);
             
-            if ($field.find('button.clear-foreign-key')) {
+            if (value == null && $field.find('button.clear-foreign-key')) {
                 $field.find('button.clear-foreign-key').click();
             }
+            $field.trigger('change');
     	},
 
         /**
@@ -470,8 +476,10 @@ var BLCAdmin = (function($) {
          * @param showIfValue - Either a function that takes one argument (the parentValue) and returns true if the
          *                      child field should be visible or a string to directly match against the parentValue
          * @param options - Additional options:
-         *   clearChildData (boolean) - if true, will null out the data of the child field if the parent field's
-         *                              value becomes null
+         *   - clearChildData (boolean) - if true, will null out the data of the child field if the parent field's
+         *     value becomes null
+         *   - additionalChangeAction (fn) - A function to execute when the value of the parent field changes. The args
+         *     passed to the function will be [$parentField, $childField, shouldShow, parentValue]
          */
         addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldSelector, childFieldSelector, 
                 showIfValue, options) {
@@ -481,7 +489,7 @@ var BLCAdmin = (function($) {
                     var toggleFunction = function(event) {
                         // Extract the parent and child field DOM elements from the data
                         var $parentField = event.data.$parentField;
-                        var $childField = event.data.$childField;
+                        var $childField = event.data.$container.find(event.data.childFieldSelector);
                         var options = event.data.options;
                         var parentValue = BLCAdmin.extractFieldValue($parentField);
                         
@@ -491,28 +499,31 @@ var BLCAdmin = (function($) {
                         var shouldShow = false;
                         if ($parentField.is(':visible')) {
                             if (typeof showIfValue == "function") {
-                                shouldShow = showIfValue(parentValue);
+                                shouldShow = showIfValue(parentValue, event.data.$container);
                             } else {
                                 shouldShow = (parentValue == showIfValue);
                             }
                         }
                         
                         // Clear the data in the child field if that option was set and the parent value is null
-                        if (options != null && options['clearChildData']) {
+                        if (options != null && options['clearChildData'] && !event.initialization) {
                             BLCAdmin.setFieldValue($childField, null);
                         }
                         
                         // Toggle the visiblity of the child field appropriately
                         $childField.toggle(shouldShow);
-                        $childField.trigger('change');
+                        
+                        if (options != null && options['additionalChangeAction'] && !event.initialization) {
+                            options['additionalChangeAction']($parentField, $childField, shouldShow, parentValue);
+                        }
                     };
                     
                     var $parentField = $container.find(parentFieldSelector);
-                    var $childField = $container.find(childFieldSelector);
                     
                     var data = {
                         '$parentField' : $parentField,
-                        '$childField' : $childField,
+                        '$container' : $container,
+                        'childFieldSelector' : childFieldSelector,
                         'options' : options
                     };
                     
@@ -520,7 +531,7 @@ var BLCAdmin = (function($) {
                     $parentField.on('change', data, toggleFunction);
     
                     // Run the toggleFunction immediately to set initial states appropriately
-                    toggleFunction({ data : data });
+                    toggleFunction({ data : data, initialization : true });
                 }
             })
         },

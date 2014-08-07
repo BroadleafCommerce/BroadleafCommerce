@@ -225,6 +225,10 @@ public class Field {
         return displayValue == null ? value : displayValue;
     }
 
+    public String getRawDisplayValue() {
+        return displayValue;
+    }
+
     /**
      * Used to build a link for this particular field value to be displayed in a modal. This is used to build the link for
      * a 'to-one-lookup' field.

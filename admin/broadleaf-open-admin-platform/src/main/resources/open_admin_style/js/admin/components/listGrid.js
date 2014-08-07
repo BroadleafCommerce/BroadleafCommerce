@@ -397,7 +397,8 @@ $(document).ready(function() {
                 }
             }
             
-            $valueField.trigger('change');
+            $valueField.trigger('change', fields);
+            $valueField.closest('.field-box').trigger('change');
             BLCAdmin.hideCurrentModal();
         });
         
@@ -408,6 +409,9 @@ $(document).ready(function() {
         if (handler != null) {
             var $parentField = $container.closest('form').find(handler['parentFieldSelector']);
             url = url + '&' + handler['childFieldPropertyName'] + '=' + BLCAdmin.extractFieldValue($parentField);
+        }
+        if ($(this).data('dynamic-field')) {
+            url = url + '&dynamicField=true';
         }
 
         BLCAdmin.showLinkAsModal(url, function() {

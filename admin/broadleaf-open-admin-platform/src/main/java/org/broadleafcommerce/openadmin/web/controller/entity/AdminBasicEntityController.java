@@ -261,6 +261,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             // fields that are not applicable for this given entity type.
             formService.removeNonApplicableFields(cmd, entityForm, entityType);
 
+            modifyAddEntityForm(entityForm, pathVars);
+
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/entityAdd");
         }
@@ -302,6 +304,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             formService.populateEntityForm(cmd, entity, entityForm, sectionCrumbs);
 
             formService.removeNonApplicableFields(cmd, entityForm, entityForm.getEntityType());
+
+            modifyAddEntityForm(entityForm, pathVars);
 
             model.addAttribute("viewType", "modal/entityAdd");
             model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -783,6 +787,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
     protected String buildAddCollectionItemModel(HttpServletRequest request, HttpServletResponse response,
             Model model, String id, String collectionField, String sectionKey, Property collectionProperty,
             FieldMetadata md, PersistencePackageRequest ppr, EntityForm entityForm, Entity entity) throws ServiceException {
+        
+        // For requests to add a new collection item include the main class that the subsequent request comes from.
+        // For instance, with basic collections we know the main associated class for a fetch through the ForeignKey
+        // persistence item but map and adorned target lookups make a standard persistence request. This solution
+        // fixes all cases.
+        String mainClassName = getClassNameForSection(sectionKey);
+        ppr.addCustomCriteria("owningClass=" + mainClassName);
         
         if (entityForm != null) {
             entityForm.clearFieldsMap();

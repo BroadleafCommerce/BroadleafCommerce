@@ -24,6 +24,7 @@ import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.page.dto.PageDTO;
 
 
 /**
@@ -45,7 +46,18 @@ public interface PageServiceExtensionHandler extends ExtensionHandler {
      * @param fieldKey
      * @return
      */
-    public ExtensionResultStatusType getFieldDefinition(ExtensionResultHolder<FieldDefinition> erh, Page page, 
+    ExtensionResultStatusType getFieldDefinition(ExtensionResultHolder<FieldDefinition> erh, Page page,
             String fieldKey);
+
+    /**
+     * This method provides the opportunity to modify the page fields associated with the pageDto 
+     * {@link ExtensionResultHolder}.    Modifying classes should clone the DTO and adjust fields.
+     * 
+     * @param erh
+     * @param pageDto
+     * @param page
+     * @return
+     */
+    ExtensionResultStatusType overridePageDto(ExtensionResultHolder<PageDTO> erh, PageDTO pageDto, Page page);
 
 }

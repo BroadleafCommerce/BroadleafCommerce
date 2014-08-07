@@ -22,10 +22,13 @@ package org.broadleafcommerce.admin.web.controller.entity;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
@@ -53,6 +56,7 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -69,6 +73,9 @@ public class AdminProductController extends AdminBasicEntityController {
     
     protected static final String SECTION_KEY = "product";
     
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+    
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
         //allow external links to work for ToOne items
@@ -81,6 +88,32 @@ public class AdminProductController extends AdminBasicEntityController {
     @Override
     public String[] getSectionCustomCriteria() {
         return new String[]{"productDirectEdit"};
+    }
+
+    @Override
+    protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
+        String defaultCategoryUrlPrefix = null;
+        Field defaultCategory = ef.findField("defaultCategory");
+        if (StringUtils.isNotBlank(defaultCategory.getValue())) {
+            Category cat = catalogService.findCategoryById(Long.parseLong(defaultCategory.getValue()));
+            defaultCategoryUrlPrefix = cat.getUrl();
+        }
+                
+        Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
+        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+        boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+        Field fullUrl = ef.findField("url");
+        fullUrl.withAttribute("overriddenUrl", overriddenUrl)
+            .withAttribute("sourceField", "defaultSku--name")
+            .withAttribute("toggleField", "overrideGeneratedUrl")
+            .withAttribute("prefix-selector", "#field-defaultCategory")
+            .withAttribute("prefix", defaultCategoryUrlPrefix)
+            .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+    }
+
+    @Override
+    protected void modifyAddEntityForm(EntityForm ef, Map<String, String> pathVars) {
+        modifyEntityForm(ef, pathVars);
     }
     
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -235,7 +268,7 @@ public class AdminProductController extends AdminBasicEntityController {
         } 
         return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField, requestParams);
     }
-    
+
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,

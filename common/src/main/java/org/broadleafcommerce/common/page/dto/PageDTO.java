@@ -127,4 +127,19 @@ public class PageDTO implements Serializable {
         this.pageAttributes = pageAttributes;
     }   
     
+    public void copy(PageDTO original) {
+        description = original.description;
+        id = original.id;
+        localeCode = original.localeCode;
+        templatePath = original.templatePath;
+        url = original.url;
+        priority = original.priority;
+        
+        // Extension Handlers Might Modify This
+        pageFields = new HashMap<String, Object>(original.pageFields);
+        ruleExpression = original.ruleExpression;
+        itemCriteriaDTOList = original.itemCriteriaDTOList;
+        pageAttributes = original.pageAttributes;
+    }
+    
 }

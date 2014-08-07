@@ -161,6 +161,10 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String url;
 
+    @Column(name = "OVERRIDE_GENERATED_URL")
+    @AdminPresentation(group = Presentation.Group.Name.General, order = Presentation.FieldOrder.URL + 10)
+    protected Boolean overrideGeneratedUrl = false;
+
     @Column(name = "URL_KEY")
     @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
@@ -772,6 +776,16 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
         } else {
             return url;
         }
+    }
+
+    @Override
+    public Boolean getOverrideGeneratedUrl() {
+        return overrideGeneratedUrl == null ? false : overrideGeneratedUrl;
+    }
+
+    @Override
+    public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl) {
+        this.overrideGeneratedUrl = overrideGeneratedUrl == null ? false : overrideGeneratedUrl;
     }
     
     @Override

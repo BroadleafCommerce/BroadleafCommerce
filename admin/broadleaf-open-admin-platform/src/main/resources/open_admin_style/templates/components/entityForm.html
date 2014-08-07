@@ -57,6 +57,11 @@
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="#{${group.title}}" />
 
+                <comment th:remove="all">
+                <!-- *** IMPORTANT *** -->
+                <!-- When changing this block of code, make sure standaloneField.html is also updated -->
+                <!-- *** IMPORTANT *** -->
+                </comment>
                 <div th:each="field : ${group.fields}" 
                      th:if="${field.name}" 
                      th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 
