@@ -26,13 +26,23 @@ import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageAttribute;
 import org.broadleafcommerce.cms.page.domain.PageField;
+import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
+import org.broadleafcommerce.cms.page.domain.PageRule;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -51,11 +61,47 @@ public class PageServiceUtility {
     @Resource(name="blPageDao")
     protected PageDao pageDao;
     
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericDao;
+
     @Resource(name = "blPageServiceExtensionManager")
     protected PageServiceExtensionManager extensionManager;
 
     @Resource(name="blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
+
+    public PageDTO buildPageDTO(Page page, boolean secure) {
+        PageDTO pageDTO = new PageDTO();
+        pageDTO.setId(page.getId());
+        pageDTO.setDescription(page.getDescription());
+        pageDTO.setUrl(page.getFullUrl());
+        pageDTO.setPriority(page.getPriority());
+
+        if (page.getPageTemplate() != null) {
+            pageDTO.setTemplatePath(page.getPageTemplate().getTemplatePath());
+            if (page.getPageTemplate().getLocale() != null) {
+                pageDTO.setLocaleCode(page.getPageTemplate().getLocale().getLocaleCode());
+            }
+        }
+
+        for (String fieldKey : page.getPageFields().keySet()) {
+            addPageFieldToDTO(page, secure, pageDTO, fieldKey);
+        }
+
+        pageDTO.setRuleExpression(buildRuleExpression(page));
+
+        if (page.getQualifyingItemCriteria() != null && page.getQualifyingItemCriteria().size() > 0) {
+            pageDTO.setItemCriteriaDTOList(buildItemCriteriaDTOList(page));
+        }
+
+        for (Entry<String, PageAttribute> entry : page.getAdditionalAttributes().entrySet()) {
+            pageDTO.getPageAttributes().put(entry.getKey(), entry.getValue().getValue());
+        }
+        pageDTO.getPageAttributes().put("title", page.getMetaTitle());
+        pageDTO.getPageAttributes().put("metaDescription", page.getMetaDescription());
+
+        return pageDTO;
+    }
 
     public void addPageFieldToDTO(Page page, boolean secure, PageDTO pageDTO, String fieldKey) {
         addPageFieldToDTO(page, secure, pageDTO, fieldKey, null);
@@ -102,5 +148,47 @@ public class PageServiceUtility {
         }
         
         return null;
+    }
+
+    protected String buildRuleExpression(Page page) {
+        StringBuffer ruleExpression = null;
+        Map<String, PageRule> ruleMap = page.getPageMatchRules();
+        if (ruleMap != null) {
+            for (String ruleKey : ruleMap.keySet()) {
+                if (ruleExpression == null) {
+                    ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
+                } else {
+                    ruleExpression.append(AND);
+                    ruleExpression.append(ruleMap.get(ruleKey).getMatchRule());
+                }
+            }
+        }
+        if (ruleExpression != null) {
+            return ruleExpression.toString();
+        } else {
+            return null;
+        }
+    }
+
+    protected List<ItemCriteriaDTO> buildItemCriteriaDTOList(Page page) {
+        List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<ItemCriteriaDTO>();
+        for (PageItemCriteria criteria : page.getQualifyingItemCriteria()) {
+            ItemCriteriaDTO criteriaDTO = new ItemCriteriaDTO();
+            criteriaDTO.setMatchRule(criteria.getMatchRule());
+            criteriaDTO.setQty(criteria.getQuantity());
+            itemCriteriaDTOList.add(criteriaDTO);
+        }
+        return itemCriteriaDTOList;
+    }
+
+    public void hydrateForeignLookups(PageDTO page) {
+        for (Entry<String, Object> entry : page.getPageFields().entrySet()) {
+            if (entry.getValue() instanceof String && ((String) entry.getValue()).startsWith(FOREIGN_LOOKUP)) {
+                String clazz = ((String) entry.getValue()).split("\\|")[1];
+                String id = ((String) entry.getValue()).split("\\|")[2];
+                Object newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
+                entry.setValue(newValue);
+            }
+        }
     }
 }

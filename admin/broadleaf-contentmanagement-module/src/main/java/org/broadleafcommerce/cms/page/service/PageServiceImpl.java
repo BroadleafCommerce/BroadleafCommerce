@@ -30,13 +30,9 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
-import org.broadleafcommerce.cms.page.domain.PageAttribute;
-import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
-import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -45,7 +41,6 @@ import org.broadleafcommerce.common.page.dto.NullPageDTO;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.rule.RuleProcessor;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
@@ -55,7 +50,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -87,9 +81,6 @@ public class PageServiceImpl implements PageService {
 
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
-    
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericDao;
 
     @Resource(name = "blPageServiceUtility")
     protected PageServiceUtility pageServiceUtility;
@@ -154,17 +145,17 @@ public class PageServiceImpl implements PageService {
         if (dto.getId() != null) {
             Page page = findPageById(dto.getId());
 
+            ExtensionResultHolder<PageDTO> newDTO = new ExtensionResultHolder<PageDTO>();
+            extensionManager.getProxy().overridePageDto(newDTO, dto, page);
+            if (newDTO.getResult() != null) {
+                dto = newDTO.getResult();
+            }
+
             ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
             templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
             
             if (StringUtils.isNotBlank(erh.getResult())) {
                 dto.setTemplatePath(erh.getResult());
-            }
-
-            ExtensionResultHolder<PageDTO> newDTO = new ExtensionResultHolder<PageDTO>();
-            extensionManager.getProxy().overridePageDto(newDTO, dto, page);
-            if (newDTO.getResult() != null) {
-                dto = newDTO.getResult();
             }
         }
         
@@ -208,74 +199,10 @@ public class PageServiceImpl implements PageService {
         List<PageDTO> dtoList = new ArrayList<PageDTO>();
         if (pageList != null) {
             for(Page page : pageList) {
-                dtoList.add(buildPageDTOInternal(page, secure));
+                dtoList.add(pageServiceUtility.buildPageDTO(page, secure));
             }
         }
         return dtoList;
-    }
-
-    protected PageDTO buildPageDTOInternal(Page page, boolean secure) {
-        PageDTO pageDTO = new PageDTO();
-        pageDTO.setId(page.getId());
-        pageDTO.setDescription(page.getDescription());
-        pageDTO.setUrl(page.getFullUrl());
-        pageDTO.setPriority(page.getPriority());
-
-        if (page.getPageTemplate() != null) {
-            pageDTO.setTemplatePath(page.getPageTemplate().getTemplatePath());
-            if (page.getPageTemplate().getLocale() != null) {
-                pageDTO.setLocaleCode(page.getPageTemplate().getLocale().getLocaleCode());
-            }
-        }
-
-        for (String fieldKey : page.getPageFields().keySet()) {
-            pageServiceUtility.addPageFieldToDTO(page, secure, pageDTO, fieldKey);
-        }
-
-        pageDTO.setRuleExpression(buildRuleExpression(page));
-
-        if (page.getQualifyingItemCriteria() != null && page.getQualifyingItemCriteria().size() > 0) {
-            pageDTO.setItemCriteriaDTOList(buildItemCriteriaDTOList(page));
-        }
-        
-        for (Entry<String, PageAttribute> entry : page.getAdditionalAttributes().entrySet()) {
-            pageDTO.getPageAttributes().put(entry.getKey(), entry.getValue().getValue());
-        }
-        pageDTO.getPageAttributes().put("title", page.getMetaTitle());
-        pageDTO.getPageAttributes().put("metaDescription", page.getMetaDescription());
-
-        return pageDTO;
-    }
-
-    protected String buildRuleExpression(Page page) {
-       StringBuffer ruleExpression = null;
-       Map<String, PageRule> ruleMap = page.getPageMatchRules();
-       if (ruleMap != null) {
-           for (String ruleKey : ruleMap.keySet()) {
-               if (ruleExpression == null) {
-                   ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
-               } else {
-                   ruleExpression.append(AND);
-                   ruleExpression.append(ruleMap.get(ruleKey).getMatchRule());
-               }
-           }
-       }
-       if (ruleExpression != null) {
-           return ruleExpression.toString();
-       } else {
-           return null;
-       }
-    }
-
-    protected List<ItemCriteriaDTO> buildItemCriteriaDTOList(Page page) {
-        List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<ItemCriteriaDTO>();
-        for(PageItemCriteria criteria : page.getQualifyingItemCriteria()) {
-            ItemCriteriaDTO criteriaDTO = new ItemCriteriaDTO();
-            criteriaDTO.setMatchRule(criteria.getMatchRule());
-            criteriaDTO.setQty(criteria.getQuantity());
-            itemCriteriaDTOList.add(criteriaDTO);
-        }
-        return itemCriteriaDTOList;
     }
 
     protected PageDTO evaluatePageRules(List<PageDTO> pageDTOList, Locale locale, Map<String, Object> ruleDTOs) {
@@ -288,7 +215,7 @@ public class PageServiceImpl implements PageService {
             if (locale != null && locale.getLocaleCode() != null) {
                 if (locale.getLocaleCode().equals(page.getLocaleCode())) {
                     if (passesPageRules(page, ruleDTOs)) {
-                        hydrateForeignLookups(page);
+                        pageServiceUtility.hydrateForeignLookups(page);
                         return page;
                     }
                 }
@@ -298,7 +225,7 @@ public class PageServiceImpl implements PageService {
         // Otherwise, we look for a match using just the language.
         for (PageDTO page : pageDTOList) {
             if (passesPageRules(page, ruleDTOs)) {
-                hydrateForeignLookups(page);
+                pageServiceUtility.hydrateForeignLookups(page);
                 return page;
             }
         }
@@ -306,16 +233,6 @@ public class PageServiceImpl implements PageService {
         return NULL_PAGE;
     }
     
-    protected void hydrateForeignLookups(PageDTO page) {
-        for (Entry<String, Object> entry : page.getPageFields().entrySet()) {
-            if (entry.getValue() instanceof String && ((String) entry.getValue()).startsWith(FOREIGN_LOOKUP)) {
-                String clazz = ((String) entry.getValue()).split("\\|")[1];
-                String id = ((String) entry.getValue()).split("\\|")[2];
-                Object newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
-                entry.setValue(newValue);
-            }
-        }
-    }
 
     protected boolean passesPageRules(PageDTO page, Map<String, Object> ruleDTOs) {
         if (pageRuleProcessors != null) {
