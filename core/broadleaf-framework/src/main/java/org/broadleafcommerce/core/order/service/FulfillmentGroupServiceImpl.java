@@ -345,7 +345,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             // OrderItem request
             FulfillmentGroupItem fulfillmentGroupItem = null;
             for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
-                if (fgi.getOrderItem().getId() == option.getOrderItem().getId()) {
+                if (fgi.getOrderItem().getId().equals(option.getOrderItem().getId())) {
                     fulfillmentGroupItem = fgi;
                 }
             }
