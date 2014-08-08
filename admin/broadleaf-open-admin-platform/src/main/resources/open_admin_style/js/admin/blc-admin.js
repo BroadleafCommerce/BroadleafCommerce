@@ -27,7 +27,6 @@ var BLCAdmin = (function($) {
 	var postValidationFormSubmitHandlers = [];
 	var initializationHandlers = [];
 	var updateHandlers = [];
-	var initializationDelay = 0;
 	var stackedModalOptions = {
 	    left: 20,
 	    top: 20
@@ -141,14 +140,6 @@ var BLCAdmin = (function($) {
 	    
 	    addInitializationHandler : function(fn) {
 	        initializationHandlers.push(fn);
-	    },
-	    
-	    addInitializationDelay : function() {
-	        initializationDelay++;
-	    },
-
-	    removeInitializationDelay : function() {
-	        initializationDelay--;
 	    },
 	    
 	    addUpdateHandler : function(fn) {
@@ -335,67 +326,60 @@ var BLCAdmin = (function($) {
     	},
     	
     	initializeFields : function($container) {
-    	    $.doTimeout(10, function() {
-    	        // Pause initialization until we're ready for it
-    	        if (initializationDelay > 0) {
-    	            return true;
-    	        }
+    	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
+    	    if ($container == null) {
+    	        $container = BLCAdmin.getActiveTab();
+    	    }
     	    
-        	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
-        	    if ($container == null) {
-        	        $container = BLCAdmin.getActiveTab();
-        	    }
-        	    
-        	    // If we've already initialized this container, we'll skip it.
-        	    if ($container.data('initialized') == 'true') {
-        	        return;
-        	    }
-        	    
-        	    // Set up rich-text HTML editors
-                $container.find('.redactor').redactor({
-                    buttons : ['html', 'formatting', 'bold', 'italic', 'deleted', 
-                               'unorderedlist', 'orderedlist', 'outdent', 'indent',
-                               'video', 'file', 'table', 'link',
-                               'fontfamily', 'fontcolor', 'alignment', 'horizontalrule'],
-                    plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
-                    convertDivs : false,
-                    xhtml       : true,
-                    paragraphy  : false,
-                    minHeight   : 140,
-                    deniedTags  : []
-                });
-                
-                $container.find('textarea.autosize').autosize();
-                
-                $container.find(".color-picker").spectrum({
-                    showButtons: false,
-                    preferredFormat: "hex6",
-                    change: function(color) {
-                        $(this).closest('.field-box').find('input.color-picker-value').val(color);
-                    },
-                    move: function(color) {
-                        $(this).closest('.field-box').find('input.color-picker-value').val(color);
-                    }
-                });
-                
-                // Set the blank value for foreign key lookups
-                $container.find('.foreign-key-value-container').each(function(index, element) {
-                    var $displayValue = $(this).find('span.display-value');
-                    if ($displayValue.text() == '') {
-                        $displayValue.text($(this).find('span.display-value-none-selected').text());
-                    }
-                });
-                
-                // Run any additionally configured initialization handlers
-                for (var i = 0; i < initializationHandlers.length; i++) {
-                    initializationHandlers[i]($container);
+    	    // If we've already initialized this container, we'll skip it.
+    	    if ($container.data('initialized') == 'true') {
+    	        return;
+    	    }
+    	    
+    	    // Set up rich-text HTML editors
+            $container.find('.redactor').redactor({
+                buttons : ['html', 'formatting', 'bold', 'italic', 'deleted', 
+                           'unorderedlist', 'orderedlist', 'outdent', 'indent',
+                           'video', 'file', 'table', 'link',
+                           'fontfamily', 'fontcolor', 'alignment', 'horizontalrule'],
+                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
+                convertDivs : false,
+                xhtml       : true,
+                paragraphy  : false,
+                minHeight   : 140,
+                deniedTags  : []
+            });
+            
+            $container.find('textarea.autosize').autosize();
+            
+            $container.find(".color-picker").spectrum({
+                showButtons: false,
+                preferredFormat: "hex6",
+                change: function(color) {
+                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
+                },
+                move: function(color) {
+                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
                 }
-                
-                // Mark this container as initialized
-        	    $container.data('initialized', 'true');
-    
-        	    return false;
-    	    });
+            });
+            
+            // Set the blank value for foreign key lookups
+            $container.find('.foreign-key-value-container').each(function(index, element) {
+                var $displayValue = $(this).find('span.display-value');
+                if ($displayValue.text() == '') {
+                    $displayValue.text($(this).find('span.display-value-none-selected').text());
+                }
+            });
+            
+            // Run any additionally configured initialization handlers
+            for (var i = 0; i < initializationHandlers.length; i++) {
+                initializationHandlers[i]($container);
+            }
+            
+            // Mark this container as initialized
+    	    $container.data('initialized', 'true');
+
+    	    return false;
     	},
     	
     	updateFields : function($container) {
