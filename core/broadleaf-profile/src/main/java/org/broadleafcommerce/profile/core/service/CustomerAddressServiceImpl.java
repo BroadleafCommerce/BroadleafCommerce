@@ -40,7 +40,7 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
         } else {
             if (customerAddress.getAddress().isDefault()) {
                 for (CustomerAddress activeCustomerAddress : activeCustomerAddresses) {
-                    if (activeCustomerAddress.getId() != customerAddress.getId() && activeCustomerAddress.getAddress().isDefault()) {
+                    if (!activeCustomerAddress.getId().equals(customerAddress.getId()) && activeCustomerAddress.getAddress().isDefault()) {
                         activeCustomerAddress.getAddress().setDefault(false);
                         customerAddressDao.save(activeCustomerAddress);
                     }
