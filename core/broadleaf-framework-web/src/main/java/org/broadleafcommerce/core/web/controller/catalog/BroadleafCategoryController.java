@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -84,6 +85,9 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
 
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
+
+    @Resource(name = "blBroadleafCatalogControllerExtensionManager")
+    protected BroadleafCatalogControllerExtensionManager catalogExtensionManager;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -149,17 +153,37 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             }
 
             addDeepLink(model, deepLinkService, category);
-
+            
+            String templatePath = null;
+            
+            // The highest priority resolution is a direct template on the category from the modules
             ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
-            templateOverrideManager.getProxy().getOverrideTemplate(erh, category);
-
-            if (StringUtils.isNotBlank(erh.getResult())) {
-                model.setViewName(erh.getResult());
-            } else if (StringUtils.isNotEmpty(category.getDisplayTemplate())) {
-                model.setViewName(category.getDisplayTemplate());   
-            } else {
-                model.setViewName(getDefaultCategoryView());
+            ExtensionResultStatusType extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, category);
+            if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
+                templatePath = erh.getResult();
             }
+    
+            // After that, we want the standard String on the category
+            if (templatePath == null) {
+                if (StringUtils.isNotBlank(category.getDisplayTemplate())) {
+                    templatePath = category.getDisplayTemplate();
+                }
+            }
+            
+            // Next, we want the default category template for the theme
+            if (templatePath == null) {
+                extResult = catalogExtensionManager.getProxy().getCategoryTemplate(erh, category);
+                if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
+                    templatePath = erh.getResult();
+                }
+            }
+            
+            // If none of those matched, we'll go with the controller default
+            if (templatePath == null) {
+                templatePath = getDefaultCategoryView();
+            }
+            
+            model.setViewName(templatePath);
         }
         return model;
     }

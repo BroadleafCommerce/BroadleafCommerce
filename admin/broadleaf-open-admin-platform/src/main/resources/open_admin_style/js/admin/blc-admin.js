@@ -25,9 +25,9 @@ var BLCAdmin = (function($) {
 	var preValidationFormSubmitHandlers = [];
 	var validationFormSubmitHandlers = [];
 	var postValidationFormSubmitHandlers = [];
+	var dependentFieldFilterHandlers = {};
 	var initializationHandlers = [];
 	var updateHandlers = [];
-	var initializationDelay = 0;
 	var stackedModalOptions = {
 	    left: 20,
 	    top: 20
@@ -114,6 +114,10 @@ var BLCAdmin = (function($) {
 		BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 		BLCAdmin.initializeFields();
 	}
+
+	function getDependentFieldFilterKey(className, childFieldName) {
+	    return className + '-' + childFieldName;
+	}
 	
 	return {
 	    /**
@@ -141,14 +145,6 @@ var BLCAdmin = (function($) {
 	    
 	    addInitializationHandler : function(fn) {
 	        initializationHandlers.push(fn);
-	    },
-	    
-	    addInitializationDelay : function() {
-	        initializationDelay++;
-	    },
-
-	    removeInitializationDelay : function() {
-	        initializationDelay--;
 	    },
 	    
 	    addUpdateHandler : function(fn) {
@@ -335,67 +331,60 @@ var BLCAdmin = (function($) {
     	},
     	
     	initializeFields : function($container) {
-    	    $.doTimeout(10, function() {
-    	        // Pause initialization until we're ready for it
-    	        if (initializationDelay > 0) {
-    	            return true;
-    	        }
+    	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
+    	    if ($container == null) {
+    	        $container = BLCAdmin.getActiveTab();
+    	    }
     	    
-        	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
-        	    if ($container == null) {
-        	        $container = BLCAdmin.getActiveTab();
-        	    }
-        	    
-        	    // If we've already initialized this container, we'll skip it.
-        	    if ($container.data('initialized') == 'true') {
-        	        return;
-        	    }
-        	    
-        	    // Set up rich-text HTML editors
-                $container.find('.redactor').redactor({
-                    buttons : ['html', 'formatting', 'bold', 'italic', 'deleted', 
-                               'unorderedlist', 'orderedlist', 'outdent', 'indent',
-                               'video', 'file', 'table', 'link',
-                               'fontfamily', 'fontcolor', 'alignment', 'horizontalrule'],
-                    plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
-                    convertDivs : false,
-                    xhtml       : true,
-                    paragraphy  : false,
-                    minHeight   : 140,
-                    deniedTags  : []
-                });
-                
-                $container.find('textarea.autosize').autosize();
-                
-                $container.find(".color-picker").spectrum({
-                    showButtons: false,
-                    preferredFormat: "hex6",
-                    change: function(color) {
-                        $(this).closest('.field-box').find('input.color-picker-value').val(color);
-                    },
-                    move: function(color) {
-                        $(this).closest('.field-box').find('input.color-picker-value').val(color);
-                    }
-                });
-                
-                // Set the blank value for foreign key lookups
-                $container.find('.foreign-key-value-container').each(function(index, element) {
-                    var $displayValue = $(this).find('span.display-value');
-                    if ($displayValue.text() == '') {
-                        $displayValue.text($(this).find('span.display-value-none-selected').text());
-                    }
-                });
-                
-                // Run any additionally configured initialization handlers
-                for (var i = 0; i < initializationHandlers.length; i++) {
-                    initializationHandlers[i]($container);
+    	    // If we've already initialized this container, we'll skip it.
+    	    if ($container.data('initialized') == 'true') {
+    	        return;
+    	    }
+    	    
+    	    // Set up rich-text HTML editors
+            $container.find('.redactor').redactor({
+                buttons : ['html', 'formatting', 'bold', 'italic', 'deleted', 
+                           'unorderedlist', 'orderedlist', 'outdent', 'indent',
+                           'video', 'file', 'table', 'link',
+                           'fontfamily', 'fontcolor', 'alignment', 'horizontalrule'],
+                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
+                convertDivs : false,
+                xhtml       : true,
+                paragraphy  : false,
+                minHeight   : 140,
+                deniedTags  : []
+            });
+            
+            $container.find('textarea.autosize').autosize();
+            
+            $container.find(".color-picker").spectrum({
+                showButtons: false,
+                preferredFormat: "hex6",
+                change: function(color) {
+                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
+                },
+                move: function(color) {
+                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
                 }
-                
-                // Mark this container as initialized
-        	    $container.data('initialized', 'true');
-    
-        	    return false;
-    	    });
+            });
+            
+            // Set the blank value for foreign key lookups
+            $container.find('.foreign-key-value-container').each(function(index, element) {
+                var $displayValue = $(this).find('span.display-value');
+                if ($displayValue.text() == '') {
+                    $displayValue.text($(this).find('span.display-value-none-selected').text());
+                }
+            });
+            
+            // Run any additionally configured initialization handlers
+            for (var i = 0; i < initializationHandlers.length; i++) {
+                initializationHandlers[i]($container);
+            }
+            
+            // Mark this container as initialized
+    	    $container.data('initialized', 'true');
+
+    	    return false;
     	},
     	
     	updateFields : function($container) {
@@ -536,6 +525,37 @@ var BLCAdmin = (function($) {
             })
         },
 
+        /**
+         * Adds a dependent field filter handler that will restrict child lookups based on the value of the parent field.
+         * 
+         * @param className - The class name that this handler should be bound to
+         * @param parentFieldSelector - A jQuery selector to use to find the div.field-box for the parent field
+         * @param childFieldName - The name of this field (the id value in the containing div.field-box)
+         * @param childFieldPropertyName - The name of the back-end field that will receive the filter on the child lookup
+         * @param options - Additional options:
+         *   parentFieldRequired (boolean) - whether or not to disable the child lookup if the parent field is null
+         */
+        addDependentFieldFilterHandler : function addDependentFieldFilterHandler(className, parentFieldSelector, 
+                childFieldName, childFieldPropertyName, options) {
+            // Register the handler so that the lookup knows how to filter itself
+            dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)] = {
+                parentFieldSelector : parentFieldSelector,
+                childFieldPropertyName : childFieldPropertyName
+            }
+            
+            // If the parentFieldRequired option is turned on, we need to toggle the behavior of the child field accordingly
+            if (options != null && options['parentFieldRequired']) {
+                BLCAdmin.addDependentFieldHandler(className, parentFieldSelector, '#' + childFieldName, function(val) {
+                    return val != null && val != "";
+                }, { 
+                    'clearChildData' : true
+                });
+            }
+        },
+        
+        getDependentFieldFilterHandler : function getDependentFieldFilterHandler(className, childFieldName) {
+            return dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)];
+        }
 	};
 	
 })(jQuery);
