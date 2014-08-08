@@ -152,10 +152,11 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
             return false;
         EmailTrackingOpensImpl other = (EmailTrackingOpensImpl) obj;
 
-        if (id == null && other.id != null) {
-            return id.equals(other.id);
-        }
-
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
         if (dateOpened == null) {
             if (other.dateOpened != null)
                 return false;
