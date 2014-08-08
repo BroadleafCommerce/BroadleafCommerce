@@ -42,7 +42,7 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
             // if parameter customerPhone is set as default, unset all other default phones
             if (customerPhone.getPhone().isDefault()) {
                 for (CustomerPhone activeCustomerPhone : activeCustomerPhones) {
-                    if (activeCustomerPhone.getId() != customerPhone.getId() && activeCustomerPhone.getPhone().isDefault()) {
+                    if (!activeCustomerPhone.getId().equals(customerPhone.getId()) && activeCustomerPhone.getPhone().isDefault()) {
                         activeCustomerPhone.getPhone().setDefault(false);
                         customerPhoneDao.save(activeCustomerPhone);
                     }
