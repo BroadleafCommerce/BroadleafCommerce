@@ -25,6 +25,7 @@ var BLCAdmin = (function($) {
 	var preValidationFormSubmitHandlers = [];
 	var validationFormSubmitHandlers = [];
 	var postValidationFormSubmitHandlers = [];
+	var dependentFieldFilterHandlers = {};
 	var initializationHandlers = [];
 	var updateHandlers = [];
 	var stackedModalOptions = {
@@ -112,6 +113,10 @@ var BLCAdmin = (function($) {
         BLCAdmin.initializeModalButtons($data);
 		BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 		BLCAdmin.initializeFields();
+	}
+
+	function getDependentFieldFilterKey(className, childFieldName) {
+	    return className + '-' + childFieldName;
 	}
 	
 	return {
@@ -520,6 +525,37 @@ var BLCAdmin = (function($) {
             })
         },
 
+        /**
+         * Adds a dependent field filter handler that will restrict child lookups based on the value of the parent field.
+         * 
+         * @param className - The class name that this handler should be bound to
+         * @param parentFieldSelector - A jQuery selector to use to find the div.field-box for the parent field
+         * @param childFieldName - The name of this field (the id value in the containing div.field-box)
+         * @param childFieldPropertyName - The name of the back-end field that will receive the filter on the child lookup
+         * @param options - Additional options:
+         *   parentFieldRequired (boolean) - whether or not to disable the child lookup if the parent field is null
+         */
+        addDependentFieldFilterHandler : function addDependentFieldFilterHandler(className, parentFieldSelector, 
+                childFieldName, childFieldPropertyName, options) {
+            // Register the handler so that the lookup knows how to filter itself
+            dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)] = {
+                parentFieldSelector : parentFieldSelector,
+                childFieldPropertyName : childFieldPropertyName
+            }
+            
+            // If the parentFieldRequired option is turned on, we need to toggle the behavior of the child field accordingly
+            if (options != null && options['parentFieldRequired']) {
+                BLCAdmin.addDependentFieldHandler(className, parentFieldSelector, '#' + childFieldName, function(val) {
+                    return val != null && val != "";
+                }, { 
+                    'clearChildData' : true
+                });
+            }
+        },
+        
+        getDependentFieldFilterHandler : function getDependentFieldFilterHandler(className, childFieldName) {
+            return dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)];
+        }
 	};
 	
 })(jQuery);
