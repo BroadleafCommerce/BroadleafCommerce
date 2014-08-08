@@ -79,11 +79,9 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
     public List<T> getHandlers() {
         synchronized (LOCK_OBJECT) {
             if (!handlersSorted) {
-                if (!handlersSorted) {
-                    Comparator fieldCompare = new BeanComparator("priority");
-                    Collections.sort(handlers, fieldCompare);
-                    handlersSorted = true;
-                }
+                Comparator fieldCompare = new BeanComparator("priority");
+                Collections.sort(handlers, fieldCompare);
+                handlersSorted = true;
             }
             return handlers;
         }
