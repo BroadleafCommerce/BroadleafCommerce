@@ -88,9 +88,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     private static final Log LOG = LogFactory.getLog(SkuCustomPersistenceHandler.class);
 
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
-    
-    @Value("${solr.index.use.sku}")
-    protected boolean useSku;
 
     @Value("${cache.entity.dao.metadata.ttl}")
     protected int cacheEntityMetaDataTtl;
