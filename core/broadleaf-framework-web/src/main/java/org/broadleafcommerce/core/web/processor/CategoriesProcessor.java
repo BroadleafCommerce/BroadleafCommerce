@@ -93,13 +93,14 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
                         subcategories = subcategories.subList(0, maxResults);
                     }
                 }
+                
+                List<Category> results = new ArrayList<Category>(subcategories.size());
+                for (CategoryXref xref : subcategories) {
+                    results.add(xref.getSubCategory());
+                }
+                
+                addToModel(arguments, resultVar, results);
             }
-            List<Category> results = new ArrayList<Category>(subcategories.size());
-            for (CategoryXref xref : subcategories) {
-                results.add(xref.getSubCategory());
-            }
-            
-            addToModel(arguments, resultVar, results);
         }
     }
 }
