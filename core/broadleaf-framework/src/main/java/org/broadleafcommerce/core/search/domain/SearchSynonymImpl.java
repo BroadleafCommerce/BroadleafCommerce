@@ -70,7 +70,7 @@ public class SearchSynonymImpl implements SearchSynonym {
     }
     @Override
     public String[] getSynonyms() {
-        return synonyms.split("|");
+        return synonyms.split("\\|");
     }
     @Override
     public void setSynonyms(String[] synonyms) {
