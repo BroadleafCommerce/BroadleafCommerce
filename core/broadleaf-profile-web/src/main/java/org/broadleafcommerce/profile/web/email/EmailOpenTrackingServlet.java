@@ -68,7 +68,7 @@ public class EmailOpenTrackingServlet extends HttpServlet {
         }
 
         // Record the open
-        if (emailId != null && !"null".equals(emailId)) {
+        if (emailId != null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("service() => Recording Open for Email[" + emailId + "]");
             }
