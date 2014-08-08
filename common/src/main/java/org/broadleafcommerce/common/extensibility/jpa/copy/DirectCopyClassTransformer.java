@@ -19,23 +19,6 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.AnnotationMemberValue;
-import javassist.bytecode.annotation.ArrayMemberValue;
-import javassist.bytecode.annotation.BooleanMemberValue;
-import javassist.bytecode.annotation.MemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
@@ -54,6 +37,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityListeners;
@@ -94,6 +94,12 @@ public class DirectCopyClassTransformer implements BroadleafClassTransformer {
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+
+        // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
+        if (className == null) {
+            return null;
+        }
+
         //Be careful with Apache library usage in this class (e.g. ArrayUtils). Usage will likely cause a ClassCircularityError
         //under JRebel. Favor not including outside libraries and unnecessary classes.
         CtClass clazz = null;
