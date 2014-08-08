@@ -179,12 +179,12 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
         List<Category> subcategories = catalogService.findActiveSubCategoriesByCategory(root, subcategoryLimit, subcategoryOffset);
         if (subcategories !=null && !subcategories.isEmpty() && wrappers == null) {
             wrappers = new ArrayList<CategoryWrapper>();
-        }
-
-        for (Category c : subcategories) {
-            CategoryWrapper subcategoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
-            subcategoryWrapper.wrapSummary(c, request);
-            wrappers.add(subcategoryWrapper);
+            
+            for (Category c : subcategories) {
+                CategoryWrapper subcategoryWrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
+                subcategoryWrapper.wrapSummary(c, request);
+                wrappers.add(subcategoryWrapper);
+            }
         }
 
         return wrappers;
