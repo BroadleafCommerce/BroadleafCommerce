@@ -42,7 +42,7 @@ public class StandardConfigLocations {
         String[] response;
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new InputStreamReader(StandardConfigLocations.class.getResourceAsStream("StandardConfigLocations.txt")));
+            reader = new BufferedReader(new InputStreamReader(StandardConfigLocations.class.getResourceAsStream("StandardConfigLocations.txt"), "UTF-8"));
             ArrayList<String> items = new ArrayList<String>();
             boolean eof = false;
             while (!eof) {

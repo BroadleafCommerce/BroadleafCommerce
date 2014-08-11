@@ -44,7 +44,7 @@ public abstract class AbstractVendorService {
 
         OutputStreamWriter osw = null;
         try {
-            osw = new OutputStreamWriter(connection.getOutputStream());
+            osw = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
             boolean isFirst = true;
             for (String key : content.keySet()) {
                 if (!isFirst) {

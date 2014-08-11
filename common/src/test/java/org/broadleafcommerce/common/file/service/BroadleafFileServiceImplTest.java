@@ -19,10 +19,14 @@
  */
 package org.broadleafcommerce.common.file.service;
 
+import org.apache.commons.io.IOUtils;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,9 +78,13 @@ public class BroadleafFileServiceImplTest extends TestCase {
     public void testCreateAddFile() throws Exception {        
         FileWorkArea workArea1 = bfs.initializeWorkArea();
         File f1 = new File(workArea1.getFilePathLocation() + "test.txt");
-        FileWriter fw = new FileWriter(f1);
-        fw.append("Test File");
-        fw.close();
+        Writer fw = null;
+        try {
+            fw = new OutputStreamWriter(new FileOutputStream(f1), "UTF-8");
+            fw.append("Test File");
+        } finally {
+            IOUtils.closeQuietly(fw);
+        }
         
         bfs.addOrUpdateResource(workArea1, f1, false);
         
@@ -95,14 +103,23 @@ public class BroadleafFileServiceImplTest extends TestCase {
     public void testCreateAddFiles() throws Exception {
         FileWorkArea workArea1 = bfs.initializeWorkArea();
         File f1 = new File(workArea1.getFilePathLocation() + "test2.txt");
-        FileWriter fw = new FileWriter(f1);
-        fw.append("Test File 2");
-        fw.close();
+        Writer fw = null;
+        try {
+            fw = new OutputStreamWriter(new FileOutputStream(f1), "UTF-8");
+            fw.append("Test File 2");
+        } finally {
+            IOUtils.closeQuietly(fw);
+        }
 
         File f2 = new File(workArea1.getFilePathLocation() + "test3.txt");
-        FileWriter fw2 = new FileWriter(f2);
-        fw2.append("Test File 3");
-        fw2.close();
+        fw = null;
+        try {
+            fw = new OutputStreamWriter(new FileOutputStream(f2), "UTF-8");
+            fw.append("Test File 3");
+        } finally {
+            IOUtils.closeQuietly(fw);
+        }
+
 
         List<File> files = new ArrayList<File>();
         files.add(f1);
@@ -127,14 +144,22 @@ public class BroadleafFileServiceImplTest extends TestCase {
     public void testCreateFilesCopyWorkarea() throws Exception {
         FileWorkArea workArea1 = bfs.initializeWorkArea();
         File f1 = new File(workArea1.getFilePathLocation() + "test4.txt");
-        FileWriter fw = new FileWriter(f1);
-        fw.append("Test File 4");
-        fw.close();
+        Writer fw = null;
+        try {
+            fw = new OutputStreamWriter(new FileOutputStream(f1), "UTF-8");
+            fw.append("Test File 4");
+        } finally {
+            IOUtils.closeQuietly(fw);
+        }
 
         File f2 = new File(workArea1.getFilePathLocation() + "test5.txt");
-        FileWriter fw2 = new FileWriter(f2);
-        fw2.append("Test File 5");
-        fw2.close();
+        fw = null;
+        try {
+            fw = new OutputStreamWriter(new FileOutputStream(f2), "UTF-8");
+            fw.append("Test File 5");
+        } finally {
+            IOUtils.closeQuietly(fw);
+        }
 
         bfs.addOrUpdateResources(workArea1, false);
         bfs.closeWorkArea(workArea1);

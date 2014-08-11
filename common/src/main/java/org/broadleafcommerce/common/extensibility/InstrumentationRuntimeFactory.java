@@ -156,7 +156,7 @@ public class InstrumentationRuntimeFactory {
         ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(file));
         zout.putNextEntry(new ZipEntry("META-INF/MANIFEST.MF"));
 
-        PrintWriter writer = new PrintWriter(new OutputStreamWriter(zout));
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(zout, "UTF-8"));
 
         writer.println("Agent-Class: " + InstrumentationRuntimeFactory.class.getName());
         writer.println("Can-Redefine-Classes: true");

@@ -351,7 +351,7 @@ public class MergeManager {
         StringBuilder item = new StringBuilder();
         boolean eof = false;
         try {
-            reader = new InputStreamReader(in);
+            reader = new InputStreamReader(in, "UTF-8");
             while (!eof) {
                 temp = reader.read();
                 if (temp == -1) {

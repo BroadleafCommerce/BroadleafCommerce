@@ -139,7 +139,7 @@ public class SiteMapGeneratorTest {
 
     protected String convertFileToString(File file) throws IOException {
         FileInputStream fin = new FileInputStream(file);
-        BufferedReader br = new BufferedReader(new InputStreamReader(fin));
+        BufferedReader br = new BufferedReader(new InputStreamReader(fin, "UTF-8"));
         StringBuilder sb = new StringBuilder();
         String line;
         while ((line = br.readLine()) != null) {

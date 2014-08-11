@@ -20,8 +20,10 @@
 package org.broadleafcommerce.common.util;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -196,7 +198,7 @@ public class PomEvaluator {
                 fileName = args[0];
             }
 
-            br = new BufferedReader(new FileReader(fileName));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
 
             forwardToTag("<dependencies>", br);
 

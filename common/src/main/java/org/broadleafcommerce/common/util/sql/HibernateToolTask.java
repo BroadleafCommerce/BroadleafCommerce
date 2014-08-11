@@ -33,9 +33,13 @@ import org.hibernate.tool.ant.ConfigurationTask;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -204,8 +208,8 @@ public class HibernateToolTask extends Task {
             BufferedWriter writer = null;
             BufferedReader reader = null;
             try{
-                writer = new BufferedWriter(new FileWriter(startFile, true));
-                reader = new BufferedReader(new FileReader(nextFile));
+                writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(startFile, true), "UTF-8"));
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(nextFile), "UTF-8"));
                 boolean eof = false;
                 String temp = null;
                 while (!eof) {

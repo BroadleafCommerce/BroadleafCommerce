@@ -107,7 +107,7 @@ public class ImportProcessor {
 
                     DOMSource source = new DOMSource(doc);
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baos));
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baos, "UTF-8"));
                     StreamResult result = new StreamResult(writer);
                     xmlTransformer.transform(source, result);
 

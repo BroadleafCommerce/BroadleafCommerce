@@ -34,7 +34,7 @@ public class StringUtil {
 
     public static long getChecksum(String test) {
         try {
-            byte buffer[] = test.getBytes();
+            byte buffer[] = test.getBytes("UTF-8");
             ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
             CheckedInputStream cis = new CheckedInputStream(bais, new Adler32());
             byte readBuffer[] = new byte[buffer.length];

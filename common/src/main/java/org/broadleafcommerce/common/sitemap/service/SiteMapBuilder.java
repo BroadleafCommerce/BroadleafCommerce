@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
@@ -33,8 +34,10 @@ import org.broadleafcommerce.common.util.FormatUtil;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,7 +90,7 @@ public class SiteMapBuilder {
      * @param fileName
      */
     protected void persistXMLDocument(String fileName, Object xmlObject) {
-
+        Writer writer = null;
         try {
             JAXBContext context = JAXBContext.newInstance(xmlObject.getClass());
             Marshaller m = context.createMarshaller();
@@ -102,16 +105,17 @@ public class SiteMapBuilder {
             if (!file.exists()) {
                 file.createNewFile();
             }
-            Writer writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             m.marshal(xmlObject, writer);
-            writer.close();
         } catch (IOException ioe) {
             LOG.error("IOException occurred persisting XML Document", ioe);
             throw new RuntimeException("Error persisting XML document when trying to build Sitemap", ioe);
         } catch (JAXBException je) {
             LOG.error("JAXBException occurred persisting XML Document", je);
             throw new RuntimeException("Error persisting XML document when trying to build Sitemap", je);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
     }
 
