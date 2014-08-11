@@ -73,13 +73,14 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
-        String webPropertyId = getWebPropertyId();
         
-        if (webPropertyId == null) {
+        if (this.webPropertyId == null) {
             ServletContext sc = ((PageContext) getJspContext()).getServletContext();
             ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(sc);
             context.getAutowireCapableBeanFactory().autowireBeanProperties(this, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, false);
         }
+        
+        String webPropertyId = getWebPropertyId();
         
         if (webPropertyId.equals("UA-XXXXXXX-X")) {
             LOG.warn("googleAnalytics.webPropertyId has not been overridden in a custom property file. Please set this in order to properly use the Google Analytics tag");
