@@ -284,7 +284,7 @@ $(document).ready(function() {
      * for the field that we are performing the to-one lookup on.
      */
     $('body').on('listGrid-to_one-rowSelected', function(event, link, fields, currentUrl) {
-        $('div.additional-foreign-key-container').trigger('valueSelected', fields);
+        $('div.additional-foreign-key-container').trigger('valueSelected', [fields, link, currentUrl]);
     });
     
     /**
@@ -356,14 +356,21 @@ $(document).ready(function() {
     $('body').on('click', '.to-one-lookup', function(event) {
         var $container = $(this).closest('div.additional-foreign-key-container');
         
-        $container.on('valueSelected', function(event, fields) {
+        $container.on('valueSelected', function(event, fields, link, currentUrl) {
             var $this = $(this);
             var displayValueProp = $this.find('input.display-value-property').val();
             
+            var displayValue = fields[displayValueProp];
+            var $selectedRow = BLCAdmin.currentModal().find('tr[data-link="' + link + '"]');
+            var $displayField = $selectedRow.find('td[data-fieldname=' + displayValueProp + ']');
+            if ($displayField.hasClass('derived')) {
+                displayValue = $.trim($displayField.text());
+            }
+            
             var $valueField = $this.find('input.value');
             $valueField.val(fields['id']);
-            $this.find('span.display-value').html(fields[displayValueProp]);
-            $this.find('input.hidden-display-value').val(fields[displayValueProp]);
+            $this.find('span.display-value').html(displayValue);
+            $this.find('input.hidden-display-value').val(displayValue);
             
             // Ensure that the clear button shows up after selecting a value
             $this.find('button.clear-foreign-key').show();
