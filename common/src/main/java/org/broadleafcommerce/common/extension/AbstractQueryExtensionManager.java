@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.extension;
 
-import org.springframework.stereotype.Service;
-
 /**
  * Extension manager for any Service or Dao that wishes to allow contribution of restrictions
  * to fetch queries. This practice is generally employed by modules that need to embellish fetch
@@ -27,10 +25,9 @@ import org.springframework.stereotype.Service;
  * @see QueryExtensionHandler
  * @author Jeff Fischer
  */
-@Service("blManualQueryExtensionManager")
-public class QueryExtensionManager extends ExtensionManager<QueryExtensionHandler> {
+public abstract class AbstractQueryExtensionManager extends ExtensionManager<QueryExtensionHandler> {
 
-    public QueryExtensionManager() {
+    public AbstractQueryExtensionManager() {
         super(QueryExtensionHandler.class);
     }
 
