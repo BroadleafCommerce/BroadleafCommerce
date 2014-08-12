@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.page.dto;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 
 import java.io.Serializable;
@@ -46,6 +47,27 @@ public class PageDTO implements Serializable {
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
     protected Map<String, String> pageAttributes = new HashMap<String, String>();
+
+    /**
+     * Attempts to obtain the given property value from the dynamic property map first, and then an actual bean property
+     * via a getter
+     * 
+     * @param propertyName
+     * @return
+     */
+    public Object getPropertyValue(String propertyName) {
+        if (getPageFields().containsKey(propertyName)) {
+            return getPageFields().get(propertyName);
+        } else if (getPageAttributes().containsKey(propertyName)) {
+            return getPageAttributes().get(propertyName);
+        } else {
+            try {
+                return BeanUtils.getProperty(this, propertyName);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
 
     public Long getId() {
         return id;
