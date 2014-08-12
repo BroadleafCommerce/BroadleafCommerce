@@ -195,7 +195,8 @@ public class PageServiceImpl implements PageService {
      * @param secure
      * @return
      */
-    protected List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure) {
+    @Override
+    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure) {
         List<PageDTO> dtoList = new ArrayList<PageDTO>();
         if (pageList != null) {
             for(Page page : pageList) {
