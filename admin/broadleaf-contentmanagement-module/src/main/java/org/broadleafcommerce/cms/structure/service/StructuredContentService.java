@@ -198,7 +198,7 @@ public interface StructuredContentService {
     public void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList);
 
 
-    public String buildTypeKey(SandBox currentSandbox, Locale locale, String contentType);
+    public String buildTypeKey(SandBox currentSandbox, Long site, Locale locale, String contentType);
 
 
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key);
