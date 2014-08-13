@@ -33,6 +33,7 @@ import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -124,7 +125,9 @@ public class PageServiceImpl implements PageService {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             //store the language only locale for cache since we have to use the lowest common denominator (i.e. the cache
             //locale and the pageTemplate locale used for cache invalidation can be different countries)
-            String key = buildKey(context.getSandBox(), languageOnlyLocale, uri);
+            Long sandBox = context.getSandBox() == null?null:context.getSandBox().getId();
+            Long site = context.getSite() == null?null:context.getSite().getId();
+            String key = buildKey(sandBox, site, languageOnlyLocale, uri);
             key = key + "-" + secure;
             if (context.isProductionSandBox()) {
                 returnList = getPageListFromCache(key);
@@ -257,14 +260,18 @@ public class PageServiceImpl implements PageService {
         return locale;
     }
 
-    protected String buildKey(SandBox currentSandBox, Locale locale, String uri) {
+    protected String buildKey(Long currentSandBox, Long site, Locale locale, String uri) {
         StringBuilder key = new StringBuilder(uri);
         if (locale != null) {
             key.append("-").append(locale.getLocaleCode());
         }
 
         if (currentSandBox != null) {
-            key.append("-").append(currentSandBox.getId());
+            key.append("-").append(currentSandBox);
+        }
+
+        if (site != null) {
+            key.append("-").append(site);
         }
 
         return key.toString();
@@ -280,7 +287,9 @@ public class PageServiceImpl implements PageService {
 
     protected String buildKey(SandBox sandBox, Page page) {
         Locale locale = page.getPageTemplate() == null ? null : page.getPageTemplate().getLocale();
-        return buildKey(sandBox, findLanguageOnlyLocale(locale), page.getFullUrl());
+        Long sandBoxId = sandBox==null?null:sandBox.getId();
+        Long siteId = (page instanceof SiteDiscriminator)?((SiteDiscriminator) page).getSiteDiscriminator():null;        
+        return buildKey(sandBoxId, siteId, findLanguageOnlyLocale(locale), page.getFullUrl());
     }
 
     protected void addPageListToCache(List<PageDTO> pageList, String key) {

@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.admin.server.service.extension;
 
-import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
