@@ -263,8 +263,8 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
     }
 
     public boolean isCachingEnabled() {
-        boolean disabled = !systemPropertiesService.resolveBooleanSystemProperty("disableThymeleafTemplateCaching");
-        if (!disabled) {
+        boolean enabled = !systemPropertiesService.resolveBooleanSystemProperty("disableThymeleafTemplateCaching");
+        if (enabled) {
             // check for a URL param that overrides caching - useful for testing if this processor is incorrectly
             // caching a page (possibly due to an bad cacheKey).
 
@@ -277,6 +277,6 @@ public class BroadleafCacheProcessor extends AbstractAttrProcessor {
                 }
             }
         }
-        return disabled;
+        return enabled;
     }
 }
