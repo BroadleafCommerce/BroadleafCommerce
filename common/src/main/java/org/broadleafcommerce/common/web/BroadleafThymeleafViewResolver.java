@@ -87,6 +87,20 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
                 (viewNamesNotToBeProcessed == null || !PatternMatchUtils.simpleMatch(viewNamesNotToBeProcessed, viewName)));
     }
 
+    @Override
+    public View resolveViewName(String viewName, Locale locale) throws Exception {
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        extensionManager.getProxy().overrideView(erh, viewName, isAjaxRequest());
+
+        String viewOverride = (String) erh.getResult();
+
+        if (viewOverride != null) {
+            viewName = viewOverride;
+        }
+
+        return super.resolveViewName(viewName, locale);
+    }
+
     /**
      * Determines which internal method to call for creating the appropriate view. If no
      * Broadleaf specific methods match the viewName, it delegates to the parent 
@@ -155,19 +169,20 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
         }
 
         AbstractThymeleafView view = null;
+        boolean ajaxRequest = isAjaxRequest();
         
-        ExtensionResultHolder erh = new ExtensionResultHolder();
-        extensionManager.getProxy().overrideView(erh);
-        String templateOverride = (String) erh.getContextMap().get(EXTENSION_TEMPLATE_ATTR_NAME);
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        extensionManager.getProxy().provideTemplateWrapper(erh, originalViewName, ajaxRequest);
+        String templateWrapper = erh.getResult();
 
-        if (templateOverride != null && isAjaxRequest()) {
-            view = (AbstractThymeleafView) super.loadView(templateOverride, locale);
+        if (templateWrapper != null && ajaxRequest) {
+            view = (AbstractThymeleafView) super.loadView(templateWrapper, locale);
             view.addStaticVariable("wrappedTemplate", viewName);
         } else {
             view = (AbstractThymeleafView) super.loadView(viewName, locale);
         }
         
-        if (!isAjaxRequest()) {
+        if (!ajaxRequest) {
             view.addStaticVariable("templateName", originalViewName);
         }
         
@@ -176,7 +191,18 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     
     @Override
     protected Object getCacheKey(String viewName, Locale locale) {
-        return viewName + "_" + locale + "_" + isAjaxRequest();
+        String cacheKey = viewName + "_" + locale + "_" + isAjaxRequest();
+
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        extensionManager.getProxy().appendCacheKey(erh, viewName, isAjaxRequest());
+
+        String addlCacheKey = (String) erh.getResult();
+
+        if (addlCacheKey != null) {
+            cacheKey = cacheKey + "_" + addlCacheKey;
+        }
+
+        return cacheKey;
     }
     
     protected boolean isIFrameRequest() {

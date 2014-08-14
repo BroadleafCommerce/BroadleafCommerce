@@ -17,28 +17,34 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.controller.catalog;
+package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
 
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * @author bpolster
  */
-public abstract class AbstractBroadleafCatalogControllerExtensionHandler extends AbstractExtensionHandler 
-        implements BroadleafCatalogControllerExtensionHandler {
-    
+public abstract class AbstractBroadleafThymeleafResolverExtensionHandler extends AbstractExtensionHandler 
+        implements BroadleafThymeleafViewResolverExtensionHandler {
+
     @Override
-    public ExtensionResultStatusType getProductTemplate(ExtensionResultHolder<String> erh, Product product) {
+    public ExtensionResultStatusType overrideView(ExtensionResultHolder<String> erh, String originalViewName,
+            boolean isAjaxRequest) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType getCategoryTemplate(ExtensionResultHolder<String> erh, Category category) {
+    public ExtensionResultStatusType appendCacheKey(ExtensionResultHolder<String> erh, String originalViewName,
+            boolean isAjaxRequest) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType provideTemplateWrapper(ExtensionResultHolder<String> erh, String originalViewName,
+            boolean isAjaxRequest) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
