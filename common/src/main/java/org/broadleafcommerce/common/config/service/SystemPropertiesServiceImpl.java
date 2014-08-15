@@ -191,7 +191,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     
     @Override
     public int resolveIntSystemProperty(String name, int defaultValue) {
-        String systemProperty = resolveSystemProperty(name, Integer.toString(0));
+        String systemProperty = resolveSystemProperty(name, Integer.toString(defaultValue));
         return Integer.valueOf(systemProperty).intValue();
     }
 
