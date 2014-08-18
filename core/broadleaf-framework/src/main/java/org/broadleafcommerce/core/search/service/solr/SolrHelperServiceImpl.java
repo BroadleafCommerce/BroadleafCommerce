@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,8 +39,12 @@ import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -284,6 +289,95 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
 
         return defaultLocale;
+    }
+
+    @Override
+    public Object getPropertyValue(Object object, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        return getPropertyValue(object, field.getPropertyName());
+    }
+
+    @Override
+    public Object getPropertyValue(Object object, String propertyName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        String[] components = propertyName.split("\\.");
+        return getPropertyValueInternal(object, components, 0);
+    }
+
+    /*
+     * This method iteratively and recursively attempts to return the value or values of the property specified by the currentPosition in the 
+     * array of components.  The components argument is an array of strings representing the object graph.
+     */
+    protected Object getPropertyValueInternal(Object object, String[] components, int currentPosition) throws NoSuchMethodException,
+            InvocationTargetException, IllegalAccessException {
+        if (object == null) {
+            return null;
+        }
+
+        Object propertyObject = PropertyUtils.getProperty(object, components[currentPosition]);
+
+        if (propertyObject != null) {
+            if (currentPosition < components.length - 1) {
+                if (Collection.class.isAssignableFrom(propertyObject.getClass())) {
+                    Collection<?> collection = (Collection<?>) propertyObject;
+                    HashSet<Object> newCollection = new HashSet<Object>();
+                    for (Object item : collection) {
+                        Object result = getPropertyValueInternal(item, components, currentPosition + 1);
+                        if (result != null) {
+                            copyPropertyToCollection(newCollection, result);
+                        }
+                    }
+                    propertyObject = newCollection;
+                } else if (Map.class.isAssignableFrom(propertyObject.getClass())) {
+                    Map<?, ?> map = (Map<?, ?>) propertyObject;
+                    HashSet<Object> newCollection = new HashSet<Object>();
+                    for (Object item : map.values()) {
+                        Object result = getPropertyValueInternal(item, components, currentPosition + 1);
+                        if (result != null) {
+                            copyPropertyToCollection(newCollection, result);
+                        }
+                    }
+                    propertyObject = newCollection;
+                } else if (propertyObject.getClass().isArray()) {
+                    Object[] array = (Object[]) propertyObject;
+                    HashSet<Object> newCollection = new HashSet<Object>();
+                    for (Object item : array) {
+                        Object result = getPropertyValueInternal(item, components, currentPosition + 1);
+                        if (result != null) {
+                            copyPropertyToCollection(newCollection, result);
+                        }
+                    }
+                    propertyObject = newCollection;
+                } else {
+                    propertyObject = getPropertyValueInternal(propertyObject, components, currentPosition + 1);
+                }
+            }
+        }
+
+        return propertyObject;
+    }
+
+    /*
+     * This adds the value of the object to the collection.  If the object is a Map, this adds the values of the 
+     * map to the collection.  If the object is a Collection or an Array, it adds each of the values to the collection. 
+     */
+    protected void copyPropertyToCollection(Collection<Object> collection, Object o) {
+        if (o == null) {
+            return;
+        }
+
+        if (Collection.class.isAssignableFrom(o.getClass())) {
+            collection.addAll((Collection<?>) o);
+        } else if (Map.class.isAssignableFrom(o.getClass())) {
+            collection.addAll(((Map<?, ?>) o).values());
+        } else if (o.getClass().isArray()) {
+            Object[] array = (Object[]) o;
+            if (array.length > 0) {
+                for (Object obj : array) {
+                    collection.add(obj);
+                }
+            }
+        } else {
+            collection.add(o);
+        }
     }
 
 }

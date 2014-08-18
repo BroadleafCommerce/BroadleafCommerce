@@ -436,6 +436,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for sku id[" + sku.getId() + "]", e);
             }
         }
+
+        attachAdditionalDocumentFields(sku, document);
+
         return document;
     }
 
@@ -494,7 +497,29 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             }
         }
 
+        attachAdditionalDocumentFields(product, document);
+
         return document;
+    }
+
+    /**
+     * Implementors can extend this and override this method to add additional fields to the Solr document.
+     * 
+     * @param sku
+     * @param document
+     */
+    protected void attachAdditionalDocumentFields(Sku sku, SolrInputDocument document) {
+        //Empty implementation. Placeholder for others to extend and add additional fields
+    }
+
+    /**
+     * Implementors can extend this and override this method to add additional fields to the Solr document.
+     * 
+     * @param product
+     * @param document
+     */
+    protected void attachAdditionalDocumentFields(Product product, SolrInputDocument document) {
+        //Empty implementation. Placeholder for others to extend and add additional fields
     }
 
     /**
@@ -652,13 +677,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     // value field out of it if it exists.
                     if (propertyValue != null) {
                         try {
-                            propertyValue = PropertyUtils.getProperty(propertyValue, "value");
+                            propertyValue = shs.getPropertyValue(propertyValue, "value"); //PropertyUtils.getProperty(propertyValue, "value");
                         } catch (NoSuchMethodException e) {
                             // Do nothing, we'll keep the existing value
                         }
                     }
                 } else {
-                    propertyValue = PropertyUtils.getProperty(sku, propertyName);
+                    propertyValue = shs.getPropertyValue(sku, propertyName); //PropertyUtils.getProperty(sku, propertyName);
                 }
                 values.put("", propertyValue);
             }
@@ -701,13 +726,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     // value field out of it if it exists.
                     if (propertyValue != null) {
                         try {
-                            propertyValue = PropertyUtils.getProperty(propertyValue, "value");
+                            propertyValue = shs.getPropertyValue(propertyValue, "value"); //PropertyUtils.getProperty(propertyValue, "value");
                         } catch (NoSuchMethodException e) {
                             // Do nothing, we'll keep the existing value
                         }
                     }
                 } else {
-                    propertyValue = PropertyUtils.getProperty(product, propertyName);
+                    propertyValue = shs.getPropertyValue(product, propertyName); //PropertyUtils.getProperty(product, propertyName);
                 }
                 values.put("", propertyValue);
             }
@@ -730,9 +755,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @param listPropertyName
      * @param mapPropertyName
      * @return the converted property name
+     * 
+     * @deprecated see SolrHelperService.getPropertyValue()
      */
+    @Deprecated
     protected String convertToMappedProperty(String propertyName, String listPropertyName, String mapPropertyName) {
-        String[] splitName = StringUtils.split(propertyName, ".");
+        String[] splitName = StringUtils.split(propertyName, "\\.");
         StringBuilder convertedProperty = new StringBuilder();
         for (int i = 0; i < splitName.length; i++) {
             if (convertedProperty.length() > 0) {
