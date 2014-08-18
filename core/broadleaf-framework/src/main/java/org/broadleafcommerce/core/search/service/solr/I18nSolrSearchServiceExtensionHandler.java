@@ -151,13 +151,13 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                     if (propertyName.contains(SKU_ATTR_MAP)) {
                         propertyValue = PropertyUtils.getMappedProperty(sku, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
                     } else {
-                        propertyValue = PropertyUtils.getProperty(sku, propertyName);
+                        propertyValue = shs.getPropertyValue(sku, propertyName); //PropertyUtils.getProperty(sku, propertyName);
                     }
                 } else {
                     if (propertyName.contains(PRODUCT_ATTR_MAP)) {
                         propertyValue = PropertyUtils.getMappedProperty(product, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
                     } else {
-                        propertyValue = PropertyUtils.getProperty(product, propertyName);
+                        propertyValue = shs.getPropertyValue(product, propertyName); //PropertyUtils.getProperty(product, propertyName);
                     }
                 }
 
