@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementations of this interface are used to hold data for a Product.  A product is a general description
@@ -621,6 +622,13 @@ public interface Product extends Serializable {
     public void setProductOptions(List<ProductOption> productOptions);
 
     public void setProductOptionXrefs(List<ProductOptionXref> productOptions);
+
+    /**
+     * Returns a Map of product option values, keyed by the product option name. 
+     * E.g. "color":["red","green","black"] 
+     * @return
+     */
+    public Map<String, Set<String>> getProductOptionValuesMap();
 
     /**
      * A product can have a designated URL.   When set, the ProductHandlerMapping will check for this

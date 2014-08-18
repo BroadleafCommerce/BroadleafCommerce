@@ -69,9 +69,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -295,6 +297,9 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
         parentObjectProperty = "product",
         gridVisibleFields = {"label", "required"})
     protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
+
+    @Transient
+    protected Map<String, Set<String>> productOptionMap;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -817,6 +822,28 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
             archiveStatus = new ArchiveStatus();
         }
         archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public Map<String, Set<String>> getProductOptionValuesMap() {
+        if (productOptionMap == null) {
+            productOptionMap = new HashMap<String, Set<String>>();
+            List<ProductOptionXref> xrefs = getProductOptionXrefs();
+            if (xrefs != null) {
+                for (ProductOptionXref xref : xrefs) {
+                    List<ProductOptionValue> productOptionValues = xref.getProductOption().getAllowedValues();
+                    if (productOptionValues != null && !productOptionValues.isEmpty()) {
+                        HashSet<String> values = new HashSet<String>();
+                        for (ProductOptionValue value : productOptionValues) {
+                            values.add(value.getAttributeValue());
+                        }
+                        productOptionMap.put(xref.getProductOption().getAttributeName(), values);
+                    }
+                }
+            }
+        }
+
+        return productOptionMap;
     }
 
     @Override
