@@ -41,8 +41,8 @@ public class ClassCustomPersistenceHandlerAdapter extends CustomPersistenceHandl
         }
     }
     
-    protected boolean classMatches(PersistencePackage persistencePackage) {
-        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+    protected boolean classMatches(PersistencePackage pkg) {
+        String ceilingEntityFullyQualifiedClassname = pkg.getCeilingEntityFullyQualifiedClassname();
         for (Class<?> clazz : handledClasses) {
             if (clazz.getName().equals(ceilingEntityFullyQualifiedClassname)) {
                 return true;
@@ -52,8 +52,12 @@ public class ClassCustomPersistenceHandlerAdapter extends CustomPersistenceHandl
         return false;
     }
     
-    protected boolean isMapOperation(PersistencePackage persistencePackage) {
-        return persistencePackage.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.MAP);
+    protected boolean isMapOperation(PersistencePackage pkg) {
+        return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.MAP);
+    }
+
+    protected boolean isAdornedListperation(PersistencePackage pkg) {
+        return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.ADORNEDTARGETLIST);
     }
 
 }

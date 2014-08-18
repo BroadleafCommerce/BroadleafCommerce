@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.dto;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 
 import java.io.Serializable;
@@ -87,6 +88,9 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     }
     
     public String getSecurityCeilingEntityFullyQualifiedClassname() {
+        if (StringUtils.isBlank(securityCeilingEntityFullyQualifiedClassname)) {
+            return ceilingEntityFullyQualifiedClassname;
+        }
         return securityCeilingEntityFullyQualifiedClassname;
     }
 

@@ -492,11 +492,15 @@ $(document).ready(function() {
             data: rowFields,
             type: "POST"
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
-                message: BLCAdmin.messages.saved + '!', 
-                alertType: 'save-alert', 
-                autoClose: 1000 
-            });
+            if (data.status == 'error') {
+                BLCAdmin.listGrid.showAlert($container, data.message);
+            } else {
+                BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
+                    message: BLCAdmin.messages.saved + '!', 
+                    alertType: 'save-alert', 
+                    autoClose: 1000 
+                });
+            }
         });
         
         return false;

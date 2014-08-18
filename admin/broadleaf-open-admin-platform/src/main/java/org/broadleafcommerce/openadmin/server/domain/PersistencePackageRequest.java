@@ -67,6 +67,7 @@ public class PersistencePackageRequest {
     protected String msg;
     protected Map<String, PersistencePackageRequest> subRequests = new LinkedHashMap<String, PersistencePackageRequest>();
     protected boolean validateUnsubmittedProperties = true;
+    protected boolean isUpdateLookupType = false;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -263,6 +264,11 @@ public class PersistencePackageRequest {
 
     public PersistencePackageRequest withMsg(String msg) {
         setMsg(msg);
+        return this;
+    }
+
+    public PersistencePackageRequest withIsUpdateLookupType(boolean isUpdateLookupType) {
+        setUpdateLookupType(isUpdateLookupType);
         return this;
     }
 
@@ -509,4 +515,13 @@ public class PersistencePackageRequest {
     public void setValidateUnsubmittedProperties(boolean validateUnsubmittedProperties) {
         this.validateUnsubmittedProperties = validateUnsubmittedProperties;
     }
+
+    public boolean isUpdateLookupType() {
+        return isUpdateLookupType;
+    }
+    
+    public void setUpdateLookupType(boolean isUpdateLookupType) {
+        this.isUpdateLookupType = isUpdateLookupType;
+    }
+    
 }

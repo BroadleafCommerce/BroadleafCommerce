@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -1278,6 +1280,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         // First, we must remove the collection entity
         PersistenceResponse persistenceResponse = service.removeSubCollectionEntity(mainMetadata, collectionProperty, entity, collectionItemId, priorKey, sectionCrumbs);
+        if (persistenceResponse.getEntity() != null && persistenceResponse.getEntity().isValidationFailure()) {
+            // If we failed, we'll return some JSON with the first error
+            String error = persistenceResponse.getEntity().getPropertyValidationErrors().values().iterator().next().get(0);
+            return new JsonResponse(response)
+                .with("status", "error")
+                .with("message", BLCMessageUtils.getMessage(error))
+                .done();
+        }
 
         // Next, we must get the new list grid that represents this collection
         ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);
