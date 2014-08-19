@@ -94,6 +94,10 @@ public @interface AdminPresentationCollection {
      * target item. Note - if the type is changed to LOOKUP, this has
      * the side effect of causing the only the association to be deleted
      * during a remove, leaving the target lookup entity intact.</p>
+     * 
+     * <p>If the type is set to LOOKUP_FOR_UPDATE, the system will trigger
+     * an update call on the target entity instead of an add. This is typically
+     * used when the target entity also has a to-one lookup to this field.</p>
      *
      * <p>Define whether or not added items for this
      * collection are acquired via search or construction.</p>

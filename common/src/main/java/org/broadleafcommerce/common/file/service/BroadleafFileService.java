@@ -117,39 +117,97 @@ public interface BroadleafFileService {
     boolean removeResource(String name);
 
     /**
+     * <p>
      * Takes in a temporary work area and a single File and copies that files to 
      * the configured FileProvider's permanent storage.
      * 
+     * <p>
      * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
      * when using a local file system as it performs a move operation instead of a copy.
      * 
      * @param workArea
      * @param fileName
      * @param removeFilesFromWorkArea
+     * @deprecated use {@link #addOrUpdateResourceForPath(FileWorkArea, File, boolean)}
      */
+    @Deprecated
     void addOrUpdateResource(FileWorkArea workArea, File file, boolean removeFilesFromWorkArea);
+    
+    /**
+     * <p>
+     * Takes in a temporary work area and a single File and copies that files to 
+     * the configured FileProvider's permanent storage.
+     * 
+     * <p>
+     * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
+     * when using a local file system as it performs a move operation instead of a copy.
+     * 
+     * @param workArea the work area from the given <b>file</b>
+     * @param file the file to upload
+     * @param removeFilesFromWorkArea whether or not the given <b>file</b> should be removed from <b>workArea</b> when it
+     * has been copied
+     */
+    String addOrUpdateResourceForPath(FileWorkArea workArea, File file, boolean removeFilesFromWorkArea);
 
     /**
+     * <p>
      * Takes in a temporary work area and copies all of the files to the configured FileProvider's permanent storage.
      * 
+     * <p>
+     * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
+     * when using a local file system as it performs a move operation instead of a copy.
+     * 
+     * @param workArea
+     * @param removeFilesFromWorkArea
+     * @deprecated use {@link #addOrUpdateResourcesForPaths(FileWorkArea, boolean)} instead
+     */
+    @Deprecated
+    void addOrUpdateResources(FileWorkArea workArea, boolean removeFilesFromWorkArea);
+    
+    /**
+     * <p>
+     * Takes in a temporary work area and copies all of the files to the configured FileProvider's permanent storage.
+     * 
+     * <p>
      * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
      * when using a local file system as it performs a move operation instead of a copy.
      * 
      * @param workArea
      * @param removeFilesFromWorkArea
      */
-    void addOrUpdateResources(FileWorkArea workArea, boolean removeFilesFromWorkArea);
+    List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, boolean removeFilesFromWorkArea);
 
     /**
+     * <p>
      * Takes in a temporary work area and a list of Files and copies them to 
      * the configured FileProvider's permanent storage.
      * 
+     * <p>
      * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
      * when using a local file system as it performs a move operation instead of a copy.     
      * 
      * @param workArea
-     * @param fileNames
+     * @param files
      * @param removeFilesFromWorkArea
+     * @deprecated use {@link #addOrUpdateResourcesForPaths(FileWorkArea, List, boolean)} instead
      */
+    @Deprecated
     void addOrUpdateResources(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea);
+    
+    /**
+     * <p>
+     * Takes in a temporary work area and a list of Files and copies them to 
+     * the configured FileProvider's permanent storage.
+     * 
+     * <p>
+     * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
+     * when using a local file system as it performs a move operation instead of a copy.     
+     * 
+     * @param workArea the work area for the given <b>files</b>
+     * @param files the files to copy to the provider's permanent storage
+     * @param removeFilesFromWorkArea whether or not the given <b>files</b> hsould be removed from the given <b>workArea</b>
+     * after they are uploaded
+     */
+    List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea);
+
 }
