@@ -37,4 +37,6 @@ public @interface ClonePolicyCollection {
     String toOneProperty() default "";
 
     boolean unowned() default false;
+
+    boolean useProductionFiltering() default false;
 }
