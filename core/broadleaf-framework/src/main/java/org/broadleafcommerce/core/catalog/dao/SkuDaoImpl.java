@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.DialectHelper;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
@@ -40,6 +41,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -89,6 +91,19 @@ public class SkuDaoImpl implements SkuDao {
     @Override
     public Sku readSkuById(Long skuId) {
         return (Sku) em.find(SkuImpl.class, skuId);
+    }
+
+    @Override
+    public Sku readSkuByExternalId(String externalId) {
+        TypedQuery<Sku> query = new TypedQueryBuilder<Sku>(Sku.class, "sku")
+                .addRestriction("sku.externalId", "=", externalId)
+                .toQuery(em);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override

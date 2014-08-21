@@ -114,6 +114,18 @@ public interface Category extends Serializable {
     public void setUrl(@Nullable String url);
 
     /**
+     * @return the flag for whether or not the URL should not be generated in the admin
+     */
+    public Boolean getOverrideGeneratedUrl();
+
+    /**
+     * Sets the flag for whether or not the URL should not be generated in the admin
+     * 
+     * @param overrideGeneratedUrl
+     */
+    public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl);
+
+    /**
      * Gets the url key. The url key is used as part of SEO url generation for this
      * category. Each segment of the url leading to a category is comprised of the url
      * keys of the various associated categories in a hierarchy leading to this one. If
@@ -677,4 +689,19 @@ public interface Category extends Serializable {
      * @param taxCode
      */
     public void setTaxCode(String taxCode);
+
+    /**
+     * Intended to hold any unique identifier not tied to the Broadleaf Database Sequence Identifier.
+     * For example, many implementations may integrate or import/export
+     * data from other systems that manage their own unique identifiers.
+     *
+     * @return external ID
+     */
+    public String getExternalId();
+
+    /**
+     * Sets a unique external ID
+     * @param externalId
+     */
+    public void setExternalId(String externalId);
 }

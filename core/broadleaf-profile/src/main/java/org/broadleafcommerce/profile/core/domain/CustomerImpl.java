@@ -64,7 +64,6 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
@@ -213,6 +212,9 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Transient
     protected boolean loggedIn;
+
+    @Transient
+    protected Map<String, Object> transientProperties = new HashMap<String, Object>();
 
     @Override
     public Long getId() {
@@ -478,6 +480,11 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
             previewable = new PreviewStatus();
         }
         previewable.setPreview(preview);
+    }
+
+    @Override
+    public Map<String, Object> getTransientProperties() {
+        return transientProperties;
     }
 
     @Override

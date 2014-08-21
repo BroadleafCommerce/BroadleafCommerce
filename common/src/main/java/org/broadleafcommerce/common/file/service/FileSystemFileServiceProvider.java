@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,16 +75,23 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
         String filePath = FilenameUtils.normalize(getBaseDirectory() + File.separator + fileName);
         return new File(filePath);
     }
+    
+    @Override
+    @Deprecated
+    public void addOrUpdateResources(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea) {
+        addOrUpdateResourcesForPaths(workArea, files, removeFilesFromWorkArea);
+    }
 
     @Override
-    public void addOrUpdateResources(FileWorkArea area, List<File> files, boolean removeResourcesFromWorkArea) {
+    public List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea) {
+        List<String> result = new ArrayList<String>();
         for (File srcFile : files) {
-            if (!srcFile.getAbsolutePath().startsWith(area.getFilePathLocation())) {
+            if (!srcFile.getAbsolutePath().startsWith(workArea.getFilePathLocation())) {
                 throw new FileServiceException("Attempt to update file " + srcFile.getAbsolutePath() +
-                        " that is not in the passed in WorkArea " + area.getFilePathLocation());
+                        " that is not in the passed in WorkArea " + workArea.getFilePathLocation());
             }
 
-            String fileName = srcFile.getAbsolutePath().substring(area.getFilePathLocation().length());
+            String fileName = srcFile.getAbsolutePath().substring(workArea.getFilePathLocation().length());
             
             // before building the resource name, convert the file path to a url-like path
             String url = FilenameUtils.separatorsToUnix(fileName);
@@ -95,7 +103,7 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
             }
             
             try {
-                if (removeResourcesFromWorkArea) {
+                if (removeFilesFromWorkArea) {
                     if (destFile.exists()) {
                         FileUtils.deleteQuietly(destFile);
                     }
@@ -103,11 +111,13 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
                 } else {
                     FileUtils.copyFile(srcFile, destFile);
                 }
+                result.add(fileName);
             } catch (IOException ioe) {
                 throw new FileServiceException("Error copying resource named " + fileName + " from workArea " +
-                        area.getFilePathLocation() + " to " + resourceName, ioe);
+                        workArea.getFilePathLocation() + " to " + resourceName, ioe);
             }
         }
+        return result;
     }
 
     @Override

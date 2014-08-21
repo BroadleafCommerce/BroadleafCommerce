@@ -20,9 +20,14 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ResourceLoader;
+import java.text.MessageFormat;
+import java.util.Locale;
+import javax.annotation.Resource;
 
 
 /**
@@ -39,6 +44,9 @@ import org.springframework.core.io.ResourceLoader;
  * <p>The basenames in this implementation are Spring path resources so if you need to refer to a resource on the classpath,
  * these should be prefixed with classpath:. This is slightly different from the {@link ResourceBundleMessageSource}; see
  * {@link ReloadableResourceBundleMessageSource#setBasenames(String...)} for more information.</p>
+ *
+ * <p>The {@link BroadleafMergeResourceExtensionManager} will get invoked first and return any
+ * resolved message from an implementing module.</p>
  * 
  * @author Phillip Verheyden
  * @see {@link ReloadableResourceBundleMessageSource}
@@ -46,6 +54,9 @@ import org.springframework.core.io.ResourceLoader;
  * @see {@link #setBasenames(String...)}
  */
 public class BroadleafMergeResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
+
+    @Resource(name = "blBroadleafMergeResourceExtensionManager")
+    protected BroadleafMergeResourceExtensionManager extensionManager;
 
     /**
      * The super implementation ensures the basenames defined at the beginning take precedence. We require the opposite in
@@ -61,6 +72,28 @@ public class BroadleafMergeResourceBundleMessageSource extends ReloadableResourc
     public void setBasenames(String... basenames) {
         CollectionUtils.reverseArray(basenames);
         super.setBasenames(basenames);
+    }
+
+    @Override
+    protected MessageFormat resolveCode(String code, Locale locale) {
+        ExtensionResultHolder<String> messageHolder = new ExtensionResultHolder<String>();
+        extensionManager.getProxy().resolveMessageSource(code, locale, messageHolder);
+        if (StringUtils.isNotBlank(messageHolder.getResult())) {
+            return createMessageFormat(messageHolder.getResult(), locale);
+        }
+
+        return super.resolveCode(code, locale);
+    }
+
+    @Override
+    protected String resolveCodeWithoutArguments(String code, Locale locale) {
+        ExtensionResultHolder<String> messageHolder = new ExtensionResultHolder<String>();
+        extensionManager.getProxy().resolveMessageSource(code, locale, messageHolder);
+        if (StringUtils.isNotBlank(messageHolder.getResult())) {
+            return messageHolder.getResult();
+        }
+
+        return super.resolveCodeWithoutArguments(code, locale);
     }
 
 }

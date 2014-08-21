@@ -21,7 +21,10 @@ package org.broadleafcommerce.cms.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.cms.web.PageHandlerMapping;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.TemplateTypeAware;
@@ -32,6 +35,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -49,6 +53,8 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
     @Qualifier("blPageDeepLinkService")
     protected DeepLinkService<PageDTO> deepLinkService;
 
+    @Resource(name = "blTemplateOverrideExtensionManager")
+    protected TemplateOverrideExtensionManager templateOverrideManager;
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -57,6 +63,7 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
         assert page != null;
 
         model.addObject(MODEL_ATTRIBUTE_NAME, page);
+        model.addObject("pageFields", page.getPageFields()); // For convenience
         model.addObject("BLC_PAGE_TYPE", "page");
 
         String plainTextStr = (String) page.getPageFields().get("plainText");
@@ -67,8 +74,17 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
                 response.setContentType("text/plain");
             }
         }
+        
+        String templatePath = page.getTemplatePath();
+        
+        // Allow extension managers to override the path.
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        ExtensionResultStatusType extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
+        if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
+            templatePath = erh.getResult();
+        }
 
-        model.setViewName(page.getTemplatePath());
+        model.setViewName(templatePath);
         addDeepLink(model, deepLinkService, page);
         return model;
     }

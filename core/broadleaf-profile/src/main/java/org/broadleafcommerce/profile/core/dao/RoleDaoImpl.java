@@ -61,4 +61,11 @@ public class RoleDaoImpl implements RoleDao {
     public void addRoleToCustomer(CustomerRole customerRole) {
         em.persist(customerRole);
     }
+    
+    public void removeCustomerRolesByCustomerId(Long customerId) {
+    	List<CustomerRole> roles = readCustomerRolesByCustomerId(customerId);
+    	for (CustomerRole r : roles) {
+    		em.remove(r);
+    	}
+    }
 }

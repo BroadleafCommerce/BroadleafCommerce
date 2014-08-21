@@ -103,7 +103,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             setDataSources(mergedDataSources);
         }
     }
-    
+
     @PostConstruct
     public void configureClassTransformers() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         classTransformers.addAll(mergedClassTransformers);
@@ -117,7 +117,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "ToArrayCallWithZeroLengthArrayArgument"})
+    @SuppressWarnings({ "unchecked", "ToArrayCallWithZeroLengthArrayArgument" })
     public void preparePersistenceUnitInfos() {
         //Need to use reflection to try and execute the logic in the DefaultPersistenceUnitManager
         //SpringSource added a block of code in version 3.1 to "protect" the user from having more than one PU with
@@ -133,13 +133,13 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             for (Field field : fields) {
                 if ("persistenceUnitInfoNames".equals(field.getName())) {
                     field.setAccessible(true);
-                    persistenceUnitInfoNames = (Set<String>)field.get(this);
+                    persistenceUnitInfoNames = (Set<String>) field.get(this);
                 } else if ("persistenceUnitInfos".equals(field.getName())) {
                     field.setAccessible(true);
-                    persistenceUnitInfos = (Map<String, PersistenceUnitInfo>)field.get(this);
+                    persistenceUnitInfos = (Map<String, PersistenceUnitInfo>) field.get(this);
                 } else if ("resourcePatternResolver".equals(field.getName())) {
                     field.setAccessible(true);
-                    resourcePatternResolver = (ResourcePatternResolver)field.get(this);
+                    resourcePatternResolver = (ResourcePatternResolver) field.get(this);
                 }
             }
 
@@ -151,26 +151,26 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                             getSuperclass().
                             getDeclaredMethod("readPersistenceUnitInfos");
             readPersistenceUnitInfos.setAccessible(true);
-            
+
             //In Spring 3.0 this returns an array
             //In Spring 3.1 this returns a List
             Object pInfosObject = readPersistenceUnitInfos.invoke(this);
             Object[] puis;
             if (pInfosObject.getClass().isArray()) {
-                puis = (Object[])pInfosObject;
+                puis = (Object[]) pInfosObject;
             } else {
-                puis = ((Collection)pInfosObject).toArray();
+                puis = ((Collection) pInfosObject).toArray();
             }
 
             for (Object pui : puis) {
-                MutablePersistenceUnitInfo mPui = (MutablePersistenceUnitInfo)pui;
+                MutablePersistenceUnitInfo mPui = (MutablePersistenceUnitInfo) pui;
                 if (mPui.getPersistenceUnitRootUrl() == null) {
                     Method determineDefaultPersistenceUnitRootUrl =
                             getClass().
                                     getSuperclass().
                                     getDeclaredMethod("determineDefaultPersistenceUnitRootUrl");
                     determineDefaultPersistenceUnitRootUrl.setAccessible(true);
-                    mPui.setPersistenceUnitRootUrl((URL)determineDefaultPersistenceUnitRootUrl.invoke(this));
+                    mPui.setPersistenceUnitRootUrl((URL) determineDefaultPersistenceUnitRootUrl.invoke(this));
                 }
                 ConfigurationOnlyState state = ConfigurationOnlyState.getState();
                 if ((state == null || !state.isConfigurationOnly()) && mPui.getNonJtaDataSource() == null) {
@@ -186,7 +186,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                     puiInitMethod.setAccessible(true);
                     puiInitMethod.invoke(pui, resourcePatternResolver.getClassLoader());
                 }
-                postProcessPersistenceUnitInfo((MutablePersistenceUnitInfo)pui);
+                postProcessPersistenceUnitInfo((MutablePersistenceUnitInfo) pui);
                 String name = mPui.getPersistenceUnitName();
                 persistenceUnitInfoNames.add(name);
 
@@ -199,7 +199,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
         try {
             List<String> managedClassNames = new ArrayList<String>();
-            
+
             for (PersistenceUnitInfo pui : mergedPus.values()) {
                 for (BroadleafClassTransformer transformer : classTransformers) {
                     try {
@@ -219,7 +219,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                     }
                 }
             }
-            
+
             for (PersistenceUnitInfo pui : mergedPus.values()) {
                 for (String managedClassName : pui.getManagedClassNames()) {
                     if (!managedClassNames.contains(managedClassName)) {

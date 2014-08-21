@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
@@ -36,7 +38,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_COUNTRY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "CountryImpl_baseCountry")
-public class CountryImpl implements Country {
+public class CountryImpl implements Country, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,7 +47,7 @@ public class CountryImpl implements Country {
     protected String abbreviation;
 
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName = "CountryImpl_Country", order=12, group = "CountryImpl_Address", prominent = true)
+    @AdminPresentation(friendlyName = "CountryImpl_Country", order=12, group = "CountryImpl_Address", prominent = true, translatable = true)
     protected String name;
 
     public String getAbbreviation() {
@@ -57,7 +59,7 @@ public class CountryImpl implements Country {
     }
 
     public String getName() {
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     public void setName(String name) {
@@ -93,5 +95,10 @@ public class CountryImpl implements Country {
         result = prime * result + ((abbreviation == null) ? 0 : abbreviation.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getName();
     }
 }

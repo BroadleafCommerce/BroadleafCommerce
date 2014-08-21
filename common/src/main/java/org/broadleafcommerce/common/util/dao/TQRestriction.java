@@ -49,7 +49,7 @@ public class TQRestriction {
      */
     public TQRestriction(String expression, String operation) {
         this.expression = expression;
-        this.operation = operation;
+        this.operation = operation.toLowerCase();
     }
     
     /**

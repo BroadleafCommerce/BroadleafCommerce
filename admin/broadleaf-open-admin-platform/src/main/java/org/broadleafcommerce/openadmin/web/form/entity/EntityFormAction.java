@@ -36,6 +36,7 @@ public class EntityFormAction implements Cloneable {
     protected String iconClass = "";
     protected String displayText = "";
     protected String id = "";
+    protected String urlOverride = null;
     
     public EntityFormAction(String id) {
         this.id = id;
@@ -91,6 +92,11 @@ public class EntityFormAction implements Cloneable {
         return this;
     }
     
+    public EntityFormAction withUrlOverride(String urlOverride) {
+        setUrlOverride(urlOverride);
+        return this;
+    }
+    
     public String getId() {
         return id;
     }
@@ -133,6 +139,25 @@ public class EntityFormAction implements Cloneable {
     
     public void setDisplayText(String displayText) {
         this.displayText = displayText;
+    }
+    
+    /**
+     * Gets the manual override for the data-actionurl attribute on an action.
+     * 
+     * @return
+     */
+    public String getUrlOverride() {
+        return urlOverride;
+    }
+    
+    /**
+     * This is a manual override for the data-actionurl attribute for an listgrid action. The data-actionurl attribute on a
+     * button is normally automatically computed by appending the postfix URL to the path of the list grid
+     * 
+     * @param actionUrlOverride
+     */
+    public void setUrlOverride(String urlOverride) {
+        this.urlOverride = urlOverride;
     }
 
 }

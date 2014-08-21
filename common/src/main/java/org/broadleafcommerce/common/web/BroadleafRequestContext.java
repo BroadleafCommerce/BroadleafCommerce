@@ -284,17 +284,16 @@ public class BroadleafRequestContext {
         if (locale == null || locale.getLocaleCode() == null) {
             return java.util.Locale.getDefault();
         } else {
-            String localeString = locale.getLocaleCode();
-            String[] components = localeString.split("_");
-            if (components.length == 1) {
-                return new java.util.Locale(components[0]);
-            } else if (components.length == 2) {
-                return new java.util.Locale(components[0], components[1]);
-            } else if (components.length == 3) {
-                return new java.util.Locale(components[0], components[1], components[2]);
-            }
-            return null;            
+            return BroadleafRequestContext.convertLocaleToJavaLocale(locale);
         }
+    }
+    
+    public static java.util.Locale convertLocaleToJavaLocale(Locale broadleafLocale) {
+        if (broadleafLocale != null) {
+            String localeString = broadleafLocale.getLocaleCode();
+            return org.springframework.util.StringUtils.parseLocaleString(localeString);
+        }
+        return null;
     }
     
     public boolean isSecure() {

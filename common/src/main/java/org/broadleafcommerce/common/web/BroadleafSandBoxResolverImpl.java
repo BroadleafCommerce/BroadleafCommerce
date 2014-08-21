@@ -105,7 +105,10 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     
     @Override
     public SandBox resolveSandBox(WebRequest request, Site site) {
-        Long previousSandBoxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        Long previousSandBoxId = null;
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            previousSandBoxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
         SandBox currentSandbox = null;
         if (!sandBoxPreviewEnabled) {
             if (LOG.isTraceEnabled()) {

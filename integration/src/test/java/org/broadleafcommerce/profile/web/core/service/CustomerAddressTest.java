@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.web.core.service;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
@@ -97,6 +98,10 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
         customerAddress.getAddress().setState(state);
         Country country = countryService.findCountryByAbbreviation("US");
         customerAddress.getAddress().setCountry(country);
+        customerAddress.getAddress().setIsoCountrySubdivision("US-KY");
+        ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code("US");
+        customerAddress.getAddress().setIsoCountryAlpha2(isoCountry);
+
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
         assert customer.equals(customerAddress.getCustomer());
         userId = customerAddress.getCustomer().getId();

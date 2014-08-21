@@ -25,6 +25,7 @@ var BLCAdmin = (function($) {
 	var preValidationFormSubmitHandlers = [];
 	var validationFormSubmitHandlers = [];
 	var postValidationFormSubmitHandlers = [];
+	var dependentFieldFilterHandlers = {};
 	var initializationHandlers = [];
 	var updateHandlers = [];
 	var stackedModalOptions = {
@@ -37,36 +38,6 @@ var BLCAdmin = (function($) {
                          '.asset-selector-container img, select, div.custom-checkbox, div.small-enum-container, ' + 
                          'textarea';
 	
-	/**
-	 * Initialize necessary font mappings for Redactor
-	 */
-	var oFontMap = {
-	    arial: ["Arial", "Arial, Helvetica, sans-serif"],
-	    arialblack: ["Arial Black", '"Arial Black", Gadget, sans-serif'],
-	    comicsans: ["Courier New", '"Courier New", Courier, monospace'],
-	    courier: ["Comic Sans", '"Comic Sans MS", cursive, sans-serif'],
-	    impact: ["Impact", 'Impact, Charcoal, sans-serif'],
-	    lucida: ["Lucida", '"Lucida Sans Unicode", "Lucida Grande", sans-serif'],
-	    lucidaconsole: ["Lucida Console", '"Lucida Console", Monaco, monospace'],
-	    georgia: ["Georgia", "Georgia, serif"],
-	    palatino: ["Palatino Linotype", '"Palatino Linotype", "Book Antiqua", Palatino, serif'],
-	    tahoma: ["Tahoma", "Tahoma, Geneva, sans-serif"],
-	    times: ["Times New Roman", "Times, serif"],
-	    trebuchet: ["Trebuchet", '"Trebuchet MS", Helvetica, sans-serif'],
-	    verdana: ["Verdana", "Verdana, Geneva, sans-serif"] 
-	};
-    var oFontDropdown = {}
-    $.each(oFontMap, function(iIndex, oFont){
-        var sFontName = oFont[0];
-        var sFontFace = oFont[1];
-        oFontDropdown[iIndex] = {
-            title: "<font face='"+sFontFace+"'>"+sFontName+"</font>",
-            callback: function(sFont, e, obj){
-                this.execCommand("fontname", sFontFace);
-            }
-        }
-    });
-    
     function getModalSkeleton() {
         var $modal = $('<div>', { 'class' : 'modal' });
         
@@ -97,14 +68,14 @@ var BLCAdmin = (function($) {
 	function showModal($data, onModalHide, onModalHideArgs) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals
 		$data.modal({
-			backdrop: (modals.length < 1)
+			backdrop: (modals.length < 1),
+			keyboard: false  // disable default keyboard behavior; wasn't intended to work with layered modals
 		});
 		
 		// If we already have an active modal, we need to modify its z-index so that it will be
 		// hidden by the current backdrop
 		if (modals.length > 0) {
 			modals.last().css('z-index', '1040');
-			
 			var $backdrop = $('.modal-backdrop');
 			$backdrop.css('z-index', parseInt($backdrop.css('z-index')) + 1);
 			
@@ -115,7 +86,6 @@ var BLCAdmin = (function($) {
 		
 		// Save our new modal into our stack
 		modals.push($data);
-		
 		// Bind a callback for the modal hidden event...
 		$data.on('hidden', function() {
 			
@@ -133,14 +103,20 @@ var BLCAdmin = (function($) {
 				modals.last().css('z-index', '1050');
 			}
 			
-    	    BLCAdmin.currentModal().find('.submit-button').show();
-    	    BLCAdmin.currentModal().find('img.ajax-loader').hide();
+			if (BLCAdmin.currentModal()) {
+				BLCAdmin.currentModal().find('.submit-button').show();
+				BLCAdmin.currentModal().find('img.ajax-loader').hide();
+			}
 		});
 		
 		BLCAdmin.initializeModalTabs($data);
         BLCAdmin.initializeModalButtons($data);
 		BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 		BLCAdmin.initializeFields();
+	}
+
+	function getDependentFieldFilterKey(className, childFieldName) {
+	    return className + '-' + childFieldName;
 	}
 	
 	return {
@@ -174,7 +150,7 @@ var BLCAdmin = (function($) {
 	    addUpdateHandler : function(fn) {
 	        updateHandlers.push(fn);
 	    },
-	    
+
     	runPreValidationSubmitHandlers : function($form) {
             for (var i = 0; i < preValidationFormSubmitHandlers.length; i++) {
                 preValidationFormSubmitHandlers[i]($form);
@@ -357,7 +333,7 @@ var BLCAdmin = (function($) {
     	initializeFields : function($container) {
     	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
     	    if ($container == null) {
-    	        $container = this.getActiveTab();
+    	        $container = BLCAdmin.getActiveTab();
     	    }
     	    
     	    // If we've already initialized this container, we'll skip it.
@@ -367,24 +343,16 @@ var BLCAdmin = (function($) {
     	    
     	    // Set up rich-text HTML editors
             $container.find('.redactor').redactor({
-                buttons : ['html', '|', 'formatting', '|', 'bold', 'italic', 'deleted', '|', 
-                           'unorderedlist', 'orderedlist', 'outdent', 'indent', '|',
-                           'selectAssetButton', 'video', 'file', 'table', 'link', '|',
-                           'font', 'fontcolor', 'backcolor', '|', 'alignment', '|', 'horizontalrule'],
-                buttonsCustom : {
-                    selectAssetButton : {
-                        title : BLCAdmin.messages.selectUploadAsset,
-                        callback : BLCAdmin.asset.selectButtonClickedRedactor
-                    },
-                    font : {
-                        title: "Advanced Font List",
-                        dropdown: oFontDropdown
-                    }
-                },
+                buttons : ['html', 'formatting', 'bold', 'italic', 'deleted', 
+                           'unorderedlist', 'orderedlist', 'outdent', 'indent',
+                           'video', 'file', 'table', 'link',
+                           'fontfamily', 'fontcolor', 'alignment', 'horizontalrule'],
+                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
                 convertDivs : false,
                 xhtml       : true,
                 paragraphy  : false,
-                minHeight   : 140
+                minHeight   : 140,
+                deniedTags  : []
             });
             
             $container.find('textarea.autosize').autosize();
@@ -415,6 +383,8 @@ var BLCAdmin = (function($) {
             
             // Mark this container as initialized
     	    $container.data('initialized', 'true');
+
+    	    return false;
     	},
     	
     	updateFields : function($container) {
@@ -453,7 +423,139 @@ var BLCAdmin = (function($) {
     	
     	getFieldSelectors : function getFieldSelectors() {
     	    return fieldSelectors.concat();
-    	}
+    	},
+    	
+    	extractFieldValue : function extractFieldValue($field) {
+            var value = $field.find('input[type="radio"]:checked').val();
+            if (value == null) {
+                value = $field.find('select').val();
+            }
+            if (value == null) {
+                value = $field.find('input[type="text"]').val();
+            }
+            if (value == null) {
+                value = $field.find('input[type="hidden"].value').val();
+            }
+            return value;
+    	},
+    	
+    	setFieldValue : function setFieldValue($field, value) {
+    	    if (value == null) {
+    	        $field.find('input[type="radio"]:checked').removeAttr('checked')
+    	    } else {
+    	        $field.find('input[type="radio"][value="' + value + '"]').attr('checked', 'checked');
+    	    }
+
+            $field.find('select').val(value);
+            $field.find('input[type="text"]').val(value);
+            
+            if (value == null && $field.find('button.clear-foreign-key')) {
+                $field.find('button.clear-foreign-key').click();
+            }
+            $field.trigger('change');
+    	},
+
+        /**
+         * Adds an initialization handler that is responsible for toggling the visiblity of a child field based on the
+         * current value of the associated parent field.
+         * 
+         * @param className - The class name that this handler should be bound to
+         * @param parentFieldSelector - A jQuery selector to use to find the div.field-box for the parent field
+         * @param childFieldSelector - A jQuery selector to use to find the div.field-box for the child field
+         * @param showIfValue - Either a function that takes one argument (the parentValue) and returns true if the
+         *                      child field should be visible or a string to directly match against the parentValue
+         * @param options - Additional options:
+         *   - clearChildData (boolean) - if true, will null out the data of the child field if the parent field's
+         *     value becomes null
+         *   - additionalChangeAction (fn) - A function to execute when the value of the parent field changes. The args
+         *     passed to the function will be [$parentField, $childField, shouldShow, parentValue]
+         */
+        addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldSelector, childFieldSelector, 
+                showIfValue, options) {
+            BLCAdmin.addInitializationHandler(function($container) {
+                var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
+                if (thisClass != null && thisClass.indexOf(className) >= 0) {
+                    var toggleFunction = function(event) {
+                        // Extract the parent and child field DOM elements from the data
+                        var $parentField = event.data.$parentField;
+                        var $childField = event.data.$container.find(event.data.childFieldSelector);
+                        var options = event.data.options;
+                        var parentValue = BLCAdmin.extractFieldValue($parentField);
+                        
+                        // Either match the string or execute a function to figure out if the child field should be shown
+                        // Additionally, if the parent field is not visible, we'll assume that the child field shouldn't
+                        // render either.
+                        var shouldShow = false;
+                        if ($parentField.is(':visible')) {
+                            if (typeof showIfValue == "function") {
+                                shouldShow = showIfValue(parentValue, event.data.$container);
+                            } else {
+                                shouldShow = (parentValue == showIfValue);
+                            }
+                        }
+                        
+                        // Clear the data in the child field if that option was set and the parent value is null
+                        if (options != null && options['clearChildData'] && !event.initialization) {
+                            BLCAdmin.setFieldValue($childField, null);
+                        }
+                        
+                        // Toggle the visiblity of the child field appropriately
+                        $childField.toggle(shouldShow);
+                        
+                        if (options != null && options['additionalChangeAction'] && !event.initialization) {
+                            options['additionalChangeAction']($parentField, $childField, shouldShow, parentValue);
+                        }
+                    };
+                    
+                    var $parentField = $container.find(parentFieldSelector);
+                    
+                    var data = {
+                        '$parentField' : $parentField,
+                        '$container' : $container,
+                        'childFieldSelector' : childFieldSelector,
+                        'options' : options
+                    };
+                    
+                    // Bind the change event for the parent field
+                    $parentField.on('change', data, toggleFunction);
+    
+                    // Run the toggleFunction immediately to set initial states appropriately
+                    toggleFunction({ data : data, initialization : true });
+                }
+            })
+        },
+
+        /**
+         * Adds a dependent field filter handler that will restrict child lookups based on the value of the parent field.
+         * 
+         * @param className - The class name that this handler should be bound to
+         * @param parentFieldSelector - A jQuery selector to use to find the div.field-box for the parent field
+         * @param childFieldName - The name of this field (the id value in the containing div.field-box)
+         * @param childFieldPropertyName - The name of the back-end field that will receive the filter on the child lookup
+         * @param options - Additional options:
+         *   parentFieldRequired (boolean) - whether or not to disable the child lookup if the parent field is null
+         */
+        addDependentFieldFilterHandler : function addDependentFieldFilterHandler(className, parentFieldSelector, 
+                childFieldName, childFieldPropertyName, options) {
+            // Register the handler so that the lookup knows how to filter itself
+            dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)] = {
+                parentFieldSelector : parentFieldSelector,
+                childFieldPropertyName : childFieldPropertyName
+            }
+            
+            // If the parentFieldRequired option is turned on, we need to toggle the behavior of the child field accordingly
+            if (options != null && options['parentFieldRequired']) {
+                BLCAdmin.addDependentFieldHandler(className, parentFieldSelector, '#' + childFieldName, function(val) {
+                    return val != null && val != "";
+                }, { 
+                    'clearChildData' : true
+                });
+            }
+        },
+        
+        getDependentFieldFilterHandler : function getDependentFieldFilterHandler(className, childFieldName) {
+            return dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)];
+        }
 	};
 	
 })(jQuery);
@@ -530,6 +632,13 @@ $(document).ready(function() {
     // Ensure that the breadcrumb will render behind the entity form actions
     var $bcc = $('.sticky-container');
     $bcc.find('ul.breadcrumbs').outerWidth($bcc.outerWidth() - $bcc.find('.entity-form-actions').outerWidth() - 30);
+});
+
+// Close current modal on escape key
+$('body').on('keyup', function(event) {
+    if (event.keyCode == 27) {  // if key is escape
+        BLCAdmin.hideCurrentModal();
+    }
 });
 
 $('body').on('click', '.disabled', function(e) {

@@ -1,0 +1,32 @@
+<div class="generated-url-container" 
+    th:attr="data-source-field=*{fields['__${field.name}__'].attributes[sourceField]},
+             data-toggle-field=*{fields['__${field.name}__'].attributes[toggleField]},
+             data-overridden-url=*{fields['__${field.name}__'].attributes[overriddenUrl] == true}"
+    th:with="overriddenUrl=*{fields['__${field.name}__'].attributes[overriddenUrl] == true}">
+
+    <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+    <div th:substituteby="components/fieldTooltip" />
+
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+
+    <a class="override-generated-url" href="#" th:text="'(' + #{Override_Generated_URL-__${overriddenUrl ? 'enabled' : 'disabled'}__} + ')'" 
+        th:attr="data-enabled=${overriddenUrl},
+                 data-enabled-text=${'(__#{Override_Generated_URL-enabled}__)'},
+                 data-disabled-text=${'(__#{Override_Generated_URL-disabled}__)'}" />
+    <br/>
+
+    <span th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
+       <a th:href="@{${'/' + field.entityViewPath}}" class="modal-view">
+            <i class="icon-external-link"></i>
+       </a>
+    </span>
+
+    <input type="text" class="twelve target-field" 
+        th:required="${field.required}" 
+        th:placeholder="${field.hint}"
+        th:field="*{fields['__${field.name}__'].value}"
+        th:attr="data-prefix=*{fields['__${field.name}__'].attributes[prefix]},
+                 data-prefix-selector=*{fields['__${field.name}__'].attributes['prefix-selector']}"
+        th:readonly="${!overriddenUrl}" />
+    
+</div>

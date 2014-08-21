@@ -46,6 +46,7 @@ public class NamedOperationManagerImpl implements NamedOperationManager {
         return derivedMap;
     }
 
+    @Override
     public List<NamedOperationComponent> getNamedOperationComponents() {
         return namedOperationComponents;
     }

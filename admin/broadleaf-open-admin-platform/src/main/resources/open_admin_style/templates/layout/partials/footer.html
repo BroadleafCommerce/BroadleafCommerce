@@ -1,6 +1,5 @@
 <footer>
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script th:inline="text">
         //<![CDATA[
         window.jQuery || document.write('<script src="[[@{/js/lib/jquery-1.9.1.js}]]"><\/script>');
@@ -39,15 +38,19 @@
                        admin/lib/plugins/jquery.ui.widget.js,
                        admin/lib/plugins/jquery.autosize.js,
                        admin/lib/plugins/spectrum.js,
+                       admin/lib/plugins/fontfamily.js,
                        admin/lib/plugins/fontcolor.js,
+                       admin/lib/plugins/fontsize.js,
+                       admin/lib/plugins/selectasset.js,
                        admin/lib/redactor.js,
                        admin/lib/plugins/bootstrap.js,
                        admin/lib/blc-conditions-builder.js,
                        admin/lib/plugins/typeahead.bundle.js" />
                       
-    <blc:bundle name="admin/admin.js" 
+    <blc:bundle name="admin.js" 
                 mapping-prefix="/js/"
                 files="BLC.js,
+                       BLC-system-property.js,
                        blc-dates.js,
                        admin/blc-admin.js,
                        admin/blc-admin-history.js,
@@ -60,6 +63,7 @@
                        admin/ui/imagezoom.js,
                       
                        admin/components/entityForm.js,
+                       admin/components/entityForm-generatedUrl.js,
                        admin/components/translations.js,
                        admin/components/assetSelector.js,
                        admin/components/ruleBuilder-operators.js,
@@ -68,8 +72,10 @@
                        admin/components/listGrid.js,
                        admin/components/listGrid-filter.js,
                        admin/components/listGrid-paginate.js,
-                       admin/components/typeahead.js,
+                       admin/components/typeahead.js" />
                       
-                       admin/blc-admin-init.js" />
+    <blc:bundle name="admin-init.js" 
+                mapping-prefix="/js/"
+                files="admin/blc-admin-init.js" />
 
 </footer>

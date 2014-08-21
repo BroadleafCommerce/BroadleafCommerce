@@ -28,6 +28,7 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
@@ -220,5 +221,56 @@ public interface SolrHelperService {
      * @return the sku id to use
      */
     public Long getSkuId(Long tentativeSkuId);
+
+    /**
+     * See getPropertyValue(Object, String)
+     * @param object
+     * @param field
+     * @return
+     */
+    public Object getPropertyValue(Object object, Field field) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
+
+    /**
+     * This method is meant to behave in a similar way to Apache's PropertyUtils.getProperty(Object, String). 
+     * This is attempting to get the value or values for a property using the property name specified in field.getPropertyName(). 
+     * The real difference with this method is that it iterates over Collections, Map values, and arrays until it reaches 
+     * end of the property name.  For example, consider a Product and the property name "defaultSku.fees.currency.currencyCode".
+     * 
+     * The property "fees" is a collection of SkuFee objects on the Sku.  If an Product is passed to this method, with a field 
+     * defining a property name of "defaultSku.fees.currency.currencyCode", this method will return a Collection of Strings.  
+     * Specifically, it will return a Set of Strings.
+     * 
+     * The point is, for Solr indexing, it is often desirable to specify all of the values associated with a product for a 
+     * given Solr field.  In this case, you are trying to get all of the unique currency codes associated with the collection 
+     * of fees associated with the default Sku for the given product.
+     * 
+     * This works similarly for Maps, Collections, Dates, Strings, Integers, Longs, and other primitives.  Note, though, that this 
+     * will return complex objects as well, if you do not specify the more primitive property that you are trying to access. 
+     * For example, if you used "defaultSku.fees.currency" as a property name, you would get a collection of BroadleafCurrency 
+     * objects back.  Solr will not be happy if you try to index these.
+     * 
+     * Note that, for arrays, this method only works with one dimensional arrays.  
+     * 
+     * For Maps, if a key is not specified, this method ignores the 
+     * key, and iterates over the values collection and treats the values the same way that it treats any other collection. 
+     * If they key is specified, then this method returns the keyed value rather than all of the values.
+     * 
+     * So, for example, if you have a product and a property such as "productAttributes(heatRange).value", it will return  
+     * a single value if there is a ProductAttribute keyed by "heatRange", or null if there is not.  If you use the property 
+     * "productAttributes.value" then is will return a collection of the values associated with each of the values in the productAttributes map.
+     * 
+     * In this regard it is quite different than PropertyUtils.getMappedProperty(Object, String).
+     * 
+     * Keep in mind that, since this method returns either a Collection or a single object that is not a Map or Array, you 
+     * need to make sure that the field can handle such a value.  For example, if your field is intended to index 
+     * a collection of Strings, you need to make sure Solr's definition of this field (or dynamic field) is a multi-valued 
+     * type according to your Solr schema definition (e.g. _txt or _ss or _is, etc.).
+     * 
+     * 
+     * @param object
+     * @param propertyName
+     * @return
+     */
+    public Object getPropertyValue(Object object, String propertyName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
 }

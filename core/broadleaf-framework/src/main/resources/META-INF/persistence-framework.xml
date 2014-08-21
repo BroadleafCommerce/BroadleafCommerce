@@ -91,6 +91,7 @@
         <class>org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl</class>
         <class>org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderLockImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderAttributeImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderItemImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl</class>
@@ -141,9 +142,9 @@
     </persistence-unit>
     
     <persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
-        <mapping-file>config/bc/jpa/domain/GiftCardPaymentInfo.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/CreditCardPaymentInfo.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/BankAccountPaymentInfo.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/GiftCardPayment.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CreditCardPayment.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/BankAccountPayment.orm.xml</mapping-file>
         <class>org.broadleafcommerce.core.payment.domain.secure.BankAccountPaymentImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.secure.CreditCardPaymentInfoImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.secure.GiftCardPaymentImpl</class>

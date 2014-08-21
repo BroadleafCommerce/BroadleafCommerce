@@ -21,14 +21,14 @@ package org.broadleafcommerce.cms.page.service;
 
 import net.sf.ehcache.Cache;
 
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -103,5 +103,14 @@ public interface PageService {
     public void removePageFromCache(SandBox sandBox, Page p);
 
     Cache getPageCache();
+
+    /**
+     * Builds a list of {@link PageDTO} objects from the given list of {@link Page} objects.
+     * 
+     * @param pageList
+     * @param secure
+     * @return
+     */
+    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure);
 
 }

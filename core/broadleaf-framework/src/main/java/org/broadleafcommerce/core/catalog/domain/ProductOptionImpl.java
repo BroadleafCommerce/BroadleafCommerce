@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -91,7 +92,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     protected String type;
     
     @Column(name = "ATTRIBUTE_NAME")
-    @AdminPresentation(friendlyName = "productOption_name", helpText = "productOption_nameHelp")
+    @AdminPresentation(friendlyName = "productOption_name", helpText = "productOption_nameHelp", requiredOverride = RequiredOverride.REQUIRED)
     protected String attributeName;
     
     @Column(name = "LABEL")

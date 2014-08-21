@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -61,6 +63,8 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     private CustomerAddressValidator customerAddressValidator;
     @Resource(name = "blStateService")
     private StateService stateService;
+    @Resource(name = "blISOService")
+    protected ISOService isoService;
    
     protected String addressUpdatedMessage = "Address successfully updated";
     protected String addressAddedMessage = "Address successfully added";
@@ -82,19 +86,47 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
      */
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
 
+        /**
+         * @deprecated - address.setState() is deprecated in favor of ISO standardization
+         * This is here for legacy compatibility
+         */
         binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                State state = stateService.findStateByAbbreviation(text);
-                setValue(state);
+                if (StringUtils.isNotEmpty(text)) {
+                    State state = stateService.findStateByAbbreviation(text);
+                    setValue(state);
+                } else {
+                    setValue(null);
+                }
             }
         });
 
+        /**
+         * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
+         * This is here for legacy compatibility
+         */
         binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                Country country = countryService.findCountryByAbbreviation(text);
-                setValue(country);
+                if (StringUtils.isNotEmpty(text)) {
+                    Country country = countryService.findCountryByAbbreviation(text);
+                    setValue(country);
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+
+        binder.registerCustomEditor(ISOCountry.class, "address.isoCountryAlpha2", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (StringUtils.isNotEmpty(text)) {
+                    ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code(text);
+                    setValue(isoCountry);
+                }else {
+                    setValue(null);
+                }
             }
         });
 

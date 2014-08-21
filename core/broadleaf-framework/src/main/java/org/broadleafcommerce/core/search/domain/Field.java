@@ -44,6 +44,20 @@ public interface Field {
     public void setId(Long id);
 
     /**
+     * The friendly name of the field, for use by admin or other UI.
+     * 
+     * @param friendlyName
+     */
+    public void setFriendlyName(String friendlyName);
+
+    /**
+     * Returns the friendly name of the field, for use by admin or other UI.
+     * 
+     * @return
+     */
+    public String getFriendlyName();
+
+    /**
      * Gets the entityType of this Field
      * @return the entityType
      */

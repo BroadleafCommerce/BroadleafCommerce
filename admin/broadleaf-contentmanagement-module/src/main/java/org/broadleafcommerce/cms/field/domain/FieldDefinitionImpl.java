@@ -74,12 +74,13 @@ public class FieldDefinitionImpl implements FieldDefinition {
     protected String name;
 
     @Column (name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "FieldDefinitionImpl_friendlyName", order = 2000)
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_friendlyName", order = 2000, prominent = true, gridOrder = 2000)
     protected String friendlyName;
 
     @Column (name = "FLD_TYPE")
-    @AdminPresentation(fieldType = SupportedFieldType.EXPLICIT_ENUMERATION, 
-        prominent = true, gridOrder = 2000, order = 1000,
+    @AdminPresentation(fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        broadleafEnumeration = "org.broadleafcommerce.common.presentation.client.DynamicSupportedFieldType",
+        prominent = true, gridOrder = 3000, order = 1000,
         friendlyName = "FieldDefinitionImpl_fieldType")
     protected String fieldType;
 
@@ -120,7 +121,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Column(name="FLD_ORDER")
     @AdminPresentation(friendlyName = "FieldDefinitionImpl_fieldOrder", order = 3000)
-    protected int fieldOrder;
+    protected Integer fieldOrder;
 
     @Column (name = "TOOLTIP")
     protected String tooltip;
@@ -175,7 +176,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
     
     @Override
     public void setAdditionalForeignKeyClass(String className) {
-        if (fieldType == null || !fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+        if (fieldType == null || !SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString().equals(fieldType)) {
             throw new IllegalArgumentException("Cannot set an additional foreign key class when the field type is not ADDITIONAL_FOREIGN_KEY");
         }
         

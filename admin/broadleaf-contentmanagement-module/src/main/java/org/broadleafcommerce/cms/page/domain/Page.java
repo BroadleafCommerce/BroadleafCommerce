@@ -142,10 +142,6 @@ public interface Page extends Serializable {
     public Map<String, PageAttribute> getAdditionalAttributes();
 
     public void setAdditionalAttributes(Map<String, PageAttribute> additionalAttributes);
-
-    public Boolean getOverrideUrl();
-
-    public void setOverrideUrl(Boolean overrideUrl);
     
     public Date getActiveStartDate();
     

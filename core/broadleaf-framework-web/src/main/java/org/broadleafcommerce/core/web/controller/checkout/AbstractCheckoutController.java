@@ -22,6 +22,8 @@ package org.broadleafcommerce.core.web.controller.checkout;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -50,6 +52,7 @@ import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
+import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
@@ -114,6 +117,12 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blCountryService")
     protected CountryService countryService;
+
+    @Resource(name = "blCountrySubdivisionService")
+    protected CountrySubdivisionService countrySubdivisionService;
+
+    @Resource(name = "blISOService")
+    protected ISOService isoService;
 
     @Resource(name = "blCustomerAddressService")
     protected CustomerAddressService customerAddressService;
@@ -181,6 +190,10 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
      * @throws Exception
      */
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+        /**
+         * @deprecated - address.setState() is deprecated in favor of ISO standardization
+         * This is here for legacy compatibility
+         */
         binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
@@ -193,13 +206,34 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
             }
         });
 
+        /**
+         * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
+         * This is here for legacy compatibility
+         */
         binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                Country country = countryService.findCountryByAbbreviation(text);
-                setValue(country);
+                if (StringUtils.isNotEmpty(text)) {
+                    Country country = countryService.findCountryByAbbreviation(text);
+                    setValue(country);
+                } else {
+                    setValue(null);
+                }
             }
         });
+
+        binder.registerCustomEditor(ISOCountry.class, "address.isoCountryAlpha2", new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) {
+                if (StringUtils.isNotEmpty(text)) {
+                    ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code(text);
+                    setValue(isoCountry);
+                } else {
+                    setValue(null);
+                }
+            }
+        });
+
         binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
 
             @Override

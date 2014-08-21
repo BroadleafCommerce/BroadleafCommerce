@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.server.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -82,6 +83,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
 
@@ -129,7 +133,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 customCriteria = info.getCustomCriteriaOverride();
             } else {
                 String propertyName = info.getPropertyName();
-                String propertyValue = entityForm.getFields().get(propertyName).getValue();
+                String propertyValue;
+                if (entityForm.getFields().containsKey(propertyName)) {
+                    propertyValue = entityForm.getFields().get(propertyName).getValue();
+                } else {
+                    propertyValue = info.getPropertyValue();
+                }
                 customCriteria = new String[] {info.getCriteriaName(), entityForm.getId(), propertyName, propertyValue};
             }
 
@@ -371,7 +380,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             
             // If we're looking up an entity instead of trying to create one on the fly, let's make sure 
             // that we're not changing the target entity at all and only creating the association to the id
-            if (fmd.getAddMethodType().equals(AddMethodType.LOOKUP)) {
+            if (fmd.getAddMethodType().equals(AddMethodType.LOOKUP) || 
+                    fmd.getAddMethodType().equals(AddMethodType.LOOKUP_FOR_UPDATE)) {
                 List<String> fieldsToRemove = new ArrayList<String>();
                 
                 String idProp = getIdProperty(mainMetadata);
@@ -391,6 +401,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 }
                 
                 ppr.setValidateUnsubmittedProperties(false);
+            }
+
+            if (fmd.getAddMethodType().equals(AddMethodType.LOOKUP_FOR_UPDATE)) {
+                ppr.setUpdateLookupType(true);
             }
 
             Property fp = new Property();
@@ -648,7 +662,17 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
-            return service.add(pkg);
+            if (request.isUpdateLookupType()) {
+                if (pkg.getSectionCrumbs() != null && pkg.getSectionCrumbs().length > 0) {
+                    SectionCrumb sc = pkg.getSectionCrumbs()[0];
+                    if (StringUtils.isNotBlank(sc.getSectionIdentifier())) {
+                        pkg.setSecurityCeilingEntityFullyQualifiedClassname(sc.getSectionIdentifier());
+                    }
+                }
+                return service.update(pkg);
+            } else {
+                return service.add(pkg);
+            }
         } catch (ValidationException e) {
             return new PersistenceResponse().withEntity(e.getEntity());
         }
@@ -673,7 +697,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     protected PersistenceResponse remove(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
-        return service.remove(pkg);
+        try {
+            return service.remove(pkg);
+        } catch (ValidationException e) {
+            return new PersistenceResponse().withEntity(e.getEntity());
+        }
     }
 
     protected PersistenceResponse fetch(PersistencePackageRequest request)
@@ -705,6 +733,22 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         CriteriaTransferObject cto = new CriteriaTransferObject();
         cto.setMaxResults(50);
         return cto;
+    }
+    
+    @Override
+    public String getForeignEntityName(String owningClass, String id) {
+        if (owningClass == null || id == null) {
+            return null;
+        }
+        
+        Class<?> clazz = genericEntityDao.getImplClass(owningClass);
+        Object foreignEntity = genericEntityDao.readGenericEntity(clazz, id);
+
+        if (foreignEntity instanceof AdminMainEntity) {
+            return ((AdminMainEntity) foreignEntity).getMainEntityName();
+        }
+        
+        return null;
     }
 
 }

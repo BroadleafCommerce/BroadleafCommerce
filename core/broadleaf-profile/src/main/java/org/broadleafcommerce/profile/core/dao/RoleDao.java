@@ -32,4 +32,5 @@ public interface RoleDao {
     
     public void addRoleToCustomer(CustomerRole customerRole);
     
+    public void removeCustomerRolesByCustomerId(Long customerId);
 }

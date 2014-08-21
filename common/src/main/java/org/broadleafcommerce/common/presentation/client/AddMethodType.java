@@ -26,5 +26,6 @@ package org.broadleafcommerce.common.presentation.client;
  */
 public enum AddMethodType {
     PERSIST,
-    LOOKUP
+    LOOKUP,
+    LOOKUP_FOR_UPDATE
 }

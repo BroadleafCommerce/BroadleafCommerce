@@ -279,7 +279,7 @@ public class EntityForm {
             containingTab.removeListGrid(lgToRemove);
         }
         
-        if (containingTab.getListGrids().size() == 0 && containingTab.getFields().size() == 0) {
+        if (containingTab != null && containingTab.getListGrids().size() == 0 && containingTab.getFields().size() == 0) {
             removeTab(containingTab);
         }
         

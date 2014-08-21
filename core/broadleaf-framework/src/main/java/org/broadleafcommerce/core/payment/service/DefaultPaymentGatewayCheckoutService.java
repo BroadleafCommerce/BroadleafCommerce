@@ -23,6 +23,8 @@ package org.broadleafcommerce.core.payment.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -90,6 +92,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     
     @Resource(name = "blCountryService")
     protected CountryService countryService;
+
+    @Resource(name = "blISOService")
+    protected ISOService isoService;
     
     @Resource(name = "blPhoneService")
     protected PhoneService phoneService;
@@ -142,36 +147,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // If the gateway sends back Shipping Information, we will save that to the first shippable fulfillment group.
         populateShippingInfo(responseDTO, order);
 
-        // If this gateway does not support multiple payments then mark all of the existing payments
-        // as invalid before adding the new one
-        List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
-        Address tempBillingAddress = null;
-        if (!config.handlesMultiplePayments()) {
-            PaymentGatewayType gateway = config.getGatewayType();
-            for (OrderPayment payment : order.getPayments()) {
-                // There may be a temporary Order Payment on the Order (e.g. to save the billing address)
-                // This will be marked as invalid, as the billing address that will be saved on the order will be parsed off the
-                // Response DTO sent back from the Gateway as it may have Address Verification or Standardization.
-                // If you do not wish to use the Billing Address coming back from the Gateway, you can override the
-                // populateBillingInfo() method
-                if (PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType()) ||
-                        (payment.getGatewayType() != null && payment.getGatewayType().equals(gateway))) {
-
-                    paymentsToInvalidate.add(payment);
-
-                    if (PaymentType.CREDIT_CARD.equals(payment.getType()) &&
-                            PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType()) ) {
-                        tempBillingAddress = payment.getBillingAddress();
-                    }
-                }
-            }
-        }
-
-        for (OrderPayment payment : paymentsToInvalidate) {
-            order.getPayments().remove(payment);
-            markPaymentAsInvalid(payment.getId());
-        }
-
         // ALWAYS create a new order payment for the payment that comes in. Invalid payments should be cleaned up by
         // invoking {@link #markPaymentAsInvalid}.
         OrderPayment payment = orderPaymentService.create();
@@ -179,6 +154,40 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         payment.setPaymentGatewayType(responseDTO.getPaymentGatewayType());
         payment.setAmount(responseDTO.getAmount());
 
+        // If this gateway does not support multiple payments then mark all of the existing payments
+        // as invalid before adding the new one
+        List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
+        Address tempBillingAddress = null;
+        if (!config.handlesMultiplePayments()) {
+            PaymentGatewayType gateway = config.getGatewayType();
+            for (OrderPayment p : order.getPayments()) {
+                // A Payment on the order will be invalidated if:
+                // - It's a temporary order payment: There may be a temporary Order Payment on the Order (e.g. to save the billing address)
+                // - The payment being added is a Final Payment and there already exists a Final Payment
+                // - The payment being added has the same gateway type of an existing one.
+                if (PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ||
+                        (p.isFinalPayment() && payment.isFinalPayment()) ||
+                        (p.getGatewayType() != null && p.getGatewayType().equals(gateway))) {
+
+                    paymentsToInvalidate.add(p);
+
+                    if (PaymentType.CREDIT_CARD.equals(p.getType()) &&
+                            PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ) {
+                        tempBillingAddress = p.getBillingAddress();
+                    }
+                }
+            }
+        }
+
+        for (OrderPayment invalid : paymentsToInvalidate) {
+            order.getPayments().remove(invalid);
+            markPaymentAsInvalid(invalid.getId());
+        }
+
+        // The billing address that will be saved on the order will be parsed off the
+        // Response DTO sent back from the Gateway as it may have Address Verification or Standardization.
+        // If you do not wish to use the Billing Address coming back from the Gateway, you can override the
+        // populateBillingInfo() method or set the useBillingAddressFromGateway property.
         populateBillingInfo(responseDTO, payment, tempBillingAddress);
         
         // Create the transaction for the payment
@@ -235,7 +244,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             billingAddress.setAddressLine2(billToDTO.getAddressLine2());
             billingAddress.setCity(billToDTO.getAddressCityLocality());
 
-            //TODO: what happens if State and Country cannot be found?
             State state = null;
             if(billToDTO.getAddressStateRegion() != null) {
                 state = stateService.findStateByAbbreviation(billToDTO.getAddressStateRegion());
@@ -245,15 +253,26 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
                         + " as a state abbreviation in BLC_STATE");
             }
             billingAddress.setState(state);
+            billingAddress.setStateProvinceRegion(billToDTO.getAddressStateRegion());
 
             billingAddress.setPostalCode(billToDTO.getAddressPostalCode());
 
-            Country country = countryService.findCountryByAbbreviation(billToDTO.getAddressCountryCode());
+            Country country = null;
+            ISOCountry isoCountry = null;
+            if (billToDTO.getAddressCountryCode() != null) {
+                country = countryService.findCountryByAbbreviation(billToDTO.getAddressCountryCode());
+                isoCountry = isoService.findISOCountryByAlpha2Code(billToDTO.getAddressCountryCode());
+            }
             if (country == null) {
                 LOG.warn("The given country from the response: " + billToDTO.getAddressCountryCode() + " could not be found"
                         + " as a country abbreviation in BLC_COUNTRY");
+            } else if (isoCountry == null) {
+                LOG.error("The given country from the response: " + billToDTO.getAddressCountryCode() + " could not be found"
+                        + " as a country alpha-2 code in BLC_ISO_COUNTRY");
             }
+
             billingAddress.setCountry(country);
+            billingAddress.setIsoCountryAlpha2(isoCountry);
 
             if (billToDTO.getAddressPhone() != null) {
                 Phone billingPhone = phoneService.create();
@@ -287,15 +306,27 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
                         + " as a state abbreviation in BLC_STATE");
             }
             shippingAddress.setState(state);
+            shippingAddress.setStateProvinceRegion(shipToDTO.getAddressStateRegion());
 
             shippingAddress.setPostalCode(shipToDTO.getAddressPostalCode());
 
-            Country country = countryService.findCountryByAbbreviation(shipToDTO.getAddressCountryCode());
+            Country country = null;
+            ISOCountry isoCountry = null;
+            if (shipToDTO.getAddressCountryCode() != null) {
+                country = countryService.findCountryByAbbreviation(shipToDTO.getAddressCountryCode());
+                isoCountry = isoService.findISOCountryByAlpha2Code(shipToDTO.getAddressCountryCode());
+            }
+
             if (country == null) {
                 LOG.warn("The given country from the response: " + shipToDTO.getAddressCountryCode() + " could not be found"
                         + " as a country abbreviation in BLC_COUNTRY");
+            } else if (isoCountry == null) {
+                LOG.error("The given country from the response: " + shipToDTO.getAddressCountryCode() + " could not be found"
+                        + " as a country alpha-2 code in BLC_ISO_COUNTRY");
             }
+
             shippingAddress.setCountry(country);
+            shippingAddress.setIsoCountryAlpha2(isoCountry);
 
             if (shipToDTO.getAddressPhone() != null) {
                 Phone shippingPhone = phoneService.create();

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.offer.service;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
@@ -101,6 +103,8 @@ public class OfferServiceTest extends CommonSetupBaseTest {
         address.setPrimaryPhone("972-978-9067");
         address.setState(stateService.findStateByAbbreviation("KY"));
         address.setCountry(countryService.findCountryByAbbreviation("US"));
+        address.setIsoCountrySubdivision("US-KY");
+        address.setIsoCountryAlpha2(isoService.findISOCountryByAlpha2Code("US"));
 
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);

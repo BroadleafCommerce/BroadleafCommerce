@@ -141,6 +141,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public Category findCategoryByExternalId(String externalId) {
+        return categoryDao.readCategoryByExternalId(externalId);
+    }
+
+    @Override
     @Deprecated
     public Category findCategoryByName(String categoryName) {
         return categoryDao.readCategoryByName(categoryName);
@@ -227,6 +232,11 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Sku findSkuById(Long skuId) {
         return skuDao.readSkuById(skuId);
+    }
+
+    @Override
+    public Sku findSkuByExternalId(String externalId) {
+        return skuDao.readSkuByExternalId(externalId);
     }
 
     @Override

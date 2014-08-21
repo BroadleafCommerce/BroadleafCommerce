@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.springframework.stereotype.Repository;
@@ -47,6 +48,16 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    @Override
+    public AdminSection save(AdminSection adminSection) {
+        return em.merge(adminSection);
+    }
+
+    @Override
+    public void remove(AdminSection adminSection) {
+        em.remove(adminSection);
+    }
 
     @Override
     public List<AdminModule> readAllAdminModules() {
@@ -54,6 +65,14 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
         List<AdminModule> modules = query.getResultList();
         return modules;
+    }
+    
+    @Override
+    public AdminModule readAdminModuleByModuleKey(String moduleKey) {
+        TypedQuery<AdminModule> q = new TypedQueryBuilder<AdminModule>(AdminModule.class, "am")
+            .addRestriction("am.moduleKey", "=", moduleKey)
+            .toQuery(em);
+        return q.getSingleResult();
     }
 
     @Override

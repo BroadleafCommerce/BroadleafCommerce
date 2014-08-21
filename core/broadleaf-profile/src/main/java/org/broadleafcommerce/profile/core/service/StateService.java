@@ -23,6 +23,10 @@ import org.broadleafcommerce.profile.core.domain.State;
 
 import java.util.List;
 
+/**
+ * @deprecated - use {@link org.broadleafcommerce.profile.core.service.CountrySubdivisionService} instead.
+ */
+@Deprecated
 public interface StateService {
 
     public List<State> findStates();

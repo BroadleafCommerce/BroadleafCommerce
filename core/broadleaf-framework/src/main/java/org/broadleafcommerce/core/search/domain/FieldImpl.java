@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -55,7 +56,7 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class FieldImpl implements Field,Serializable {
+public class FieldImpl implements Field, Serializable, AdminMainEntity {
     
     /**
      * 
@@ -82,8 +83,12 @@ public class FieldImpl implements Field,Serializable {
     @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
     protected String entityType;
     
+    @Column(name = "FRIENDLY_NAME")
+    @AdminPresentation(friendlyName = "FieldImpl_friendlyName", group = "FieldImpl_descrpition", order = 1, prominent = true)
+    protected String friendlyName;
+
     @Column(name = "PROPERTY_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 1, prominent = true)
+    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 2, prominent = true)
     protected String propertyName;
     
     @Column(name = "ABBREVIATION")
@@ -155,6 +160,16 @@ public class FieldImpl implements Field,Serializable {
     @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
+    }
+
+    @Override
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    @Override
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
     }
 
     @Override
@@ -230,5 +245,10 @@ public class FieldImpl implements Field,Serializable {
         
         return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
                 
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getQualifiedFieldName();
     }
 }

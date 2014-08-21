@@ -51,6 +51,7 @@ import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -119,7 +120,7 @@ import javax.persistence.Transient;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRECLONE_INFORMATION),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CategoryImpl implements Category, Status, AdminMainEntity, Locatable {
+public class CategoryImpl implements Category, Status, AdminMainEntity, Locatable, TemplatePathContainer {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
@@ -190,6 +191,17 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
+
+    @Column(name = "OVERRIDE_GENERATED_URL")
+    @AdminPresentation(group = Presentation.Group.Name.General, order = 2010)
+    protected Boolean overrideGeneratedUrl = false;
+
+    @Column(name = "EXTERNAL_ID")
+    @Index(name="CATEGORY_E_ID_INDEX", columnNames={"EXTERNAL_ID"})
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_ExternalID",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+    protected String externalId;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
@@ -272,6 +284,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             targetObjectProperty = "category",
             parentObjectProperty = "subCategory",
             friendlyName = "allParentCategoriesTitle",
+            sortProperty = "displayOrder",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             gridVisibleFields = { "name" })
     @ClonePolicyAdornedTargetCollection(unowned = true)
@@ -491,6 +504,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Override
+    public Boolean getOverrideGeneratedUrl() {
+        return overrideGeneratedUrl == null ? false : overrideGeneratedUrl;
+    }
+
+    @Override
+    public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl) {
+        this.overrideGeneratedUrl = overrideGeneratedUrl == null ? false : overrideGeneratedUrl;
     }
 
     @Override
@@ -1324,6 +1347,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     public String getLocation() {
         return getUrl();
+    }
+
+    @Override
+    public String getExternalId() {
+        return externalId;
+    }
+
+    @Override
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
     }
 
 }

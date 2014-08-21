@@ -22,6 +22,7 @@ package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -66,6 +67,8 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,10 +89,18 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     private static final Log LOG = LogFactory.getLog(SkuCustomPersistenceHandler.class);
 
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
-    
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
     
+    @Value("${cache.entity.dao.metadata.ttl}")
+    protected int cacheEntityMetaDataTtl;
+
+    protected long lastCacheFlushTime = System.currentTimeMillis();
+
+    protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = Collections.synchronizedMap(new
+            LRUMap<String, Map<String, FieldMetadata>>(100, 1000));
+
     @Resource(name="blAdornedTargetListPersistenceModule")
     protected PersistenceModule adornedPersistenceModule;
 
@@ -128,6 +139,23 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         return canHandle(persistencePackage, updateType);
     }
 
+    protected boolean useCache() {
+        if (cacheEntityMetaDataTtl < 0) {
+            return true;
+        }
+        if (cacheEntityMetaDataTtl == 0) {
+            return false;
+        } else {
+            if ((System.currentTimeMillis() - lastCacheFlushTime) > cacheEntityMetaDataTtl) {
+                lastCacheFlushTime = System.currentTimeMillis();
+                METADATA_CACHE.clear();
+                return true;
+            } else {
+                return true;
+            }
+        }
+    }
+
     /**
      * Since this is the default for all Skus, it's possible that we are providing custom criteria for this
      * Sku lookup. In that case, we probably want to delegate to a child class, so only use this particular
@@ -159,39 +187,54 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
 
-            //Grab the default properties for the Sku
-            Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
-            
-            if (persistencePackage.getCustomCriteria() == null || persistencePackage.getCustomCriteria().length == 0) {
-                //look up all the ProductOptions and then create new fields for each of them
-                List<ProductOption> options = catalogService.readAllProductOptions();
-                int order = 0;
-                for (ProductOption option : options) {
-                    //add this to the built Sku properties
-                    FieldMetadata md = createIndividualOptionField(option, order);
-                    if (md != null) {
-                        properties.put("productOption" + option.getId(), md);
-                    }
-                }
-            } else {
-                // If we have a product to filter the list of available product options, then use it
-                try {
-                    Long productId = Long.parseLong(persistencePackage.getCustomCriteria()[0]);
-                    Product product = catalogService.findProductById(productId);
-                    for (ProductOption option : product.getProductOptions()) {
-                        FieldMetadata md = createIndividualOptionField(option, 0);
+            Map<String, FieldMetadata> properties = null;
+            boolean isCache = useCache();
+            String key = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+            if (persistencePackage.getCustomCriteria() != null && persistencePackage.getCustomCriteria().length > 0) {
+                key += persistencePackage.getCustomCriteria()[0];
+            }
+            if (isCache) {
+                properties = METADATA_CACHE.get(key);
+            }
+            if (properties == null) {
+                //Grab the default properties for the Sku
+                properties = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
+
+
+                if (persistencePackage.getCustomCriteria() == null || persistencePackage.getCustomCriteria().length == 0) {
+                    //look up all the ProductOptions and then create new fields for each of them
+                    List<ProductOption> options = catalogService.readAllProductOptions();
+                    int order = 0;
+                    for (ProductOption option : options) {
+                        //add this to the built Sku properties
+                        FieldMetadata md = createIndividualOptionField(option, order);
                         if (md != null) {
                             properties.put("productOption" + option.getId(), md);
                         }
                     }
-                } catch (NumberFormatException e) {
-                    // the criteria wasn't a product id, just don't do anything
+                } else {
+                    // If we have a product to filter the list of available product options, then use it
+                    try {
+                        Long productId = Long.parseLong(persistencePackage.getCustomCriteria()[0]);
+                        Product product = catalogService.findProductById(productId);
+                        for (ProductOption option : product.getProductOptions()) {
+                            FieldMetadata md = createIndividualOptionField(option, 0);
+                            if (md != null) {
+                                properties.put("productOption" + option.getId(), md);
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        // the criteria wasn't a product id, just don't do anything
+                    }
                 }
-            }
 
-            //also build the consolidated field; if using the SkuBasicClientEntityModule then this field will be
-            //permanently hidden
-            properties.put(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME, createConsolidatedOptionField(SkuImpl.class));
+                //also build the consolidated field; if using the SkuBasicClientEntityModule then this field will be
+                //permanently hidden
+                properties.put(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME, createConsolidatedOptionField(SkuImpl.class));
+            }
+            if (isCache) {
+                METADATA_CACHE.put(key, properties);
+            }
 
             allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
             
@@ -255,7 +298,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @return
      * @see {@link #createConsolidatedOptionField(Class)};
      */
-    public static Property getConsolidatedOptionProperty(List<ProductOptionValue> values) {
+    public static Property getConsolidatedOptionProperty(Collection<ProductOptionValue> values) {
         Property optionValueProperty = new Property();
         optionValueProperty.setName(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME);
 
@@ -410,7 +453,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         
         if (productOptionValueFilterIDs.size() > 0) {
             FilterMapping filterMapping = new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + "productOptionValues.id"))
+                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + ".productOptionValues.id"))
                 .withDirectFilterValues(productOptionValueFilterIDs)
                 .withRestriction(new Restriction()
                     .withPredicateProvider(new PredicateProvider() {
@@ -426,7 +469,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
         if (productOptionValueFilterValues.size() > 0) {
             FilterMapping filterMapping = new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + "productOptionValues.attributeValue"))
+                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + ".productOptionValues.attributeValue"))
                 .withDirectFilterValues(productOptionValueFilterValues)
                 .withRestriction(new Restriction()
                     .withPredicateProvider(new PredicateProvider() {

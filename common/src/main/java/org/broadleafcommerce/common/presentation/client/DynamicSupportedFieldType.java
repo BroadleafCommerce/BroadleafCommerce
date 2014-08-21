@@ -45,6 +45,9 @@ public class DynamicSupportedFieldType implements Serializable, BroadleafEnumera
     public static final DynamicSupportedFieldType HTML = new DynamicSupportedFieldType("HTML", "Rich Text");
     public static final DynamicSupportedFieldType MONEY = new DynamicSupportedFieldType("MONEY", "Money");
     public static final DynamicSupportedFieldType COLOR = new DynamicSupportedFieldType("COLOR", "Color");
+    public static final DynamicSupportedFieldType ASSET_LOOKUP = new DynamicSupportedFieldType("ASSET_LOOKUP", "Image");
+    public static final DynamicSupportedFieldType PRODUCT_LOOKUP = new DynamicSupportedFieldType("ADDITIONAL_FOREIGN_KEY|org.broadleafcommerce.core.catalog.domain.Product", "Product Lookup");
+    public static final DynamicSupportedFieldType CATEGORY_LOOKUP = new DynamicSupportedFieldType("ADDITIONAL_FOREIGN_KEY|org.broadleafcommerce.core.catalog.domain.Category", "Category Lookup");
 
     public static DynamicSupportedFieldType getInstance(final String type) {
         return TYPES.get(type);
@@ -68,6 +71,9 @@ public class DynamicSupportedFieldType implements Serializable, BroadleafEnumera
      * @throws IllegalArgumentException when the given type does not exist in {@link SupportedFieldType}
      */
     public static void verifyLegalType(String type) {
+        if (type.contains("|")) {
+            type = type.substring(0, type.indexOf('|'));
+        }
         SupportedFieldType.valueOf(type);
     }
     

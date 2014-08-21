@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.core.payment.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
@@ -53,8 +54,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     public PaymentRequestDTO translateOrder(Order order) {
         if (order != null) {
             PaymentRequestDTO requestDTO = new PaymentRequestDTO()
-                    .orderId(order.getId().toString())
-                    .orderCurrencyCode(order.getCurrency().getCurrencyCode());
+                    .orderId(order.getId().toString());
+            if (order.getCurrency() != null) {
+                requestDTO.orderCurrencyCode(order.getCurrency().getCurrencyCode());
+            }
 
             populateCustomerInfo(order, requestDTO);
             populateShipTo(order, requestDTO);
@@ -150,11 +153,17 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                 String countryAbbr = null;
                 String phone = null;
 
-                if (fgAddress.getState() != null) {
+                if (StringUtils.isNotBlank(fgAddress.getStateProvinceRegion())) {
+                    stateAbbr = fgAddress.getStateProvinceRegion();
+                } else if (fgAddress.getState() != null) {
+                    //support legacy
                     stateAbbr = fgAddress.getState().getAbbreviation();
                 }
 
-                if (fgAddress.getCountry() != null) {
+                if (fgAddress.getIsoCountryAlpha2() != null) {
+                    countryAbbr = fgAddress.getIsoCountryAlpha2().getAlpha2();
+                } else if (fgAddress.getCountry() != null) {
+                    //support legacy
                     countryAbbr = fgAddress.getCountry().getAbbreviation();
                 }
 
@@ -187,11 +196,17 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                     String countryAbbr = null;
                     String phone = null;
 
-                    if (billAddress.getState() != null) {
+                    if (StringUtils.isNotBlank(billAddress.getStateProvinceRegion())) {
+                        stateAbbr = billAddress.getStateProvinceRegion();
+                    } else if (billAddress.getState() != null) {
+                        //support legacy
                         stateAbbr = billAddress.getState().getAbbreviation();
                     }
 
-                    if (billAddress.getCountry() != null) {
+                    if (billAddress.getIsoCountryAlpha2() != null) {
+                        countryAbbr = billAddress.getIsoCountryAlpha2().getAlpha2();
+                    } else if (billAddress.getCountry() != null) {
+                        //support legacy
                         countryAbbr = billAddress.getCountry().getAbbreviation();
                     }
 

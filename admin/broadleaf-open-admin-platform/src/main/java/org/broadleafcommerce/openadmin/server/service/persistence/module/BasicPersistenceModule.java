@@ -55,6 +55,7 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.AdvancedCollectionFieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -181,8 +182,16 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         }
         Map<String, FieldMetadata> newMap = new HashMap<String, FieldMetadata>();
         for (Map.Entry<String, FieldMetadata> entry : metadata.entrySet()) {
+            String fieldName = entry.getKey();
+            FieldMetadata md = entry.getValue();
+            // Detect instances where the actual metadata for the field is some sort of CollectionMetadata but also corresponds
+            // to a ForeignKey and ensure that gets included in the filtered map. That way the {@link BasicPersistenceModule}
+            // can appropriate handle filtration and population
             if (entry.getValue() instanceof BasicFieldMetadata) {
-                newMap.put(entry.getKey(), entry.getValue());
+                newMap.put(fieldName, md);
+            } else if (md.getAdditionalMetadata().containsKey(AdvancedCollectionFieldMetadataProvider.FOREIGN_KEY_ADDITIONAL_METADATA_KEY)) {
+                newMap.put(fieldName,
+                        (BasicFieldMetadata) md.getAdditionalMetadata().get(AdvancedCollectionFieldMetadataProvider.FOREIGN_KEY_ADDITIONAL_METADATA_KEY));
             }
         }
 
@@ -766,14 +775,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                                  String ceilingEntityFullyQualifiedClassname,
                                                  Map<String, FieldMetadata> mergedUnfilteredProperties,
                                                  RestrictionFactory customRestrictionFactory) {
+        Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         List<FilterMapping> filterMappings = new ArrayList<FilterMapping>();
         for (String propertyId : cto.getCriteriaMap().keySet()) {
-            if (mergedUnfilteredProperties.containsKey(propertyId)) {
+            if (mergedProperties.containsKey(propertyId)) {
                 boolean handled = false;
                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                     FieldProviderResponse response = fieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties,
+                                    ceilingEntityFullyQualifiedClassname, mergedProperties,
                                     propertyId, getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
                                     :customRestrictionFactory), filterMappings);
                     if (FieldProviderResponse.NOT_HANDLED != response) {
@@ -786,7 +796,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (!handled) {
                     defaultFieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
-                                    ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties, propertyId,
+                                    ceilingEntityFullyQualifiedClassname, mergedProperties, propertyId,
                                     getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
                                                                         :customRestrictionFactory), filterMappings);
                 }

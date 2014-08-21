@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -74,16 +75,24 @@ public class BroadleafProductController extends BroadleafAbstractController impl
 
         addDeepLink(model, deepLinkService, product);
         
-        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
-        templateOverrideManager.getProxy().getOverrideTemplate(erh, product);
-        
-        if (StringUtils.isNotBlank(erh.getResult())) {
-            model.setViewName(erh.getResult());
-        } else if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
-            model.setViewName(product.getDisplayTemplate());    
+        String templatePath = null;
+
+        // Use the products custom template if available
+        if (StringUtils.isNotBlank(product.getDisplayTemplate())) {
+            templatePath = product.getDisplayTemplate();
         } else {
-            model.setViewName(getDefaultProductView());
+            // Otherwise, use the controller default.
+            templatePath = getDefaultProductView();
         }
+
+        // Allow extension managers to override.
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        ExtensionResultStatusType extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, product);
+        if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
+            templatePath = erh.getResult();
+        }
+        
+        model.setViewName(templatePath);
         return model;
     }
 

@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
@@ -47,6 +48,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -79,7 +81,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
     /**
      * Global value, intentionally only retrieved as a file property NOT via the system properties service
      */
-    @Value("${googleAnalytics.masterWebPropertyId:}")
+    @Value("${googleAnalytics.masterWebPropertyId}")
     protected String masterWebPropertyId;
     
     @Resource(name = "blOrderService")
@@ -131,23 +133,46 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
             
             for (Entry<String, String> tracker : trackers.entrySet()) {
                 String trackerName = tracker.getKey();
+                String trackerPrefix = "";
                 String id = tracker.getValue();
-                sb.append("ga('create', '" + id + "', 'auto', {'name': '" + trackerName + "'");
+                sb.append("ga('create', '" + id + "', 'auto', {");
+
+                if (!"webProperty".equals(trackerName)) {
+                    trackerPrefix = trackerName + ".";
+                    sb.append("'name': '" + trackerName + "'");
+                    if (testLocal) {
+                        sb.append(",");
+                    }
+                }
                 if (testLocal) {
-                    sb.append(",'cookieDomain': 'none'");
+                    sb.append("'cookieDomain': 'none'");
                 }
                 sb.append("});");
-                sb.append("ga('" + trackerName + ".send', 'pageview');");
+
+                if ("webProperty".equals(trackerName)) {
+                    HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+                    if (request != null) {
+                        Map<String, String> setValuesMap = (Map<String, String>) request.getAttribute("blGAValuesMap");
+                        if (setValuesMap != null) {
+                            for (Map.Entry<String, String> entry : setValuesMap.entrySet()) {
+                                sb.append("ga('" + trackerPrefix + "set',").append(entry.getKey()).append(",")
+                                        .append(entry.getValue()).append(");");
+                            }
+                        }
+                    }
+                }
+
+                sb.append("ga('" + trackerPrefix + "send', 'pageview');");
                 
                 if (isIncludeLinkAttribution()) {
-                    sb.append(getLinkAttributionJs(trackerName));
+                    sb.append(getLinkAttributionJs(trackerPrefix));
                 }
                 if (isIncludeDisplayAdvertising()) {
-                    sb.append(getDisplayAdvertisingJs(trackerName));
+                    sb.append(getDisplayAdvertisingJs(trackerPrefix));
                 }
                 
                 if (order != null) {
-                    sb.append(getTransactionJs(order, trackerName));
+                    sb.append(getTransactionJs(order, trackerPrefix));
                 }
             }
             
@@ -172,7 +197,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
      */
     protected Map<String, String> getTrackers() {
         Map<String, String> trackers = new HashMap<String, String>();
-        if (StringUtils.isNotBlank(getMasterWebPropertyId())) {
+        if (shouldShowMasterTracker()) {
             trackers.put("master", getMasterWebPropertyId());
         }
         if (StringUtils.isNotBlank(getWebPropertyId())) {
@@ -182,13 +207,18 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
         return trackers;
     }
     
+    protected boolean shouldShowMasterTracker() {
+        String masterWebPropertyId = getMasterWebPropertyId();
+        return (StringUtils.isNotBlank(masterWebPropertyId) && (!"UA-XXXXXXX-X".equals(masterWebPropertyId)));
+    }
+
     /**
      * Builds the linke attribution Javascript
      * @param tracker the name of the tracker that is using the link attribution
      * @return
      */
-    protected String getLinkAttributionJs(String tracker) {
-        return "ga('" + tracker + ".require', 'linkid', 'linkid.js');";
+    protected String getLinkAttributionJs(String trackerPrefix) {
+        return "ga('" + trackerPrefix + "require', 'linkid', 'linkid.js');";
     }
     
     /**
@@ -196,19 +226,19 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
      * @param tracker
      * @return
      */
-    protected String getDisplayAdvertisingJs(String tracker) {
-        return "ga('" + tracker + ".require', 'displayfeatures');";
+    protected String getDisplayAdvertisingJs(String trackerPrefix) {
+        return "ga('" + trackerPrefix + "require', 'displayfeatures');";
     }
     
     /**
      * Builds the transaction analytics for the given tracker name. Invokes {@link #getItemJs(Order, String) for each item
      * in the given <b>order</b>.
      */
-    protected String getTransactionJs(Order order, String tracker) {
+    protected String getTransactionJs(Order order, String trackerPrefix) {
         StringBuffer sb = new StringBuffer();
-        sb.append("ga('" + tracker + ".require', 'ecommerce', 'ecommerce.js');");
+        sb.append("ga('" + trackerPrefix + "require', 'ecommerce', 'ecommerce.js');");
         
-        sb.append("ga('" + tracker + ".ecommerce:addTransaction', {");
+        sb.append("ga('" + trackerPrefix + "ecommerce:addTransaction', {");
         sb.append("'id': '" + order.getOrderNumber() + "'");
         if (StringUtils.isNotBlank(getAffiliation())) {
             sb.append(",'affiliation': '" + getAffiliation() + "'");
@@ -221,14 +251,14 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
             sb.append(",'currency': '" + order.getCurrency().getCurrencyCode() + "'");
         }
         sb.append("});");
+
+        sb.append(getItemJs(order, trackerPrefix));
         
-        getItemJs(order, tracker);
-        
-        sb.append("ga('" + tracker + ".ecommerce:send');");
+        sb.append("ga('" + trackerPrefix + "ecommerce:send');");
         return sb.toString();
     }
     
-    protected String getItemJs(Order order, String tracker) {
+    protected String getItemJs(Order order, String trackerPrefix) {
         StringBuffer sb = new StringBuffer();
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
@@ -236,7 +266,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
     
                 Sku sku = ((SkuAccessor) orderItem).getSku();
                 
-                sb.append("ga('" + tracker + ".ecommerce:addItem', {");
+                sb.append("ga('" + trackerPrefix + "ecommerce:addItem', {");
                 sb.append("'id': '" + order.getOrderNumber() + "'");
                 sb.append(",'name': '" + sku.getName() + "'");
                 sb.append(",'sku': '" + sku.getId() + "'");

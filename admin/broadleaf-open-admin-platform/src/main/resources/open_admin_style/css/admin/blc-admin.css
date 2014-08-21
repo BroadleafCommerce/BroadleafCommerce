@@ -321,6 +321,8 @@ h2#mainEntityName {
 	margin-top: 0;
 }
 
+input[type="text"][readonly], input[type="password"][readonly], input[type="date"][readonly], input[type="datetime"][readonly], input[type="email"][readonly], input[type="number"][readonly], input[type="search"][readonly], input[type="tel"][readonly], input[type="time"][readonly], input[type="url"][readonly], textarea[readonly] { background-color: #ddd; }
+
 /* --------------------------------------------------
   Top Bar
 ----------------------------------------------------- */
@@ -1552,13 +1554,17 @@ form.custom div.conditional div.custom.dropdown {
 	padding-bottom: 0;
 }
 
-body .redactor_toolbar li a.redactor_btn_selectAssetButton { 
+body .redactor_toolbar li a.re-selectasset { 
 	background-position: -200px; 
 }
 
 body .redactor_toolbar li a.redactor_btn_font { 
 	background-image: url('../../img/admin/font-selection.png');
 	background-position: 0 -5px;
+}
+
+body .redactor_redactor {
+    max-width: 934px;
 }
 
 .category-tree {

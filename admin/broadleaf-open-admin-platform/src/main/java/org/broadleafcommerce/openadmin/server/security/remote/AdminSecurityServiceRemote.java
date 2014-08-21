@@ -127,7 +127,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     @Override
     public void securityCheck(PersistencePackage persistencePackage, EntityOperationType operationType) throws ServiceException {
         Set<String> ceilingNames = new HashSet<String>();
-        ceilingNames.add(persistencePackage.getCeilingEntityFullyQualifiedClassname());
+        ceilingNames.add(persistencePackage.getSecurityCeilingEntityFullyQualifiedClassname());
         if (!ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs())) {
             ceilingNames.addAll(CollectionUtils.transform(Arrays.asList(persistencePackage.getSectionCrumbs()),
                     new Transformer() {

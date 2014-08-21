@@ -20,8 +20,10 @@
 package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
@@ -32,13 +34,21 @@ import javax.annotation.Resource;
 public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
 
     @Resource(name="blOfferService")
-    private OfferService offerService;
+    protected OfferService offerService;
+
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
 
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
+        List<OfferCode> offerCodes = offerService.buildOfferCodeListForCustomer(order.getCustomer());
+        if (offerCodes != null && !offerCodes.isEmpty()) {
+            order = orderService.addOfferCodes(order, offerCodes, false);
+        }
+
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        order = offerService.applyAndSaveOffersToOrder(offers, order);
         context.setSeedData(order);
 
         return context;

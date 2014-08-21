@@ -200,6 +200,15 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             if (map.containsKey(mapKey)) {
                 entity.addValidationError(mapStructure.getKeyPropertyName(), "keyExistsValidationError");
             }
+
+            if (StringUtils.isNotBlank(mapStructure.getMapKeyValueProperty())) {
+                Property p = entity.findProperty("key");
+                Property newP = new Property();
+                newP.setName(mapStructure.getMapKeyValueProperty());
+                newP.setValue(p.getValue());
+                newP.setIsDirty(p.getIsDirty());
+                entity.addProperty(newP);
+            }
             
             PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
             Map<String, FieldMetadata> valueUnfilteredMergedProperties;

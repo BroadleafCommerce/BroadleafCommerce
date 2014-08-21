@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.web.controller;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
@@ -42,6 +43,11 @@ public class AbstractAdminAbstractControllerExtensionHandler extends AbstractExt
 
     @Override
     public ExtensionResultStatusType addAdditionalMainActions(String sectionClassName, List<EntityFormAction> actions) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType modifyMainActions(ClassMetadata cmd, List<EntityFormAction> mainActions) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

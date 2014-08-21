@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -169,8 +171,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
         if (isAddActionAllowed(sectionClassName, cmd)) {
             mainActions.add(DefaultMainActions.ADD);
         }
-        
+
         mainEntityActionsExtensionManager.getProxy().modifyMainActions(cmd, mainActions);
+        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
     }
     
     protected boolean isAddActionAllowed(String sectionClassName, ClassMetadata cmd) {
@@ -261,6 +264,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             // fields that are not applicable for this given entity type.
             formService.removeNonApplicableFields(cmd, entityForm, entityType);
 
+            modifyAddEntityForm(entityForm, pathVars);
+
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/entityAdd");
         }
@@ -303,6 +308,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             formService.removeNonApplicableFields(cmd, entityForm, entityForm.getEntityType());
 
+            modifyAddEntityForm(entityForm, pathVars);
+
             model.addAttribute("viewType", "modal/entityAdd");
             model.addAttribute("currentUrl", request.getRequestURL().toString());
             model.addAttribute("modalHeaderType", "addEntity");
@@ -341,6 +348,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, crumbs);
 
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
+        
+        modifyEntityForm(entityForm, pathVars);
         
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
@@ -405,6 +414,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, subRecordsMap, entityForm, sectionCrumbs);
+            
+            modifyEntityForm(entityForm, pathVars);
             
             model.addAttribute("entity", entity);
             model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -779,6 +790,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
     protected String buildAddCollectionItemModel(HttpServletRequest request, HttpServletResponse response,
             Model model, String id, String collectionField, String sectionKey, Property collectionProperty,
             FieldMetadata md, PersistencePackageRequest ppr, EntityForm entityForm, Entity entity) throws ServiceException {
+        
+        // For requests to add a new collection item include the main class that the subsequent request comes from.
+        // For instance, with basic collections we know the main associated class for a fetch through the ForeignKey
+        // persistence item but map and adorned target lookups make a standard persistence request. This solution
+        // fixes all cases.
+        String mainClassName = getClassNameForSection(sectionKey);
+        ppr.addCustomCriteria("owningClass=" + mainClassName);
         
         if (entityForm != null) {
             entityForm.clearFieldsMap();
@@ -1263,6 +1281,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         // First, we must remove the collection entity
         PersistenceResponse persistenceResponse = service.removeSubCollectionEntity(mainMetadata, collectionProperty, entity, collectionItemId, priorKey, sectionCrumbs);
+        if (persistenceResponse.getEntity() != null && persistenceResponse.getEntity().isValidationFailure()) {
+            // If we failed, we'll return some JSON with the first error
+            String error = persistenceResponse.getEntity().getPropertyValidationErrors().values().iterator().next().get(0);
+            return new JsonResponse(response)
+                .with("status", "error")
+                .with("message", BLCMessageUtils.getMessage(error))
+                .done();
+        }
 
         // Next, we must get the new list grid that represents this collection
         ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);

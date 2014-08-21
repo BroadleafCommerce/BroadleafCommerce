@@ -23,11 +23,13 @@ RedactorPlugins.fontcolor = {
 			this.pickerBuild($dropdown, name, colors);
 			$(this.$toolbar).append($dropdown);
 
-			this.buttonAdd(name, this.opts.curLang[name], $.proxy(function(btnName, $button, btnObject, e)
+			var btn = this.buttonAdd(name, this.opts.curLang[name], $.proxy(function(btnName, $button, btnObject, e)
 			{
 				this.dropdownShow(e, btnName);
 
 			}, this));
+
+			btn.data('dropdown', $dropdown);
 		}
 	},
 	pickerBuild: function($dropdown, name, colors)

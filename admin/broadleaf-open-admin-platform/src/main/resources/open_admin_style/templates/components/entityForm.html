@@ -29,10 +29,10 @@
         <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
             <b>[[#{__${tab.key}__}]]</b>
             <span th:if="${#lists.size(field.value) &gt; 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">
-                [[#{__${field.key}__}]]: <span th:each="message : ${field.value}">[[#{__${message}__}]]</span>
+                <span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:each="message : ${field.value}">[[#{__${message}__}]]</span>
             </span>
             <span th:if="${#lists.size(field.value) == 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">
-                [[#{__${field.key}__}]]: [[#{__${field.value.get(0)}__}]]
+                <span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:remove="tag" th:text="#{${field.value.get(0)}}"></span>
             </span>
             <br />
         </div>
@@ -57,6 +57,11 @@
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="#{${group.title}}" />
 
+                <comment th:remove="all">
+                <!-- *** IMPORTANT *** -->
+                <!-- When changing this block of code, make sure standaloneField.html is also updated -->
+                <!-- *** IMPORTANT *** -->
+                </comment>
                 <div th:each="field : ${group.fields}" 
                      th:if="${field.name}" 
                      th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 

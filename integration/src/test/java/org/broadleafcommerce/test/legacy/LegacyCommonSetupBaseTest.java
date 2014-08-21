@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.test.legacy;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
+import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
@@ -55,7 +58,10 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 
 public abstract class LegacyCommonSetupBaseTest extends BaseTest {
-    
+
+    @Resource
+    protected ISOService isoService;
+
     @Resource
     protected CountryService countryService;
     
@@ -86,6 +92,11 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
         country.setAbbreviation("US");
         country.setName("United States");
         countryService.save(country);
+
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("US");
+        isoCountry.setName("UNITED STATES");
+        isoService.save(isoCountry);
     }
     
     public void createState() {
@@ -156,6 +167,11 @@ public abstract class LegacyCommonSetupBaseTest extends BaseTest {
         customerAddress.getAddress().setState(state);
         Country country = countryService.findCountryByAbbreviation("US");
         customerAddress.getAddress().setCountry(country);
+
+        customerAddress.getAddress().setIsoCountrySubdivision("US-KY");
+        ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code("US");
+        customerAddress.getAddress().setIsoCountryAlpha2(isoCountry);
+
         return customerAddressService.saveCustomerAddress(customerAddress);
     }
     

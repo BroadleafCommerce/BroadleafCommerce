@@ -43,6 +43,8 @@
                 <ref bean="blProductCustomPersistenceHandler" />
                 <ref bean="blChildCategoriesCustomPersistenceHandler" />
                 <ref bean="blSkuCustomPersistenceHandler" />
+                <ref bean="blISOCountryPersistenceHandler"/>
+                <ref bean="blSkuBundleItemCustomPersistenceHandler" />
             </list>
         </property>
     </bean>

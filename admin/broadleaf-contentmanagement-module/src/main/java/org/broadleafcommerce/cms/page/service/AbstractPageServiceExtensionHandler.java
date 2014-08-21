@@ -24,6 +24,7 @@ import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.page.dto.PageDTO;
 
 
 /**
@@ -35,6 +36,11 @@ public abstract class AbstractPageServiceExtensionHandler extends AbstractExtens
     @Override
     public ExtensionResultStatusType getFieldDefinition(ExtensionResultHolder<FieldDefinition> erh, Page page, 
             String fieldKey) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType overridePageDto(ExtensionResultHolder<PageDTO> erh, PageDTO pageDto, Page page) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

@@ -29,6 +29,7 @@ public class CustomerAddressForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    protected String blDynamicForm;
     protected Address address = new AddressImpl();
     protected String addressName;
     protected Long customerAddressId;
@@ -36,25 +37,40 @@ public class CustomerAddressForm implements Serializable {
     public CustomerAddressForm() {
         address.setPhonePrimary(new PhoneImpl());
     }
+
+    public String getBlDynamicForm() {
+        return blDynamicForm;
+    }
+
+    public void setBlDynamicForm(String blDynamicForm) {
+        this.blDynamicForm = blDynamicForm;
+    }
+
     public Address getAddress() {
         return address;
     }
+
     public void setAddress(Address address) {
         if (address.getPhonePrimary() == null) {
             address.setPhonePrimary(new PhoneImpl());
         }
         this.address = address;
     }
+
     public String getAddressName() {
         return addressName;
     }
+
     public void setAddressName(String addressName) {
         this.addressName = addressName;
     }
+
     public Long getCustomerAddressId() {
         return customerAddressId;
     }
+
     public void setCustomerAddressId(Long customerAddressId) {
         this.customerAddressId = customerAddressId;
     }
+
 }

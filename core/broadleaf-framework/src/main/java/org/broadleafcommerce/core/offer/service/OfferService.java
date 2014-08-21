@@ -86,10 +86,24 @@ public interface OfferService {
     public OfferCode lookupOfferCodeByCode(String code);
 
     /**
-     * Apply offers to order.
+     * Apply offers to order. By default this does not re-price the order.
      * @param offers the offers
      * @param order the order
+     * @return
      */
+    public Order applyAndSaveOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+
+    /**
+     * Apply offers to order. By default this does not re-price the order. This method is deprecated and 
+     * should not be used.  The saved order should be returned from this method, which is the case in 
+     * applyAndSaveOffersToOrder.
+     * @param offers
+     * @param order
+     * 
+     * @throws PricingException
+     * @{@link Deprecated} see applyAndSaveOffersToOrder
+     */
+    @Deprecated
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     /**
@@ -98,6 +112,18 @@ public interface OfferService {
      * @return
      */
     public List<Offer> buildOfferListForOrder(Order order);
+
+    /**
+     * Attempts to resolve a list of offer codes associated explicitly with the customer. 
+     * For example, an implementation may choose to associate a specific offer code with a customer 
+     * in a custom table or in customer attributes.  This allows you to associate one or more offer codes 
+     * with a customer without necessarily having them type it in (e.g. on a URL), or by allowing them to 
+     * type it in, but before it has been actually applied to an order.
+     * 
+     * @param customer
+     * @return
+     */
+    public List<OfferCode> buildOfferCodeListForCustomer(Customer customer);
 
     public CustomerOfferDao getCustomerOfferDao();
 
@@ -123,6 +149,9 @@ public interface OfferService {
 
     public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor);
     
+    public Order applyAndSaveFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+
+    @Deprecated
     public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
     public PromotableItemFactory getPromotableItemFactory();

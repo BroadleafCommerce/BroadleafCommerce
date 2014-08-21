@@ -21,6 +21,8 @@ package org.broadleafcommerce.profile.web.core.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafRequestCustomerResolverImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -59,18 +61,24 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
     
+    @Resource(name = "blCustomerMergeExtensionManager")
+    protected CustomerMergeExtensionManager customerMergeExtensionManager;
+
     protected ApplicationEventPublisher eventPublisher;
 
     public static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME = "_blc_anonymousCustomer";
     public static final String ANONYMOUS_CUSTOMER_ID_SESSION_ATTRIBUTE_NAME = "_blc_anonymousCustomerId";
     private static final String LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME = "_blc_lastPublishedEvent";
     public static final String OVERRIDE_CUSTOMER_SESSION_ATTR_NAME = "_blc_overrideCustomerId";
+    public static final String ANONYMOUS_CUSTOMER_MERGED_SESSION_ATTRIBUTE_NAME = "_blc_anonymousCustomerMerged";
 
     @Override
     public void process(WebRequest request) {
         Customer customer = null;
-
-        Long overrideId = (Long) request.getAttribute(OVERRIDE_CUSTOMER_SESSION_ATTR_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
+        Long overrideId = null;
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            overrideId = (Long) request.getAttribute(OVERRIDE_CUSTOMER_SESSION_ATTR_NAME, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
         if (overrideId != null) {
             customer = customerService.readCustomerById(overrideId);
         } else {
@@ -130,10 +138,14 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
             // Cookie logic probably needs to be configurable - with TCS as the exception.
 
             customer = resolveAnonymousCustomer(request);
+        } else {
+            //Does this customer need to have an anonymous customer's data merged into it?
+            customer = mergeCustomerIfRequired(request, customer);
         }
         CustomerState.setCustomer(customer);
 
         // Setup customer for content rule processing
+        @SuppressWarnings("unchecked")
         Map<String,Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM, WebRequest.SCOPE_REQUEST);
         if (ruleMap == null) {
             ruleMap = new HashMap<String,Object>();
@@ -143,6 +155,61 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
         
     }
     
+    /**
+     * Allows the merging of anonymous customer data and / or session data, to the logged in customer, if required. 
+     * This is written to only require it to happen once.
+     * @param request
+     * @param customer
+     * @return
+     */
+    protected Customer mergeCustomerIfRequired(WebRequest request, Customer customer) {
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            //Don't call this if it has already been called
+            if (request.getAttribute(getAnonymousCustomerMergedSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION) == null) {
+                //Set this so we don't do this every time.
+                request.setAttribute(getAnonymousCustomerMergedSessionAttributeName(), Boolean.TRUE, WebRequest.SCOPE_GLOBAL_SESSION);
+
+                Customer anonymousCustomer = getAnonymousCustomer(request);
+                customer = copyAnonymousCustomerInfoToCustomer(request, anonymousCustomer, customer);
+            }
+        }
+        return customer;
+    }
+
+    /**
+     * This allows the customer object to be augmented by information that may have been stored on the 
+     * anonymous customer or session.  After login, a new instance of customer is created that is different from the 
+     * anonymous customer.  In many cases, there are reasons that the anonymous customer may have had data associated with 
+     * them that is required on the new customer.  For example, customer attributes, promotions, promo codes, etc. 
+     * may have been associated with the anonymous customer, and we want them to be copied to this customer.  
+     * The default implementation does not copy data. It simply provides a hook for implementors to extend / implement 
+     * this method. You should consider security when copying data from one customer to another.
+     * 
+     * @param request
+     * @param anonymous
+     * @param customer
+     * @return
+     */
+    protected Customer copyAnonymousCustomerInfoToCustomer(WebRequest request, Customer anonymous, Customer customer) {
+        if (customerMergeExtensionManager != null) {
+            ExtensionResultHolder<Customer> resultHolder = new ExtensionResultHolder<Customer>();
+            resultHolder.setResult(customer);
+            customerMergeExtensionManager.getProxy().merge(resultHolder, request, anonymous);
+            
+            if (resultHolder.getThrowable() != null) {
+                if (resultHolder.getThrowable() instanceof RuntimeException) {
+                    throw ((RuntimeException) resultHolder.getThrowable());
+                } else {
+                    throw new RuntimeException("An unexpected error occured merging the anonymous customer",
+                            resultHolder.getThrowable());
+                }
+            }
+            
+            return customerService.saveCustomer(resultHolder.getResult());
+        }
+        return customer;
+    }
+
     /**
      * Subclasses can extend to resolve other types of Authentication tokens
      * @param authentication
@@ -191,7 +258,9 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
         //and store the entire customer in session (don't persist to DB just yet)
         if (customer == null) {
             customer = customerService.createNewCustomer();
-            request.setAttribute(getAnonymousCustomerSessionAttributeName(), customer, WebRequest.SCOPE_GLOBAL_SESSION);
+            if (BLCRequestUtils.isOKtoUseSession(request)) {
+                request.setAttribute(getAnonymousCustomerSessionAttributeName(), customer, WebRequest.SCOPE_GLOBAL_SESSION);
+            }
         }
         customer.setAnonymous(true);
 
@@ -210,19 +279,22 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
      * @see {@link #getAnonymousCustomerIdSessionAttributeName()}
      */
     public Customer getAnonymousCustomer(WebRequest request) {
-        Customer anonymousCustomer = (Customer) request.getAttribute(getAnonymousCustomerSessionAttributeName(),
-                WebRequest.SCOPE_GLOBAL_SESSION);
-        if (anonymousCustomer == null) {
-            //Customer is not in session, see if we have just a customer ID in session (the anonymous customer might have
-            //already been persisted)
-            Long customerId = (Long) request.getAttribute(getAnonymousCustomerIdSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
-            if (customerId != null) {
-                //we have a customer ID in session, look up the customer from the database to ensure we have an up-to-date
-                //customer to store in CustomerState
-                anonymousCustomer = customerService.readCustomerById(customerId);
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            Customer anonymousCustomer = (Customer) request.getAttribute(getAnonymousCustomerSessionAttributeName(),
+                    WebRequest.SCOPE_GLOBAL_SESSION);
+            if (anonymousCustomer == null) {
+                //Customer is not in session, see if we have just a customer ID in session (the anonymous customer might have
+                //already been persisted)
+                Long customerId = (Long) request.getAttribute(getAnonymousCustomerIdSessionAttributeName(), WebRequest.SCOPE_GLOBAL_SESSION);
+                if (customerId != null) {
+                    //we have a customer ID in session, look up the customer from the database to ensure we have an up-to-date
+                    //customer to store in CustomerState
+                    anonymousCustomer = customerService.readCustomerById(customerId);
+                }
             }
+            return anonymousCustomer;
         }
-        return anonymousCustomer;
+        return null;
     }
     
     /**
@@ -276,4 +348,14 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
         return BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomerRequestAttributeName();
     }
     
+    /**
+     * This is the name of a session attribute that holds whether or not the anonymous customer has been merged into 
+     * the logged in customer.  This is useful for tracking as often there is an anonymous customer that has customer 
+     * attributes or other data that is saved on the customer in the database or in transient properties.  It is often 
+     * beneficial, after logging in, to copy certain properties to the logged in customer.
+     * @return
+     */
+    public static String getAnonymousCustomerMergedSessionAttributeName() {
+        return ANONYMOUS_CUSTOMER_MERGED_SESSION_ATTRIBUTE_NAME;
+    }
 }

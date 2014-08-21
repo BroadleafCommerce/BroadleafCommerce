@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -149,17 +150,25 @@ public class BroadleafCategoryController extends BroadleafAbstractController imp
             }
 
             addDeepLink(model, deepLinkService, category);
-
-            ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
-            templateOverrideManager.getProxy().getOverrideTemplate(erh, category);
-
-            if (StringUtils.isNotBlank(erh.getResult())) {
-                model.setViewName(erh.getResult());
-            } else if (StringUtils.isNotEmpty(category.getDisplayTemplate())) {
-                model.setViewName(category.getDisplayTemplate());   
+            
+            String templatePath = null;
+            
+            // Use the categories custom template if available
+            if (StringUtils.isNotBlank(category.getDisplayTemplate())) {
+                templatePath = category.getDisplayTemplate();
             } else {
-                model.setViewName(getDefaultCategoryView());
+                // Otherwise, use the controller default.
+                templatePath = getDefaultCategoryView();
             }
+
+            // Allow extension managers to override.
+            ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+            ExtensionResultStatusType extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, category);
+            if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
+                templatePath = erh.getResult();
+            }
+            
+            model.setViewName(templatePath);
         }
         return model;
     }

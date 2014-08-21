@@ -80,7 +80,8 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             @PathVariable(value = "owningClass") String owningClass,
             @PathVariable(value="collectionField") String collectionField,
             @RequestParam(required = false) String requestingEntityId,
-            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
+            @RequestParam(defaultValue = "false") boolean dynamicField,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams, sectionCrumbs, pathVars);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
@@ -88,7 +89,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         // Only get collection property metadata when there is a non-structured content field that I am looking for
         Property collectionProperty = null;
         FieldMetadata md = null;
-        if (!collectionField.contains("|")) {
+        if (!collectionField.contains("|") && !dynamicField) {
             collectionProperty = mainMetadata.getPMap().get(collectionField);
             md = collectionProperty.getMetadata();
             ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
@@ -100,11 +101,14 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ppr.removeFilterAndSortCriteria("requestingEntityId");
         ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
         ppr.addCustomCriteria("owningClass=" + owningClass);
+        ppr.addCustomCriteria("requestingField=" + collectionField);
+        
+        modifyFetchPersistencePackageRequest(ppr, pathVars);
         
         DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
         ListGrid listGrid = null;
         // If we're dealing with a lookup from a dynamic field, we need to build the list grid differently
-        if (collectionField.contains("|")) {
+        if (collectionField.contains("|") || dynamicField) {
             listGrid = formService.buildMainListGrid(drs, mainMetadata, "/" + owningClass, sectionCrumbs);
             listGrid.setListGridType(ListGrid.Type.TO_ONE);
             listGrid.setSubCollectionFieldName(collectionField);
@@ -176,5 +180,13 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         return responses;
     }
 
-    
+    /**
+     * Hook method to allow a user to modify the persistence package request for a fetch on a select lookup.
+     * 
+     * @param ppr
+     * @param pathVars
+     */
+    protected void modifyFetchPersistencePackageRequest(PersistencePackageRequest ppr, Map<String, String> pathVars) {
+        
+    }
 }

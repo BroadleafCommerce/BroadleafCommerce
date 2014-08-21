@@ -48,5 +48,8 @@
     <bean id="org.broadleafcommerce.profile.core.domain.IdGeneration" class="org.broadleafcommerce.profile.core.domain.IdGenerationImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.Phone" class="org.broadleafcommerce.profile.core.domain.PhoneImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.Role" class="org.broadleafcommerce.profile.core.domain.RoleImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.profile.core.domain.State" class="org.broadleafcommerce.profile.core.domain.StateImpl" scope="prototype"/>  
+    <bean id="org.broadleafcommerce.profile.core.domain.State" class="org.broadleafcommerce.profile.core.domain.StateImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.core.domain.CountrySubdivision" class="org.broadleafcommerce.profile.core.domain.CountrySubdivisionImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategory" class="org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategoryImpl" scope="prototype"/>
+
 </beans>

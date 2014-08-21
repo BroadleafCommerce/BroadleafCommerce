@@ -22,12 +22,14 @@ package org.broadleafcommerce.core.web.controller.account;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.service.GenericResponse;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.validator.ResetPasswordValidator;
 import org.broadleafcommerce.profile.web.core.service.login.LoginService;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -107,7 +109,9 @@ public class BroadleafLoginController extends BroadleafAbstractController {
              model.addAttribute("errorCode", errorCode);             
              return getForgotPasswordView();
         } else {
-            request.getSession(true).setAttribute("forgot_password_username", username);
+            if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+                request.getSession(true).setAttribute("forgot_password_username", username);
+            }
             return getForgotPasswordSuccessView();
         }
     }   
@@ -228,7 +232,10 @@ public class BroadleafLoginController extends BroadleafAbstractController {
      */
     public ResetPasswordForm initResetPasswordForm(HttpServletRequest request) {
         ResetPasswordForm resetPasswordForm = new ResetPasswordForm();
-        String username = (String) request.getSession(true).getAttribute("forgot_password_username");
+        String username = null;
+        if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+            username = (String) request.getSession(true).getAttribute("forgot_password_username");
+        }
         String token = request.getParameter("token");
         resetPasswordForm.setToken(token);
         resetPasswordForm.setUsername(username);

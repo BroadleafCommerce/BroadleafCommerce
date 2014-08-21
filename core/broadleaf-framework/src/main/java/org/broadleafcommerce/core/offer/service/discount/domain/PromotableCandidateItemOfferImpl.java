@@ -35,6 +35,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     protected Offer offer;
     protected PromotableOrder promotableOrder;
     protected Money potentialSavings;
+    protected Money potentialSavingsQtyOne;
     protected int uses = 0;
     
     protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap =
@@ -96,6 +97,19 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     @Override
     public void setPotentialSavings(Money potentialSavings) {
         this.potentialSavings = potentialSavings;
+    }
+
+    @Override
+    public Money getPotentialSavingsQtyOne() {
+        if (potentialSavingsQtyOne == null) {
+            return new Money(promotableOrder.getOrderCurrency());
+        }
+        return potentialSavingsQtyOne;
+    }
+
+    @Override
+    public void setPotentialSavingsQtyOne(Money potentialSavingsQtyOne) {
+        this.potentialSavingsQtyOne = potentialSavingsQtyOne;
     }
 
     @Override

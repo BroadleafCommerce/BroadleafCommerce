@@ -23,8 +23,8 @@
     <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}" th:attr="data-onchangetrigger=${field.onChangeTrigger}" />
     <input type="hidden" class="hidden-display-value" th:field="*{fields['__${field.name}__'].displayValue}" />
 
-    <label th:for="${field.name}" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
-    
+    <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+    <div th:substituteby="components/fieldTooltip" />
 
     <div class="foreign-key-value-container">
         
@@ -42,7 +42,8 @@
             
             <button class="to-one-lookup tiny radius secondary button hover-cursor"
                 type="button" th:inline="text"
-                th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id})}">
+                th:attr="data-select-url=@{${'/' + field.owningEntityClass + '/' + field.name + '/select'}(requestingEntityId=${entityForm.id})},
+                         data-dynamic-field=${field.attributes['dynamicField']}">
                 <i class="icon-search"></i>&nbsp;[[#{Lookup}]]
             </button>
 

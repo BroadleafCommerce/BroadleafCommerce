@@ -102,7 +102,11 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     
     @Resource(name="blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
-    
+
+    /**
+     * Deprecated in favor of {@link org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionManager}
+     */
+    @Deprecated
     @Resource(name = "blMainEntityActionsExtensionManager")
     protected MainEntityActionsExtensionManager mainEntityActionsExtensionManager;
 
@@ -309,7 +313,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         // However, when we fetch, the second custom criteria needs to be the id
         // of this particular structured content entity
         ppr.setCustomCriteria(new String[] { info.getCriteriaName(), entityId });
-        Entity entity = service.getRecord(ppr, entityId, cmd, true).getDynamicResultSet().getRecords()[0];
+        Entity entity = service.getRecord(ppr, info.getPropertyValue(), cmd, true).getDynamicResultSet().getRecords()[0];
         
         List<Field> fieldsToMove = new ArrayList<Field>();
         // override the results of the entity with the dynamic form passed in
@@ -570,6 +574,25 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * @deprecated in favor of {@link #attachSectionSpecificInfo(PersistencePackageRequest, Map)}
      */
     protected void attachSectionSpecificInfo(PersistencePackageRequest ppr) {
+        
+    }
+    
+    /**
+     * This method is invoked whenever an assembled EntityForm is rendered. This typically occurs when viewing an entity
+     * in the admin or viewing an error state on a POST for that entity.
+     * 
+     * @param entityForm
+     */
+    protected void modifyEntityForm(EntityForm entityForm, Map<String, String> pathVars) {
+        
+    }
+
+    /**
+     * This method is invoked whenever an assembled EntityForm is rendered for the add entity screen.
+     * 
+     * @param entityForm
+     */
+    protected void modifyAddEntityForm(EntityForm entityForm, Map<String, String> pathVars) {
         
     }
 

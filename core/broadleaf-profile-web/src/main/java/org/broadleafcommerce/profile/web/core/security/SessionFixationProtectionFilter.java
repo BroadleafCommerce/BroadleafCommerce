@@ -25,8 +25,10 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.encryption.EncryptionModule;
 import org.broadleafcommerce.common.security.RandomGenerator;
 import org.broadleafcommerce.common.security.util.CookieUtils;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
@@ -108,7 +110,9 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
     protected void abortUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
         SecurityContextHolder.clearContext();
         cookieUtils.invalidateCookie(response, SessionFixationProtectionCookie.COOKIE_NAME);
-        request.getSession().invalidate();
+        if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+            request.getSession().invalidate();
+        }
         response.sendRedirect("/"); 
     }
 

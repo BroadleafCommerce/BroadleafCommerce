@@ -22,11 +22,11 @@ package org.broadleafcommerce.openadmin.server.domain;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
-import org.broadleafcommerce.openadmin.dto.CollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
@@ -67,6 +67,7 @@ public class PersistencePackageRequest {
     protected String msg;
     protected Map<String, PersistencePackageRequest> subRequests = new LinkedHashMap<String, PersistencePackageRequest>();
     protected boolean validateUnsubmittedProperties = true;
+    protected boolean isUpdateLookupType = false;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -159,10 +160,6 @@ public class PersistencePackageRequest {
             }
         });
         
-        if (md instanceof CollectionMetadata) {
-            request.setCustomCriteria(((CollectionMetadata) md).getCustomCriteria());
-        }
-
         if (sectionCrumbs != null) {
             request.setSectionCrumbs(sectionCrumbs.toArray(new SectionCrumb[sectionCrumbs.size()]));
         }
@@ -270,6 +267,11 @@ public class PersistencePackageRequest {
         return this;
     }
 
+    public PersistencePackageRequest withIsUpdateLookupType(boolean isUpdateLookupType) {
+        setUpdateLookupType(isUpdateLookupType);
+        return this;
+    }
+
     /* *********** */
     /* ADD METHODS */
     /* *********** */
@@ -348,10 +350,10 @@ public class PersistencePackageRequest {
     }
 
     public void setCustomCriteria(String[] customCriteria) {
-        if (customCriteria == null) {
+        if (customCriteria == null || customCriteria.length == 0) {
             this.customCriteria = new ArrayList<String>();
         } else {
-            this.customCriteria.addAll(Arrays.asList(customCriteria));
+            this.customCriteria = BLCArrayUtils.asList(customCriteria);
         }
     }
 
@@ -513,4 +515,13 @@ public class PersistencePackageRequest {
     public void setValidateUnsubmittedProperties(boolean validateUnsubmittedProperties) {
         this.validateUnsubmittedProperties = validateUnsubmittedProperties;
     }
+
+    public boolean isUpdateLookupType() {
+        return isUpdateLookupType;
+    }
+    
+    public void setUpdateLookupType(boolean isUpdateLookupType) {
+        this.isUpdateLookupType = isUpdateLookupType;
+    }
+    
 }

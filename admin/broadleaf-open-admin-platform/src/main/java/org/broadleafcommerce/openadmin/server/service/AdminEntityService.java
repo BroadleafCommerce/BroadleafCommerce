@@ -19,9 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service;
 
-import java.util.List;
-import java.util.Map;
-
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -33,6 +31,9 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -232,6 +233,16 @@ public interface AdminEntityService {
      * @throws ServiceException
      */
     public String getIdProperty(ClassMetadata cmd) throws ServiceException;
+
+    /**
+     * For the given class (which could be an interface) and id, finds the {@link AdminMainEntity} value for the 
+     * foreign entity
+     * 
+     * @param owningClass
+     * @param id
+     * @return the friendly name for the given foreign entity
+     */
+    public String getForeignEntityName(String owningClass, String id);
 
 
 }

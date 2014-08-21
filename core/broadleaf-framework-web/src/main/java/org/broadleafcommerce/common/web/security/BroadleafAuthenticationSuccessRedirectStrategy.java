@@ -19,14 +19,17 @@
  */
 package org.broadleafcommerce.common.web.security;
 
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /** 
  * If the incoming request is an ajax request, the system will add the desired redirect path to the session and
@@ -46,7 +49,9 @@ public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectS
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
         if (BroadleafControllerUtility.isAjaxRequest(request)) {
-            request.getSession().setAttribute("BLC_REDIRECT_URL", url);
+            if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+                request.getSession().setAttribute("BLC_REDIRECT_URL", url);
+            }
             url = getRedirectPath();
         }
         redirectStrategy.sendRedirect(request, response, url);

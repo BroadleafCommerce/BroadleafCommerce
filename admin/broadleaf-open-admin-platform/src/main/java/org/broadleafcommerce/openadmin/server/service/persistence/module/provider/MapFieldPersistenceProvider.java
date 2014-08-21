@@ -80,9 +80,11 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 }
                 String key = populateValueRequest.getProperty().getName().substring(populateValueRequest.getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), populateValueRequest.getProperty().getName().length());
                 boolean persistValue = false;
+                boolean setOnParent = false;
                 if (assignableValue == null) {
                     assignableValue = (ValueAssignable) valueType.newInstance();
                     persistValue = true;
+                    setOnParent = true;
                     dirty = true;
                 } else {
                     dirty = assignableValue.getValue().equals(populateValueRequest.getProperty().getValue());
@@ -112,12 +114,19 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                         middleInstance = populateValueRequest.getFieldManager().getFieldValue(instance, propertyName);
                     }
                     populateValueRequest.getFieldManager().setFieldValue(assignableValue, manyToField, middleInstance);
+                    if (!populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().contains(middleInstance)) {
+                        //if this is part of an add for the manyToField object, don't persist this map value, since it would result in a
+                        //transient object exception on the manyToField object (which itself has not been saved yet)
+                        persistValue = false;
+                    }
                 }
                 if (Searchable.class.isAssignableFrom(valueType)) {
                     ((Searchable) assignableValue).setSearchable(populateValueRequest.getMetadata().getSearchable());
                 }
                 if (persistValue) {
                     populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(assignableValue);
+                }
+                if (setOnParent) {
                     populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), assignableValue);
                 }
             } else {

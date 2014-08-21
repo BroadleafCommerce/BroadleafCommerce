@@ -67,6 +67,29 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     public AdminPermission readAdminPermissionById(Long id) {
         return (AdminPermission) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminPermission"), id);
     }
+
+    @Override
+    public AdminPermission readAdminPermissionByNameAndType(String name, String type) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<AdminPermission> criteria = builder.createQuery(AdminPermission.class);
+        Root<AdminPermissionImpl> adminPerm = criteria.from(AdminPermissionImpl.class);
+        criteria.select(adminPerm);
+
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(adminPerm.get("name"), name));
+        restrictions.add(builder.equal(adminPerm.get("type"), type));
+
+        // Execute the query with the restrictions
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        TypedQuery<AdminPermission> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        List<AdminPermission> results = query.getResultList();
+        if (results == null || results.size() == 0) {
+            return null;
+        } else {
+            return results.get(0);
+        }
+    }
     
     @Override
     public AdminPermission readAdminPermissionByName(String name) {

@@ -49,6 +49,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
@@ -69,9 +70,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -132,7 +135,7 @@ import javax.persistence.Transient;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRECLONE_INFORMATION),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class ProductImpl implements Product, Status, AdminMainEntity, Locatable {
+public class ProductImpl implements Product, Status, AdminMainEntity, Locatable, TemplatePathContainer {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
@@ -160,6 +163,10 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
             requiredOverride = RequiredOverride.REQUIRED,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String url;
+
+    @Column(name = "OVERRIDE_GENERATED_URL")
+    @AdminPresentation(group = Presentation.Group.Name.General, order = Presentation.FieldOrder.URL + 10)
+    protected Boolean overrideGeneratedUrl = false;
 
     @Column(name = "URL_KEY")
     @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey",
@@ -262,7 +269,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "allParentCategoriesTitle", order = 3000,
         tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
-        joinEntityClass = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl",
+        sortProperty = "displayOrder",
         targetObjectProperty = "category",
         parentObjectProperty = "product",
         gridVisibleFields = { "name" })
@@ -291,6 +298,9 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
         parentObjectProperty = "product",
         gridVisibleFields = {"label", "required"})
     protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
+
+    @Transient
+    protected Map<String, Set<String>> productOptionMap;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -773,6 +783,16 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
             return url;
         }
     }
+
+    @Override
+    public Boolean getOverrideGeneratedUrl() {
+        return overrideGeneratedUrl == null ? false : overrideGeneratedUrl;
+    }
+
+    @Override
+    public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl) {
+        this.overrideGeneratedUrl = overrideGeneratedUrl == null ? false : overrideGeneratedUrl;
+    }
     
     @Override
     public void setUrl(String url) {
@@ -803,6 +823,28 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
             archiveStatus = new ArchiveStatus();
         }
         archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public Map<String, Set<String>> getProductOptionValuesMap() {
+        if (productOptionMap == null) {
+            productOptionMap = new HashMap<String, Set<String>>();
+            List<ProductOptionXref> xrefs = getProductOptionXrefs();
+            if (xrefs != null) {
+                for (ProductOptionXref xref : xrefs) {
+                    List<ProductOptionValue> productOptionValues = xref.getProductOption().getAllowedValues();
+                    if (productOptionValues != null && !productOptionValues.isEmpty()) {
+                        HashSet<String> values = new HashSet<String>();
+                        for (ProductOptionValue value : productOptionValues) {
+                            values.add(value.getAttributeValue());
+                        }
+                        productOptionMap.put(xref.getProductOption().getAttributeName(), values);
+                    }
+                }
+            }
+        }
+
+        return productOptionMap;
     }
 
     @Override

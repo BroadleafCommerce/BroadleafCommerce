@@ -42,5 +42,10 @@ public interface AdminNavigationDao {
 
     public AdminSection readAdminSectionBySectionKey(String sectionKey);
 
+    public AdminSection save(AdminSection adminSection);
+
+    public void remove(AdminSection adminSection);
+
+    public AdminModule readAdminModuleByModuleKey(String moduleKey);
 
 }
