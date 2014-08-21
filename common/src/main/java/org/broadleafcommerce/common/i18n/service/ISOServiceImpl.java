@@ -23,8 +23,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.dao.ISODao;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+
 import javax.annotation.Resource;
 
 /**
@@ -49,6 +53,7 @@ public class ISOServiceImpl implements ISOService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public ISOCountry save(ISOCountry isoCountry) {
         return isoDao.save(isoCountry);
     }
