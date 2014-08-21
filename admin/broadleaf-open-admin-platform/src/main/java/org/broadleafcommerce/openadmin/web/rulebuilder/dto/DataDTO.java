@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -67,5 +69,19 @@ public class DataDTO implements Serializable {
 
     public void setGroups(ArrayList<DataDTO> groups) {
         this.groups = groups;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
+            DataDTO that = (DataDTO) obj;
+            return new EqualsBuilder()
+                .append(id, that.id)
+                .append(quantity, that.quantity)
+                .append(groupOperator, that.groupOperator)
+                .append(groups.toArray(), that.groups.toArray())
+                .build();
+        }
+        return false;
     }
 }

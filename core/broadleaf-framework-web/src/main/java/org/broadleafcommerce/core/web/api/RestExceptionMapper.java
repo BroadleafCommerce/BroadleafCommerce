@@ -26,11 +26,13 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorMessageWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorWrapper;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Locale;
@@ -54,11 +56,12 @@ import javax.ws.rs.ext.Provider;
  *
  */
 //This class MUST be a singleton Spring Bean
-@Scope("singleton")
 @Provider
-public class BroadleafRestExceptionMapper implements ExceptionMapper<Throwable>, MessageSourceAware, ApplicationContextAware {
+@Component("blRestExceptionMapper")
+@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+public class RestExceptionMapper implements ExceptionMapper<Throwable>, MessageSourceAware, ApplicationContextAware {
 
-    private static final Log LOG = LogFactory.getLog(BroadleafRestExceptionMapper.class);
+    private static final Log LOG = LogFactory.getLog(RestExceptionMapper.class);
 
     protected String messageKeyPrefix = BroadleafWebServicesException.class.getName() + '.';
 

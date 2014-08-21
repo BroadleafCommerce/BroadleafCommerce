@@ -63,9 +63,9 @@ import org.w3c.dom.Element;
         xmlns:context="http://www.springframework.org/schema/context"
         xmlns:embedded="http://schema.broadleafcommerce.org/embedded"
         xsi:schemaLocation="http://www.springframework.org/schema/beans
-                http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
                 http://www.springframework.org/schema/context
-                http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                http://www.springframework.org/schema/context/spring-context-4.0.xsd
                 http://schema.broadleafcommerce.org/embedded
                 http://schema.broadleafcommerce.org/embedded/embedded-3.1.xsd">
  * }
