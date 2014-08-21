@@ -1232,11 +1232,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 field.setValue(String.valueOf(sequenceValue));
             }
 
-            PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, sectionCrumbs);
-
-            // Next, we must get the new list grid that represents this collection
-            ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);
-            model.addAttribute("listGrid", listGrid);
+            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, sectionCrumbs);
 
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);
