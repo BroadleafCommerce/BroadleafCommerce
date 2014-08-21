@@ -182,6 +182,8 @@
     
     <bean id="blThymeleafStandardTemplateModeHandlers" 
         class="org.broadleafcommerce.common.web.BroadleafThymeleafStandardTemplateModeHandlers" />
+        
+    <bean id="thymeleafLayoutDialect" class="nz.net.ultraq.thymeleaf.LayoutDialect" />
     
     <bean id="blWebTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
         <property name="messageResolvers">
@@ -195,6 +197,7 @@
         <property name="dialects">
             <set>
                 <ref bean="thymeleafSpringStandardDialect" />
+                <ref bean="thymeleafLayoutDialect" />
                 <ref bean="blDialect" />
             </set>
         </property>

@@ -734,6 +734,13 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>nz.net.ultraq.thymeleaf</groupId>
+                <artifactId>thymeleaf-layout-dialect</artifactId>
+                <version>1.2.5</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
 
             <!-- Testing Libraries -->
             <dependency>
