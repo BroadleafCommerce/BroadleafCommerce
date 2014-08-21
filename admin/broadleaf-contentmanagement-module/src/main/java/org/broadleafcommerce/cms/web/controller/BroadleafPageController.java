@@ -24,6 +24,7 @@ import org.broadleafcommerce.cms.web.PageHandlerMapping;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.TemplateTypeAware;
@@ -51,10 +52,9 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
     @Autowired(required = false)
     @Qualifier("blPageDeepLinkService")
     protected DeepLinkService<PageDTO> deepLinkService;
-    
-    @Resource(name = "blBroadleafPageControllerExtensionManager")
-    protected BroadleafPageControllerExtensionManager extensionManager;
 
+    @Resource(name = "blTemplateOverrideExtensionManager")
+    protected TemplateOverrideExtensionManager templateOverrideManager;
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -77,8 +77,10 @@ public class BroadleafPageController extends BroadleafAbstractController impleme
         
         String templatePath = page.getTemplatePath();
         
+        // Allow extension managers to override the path.
         ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
-        if (ExtensionResultStatusType.NOT_HANDLED != extensionManager.getProxy().getTemplate(erh, page)) {
+        ExtensionResultStatusType extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
+        if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
             templatePath = erh.getResult();
         }
 

@@ -61,9 +61,6 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
 
-    @Resource(name = "blBroadleafCatalogControllerExtensionManager")
-    protected BroadleafCatalogControllerExtensionManager catalogExtensionManager;
-
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView model = new ModelAndView();
@@ -80,31 +77,19 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         
         String templatePath = null;
 
-        // The highest priority resolution is a direct template on the product from modules
+        // Use the products custom template if available
+        if (StringUtils.isNotBlank(product.getDisplayTemplate())) {
+            templatePath = product.getDisplayTemplate();
+        } else {
+            // Otherwise, use the controller default.
+            templatePath = getDefaultProductView();
+        }
+
+        // Allow extension managers to override.
         ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
         ExtensionResultStatusType extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, product);
         if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
             templatePath = erh.getResult();
-        }
-
-        // After that, we want the standard String on the product
-        if (templatePath == null) {
-            if (StringUtils.isNotBlank(product.getDisplayTemplate())) {
-                templatePath = product.getDisplayTemplate();
-            }
-        }
-        
-        // Next, we want the default product template for the theme
-        if (templatePath == null) {
-            extResult = catalogExtensionManager.getProxy().getProductTemplate(erh, product);
-            if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
-                templatePath = erh.getResult();
-            }
-        }
-        
-        // If none of those matched, we'll go with the controller default
-        if (templatePath == null) {
-            templatePath = getDefaultProductView();
         }
         
         model.setViewName(templatePath);

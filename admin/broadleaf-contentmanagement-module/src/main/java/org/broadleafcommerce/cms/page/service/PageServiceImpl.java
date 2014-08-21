@@ -24,7 +24,6 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
@@ -149,16 +148,11 @@ public class PageServiceImpl implements PageService {
             Page page = findPageById(dto.getId());
 
             ExtensionResultHolder<PageDTO> newDTO = new ExtensionResultHolder<PageDTO>();
+
+            // Allow an extension point to override the page to render.
             extensionManager.getProxy().overridePageDto(newDTO, dto, page);
             if (newDTO.getResult() != null) {
                 dto = newDTO.getResult();
-            }
-
-            ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
-            templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
-            
-            if (StringUtils.isNotBlank(erh.getResult())) {
-                dto.setTemplatePath(erh.getResult());
             }
         }
         

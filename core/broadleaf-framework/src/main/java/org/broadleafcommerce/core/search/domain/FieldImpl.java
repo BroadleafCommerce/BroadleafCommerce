@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -55,7 +56,7 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class FieldImpl implements Field,Serializable {
+public class FieldImpl implements Field, Serializable, AdminMainEntity {
     
     /**
      * 
@@ -244,5 +245,10 @@ public class FieldImpl implements Field,Serializable {
         
         return getEntityType().getType().equals(other.getEntityType().getType()) && getPropertyName().equals(other.getPropertyName());
                 
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getQualifiedFieldName();
     }
 }
