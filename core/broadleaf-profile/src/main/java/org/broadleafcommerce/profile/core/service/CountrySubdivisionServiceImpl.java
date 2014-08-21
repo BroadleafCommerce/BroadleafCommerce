@@ -46,6 +46,11 @@ public class CountrySubdivisionServiceImpl implements CountrySubdivisionService 
     }
 
     @Override
+    public List<CountrySubdivision> findSubdivisionsByCountryAndCategory(String countryAbbreviation, String category) {
+        return countrySubdivisionDao.findSubdivisionsByCountryAndCategory(countryAbbreviation, category);
+    }
+
+    @Override
     public CountrySubdivision findSubdivisionByAbbreviation(String abbreviation) {
         return countrySubdivisionDao.findSubdivisionByAbbreviation(abbreviation);
     }
