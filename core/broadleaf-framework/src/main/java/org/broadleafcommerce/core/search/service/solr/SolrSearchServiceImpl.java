@@ -548,7 +548,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                         if (!rangeValues[1].equals("null")) {
                             maxValue = new BigDecimal(rangeValues[1]);
                         }
-                        selectedValues[i] = "{!" + getSolrRangeFunctionString(minValue, maxValue) + "}" + solrKey;
+                        selectedValues[i] = "{!" + getSolrRangeFunctionString(minValue, maxValue) + "}field(" + solrKey + ")";
                     } else {
                         selectedValues[i] = solrKey + ":\"" + selectedValues[i] + "\"";
                     }
@@ -816,7 +816,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * would produce the following String: {!tag=a frange incl=false l=minVal u=maxVal}a
      */
     protected String getSolrTaggedFieldString(String indexField, String tag, SearchFacetRange range) {
-        return getSolrFieldTag(indexField, tag, range) + indexField;
+        return getSolrFieldTag(indexField, tag, range) + (range == null ? indexField : ("field(" + indexField + ")"));
     }
 
     /**
