@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.checkout.validator;
 
+import org.broadleafcommerce.common.web.form.BroadleafFormType;
 import org.broadleafcommerce.common.web.validator.BroadleafCommonAddressValidator;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,6 @@ public class BillingInfoFormValidator extends BroadleafCommonAddressValidator im
 
     public void validate(Object obj, Errors errors) {
         BillingInfoForm billingInfoForm = (BillingInfoForm) obj;
-        super.validate(billingInfoForm.getAddress(), errors);
+        super.validate(BroadleafFormType.BILLING_FORM, billingInfoForm.getAddress(), errors);
     }
 }

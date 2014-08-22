@@ -35,20 +35,11 @@ public class BillingInfoForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected String blDynamicForm;
     protected Address address = new AddressImpl();
     protected boolean useShippingAddress;
 
     public BillingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
-    }
-
-    public String getBlDynamicForm() {
-        return blDynamicForm;
-    }
-
-    public void setBlDynamicForm(String blDynamicForm) {
-        this.blDynamicForm = blDynamicForm;
     }
 
     public Address getAddress() {

@@ -38,7 +38,6 @@ public class ShippingInfoForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected String blDynamicForm;
 	protected Address address = new AddressImpl();
     protected String addressName;
     protected FulfillmentOption fulfillmentOption;
@@ -49,14 +48,6 @@ public class ShippingInfoForm implements Serializable {
 
     public ShippingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
-    }
-
-    public String getBlDynamicForm() {
-        return blDynamicForm;
-    }
-
-    public void setBlDynamicForm(String blDynamicForm) {
-        this.blDynamicForm = blDynamicForm;
     }
 
     public Long getFulfillmentOptionId() {

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.checkout.validator;
 
+import org.broadleafcommerce.common.web.form.BroadleafFormType;
 import org.broadleafcommerce.common.web.validator.BroadleafCommonAddressValidator;
 import org.broadleafcommerce.core.web.checkout.model.ShippingInfoForm;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,6 @@ public class MultishipAddAddressFormValidator extends BroadleafCommonAddressVali
 
     public void validate(Object obj, Errors errors) {
         ShippingInfoForm shippingInfoForm = (ShippingInfoForm) obj;
-        super.validate(shippingInfoForm.getAddress(), errors);
+        super.validate(BroadleafFormType.SHIPPING_FORM, shippingInfoForm.getAddress(), errors);
     }
 }
