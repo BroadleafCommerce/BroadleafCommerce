@@ -97,7 +97,7 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     protected String abbreviation;
     
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition", order = 4, prominent = true)
+    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition", order = 4)
     protected Boolean searchable = false;
     
     // This is a broadleaf enumeration
@@ -250,6 +250,6 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
 
     @Override
     public String getMainEntityName() {
-        return getQualifiedFieldName();
+        return getFriendlyName();
     }
 }
