@@ -537,18 +537,18 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             }
 
             if (solrKey != null) {
-                String solrTag = getSolrFieldTag(shs.getGlobalFacetTagField(), "tag");
-
                 String[] selectedValues = entry.getValue().clone();
                 for (int i = 0; i < selectedValues.length; i++) {
                     if (selectedValues[i].contains("range[")) {
                         String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
                                 selectedValues[i].indexOf(']'));
                         String[] rangeValues = StringUtils.split(rangeValue, ':');
-                        if (rangeValues[1].equals("null")) {
-                            rangeValues[1] = "*";
+                        BigDecimal minValue = new BigDecimal(rangeValues[0]);
+                        BigDecimal maxValue = null;
+                        if (!rangeValues[1].equals("null")) {
+                            maxValue = new BigDecimal(rangeValues[1]);
                         }
-                        selectedValues[i] = solrKey + ":[" + rangeValues[0] + " TO " + rangeValues[1] + "]";
+                        selectedValues[i] = "{!" + getSolrRangeFunctionString(minValue, maxValue) + "}" + solrKey;
                     } else {
                         selectedValues[i] = solrKey + ":\"" + selectedValues[i] + "\"";
                     }
@@ -556,7 +556,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 String valueString = StringUtils.join(selectedValues, " OR ");
 
                 StringBuilder sb = new StringBuilder();
-                sb.append(solrTag).append("(").append(valueString).append(")");
+                sb.append("(").append(valueString).append(")");
 
                 query.addFilterQuery(sb.toString());
             }
@@ -573,7 +573,6 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         query.setFacet(true);
         for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
             SearchFacetDTO dto = entry.getValue();
-            String facetTagField = entry.getValue().isActive() ? shs.getGlobalFacetTagField() : entry.getKey();
 
             // Clone the list - we don't want to remove these facets from the DB
             List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
@@ -584,10 +583,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
             if (facetRanges != null && facetRanges.size() > 0) {
                 for (SearchFacetRange range : facetRanges) {
-                    query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), facetTagField, "ex", range));
+                    query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
                 }
             } else {
-                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), facetTagField, "ex", null));
+                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "key", null));
             }
         }
     }
@@ -618,11 +617,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         if (response.getFacetQuery() != null) {
             for (Entry<String, Integer> entry : response.getFacetQuery().entrySet()) {
                 String key = entry.getKey();
-                String facetFieldName = key.substring(key.indexOf("}") + 1, key.indexOf(':'));
+                String facetFieldName = key.substring(0, key.indexOf("["));
                 SearchFacetDTO facetDTO = namedFacetMap.get(facetFieldName);
 
-                String minValue = key.substring(key.indexOf("[") + 1, key.indexOf(" TO"));
-                String maxValue = key.substring(key.indexOf(" TO ") + 4, key.indexOf("]"));
+                String minValue = key.substring(key.indexOf("[") + 1, key.indexOf(":"));
+                String maxValue = key.substring(key.indexOf(":") + 1, key.indexOf("]"));
                 if (maxValue.equals("*")) {
                     maxValue = null;
                 }
@@ -813,42 +812,53 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     /**
-     * Returns a field string. Given indexField = a and a non-null range, would produce the following String:
-     * a:[minVal TO maxVal]
-     */
-    protected String getSolrFieldString(String indexField, SearchFacetRange range) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(indexField);
-
-        if (range != null) {
-            String minValue = range.getMinValue().toPlainString();
-            String maxValue = range.getMaxValue() == null ? "*" : range.getMaxValue().toPlainString();
-            sb.append(":[").append(minValue).append(" TO ").append(maxValue).append("]");
-        }
-
-        return sb.toString();
-    }
-
-    /**
      * Returns a fully composed solr field string. Given indexField = a, tag = ex, and a non-null range,
-     * would produce the following String: {!ex=a}a:[minVal TO maxVal]
+     * would produce the following String: {!tag=a frange incl=false l=minVal u=maxVal}a
      */
-    protected String getSolrTaggedFieldString(String indexField, String tagField, String tag, SearchFacetRange range) {
-        return getSolrFieldTag(tagField, tag) + getSolrFieldString(indexField, range);
+    protected String getSolrTaggedFieldString(String indexField, String tag, SearchFacetRange range) {
+        return getSolrFieldTag(indexField, tag, range) + indexField;
     }
 
     /**
-     * Returns a solr field tag. Given indexField = a, tag = ex, would produce the following String:
-     * {!ex=a}
+     * Returns a solr field tag. Given indexField = a, tag = tag, would produce the following String:
+     * {!tag=a}. if range is not null it will produce {!tag=a frange incl=false l=minVal u=maxVal} 
      */
-    protected String getSolrFieldTag(String tagField, String tag) {
+    protected String getSolrFieldTag(String tagField, String tag, SearchFacetRange range) {
         StringBuilder sb = new StringBuilder();
         if (StringUtils.isNotBlank(tag)) {
-            sb.append("{!").append(tag).append("=").append(tagField).append("}");
+            sb.append("{!").append(tag).append("=").append(tagField);
+        	
+            if (range != null) {
+                sb.append("[").append(range.getMinValue().toPlainString()).append(":");
+                if (range.getMaxValue() != null)
+                    sb.append(range.getMaxValue().toPlainString());
+                else
+                    sb.append("*");
+                sb.append("]");
+    			
+                sb.append(" "+getSolrRangeFunctionString(range.getMinValue(), range.getMaxValue()));
+            }
+        	
+            sb.append("}");
         }
         return sb.toString();
     }
+	
+    /**
+     * @param minValue
+     * @param maxValue
+     * @return a string representing a call to the frange solr function. it is not inclusive of lower limit, inclusive of upper limit
+     */
+	protected String getSolrRangeFunctionString(BigDecimal minValue, BigDecimal maxValue) {
+		StringBuilder sb = new StringBuilder();
+
+        sb.append("frange incl=false l=").append(minValue.toPlainString());
+        if (maxValue != null) {
+        	sb.append(" u=").append(maxValue.toPlainString());
+        }
+		
+		return sb.toString();
+	}
 
     /**
      * @param facets
