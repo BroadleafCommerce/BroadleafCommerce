@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.Phone;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -126,10 +127,22 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
                 billing.setCountry(shipping.getCountry());
                 billing.setIsoCountryAlpha2(shipping.getIsoCountryAlpha2());
                 billing.setPrimaryPhone(shipping.getPrimaryPhone());
+                billing.setPhonePrimary(copyPhone(shipping.getPhonePrimary()));
                 billing.setEmailAddress(shipping.getEmailAddress());
                 billingInfoForm.setAddress(billing);
             }
         }
+    }
+
+    protected Phone copyPhone(Phone phoneToCopy) {
+        if (phoneToCopy != null) {
+            Phone copy = phoneService.create();
+            copy.setCountryCode(phoneToCopy.getCountryCode());
+            copy.setPhoneNumber(phoneToCopy.getPhoneNumber());
+            copy.setExtension(phoneToCopy.getExtension());
+            return copy;
+        }
+        return null;
     }
 
 
