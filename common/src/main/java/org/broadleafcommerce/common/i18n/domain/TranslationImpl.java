@@ -76,25 +76,25 @@ public class TranslationImpl implements Serializable, Translation {
     protected Long id;
 
     @Column(name = "ENTITY_TYPE")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "Entity Type", prominent = true)
     protected String entityType;
 
     @Column(name = "ENTITY_ID")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "Entity ID", prominent = true)
     protected String entityId;
 
     @Column(name = "FIELD_NAME")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "Field Name", prominent = true)
     protected String fieldName;
 
     @Column(name = "LOCALE_CODE")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "Locale Code", prominent = true)
     protected String localeCode;
 
     @Column(name = "TRANSLATED_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "Translated Value", prominent = true)
     protected String translatedValue;
 
     /* ************************ */
