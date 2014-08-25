@@ -1565,6 +1565,10 @@ body .redactor_redactor {
     max-width: 934px;
 }
 
+body #redactor_modal_overlay, body #redactor_modal, body .redactor_dropdown {
+	z-index: 3000 !important;
+}
+
 .category-tree {
 	display: none;
 }
