@@ -201,7 +201,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Override
     public Boolean getHiddenFlag() {
-        return hiddenFlag;
+        return hiddenFlag == null ? false : hiddenFlag;
     }
 
     @Override
