@@ -35,6 +35,7 @@ import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
+import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -167,6 +168,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                         shipping.setPostalCode(billing.getPostalCode());
                         shipping.setCountry(billing.getCountry());
                         shipping.setPrimaryPhone(billing.getPrimaryPhone());
+                        shipping.setPhonePrimary(copyPhone(billing.getPhonePrimary()));
                         shipping.setEmailAddress(billing.getEmailAddress());
                         shippingInfoForm.setAddress(shipping);
                     }
@@ -174,6 +176,17 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
             }
 
         }
+    }
+
+    protected Phone copyPhone(Phone phoneToCopy) {
+        if (phoneToCopy != null) {
+            Phone copy = phoneService.create();
+            copy.setCountryCode(phoneToCopy.getCountryCode());
+            copy.setPhoneNumber(phoneToCopy.getPhoneNumber());
+            copy.setExtension(phoneToCopy.getExtension());
+            return copy;
+        }
+        return null;
     }
 
     /**
