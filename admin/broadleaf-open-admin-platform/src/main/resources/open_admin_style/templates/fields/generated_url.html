@@ -10,22 +10,24 @@
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
     <a class="override-generated-url" href="#" th:text="'(' + #{Override_Generated_URL-__${overriddenUrl ? 'enabled' : 'disabled'}__} + ')'" 
+        th:unless="*{fields['__${field.name}__'].attributes[isPath]}"
         th:attr="data-enabled=${overriddenUrl},
                  data-enabled-text=${'(__#{Override_Generated_URL-enabled}__)'},
                  data-disabled-text=${'(__#{Override_Generated_URL-disabled}__)'}" />
-    <br/>
 
-    <span th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
-       <a th:href="@{${'/' + field.entityViewPath}}" class="modal-view">
-            <i class="icon-external-link"></i>
-       </a>
-    </span>
+    <a class="override-generated-url" href="#" th:text="'(' + #{Override_Generated_Path-__${overriddenUrl ? 'enabled' : 'disabled'}__} + ')'" 
+        th:if="*{fields['__${field.name}__'].attributes[isPath]}"
+        th:attr="data-enabled=${overriddenUrl},
+                 data-enabled-text=${'(__#{Override_Generated_Path-enabled}__)'},
+                 data-disabled-text=${'(__#{Override_Generated_Path-disabled}__)'}" />
+    <br/>
 
     <input type="text" class="twelve target-field" 
         th:required="${field.required}" 
         th:placeholder="${field.hint}"
         th:field="*{fields['__${field.name}__'].value}"
         th:attr="data-prefix=*{fields['__${field.name}__'].attributes[prefix]},
+                 data-allow-slash=*{fields['__${field.name}__'].attributes[allowSlash]},
                  data-prefix-selector=*{fields['__${field.name}__'].attributes['prefix-selector']}"
         th:readonly="${!overriddenUrl}" />
     
