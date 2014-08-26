@@ -99,7 +99,15 @@ public class SiteDaoImpl implements SiteDao {
         Root<SiteImpl> site = criteria.from(SiteImpl.class);
         criteria.select(site);
 
-        criteria.where(site.get("siteIdentifierValue").as(String.class).in(siteIdentifiers));
+        criteria.where(builder.and(site.get("siteIdentifierValue").as(String.class).in(siteIdentifiers),
+                builder.and(
+                    builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
+                        builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
+                    builder.or(builder.isNull(site.get("deactivated").as(Boolean.class)),
+                        builder.notEqual(site.get("deactivated").as(Boolean.class), true))
+                )
+            )
+        );
         TypedQuery<Site> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
 
