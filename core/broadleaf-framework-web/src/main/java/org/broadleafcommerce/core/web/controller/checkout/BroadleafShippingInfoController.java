@@ -181,9 +181,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
     protected Phone copyPhone(Phone phoneToCopy) {
         if (phoneToCopy != null) {
             Phone copy = phoneService.create();
-            copy.setCountryCode(phoneToCopy.getCountryCode());
             copy.setPhoneNumber(phoneToCopy.getPhoneNumber());
-            copy.setExtension(phoneToCopy.getExtension());
             return copy;
         }
         return null;
