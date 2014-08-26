@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
@@ -398,7 +399,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         List<SolrDocument> responseDocuments;
         int numResults = 0;
         try {
-            response = SolrContext.getServer().query(solrQuery);
+            response = SolrContext.getServer().query(solrQuery, getSolrQueryMethod());
             responseDocuments = getResponseDocuments(response);
             numResults = (int) response.getResults().getNumFound();
 
@@ -910,4 +911,15 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         return solrFieldKeyMap;
     }
 
+    /**
+     * Allows the user to choose the query method to use.  POST allows for longer, more complex queries with 
+     * a higher number of facets.
+     * 
+     * Default value is POST.  Implementors can override this to use GET if they wish.
+     * 
+     * @return
+     */
+    protected METHOD getSolrQueryMethod() {
+        return METHOD.POST;
+    }
 }
