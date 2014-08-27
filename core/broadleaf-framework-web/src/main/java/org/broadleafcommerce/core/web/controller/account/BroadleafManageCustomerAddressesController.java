@@ -19,143 +19,24 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.i18n.domain.ISOCountry;
-import org.broadleafcommerce.common.i18n.service.ISOService;
-import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
-import org.broadleafcommerce.profile.core.domain.Phone;
-import org.broadleafcommerce.profile.core.domain.PhoneImpl;
-import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.service.AddressService;
-import org.broadleafcommerce.profile.core.service.CountryService;
-import org.broadleafcommerce.profile.core.service.CustomerAddressService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import java.beans.PropertyEditorSupport;
 import java.util.List;
-
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-public class BroadleafManageCustomerAddressesController extends BroadleafAbstractController {
+public class BroadleafManageCustomerAddressesController extends AbstractCustomerAddressController {
 
-    @Resource(name = "blCustomerAddressService")
-    private CustomerAddressService customerAddressService;
-    @Resource(name = "blAddressService")
-    private AddressService addressService;
-    @Resource(name = "blCountryService")
-    private CountryService countryService;
-    @Resource(name = "blCustomerAddressValidator")
-    private CustomerAddressValidator customerAddressValidator;
-    @Resource(name = "blStateService")
-    private StateService stateService;
-    @Resource(name = "blISOService")
-    protected ISOService isoService;
-   
     protected String addressUpdatedMessage = "Address successfully updated";
     protected String addressAddedMessage = "Address successfully added";
     protected String addressRemovedMessage = "Address successfully removed";
     protected String addressRemovedErrorMessage = "Address could not be removed as it is in use";
-    
-    protected static String customerAddressesView = "account/manageCustomerAddresses";
-    protected static String customerAddressesRedirect = "redirect:/account/addresses";
-    
-    /**
-     * Initializes some custom binding operations for the managing an address. 
-     * More specifically, this method will attempt to bind state and country
-     * abbreviations to actual State and Country objects when the String 
-     * representation of the abbreviation is submitted.
-     * 
-     * @param request
-     * @param binder
-     * @throws Exception
-     */
-    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
 
-        /**
-         * @deprecated - address.setState() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    State state = stateService.findStateByAbbreviation(text);
-                    setValue(state);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        /**
-         * @deprecated - address.setCountry() is deprecated in favor of ISO standardization
-         * This is here for legacy compatibility
-         */
-        binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    Country country = countryService.findCountryByAbbreviation(text);
-                    setValue(country);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-
-        binder.registerCustomEditor(ISOCountry.class, "address.isoCountryAlpha2", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (StringUtils.isNotEmpty(text)) {
-                    ISOCountry isoCountry = isoService.findISOCountryByAlpha2Code(text);
-                    setValue(isoCountry);
-                }else {
-                    setValue(null);
-                }
-            }
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (!StringUtils.isBlank(text)) {
-                    Phone phone = new PhoneImpl();
-                    phone.setPhoneNumber(text);
-                    setValue(phone);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-    }
-     
-    protected List<State> populateStates() {
-        return stateService.findStates();
-    }
-    
-    protected List<Country> populateCountries() {
-        return countryService.findCountries();
-    }
-    
-    protected List<CustomerAddress> populateCustomerAddresses() {
-        return customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
-    }
-    
     public String viewCustomerAddresses(HttpServletRequest request, Model model) {
         model.addAttribute("customerAddressForm", new CustomerAddressForm());
         return getCustomerAddressesView();
@@ -225,14 +106,6 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
             redirectAttributes.addFlashAttribute("errorMessage", getAddressRemovedErrorMessage());
         }
         return getCustomerAddressesRedirect();
-    }
-
-    public String getCustomerAddressesView() {
-        return customerAddressesView;
-    }
-
-    public String getCustomerAddressesRedirect() {
-        return customerAddressesRedirect;
     }
 
     public String getAddressUpdatedMessage() {
