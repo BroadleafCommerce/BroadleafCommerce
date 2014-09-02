@@ -31,6 +31,8 @@ import org.broadleafcommerce.cms.file.dao.StaticAssetStorageDao;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetStorage;
 import org.broadleafcommerce.cms.file.service.operation.NamedOperationManager;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.broadleafcommerce.common.file.service.GloballySharedInputStream;
@@ -90,6 +92,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     @Resource(name="blNamedOperationManager")
     protected NamedOperationManager namedOperationManager;
 
+    @Resource(name = "blStaticAssetServiceExtensionManager")
+    protected StaticAssetServiceExtensionManager extensionManager;
+
     protected StaticAsset findStaticAsset(String fullUrl) {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
 
@@ -102,7 +107,17 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         
     protected File getFileFromLocalRepository(String cachedFileName) {
         // Look for a shared file (this represents a file that was based on a file originally in the classpath.
-        File cacheFile = broadleafFileService.getSharedLocalResource(cachedFileName);
+        File cacheFile = null;
+        if (extensionManager != null) {
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().fileExists(cachedFileName, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                cacheFile = (File) holder.getResult();
+            }
+        }
+        if (cacheFile == null) {
+            cacheFile = broadleafFileService.getSharedLocalResource(cachedFileName);
+        }
         if (cacheFile.exists()) {
             return cacheFile;
         } else {

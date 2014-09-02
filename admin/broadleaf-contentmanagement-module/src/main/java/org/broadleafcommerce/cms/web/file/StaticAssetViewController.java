@@ -131,7 +131,7 @@ public class StaticAssetViewController extends AbstractController {
         // Static Assets don't typically go through the Spring Security pipeline but they may need access 
         // to the site 
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        context.setSite(siteResolver.resolveSite(new ServletWebRequest(request, response)));
+        context.setNonPersistentSite(siteResolver.resolveSite(new ServletWebRequest(request, response)));
         try {
             Map<String, String> model = staticAssetStorageService.getCacheFileModel(fullUrl, convertParameterMap(request.getParameterMap()));
             return new ModelAndView(viewResolverName, model);
