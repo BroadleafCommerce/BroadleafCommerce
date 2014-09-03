@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.core.spec.checkout.service.workflow
 
-
-
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed
 import org.broadleafcommerce.core.order.domain.Order
 import org.broadleafcommerce.core.order.domain.OrderImpl
@@ -30,19 +28,17 @@ import org.broadleafcommerce.core.workflow.ProcessContext
 
 import spock.lang.Specification
 
-class BaseCheckoutRollbackSpec extends Specification{
-	
-	BaseActivity<ProcessContext<CheckoutSeed>> activity;
-	ProcessContext<CheckoutSeed> context;
-	Map<String, Object> stateConfiguration;
-	
-	def setup() {
-		Order order = new OrderImpl()
-		context = new DefaultProcessContextImpl<CheckoutSeed>().with{
-			seedData = new CheckoutSeed(order, null)
-			it
-		}
-	}
-	
+class BaseCheckoutRollbackSpec extends Specification {
 
+    BaseActivity<ProcessContext<CheckoutSeed>> activity
+    ProcessContext<CheckoutSeed> context
+    Map<String, Object> stateConfiguration
+
+    def setup() {
+        Order order = new OrderImpl()
+        context = new DefaultProcessContextImpl<CheckoutSeed>().with {
+            seedData = new CheckoutSeed(order, null)
+            it
+        }
+    }
 }

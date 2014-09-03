@@ -26,18 +26,17 @@ import org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderRollbac
 import org.broadleafcommerce.core.order.service.type.OrderStatus
 import org.broadleafcommerce.core.workflow.state.RollbackHandler
 
-class CompleteOrderRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
-	
-	def"Test that seed data has been sent to correct values"(){
-		RollbackHandler rollbackHandler = new CompleteOrderRollbackHandler()
-		
-		when:"rollbackState is executed"
-		rollbackHandler.rollbackState(activity, context, stateConfiguration)
-		
-		then:"seedData's order status is set to IN_Process, and its order number and submite date are nulled"
-		context.seedData.order.status == OrderStatus.IN_PROCESS
-		context.seedData.order.orderNumber == null
-		context.seedData.order.submitDate == null
-	}
+class CompleteOrderRollbackHandlerSpec extends BaseCheckoutRollbackSpec {
 
+    def "Test that seed data has been sent to correct values"() {
+        RollbackHandler rollbackHandler = new CompleteOrderRollbackHandler()
+
+        when: "rollbackState is executed"
+        rollbackHandler.rollbackState(activity, context, stateConfiguration)
+
+        then: "seedData's order status is set to IN_Process, and its order number and submite date are nulled"
+        context.seedData.order.status == OrderStatus.IN_PROCESS
+        context.seedData.order.orderNumber == null
+        context.seedData.order.submitDate == null
+    }
 }
