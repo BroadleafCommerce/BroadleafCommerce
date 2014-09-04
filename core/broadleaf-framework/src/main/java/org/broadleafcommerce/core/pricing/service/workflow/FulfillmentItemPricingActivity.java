@@ -203,7 +203,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
         }
 
         Money orderAdjustmentTotal = order.getOrderAdjustmentsValue();
-        Money amountDiff = totalOrderAdjustmentDistributed.subtract(orderAdjustmentTotal);
+        Money amountDiff = orderAdjustmentTotal.subtract(totalOrderAdjustmentDistributed);
 
         if (!(amountDiff.getAmount().compareTo(BigDecimal.ZERO) == 0)) {
             long numApplicationsNeeded = countNumberOfUnits(amountDiff);
@@ -262,7 +262,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
 
     public long countNumberOfUnits(Money difference) {
         double numUnits = difference.multiply(Math.pow(10, difference.getCurrency().getDefaultFractionDigits())).doubleValue();
-        return Math.round(numUnits);
+        return Math.round(Math.abs(numUnits));
     }
 
     /**
