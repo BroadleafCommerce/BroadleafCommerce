@@ -34,8 +34,6 @@ import org.broadleafcommerce.core.order.domain.OrderItem
 import org.broadleafcommerce.core.order.domain.OrderItemImpl
 import org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity
 
-import spock.lang.IgnoreRest
-
 class FulfillmentItemPricingActivitySpec extends BasePricingActivitySpec {
 
     /* This activity has a ton of helper methods, so these tests all have large setup sections to mimic the set up of the 
@@ -198,7 +196,7 @@ class FulfillmentItemPricingActivitySpec extends BasePricingActivitySpec {
         fulfillmentGroupItem2.totalItemAmount.getAmount() == (new Money(3.00)).getAmount()
 
     }
-    @IgnoreRest
+
     def "Test fixItemTotalRoundingIssues"() {
 
         //This test is for Code Coverage of the fixItemTotalRoundingIssues helper method
