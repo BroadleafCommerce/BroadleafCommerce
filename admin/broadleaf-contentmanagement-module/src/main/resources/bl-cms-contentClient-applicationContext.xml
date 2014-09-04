@@ -153,12 +153,14 @@
     <bean id="blContentProcessor" class="org.broadleafcommerce.cms.web.processor.ContentProcessor" />
     <bean id="blContentProcessorExtensionManager" class="org.broadleafcommerce.cms.web.processor.ContentProcessorExtensionManager" />
     <bean id="blUrlRewriteProcessor" class="org.broadleafcommerce.cms.web.processor.UrlRewriteProcessor" />
+    <bean id="blHrefUrlRewriteProcessor" class="org.broadleafcommerce.cms.web.processor.HrefUrlRewriteProcessor" />
 
     <bean id="blDialectCmsProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
             <set>
                 <ref bean="blContentProcessor"/>
                 <ref bean="blUrlRewriteProcessor" />
+                <ref bean="blHrefUrlRewriteProcessor" />
             </set>
         </property>
     </bean>
