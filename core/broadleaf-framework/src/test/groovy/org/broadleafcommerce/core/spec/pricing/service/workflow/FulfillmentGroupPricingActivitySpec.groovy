@@ -44,21 +44,19 @@ class FulfillmentGroupPricingActivitySpec extends BasePricingActivitySpec {
      */
     FulfillmentPricingService mockFulfillmentPricingService
     def setup() {
-        FulfillmentGroup fulfillmentGroup1 = new FulfillmentGroupImpl().with {
-            shippingOverride = false
-            order = context.seedData
-            it
-        }
-        FulfillmentGroup fulfillmentGroup2 = new FulfillmentGroupImpl().with {
-            shippingOverride = true
-            fulfillmentPrice = new Money('1.00')
-            order = context.seedData
-            it
-        }
         context.seedData.fulfillmentGroups = [
             null,
-            fulfillmentGroup1,
-            fulfillmentGroup2
+            new FulfillmentGroupImpl().with {
+                shippingOverride = false
+                order = context.seedData
+                it
+            },
+            new FulfillmentGroupImpl().with {
+                shippingOverride = true
+                fulfillmentPrice = new Money('1.00')
+                order = context.seedData
+                it
+            }
         ]
         mockFulfillmentPricingService = Mock()
     }

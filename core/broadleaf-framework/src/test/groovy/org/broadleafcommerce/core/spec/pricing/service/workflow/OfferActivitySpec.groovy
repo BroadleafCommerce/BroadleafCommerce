@@ -17,9 +17,11 @@
  * limitations under the License.
  * #L%
  */
+/**
+ * @author Austin Rooke (austinrooke)
+ */
 package org.broadleafcommerce.core.spec.pricing.service.workflow
 
-import org.broadleafcommerce.core.offer.domain.OfferCode
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl
 import org.broadleafcommerce.core.offer.service.OfferService
 import org.broadleafcommerce.core.order.service.OrderService
@@ -36,9 +38,6 @@ class OfferActivitySpec extends BasePricingActivitySpec {
     }
 
     def"Test a valid run with valid data"() {
-        setup: "Prepare a List of OfferCode's"
-        List<OfferCode> offerCodes = new ArrayList<OfferCode>()
-        offerCodes.add(new OfferCodeImpl())
 
         activity = new OfferActivity().with {
             offerService = mockOfferService
@@ -50,7 +49,7 @@ class OfferActivitySpec extends BasePricingActivitySpec {
         context = activity.execute(context)
 
         then: "orderService's addOfferCodes should have run and offerService's buildOfferListForOrder as well as applyAndSaveOffersToOrder should have run"
-        1 * mockOfferService.buildOfferCodeListForCustomer(_) >> offerCodes
+        1 * mockOfferService.buildOfferCodeListForCustomer(_) >> [new OfferCodeImpl()]
         1 * mockOfferService.applyAndSaveOffersToOrder(_, _) >> context.seedData
         1 * mockOrderService.addOfferCodes(_, _, _) >> context.seedData
         context.seedData != null

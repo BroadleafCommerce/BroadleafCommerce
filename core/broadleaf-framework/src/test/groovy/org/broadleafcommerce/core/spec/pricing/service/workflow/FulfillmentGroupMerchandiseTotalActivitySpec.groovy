@@ -23,9 +23,7 @@
 package org.broadleafcommerce.core.spec.pricing.service.workflow
 
 import org.broadleafcommerce.common.money.Money
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl
-import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl
 import org.broadleafcommerce.core.order.domain.OrderItem
 import org.broadleafcommerce.core.order.domain.OrderItemImpl
@@ -56,35 +54,30 @@ class FulfillmentGroupMerchandiseTotalActivitySpec extends BasePricingActivitySp
             order = context.seedData
             it
         }
-        FulfillmentGroupItem fulfillmentGroupItem1 = new FulfillmentGroupItemImpl().with() {
-            orderItem = orderItem1
-            quantity = 1
-            it
-        }
-        FulfillmentGroupItem fulfillmentGroupItem2 = new FulfillmentGroupItemImpl().with() {
-            orderItem = orderItem2
-            quantity = 2
-            it
-        }
-        FulfillmentGroupItem fulfillmentGroupItem3 = new FulfillmentGroupItemImpl().with() {
-            orderItem = orderItem2
-            quantity = 3
-            it
-        }
-        FulfillmentGroup fulfillmentGroup1 = new FulfillmentGroupImpl().with() {
-            fulfillmentGroupItems << fulfillmentGroupItem1
-            fulfillmentGroupItems << fulfillmentGroupItem2
-            order = context.seedData
-            it
-        }
-        FulfillmentGroup fulfillmentGroup2 = new FulfillmentGroupImpl().with() {
-            fulfillmentGroupItems << fulfillmentGroupItem3
-            order = context.seedData
-            it
-        }
         context.seedData.fulfillmentGroups = [
-            fulfillmentGroup1,
-            fulfillmentGroup2
+            new FulfillmentGroupImpl().with() {
+                fulfillmentGroupItems << new FulfillmentGroupItemImpl().with() {
+                    orderItem = orderItem1
+                    quantity = 1
+                    it
+                }
+                fulfillmentGroupItems << new FulfillmentGroupItemImpl().with() {
+                    orderItem = orderItem2
+                    quantity = 2
+                    it
+                }
+                order = context.seedData
+                it
+            },
+            new FulfillmentGroupImpl().with() {
+                fulfillmentGroupItems << new FulfillmentGroupItemImpl().with() {
+                    orderItem = orderItem2
+                    quantity = 3
+                    it
+                }
+                order = context.seedData
+                it
+            }
         ]
     }
 
