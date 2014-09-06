@@ -67,6 +67,11 @@ public class CatalogServiceImpl implements CatalogService {
     public Product findProductById(Long productId) {
         return productDao.readProductById(productId);
     }
+    
+    @Override
+    public Product findProductByExternalId(String externalId) {
+        return productDao.readProductByExternalId(externalId);
+    }
 
     @Override
     public List<Product> findProductsByName(String searchName) {

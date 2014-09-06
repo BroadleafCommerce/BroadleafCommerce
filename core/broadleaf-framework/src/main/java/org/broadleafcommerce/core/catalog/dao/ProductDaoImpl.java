@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.DialectHelper;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
@@ -52,6 +53,7 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -101,6 +103,19 @@ public class ProductDaoImpl implements ProductDao {
     @Override
     public Product readProductById(Long productId) {
         return em.find(ProductImpl.class, productId);
+    }
+    
+    @Override
+    public Product readProductByExternalId(String externalId) {
+        TypedQuery<Product> query = new TypedQueryBuilder<Product>(Product.class, "product")
+                .addRestriction("product.defaultSku.externalId", "=", externalId)
+                .toQuery(em);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
