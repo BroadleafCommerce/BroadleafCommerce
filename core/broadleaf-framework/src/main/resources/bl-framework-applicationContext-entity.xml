@@ -21,7 +21,7 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
            
     <!-- Entity mappings - override for extensibility -->
     <bean id="org.broadleafcommerce.core.catalog.domain.Category" class="org.broadleafcommerce.core.catalog.domain.CategoryImpl" scope="prototype"/>

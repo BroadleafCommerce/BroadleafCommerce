@@ -63,7 +63,7 @@ public class SchemaLocationNodeValueMerge extends SpaceDelimitedNodeValueMerge {
      * Sanitizes the given attribute value by stripping out the version number for the Spring XSDs.
      * 
      * <p>
-     * For example, given http://www.springframework.org/schema/beans/<b>spring-beans-4.0.xsd</b> this will return
+     * For example, given http://www.springframework.org/schema/beans/<b>spring-beans-4.1.xsd</b> this will return
      * http://www.springframework.org/schema/beans/<b>spring-beans.xsd</b>
      * 
      * @param attributeValue the value of an xsi:schemaLocation attribute

@@ -46,7 +46,7 @@ public class SchemaLocationMergeTest {
     
     @Test
     public void testReplacementRegex() {
-        String val = "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd";
+        String val = "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd";
         String replacedVal = merge.getSanitizedValue(val);
         assertEquals(replacedVal, "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd");
     }
@@ -57,7 +57,7 @@ public class SchemaLocationMergeTest {
         node1.setNodeValue("http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
                 + "\nhttp://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-8.4.xsd"
                 + "\nhttp://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-9.4.xsd"
-                + "\nhttp://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd");
+                + "\nhttp://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd");
         Node node2 = new DummyNode();
         node2.setNodeValue("http://www.springframework.org/schema/beans       http://www.springframework.org/schema/beans/spring-beans.xsd");
         
@@ -74,7 +74,7 @@ public class SchemaLocationMergeTest {
         Node node1 = new DummyNode();
         node1.setNodeValue("http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd");
         Node node2 = new DummyNode();
-        node2.setNodeValue("http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd");
+        node2.setNodeValue("http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd");
         
         Set<String> mergedVals = merge.getMergedNodeValues(node1, node2);
         
