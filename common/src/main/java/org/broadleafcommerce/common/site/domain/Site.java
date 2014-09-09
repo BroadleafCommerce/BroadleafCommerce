@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 
@@ -108,8 +107,8 @@ public interface Site extends Serializable {
      * Retrieve a list of product, category and offer groupings that
      * this site has access to
      *
-     * @return a {@link CollectionUtils#unmodifiableCollection} list of catalog groupings
-     * @deprecated use {@link #getCatalogXrefs()} instead
+     * @return a list of catalog groupings
+     * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3
      */
     @Deprecated
     public List<Catalog> getCatalogs();
@@ -119,26 +118,10 @@ public interface Site extends Serializable {
      * this site has access to
      *
      * @param catalogs a list of catalog groupings
-     * @deprecated use {@link #setCatalogXrefs(List)} instead
+     * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3
      */
     @Deprecated
     public void setCatalogs(List<Catalog> catalogs);
-
-    /**
-     * Retrieve a list of product, category and offer groupings that
-     * this site has access to
-     *
-     * @return a list of catalog groupings
-     */
-    public List<SiteCatalogXref> getCatalogXrefs();
-
-    /**
-     * Set the list of product, category and offer groupings that
-     * this site has access to
-     *
-     * @param catalogs a list of catalog groupings
-     */
-    public void setCatalogXrefs(List<SiteCatalogXref> catalogXrefs);
 
     /**
      * Retrieve an deep copy of this site. Not bound by
@@ -158,6 +141,7 @@ public interface Site extends Serializable {
      * This method will return true when the given site was created based on a template.
      * 
      * @return whether or not this site is a TemplateSite
+     * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3     
      */
     public boolean isTemplateSite();
 }
