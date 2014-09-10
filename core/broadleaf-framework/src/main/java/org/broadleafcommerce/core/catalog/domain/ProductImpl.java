@@ -512,15 +512,15 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public List<CategoryProductXref> getAllParentCategoryXrefs() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
-            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
-            ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategoryXrefs(this, holder);
-            if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                return (List<CategoryProductXref>) holder.getResult();
-            }
-        }
+//        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+//        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
+//            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
+//            ExtensionResultHolder holder = new ExtensionResultHolder();
+//            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategoryXrefs(this, holder);
+//            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+//                return (List<CategoryProductXref>) holder.getResult();
+//            }
+//        }
         return allParentCategoryXrefs;
     }
 
@@ -533,15 +533,15 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     @Deprecated
     public List<Category> getAllParentCategories() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
-            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
-            ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategories(this, holder);
-            if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                return (List<Category>) holder.getResult();
-            }
-        }
+//        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+//        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
+//            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
+//            ExtensionResultHolder holder = new ExtensionResultHolder();
+//            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategories(this, holder);
+//            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+//                return (List<Category>) holder.getResult();
+//            }
+//        }
         List<Category> parents = new ArrayList<Category>();
         for (CategoryProductXref xref : allParentCategoryXrefs) {
             parents.add(xref.getCategory());
