@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2014 Broadleaf Commerce
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.extension;
+package org.broadleafcommerce.common.extensibility.jpa.clone;
 
-import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.springframework.stereotype.Service;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * For internal usage. Allows extension of entity API calls without subclassing the entity.
  *
  * @author Jeff Fischer
  */
-@Service("blCategoryEntityExtensionManager")
-public class CategoryEntityExtensionManager extends ExtensionManager<CategoryEntityExtensionHandler> {
-
-    public CategoryEntityExtensionManager() {
-        super(CategoryEntityExtensionHandler.class);
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+public @interface CloneFilteredAdornedTargetCollection {
 
 }
