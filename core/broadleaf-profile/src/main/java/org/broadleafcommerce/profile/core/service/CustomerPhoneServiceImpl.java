@@ -16,12 +16,15 @@
 
 package org.broadleafcommerce.profile.core.service;
 
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.CustomerPhoneDao;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Service("blCustomerPhoneService")
 public class CustomerPhoneServiceImpl implements CustomerPhoneService {
@@ -29,6 +32,8 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
     @Resource(name="blCustomerPhoneDao")
     protected CustomerPhoneDao customerPhoneDao;
 
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public CustomerPhone saveCustomerPhone(CustomerPhone customerPhone) {
         List<CustomerPhone> activeCustomerPhones = readActiveCustomerPhonesByCustomerId(customerPhone.getCustomer().getId());
         if (activeCustomerPhones != null && activeCustomerPhones.isEmpty()) {
@@ -47,30 +52,39 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
         return customerPhoneDao.save(customerPhone);
     }
 
+    @Override
     public List<CustomerPhone> readActiveCustomerPhonesByCustomerId(Long customerId) {
         return customerPhoneDao.readActiveCustomerPhonesByCustomerId(customerId);
     }
 
+    @Override
     public CustomerPhone readCustomerPhoneById(Long customerPhoneId) {
         return customerPhoneDao.readCustomerPhoneById(customerPhoneId);
     }
 
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId) {
         customerPhoneDao.makeCustomerPhoneDefault(customerPhoneId, customerId);
     }
 
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void deleteCustomerPhoneById(Long customerPhoneId){
         customerPhoneDao.deleteCustomerPhoneById(customerPhoneId);
     }
 
+    @Override
     public CustomerPhone findDefaultCustomerPhone(Long customerId) {
         return customerPhoneDao.findDefaultCustomerPhone(customerId);
     }
 
+    @Override
     public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId) {
         return customerPhoneDao.readAllCustomerPhonesByCustomerId(customerId);
     }
 
+    @Override
     public CustomerPhone create() {
         return customerPhoneDao.create();
     }

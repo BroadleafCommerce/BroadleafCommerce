@@ -24,6 +24,7 @@ import org.broadleafcommerce.core.payment.domain.Referenced;
 import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -42,10 +43,13 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
     @Resource(name = "blSecurePaymentInfoDao")
     protected SecurePaymentInfoDao securePaymentInfoDao;
 
+    @Override
+    @Transactional("blTransactionManagerSecureInfo")
     public Referenced save(Referenced securePaymentInfo) {
         return securePaymentInfoDao.save(securePaymentInfo);
     }
 
+    @Override
     public Referenced create(PaymentInfoType paymentInfoType) {
         if (paymentInfoType.equals(PaymentInfoType.CREDIT_CARD)) {
             CreditCardPaymentInfo ccinfo = securePaymentInfoDao.createCreditCardPaymentInfo();
@@ -61,6 +65,7 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
         return null;
     }
 
+    @Override
     public Referenced findSecurePaymentInfo(String referenceNumber, PaymentInfoType paymentInfoType) throws WorkflowException {
         if (paymentInfoType == PaymentInfoType.CREDIT_CARD) {
             CreditCardPaymentInfo ccinfo = findCreditCardInfo(referenceNumber);
@@ -85,6 +90,7 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
         return null;
     }
 
+    @Override
     public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentInfoType paymentInfoType) throws WorkflowException {
         Referenced referenced = findSecurePaymentInfo(referenceNumber, paymentInfoType);
         if (referenced != null) {
@@ -93,6 +99,8 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
 
     }
 
+    @Override
+    @Transactional("blTransactionManagerSecureInfo")
     public void remove(Referenced securePaymentInfo) {
         securePaymentInfoDao.delete(securePaymentInfo);
     }

@@ -17,9 +17,11 @@
 package org.broadleafcommerce.core.inventory.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.inventory.dao.AvailabilityDao;
 import org.broadleafcommerce.core.inventory.domain.SkuAvailability;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +110,7 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     }
     
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void save(SkuAvailability skuAvailability) {
         availabilityDao.save(skuAvailability);
     }
