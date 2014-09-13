@@ -27,11 +27,13 @@ import org.broadleafcommerce.cms.url.service.URLHandlerService;
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashSet;
 import java.util.Map;
@@ -50,11 +52,14 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Component("blURLHandlerFilter")
 public class URLHandlerFilter extends OncePerRequestFilter {
-    
+
+    private static final Log LOG = LogFactory.getLog(URLHandlerFilter.class);
+
     @Resource(name = "blURLHandlerService")
     private URLHandlerService urlHandlerService;
 
-    private static final Log LOG = LogFactory.getLog(URLHandlerFilter.class);
+    @Value("${request.uri.encoding}")
+    public String charEncoding;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -68,6 +73,8 @@ public class URLHandlerFilter extends OncePerRequestFilter {
         } else {
             requestURIWithoutContext = request.getRequestURI();
         }
+
+        requestURIWithoutContext = URLDecoder.decode(requestURIWithoutContext, charEncoding);
         URLHandler handler = urlHandlerService.findURLHandlerByURI(requestURIWithoutContext);
         
         if (handler != null) {
