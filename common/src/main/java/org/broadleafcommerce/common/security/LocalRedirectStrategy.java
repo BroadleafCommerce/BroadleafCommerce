@@ -20,14 +20,16 @@
 package org.broadleafcommerce.common.security;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.security.web.RedirectStrategy;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This class insures that if using the successUrl or failureUrl request
@@ -36,8 +38,9 @@ import java.net.URL;
  */
 public class LocalRedirectStrategy implements RedirectStrategy {
 
+    
     private boolean contextRelative = false;
-    private Logger logger = Logger.getLogger(this.getClass());
+    private static final Log LOG = LogFactory.getLog(LocalRedirectStrategy.class);
     private boolean enforcePortMatch = false;
 
     /*
@@ -48,6 +51,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
      * servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
      * java.lang.String)
      */
+    @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
         if (!url.startsWith("/")) {
             if (StringUtils.equals(request.getParameter("successUrl"), url) || StringUtils.equals(request.getParameter("failureUrl"), url)) {
@@ -56,8 +60,8 @@ public class LocalRedirectStrategy implements RedirectStrategy {
         }
         String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
         redirectUrl = response.encodeRedirectURL(redirectUrl);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Redirecting to '" + url + "'");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Redirecting to '" + url + "'");
         }
 
         response.sendRedirect(redirectUrl);
@@ -119,7 +123,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
             }
         }
         String errorMessage = "Invalid redirect url specified.  Must be of the form /<relative view> or http[s]://<server name>[:<server port>][/<context path>]/...";
-        logger.warn(errorMessage + ":  " + url);
+        LOG.warn(errorMessage + ":  " + url);
         throw new MalformedURLException(errorMessage + ":  " + url);
     }
 

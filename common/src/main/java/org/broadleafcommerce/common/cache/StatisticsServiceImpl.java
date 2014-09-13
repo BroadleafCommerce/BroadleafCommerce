@@ -19,6 +19,17 @@
  */
 package org.broadleafcommerce.common.cache;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jmx.export.naming.SelfNaming;
+import org.springframework.jmx.support.ObjectNameManager;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,17 +50,6 @@ import javax.management.MBeanOperationInfo;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.broadleafcommerce.common.time.SystemTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jmx.export.naming.SelfNaming;
-import org.springframework.jmx.support.ObjectNameManager;
-import org.springframework.stereotype.Service;
 
 /**
  * @author Jeff Fischer
