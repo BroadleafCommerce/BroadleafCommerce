@@ -19,15 +19,18 @@
  */
 package org.broadleafcommerce.core.pricing.service;
 
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOption;
 import org.broadleafcommerce.core.pricing.dao.ShippingRateDao;
 import org.broadleafcommerce.core.pricing.domain.ShippingRate;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 
 /**
  * @deprecated Superceded in functionality by {@link BandedPriceFulfillmentOption} and {@link BandedFulfillmentPricingProvider}
@@ -51,6 +54,7 @@ public class ShippingRateServiceImpl implements ShippingRateService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public ShippingRate save(ShippingRate shippingRate) {
         return shippingRateDao.save(shippingRate);
     }

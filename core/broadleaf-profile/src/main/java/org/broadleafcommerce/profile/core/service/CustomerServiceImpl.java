@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.security.util.PasswordReset;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.dao.CustomerForgotPasswordSecurityTokenDao;
 import org.broadleafcommerce.profile.core.dao.RoleDao;
@@ -48,6 +49,7 @@ import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -114,11 +116,13 @@ public class CustomerServiceImpl implements CustomerService {
     protected List<PasswordUpdatedHandler> passwordChangedHandlers = new ArrayList<PasswordUpdatedHandler>();
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer saveCustomer(Customer customer) {
         return saveCustomer(customer, customer.isRegistered());
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer saveCustomer(Customer customer, boolean register) {
         if (register && !customer.isRegistered()) {
             customer.setRegistered(true);
@@ -142,6 +146,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer registerCustomer(Customer customer, String password, String passwordConfirm) {
         customer.setRegistered(true);
 
@@ -180,6 +185,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer changePassword(PasswordChange passwordChange) {
         Customer customer = readCustomerByUsername(passwordChange.getUsername());
         customer.setUnencodedPassword(passwordChange.getNewPassword());
@@ -194,6 +200,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Customer resetPassword(PasswordReset passwordReset) {
         Customer customer = readCustomerByUsername(passwordReset.getUsername());
         String newPassword = PasswordUtils.generateTemporaryPassword(passwordReset.getPasswordLength());
@@ -368,6 +375,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public GenericResponse sendForgotUsernameNotification(String emailAddress) {
         GenericResponse response = new GenericResponse();
         List<Customer> customers = null;
@@ -398,6 +406,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public GenericResponse sendForgotPasswordNotification(String username, String resetPasswordUrl) {
         GenericResponse response = new GenericResponse();
         Customer customer = null;
@@ -485,6 +494,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
     
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
         GenericResponse response = new GenericResponse();
         Customer customer = null;

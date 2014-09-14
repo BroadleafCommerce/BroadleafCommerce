@@ -75,16 +75,6 @@
     </aop:config>
 
     <aop:config>
-        <aop:pointcut id="blOrderPaymentServiceOperation" expression="execution(* org.broadleafcommerce.core.payment.service.OrderPaymentService.save(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderPaymentServiceOperation"/>
-    </aop:config>
-    
-    <aop:config>
-        <aop:pointcut id="blOrderPaymentServiceOperation2" expression="execution(* org.broadleafcommerce.core.payment.service.OrderPaymentService.delete(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderPaymentServiceOperation2"/>
-    </aop:config>
-
-    <aop:config>
         <aop:pointcut id="blCodeTypeServiceOperation" expression="execution(* org.broadleafcommerce.core.util.service.CodeTypeService.*(..))"/>
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCodeTypeServiceOperation"/>
     </aop:config>
@@ -109,9 +99,4 @@
         <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderItemDaoOperation3"/>
     </aop:config>
 
-    <aop:config>
-        <aop:pointcut id="blShippingRateServiceOperation" expression="execution(* org.broadleafcommerce.core.pricing.service.ShippingRateService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blShippingRateServiceOperation"/>
-    </aop:config>
-    
 </beans>
