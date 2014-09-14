@@ -19,9 +19,11 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.PhoneDao;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -31,14 +33,18 @@ public class PhoneServiceImpl implements PhoneService {
     @Resource(name="blPhoneDao")
     protected PhoneDao phoneDao;
 
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Phone savePhone(Phone phone) {
         return phoneDao.save(phone);
     }
 
+    @Override
     public Phone readPhoneById(Long phoneId) {
         return phoneDao.readPhoneById(phoneId);
     }
 
+    @Override
     public Phone create() {
         return phoneDao.create();
     }
