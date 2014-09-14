@@ -19,8 +19,8 @@
  */
 package org.broadleafcommerce.common.encryption;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.RuntimeEnvironmentKeyResolver;
 import org.broadleafcommerce.common.config.SystemPropertyRuntimeEnvironmentKeyResolver;
 
@@ -36,7 +36,8 @@ import org.broadleafcommerce.common.config.SystemPropertyRuntimeEnvironmentKeyRe
  *
  */
 public class PassthroughEncryptionModule implements EncryptionModule {
-    protected static final Logger LOG = LogManager.getLogger(PassthroughEncryptionModule.class);
+    
+    private static final Log LOG = LogFactory.getLog(PassthroughEncryptionModule.class);
     
     protected RuntimeEnvironmentKeyResolver keyResolver = new SystemPropertyRuntimeEnvironmentKeyResolver();
     
@@ -46,10 +47,12 @@ public class PassthroughEncryptionModule implements EncryptionModule {
         }
     }
 
+    @Override
     public String decrypt(String cipherText) {
         return cipherText;
     }
 
+    @Override
     public String encrypt(String plainText) {
         return plainText;
     }

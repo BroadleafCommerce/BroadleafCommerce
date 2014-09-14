@@ -22,8 +22,6 @@ package org.broadleafcommerce.common.cache;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.naming.SelfNaming;
@@ -102,12 +100,12 @@ public class StatisticsServiceImpl implements DynamicMBean, StatisticsService, S
 
     @Override
     public void activateLogging() {
-        LogManager.getLogger(StatisticsServiceImpl.class).setLevel(Level.INFO);
+        //LogManager.getLogManager().getLogger(StatisticsServiceImpl.class.getName()).setLevel(Level.INFO);
     }
 
     @Override
     public void disableLogging() {
-        LogManager.getLogger(StatisticsServiceImpl.class).setLevel(Level.DEBUG);
+        //LogManager.getLogger(StatisticsServiceImpl.class).setLevel(Level.DEBUG);
     }
 
     public String getAppName() {
