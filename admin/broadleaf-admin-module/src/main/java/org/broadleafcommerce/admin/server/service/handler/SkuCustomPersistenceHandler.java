@@ -195,7 +195,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             if (persistencePackage.getCustomCriteria() != null && persistencePackage.getCustomCriteria().length > 0) {
                 key += persistencePackage.getCustomCriteria()[0];
             }
-            if (!isCache) {
+            if (isCache) {
                 properties = METADATA_CACHE.get(key);
             }
             if (properties == null) {
