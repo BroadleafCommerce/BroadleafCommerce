@@ -35,6 +35,8 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductSkuXref;
+import org.broadleafcommerce.core.catalog.domain.ProductSkuXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -169,7 +171,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             Class testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
-            return Sku.class.isAssignableFrom(testClass) && 
+            return ProductSkuXrefImpl.class.isAssignableFrom(testClass) &&
                     //ArrayUtils.isEmpty(persistencePackage.getCustomCriteria()) &&
                     OperationType.BASIC.equals(operationType) && 
                     (persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST) == null);
@@ -193,12 +195,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             if (persistencePackage.getCustomCriteria() != null && persistencePackage.getCustomCriteria().length > 0) {
                 key += persistencePackage.getCustomCriteria()[0];
             }
-            if (isCache) {
+            if (!isCache) {
                 properties = METADATA_CACHE.get(key);
             }
             if (properties == null) {
                 //Grab the default properties for the Sku
-                properties = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
+                properties = helper.getSimpleMergedProperties(ProductSkuXrefImpl.class.getName(), persistencePerspective);
 
 
                 if (persistencePackage.getCustomCriteria() == null || persistencePackage.getCustomCriteria().length == 0) {
@@ -242,7 +244,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             adornedPersistenceModule.setPersistenceManager((PersistenceManager)helper);
             adornedPersistenceModule.updateMergedProperties(persistencePackage, allMergedProperties);
             
-            Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Sku.class);
+            Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ProductSkuXrefImpl.class);
+
+            for (Map.Entry<MergedPropertyType, Map<String, FieldMetadata>> entry : allMergedProperties.entrySet()) {
+                filterOutProductMetadata(entry.getValue());
+            }
+
             ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
             DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
 
@@ -251,6 +258,20 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             ServiceException ex = new ServiceException("Unable to retrieve inspection results for " +
                     persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             throw ex;
+        }
+    }
+
+    protected void filterOutProductMetadata(Map<String, FieldMetadata> map) {
+        //TODO we shouldn't have to filter out these keys here -- we should be able to exclude using @AdminPresentation,
+        //but there's a bug preventing this behavior from completely working correctly
+        List<String> removeKeys = new ArrayList<String>();
+        for (Map.Entry<String, FieldMetadata> entry : map.entrySet()) {
+            if (entry.getKey().contains("defaultProduct.")) {
+                removeKeys.add(entry.getKey());
+            }
+        }
+        for (String removeKey : removeKeys) {
+            map.remove(removeKey);
         }
     }
 
@@ -391,7 +412,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             //get the default properties from Sku and its subclasses
-            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(ProductSkuXref.class.getName(), persistencePerspective);
 
             //Pull back the Skus based on the criteria from the client
             List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps);
@@ -408,7 +429,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
             //Now fill out the relevant properties for the product options for the Skus that were returned
             for (int i = 0; i < records.size(); i++) {
-                Sku sku = (Sku) records.get(i);
+                Sku sku = ((ProductSkuXref) records.get(i)).getSku();
                 Entity entity = payload[i];
 
                 List<ProductOptionValue> optionValues = sku.getProductOptionValues();
@@ -503,9 +524,10 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         try {
             //Fill out the Sku instance from the form
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Sku adminInstance = (Sku) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
-            adminInstance = (Sku) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            ProductSkuXref adminInstance = (ProductSkuXref) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(ProductSkuXref.class.getName(), persistencePerspective);
+            filterOutProductMetadata(adminProperties);
+            adminInstance = (ProductSkuXref) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             //Verify that there isn't already a Sku for this particular product option value combo
             Entity errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
@@ -520,7 +542,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             adminInstance = dynamicEntityDao.persist(adminInstance);
 
             //associate the product option values
-            associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
+            associateProductOptionValuesToSku(entity, adminInstance.getSku(), dynamicEntityDao);
 
             //After associating the product option values, save off the Sku
             adminInstance = dynamicEntityDao.merge(adminInstance);
@@ -542,21 +564,22 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         try {
             //Fill out the Sku instance from the form
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(ProductSkuXref.class.getName(), persistencePerspective);
+            filterOutProductMetadata(adminProperties);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            Sku adminInstance = (Sku) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            adminInstance = (Sku) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            ProductSkuXref adminInstance = (ProductSkuXref) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            adminInstance = (ProductSkuXref) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             //Verify that there isn't already a Sku for this particular product option value combo
             Entity errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
                                                                             getProductOptionProperties(entity),
-                                                                            adminInstance);
+                                                                            adminInstance.getSku());
             if (errorEntity != null) {
                 entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
             }
 
-            associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
+            associateProductOptionValuesToSku(entity, adminInstance.getSku(), dynamicEntityDao);
 
             adminInstance = dynamicEntityDao.merge(adminInstance);
 

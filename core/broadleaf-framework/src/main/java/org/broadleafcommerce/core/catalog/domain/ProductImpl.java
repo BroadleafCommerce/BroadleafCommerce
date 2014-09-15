@@ -23,9 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.clone.CloneFilteredAdornedTargetCollection;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -210,6 +208,9 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     
     @Transient
     protected List<Sku> skus = new ArrayList<Sku>();
+
+    @Transient
+    protected List<Sku> additionalSkus = new ArrayList<Sku>();
     
     @Transient
     protected String promoMessage;
@@ -224,7 +225,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         sortProperty = "sequence", 
         maintainedAdornedTargetFields = { "promotionMessage" }, 
         gridVisibleFields = { "defaultSku.name", "promotionMessage" })
-    @CloneFilteredAdornedTargetCollection
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
@@ -237,16 +237,14 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         sortProperty = "sequence",
         maintainedAdornedTargetFields = { "promotionMessage" }, 
         gridVisibleFields = { "defaultSku.name", "promotionMessage" })
-    @CloneFilteredAdornedTargetCollection
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy="product")
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = ProductSkuXrefImpl.class, mappedBy = "product", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName="ProductImpl_Additional_Skus", order = 1000,
+    @AdminPresentationCollection(friendlyName = "ProductImpl_Additional_Skus", order = 1000,
         tab = Presentation.Tab.Name.ProductOptions, tabOrder = Presentation.Tab.Order.ProductOptions)
-    @ClonePolicyCollection
-    protected List<Sku> additionalSkus = new ArrayList<Sku>();
+    protected List<ProductSkuXref> additionalSkusXrefs = new ArrayList<ProductSkuXref>();
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -269,7 +267,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         targetObjectProperty = "category",
         parentObjectProperty = "product",
         gridVisibleFields = { "name" })
-    @CloneFilteredAdornedTargetCollection()
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
 
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -439,15 +436,16 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     public List<Sku> getAllSkus() {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
-        for (Sku additionalSku : additionalSkus) {
-            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
-                allSkus.add(additionalSku);
+        for (ProductSkuXref additionalSku : additionalSkusXrefs) {
+            if (!additionalSku.getSku().getId().equals(getDefaultSku().getId())) {
+                allSkus.add(additionalSku.getSku());
             }
         }
-        return allSkus;
+        return Collections.unmodifiableList(allSkus);
     }
 
     @Override
+    @Deprecated
     public List<Sku> getSkus() {
         if (skus.size() == 0) {
             List<Sku> additionalSkus = getAdditionalSkus();
@@ -457,21 +455,38 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
                 }
             }
         }
-        return skus;
+        return Collections.unmodifiableList(skus);
     }
 
     @Override
+    @Deprecated
     public List<Sku> getAdditionalSkus() {
-        return additionalSkus;
+        if (additionalSkus.size() == 0) {
+            for (ProductSkuXref sku : additionalSkusXrefs) {
+                additionalSkus.add(sku.getSku());
+            }
+        }
+        return Collections.unmodifiableList(additionalSkus);
     }
 
     @Override
+    @Deprecated
     public void setAdditionalSkus(List<Sku> skus) {
         this.additionalSkus.clear();
+        this.additionalSkusXrefs.clear();
         for(Sku sku : skus){
-            this.additionalSkus.add(sku);
+            this.additionalSkusXrefs.add(new ProductSkuXrefImpl(this, sku));
         }
-        //this.skus.clear();
+    }
+
+    @Override
+    public List<ProductSkuXref> getAdditionalSkusXrefs() {
+        return additionalSkusXrefs;
+    }
+
+    @Override
+    public void setAdditionalSkusXrefs(List<ProductSkuXref> additionalSkusXrefs) {
+        this.additionalSkusXrefs = additionalSkusXrefs;
     }
 
     @Override

@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -320,12 +319,8 @@ public class SkuImpl implements Sku {
      * This relationship will be non-null if and only if this Sku is contained in the list of
      * additional Skus for a Product (for Skus based on ProductOptions)
      */
-    @ManyToOne(optional = true, targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", 
-        joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
-    protected Product product;
+    @ManyToOne(optional = true, targetEntity = ProductSkuXrefImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    protected ProductSkuXref product;
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
@@ -343,7 +338,6 @@ public class SkuImpl implements Sku {
         inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID",referencedColumnName = "PRODUCT_OPTION_VALUE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
-    @ClonePolicyCollection(deepClone = false)
     //Use a Set instead of a List - see https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917
     protected Set<ProductOptionValue> productOptionValues = new HashSet<ProductOptionValue>();
 
@@ -353,7 +347,6 @@ public class SkuImpl implements Sku {
             inverseJoinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
-    @ClonePolicyCollection
     protected List<SkuFee> fees = new ArrayList<SkuFee>();
 
     @ElementCollection
@@ -374,7 +367,6 @@ public class SkuImpl implements Sku {
             inverseJoinColumns = @JoinColumn(name = "FULFILLMENT_OPTION_ID",referencedColumnName = "FULFILLMENT_OPTION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
-    @ClonePolicyCollection
     protected List<FulfillmentOption> excludedFulfillmentOptions = new ArrayList<FulfillmentOption>();
 
     @Column(name = "INVENTORY_TYPE")
@@ -456,12 +448,12 @@ public class SkuImpl implements Sku {
     }
 
     protected boolean hasDefaultSku() {
-        return (product != null && product.getDefaultSku() != null && !getId().equals(product.getDefaultSku().getId()));
+        return (product != null && product.getProduct().getDefaultSku() != null && !getId().equals(product.getProduct().getDefaultSku().getId()));
     }
 
     protected Sku lookupDefaultSku() {
-        if (product != null && product.getDefaultSku() != null) {
-            return product.getDefaultSku();
+        if (product != null && product.getProduct().getDefaultSku() != null) {
+            return product.getProduct().getDefaultSku();
         } else {
             return null;
         }
@@ -855,12 +847,12 @@ public class SkuImpl implements Sku {
 
     @Override
     public Product getProduct() {
-        return (getDefaultProduct() != null) ? getDefaultProduct() : this.product;
+        return (getDefaultProduct() != null) ? getDefaultProduct() : this.product.getProduct();
     }
 
     @Override
     public void setProduct(Product product) {
-        this.product = product;
+        this.product = new ProductSkuXrefImpl(product, this);
     }
 
     @Override

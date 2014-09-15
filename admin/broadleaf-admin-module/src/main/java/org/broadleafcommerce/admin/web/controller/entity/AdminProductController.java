@@ -118,7 +118,7 @@ public class AdminProductController extends AdminBasicEntityController {
     
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
             String id, Map<String, String> pathVars) throws Exception {
-        String collectionField = "additionalSkus";
+        String collectionField = "additionalSkuXrefs";
         String mainClassName = getClassNameForSection(SECTION_KEY);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
         ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
@@ -190,7 +190,7 @@ public class AdminProductController extends AdminBasicEntityController {
             String sectionKey,
             Property collectionProperty,
             FieldMetadata md, PersistencePackageRequest ppr, EntityForm entityForm, Entity entity) throws ServiceException {
-        if ("additionalSkus".equals(collectionField) && ppr.getCustomCriteria().length == 0) {
+        if ("additionalSkuXrefs".equals(collectionField) && ppr.getCustomCriteria().length == 0) {
             ppr.withCustomCriteria(new String[] { id });
         }
         return super.buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, entityForm, entity);
@@ -198,7 +198,7 @@ public class AdminProductController extends AdminBasicEntityController {
     
     protected String showUpdateAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
             String id, String collectionItemId, Map<String, String> pathVars) throws Exception {
-        String collectionField = "additionalSkus";
+        String collectionField = "additionalSkuXrefs";
         
         // Find out metadata for the additionalSkus property
         String mainClassName = getClassNameForSection(SECTION_KEY);
@@ -250,7 +250,7 @@ public class AdminProductController extends AdminBasicEntityController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
-        if ("additionalSkus".equals(collectionField)) {
+        if ("additionalSkuXrefs".equals(collectionField)) {
             return showUpdateAdditionalSku(request, response, model, id, collectionItemId, pathVars);
         }
         return super.showUpdateCollectionItem(request, response, model, pathVars, id, collectionField, collectionItemId);
@@ -263,7 +263,7 @@ public class AdminProductController extends AdminBasicEntityController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
-        if ("additionalSkus".equals(collectionField)) {
+        if ("additionalSkuXrefs".equals(collectionField)) {
             return showAddAdditionalSku(request, response, model, id, pathVars);
         } 
         return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField, requestParams);
@@ -283,7 +283,7 @@ public class AdminProductController extends AdminBasicEntityController {
                                                                 .withButtonClass("generate-skus")
                                                                 .withUrlPostfix("/generate-skus");
         
-        ListGrid skusGrid = form.findListGrid("additionalSkus");
+        ListGrid skusGrid = form.findListGrid("additionalSkuXrefs");
         if (skusGrid != null) {
             skusGrid.addToolbarAction(generateSkusAction);
             skusGrid.setCanFilterAndSort(false);
@@ -292,7 +292,7 @@ public class AdminProductController extends AdminBasicEntityController {
         // When we're dealing with product bundles, we don't want to render the product options and additional skus
         // list grids. Remove them from the form.
         if (ProductBundle.class.isAssignableFrom(Class.forName(form.getEntityType()))) {
-            form.removeListGrid("additionalSkus");
+            form.removeListGrid("additionalSkuXrefs");
             form.removeListGrid("productOptions");
         }
         
