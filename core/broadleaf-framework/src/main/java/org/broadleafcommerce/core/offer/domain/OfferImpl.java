@@ -24,7 +24,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -127,7 +126,6 @@ public class OfferImpl implements Offer, AdminMainEntity {
             order = 1,
             tab = Presentation.Tab.Name.Codes,
             tabOrder = Presentation.Tab.Order.Codes)
-    @ClonePolicyCollection(unowned = true)
     protected List<OfferCode> offerCodes = new ArrayList<OfferCode>(100);
 
     @Column(name = "OFFER_NAME", nullable=false)
@@ -286,7 +284,6 @@ public class OfferImpl implements Offer, AdminMainEntity {
     @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Rule",
         group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, ruleIdentifier = RuleIdentifier.ORDERITEM)
-    @ClonePolicyCollection
     protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -297,7 +294,6 @@ public class OfferImpl implements Offer, AdminMainEntity {
         group = Presentation.Group.Name.ItemTarget, groupOrder = Presentation.Group.Order.ItemTarget,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM)
-    @ClonePolicyCollection
     protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")

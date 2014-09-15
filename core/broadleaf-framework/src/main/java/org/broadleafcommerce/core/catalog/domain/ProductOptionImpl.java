@@ -20,7 +20,6 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -137,7 +136,6 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @OrderBy(value = "displayOrder")
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "ProductOptionImpl_Allowed_Values")
-    @ClonePolicyCollection
     protected List<ProductOptionValue> allowedValues = new ArrayList<ProductOptionValue>();
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "productOption")

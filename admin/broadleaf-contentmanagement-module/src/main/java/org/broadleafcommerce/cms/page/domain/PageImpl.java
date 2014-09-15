@@ -20,7 +20,6 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -165,7 +164,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
         joinColumns = @JoinColumn(name = "PAGE_ID"), 
         inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @ClonePolicyCollection
     @Deprecated
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
 

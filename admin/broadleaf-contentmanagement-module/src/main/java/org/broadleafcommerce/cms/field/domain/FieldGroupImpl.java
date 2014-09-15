@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -76,7 +75,6 @@ public class FieldGroupImpl implements FieldGroup {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderBy("fieldOrder")
     @BatchSize(size = 20)
-    @ClonePolicyCollection(deepClone = false)
     protected List<FieldDefinition> fieldDefinitions = new ArrayList<FieldDefinition>();
 
     @Override

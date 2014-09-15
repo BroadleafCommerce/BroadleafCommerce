@@ -20,7 +20,6 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -204,7 +203,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM)
-    @ClonePolicyCollection
     @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 

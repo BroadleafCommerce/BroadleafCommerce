@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -86,7 +85,6 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "skuBundleItemsTitle")
-    @ClonePolicyCollection
     protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
     
     @Override

@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.common.enumeration.domain;
 
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -85,7 +84,6 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     @OneToMany(mappedBy = "type", targetEntity = DataDrivenEnumerationValueImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "DataDrivenEnumerationImpl_Enum_Values", order = 3)
-    @ClonePolicyCollection
     protected List<DataDrivenEnumerationValue> enumValues = new ArrayList<DataDrivenEnumerationValue>();
     
     @Override

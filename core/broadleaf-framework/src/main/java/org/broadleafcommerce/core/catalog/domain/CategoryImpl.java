@@ -27,13 +27,10 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
-import org.broadleafcommerce.common.extensibility.jpa.clone.CloneFilteredAdornedTargetCollection;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
@@ -270,7 +267,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "displayOrder",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             gridVisibleFields = { "name" })
-    @CloneFilteredAdornedTargetCollection()
     protected List<CategoryXref> allChildCategoryXrefs = new ArrayList<CategoryXref>(10);
 
     @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "subCategory", orphanRemoval = true)
@@ -285,7 +281,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "displayOrder",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             gridVisibleFields = { "name" })
-    @CloneFilteredAdornedTargetCollection()
     protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<CategoryXref>(10);
 
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "category", orphanRemoval = true)
@@ -300,7 +295,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "displayOrder",
             tab = Presentation.Tab.Name.Products, tabOrder = Presentation.Tab.Order.Products,
             gridVisibleFields = { "defaultSku.name" })
-    @CloneFilteredAdornedTargetCollection()
     protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
 
     @ElementCollection
@@ -347,7 +341,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
             gridVisibleFields = { "defaultSku.name", "promotionMessage" })
-    @CloneFilteredAdornedTargetCollection
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
     
     @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
@@ -360,7 +353,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
             gridVisibleFields = { "defaultSku.name", "promotionMessage" })
-    @CloneFilteredAdornedTargetCollection
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
@@ -373,7 +365,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
             gridVisibleFields = { "defaultSku.name", "promotionMessage" })
-    @CloneFilteredAdornedTargetCollection
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
     
     @OneToMany(mappedBy = "category", targetEntity = CategorySearchFacetImpl.class, cascade = {CascadeType.ALL})
@@ -386,7 +377,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "sequence",
             gridVisibleFields = { "field", "label", "searchDisplayPriority" })
     @BatchSize(size = 50)
-    @CloneFilteredAdornedTargetCollection
     protected List<CategorySearchFacet> searchFacets  = new ArrayList<CategorySearchFacet>();
     
     @ManyToMany(targetEntity = SearchFacetImpl.class)
@@ -403,7 +393,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             friendlyName = "excludedFacetsTitle",
             tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets,
             gridVisibleFields = {"field", "label", "searchDisplayPriority"})
-    @CloneFilteredAdornedTargetCollection
     protected List<SearchFacet> excludedSearchFacets = new ArrayList<SearchFacet>(10);
     
     @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)

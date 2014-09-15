@@ -22,7 +22,6 @@ package org.broadleafcommerce.cms.page.domain;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -115,7 +114,6 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderColumn(name = "GROUP_ORDER")
     @BatchSize(size = 20)
-    @ClonePolicyCollection(deepClone = false)
     protected List<FieldGroup> fieldGroups = new ArrayList<FieldGroup>();
 
     @Override
