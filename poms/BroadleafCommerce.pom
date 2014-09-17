@@ -5,7 +5,7 @@
 	<artifactId>BroadleafCommerce</artifactId>
 	<packaging>pom</packaging>
 	<name>BroadleafCommerce</name>
-	<version>0.9.46</version>
+	<version>0.9.47</version>
 	<description>BroadleafCommerce Maven Build </description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,28 +15,28 @@
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-profile</artifactId>
-				<version>0.9.46</version>
+				<version>0.9.47</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-profile-web</artifactId>
-				<version>0.9.46</version>
+				<version>0.9.47</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-framework</artifactId>
-				<version>0.9.46</version>
+				<version>0.9.47</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-framework-web</artifactId>
-				<version>0.9.46</version>
+				<version>0.9.47</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
@@ -647,7 +647,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -660,70 +660,70 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-instrument</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jms</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -737,7 +737,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-oxm</artifactId>
-                <version>4.0.5.RELEASE</version>
+                <version>4.1.0.RELEASE</version>
                 <type>jar</type>
                 <scope>runtime</scope>
             </dependency>
