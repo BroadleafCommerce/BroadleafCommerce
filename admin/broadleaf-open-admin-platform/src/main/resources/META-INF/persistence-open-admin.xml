@@ -36,16 +36,9 @@
         <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
         <exclude-unlisted-classes/>
         <properties>
+            <!-- Other properties inherited from persistence-common.xml -->
             <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
-            <property name="hibernate.cache.use_second_level_cache" value="true"/>
-            <property name="hibernate.cache.use_query_cache" value="true"/>
-            <!--property name="hibernate.generate_statistics" value="true" /-->
-            <property name="hibernate.archive.autodetection" value="false" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.ejb.session_factory_observer" value="org.broadleafcommerce.openadmin.server.dao.SessionFactoryChangeListener"/>
-            <property name="hibernate.id.new_generator_mappings" value="true"/>
         </properties>
     </persistence-unit>
     
@@ -59,6 +52,7 @@
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
         </properties>
     </persistence-unit>
 

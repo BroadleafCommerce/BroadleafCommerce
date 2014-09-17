@@ -53,16 +53,6 @@
         <class>org.broadleafcommerce.profile.core.domain.CountrySubdivisionImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategoryImpl</class>
         <exclude-unlisted-classes/>
-        <properties>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
-            <property name="hibernate.cache.use_second_level_cache" value="true"/>
-            <property name="hibernate.cache.use_query_cache" value="true"/>
-            <property name="hibernate.generate_statistics" value="false" />
-            <property name="hibernate.archive.autodetection" value="false" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
-            <property name="hibernate.id.new_generator_mappings" value="true"/>
-        </properties>
+        <!-- JPA properties inherited from persistence-common.xml -->
     </persistence-unit>
 </persistence>

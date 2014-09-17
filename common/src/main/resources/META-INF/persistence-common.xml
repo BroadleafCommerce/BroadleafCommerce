@@ -62,6 +62,7 @@
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>
