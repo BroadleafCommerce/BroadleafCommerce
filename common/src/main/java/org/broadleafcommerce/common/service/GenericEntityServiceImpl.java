@@ -23,6 +23,8 @@ package org.broadleafcommerce.common.service;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 
@@ -36,6 +38,21 @@ public class GenericEntityServiceImpl implements GenericEntityService {
     public Object readGenericEntity(String className, Object id) {
         Class<?> clazz = genericEntityDao.getImplClass(className);
         return genericEntityDao.readGenericEntity(clazz, id);
+    }
+    
+    @Override
+    public <T> T save(T object) {
+        return genericEntityDao.save(object);
+    }
+
+    @Override
+    public <T> Long readCountGenericEntity(Class<T> clazz) {
+        return genericEntityDao.readCountGenericEntity(clazz);
+    }
+
+    @Override
+    public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset) {
+        return genericEntityDao.readAllGenericEntity(clazz, limit, offset);
     }
 
 }

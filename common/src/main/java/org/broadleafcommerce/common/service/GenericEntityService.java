@@ -20,8 +20,16 @@
 
 package org.broadleafcommerce.common.service;
 
+import java.util.List;
+
 public interface GenericEntityService {
 
     public Object readGenericEntity(String className, Object id);
+
+    public <T> T save(T object);
+
+    public <T> Long readCountGenericEntity(Class<T> clazz);
+
+    public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset);
 
 }

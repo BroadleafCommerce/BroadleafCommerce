@@ -20,10 +20,18 @@
 
 package org.broadleafcommerce.common.dao;
 
+import java.util.List;
+
 public interface GenericEntityDao {
 
     public Object readGenericEntity(Class<?> clazz, Object id);
 
     public Class<?> getImplClass(String className);
+
+    public <T> T save(T object);
+
+    public <T> Long readCountGenericEntity(Class<T> clazz);
+
+    public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset);
 
 }

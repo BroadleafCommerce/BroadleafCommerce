@@ -22,17 +22,20 @@ package org.broadleafcommerce.common.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 
 @Repository("blGenericEntityDao")
@@ -62,6 +65,22 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
     }
 
     @Override
+    public <T> Long readCountGenericEntity(Class<T> clazz) {
+        TypedQuery<Long> q = new TypedQueryBuilder<T>(clazz, "root")
+            .toCountQuery(em);
+        return q.getSingleResult();
+    }
+
+    @Override
+    public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset) {
+        TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root")
+            .toQuery(em);
+        q.setMaxResults(limit);
+        q.setFirstResult(offset);
+        return q.getResultList();
+    }
+
+    @Override
     public Class<?> getImplClass(String className) {
         Class<?> clazz = entityConfiguration.lookupEntityClass(className);
         if (clazz == null) {
@@ -73,5 +92,11 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
         }
         return clazz;
     }
+    
+    @Override
+    public <T> T save(T object) {
+        return em.merge(object);
+    }
+    
 
 }
