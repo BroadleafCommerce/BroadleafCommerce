@@ -19,12 +19,10 @@
  */
 package org.broadleafcommerce.openadmin.server.service;
 
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
@@ -33,6 +31,9 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -103,6 +104,54 @@ public interface AdminEntityService {
      */
     public PersistenceResponse removeEntity(EntityForm entityForm, String[] customCriteria, List<SectionCrumb> sectionCrumb)
             throws ServiceException;
+
+    /**
+     * Thin layer on top of {@link DynamicEntityService#add(org.broadleafcommerce.openadmin.dto.PersistencePackage)} that
+     * swallows all {@link ValidationException}s that could be thrown and still just returns a {@link PersistenceResponse}
+     * with the {@link Entity} that failed validation.
+     * 
+     * @param request
+     * @return
+     * @throws ServiceException if there were exceptions other than a {@link ValidationException} that was thrown as a
+     * result of the attempted add
+     */
+    public PersistenceResponse add(PersistencePackageRequest request) throws ServiceException;
+    
+    /**
+     * Thin layer on top of {@link DynamicEntityService#update(org.broadleafcommerce.openadmin.dto.PersistencePackage)}
+     * @param request
+     * @return
+     * @throws ServiceException if there were exceptions other than a {@link ValidationException} that was thrown as a
+     * result of the attempted update
+     */
+    public PersistenceResponse update(PersistencePackageRequest request) throws ServiceException;
+
+    /**
+     * Thin layer on top of {@link DynamicEntityService#inspect(org.broadleafcommerce.openadmin.dto.PersistencePackage)}
+     * @param request
+     * @return
+     * @throws ServiceException
+     */
+    public PersistenceResponse inspect(PersistencePackageRequest request) throws ServiceException;
+
+    /**
+     * Thin layer on top of {@link DynamicEntityService#remove(org.broadleafcommerce.openadmin.dto.PersistencePackage)}
+     * @param request
+     * @return
+     * @throws ServiceException
+     */
+    public PersistenceResponse remove(PersistencePackageRequest request) throws ServiceException;
+
+    /**
+     * Thin layer on top of {@link DynamicEntityService#fetch(org.broadleafcommerce.openadmin.dto.PersistencePackage, org.broadleafcommerce.openadmin.dto.CriteriaTransferObject)}.
+     * This will glean and create a {@link CriteriaTransferObject} from {@link PersistencePackageRequest#getFilterAndSortCriteria()}
+     * to pass to {@link DynamicEntityService}.
+     * 
+     * @param request
+     * @return
+     * @throws ServiceException
+     */
+    public PersistenceResponse fetch(PersistencePackageRequest request) throws ServiceException;
 
     /**
      * Gets an Entity representing a specific collection item
