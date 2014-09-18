@@ -47,7 +47,6 @@ import javax.annotation.Resource;
  * @author jfischer
  */
 @Service("blDynamicEntityRemoteService")
-@Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
 public class DynamicEntityRemoteService implements DynamicEntityService, DynamicEntityRemote, ApplicationContextAware {
 
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
@@ -135,6 +134,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     @Override
+    @Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
     public Entity add(PersistencePackage persistencePackage) throws ServiceException {
         cleanEntity(persistencePackage.getEntity());
         if (persistencePackage.getEntity().isValidationFailure()) {
@@ -158,6 +158,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     @Override
+    @Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
     public Entity update(PersistencePackage persistencePackage) throws ServiceException {
         cleanEntity(persistencePackage.getEntity());
         if (persistencePackage.getEntity().isValidationFailure()) {
@@ -181,6 +182,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Dynamic
     }
 
     @Override
+    @Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
     public void remove(PersistencePackage persistencePackage) throws ServiceException {
         try {
             PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);

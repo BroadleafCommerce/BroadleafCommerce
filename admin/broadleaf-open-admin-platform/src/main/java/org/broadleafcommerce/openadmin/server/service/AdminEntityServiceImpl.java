@@ -16,19 +16,6 @@
 
 package org.broadleafcommerce.openadmin.server.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -58,6 +45,19 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -569,7 +569,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         throw new ServiceException("Could not determine ID field for " + cmd.getCeilingType());
     }
 
-    protected Entity add(PersistencePackageRequest request)
+    @Override
+    public Entity add(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
@@ -579,7 +580,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
     }
 
-    protected Entity update(PersistencePackageRequest request)
+    @Override
+    public Entity update(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
@@ -589,19 +591,22 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
     }
 
-    protected DynamicResultSet inspect(PersistencePackageRequest request)
+    @Override
+    public DynamicResultSet inspect(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.inspect(pkg);
     }
 
-    protected void remove(PersistencePackageRequest request)
+    @Override
+    public void remove(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         service.remove(pkg);
     }
 
-    protected DynamicResultSet fetch(PersistencePackageRequest request)
+    @Override
+    public DynamicResultSet fetch(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
 
