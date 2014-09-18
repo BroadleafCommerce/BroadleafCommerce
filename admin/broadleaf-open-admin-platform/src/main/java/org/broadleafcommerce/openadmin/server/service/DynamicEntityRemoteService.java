@@ -217,4 +217,19 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
             }
         });
     }
+
+    @Override
+    public PersistenceResponse nonTransactionalAdd(PersistencePackage persistencePackage) throws ServiceException {
+        return add(persistencePackage);
+    }
+
+    @Override
+    public PersistenceResponse nonTransactionalUpdate(PersistencePackage persistencePackage) throws ServiceException {
+        return update(persistencePackage);
+    }
+
+    @Override
+    public PersistenceResponse nonTransactionalRemove(PersistencePackage persistencePackage) throws ServiceException {
+        return remove(persistencePackage);
+    }
 }

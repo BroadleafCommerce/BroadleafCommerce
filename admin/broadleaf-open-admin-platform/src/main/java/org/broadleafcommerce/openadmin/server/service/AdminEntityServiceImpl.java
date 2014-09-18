@@ -659,8 +659,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public PersistenceResponse add(PersistencePackageRequest request)
-            throws ServiceException {
+    public PersistenceResponse add(PersistencePackageRequest request) throws ServiceException {
+        return add(request, true);
+    }
+    
+    public PersistenceResponse add(PersistencePackageRequest request, boolean transactional) throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
             if (request.isUpdateLookupType()) {
@@ -670,21 +673,36 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                         pkg.setSecurityCeilingEntityFullyQualifiedClassname(sc.getSectionIdentifier());
                     }
                 }
-                return service.update(pkg);
+                if (transactional) {
+                    return service.update(pkg);
+                } else {
+                    return service.nonTransactionalUpdate(pkg);
+                }
             } else {
-                return service.add(pkg);
+                if (transactional) {
+                    return service.add(pkg);
+                } else {
+                    return service.nonTransactionalAdd(pkg);
+                }
             }
         } catch (ValidationException e) {
             return new PersistenceResponse().withEntity(e.getEntity());
         }
     }
-
+    
     @Override
-    public PersistenceResponse update(PersistencePackageRequest request)
-            throws ServiceException {
+    public PersistenceResponse update(PersistencePackageRequest request) throws ServiceException {
+        return update(request, true);
+    }
+    
+    public PersistenceResponse update(PersistencePackageRequest request, boolean transactional) throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
-            return service.update(pkg);
+            if (transactional) {
+                return service.update(pkg);
+            } else {
+                return service.nonTransactionalUpdate(pkg);
+            }
         } catch (ValidationException e) {
             return new PersistenceResponse().withEntity(e.getEntity());
         }
@@ -700,9 +718,17 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     @Override
     public PersistenceResponse remove(PersistencePackageRequest request)
             throws ServiceException {
+        return remove(request, true);
+    }
+
+    public PersistenceResponse remove(PersistencePackageRequest request, boolean transactional) throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
-            return service.remove(pkg);
+            if (transactional) {
+                return service.remove(pkg);
+            } else {
+                return service.nonTransactionalRemove(pkg);
+            }
         } catch (ValidationException e) {
             return new PersistenceResponse().withEntity(e.getEntity());
         }

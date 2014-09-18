@@ -119,6 +119,18 @@ public interface AdminEntityService {
     public PersistenceResponse add(PersistencePackageRequest request) throws ServiceException;
     
     /**
+     * Works the same as {@link #add(PersistencePackageRequest)} but you can optionally invoke the transactional version
+     * of {@link DynamicEntityRemoteService#add(org.broadleafcommerce.openadmin.dto.PersistencePackage)} in situations
+     * where you want to manage the transactions in a parent component
+     * 
+     * @param request
+     * @param transactional
+     * @return
+     * @throws ServiceException
+     */
+    public PersistenceResponse add(PersistencePackageRequest request, boolean transactional) throws ServiceException;
+    
+    /**
      * Thin layer on top of {@link DynamicEntityService#update(org.broadleafcommerce.openadmin.dto.PersistencePackage)}
      * @param request
      * @return
@@ -126,6 +138,18 @@ public interface AdminEntityService {
      * result of the attempted update
      */
     public PersistenceResponse update(PersistencePackageRequest request) throws ServiceException;
+    
+    /**
+     * Works the same as {@link #update(PersistencePackageRequest)} but you can optionally invoke the transactional version
+     * of {@link DynamicEntityRemoteService#update(org.broadleafcommerce.openadmin.dto.PersistencePackage)} in situations
+     * where you want to manage the transactions in a parent component
+     * 
+     * @param request
+     * @param transactional
+     * @return
+     * @throws ServiceException
+     */
+    public PersistenceResponse update(PersistencePackageRequest request, boolean transactional) throws ServiceException;
 
     /**
      * Thin layer on top of {@link DynamicEntityService#inspect(org.broadleafcommerce.openadmin.dto.PersistencePackage)}
@@ -142,6 +166,18 @@ public interface AdminEntityService {
      * @throws ServiceException
      */
     public PersistenceResponse remove(PersistencePackageRequest request) throws ServiceException;
+    
+    /**
+     * Works the same as {@link #remove(PersistencePackageRequest)} but you can optionally invoke the transactional version
+     * of {@link DynamicEntityRemoteService#remove(org.broadleafcommerce.openadmin.dto.PersistencePackage)} in situations
+     * where you want to manage the transactions in a parent component
+     * 
+     * @param request
+     * @param transactional
+     * @return
+     * @throws ServiceException
+     */
+    public PersistenceResponse remove(PersistencePackageRequest request, boolean transactional) throws ServiceException;
 
     /**
      * Thin layer on top of {@link DynamicEntityService#fetch(org.broadleafcommerce.openadmin.dto.PersistencePackage, org.broadleafcommerce.openadmin.dto.CriteriaTransferObject)}.
