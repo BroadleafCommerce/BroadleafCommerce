@@ -278,6 +278,8 @@
         </property>
     </bean>
 
+    <bean id="blStatisticsServiceLogAdapter" class="org.broadleafcommerce.common.cache.NoOpStatisticsServiceLogAdapter"/>
+
     <bean id="blStatisticsService" class="org.broadleafcommerce.common.cache.StatisticsServiceImpl">
         <property name="appName">
             <bean class="org.springframework.jndi.JndiObjectFactoryBean">
@@ -287,6 +289,7 @@
                 <property name="defaultObject" value="broadleaf"/>
             </bean>
         </property>
+        <property name="adapter" ref="blStatisticsServiceLogAdapter"/>
     </bean>
 
     <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
