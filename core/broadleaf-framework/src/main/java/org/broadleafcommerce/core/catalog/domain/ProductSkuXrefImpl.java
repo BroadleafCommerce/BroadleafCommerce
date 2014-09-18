@@ -33,6 +33,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -87,7 +88,7 @@ public class ProductSkuXrefImpl implements ProductSkuXref {
     protected Product product;
 
     //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
-    @ManyToOne(targetEntity = SkuImpl.class)
+    @ManyToOne(targetEntity = SkuImpl.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "SKU_ID")
     @ClonePolicy
     protected Sku sku;
