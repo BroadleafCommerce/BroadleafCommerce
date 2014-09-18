@@ -93,7 +93,7 @@ public class SkuMediaXrefImpl implements SkuMediaXref {
     protected Sku sku;
 
     //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
-    @ManyToOne(targetEntity = MediaImpl.class, cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @ManyToOne(targetEntity = MediaImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "MEDIA_ID")
     @ClonePolicy
     protected Media media;
