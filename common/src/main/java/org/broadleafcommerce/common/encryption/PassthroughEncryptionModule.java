@@ -29,18 +29,18 @@ import org.broadleafcommerce.common.config.SystemPropertyRuntimeEnvironmentKeyRe
  * A real implementation should adhere to PCI compliance, which requires robust key
  * management, including regular key rotation. An excellent solution would be a module
  * for interacting with the StrongKey solution. Refer to this discussion:
- * 
+ *
  * http://www.strongauth.com/forum/index.php?topic=44.0
- * 
+ *
  * @author jfischer
  *
  */
 public class PassthroughEncryptionModule implements EncryptionModule {
-    
+
     private static final Log LOG = LogFactory.getLog(PassthroughEncryptionModule.class);
-    
+
     protected RuntimeEnvironmentKeyResolver keyResolver = new SystemPropertyRuntimeEnvironmentKeyResolver();
-    
+
     public PassthroughEncryptionModule() {
         if ("production".equals(keyResolver.resolveRuntimeEnvironmentKey())) {
             LOG.warn("This passthrough encryption module provides NO ENCRYPTION and should NOT be used in production.");

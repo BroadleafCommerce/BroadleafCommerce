@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class LocalRedirectStrategy implements RedirectStrategy {
 
-    
     private boolean contextRelative = false;
     private static final Log LOG = LogFactory.getLog(LocalRedirectStrategy.class);
     private boolean enforcePortMatch = false;
@@ -69,7 +68,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
 
     /**
      * Create the redirect url
-     * 
+     *
      * @param contextPath
      * @param url
      * @return
@@ -99,7 +98,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
     /**
      * Insure the url is valid (must begin with http or https) and local to the
      * application
-     * 
+     *
      * @param contextPath
      *            the application context path
      * @param url
@@ -131,7 +130,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
      * This forces the redirect url port to match the request port. This could
      * be problematic when switching between secure and non-secure (e.g.
      * http://localhost:8080 to https://localhost:8443)
-     * 
+     *
      * @param enforcePortMatch
      */
     public void setEnforcePortMatch(boolean enforcePortMatch) {
@@ -141,7 +140,7 @@ public class LocalRedirectStrategy implements RedirectStrategy {
     /**
      * Set whether or not the context should be included in the redirect path. If true, the context
      * is excluded from the generated path, otherwise it is included.
-     * 
+     *
      * @param contextRelative
      */
     public void setContextRelative(boolean contextRelative) {

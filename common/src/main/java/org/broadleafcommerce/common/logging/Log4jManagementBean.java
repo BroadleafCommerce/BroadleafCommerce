@@ -20,9 +20,7 @@
 package org.broadleafcommerce.common.logging;
 
 import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.stereotype.Component;
 
-@Component
 @ManagedResource(objectName="org.broadleafcommerce:name=Log4JManangement", description="Logging Management", currencyTimeLimit=15)
 public class Log4jManagementBean {
 
