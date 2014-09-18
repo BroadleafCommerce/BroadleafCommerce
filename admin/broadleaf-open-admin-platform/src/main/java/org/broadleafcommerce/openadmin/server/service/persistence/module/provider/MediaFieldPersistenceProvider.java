@@ -125,6 +125,78 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         return response;
     }
 
+    @Override
+    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+        if (!canHandleExtraction(extractValueRequest, property)) {
+            return FieldProviderResponse.NOT_HANDLED;
+        }
+
+        if (extractValueRequest.getRequestedValue() != null) {
+            Object requestedValue = extractValueRequest.getRequestedValue();
+            if (!StringUtils.isEmpty(extractValueRequest.getMetadata().getToOneTargetProperty())) {
+                try {
+                    requestedValue = extractValueRequest.getFieldManager().getFieldValue(requestedValue, extractValueRequest.getMetadata().getToOneTargetProperty());
+                } catch (IllegalAccessException e) {
+                    throw ExceptionHelper.refineException(e);
+                } catch (FieldNotAvailableException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+            }
+            if (requestedValue instanceof Media) {
+                Media media = (Media) requestedValue;
+                String jsonString = convertMediaToJson(media);
+                property.setValue(jsonString);
+                property.setUnHtmlEncodedValue(jsonString);
+                property.setDisplayValue(extractValueRequest.getDisplayVal());
+                return FieldProviderResponse.HANDLED_BREAK;
+            } else {
+                throw new UnsupportedOperationException("MEDIA type is currently only supported on fields of type Media");
+            }
+        }
+        return FieldProviderResponse.HANDLED;
+    }
+
+    @Override
+    public FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
+        // BP:  Basically copied this from RuleFieldPersistenceProvider
+        List<Property> propertyList = new ArrayList<Property>();
+        propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
+        Iterator<Property> itr = propertyList.iterator();
+        List<Property> additionalProperties = new ArrayList<Property>();
+        while(itr.hasNext()) {
+            Property prop = itr.next();
+            if (prop.getName().endsWith("Json")) {
+                for (Map.Entry<String, FieldMetadata> entry : properties.entrySet()) {
+                    if (prop.getName().startsWith(entry.getKey())) {
+                        BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
+                        if (originalFM.getFieldType() == SupportedFieldType.MEDIA) {
+                            Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(originalFM
+                                    .getName());
+                            if (originalProp == null) {
+                                originalProp = new Property();
+                                originalProp.setName(originalFM.getName());
+                                additionalProperties.add(originalProp);
+                            }
+                            originalProp.setValue(prop.getValue());
+                            originalProp.setRawValue(prop.getRawValue());
+                            originalProp.setUnHtmlEncodedValue(prop.getUnHtmlEncodedValue());
+                            itr.remove();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        propertyList.addAll(additionalProperties);
+        addFilterPropertiesRequest.getEntity().setProperties(propertyList.toArray(new Property[propertyList.size()]));
+        return FieldProviderResponse.HANDLED;
+    }
+
+    @Override
+    public int getOrder() {
+        return FieldPersistenceProvider.MEDIA;
+    }
+
     protected void setupJoinEntityParent(PopulateValueRequest populateValueRequest, Serializable instance, Class<?>
             valueType, Object parent) throws IllegalAccessException, FieldNotAvailableException, InstantiationException {
         //this is a join-entity type
@@ -225,78 +297,6 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             startingValueType = MediaImpl.class;
         }
         return startingValueType;
-    }
-
-    @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
-        if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
-        }
-
-        if (extractValueRequest.getRequestedValue() != null) {
-            Object requestedValue = extractValueRequest.getRequestedValue();
-            if (!StringUtils.isEmpty(extractValueRequest.getMetadata().getToOneTargetProperty())) {
-                try {
-                    requestedValue = extractValueRequest.getFieldManager().getFieldValue(requestedValue, extractValueRequest.getMetadata().getToOneTargetProperty());
-                } catch (IllegalAccessException e) {
-                    throw ExceptionHelper.refineException(e);
-                } catch (FieldNotAvailableException e) {
-                    throw ExceptionHelper.refineException(e);
-                }
-            }
-            if (requestedValue instanceof Media) {
-                Media media = (Media) requestedValue;
-                String jsonString = convertMediaToJson(media);
-                property.setValue(jsonString);
-                property.setUnHtmlEncodedValue(jsonString);
-                property.setDisplayValue(extractValueRequest.getDisplayVal());
-                return FieldProviderResponse.HANDLED_BREAK;
-            } else {
-                throw new UnsupportedOperationException("MEDIA type is currently only supported on fields of type Media");
-            }
-        }
-        return FieldProviderResponse.HANDLED;
-    }
-
-    @Override
-    public FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
-        // BP:  Basically copied this from RuleFieldPersistenceProvider
-        List<Property> propertyList = new ArrayList<Property>();
-        propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
-        Iterator<Property> itr = propertyList.iterator();
-        List<Property> additionalProperties = new ArrayList<Property>();
-        while(itr.hasNext()) {
-            Property prop = itr.next();
-            if (prop.getName().endsWith("Json")) {
-                for (Map.Entry<String, FieldMetadata> entry : properties.entrySet()) {
-                    if (prop.getName().startsWith(entry.getKey())) {
-                        BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
-                        if (originalFM.getFieldType() == SupportedFieldType.MEDIA) {
-                            Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(originalFM
-                                    .getName());
-                            if (originalProp == null) {
-                                originalProp = new Property();
-                                originalProp.setName(originalFM.getName());
-                                additionalProperties.add(originalProp);
-                            }
-                            originalProp.setValue(prop.getValue());
-                            originalProp.setRawValue(prop.getRawValue());
-                            originalProp.setUnHtmlEncodedValue(prop.getUnHtmlEncodedValue());
-                            itr.remove();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        propertyList.addAll(additionalProperties);
-        addFilterPropertiesRequest.getEntity().setProperties(propertyList.toArray(new Property[propertyList.size()]));
-        return FieldProviderResponse.HANDLED;
-    }
-
-    @Override
-    public int getOrder() {
-        return FieldPersistenceProvider.MEDIA;
     }
 
     protected String convertMediaToJson(Media media) {
