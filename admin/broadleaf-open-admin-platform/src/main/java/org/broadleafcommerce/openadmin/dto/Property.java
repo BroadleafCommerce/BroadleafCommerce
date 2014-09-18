@@ -44,6 +44,15 @@ public class Property implements Serializable {
     protected String originalValue;
     protected Date deployDate;
 
+    public Property() {
+        // Default public constructor
+    }
+
+    public Property(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
     public String getName() {
         return name;
     }
