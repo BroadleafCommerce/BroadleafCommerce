@@ -89,6 +89,9 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String mapFieldValueClass;
     protected Boolean searchable;
     protected String manyToField;
+    protected String toOneTargetProperty;
+    protected String toOneParentProperty;
+    protected String mapKeyValueProperty;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -481,6 +484,30 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.manyToField = manyToField;
     }
 
+    public String getToOneTargetProperty() {
+        return toOneTargetProperty;
+    }
+
+    public void setToOneTargetProperty(String toOneTargetProperty) {
+        this.toOneTargetProperty = toOneTargetProperty;
+    }
+
+    public String getToOneParentProperty() {
+        return toOneParentProperty;
+    }
+
+    public void setToOneParentProperty(String toOneParentProperty) {
+        this.toOneParentProperty = toOneParentProperty;
+    }
+
+    public String getMapKeyValueProperty() {
+        return mapKeyValueProperty;
+    }
+
+    public void setMapKeyValueProperty(String mapKeyValueProperty) {
+        this.mapKeyValueProperty = mapKeyValueProperty;
+    }
+
     public void setLookupType(LookupType lookupType) {
         this.lookupType = lookupType;
     }
@@ -564,6 +591,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.mapFieldValueClass = mapFieldValueClass;
         metadata.searchable = searchable;
         metadata.manyToField = manyToField;
+        metadata.toOneTargetProperty = toOneTargetProperty;
+        metadata.toOneParentProperty = toOneParentProperty;
+        metadata.mapKeyValueProperty = mapKeyValueProperty;
         metadata.lookupType = lookupType;
         metadata.translatable = translatable;
         metadata.isDerived = isDerived;
@@ -721,6 +751,15 @@ public class BasicFieldMetadata extends FieldMetadata {
         if (manyToField != null ? !manyToField.equals(metadata.manyToField) : metadata.manyToField != null) {
             return false;
         }
+        if (toOneTargetProperty != null ? !toOneTargetProperty.equals(metadata.toOneTargetProperty) : metadata.toOneTargetProperty != null) {
+            return false;
+        }
+        if (toOneParentProperty != null ? !toOneParentProperty.equals(metadata.toOneParentProperty) : metadata.toOneParentProperty != null) {
+            return false;
+        }
+        if (mapKeyValueProperty != null ? !mapKeyValueProperty.equals(metadata.mapKeyValueProperty) : metadata.mapKeyValueProperty != null) {
+            return false;
+        }
         if (lookupType != null ? !lookupType.equals(metadata.lookupType) : metadata.lookupType != null) {
             return false;
         }
@@ -776,6 +815,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (mapFieldValueClass != null ? mapFieldValueClass.hashCode() : 0);
         result = 31 * result + (searchable != null ? searchable.hashCode() : 0);
         result = 31 * result + (manyToField != null ? manyToField.hashCode() : 0);
+        result = 31 * result + (toOneTargetProperty != null ? toOneTargetProperty.hashCode() : 0);
+        result = 31 * result + (toOneParentProperty != null ? toOneParentProperty.hashCode() : 0);
+        result = 31 * result + (mapKeyValueProperty != null ? mapKeyValueProperty.hashCode() : 0);
         result = 31 * result + (lookupType != null ? lookupType.hashCode() : 0);
         result = 31 * result + (isDerived != null ? isDerived.hashCode() : 0);
         return result;

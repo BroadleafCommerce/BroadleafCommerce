@@ -21,6 +21,8 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -48,6 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  * @author Brian Polster
@@ -79,41 +83,83 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         boolean dirty = false;
         try {
             setNonDisplayableValues(populateValueRequest);
-            Class<?> valueType = null;
+            Class<?> startingValueType = null;
             if (!populateValueRequest.getProperty().getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
-                valueType = populateValueRequest.getReturnType();
+                startingValueType = populateValueRequest.getReturnType();
             } else {
                 String valueClassName = populateValueRequest.getMetadata().getMapFieldValueClass();
                 if (valueClassName != null) {
-                    valueType = Class.forName(valueClassName);
+                    startingValueType = Class.forName(valueClassName);
                 }
-                if (valueType == null) {
-                    valueType = populateValueRequest.getReturnType();
+                if (startingValueType == null) {
+                    startingValueType = populateValueRequest.getReturnType();
                 }
             }                       
 
-            if (valueType == null) {
+            if (startingValueType == null) {
                 throw new IllegalAccessException("Unable to determine the valueType for the rule field (" + populateValueRequest.getProperty().getName() + ")");
-            } else if (Media.class.equals(valueType)) {
-                valueType = MediaImpl.class;
+            } else if (Media.class.equals(startingValueType)) {
+                startingValueType = MediaImpl.class;
+            }
+
+            Class<?> valueType = startingValueType;
+            if (!StringUtils.isEmpty(populateValueRequest.getMetadata().getToOneTargetProperty())) {
+                java.lang.reflect.Field nestedField = FieldManager.getSingleField(valueType, populateValueRequest.getMetadata().getToOneTargetProperty());
+                ManyToOne manyToOne = nestedField.getAnnotation(ManyToOne.class);
+                if (manyToOne != null && !manyToOne.targetEntity().getName().equals(void.class.getName())) {
+                    valueType = manyToOne.targetEntity();
+                } else {
+                    OneToOne oneToOne = nestedField.getAnnotation(OneToOne.class);
+                    if (oneToOne != null && !oneToOne.targetEntity().getName().equals(void.class.getName())) {
+                        valueType = oneToOne.targetEntity();
+                    }
+                }
             }
         
             if (Media.class.isAssignableFrom(valueType)) {
                 Media newMedia = convertJsonToMedia(populateValueRequest.getProperty().getUnHtmlEncodedValue());
+                boolean persist = false;
+                Object parent;
                 Media media;
                 try {
-                    media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
+                    parent = populateValueRequest.getFieldManager().getFieldValue(instance,
                             populateValueRequest.getProperty().getName());
+
+                    if (parent == null) {
+                        parent = startingValueType.newInstance();
+                        if (!startingValueType.equals(valueType)) {
+                            //this is a join-entity type
+                            Object parentsParent = instance;
+                            String parentsParentName = populateValueRequest.getProperty().getName();
+                            if (parentsParentName.contains(".")) {
+                                parentsParent = populateValueRequest.getFieldManager().getFieldValue(instance,
+                                        parentsParentName.substring(0, parentsParentName.lastIndexOf(".")));
+                            }
+                            populateValueRequest.getFieldManager().setFieldValue(parent, populateValueRequest.getMetadata().
+                                    getToOneParentProperty(), parentsParent);
+                            populateValueRequest.getFieldManager().setFieldValue(parent, populateValueRequest.getMetadata().
+                                    getMapKeyValueProperty(), parentsParentName.substring(parentsParentName.indexOf(
+                                            FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
+                                    parentsParentName.length()));
+                            populateValueRequest.getFieldManager().setFieldValue(parent, populateValueRequest.getMetadata().getToOneTargetProperty(), valueType.newInstance());
+                            //populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
+                        }
+                        populateValueRequest.getFieldManager().setFieldValue(instance,
+                                populateValueRequest.getProperty().getName(), parent);
+                        parent = populateValueRequest.getFieldManager().getFieldValue(instance,
+                                populateValueRequest.getProperty().getName());
+                        persist = true;
+                    }
+                    if (!StringUtils.isEmpty(populateValueRequest.getMetadata().getToOneTargetProperty())) {
+                        media = (Media) populateValueRequest.getFieldManager().getFieldValue(parent,
+                                populateValueRequest.getMetadata().getToOneTargetProperty());
+                    } else {
+                        media = (Media) parent;
+                    }
                 } catch (FieldNotAvailableException e) {
                     throw new IllegalArgumentException(e);
                 }
                 populateValueRequest.getProperty().setOriginalValue(convertMediaToJson(media));
-
-                boolean persist = false;
-                if (media == null) {
-                    media = (Media) valueType.newInstance();
-                    persist = true;
-                }
 
                 Map description = BeanUtils.describe(media);
                 for (Object temp : description.keySet()) {
@@ -133,12 +179,23 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 }
 
                 if (dirty) {
+                    if (!persist) {
+                        //pre-merge (can result in a clone for enterprise)
+                        parent = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(parent);
+                        //populateValueRequest.getFieldManager().setFieldValue(instance,
+                                //populateValueRequest.getProperty().getName(), parent);
+                        if (!StringUtils.isEmpty(populateValueRequest.getMetadata().getToOneTargetProperty())) {
+                            media = (Media) populateValueRequest.getFieldManager().getFieldValue(parent,
+                                    populateValueRequest.getMetadata().getToOneTargetProperty());
+                        } else {
+                            media = (Media) parent;
+                        }
+                    }
                     updateMediaFields(media, newMedia);
                     if (persist) {
-                        populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(media);
+                        populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
                     }
-                    populateValueRequest.getFieldManager().setFieldValue(instance,
-                            populateValueRequest.getProperty().getName(), media);
+
 		            response = FieldProviderResponse.HANDLED_BREAK;
                 }
             } else {
@@ -159,8 +216,18 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
 
         if (extractValueRequest.getRequestedValue() != null) {
-            if (extractValueRequest.getRequestedValue() instanceof Media) {
-                Media media = (Media) extractValueRequest.getRequestedValue();
+            Object requestedValue = extractValueRequest.getRequestedValue();
+            if (!StringUtils.isEmpty(extractValueRequest.getMetadata().getToOneTargetProperty())) {
+                try {
+                    requestedValue = extractValueRequest.getFieldManager().getFieldValue(requestedValue, extractValueRequest.getMetadata().getToOneTargetProperty());
+                } catch (IllegalAccessException e) {
+                    throw ExceptionHelper.refineException(e);
+                } catch (FieldNotAvailableException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+            }
+            if (requestedValue instanceof Media) {
+                Media media = (Media) requestedValue;
                 String jsonString = convertMediaToJson(media);
                 property.setValue(jsonString);
                 property.setUnHtmlEncodedValue(jsonString);

@@ -25,13 +25,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
-import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -70,6 +68,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -95,7 +94,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.MapKeyClass;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -277,18 +275,18 @@ public class SkuImpl implements Sku {
         tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
         group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
     protected Boolean isMachineSortable = true;
-    
-    @ManyToMany(targetEntity = MediaImpl.class)
-    @JoinTable(name = "BLC_SKU_MEDIA_MAP", 
-        inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
-    @MapKeyColumn(name = "MAP_KEY")
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+
+    @OneToMany(mappedBy = "sku", targetEntity = SkuMediaXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "SkuImpl_Sku_Media",
         tab = ProductImpl.Presentation.Tab.Name.Media, tabOrder = ProductImpl.Presentation.Tab.Order.Media,
         keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
         deleteEntityUponRemove = true,
-        mediaField = "url",
+        mediaField = "media.url",
+        toOneTargetProperty = "media",
+        toOneParentProperty = "sku",
         forceFreeFormKeys = true
     )
     @AdminPresentationMapFields(
@@ -302,8 +300,9 @@ public class SkuImpl implements Sku {
                             friendlyName = "SkuImpl_Primary_Media")
             )
     })
-    @BatchSize(size = 50)
-    @ClonePolicyMap
+    protected Map<String, SkuMediaXref> skuMediaXref = new HashMap<String, SkuMediaXref>();
+
+    @Transient
     protected Map<String, Media> skuMedia = new HashMap<String, Media>();
 
     /**
@@ -329,7 +328,6 @@ public class SkuImpl implements Sku {
     @AdminPresentationMap(friendlyName = "skuAttributesTitle", 
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         deleteEntityUponRemove = true, forceFreeFormKeys = true)
-    @ClonePolicyMap
     protected Map<String, SkuAttribute> skuAttributes = new HashMap<String, SkuAttribute>();
 
     @ManyToMany(targetEntity = ProductOptionValueImpl.class)
@@ -358,7 +356,6 @@ public class SkuImpl implements Sku {
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
-    @ClonePolicyMap
     protected Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates = new HashMap<FulfillmentOption, BigDecimal>();
 
     @ManyToMany(targetEntity = FulfillmentOptionImpl.class)
@@ -821,18 +818,39 @@ public class SkuImpl implements Sku {
     }
 
     @Override
+    @Deprecated
     public Map<String, Media> getSkuMedia() {
-        if (skuMedia == null || skuMedia.isEmpty()) {
-            if (hasDefaultSku()) {
-                return lookupDefaultSku().getSkuMedia();
+        if (skuMedia.size() == 0) {
+            for (Map.Entry<String, SkuMediaXref> entry : getSkuMediaXref().entrySet()) {
+                skuMedia.put(entry.getKey(), entry.getValue().getMedia());
             }
         }
-        return skuMedia;
+        return Collections.unmodifiableMap(skuMedia);
     }
 
     @Override
+    @Deprecated
     public void setSkuMedia(Map<String, Media> skuMedia) {
-        this.skuMedia = skuMedia;
+        this.skuMedia.clear();
+        this.skuMediaXref.clear();
+        for(Map.Entry<String, Media> entry : skuMedia.entrySet()){
+            this.skuMediaXref.put(entry.getKey(), new SkuMediaXrefImpl(this, entry.getValue(), entry.getKey()));
+        }
+    }
+
+    @Override
+    public Map<String, SkuMediaXref> getSkuMediaXref() {
+        if (skuMediaXref == null || skuMediaXref.isEmpty()) {
+            if (hasDefaultSku()) {
+                return lookupDefaultSku().getSkuMediaXref();
+            }
+        }
+        return skuMediaXref;
+    }
+
+    @Override
+    public void setSkuMediaXref(Map<String, SkuMediaXref> skuMediaXref) {
+        this.skuMediaXref = skuMediaXref;
     }
 
     @Override

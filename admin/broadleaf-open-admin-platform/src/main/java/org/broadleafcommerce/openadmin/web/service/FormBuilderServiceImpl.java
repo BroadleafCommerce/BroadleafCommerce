@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.media.domain.Media;
@@ -59,6 +60,7 @@ import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityS
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
@@ -88,6 +90,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -297,7 +301,26 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 for (Property p : cmd.getProperties()) {
                     if (p.getMetadata() instanceof BasicFieldMetadata) {
                         BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                        if (md.getTargetClass().equals(mmd.getValueClassName())) {
+                        String valueClassName = mmd.getValueClassName();
+                        if (!StringUtils.isEmpty(mmd.getToOneTargetProperty())) {
+                            Class<?> clazz;
+                            try {
+                                clazz = Class.forName(mmd.getValueClassName());
+                            } catch (ClassNotFoundException e) {
+                                throw ExceptionHelper.refineException(e);
+                            }
+                            java.lang.reflect.Field nestedField = FieldManager.getSingleField(clazz, mmd.getToOneTargetProperty());
+                            ManyToOne manyToOne = nestedField.getAnnotation(ManyToOne.class);
+                            if (manyToOne != null && !manyToOne.targetEntity().getName().equals(void.class.getName())) {
+                                valueClassName = manyToOne.targetEntity().getName();
+                            } else {
+                                OneToOne oneToOne = nestedField.getAnnotation(OneToOne.class);
+                                if (oneToOne != null && !oneToOne.targetEntity().getName().equals(void.class.getName())) {
+                                    valueClassName = oneToOne.targetEntity().getName();
+                                }
+                            }
+                        }
+                        if (md.getTargetClass().equals(valueClassName)) {
                             if (md.isProminent() != null && md.isProminent() 
                                     && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                                 hf = createHeaderField(p, md);

@@ -60,6 +60,7 @@
         <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductSkuXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuFeeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
         <class>org.broadleafcommerce.core.util.domain.CodeTypeImpl</class>

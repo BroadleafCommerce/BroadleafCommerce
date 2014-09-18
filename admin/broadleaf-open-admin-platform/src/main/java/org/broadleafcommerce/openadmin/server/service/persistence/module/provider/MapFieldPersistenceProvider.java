@@ -19,10 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.List;
-
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.value.Searchable;
 import org.broadleafcommerce.common.value.ValueAssignable;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -37,6 +35,13 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.List;
+
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  * @author Jeff Fischer
@@ -60,33 +65,80 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         boolean dirty = false;
         try {
             //handle some additional field settings (if applicable)
-            Class<?> valueType = null;
+            Class<?> startingValueType = null;
             String valueClassName = populateValueRequest.getMetadata().getMapFieldValueClass();
             if (valueClassName != null) {
-                valueType = Class.forName(valueClassName);
+                startingValueType = Class.forName(valueClassName);
             }
-            if (valueType == null) {
-                valueType = populateValueRequest.getReturnType();
+            if (startingValueType == null) {
+                startingValueType = populateValueRequest.getReturnType();
             }
-            if (valueType == null) {
+            if (startingValueType == null) {
                 throw new IllegalAccessException("Unable to determine the valueType for the rule field (" + populateValueRequest.getProperty().getName() + ")");
             }
+
+            Class<?> valueType = startingValueType;
+            if (!StringUtils.isEmpty(populateValueRequest.getMetadata().getToOneTargetProperty())) {
+                java.lang.reflect.Field nestedField = FieldManager.getSingleField(valueType, populateValueRequest.getMetadata().getToOneTargetProperty());
+                ManyToOne manyToOne = nestedField.getAnnotation(ManyToOne.class);
+                if (manyToOne != null && !manyToOne.targetEntity().getName().equals(void.class.getName())) {
+                    valueType = manyToOne.targetEntity();
+                } else {
+                    OneToOne oneToOne = nestedField.getAnnotation(OneToOne.class);
+                    if (oneToOne != null && !oneToOne.targetEntity().getName().equals(void.class.getName())) {
+                        valueType = oneToOne.targetEntity();
+                    }
+                }
+            }
+
             if (ValueAssignable.class.isAssignableFrom(valueType)) {
+                boolean persistValue = false;
                 ValueAssignable assignableValue;
+                Object parent;
                 try {
-                    assignableValue = (ValueAssignable) populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName());
+                    parent = populateValueRequest.getFieldManager().getFieldValue(instance,
+                            populateValueRequest.getProperty().getName());
+                    if (parent == null) {
+                        parent = startingValueType.newInstance();
+                        if (!startingValueType.equals(valueType)) {
+                            //this is a join-entity type
+                            Object parentsParent = instance;
+                            String parentsParentName = populateValueRequest.getProperty().getName();
+                            if (parentsParentName.contains(".")) {
+                                parentsParent = populateValueRequest.getFieldManager().getFieldValue(instance,
+                                        parentsParentName.substring(0, parentsParentName.lastIndexOf(".")));
+                            }
+                            populateValueRequest.getFieldManager().setFieldValue(parent, populateValueRequest.getMetadata().
+                                    getToOneParentProperty(), parentsParent);
+                            populateValueRequest.getFieldManager().setFieldValue(parent, populateValueRequest.getMetadata().
+                                    getMapKeyValueProperty(), parentsParentName.substring(parentsParentName.indexOf(
+                                            FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
+                                    parentsParentName.length()));
+                            populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
+                        }
+                        populateValueRequest.getFieldManager().setFieldValue(instance,
+                                populateValueRequest.getProperty().getName(), parent);
+                        parent = populateValueRequest.getFieldManager().getFieldValue(instance,
+                                populateValueRequest.getProperty().getName());
+                        persistValue = true;
+                        dirty = true;
+                    } else {
+                        //pre-merge (can result in a clone for enterprise)
+                        parent = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(parent);
+                        populateValueRequest.getFieldManager().setFieldValue(instance,
+                                populateValueRequest.getProperty().getName(), parent);
+                    }
+                    if (!StringUtils.isEmpty(populateValueRequest.getMetadata().getToOneTargetProperty())) {
+                        assignableValue = (ValueAssignable) populateValueRequest.getFieldManager().getFieldValue(parent,
+                                populateValueRequest.getMetadata().getToOneTargetProperty());
+                    } else {
+                        assignableValue = (ValueAssignable) parent;
+                    }
                 } catch (FieldNotAvailableException e) {
                     throw new IllegalArgumentException(e);
                 }
                 String key = populateValueRequest.getProperty().getName().substring(populateValueRequest.getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), populateValueRequest.getProperty().getName().length());
-                boolean persistValue = false;
-                boolean setOnParent = false;
-                if (assignableValue == null) {
-                    assignableValue = (ValueAssignable) valueType.newInstance();
-                    persistValue = true;
-                    setOnParent = true;
-                    dirty = true;
-                } else {
+                if (assignableValue != null) {
                     dirty = assignableValue.getValue().equals(populateValueRequest.getProperty().getValue());
                     populateValueRequest.getProperty().setOriginalValue(String.valueOf(assignableValue));
                     populateValueRequest.getProperty().setOriginalDisplayValue(String.valueOf(assignableValue));
@@ -126,9 +178,6 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 if (persistValue) {
                     populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(assignableValue);
                 }
-                if (setOnParent) {
-                    populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), assignableValue);
-                }
             } else {
                 //handle the map value set itself
                 if (FieldProviderResponse.NOT_HANDLED==super.populateValue(populateValueRequest, instance)) {
@@ -144,12 +193,26 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
 
     @Override
     public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
-        if (extractValueRequest.getRequestedValue() != null && extractValueRequest.getRequestedValue() instanceof ValueAssignable) {
-            ValueAssignable assignableValue = (ValueAssignable) extractValueRequest.getRequestedValue();
-            String val = (String) assignableValue.getValue();
-            property.setValue(val);
-            property.setDisplayValue(extractValueRequest.getDisplayVal());
-        } else {
+        checkValue:{
+            if (extractValueRequest.getRequestedValue() != null) {
+                Object requestedValue = extractValueRequest.getRequestedValue();
+                if (!StringUtils.isEmpty(extractValueRequest.getMetadata().getToOneTargetProperty())) {
+                    try {
+                        requestedValue = extractValueRequest.getFieldManager().getFieldValue(requestedValue, extractValueRequest.getMetadata().getToOneTargetProperty());
+                    } catch (IllegalAccessException e) {
+                        throw ExceptionHelper.refineException(e);
+                    } catch (FieldNotAvailableException e) {
+                        throw ExceptionHelper.refineException(e);
+                    }
+                }
+                if (requestedValue instanceof ValueAssignable) {
+                    ValueAssignable assignableValue = (ValueAssignable) requestedValue;
+                    String val = (String) assignableValue.getValue();
+                    property.setValue(val);
+                    property.setDisplayValue(extractValueRequest.getDisplayVal());
+                    break checkValue;
+                }
+            }
             if (FieldProviderResponse.NOT_HANDLED==super.extractValue(extractValueRequest, property)) {
                 return FieldProviderResponse.NOT_HANDLED;
             }
