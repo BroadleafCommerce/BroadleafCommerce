@@ -278,10 +278,24 @@ public interface Offer extends Status, Serializable {
     public Boolean isTotalitarianOffer();
 
     public void setTotalitarianOffer(Boolean totalitarianOffer);
-    
+
+    /**
+     * @deprecated use {@link #getOfferMatchRulesXref()} instead
+     * @return
+     */
+    @Deprecated
     public Map<String, OfferRule> getOfferMatchRules();
 
+    /**
+     * @deprecated use {@link #setOfferMatchRulesXref(java.util.Map)} instead
+     * @param offerMatchRules
+     */
+    @Deprecated
     public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
+
+    Map<String, OfferOfferRuleXref> getOfferMatchRulesXref();
+
+    void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref);
     
     public Boolean getTreatAsNewFormat();
 

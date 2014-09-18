@@ -74,6 +74,7 @@
         <class>org.broadleafcommerce.core.offer.domain.OfferCodeImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferRuleImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferOfferRuleXrefImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferInfoImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl</class>
@@ -106,7 +107,6 @@
         <class>org.broadleafcommerce.core.order.domain.TaxDetailImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.OrderPaymentImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl</class>
-
         <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
         <class>org.broadleafcommerce.core.pricing.domain.ShippingRateImpl</class>
         <class>org.broadleafcommerce.core.store.domain.StoreImpl</class>

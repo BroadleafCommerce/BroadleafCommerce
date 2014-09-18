@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -45,6 +46,8 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.SkuMediaXref;
+import org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl;
 import org.broadleafcommerce.core.offer.extension.OfferEntityExtensionManager;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -83,9 +86,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -308,11 +313,9 @@ public class OfferImpl implements Offer, AdminMainEntity {
         group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
         visibility = VisibilityEnum.VISIBLE_ALL)
     protected Boolean requiresRelatedTargetAndQualifiers = false;
-    
-    @ManyToMany(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "BLC_OFFER_RULE_MAP", 
-        inverseJoinColumns = @JoinColumn(name = "OFFER_RULE_ID", referencedColumnName = "OFFER_RULE_ID"))
-    @MapKeyColumn(name = "MAP_KEY", nullable = false)
+
+    @OneToMany(mappedBy = "offer", targetEntity = OfferOfferRuleXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentationMapFields(
         mapDisplayFields = {
@@ -342,6 +345,9 @@ public class OfferImpl implements Offer, AdminMainEntity {
             )
         }
     )
+    Map<String, OfferOfferRuleXref> offerMatchRulesXref = new HashMap<String, OfferOfferRuleXref>();
+
+    @Transient
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")
@@ -754,17 +760,35 @@ public class OfferImpl implements Offer, AdminMainEntity {
     }
 
     @Override
+    @Deprecated
     public Map<String, OfferRule> getOfferMatchRules() {
-        if (offerMatchRules == null) {
-            offerMatchRules = new HashMap<String, OfferRule>();
+        if (offerMatchRules.size() == 0) {
+            for (Map.Entry<String, OfferOfferRuleXref> entry : getOfferMatchRulesXref().entrySet()) {
+                offerMatchRules.put(entry.getKey(), entry.getValue().getOfferRule());
+            }
         }
-        return offerMatchRules;
+        return Collections.unmodifiableMap(offerMatchRules);
     }
 
     @Override
+    @Deprecated
     public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules) {
-        this.offerMatchRules = offerMatchRules;
+        this.offerMatchRules.clear();
+        this.offerMatchRulesXref.clear();
+        for(Map.Entry<String, OfferRule> entry : offerMatchRules.entrySet()){
+            this.offerMatchRulesXref.put(entry.getKey(), new OfferOfferRuleXrefImpl(this, entry.getValue(), entry.getKey()));
+        }
     }
+
+    @Override
+    public Map<String, OfferOfferRuleXref> getOfferMatchRulesXref() {
+       return offerMatchRulesXref;
+    }
+
+    @Override
+    public void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref) {
+       this.offerMatchRulesXref = offerMatchRulesXref;
+   }
 
     @Override
     public Boolean getTreatAsNewFormat() {
