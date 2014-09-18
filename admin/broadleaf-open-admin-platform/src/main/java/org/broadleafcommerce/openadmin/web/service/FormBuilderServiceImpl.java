@@ -193,6 +193,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         FieldMetadata fmd = field.getMetadata();
         // Get the class metadata for this particular field
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(fmd, sectionCrumbs);
+        if (field != null) {
+            ppr.setSectionEntityField(field.getName());
+        }
         ClassMetadata cmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
         List<Field> headerFields = new ArrayList<Field>();
@@ -372,7 +375,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setTotalRecords(drs.getTotalRecords());
         listGrid.setPageSize(drs.getPageSize());
         
-        AdminSection section = navigationService.findAdminSectionByClass(className);
+        String sectionIdentifier = extractSectionIdentifierFromCrumb(sectionCrumbs);
+        AdminSection section = navigationService.findAdminSectionByClassAndSectionId(className, sectionIdentifier);
         if (section != null) {
             listGrid.setExternalEntitySectionKey(section.getUrl());
         }
@@ -552,12 +556,23 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return ef;
     }
     
+    protected String extractSectionIdentifierFromCrumb(List<SectionCrumb> sectionCrumbs) {
+        if (sectionCrumbs != null && sectionCrumbs.size() > 0) {
+            return sectionCrumbs.get(0).getSectionIdentifier();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void populateEntityForm(ClassMetadata cmd, EntityForm ef, List<SectionCrumb> sectionCrumbs)
             throws ServiceException {
         ef.setCeilingEntityClassname(cmd.getCeilingType());
         
-        AdminSection section = navigationService.findAdminSectionByClass(cmd.getCeilingType());
+        String sectionIdentifier = extractSectionIdentifierFromCrumb(sectionCrumbs);
+
+        AdminSection section = navigationService.findAdminSectionByClassAndSectionId(cmd.getCeilingType(),
+                sectionIdentifier);
         if (section != null) {
             ef.setSectionKey(section.getUrl());
         } else {

@@ -562,7 +562,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         BasicFieldMetadata md = (BasicFieldMetadata) collectionProperty.getMetadata();
 
-        AdminSection section = adminNavigationService.findAdminSectionByClass(md.getForeignKeyClass());
+        AdminSection section = adminNavigationService.findAdminSectionByClassAndSectionId(md.getForeignKeyClass(), sectionKey);
         String sectionUrlKey = (section.getUrl().startsWith("/")) ? section.getUrl().substring(1) : section.getUrl();
         Map<String, String> varsForField = new HashMap<String, String>();
         varsForField.put("sectionKey", sectionUrlKey);
@@ -836,6 +836,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             // is the standard list grid for the target entity of this field
             ppr.setOperationTypesOverride(null);
             ppr.setType(PersistencePackageRequest.Type.STANDARD);
+            ppr.setSectionEntityField(collectionField);
 
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 

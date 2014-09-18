@@ -84,29 +84,41 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     }
     
     @Override
-    public AdminSection readAdminSectionByClass(Class<?> clazz) {
+    public AdminSection readAdminSectionByClassAndSectionId(Class<?> clazz, String sectionId) {
         String className = clazz.getName();
         
         // Try to find a section for the exact input received
-        AdminSection section = readAdminSectionForClassName(className);
-        if (section != null) return section;
-        
-        // If we didn't find a section, and this class ends in Impl, try again without the Impl.
-        // Most of the sections should match to the interface
-        if (className.endsWith("Impl")) {
-            className = className.substring(0, className.length() - 4);
-            section = readAdminSectionForClassName(className);
+        List<AdminSection> sections = readAdminSectionForClassName(className);
+        if (CollectionUtils.isEmpty(sections)) {
+            // If we didn't find a section, and this class ends in Impl, try again without the Impl.
+            // Most of the sections should match to the interface
+            if (className.endsWith("Impl")) {
+                className = className.substring(0, className.length() - 4);
+                sections = readAdminSectionForClassName(className);
+            }
         }
-        if (section != null) return section;
         
-        // If we still didn't find a section, we should walk up the inheritance hierarchy tree looking for
-        // implemented interfaces or extensions of those interfaces.
-        // TODO: APA
+        if (!CollectionUtils.isEmpty(sections)) {
+            AdminSection returnSection = sections.get(0);
+
+            if (sectionId != null) {
+                if (!sectionId.startsWith("/")) {
+                    sectionId = "/" + sectionId;
+                }
+                for (AdminSection section : sections) {
+                    if (sectionId.equals(section.getUrl())) {
+                        returnSection = section;
+                        break;
+                    }
+                }
+            }
+            return returnSection;
+        }
         
         return null;
     }
     
-    protected AdminSection readAdminSectionForClassName(String className) {
+    protected List<AdminSection> readAdminSectionForClassName(String className) {
         TypedQuery<AdminSection> q = em.createQuery(
             "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
         q.setParameter("className", className);
@@ -115,7 +127,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         if (CollectionUtils.isEmpty(result)) {
             return null;
         }
-        return q.getResultList().get(0);
+        return q.getResultList();
     }
 
     @Override

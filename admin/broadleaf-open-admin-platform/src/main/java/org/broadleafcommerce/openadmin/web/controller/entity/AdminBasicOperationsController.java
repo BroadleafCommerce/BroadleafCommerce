@@ -84,6 +84,11 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(owningClass, requestParams, sectionCrumbs, pathVars);
+
+        // We might need these fields in the initial inspect.
+        ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
+        ppr.addCustomCriteria("owningClass=" + owningClass);
+        ppr.addCustomCriteria("requestingField=" + collectionField);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         
         // Only get collection property metadata when there is a non-structured content field that I am looking for

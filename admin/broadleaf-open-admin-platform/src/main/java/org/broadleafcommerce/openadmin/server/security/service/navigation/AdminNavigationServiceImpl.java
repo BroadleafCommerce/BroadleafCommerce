@@ -125,9 +125,9 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     }
     
     @Override
-    public AdminSection findAdminSectionByClass(String className) {
+    public AdminSection findAdminSectionByClassAndSectionId(String className, String sectionId) {
         try {
-            return findAdminSectionByClass(Class.forName(className));
+            return findAdminSectionByClassAndSectionId(Class.forName(className), sectionId);
         } catch (ClassNotFoundException e) {
             LOG.warn("Invalid classname received. This likely points to a configuration error.");
             return null;
@@ -135,8 +135,8 @@ public class AdminNavigationServiceImpl implements AdminNavigationService {
     }
     
     @Override
-    public AdminSection findAdminSectionByClass(Class<?> clazz) {
-        return adminNavigationDao.readAdminSectionByClass(clazz);
+    public AdminSection findAdminSectionByClassAndSectionId(Class<?> clazz, String sectionId) {
+        return adminNavigationDao.readAdminSectionByClassAndSectionId(clazz, sectionId);
     }
 
     @Override

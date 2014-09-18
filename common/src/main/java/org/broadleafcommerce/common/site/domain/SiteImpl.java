@@ -29,9 +29,7 @@ import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.hibernate.annotations.BatchSize;
@@ -90,27 +88,33 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName = "SiteImpl_Site_Name", order=1, gridOrder = 1, group = "SiteImpl_Site", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Name", order = 1000,
+            gridOrder = 1, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
 
     @Column (name = "SITE_IDENTIFIER_TYPE")
-    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order=2, gridOrder = 2, group = "SiteImpl_Site", prominent = true, broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order = 2000,
+            gridOrder = 2, prominent = true,
+            broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType",
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION)
     protected String siteIdentifierType;
 
     @Column (name = "SITE_IDENTIFIER_VALUE")
-    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order=3, gridOrder = 3, group = "SiteImpl_Site", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order = 3000,
+            gridOrder = 3, prominent = true)
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
     @Column(name = "DEACTIVATED")
-    @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order = 4, gridOrder = 4, group = "SiteImpl_Site", excluded = true)
+    @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order = 4000,
+            gridOrder = 4, excluded = false)
     protected Boolean deactivated = false;
     
     @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "SITE_ID"), inverseJoinColumns = @JoinColumn(name = "CATALOG_ID"))
     @BatchSize(size = 50)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "siteCatalogTitle", manyToField = "sites")
+    @AdminPresentation(excluded = true)
     protected List<Catalog> catalogs = new ArrayList<Catalog>();
 
     /**************************************************/
