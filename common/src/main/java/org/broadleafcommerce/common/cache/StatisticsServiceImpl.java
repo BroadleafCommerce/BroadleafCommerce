@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.naming.SelfNaming;
 import org.springframework.jmx.support.ObjectNameManager;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
@@ -61,6 +59,8 @@ public class StatisticsServiceImpl implements DynamicMBean, StatisticsService, S
     protected Long logResolution = 30000L;
 
     protected String appName = "broadleaf";
+
+    protected StatisticsServiceLogAdapter adapter;
 
     protected Map<String, CacheStat> cacheStats = Collections.synchronizedMap(new HashMap<String, CacheStat>());
 
@@ -100,12 +100,16 @@ public class StatisticsServiceImpl implements DynamicMBean, StatisticsService, S
 
     @Override
     public void activateLogging() {
-        //LogManager.getLogManager().getLogger(StatisticsServiceImpl.class.getName()).setLevel(Level.INFO);
+        if (getAdapter() != null) {
+            getAdapter().activateLogging(StatisticsServiceImpl.class);
+        }
     }
 
     @Override
     public void disableLogging() {
-        //LogManager.getLogger(StatisticsServiceImpl.class).setLevel(Level.DEBUG);
+        if (getAdapter() != null) {
+            getAdapter().disableLogging(StatisticsServiceImpl.class);
+        }
     }
 
     public String getAppName() {
@@ -218,5 +222,13 @@ public class StatisticsServiceImpl implements DynamicMBean, StatisticsService, S
             null,  // constructors
             opers,
             null); // notifications
+    }
+
+    public StatisticsServiceLogAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void setAdapter(StatisticsServiceLogAdapter adapter) {
+        this.adapter = adapter;
     }
 }
