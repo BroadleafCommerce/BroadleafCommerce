@@ -1,6 +1,6 @@
 /*
  * #%L
- * broadleaf-multitenant-singleschema
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%

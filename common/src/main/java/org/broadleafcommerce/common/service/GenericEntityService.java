@@ -22,14 +22,46 @@ package org.broadleafcommerce.common.service;
 
 import java.util.List;
 
+/**
+ * CRUD methods for generic entities
+ * 
+ * @author Andre Azzolini (apazzolini)
+ */
 public interface GenericEntityService {
 
+    /**
+     * Finds a generic entity by a classname and id
+     * 
+     * @param className
+     * @param id
+     * @return the entity
+     */
     public Object readGenericEntity(String className, Object id);
 
+    /**
+     * Saves a generic entity
+     * 
+     * @param object
+     * @return the persisted version of the entity
+     */
     public <T> T save(T object);
 
+    /**
+     * Finds how many of the given entity class are persisted
+     * 
+     * @param clazz
+     * @return the count of the generic entity
+     */
     public <T> Long readCountGenericEntity(Class<T> clazz);
 
+    /**
+     * Finds all generic entities for a given classname, with pagination options.
+     * 
+     * @param clazz
+     * @param limit
+     * @param offset
+     * @return the entities
+     */
     public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset);
 
 }
