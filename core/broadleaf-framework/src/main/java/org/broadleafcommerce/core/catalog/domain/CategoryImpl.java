@@ -1128,17 +1128,17 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public void setInventoryType(InventoryType inventoryType) {
-        this.inventoryType = inventoryType.getType();
+        this.inventoryType = inventoryType == null ? null : inventoryType.getType();
     }
     
     @Override
     public FulfillmentType getFulfillmentType() {
-        return FulfillmentType.getInstance(this.fulfillmentType);
+        return fulfillmentType == null ? null : FulfillmentType.getInstance(this.fulfillmentType);
     }
     
     @Override
     public void setFulfillmentType(FulfillmentType fulfillmentType) {
-        this.fulfillmentType = fulfillmentType.getType();
+        this.fulfillmentType = fulfillmentType == null ? null : fulfillmentType.getType();
     }
 
     @Override
