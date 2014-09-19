@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +53,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -80,6 +82,13 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         if (!canHandlePersistence(populateValueRequest, instance)) {
             return FieldProviderResponse.NOT_HANDLED;
         }
+        String prop = populateValueRequest.getProperty().getName();
+        if (prop.contains(FieldManager.MAPFIELDSEPARATOR)) {
+            Field field = populateValueRequest.getFieldManager().getField(instance.getClass(), prop.substring(0, prop.indexOf(FieldManager.MAPFIELDSEPARATOR)));
+            if (field.getAnnotation(OneToMany.class) == null) {
+                throw new UnsupportedOperationException("MediaFieldPersistenceProvider is currently only compatible with map fields when modelled using @OneToMany");
+            }
+        }
         FieldProviderResponse response = FieldProviderResponse.HANDLED;
         boolean dirty;
         try {
@@ -100,8 +109,8 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         if (!startingValueType.equals(valueType)) {
                             setupJoinEntityParent(populateValueRequest, instance, valueType, parent);
                         }
-                        populateValueRequest.getFieldManager().setFieldValue(instance,
-                                populateValueRequest.getProperty().getName(), parent);
+                        //populateValueRequest.getFieldManager().setFieldValue(instance,
+                                //populateValueRequest.getProperty().getName(), parent);
                         persist = true;
                     }
                     media = establishMedia(populateValueRequest, parent);
@@ -266,7 +275,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     protected Class<?> getValueType(PopulateValueRequest populateValueRequest, Class<?> startingValueType) {
         Class<?> valueType = startingValueType;
         if (!StringUtils.isEmpty(populateValueRequest.getMetadata().getToOneTargetProperty())) {
-            java.lang.reflect.Field nestedField = FieldManager.getSingleField(valueType, populateValueRequest
+            Field nestedField = FieldManager.getSingleField(valueType, populateValueRequest
                     .getMetadata().getToOneTargetProperty());
             ManyToOne manyToOne = nestedField.getAnnotation(ManyToOne.class);
             if (manyToOne != null && !manyToOne.targetEntity().getName().equals(void.class.getName())) {

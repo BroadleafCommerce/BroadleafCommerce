@@ -98,9 +98,13 @@ public class MapFieldsFieldMetadataProvider extends DefaultFieldMetadataProvider
             AdminPresentationMap annotMap = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
             if (annotMap != null && !StringUtils.isEmpty(annotMap.toOneTargetProperty())) {
                 basicFieldMetadata.setToOneTargetProperty(annotMap.toOneTargetProperty());
+            } else if (!StringUtils.isEmpty(annot.toOneTargetProperty())) {
+                basicFieldMetadata.setToOneTargetProperty(annot.toOneTargetProperty());
             }
             if (annotMap != null && !StringUtils.isEmpty(annotMap.toOneParentProperty())) {
                 basicFieldMetadata.setToOneParentProperty(annotMap.toOneParentProperty());
+            } else if (!StringUtils.isEmpty(annot.toOneParentProperty())) {
+                basicFieldMetadata.setToOneParentProperty(annot.toOneParentProperty());
             }
             String mapKeyValueProperty = "key";
             if (StringUtils.isNotBlank(myInfo.getMapKey())) {

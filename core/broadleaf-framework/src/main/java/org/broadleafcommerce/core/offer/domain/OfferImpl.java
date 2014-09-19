@@ -318,6 +318,8 @@ public class OfferImpl implements Offer, AdminMainEntity {
     @MapKey(name = "key")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentationMapFields(
+        toOneTargetProperty = "offerRule",
+        toOneParentProperty = "offer",
         mapDisplayFields = {
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
