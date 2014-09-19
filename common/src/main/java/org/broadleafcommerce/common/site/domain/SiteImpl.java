@@ -169,12 +169,12 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
 
     @Override
     public SiteResolutionType getSiteResolutionType() {
-        return SiteResolutionType.getInstance(siteIdentifierType);
+        return siteIdentifierType == null ? null : SiteResolutionType.getInstance(siteIdentifierType);
     }
 
     @Override
     public void setSiteResolutionType(SiteResolutionType siteResolutionType) {
-        this.siteIdentifierType = siteResolutionType.getType();
+        this.siteIdentifierType = siteResolutionType == null ? null : siteResolutionType.getType();
     }
 
     @Override
