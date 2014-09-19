@@ -282,8 +282,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             gridVisibleFields = { "name" })
     protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<CategoryXref>(10);
 
-    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "category", orphanRemoval = true)
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "category", orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @BatchSize(size = 50)

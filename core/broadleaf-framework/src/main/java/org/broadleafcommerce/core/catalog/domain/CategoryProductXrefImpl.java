@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.clone.CloneRefreshNode;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -34,6 +35,7 @@ import org.hibernate.annotations.PolymorphismType;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -95,6 +97,7 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     /** The product. */
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
+    @CloneRefreshNode
     protected Product product = new ProductImpl();
 
     /** The display order. */
