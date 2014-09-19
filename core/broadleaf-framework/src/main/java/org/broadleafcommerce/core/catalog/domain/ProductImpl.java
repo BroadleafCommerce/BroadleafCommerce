@@ -207,9 +207,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     
     @Transient
     protected List<Sku> skus = new ArrayList<Sku>();
-
-    @Transient
-    protected List<Sku> additionalSkus = new ArrayList<Sku>();
     
     @Transient
     protected String promoMessage;
@@ -243,7 +240,10 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "ProductImpl_Additional_Skus", order = 1000,
         tab = Presentation.Tab.Name.ProductOptions, tabOrder = Presentation.Tab.Order.ProductOptions)
-    protected List<ProductSkuXref> additionalSkusXrefs = new ArrayList<ProductSkuXref>();
+    protected List<ProductSkuXref> additionalSkus = new ArrayList<ProductSkuXref>();
+
+    @Transient
+    protected List<Sku> legacyAdditionalSkus = new ArrayList<Sku>();
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -434,7 +434,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     public List<Sku> getAllSkus() {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
-        for (ProductSkuXref additionalSku : additionalSkusXrefs) {
+        for (ProductSkuXref additionalSku : additionalSkus) {
             if (!additionalSku.getSku().getId().equals(getDefaultSku().getId())) {
                 allSkus.add(additionalSku.getSku());
             }
@@ -459,32 +459,32 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     @Deprecated
     public List<Sku> getAdditionalSkus() {
-        if (additionalSkus.size() == 0) {
-            for (ProductSkuXref sku : additionalSkusXrefs) {
-                additionalSkus.add(sku.getSku());
+        if (legacyAdditionalSkus.size() == 0) {
+            for (ProductSkuXref sku : getAdditionalSkusXrefs()) {
+                legacyAdditionalSkus.add(sku.getSku());
             }
         }
-        return Collections.unmodifiableList(additionalSkus);
+        return Collections.unmodifiableList(legacyAdditionalSkus);
     }
 
     @Override
     @Deprecated
     public void setAdditionalSkus(List<Sku> skus) {
         this.additionalSkus.clear();
-        this.additionalSkusXrefs.clear();
+        this.legacyAdditionalSkus.clear();
         for(Sku sku : skus){
-            this.additionalSkusXrefs.add(new ProductSkuXrefImpl(this, sku));
+            this.additionalSkus.add(new ProductSkuXrefImpl(this, sku));
         }
     }
 
     @Override
     public List<ProductSkuXref> getAdditionalSkusXrefs() {
-        return additionalSkusXrefs;
+        return additionalSkus;
     }
 
     @Override
     public void setAdditionalSkusXrefs(List<ProductSkuXref> additionalSkusXrefs) {
-        this.additionalSkusXrefs = additionalSkusXrefs;
+        this.additionalSkus = additionalSkusXrefs;
     }
 
     @Override

@@ -300,10 +300,10 @@ public class SkuImpl implements Sku {
                             friendlyName = "SkuImpl_Primary_Media")
             )
     })
-    protected Map<String, SkuMediaXref> skuMediaXref = new HashMap<String, SkuMediaXref>();
+    protected Map<String, SkuMediaXref> skuMedia = new HashMap<String, SkuMediaXref>();
 
     @Transient
-    protected Map<String, Media> skuMedia = new HashMap<String, Media>();
+    protected Map<String, Media> legacySkuMedia = new HashMap<String, Media>();
 
     /**
      * This will be non-null if and only if this Sku is the default Sku for a Product
@@ -820,37 +820,37 @@ public class SkuImpl implements Sku {
     @Override
     @Deprecated
     public Map<String, Media> getSkuMedia() {
-        if (skuMedia.size() == 0) {
+        if (legacySkuMedia.size() == 0) {
             for (Map.Entry<String, SkuMediaXref> entry : getSkuMediaXref().entrySet()) {
-                skuMedia.put(entry.getKey(), entry.getValue().getMedia());
+                legacySkuMedia.put(entry.getKey(), entry.getValue().getMedia());
             }
         }
-        return Collections.unmodifiableMap(skuMedia);
+        return Collections.unmodifiableMap(legacySkuMedia);
     }
 
     @Override
     @Deprecated
     public void setSkuMedia(Map<String, Media> skuMedia) {
         this.skuMedia.clear();
-        this.skuMediaXref.clear();
+        this.legacySkuMedia.clear();
         for(Map.Entry<String, Media> entry : skuMedia.entrySet()){
-            this.skuMediaXref.put(entry.getKey(), new SkuMediaXrefImpl(this, entry.getValue(), entry.getKey()));
+            this.skuMedia.put(entry.getKey(), new SkuMediaXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }
 
     @Override
     public Map<String, SkuMediaXref> getSkuMediaXref() {
-        if (skuMediaXref == null || skuMediaXref.isEmpty()) {
+        if (skuMedia == null || skuMedia.isEmpty()) {
             if (hasDefaultSku()) {
                 return lookupDefaultSku().getSkuMediaXref();
             }
         }
-        return skuMediaXref;
+        return skuMedia;
     }
 
     @Override
     public void setSkuMediaXref(Map<String, SkuMediaXref> skuMediaXref) {
-        this.skuMediaXref = skuMediaXref;
+        this.skuMedia = skuMediaXref;
     }
 
     @Override

@@ -120,7 +120,7 @@ public class ProductDaoImpl implements ProductDao {
 
         FetchParent fetchParent = product.fetch("defaultSku", JoinType.LEFT);
         if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
-            fetchParent.fetch("skuMediaXref", JoinType.LEFT);
+            fetchParent.fetch("skuMedia", JoinType.LEFT);
         }
         criteria.select(product);
 
