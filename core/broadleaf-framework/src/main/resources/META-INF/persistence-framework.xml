@@ -75,6 +75,7 @@
         <class>org.broadleafcommerce.core.offer.domain.OfferImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferRuleImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferOfferRuleXrefImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferInfoImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl</class>

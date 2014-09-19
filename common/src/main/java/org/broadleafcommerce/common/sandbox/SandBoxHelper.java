@@ -114,6 +114,8 @@ public interface SandBoxHelper {
      */
     OriginalIdResponse getOriginalId(EntityManager em, Class<?> type, Long id);
 
+    Long getOriginalId(EntityManager em, Object test);
+
     /**
      * Setup basic required fields for sandbox support
      *

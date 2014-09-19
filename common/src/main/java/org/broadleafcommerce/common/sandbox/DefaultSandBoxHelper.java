@@ -86,6 +86,11 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     }
 
     @Override
+    public Long getOriginalId(EntityManager em, Object test) {
+        return null;
+    }
+
+    @Override
     public void setupSandBoxState(Object clone, EntityManager em) {
         //do nothing
     }

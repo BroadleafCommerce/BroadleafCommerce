@@ -46,6 +46,9 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.ProductSkuXref;
+import org.broadleafcommerce.core.catalog.domain.ProductSkuXrefImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuMediaXref;
 import org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl;
 import org.broadleafcommerce.core.offer.extension.OfferEntityExtensionManager;
@@ -290,15 +293,16 @@ public class OfferImpl implements Offer, AdminMainEntity {
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, ruleIdentifier = RuleIdentifier.ORDERITEM)
     protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
     
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "BLC_TAR_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferTargetCriteriaXrefImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Target_Item_Rule",
         group = Presentation.Group.Name.ItemTarget, groupOrder = Presentation.Group.Order.ItemTarget,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM)
-    protected Set<OfferItemCriteria> targetItemCriteria = new HashSet<OfferItemCriteria>();
+    protected Set<OfferTargetCriteriaXref> targetItemCriteria = new HashSet<OfferTargetCriteriaXref>();
+
+    @Transient
+    protected Set<OfferItemCriteria> legacyTargetItemCriteria = new HashSet<OfferItemCriteria>();
     
     @Column(name = "TOTALITARIAN_OFFER")
     @AdminPresentation(friendlyName = "OfferImpl_Totalitarian_Offer",
@@ -329,9 +333,9 @@ public class OfferImpl implements Offer, AdminMainEntity {
             ),
             @AdminPresentationMapField(
             fieldName = RuleIdentifier.TIME_FIELD_KEY,
-                    fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
-                            group = Presentation.Group.Name.ActivityRange, groupOrder = Presentation.Group.Order.ActivityRange,
-                            ruleIdentifier = RuleIdentifier.TIME, friendlyName = "OfferImpl_Time_Rule")
+                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
+                    group = Presentation.Group.Name.ActivityRange, groupOrder = Presentation.Group.Order.ActivityRange,
+                    ruleIdentifier = RuleIdentifier.TIME, friendlyName = "OfferImpl_Time_Rule")
             ),
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.ORDER_FIELD_KEY,
@@ -343,14 +347,14 @@ public class OfferImpl implements Offer, AdminMainEntity {
                 fieldName = RuleIdentifier.FULFILLMENT_GROUP_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
                     group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
-                                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP, friendlyName = "OfferImpl_FG_Rule")
+                    ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP, friendlyName = "OfferImpl_FG_Rule")
             )
         }
     )
-    Map<String, OfferOfferRuleXref> offerMatchRulesXref = new HashMap<String, OfferOfferRuleXref>();
+    Map<String, OfferOfferRuleXref> offerMatchRules = new HashMap<String, OfferOfferRuleXref>();
 
     @Transient
-    Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
+    Map<String, OfferRule> legacyOfferMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")
     @AdminPresentation(friendlyName = "OfferImpl_Treat_As_New_Format",
@@ -729,18 +733,40 @@ public class OfferImpl implements Offer, AdminMainEntity {
     }
 
     @Override
+    @Deprecated
     public Set<OfferItemCriteria> getTargetItemCriteria() {
+        if (legacyTargetItemCriteria.size() == 0) {
+            for (OfferTargetCriteriaXref xref : getTargetItemCriteriaXref()) {
+                legacyTargetItemCriteria.add(xref.getOfferItemCriteria());
+            }
+        }
+        return Collections.unmodifiableSet(legacyTargetItemCriteria);
+    }
+
+    @Override
+    @Deprecated
+    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria) {
+        this.legacyTargetItemCriteria.clear();
+        this.targetItemCriteria.clear();
+        for(OfferItemCriteria crit : targetItemCriteria){
+            this.targetItemCriteria.add(new OfferTargetCriteriaXrefImpl(this, crit));
+        }
+    }
+
+    @Override
+    public Set<OfferTargetCriteriaXref> getTargetItemCriteriaXref() {
         if (OfferType.ORDER_ITEM.equals(getType()) && CollectionUtils.isEmpty(targetItemCriteria)) {
             OfferItemCriteria oic = new OfferItemCriteriaImpl();
             oic.setQuantity(1);
-            return Collections.unmodifiableSet(Collections.singleton(oic));
+            OfferTargetCriteriaXref xref = new OfferTargetCriteriaXrefImpl(this, oic);
+            return Collections.unmodifiableSet(Collections.singleton(xref));
         }
         return targetItemCriteria;
     }
 
     @Override
-    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria) {
-        this.targetItemCriteria = targetItemCriteria;
+    public void setTargetItemCriteriaXref(Set<OfferTargetCriteriaXref> targetItemCriteriaXref) {
+        this.targetItemCriteria = targetItemCriteriaXref;
     }
 
     @Override
@@ -764,32 +790,32 @@ public class OfferImpl implements Offer, AdminMainEntity {
     @Override
     @Deprecated
     public Map<String, OfferRule> getOfferMatchRules() {
-        if (offerMatchRules.size() == 0) {
+        if (legacyOfferMatchRules.size() == 0) {
             for (Map.Entry<String, OfferOfferRuleXref> entry : getOfferMatchRulesXref().entrySet()) {
-                offerMatchRules.put(entry.getKey(), entry.getValue().getOfferRule());
+                legacyOfferMatchRules.put(entry.getKey(), entry.getValue().getOfferRule());
             }
         }
-        return Collections.unmodifiableMap(offerMatchRules);
+        return Collections.unmodifiableMap(legacyOfferMatchRules);
     }
 
     @Override
     @Deprecated
     public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules) {
         this.offerMatchRules.clear();
-        this.offerMatchRulesXref.clear();
+        this.legacyOfferMatchRules.clear();
         for(Map.Entry<String, OfferRule> entry : offerMatchRules.entrySet()){
-            this.offerMatchRulesXref.put(entry.getKey(), new OfferOfferRuleXrefImpl(this, entry.getValue(), entry.getKey()));
+            this.offerMatchRules.put(entry.getKey(), new OfferOfferRuleXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }
 
     @Override
     public Map<String, OfferOfferRuleXref> getOfferMatchRulesXref() {
-       return offerMatchRulesXref;
+       return offerMatchRules;
     }
 
     @Override
     public void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref) {
-       this.offerMatchRulesXref = offerMatchRulesXref;
+       this.offerMatchRules = offerMatchRulesXref;
    }
 
     @Override

@@ -23,20 +23,24 @@ import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.rule.SimpleRule;
+import org.broadleafcommerce.common.rule.QuantityBasedRule;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductSkuXref;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
-import javax.annotation.Nonnull;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,57 +55,51 @@ import javax.persistence.Table;
 @Entity
 @Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_OFFER_RULE_MAP")
+@Table(name = "BLC_TAR_CRIT_OFFER_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
 @AdminPresentationClass(excludeFromPolymorphism = false, populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class OfferOfferRuleXrefImpl implements OfferOfferRuleXref, SimpleRule {
+public class OfferTargetCriteriaXrefImpl implements OfferTargetCriteriaXref, QuantityBasedRule {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    public OfferOfferRuleXrefImpl(Offer offer, OfferRule offerRule, String key) {
+    public OfferTargetCriteriaXrefImpl(Offer offer, OfferItemCriteria offerItemCriteria) {
         this.offer = offer;
-        this.offerRule = offerRule;
-        this.key = key;
+        this.offerItemCriteria = offerItemCriteria;
     }
 
-    public OfferOfferRuleXrefImpl() {
-        //support default constructor for Hibernate
+    public OfferTargetCriteriaXrefImpl() {
+        //do nothing - default constructor for Hibernate contract
     }
 
     @Id
-    @GeneratedValue(generator= "OfferOfferRuleId")
+    @GeneratedValue(generator= "OfferTarCritId")
     @GenericGenerator(
-        name="OfferOfferRuleId",
+        name="OfferTarCritId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="segment_value", value="OfferOfferRuleXrefImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferOfferRuleXrefImpl")
+            @Parameter(name="segment_value", value="OfferTargetCriteriaXrefImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl")
         }
     )
-    @Column(name = "OFFER_OFFER_RULE_ID")
+    @Column(name = "OFFER_TAR_CRIT_ID")
     protected Long id;
 
-    //for the collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
+    //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
-    @JoinColumn(name = "BLC_OFFER_OFFER_ID")
+    @JoinColumn(name = "OFFER_ID")
     @AdminPresentation(excluded = true)
     protected Offer offer;
 
-    //for the collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
-    @ManyToOne(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.ALL})
-    @JoinColumn(name = "OFFER_RULE_ID")
+    //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
+    @ManyToOne(targetEntity = OfferItemCriteriaImpl.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID")
     @ClonePolicy
-    protected OfferRule offerRule;
-
-    @Column(name = "MAP_KEY", nullable=false)
-    @Index(name="SKUMEDIA_KEY_INDEX", columnNames={"MAP_KEY"})
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
-    protected String key;
+    protected OfferItemCriteria offerItemCriteria;
 
     @Override
     public Long getId() {
@@ -124,41 +122,42 @@ public class OfferOfferRuleXrefImpl implements OfferOfferRuleXref, SimpleRule {
     }
 
     @Override
-    public OfferRule getOfferRule() {
-        return offerRule;
+    public OfferItemCriteria getOfferItemCriteria() {
+        return offerItemCriteria;
     }
 
     @Override
-    public void setOfferRule(OfferRule offerRule) {
-        this.offerRule = offerRule;
+    public void setOfferItemCriteria(OfferItemCriteria offerItemCriteria) {
+        this.offerItemCriteria = offerItemCriteria;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public Integer getQuantity() {
+        createEntityInstance();
+        return offerItemCriteria.getQuantity();
     }
 
     @Override
-    public void setKey(String key) {
-        this.key = key;
+    public void setQuantity(Integer quantity) {
+        createEntityInstance();
+        offerItemCriteria.setQuantity(quantity);
     }
 
-    @Nonnull
     @Override
     public String getMatchRule() {
         createEntityInstance();
-        return offerRule.getMatchRule();
+        return offerItemCriteria.getMatchRule();
     }
 
     @Override
-    public void setMatchRule(@Nonnull String matchRule) {
+    public void setMatchRule(String matchRule) {
         createEntityInstance();
-        offerRule.setMatchRule(matchRule);
+        offerItemCriteria.setMatchRule(matchRule);
     }
 
     protected void createEntityInstance() {
-        if (offerRule == null) {
-            offerRule = new OfferRuleImpl();
+        if (offerItemCriteria == null) {
+            offerItemCriteria = new OfferItemCriteriaImpl();
         }
     }
 }
