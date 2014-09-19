@@ -206,6 +206,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             parentsParent = populateValueRequest.getFieldManager().getFieldValue(instance,
                     parentsParentName.substring(0, parentsParentName.lastIndexOf(".")));
         }
+        if (!populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().contains(parentsParent)) {
+            populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parentsParent);
+        }
         populateValueRequest.getFieldManager().setFieldValue(parent, populateValueRequest.getMetadata().
                 getToOneParentProperty(), parentsParent);
         populateValueRequest.getFieldManager().setFieldValue(parent, populateValueRequest.getMetadata().
