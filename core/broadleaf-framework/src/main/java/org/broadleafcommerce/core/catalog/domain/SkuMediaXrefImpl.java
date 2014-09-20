@@ -36,6 +36,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
+import org.hibernate.service.UnknownUnwrapTypeException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -58,7 +59,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SkuMediaXrefImpl implements SkuMediaXref {
+public class SkuMediaXrefImpl implements SkuMediaXref, Media {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -141,5 +142,72 @@ public class SkuMediaXrefImpl implements SkuMediaXref {
     @Override
     public void setKey(String key) {
         this.key = key;
+    }
+
+    @Override
+    public String getUrl() {
+        createEntityInstance();
+        return media.getUrl();
+    }
+
+    @Override
+    public void setUrl(String url) {
+        createEntityInstance();
+        media.setUrl(url);
+    }
+
+    @Override
+    public String getTitle() {
+        createEntityInstance();
+        return media.getTitle();
+    }
+
+    @Override
+    public void setTitle(String title) {
+        createEntityInstance();
+        media.setTitle(title);
+    }
+
+    @Override
+    public String getAltText() {
+        createEntityInstance();
+        return media.getAltText();
+    }
+
+    @Override
+    public void setAltText(String altText) {
+        createEntityInstance();
+        media.setAltText(altText);
+    }
+
+    @Override
+    public String getTags() {
+        createEntityInstance();
+        return media.getTags();
+    }
+
+    @Override
+    public void setTags(String tags) {
+        createEntityInstance();
+        media.setTags(tags);
+    }
+
+    protected void createEntityInstance() {
+        if (media == null) {
+            media = new MediaImpl();
+        }
+    }
+
+    @Override
+    public boolean isUnwrappableAs(Class unwrapType) {
+        return Media.class.equals(unwrapType);
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> unwrapType) {
+        if (isUnwrappableAs(unwrapType)) {
+            return (T) media;
+        }
+        throw new UnknownUnwrapTypeException(unwrapType);
     }
 }

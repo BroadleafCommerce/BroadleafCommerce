@@ -260,7 +260,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             Field field = populateValueRequest.getFieldManager().getField(instance.getClass(),
                                     prop.substring(0, prop.indexOf(FieldManager.MAPFIELDSEPARATOR)));
                             OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-                            populateValueRequest.getFieldManager().setFieldValue(rule, oneToMany.mappedBy(), instance);
+                            Object parent = extractParent(populateValueRequest, instance);
+                            populateValueRequest.getFieldManager().setFieldValue(rule, oneToMany.mappedBy(), parent);
                             populateValueRequest.getFieldManager().setFieldValue(rule, populateValueRequest.getMetadata().
                                     getMapKeyValueProperty(), prop.substring(prop.indexOf(
                                     FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
@@ -294,7 +295,20 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         return dirty;
     }
 
-    protected boolean populateQuantityRule(PopulateValueRequest populateValueRequest, Serializable instance) throws IllegalAccessException {
+    protected Object extractParent(PopulateValueRequest populateValueRequest, Serializable instance) throws IllegalAccessException, FieldNotAvailableException {
+        Object parent = instance;
+        String parentName = populateValueRequest.getProperty().getName();
+        if (parentName.contains(".")) {
+            parent = populateValueRequest.getFieldManager().getFieldValue(instance,
+                    parentName.substring(0, parentName.lastIndexOf(".")));
+        }
+        if (!populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().contains(parent)) {
+            populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
+        }
+        return parent;
+    }
+
+    protected boolean populateQuantityRule(PopulateValueRequest populateValueRequest, Serializable instance) throws FieldNotAvailableException, IllegalAccessException {
         String prop = populateValueRequest.getProperty().getName();
         Field field = populateValueRequest.getFieldManager().getField(instance.getClass(), prop);
         OneToMany oneToMany = field.getAnnotation(OneToMany.class);
@@ -310,18 +324,15 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         }
         DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
         Collection<QuantityBasedRule> rules;
-        try {
-            rules = (Collection<QuantityBasedRule>) populateValueRequest.getFieldManager().getFieldValue
-                    (instance, populateValueRequest.getProperty().getName());
-        } catch (FieldNotAvailableException e) {
-            throw new IllegalArgumentException(e);
-        }
+        rules = (Collection<QuantityBasedRule>) populateValueRequest.getFieldManager().getFieldValue
+                (instance, populateValueRequest.getProperty().getName());
+        Object parent = extractParent(populateValueRequest, instance);
         //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
         dirty = updateQuantityRule(
                 populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager(),
                 translator, RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
                 populateValueRequest.getMetadata().getRuleIdentifier(),
-                populateValueRequest.getProperty().getUnHtmlEncodedValue(), rules, valueType, instance,
+                populateValueRequest.getProperty().getUnHtmlEncodedValue(), rules, valueType, parent,
                 oneToMany.mappedBy());
         return dirty;
     }

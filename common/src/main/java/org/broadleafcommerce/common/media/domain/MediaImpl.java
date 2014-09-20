@@ -29,6 +29,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.service.UnknownUnwrapTypeException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -130,6 +131,16 @@ public class MediaImpl implements Media {
     @Override
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    @Override
+    public boolean isUnwrappableAs(Class unwrapType) {
+        return false;
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> unwrapType) {
+        throw new UnknownUnwrapTypeException(unwrapType);
     }
 
     @Override

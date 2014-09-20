@@ -19,9 +19,11 @@
  */
 package org.broadleafcommerce.common.media.domain;
 
+import org.hibernate.service.spi.Wrapped;
+
 import java.io.Serializable;
 
-public interface Media extends Serializable {
+public interface Media extends Wrapped, Serializable {
 
     public Long getId();
 
