@@ -49,6 +49,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -142,22 +143,39 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     break;
                 case DECIMAL:
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
                         populateValueRequest.getFieldManager().setFieldValue(instance,
-                                populateValueRequest.getProperty().getName(), new BigDecimal(populateValueRequest.getRequestedValue()));
+                                populateValueRequest.getProperty().getName(), val);
+                        format.setParseBigDecimal(false);
                     } else {
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
+                        Double val = populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue()).doubleValue();
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
                     }
                     break;
                 case MONEY:
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new BigDecimal(populateValueRequest.getRequestedValue()));
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
+                        
+                        populateValueRequest.getFieldManager()
+                            .setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
+                        format.setParseBigDecimal(true);
                     } else if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                        Double val = populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue()).doubleValue();
+                        
                         LOG.warn("The requested Money field is of type double and could result in a loss of precision." +
                         		" Broadleaf recommends that the type of all Money fields are 'BigDecimal' in order to avoid" +
                         		" this loss of precision that could occur.");
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
                     } else {
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Money(new BigDecimal(populateValueRequest.getRequestedValue())));
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Money(val));
+                        format.setParseBigDecimal(false);
                     }
                     break;
                 case INTEGER:
