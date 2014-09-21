@@ -50,7 +50,7 @@ public abstract class AbstractMoneyFieldPersistenceProvider extends FieldPersist
     }
     
     protected String formatValue(BigDecimal value, ExtractValueRequest extractValueRequest, Property property) {
-        NumberFormat format = NumberFormat.getInstance();
+        NumberFormat format = NumberFormat.getInstance(getLocale(extractValueRequest, property));
         format.setMaximumFractionDigits(2);
         format.setMinimumFractionDigits(2);
         format.setGroupingUsed(false);
