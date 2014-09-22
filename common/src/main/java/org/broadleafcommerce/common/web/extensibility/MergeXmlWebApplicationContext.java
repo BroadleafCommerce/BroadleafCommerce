@@ -77,6 +77,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
     private String patchLocation;
     private String shutdownBean;
     private String shutdownMethod;
+    private int standardLocationTypes = StandardConfigLocations.APPCONTEXTTYPE;
 
     /**
      * Load the bean definitions with the given XmlBeanDefinitionReader.
@@ -92,7 +93,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
      * @see #getResourcePatternResolver
      */
     protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
-        String[] broadleafConfigLocations = StandardConfigLocations.retrieveAll(StandardConfigLocations.APPCONTEXTTYPE);
+        String[] broadleafConfigLocations = StandardConfigLocations.retrieveAll(standardLocationTypes);
 
         ArrayList<ResourceInputStream> sources = new ArrayList<ResourceInputStream>(20);
         for (String location : broadleafConfigLocations) {
@@ -128,7 +129,6 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
         }
 
         Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(filteredSources, patches);
-
         reader.loadBeanDefinitions(resources);
     }
 
@@ -161,6 +161,13 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
      */
     public void setPatchLocation(String patchLocation) {
         this.patchLocation = patchLocation;
+    }
+    
+    /**
+     * @param standardLocationTypes the standard location type to use
+     */
+    public void setStandardLocationTypes(int standardLocationTypes) {
+        this.standardLocationTypes = standardLocationTypes;
     }
 
     /**
