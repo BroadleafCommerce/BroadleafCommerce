@@ -164,7 +164,8 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
     }
     
     /**
-     * @param standardLocationTypes the standard location type to use
+     * Sets the type of standard Broadleaf context locations that should be merged. For possible values see
+     * {@link StandardConfigLocations#APPCONTEXTTYPE}
      */
     public void setStandardLocationTypes(int standardLocationTypes) {
         this.standardLocationTypes = standardLocationTypes;
