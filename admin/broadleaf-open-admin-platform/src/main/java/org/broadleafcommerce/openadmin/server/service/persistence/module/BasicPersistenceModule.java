@@ -168,6 +168,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         Locale locale = brc.getJavaLocale();
         DecimalFormat format = (DecimalFormat) NumberFormat.getInstance(locale);
         format.applyPattern("0.########");
+        format.setGroupingUsed(false);
         return format;
     }
 

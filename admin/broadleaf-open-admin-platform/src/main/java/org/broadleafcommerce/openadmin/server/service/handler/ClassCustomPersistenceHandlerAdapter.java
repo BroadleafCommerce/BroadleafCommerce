@@ -51,6 +51,10 @@ public class ClassCustomPersistenceHandlerAdapter extends CustomPersistenceHandl
 
         return false;
     }
+
+    protected boolean isBasicOperation(PersistencePackage pkg) {
+        return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.BASIC);
+    }
     
     protected boolean isMapOperation(PersistencePackage pkg) {
         return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.MAP);

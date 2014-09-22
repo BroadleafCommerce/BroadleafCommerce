@@ -19,8 +19,8 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.apache.commons.collections4.map.LRUMap;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
-import org.codehaus.jackson.map.util.LRUMap;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 

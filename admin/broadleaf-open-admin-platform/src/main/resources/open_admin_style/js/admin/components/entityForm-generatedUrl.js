@@ -48,13 +48,19 @@
                     generatedPrefix = $targetField.data('prefix');
                 }
                 generatedPrefix += '/';
+            } else if ($targetField.data('prefix') == "NONE") {
+                generatedPrefix = "";
             } else if ($targetField.data('prefix')) {
                 generatedPrefix = $targetField.data('prefix');
             } else {
                 generatedPrefix = '/';
             }
 
-            $targetField.val(generatedPrefix + BLCAdmin.generatedUrl.convertToUrlFragment($sourceField.val()));
+            var convertedUrl = BLCAdmin.generatedUrl.convertToUrlFragment($sourceField.val(), {
+                allowSlash : $targetField.data('allow-slash')
+            });
+
+            $targetField.val(generatedPrefix + convertedUrl);
         },
         
         unregisterUrlGenerator : function unregisterUrlGenrator($generatedUrlContainer) {
@@ -62,8 +68,12 @@
             $generatedUrlContainer.closest('form').find('#field-' + sourceFieldName + " input").off('keyup');
         },
         
-        convertToUrlFragment : function convertToUrlFragment(val) {
-            return val = val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase();
+        convertToUrlFragment : function convertToUrlFragment(val, options) {
+            if (options != null && options.allowSlash) {
+                return val = val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_\/]/gi, '').toLowerCase();
+            } else {
+                return val = val.replace(/ /g, BLC.systemProperty.urlFragmentSeparator).replace(/[^\w\s-_]/gi, '').toLowerCase();
+            }
         }
 
     }

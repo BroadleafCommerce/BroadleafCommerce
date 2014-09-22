@@ -46,7 +46,7 @@ public class DatabaseOrderLockManager implements OrderLockManager {
 
     @Override
     public Object acquireLock(Order order) {
-        if (order instanceof NullOrderImpl) {
+        if (order == null || order instanceof NullOrderImpl) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Thread[" + Thread.currentThread().getId() + "] Attempted to grab a lock for a NullOrderImpl. ");
             }
@@ -54,7 +54,7 @@ public class DatabaseOrderLockManager implements OrderLockManager {
         }
 
         boolean lockAcquired = false;
-        
+        int count = 0;
         while (!lockAcquired) {
             try {
                 lockAcquired = orderService.acquireLock(order);
@@ -65,6 +65,10 @@ public class DatabaseOrderLockManager implements OrderLockManager {
             }
 
             if (!lockAcquired) {
+                count++;
+                if (count >= getDatabaseLockAcquisitionNumRetries()) {
+                    throw new RuntimeException("Exceeded max retries to attempt to acquire a lock on current Order");
+                }
                 try {
                     int msToSleep = getDatabaseLockPollingIntervalMs();
 
@@ -113,6 +117,10 @@ public class DatabaseOrderLockManager implements OrderLockManager {
 
     protected int getDatabaseLockPollingIntervalMs() {
         return BLCSystemProperty.resolveIntSystemProperty("order.lock.databaseLockPollingIntervalMs");
+    }
+    
+    protected int getDatabaseLockAcquisitionNumRetries() {
+        return BLCSystemProperty.resolveIntSystemProperty("order.lock.databaseLockAcquisitionNumRetries", 5);
     }
 
     @Override

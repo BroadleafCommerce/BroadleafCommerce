@@ -22,17 +22,17 @@ package org.broadleafcommerce.openadmin.web.processor;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.element.AbstractLocalVariableDefinitionElementProcessor;
-import org.thymeleaf.spring3.context.SpringWebContext;
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -40,7 +40,8 @@ import java.util.Map;
 @Component("blAdminFieldBuilderProcessor")
 public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionElementProcessor {
 
-    private RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
+    @Resource(name = "blRuleBuilderFieldServiceFactory")
+    protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -54,19 +55,8 @@ public class AdminFieldBuilderProcessor extends AbstractLocalVariableDefinitionE
         return 100;
     }
 
-    protected void initServices(Arguments arguments) {
-        final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();
-
-        if (ruleBuilderFieldServiceFactory == null) {
-            ruleBuilderFieldServiceFactory = (RuleBuilderFieldServiceFactory)
-                    applicationContext.getBean("blRuleBuilderFieldServiceFactory");
-        }
-
-    }
-
     @Override
     protected Map<String, Object> getNewLocalVariables(Arguments arguments, Element element) {
-        initServices(arguments);
         FieldWrapper fieldWrapper = new FieldWrapper();
         
         Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())

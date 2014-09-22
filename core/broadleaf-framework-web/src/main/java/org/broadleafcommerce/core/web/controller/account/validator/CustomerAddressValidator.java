@@ -19,11 +19,11 @@
  */
 package org.broadleafcommerce.core.web.controller.account.validator;
 
+import org.broadleafcommerce.common.web.form.BroadleafFormType;
 import org.broadleafcommerce.common.web.validator.BroadleafCommonAddressValidator;
 import org.broadleafcommerce.core.web.controller.account.CustomerAddressForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component("blCustomerAddressValidator")
@@ -36,7 +36,7 @@ public class CustomerAddressValidator extends BroadleafCommonAddressValidator im
 
     public void validate(Object obj, Errors errors) {
         CustomerAddressForm form = (CustomerAddressForm) obj;
-        super.validate(form.getAddress(), errors);
+        super.validate(BroadleafFormType.CUSTOMER_ADDRESS_FORM, form.getAddress(), errors);
     }
 }
 

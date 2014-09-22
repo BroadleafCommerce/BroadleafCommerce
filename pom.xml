@@ -51,13 +51,13 @@
     </developers>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>3.2.9.RELEASE</spring.version>
-        <spring.security.version>3.1.3.RELEASE</spring.security.version>
+        <spring.version>4.1.0.RELEASE</spring.version>
+        <spring.security.version>3.2.5.RELEASE</spring.security.version>
         <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
         <thymeleaf.version>2.1.3.RELEASE</thymeleaf.version>
         <geb.version>0.9.3</geb.version>
         <spock.version>0.7-groovy-2.0</spock.version>
-        <selenium.version>2.42.2</selenium.version>
+        <selenium.version>2.43.1</selenium.version>
         <groovy.version>2.1.8</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
     </properties>
@@ -66,20 +66,13 @@
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
     </scm>
-    <repositories>
-        <repository>
-            <id>Codehaus Internal</id>
-            <name>Codehaus Internal</name>
-            <url>http://repository.codehaus.org</url>
-        </repository>
-    </repositories>
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.0.2</version>
+                    <version>3.1</version>
                     <configuration>
                         <source>1.6</source>
                         <target>1.6</target>
@@ -183,10 +176,12 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>2.6</version>
                 <configuration>
+                    <aggregate>true</aggregate>
                     <formats>
                         <format>xml</format>
+                        <format>html</format>
                     </formats>
                 </configuration>
             </plugin>
@@ -498,6 +493,11 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.3</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>1.8.3</version>
@@ -651,13 +651,6 @@
 
             <!-- JAX-RS Libraries -->
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-json</artifactId>
-                <version>1.17.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
                 <artifactId>jersey-spring</artifactId>
                 <version>1.17.1</version>
@@ -677,6 +670,16 @@
                 <version>1.17.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>2.3.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <version>2.3.3</version>
             </dependency>
 
             <!-- JMS Libraries -->
@@ -728,8 +731,15 @@
             </dependency>
             <dependency>
                 <groupId>org.thymeleaf</groupId>
-                <artifactId>thymeleaf-spring3</artifactId>
+                <artifactId>thymeleaf-spring4</artifactId>
                 <version>${thymeleaf.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>nz.net.ultraq.thymeleaf</groupId>
+                <artifactId>thymeleaf-layout-dialect</artifactId>
+                <version>1.2.5</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -881,7 +891,7 @@
             <dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
-                <version>2.2.0.Final</version>
+                <version>2.2.1.Final</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1225,18 +1235,6 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-core-asl</artifactId>
-                <version>1.9.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.12</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>eu.medsea.mimeutil</groupId>
                 <artifactId>mime-util</artifactId>
                 <version>2.1.3</version>
@@ -1272,7 +1270,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator-annotation-processor</artifactId>
-                <version>4.1.0.Final</version>
+                <version>4.3.0.Final</version>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>

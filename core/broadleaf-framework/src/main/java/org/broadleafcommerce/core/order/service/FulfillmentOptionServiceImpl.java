@@ -25,19 +25,19 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * 
  * @author Phillip Verheyden
  */
 @Service("blFulfillmentOptionService")
-@Transactional("blTransactionManager")
 public class FulfillmentOptionServiceImpl implements FulfillmentOptionService {
 
     @Resource(name = "blFulfillmentOptionDao")
-    FulfillmentOptionDao fulfillmentOptionDao;
+    protected FulfillmentOptionDao fulfillmentOptionDao;
 
     @Override
     public FulfillmentOption readFulfillmentOptionById(Long fulfillmentOptionId) {
@@ -45,6 +45,7 @@ public class FulfillmentOptionServiceImpl implements FulfillmentOptionService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public FulfillmentOption save(FulfillmentOption option) {
         return fulfillmentOptionDao.save(option);
     }

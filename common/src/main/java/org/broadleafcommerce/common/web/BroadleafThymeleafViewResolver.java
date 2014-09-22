@@ -22,14 +22,15 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
-import org.thymeleaf.spring3.view.AbstractThymeleafView;
-import org.thymeleaf.spring3.view.ThymeleafViewResolver;
+import org.thymeleaf.spring4.view.AbstractThymeleafView;
+import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -75,6 +76,10 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     protected Map<String, String> layoutMap = new HashMap<String, String>();
     protected String fullPageLayout = "layout/fullPageLayout";
     protected String iframeLayout = "layout/iframeLayout";
+    
+    protected boolean useThymeleafLayoutDialect() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("thymeleaf.useLayoutDialect");
+    }
     
     /*
      * This method is a copy of the same method in ThymeleafViewResolver, but since it is marked private,
@@ -145,7 +150,7 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     protected View loadView(final String originalViewName, final Locale locale) throws Exception {
         String viewName = originalViewName;
         
-        if (!isAjaxRequest()) {
+        if (!isAjaxRequest() && !useThymeleafLayoutDialect()) {
             String longestPrefix = "";
             
             for (Entry<String, String> entry : layoutMap.entrySet()) {

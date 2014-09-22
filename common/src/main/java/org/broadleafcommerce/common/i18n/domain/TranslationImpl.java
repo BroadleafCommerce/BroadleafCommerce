@@ -49,7 +49,7 @@ import javax.persistence.Lob;
 @Inheritance(strategy = InheritanceType.JOINED)
 @javax.persistence.Table(name = "BLC_TRANSLATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blTranslationElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "TranslationImpl_baseTranslation")
 //multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
 @Table(appliesTo = "BLC_TRANSLATION", indexes = {
         @Index(name = "TRANSLATION_INDEX", columnNames = {"ENTITY_TYPE","ENTITY_ID","FIELD_NAME","LOCALE_CODE"})
@@ -77,7 +77,7 @@ public class TranslationImpl implements Serializable, Translation {
     protected Long id;
 
     @Column(name = "ENTITY_TYPE")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "TranslationImpl_EntityType", prominent = true)
     protected String entityType;
 
     @Column(name = "ENTITY_ID")
@@ -85,17 +85,17 @@ public class TranslationImpl implements Serializable, Translation {
     protected String entityId;
 
     @Column(name = "FIELD_NAME")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "TranslationImpl_FieldName", prominent = true)
     protected String fieldName;
 
     @Column(name = "LOCALE_CODE")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "TranslationImpl_LocaleCode", prominent = true)
     protected String localeCode;
 
     @Column(name = "TRANSLATED_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "TranslationImpl_TranslatedValue", prominent = true)
     protected String translatedValue;
 
     /* ************************ */

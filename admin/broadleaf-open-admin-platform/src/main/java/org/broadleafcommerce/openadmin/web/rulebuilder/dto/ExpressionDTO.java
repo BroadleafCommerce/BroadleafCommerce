@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import java.io.Serializable;
 
 /**
@@ -76,5 +78,20 @@ public class ExpressionDTO extends DataDTO implements Serializable {
 
     public void setEnd(String end) {
         this.end = end;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
+            ExpressionDTO that = (ExpressionDTO) obj;
+            return super.equals(obj) && new EqualsBuilder()
+                .append(name, that.name)
+                .append(operator, that.operator)
+                .append(value, that.value)
+                .append(start, that.start)
+                .append(end, that.end)
+                .build();
+        }
+        return false;
     }
 }

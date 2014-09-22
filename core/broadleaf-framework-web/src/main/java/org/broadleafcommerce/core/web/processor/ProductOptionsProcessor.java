@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -30,16 +31,15 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.util.LRUMap;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.StringWriter;
 import java.io.Writer;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

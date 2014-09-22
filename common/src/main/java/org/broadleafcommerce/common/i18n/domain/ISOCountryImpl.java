@@ -43,9 +43,6 @@ import javax.persistence.Table;
 @Table(name = "BLC_ISO_COUNTRY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(friendlyName = "ISOCountryImpl_baseCountry")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
-})
 public class ISOCountryImpl implements ISOCountry, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;

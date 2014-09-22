@@ -31,6 +31,8 @@ public interface CountrySubdivisionService {
 
     public List<CountrySubdivision> findSubdivisions(String countryAbbreviation);
 
+    public List<CountrySubdivision> findSubdivisionsByCountryAndCategory(String countryAbbreviation, String category);
+
     public CountrySubdivision findSubdivisionByAbbreviation(String abbreviation);
 
     public CountrySubdivision save(CountrySubdivision subdivision);

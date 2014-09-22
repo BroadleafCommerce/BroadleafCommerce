@@ -23,9 +23,11 @@ import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed
 import org.broadleafcommerce.core.order.domain.Order
 import org.broadleafcommerce.core.order.domain.OrderImpl
 import org.broadleafcommerce.core.workflow.BaseActivity
+import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl
 import org.broadleafcommerce.core.workflow.ProcessContext
 import org.broadleafcommerce.profile.core.domain.Customer
 import org.broadleafcommerce.profile.core.domain.CustomerImpl
+
 import spock.lang.Specification
 
 /**
@@ -42,30 +44,10 @@ class BaseCheckoutActivitySpec extends Specification {
         Order order = new OrderImpl()
         order.id = 1
         order.customer = customer
-        context = new ProcessContext<CheckoutSeed>() {
-
-            CheckoutSeed seed = new CheckoutSeed(order, null)
-
-            @Override
-            boolean stopProcess() {
-                return false
-            }
-
-            @Override
-            boolean isStopped() {
-                return false
-            }
-
-            @Override
-            void setSeedData(CheckoutSeed seedObject) {
-                seed = seedObject
-            }
-
-            @Override
-            CheckoutSeed getSeedData() {
-                return seed
-            }
-        }
+        context = new DefaultProcessContextImpl<CheckoutSeed>().with{
+			seedData = new CheckoutSeed(order, null)
+			it
+		} 
     }
 
 }

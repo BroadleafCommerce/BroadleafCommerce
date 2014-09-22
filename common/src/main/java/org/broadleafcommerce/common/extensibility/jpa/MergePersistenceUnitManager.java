@@ -29,14 +29,9 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.instrument.classloading.LoadTimeWeaver;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
-import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
-import org.springframework.util.ClassUtils;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,21 +62,25 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     private static final Log LOG = LogFactory.getLog(MergePersistenceUnitManager.class);
 
     protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<String, PersistenceUnitInfo>();
-    protected final boolean jpa2ApiPresent = ClassUtils.hasMethod(PersistenceUnitInfo.class, "getSharedCacheMode");
     protected List<BroadleafClassTransformer> classTransformers = new ArrayList<BroadleafClassTransformer>();
 
-    @Resource(name = "blMergedPersistenceXmlLocations")
+    @Resource(name="blMergedPersistenceXmlLocations")
     protected Set<String> mergedPersistenceXmlLocations;
 
-    @Resource(name = "blMergedDataSources")
+    @Resource(name="blMergedDataSources")
     protected Map<String, DataSource> mergedDataSources;
-
-    @Resource(name = "blMergedClassTransformers")
+    
+    @Resource(name="blMergedClassTransformers")
     protected Set<BroadleafClassTransformer> mergedClassTransformers;
 
     @Resource(name="blEntityMarkerClassTransformer")
     protected EntityMarkerClassTransformer entityMarkerClassTransformer;
 
+    @Override
+    protected boolean isPersistenceUnitOverrideAllowed() {
+        return true;
+    }
+    
     @PostConstruct
     public void configureMergedItems() {
         String[] tempLocations;
@@ -110,15 +109,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         classTransformers.addAll(mergedClassTransformers);
     }
 
-    protected PersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
+    protected MutablePersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
         if (!mergedPus.containsKey(persistenceUnitName)) {
-            PersistenceUnitInfo puiToStore = newPU;
-            if (jpa2ApiPresent) {
-                puiToStore = createPersistenceUnit(newPU);
-            }
-            mergedPus.put(persistenceUnitName, puiToStore);
+            mergedPus.put(persistenceUnitName, newPU);
         }
-        return mergedPus.get(persistenceUnitName);
+        return (MutablePersistenceUnitInfo) mergedPus.get(persistenceUnitName);
     }
 
     @Override
@@ -195,11 +190,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 String name = mPui.getPersistenceUnitName();
                 persistenceUnitInfoNames.add(name);
 
-                PersistenceUnitInfo puiToStore = mPui;
-                if (jpa2ApiPresent) {
-                    puiToStore = this.createPersistenceUnit(mPui);
-                }
-                persistenceUnitInfos.put(name, puiToStore);
+                persistenceUnitInfos.put(name, mPui);
             }
         } catch (Exception e) {
             throw new RuntimeException("An error occured reflectively invoking methods on " +
@@ -252,51 +243,41 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             throw new RuntimeException(e);
         }
     }
-
+    
     @Override
     protected void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo newPU) {
         super.postProcessPersistenceUnitInfo(newPU);
         ConfigurationOnlyState state = ConfigurationOnlyState.getState();
         String persistenceUnitName = newPU.getPersistenceUnitName();
-        MutablePersistenceUnitInfo temp;
-        PersistenceUnitInfo pui = getMergedUnit(persistenceUnitName, newPU);
-        if (pui != null && Proxy.isProxyClass(pui.getClass())) {
-            // JPA 2.0 PersistenceUnitInfo decorator with a SpringPersistenceUnitInfo as target
-            InvocationHandler dec = Proxy.getInvocationHandler(pui);
-            temp = (MutablePersistenceUnitInfo) this.getDeclaredFieldValue(dec, "target");
-        }
-        else {
-            // Must be a raw JPA 1.0 SpringPersistenceUnitInfo instance
-            temp = (MutablePersistenceUnitInfo) pui;
-        }
+        MutablePersistenceUnitInfo pui = getMergedUnit(persistenceUnitName, newPU);
 
         List<String> managedClassNames = newPU.getManagedClassNames();
-        for (String managedClassName : managedClassNames) {
-            if (!temp.getManagedClassNames().contains(managedClassName)) {
-                temp.addManagedClassName(managedClassName);
+        for (String managedClassName : managedClassNames){
+            if (!pui.getManagedClassNames().contains(managedClassName)) {
+                pui.addManagedClassName(managedClassName);
             }
         }
         List<String> mappingFileNames = newPU.getMappingFileNames();
         for (String mappingFileName : mappingFileNames) {
-            if (!temp.getMappingFileNames().contains(mappingFileName)) {
-                temp.addMappingFileName(mappingFileName);
+            if (!pui.getMappingFileNames().contains(mappingFileName)) {
+                pui.addMappingFileName(mappingFileName);
             }
         }
-        temp.setExcludeUnlistedClasses(newPU.excludeUnlistedClasses());
+        pui.setExcludeUnlistedClasses(newPU.excludeUnlistedClasses());
         for (URL url : newPU.getJarFileUrls()) {
             // Avoid duplicate class scanning by Ejb3Configuration. Do not re-add the URL to the list of jars for this
             // persistence unit or duplicate the persistence unit root URL location (both types of locations are scanned)
-            if (!temp.getJarFileUrls().contains(url) && !temp.getPersistenceUnitRootUrl().equals(url)) {
-                temp.addJarFileUrl(url);
+            if (!pui.getJarFileUrls().contains(url) && !pui.getPersistenceUnitRootUrl().equals(url)) {
+                pui.addJarFileUrl(url);
             }
         }
-        if (temp.getProperties() == null) {
-            temp.setProperties(newPU.getProperties());
+        if (pui.getProperties() == null) {
+            pui.setProperties(newPU.getProperties());
         } else {
             Properties props = newPU.getProperties();
             if (props != null) {
                 for (Object key : props.keySet()) {
-                    temp.getProperties().put(key, props.get(key));
+                    pui.getProperties().put(key, props.get(key));
                     for (BroadleafClassTransformer transformer : classTransformers) {
                         try {
                             transformer.compileJPAProperties(props, key);
@@ -309,21 +290,21 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         }
         if (state == null || !state.isConfigurationOnly()) {
             if (newPU.getJtaDataSource() != null) {
-                temp.setJtaDataSource(newPU.getJtaDataSource());
+                pui.setJtaDataSource(newPU.getJtaDataSource());
             }
             if (newPU.getNonJtaDataSource() != null) {
-                temp.setNonJtaDataSource(newPU.getNonJtaDataSource());
+                pui.setNonJtaDataSource(newPU.getNonJtaDataSource());
             }
         } else {
-            temp.getProperties().setProperty("hibernate.hbm2ddl.auto", "none");
-            temp.getProperties().setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
+            pui.getProperties().setProperty("hibernate.hbm2ddl.auto", "none");
+            pui.getProperties().setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
         }
-        temp.setTransactionType(newPU.getTransactionType());
+        pui.setTransactionType(newPU.getTransactionType());
         if (newPU.getPersistenceProviderClassName() != null) {
-            temp.setPersistenceProviderClassName(newPU.getPersistenceProviderClassName());
+            pui.setPersistenceProviderClassName(newPU.getPersistenceProviderClassName());
         }
         if (newPU.getPersistenceProviderPackageName() != null) {
-            temp.setPersistenceProviderPackageName(newPU.getPersistenceProviderPackageName());
+            pui.setPersistenceProviderPackageName(newPU.getPersistenceProviderPackageName());
         }
     }
 
@@ -351,37 +332,4 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         this.classTransformers = classTransformers;
     }
 
-    private Object getDeclaredFieldValue(Object source, String name) throws IllegalArgumentException, SecurityException {
-        Field declaredField;
-        try {
-            declaredField = source.getClass().getDeclaredField(name);
-            declaredField.setAccessible(true);
-            Object value = declaredField.get(source);
-            return value;
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    private PersistenceUnitInfo createPersistenceUnit(PersistenceUnitInfo mPui) throws IllegalArgumentException, SecurityException {
-        InvocationHandler jpa2PersistenceUnitInfoDecorator = null;
-        Class<?>[] classes = getClass().getSuperclass().getDeclaredClasses();
-        for (Class<?> clz : classes) {
-            if ("org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager$Jpa2PersistenceUnitInfoDecorator".equals(clz.getName())) {
-                Constructor<?> constructor;
-                try {
-                    constructor = clz.getConstructor(Class.forName("org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo"));
-                    constructor.setAccessible(true);
-                    jpa2PersistenceUnitInfoDecorator = (InvocationHandler) constructor.newInstance(mPui);
-                } catch (Exception e) {
-                    throw new IllegalArgumentException(e);
-                }
-                break;
-            }
-        }
-
-        PersistenceUnitInfo puiToStore = (PersistenceUnitInfo) Proxy.newProxyInstance(SmartPersistenceUnitInfo.class.getClassLoader(),
-                new Class[] { SmartPersistenceUnitInfo.class }, jpa2PersistenceUnitInfoDecorator);
-        return puiToStore;
-    }
 }

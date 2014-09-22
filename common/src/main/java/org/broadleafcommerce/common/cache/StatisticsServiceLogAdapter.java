@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,15 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.logging;
-
-import org.apache.log4j.spi.Filter;
-import org.apache.log4j.spi.LoggingEvent;
+package org.broadleafcommerce.common.cache;
 
 /**
- * Log4J filter that will remove any SUPPORT level
- * log messages from appearing
- *
- * @author Jeff Fischer
+ * @author Elbert Bautista (elbertbautista)
  */
-public class SupportLevelFilter extends Filter {
+public interface StatisticsServiceLogAdapter {
 
-    @Override
-    public int decide(LoggingEvent event) {
-        if(SupportLevel.SUPPORT.equals(event.getLevel())) {
-            return Filter.DENY;
-        }
-        return Filter.ACCEPT;
-    }
+    void activateLogging(Class clazz);
+
+    void disableLogging(Class clazz);
 
 }

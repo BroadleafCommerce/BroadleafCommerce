@@ -92,12 +92,12 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
      * If neither of those cases match, delegates to the normal ResourceHttpRequestHandler
      */
     @Override
-	protected Resource getResource(HttpServletRequest request) {
+	protected Resource getResource(HttpServletRequest request) throws IOException {
         establishThinRequestContext();
         return getResourceInternal(request);
     }
 
-	protected Resource getResourceInternal(HttpServletRequest request) {
+	protected Resource getResourceInternal(HttpServletRequest request) throws IOException {
 		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         if (bundlingService.hasBundle(path)) {
             return bundlingService.getBundle(path);
@@ -175,6 +175,7 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
      * @return a clone of the locations list that is in {@link ResourceHttpRequestHandler}. Note that we must use
      * reflection to access this field as it is marked private.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public List<Resource> getLocations() {
         try {

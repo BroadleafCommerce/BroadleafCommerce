@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
@@ -84,19 +85,19 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     protected String entityType;
     
     @Column(name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "FieldImpl_friendlyName", group = "FieldImpl_descrpition", order = 1, prominent = true)
+    @AdminPresentation(friendlyName = "FieldImpl_friendlyName", group = "FieldImpl_descrpition", order = 1, prominent = true, translatable = true)
     protected String friendlyName;
 
     @Column(name = "PROPERTY_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 2, prominent = true)
+    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 2)
     protected String propertyName;
     
     @Column(name = "ABBREVIATION")
-    @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition", order = 3, prominent = true)
+    @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition", order = 3)
     protected String abbreviation;
     
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition", order = 4, prominent = true)
+    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition", order = 4)
     protected Boolean searchable = false;
     
     // This is a broadleaf enumeration
@@ -164,7 +165,7 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
 
     @Override
     public String getFriendlyName() {
-        return friendlyName;
+        return DynamicTranslationProvider.getValue(this, "friendlyName", friendlyName);
     }
 
     @Override
@@ -249,6 +250,6 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
 
     @Override
     public String getMainEntityName() {
-        return getQualifiedFieldName();
+        return getFriendlyName();
     }
 }

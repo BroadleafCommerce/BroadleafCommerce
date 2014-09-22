@@ -65,6 +65,15 @@ public class CountrySubdivisionDaoImpl implements CountrySubdivisionDao {
     }
 
     @Override
+    public List<CountrySubdivision> findSubdivisionsByCountryAndCategory(String countryAbbreviation, String category) {
+        Query query = em.createNamedQuery("BC_FIND_SUBDIVISIONS_BY_COUNTRY_ABBREVIATION_AND_CATEGORY");
+        query.setParameter("countryAbbreviation", countryAbbreviation);
+        query.setParameter("category", category);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
+    }
+
+    @Override
     public CountrySubdivision create() {
         return (CountrySubdivision) entityConfiguration.createEntityInstance(CountrySubdivision.class.getName());
     }

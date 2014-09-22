@@ -505,15 +505,14 @@ $(document).ready(function() {
     $('body').on('click', '.custom-entity-search a.search-button', function(event) {
         //this takes place on the main list grid screen so there should be a single list grid
         var search = $(this).closest('form').find('input').val();
-        var $firstHeader = $('body').find('#listGrid-main-header th:first-child');
-        var $input = $firstHeader.find('input.listgrid-criteria-input');
+        var $firstInput = $($('body').find('#listGrid-main-header th input.listgrid-criteria-input')[0]);
         
-        $input.val(search);
+        $firstInput.val(search);
 
         $(this).closest('form').find('input').val('');
         
         var submitData = {};
-        submitData[$input.data('name')] =  $input.val();
+        submitData[$firstInput.data('name')] =  $firstInput.val();
         
         BLC.ajax({
             url: $(this).closest('form').attr('action'),
@@ -525,7 +524,7 @@ $(document).ready(function() {
                 BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
             }
             BLCAdmin.listGrid.replaceRelatedListGrid($(data), null, { isRefresh : false});
-            $input.trigger('input');
+            $firstInput.trigger('input');
         });
         return false;
     });

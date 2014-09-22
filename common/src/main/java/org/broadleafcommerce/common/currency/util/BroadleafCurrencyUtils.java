@@ -19,10 +19,9 @@
  */
 package org.broadleafcommerce.common.currency.util;
 
+import org.apache.commons.collections4.map.LRUMap;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.codehaus.jackson.map.util.LRUMap;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

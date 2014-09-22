@@ -38,6 +38,8 @@ public interface CatalogService {
     public Product saveProduct(Product product);
 
     public Product findProductById(Long productId);
+    
+    public Product findProductByExternalId(String externalId);
 
     public List<Product> findProductsByName(String searchName);
 
@@ -60,6 +62,7 @@ public interface CatalogService {
      * @param currentDate
      * @return
      */
+    @Deprecated
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate);
     
     /**
@@ -79,6 +82,7 @@ public interface CatalogService {
      * @param searchCriteria
      * @return
      */
+    @Deprecated
     public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, SearchCriteria searchCriteria);
     
     /**
@@ -93,6 +97,7 @@ public interface CatalogService {
     /**
      * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, SearchCriteria)}
      */
+    @Deprecated
     public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, SearchCriteria searchCriteria);
 
     /**
@@ -108,6 +113,7 @@ public interface CatalogService {
     /**
      * @deprecated Use {@link #findActiveProductsByCategory(Category, limit, offset}
      */
+    @Deprecated
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
 
     /**

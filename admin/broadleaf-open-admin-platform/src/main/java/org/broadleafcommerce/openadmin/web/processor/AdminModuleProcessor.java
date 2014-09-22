@@ -22,9 +22,8 @@ package org.broadleafcommerce.openadmin.web.processor;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
-import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
-import org.springframework.context.ApplicationContext;
+import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +31,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.spring3.context.SpringWebContext;
+
+import javax.annotation.Resource;
 
 /**
  * A Thymeleaf processor that will add the appropriate AdminModules to the model. It does this by
@@ -48,8 +48,11 @@ public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
 
-    private AdminNavigationService adminNavigationService;
-    private AdminSecurityService securityService;
+    @Resource(name = "blAdminNavigationService")
+    protected AdminNavigationService adminNavigationService;
+    
+    @Resource(name = "blAdminSecurityService")
+    protected AdminSecurityService securityService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -66,7 +69,6 @@ public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
         String resultVar = element.getAttributeValue("resultVar");
-        initServices(arguments);
 
         AdminUser user = getPersistentAdminUser();
         if (user != null) {
@@ -74,14 +76,6 @@ public class AdminModuleProcessor extends AbstractModelVariableModifierProcessor
             addToModel(arguments, resultVar, menu);
         }
 
-    }
-
-    protected void initServices(Arguments arguments) {
-        if (adminNavigationService == null || securityService == null) {
-            final ApplicationContext applicationContext = ((SpringWebContext) arguments.getContext()).getApplicationContext();
-            adminNavigationService = (AdminNavigationService) applicationContext.getBean("blAdminNavigationService");
-            securityService = (AdminSecurityService) applicationContext.getBean("blAdminSecurityService");
-        }
     }
 
     protected AdminUser getPersistentAdminUser() {

@@ -73,11 +73,12 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -687,7 +689,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (json != null && !"".equals(json)) {
             try {
                 ObjectMapper om = new ObjectMapper();
-                om.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 return om.readValue(json, entityConfiguration.lookupEntityClass(MediaDto.class.getName(), MediaDto.class));
             } catch (Exception e) {
                 LOG.warn("Error parsing json to media " + json, e);
@@ -709,7 +711,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected DataWrapper convertJsonToDataWrapper(String json) {
         ObjectMapper mapper = new ObjectMapper();
         DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
-        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null));
+        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null, null, null));
         module.addDeserializer(DataDTO.class, dtoDeserializer);
         mapper.registerModule(module);
         try {
