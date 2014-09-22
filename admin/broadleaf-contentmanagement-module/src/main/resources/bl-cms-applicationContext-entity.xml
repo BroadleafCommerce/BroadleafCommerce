@@ -37,4 +37,7 @@
     <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContentRule" class="org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.cms.url.domain.URLHandler" class="org.broadleafcommerce.cms.url.domain.URLHandlerImpl" scope="prototype"/>
 
+    <bean id="org.broadleafcommerce.cms.field.domain.FieldDefinition" class="org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.cms.structure.domain.StructuredContentField" class="org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl" scope="prototype"/>
+
 </beans>
