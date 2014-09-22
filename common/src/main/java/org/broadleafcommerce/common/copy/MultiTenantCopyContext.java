@@ -55,6 +55,11 @@ public class MultiTenantCopyContext {
             @SuppressWarnings("unchecked")
             public T execute() throws ServiceException {
                 Object cloneId = getEquivalentId(clazz.getName(), originalId);
+
+                if (cloneId == null) {
+                    return null;
+                }
+
                 return (T) genericEntityService.readGenericEntity(clazz.getName(), cloneId);
             }
         }, getToSite(), getToCatalog());
