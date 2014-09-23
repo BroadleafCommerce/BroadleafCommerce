@@ -337,10 +337,16 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     @Transactional("blTransactionManagerAssetStorageInfo")
     @Override
     public void createStaticAssetStorageFromFile(MultipartFile file, StaticAsset staticAsset) throws IOException {
+        createStaticAssetStorage(file.getInputStream(), staticAsset);
+    }
+    
+    @Transactional("blTransactionManagerAssetStorageInfo")
+    @Override
+    public void createStaticAssetStorage(InputStream fileInputStream, StaticAsset staticAsset) throws IOException {
         if (StorageType.DATABASE.equals(staticAsset.getStorageType())) {
             StaticAssetStorage storage = staticAssetStorageDao.create();
             storage.setStaticAssetId(staticAsset.getId());
-            Blob uploadBlob = staticAssetStorageDao.createBlob(file);
+            Blob uploadBlob = staticAssetStorageDao.createBlob(fileInputStream, staticAsset.getFileSize());
             storage.setFileData(uploadBlob);
             staticAssetStorageDao.save(storage);
         } else if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
@@ -348,7 +354,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             // Convert the given URL from the asset to a system-specific suitable file path
             String destFileName = FilenameUtils.normalize(tempWorkArea.getFilePathLocation() + File.separator + FilenameUtils.separatorsToSystem(staticAsset.getFullUrl()));
 
-            InputStream input = file.getInputStream();
+            InputStream input = fileInputStream;
             byte[] buffer = new byte[fileBufferSize];
 
             File destFile = new File(destFileName);
