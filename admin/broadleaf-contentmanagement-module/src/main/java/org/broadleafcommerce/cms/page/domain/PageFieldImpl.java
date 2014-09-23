@@ -51,7 +51,8 @@ import javax.persistence.Table;
 @Table(name = "BLC_PAGE_FLD")
 @EntityListeners(value = { AdminAuditableListener.class })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE, skipOverlaps=true)
 })
 public class PageFieldImpl implements PageField {
 
