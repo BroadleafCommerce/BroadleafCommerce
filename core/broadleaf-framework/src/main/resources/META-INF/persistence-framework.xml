@@ -58,7 +58,9 @@
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductSkuXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuFeeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
         <class>org.broadleafcommerce.core.util.domain.CodeTypeImpl</class>
@@ -72,6 +74,8 @@
         <class>org.broadleafcommerce.core.offer.domain.OfferCodeImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferRuleImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferOfferRuleXrefImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferInfoImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl</class>
@@ -104,7 +108,6 @@
         <class>org.broadleafcommerce.core.order.domain.TaxDetailImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.OrderPaymentImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl</class>
-
         <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
         <class>org.broadleafcommerce.core.pricing.domain.ShippingRateImpl</class>
         <class>org.broadleafcommerce.core.store.domain.StoreImpl</class>

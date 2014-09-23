@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 
+import org.broadleafcommerce.common.extensibility.jpa.clone.CloneRefreshNode;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -83,6 +84,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
+    @CloneRefreshNode
     protected Product product = new ProductImpl();
 
     @Override

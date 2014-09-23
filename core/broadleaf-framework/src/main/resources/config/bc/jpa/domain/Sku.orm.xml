@@ -34,7 +34,8 @@
     <named-query name="BC_READ_SKU_BY_OUTGOING_URL" >
         <query>SELECT sku
                FROM org.broadleafcommerce.core.catalog.domain.Sku sku
-               LEFT JOIN sku.product product
+               LEFT JOIN sku.product productxref
+               LEFT JOIN productxref.product product
                LEFT JOIN sku.defaultProduct defaultProduct
                WHERE (defaultProduct.url = :url
                OR (product.url = :productUrl AND sku.urlKey = :skuUrlKey))

@@ -17,21 +17,31 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.extension;
+package org.broadleafcommerce.core.catalog.domain;
 
-import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.springframework.stereotype.Service;
+import org.broadleafcommerce.common.media.domain.Media;
+
+import java.io.Serializable;
 
 /**
- * For internal usage. Allows extension of entity API calls without subclassing the entity.
- *
  * @author Jeff Fischer
  */
-@Service("blCategoryEntityExtensionManager")
-public class CategoryEntityExtensionManager extends ExtensionManager<CategoryEntityExtensionHandler> {
+public interface SkuMediaXref extends Serializable {
 
-    public CategoryEntityExtensionManager() {
-        super(CategoryEntityExtensionHandler.class);
-    }
+    Long getId();
+
+    void setId(Long id);
+
+    Sku getSku();
+
+    void setSku(Sku sku);
+
+    Media getMedia();
+
+    void setMedia(Media media);
+
+    String getKey();
+
+    void setKey(String key);
 
 }

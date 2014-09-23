@@ -17,21 +17,29 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.catalog.extension;
+package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.springframework.stereotype.Service;
+import java.io.Serializable;
 
 /**
- * For internal usage. Allows extending API calls without subclassing the entity.
- *
  * @author Jeff Fischer
  */
-@Service("blProductOptionEntityExtensionManager")
-public class ProductOptionEntityExtensionManager extends ExtensionManager<ProductOptionEntityExtensionHandler> {
+public interface OfferOfferRuleXref extends Serializable {
 
-    public ProductOptionEntityExtensionManager() {
-        super(ProductOptionEntityExtensionHandler.class);
-    }
+    Long getId();
+
+    void setId(Long id);
+
+    Offer getOffer();
+
+    void setOffer(Offer offer);
+
+    OfferRule getOfferRule();
+
+    void setOfferRule(OfferRule offerRule);
+
+    String getKey();
+
+    void setKey(String key);
 
 }

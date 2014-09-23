@@ -583,48 +583,45 @@ public class MapStructurePersistenceModule extends BasicPersistenceModule {
             if (key instanceof String && mapFieldKeys.contains(key)) {
                 continue;
             }
-            Entity entityItem = new Entity();
-            entityItem.setType(new String[]{record.getClass().getName()});
-            entities.add(entityItem);
-            List<Property> props = new ArrayList<Property>();
-
-            Property propertyItem = new Property();
-            propertyItem.setName(mapStructure.getKeyPropertyName());
-            props.add(propertyItem);
-            String strVal;
-            if (Date.class.isAssignableFrom(key.getClass())) {
-                strVal = getSimpleDateFormatter().format((Date) key);
-            } else if (Timestamp.class.isAssignableFrom(key.getClass())) {
-                strVal = getSimpleDateFormatter().format(new Date(((Timestamp) key).getTime()));
-            } else if (Calendar.class.isAssignableFrom(key.getClass())) {
-                strVal = getSimpleDateFormatter().format(((Calendar) key).getTime());
-            } else if (Double.class.isAssignableFrom(key.getClass())) {
-                strVal = getDecimalFormatter().format(key);
-            } else if (BigDecimal.class.isAssignableFrom(key.getClass())) {
-                strVal = getDecimalFormatter().format(key);
-            } else {
-                strVal = key.toString();
-            }
-            propertyItem.setValue(strVal);
-
-            PersistentClass persistentClass = persistenceManager.getDynamicEntityDao().getPersistentClass(mapStructure.getValueClassName());
-            if (persistentClass == null) {
-                Property temp = new Property();
-                temp.setName(((SimpleValueMapStructure) mapStructure).getValuePropertyName());
-                temp.setValue(String.valueOf(map.get(key)));
-                props.add(temp);
-            } else {
-                extractPropertiesFromPersistentEntity(valueMergedProperties, (Serializable) map.get(key), props);
-            }
-            if (symbolicIdProperty != null) {
-                props.add(symbolicIdProperty);
-            }
-
-            Property[] properties = new Property[props.size()];
-            properties = props.toArray(properties);
-            entityItem.setProperties(properties);
+            entities.add(getMapRecord(record.getClass().getName(), (Serializable) map.get(key), mapStructure, valueMergedProperties, symbolicIdProperty, key));
         }
 
         return entities.toArray(new Entity[entities.size()]);
+    }
+
+    protected Entity getMapRecord(String ceilingClass, Serializable valueInstance, MapStructure mapStructure, Map<String, FieldMetadata> valueMergedProperties, Property symbolicIdProperty, Object key) {
+        Entity entityItem = new Entity();
+        entityItem.setType(new String[]{ceilingClass});
+        List<Property> props = new ArrayList<Property>();
+
+        Property propertyItem = new Property();
+        propertyItem.setName(mapStructure.getKeyPropertyName());
+        props.add(propertyItem);
+        String strVal;
+        if (Date.class.isAssignableFrom(key.getClass())) {
+            strVal = getSimpleDateFormatter().format((Date) key);
+        } else if (Timestamp.class.isAssignableFrom(key.getClass())) {
+            strVal = getSimpleDateFormatter().format(new Date(((Timestamp) key).getTime()));
+        } else if (Calendar.class.isAssignableFrom(key.getClass())) {
+            strVal = getSimpleDateFormatter().format(((Calendar) key).getTime());
+        } else if (Double.class.isAssignableFrom(key.getClass())) {
+            strVal = getDecimalFormatter().format(key);
+        } else if (BigDecimal.class.isAssignableFrom(key.getClass())) {
+            strVal = getDecimalFormatter().format(key);
+        } else {
+            strVal = key.toString();
+        }
+        propertyItem.setValue(strVal);
+
+        extractPropertiesFromPersistentEntity(valueMergedProperties, valueInstance, props);
+        if (symbolicIdProperty != null) {
+            props.add(symbolicIdProperty);
+        }
+
+        Property[] properties = new Property[props.size()];
+        properties = props.toArray(properties);
+        entityItem.setProperties(properties);
+
+        return entityItem;
     }
 }

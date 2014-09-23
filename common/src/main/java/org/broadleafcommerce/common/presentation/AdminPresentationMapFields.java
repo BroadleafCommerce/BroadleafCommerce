@@ -43,4 +43,25 @@ public @interface AdminPresentationMapFields {
      */
     AdminPresentationMapField[] mapDisplayFields();
 
+    /**
+     * <p>Optional - if the intended map value is actually buried inside of a modelled join entity, specify the
+     * the path to that value here. For example, SkuImpl.skuMedia uses SkuMediaXrefImpl, but the intended value
+     * is Media, so the toOneTargetProperty annotation param is "media". Note - only declare here if the field
+     * does not also have an {@link org.broadleafcommerce.common.presentation.AdminPresentationMap} annotation
+     * already, which is the preferred location for declaring this value.</p>
+     *
+     * @return the path to the intended map value field in the join entity
+     */
+    String toOneTargetProperty() default "";
+
+    /**
+     * <p>Optional - if the intended map value is actually buried inside of a modelled join entity, specify the
+     * the path to that parent here. For example, SkuImpl.skuMedia uses SkuMediaXrefImpl, and the parent reference
+     * inside SkuMediaXrefImpl is to Sku, so the toOneParentProperty annotation param is "sku". Note - only declare here if the field
+     * does not also have an {@link org.broadleafcommerce.common.presentation.AdminPresentationMap} annotation
+     * already, which is the preferred location for declaring this value.</p>
+     *
+     * @return the path to the parent in the join entity
+     */
+    String toOneParentProperty() default "";
 }

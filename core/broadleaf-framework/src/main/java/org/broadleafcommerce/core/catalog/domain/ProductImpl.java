@@ -24,14 +24,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyAdornedTargetCollection;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
@@ -53,9 +48,7 @@ import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.Locatable;
-import org.broadleafcommerce.core.catalog.extension.ProductEntityExtensionManager;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -132,7 +125,6 @@ import javax.persistence.Transient;
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRECLONE_INFORMATION),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class ProductImpl implements Product, Status, AdminMainEntity, Locatable, TemplatePathContainer {
@@ -228,7 +220,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         sortProperty = "sequence", 
         maintainedAdornedTargetFields = { "promotionMessage" }, 
         gridVisibleFields = { "defaultSku.name", "promotionMessage" })
-    @ClonePolicyAdornedTargetCollection
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
@@ -241,16 +232,17 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         sortProperty = "sequence",
         maintainedAdornedTargetFields = { "promotionMessage" }, 
         gridVisibleFields = { "defaultSku.name", "promotionMessage" })
-    @ClonePolicyAdornedTargetCollection
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy="product")
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = ProductSkuXrefImpl.class, mappedBy = "product", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName="ProductImpl_Additional_Skus", order = 1000,
+    @AdminPresentationCollection(friendlyName = "ProductImpl_Additional_Skus", order = 1000,
         tab = Presentation.Tab.Name.ProductOptions, tabOrder = Presentation.Tab.Order.ProductOptions)
-    @ClonePolicyCollection
-    protected List<Sku> additionalSkus = new ArrayList<Sku>();
+    protected List<ProductSkuXref> additionalSkus = new ArrayList<ProductSkuXref>();
+
+    @Transient
+    protected List<Sku> legacyAdditionalSkus = new ArrayList<Sku>();
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -273,7 +265,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         targetObjectProperty = "category",
         parentObjectProperty = "product",
         gridVisibleFields = { "name" })
-    @ClonePolicyAdornedTargetCollection(unowned = true)
     protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
 
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -284,7 +275,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
     )
-    @ClonePolicyMap
     protected Map<String, ProductAttribute> productAttributes = new HashMap<String, ProductAttribute>();
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product")
@@ -443,15 +433,16 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     public List<Sku> getAllSkus() {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
-        for (Sku additionalSku : additionalSkus) {
-            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
-                allSkus.add(additionalSku);
+        for (ProductSkuXref additionalSku : additionalSkus) {
+            if (!additionalSku.getSku().getId().equals(getDefaultSku().getId())) {
+                allSkus.add(additionalSku.getSku());
             }
         }
-        return allSkus;
+        return Collections.unmodifiableList(allSkus);
     }
 
     @Override
+    @Deprecated
     public List<Sku> getSkus() {
         if (skus.size() == 0) {
             List<Sku> additionalSkus = getAdditionalSkus();
@@ -461,21 +452,38 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
                 }
             }
         }
-        return skus;
+        return Collections.unmodifiableList(skus);
     }
 
     @Override
+    @Deprecated
     public List<Sku> getAdditionalSkus() {
+        if (legacyAdditionalSkus.size() == 0) {
+            for (ProductSkuXref sku : getAdditionalSkusXrefs()) {
+                legacyAdditionalSkus.add(sku.getSku());
+            }
+        }
+        return Collections.unmodifiableList(legacyAdditionalSkus);
+    }
+
+    @Override
+    @Deprecated
+    public void setAdditionalSkus(List<Sku> skus) {
+        this.additionalSkus.clear();
+        this.legacyAdditionalSkus.clear();
+        for(Sku sku : skus){
+            this.additionalSkus.add(new ProductSkuXrefImpl(this, sku));
+        }
+    }
+
+    @Override
+    public List<ProductSkuXref> getAdditionalSkusXrefs() {
         return additionalSkus;
     }
 
     @Override
-    public void setAdditionalSkus(List<Sku> skus) {
-        this.additionalSkus.clear();
-        for(Sku sku : skus){
-            this.additionalSkus.add(sku);
-        }
-        //this.skus.clear();
+    public void setAdditionalSkusXrefs(List<ProductSkuXref> additionalSkusXrefs) {
+        this.additionalSkus = additionalSkusXrefs;
     }
 
     @Override
@@ -512,15 +520,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public List<CategoryProductXref> getAllParentCategoryXrefs() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
-            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
-            ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategoryXrefs(this, holder);
-            if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                return (List<CategoryProductXref>) holder.getResult();
-            }
-        }
         return allParentCategoryXrefs;
     }
 
@@ -533,15 +532,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     @Deprecated
     public List<Category> getAllParentCategories() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
-            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
-            ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategories(this, holder);
-            if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                return (List<Category>) holder.getResult();
-            }
-        }
         List<Category> parents = new ArrayList<Category>();
         for (CategoryProductXref xref : allParentCategoryXrefs) {
             parents.add(xref.getCategory());
@@ -642,15 +632,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public List<RelatedProduct> getCrossSaleProducts() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
-            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
-            ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().getCrossSaleProducts(this, holder);
-            if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                return (List<RelatedProduct>) holder.getResult();
-            }
-        }
         return crossSaleProducts;
     }
 
@@ -664,15 +645,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public List<RelatedProduct> getUpSaleProducts() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
-            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
-            ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().getUpSaleProducts(this, holder);
-            if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                return (List<RelatedProduct>) holder.getResult();
-            }
-        }
         return upSaleProducts;
     }
 
@@ -735,15 +707,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public List<ProductOptionXref> getProductOptionXrefs() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
-            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
-            ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().getProductOptionXrefs(this, holder);
-            if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                return (List<ProductOptionXref>) holder.getResult();
-            }
-        }
         return productOptions;
     }
 
@@ -754,15 +717,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public List<ProductOption> getProductOptions() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
-            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
-            ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().getProductOptions(this, holder);
-            if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                return (List<ProductOption>) holder.getResult();
-            }
-        }
         List<ProductOption> response = new ArrayList<ProductOption>();
         for (ProductOptionXref xref : productOptions) {
             response.add(xref.getProductOption());

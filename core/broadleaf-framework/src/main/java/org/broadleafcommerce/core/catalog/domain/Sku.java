@@ -323,14 +323,30 @@ public interface Sku extends Serializable {
     /**
      * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
      * is a media object.
+     * @deprecated use {@link #getSkuMediaXref()} instead
      */
+    @Deprecated
     public Map<String, Media> getSkuMedia();
 
     /**
      * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
      * is an object of type Media.
+     * @deprecated use {@link #setSkuMediaXref(java.util.Map)} instead
      */
+    @Deprecated
     public void setSkuMedia(Map<String, Media> skuMedia);
+
+    /**
+     * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
+     * is a cross-reference to a media object.
+     */
+    Map<String, SkuMediaXref> getSkuMediaXref();
+
+    /**
+     * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
+     * is a cross-reference object to type Media.
+     */
+    void setSkuMediaXref(Map<String, SkuMediaXref> skuMediaXref);
 
     /**
      * Returns whether or not this Sku, the given Product and the given Category are all active

@@ -139,10 +139,6 @@
     <bean id="blFrameworkEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
-                <entry key="blCategoryEntityExtensionManager" value-ref="blCategoryEntityExtensionManager"/>
-                <entry key="blOfferEntityExtensionManager" value-ref="blOfferEntityExtensionManager"/>
-                <entry key="blProductOptionEntityExtensionManager" value-ref="blProductOptionEntityExtensionManager"/>
-                <entry key="blProductEntityExtensionManager" value-ref="blProductEntityExtensionManager"/>
             </map>
         </property>
     </bean>

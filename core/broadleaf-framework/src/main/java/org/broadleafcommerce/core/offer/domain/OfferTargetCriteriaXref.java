@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,25 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.extensibility.jpa.clone;
+package org.broadleafcommerce.core.offer.domain;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.Serializable;
 
 /**
- *
  * @author Jeff Fischer
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-public @interface ClonePolicyCollection {
+public interface OfferTargetCriteriaXref extends Serializable {
 
-    boolean deepClone() default true;
+    Long getId();
 
-    String toOneProperty() default "";
+    void setId(Long id);
 
-    boolean unowned() default false;
+    Offer getOffer();
 
-    boolean useProductionFiltering() default false;
+    void setOffer(Offer offer);
+
+    OfferItemCriteria getOfferItemCriteria();
+
+    void setOfferItemCriteria(OfferItemCriteria offerItemCriteria);
+
 }

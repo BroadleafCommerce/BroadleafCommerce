@@ -20,12 +20,9 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -34,8 +31,6 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.extension.ProductOptionEntityExtensionManager;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
@@ -67,7 +62,6 @@ import javax.persistence.Table;
 @AdminPresentationClass(friendlyName = "ProductOptionImpl_baseProductOption", populateToOneFields=PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRECLONE_INFORMATION),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class ProductOptionImpl implements ProductOption, AdminMainEntity {
@@ -137,7 +131,6 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @OrderBy(value = "displayOrder")
     @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "ProductOptionImpl_Allowed_Values")
-    @ClonePolicyCollection
     protected List<ProductOptionValue> allowedValues = new ArrayList<ProductOptionValue>();
 
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "productOption")
@@ -207,16 +200,6 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
 
     @Override
     public List<ProductOptionXref> getProductXrefs() {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getAdditionalProperties().containsKey("blProductOptionEntityExtensionManager")) {
-            ProductOptionEntityExtensionManager extensionManager = (ProductOptionEntityExtensionManager) context.getAdditionalProperties().get("blProductOptionEntityExtensionManager");
-            ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().getProductXrefs(this, holder);
-            if (ExtensionResultStatusType.HANDLED.equals(result)) {
-                return (List<ProductOptionXref>) holder.getResult();
-            }
-        }
-
         return products;
     }
 

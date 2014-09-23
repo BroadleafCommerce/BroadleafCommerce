@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
@@ -28,6 +29,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -271,17 +273,45 @@ public interface Offer extends Status, Serializable {
 
     public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
 
+    /**
+     * @deprecated use {@link #getTargetItemCriteriaXref()} instead
+     * @return
+     */
+    @Deprecated
     public Set<OfferItemCriteria> getTargetItemCriteria();
 
+    /**
+     * @deprecated use {@link #setTargetItemCriteriaXref(java.util.Set)} instead
+     * @param targetItemCriteria
+     */
+    @Deprecated
     public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria);
+
+    Set<OfferTargetCriteriaXref> getTargetItemCriteriaXref();
+
+    void setTargetItemCriteriaXref(Set<OfferTargetCriteriaXref> targetItemCriteriaXref);
     
     public Boolean isTotalitarianOffer();
 
     public void setTotalitarianOffer(Boolean totalitarianOffer);
-    
+
+    /**
+     * @deprecated use {@link #getOfferMatchRulesXref()} instead
+     * @return
+     */
+    @Deprecated
     public Map<String, OfferRule> getOfferMatchRules();
 
+    /**
+     * @deprecated use {@link #setOfferMatchRulesXref(java.util.Map)} instead
+     * @param offerMatchRules
+     */
+    @Deprecated
     public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
+
+    Map<String, OfferOfferRuleXref> getOfferMatchRulesXref();
+
+    void setOfferMatchRulesXref(Map<String, OfferOfferRuleXref> offerMatchRulesXref);
     
     public Boolean getTreatAsNewFormat();
 

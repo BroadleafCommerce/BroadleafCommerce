@@ -31,6 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.common.extensibility.jpa.clone.CloneRefreshNode;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -88,6 +89,7 @@ public class CrossSaleProductImpl implements RelatedProduct {
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     @Index(name="CROSSSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
+    @CloneRefreshNode
     protected Product relatedSaleProduct = new ProductImpl();
 
     @Override

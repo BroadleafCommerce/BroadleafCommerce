@@ -29,8 +29,6 @@ public class DirectCopyTransformTypes {
 
     //Class should receive sandbox related fields
     public static final String SANDBOX = "sandbox";
-    //Class should receive fields that describe the original entity from which a sandbox clone was derived
-    public static final String SANDBOX_PRECLONE_INFORMATION = "sandboxPreCloneInformation";
     //Class should receive fields describing the site to which the entity belongs
     public static final String MULTITENANT_SITE = "multiTenantSite";
     //Class should receive fields describing the catalog to which the entity belongs

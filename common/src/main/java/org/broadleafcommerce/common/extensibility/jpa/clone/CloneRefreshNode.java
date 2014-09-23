@@ -25,15 +25,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Useful for marking ToOne references as a refresh target. Provides EntityManager.refresh() functionality for nested
+ * object structures. This is more targeted than JPA refresh cascades and the behavior is slightly different than what is
+ * provided by JPA out-of-the-box using CascadeType.REFRESH. This annotation only has meaning in the context of the
+ * enterprise module.
  *
  * @author Jeff Fischer
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface ClonePolicyMap {
-
-    boolean deepClone() default true;
-
-    String toOneProperty() default "";
+public @interface CloneRefreshNode {
 
 }

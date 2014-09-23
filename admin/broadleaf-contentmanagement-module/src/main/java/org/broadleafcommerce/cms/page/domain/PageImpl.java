@@ -20,8 +20,6 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -139,7 +137,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     @MapKey(name = "fieldKey")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @BatchSize(size = 20)
-    @ClonePolicyMap
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
     
     @Column(name = "PRIORITY")
@@ -156,7 +153,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
         inverseJoinColumns = @JoinColumn(name = "PAGE_RULE_ID", referencedColumnName = "PAGE_RULE_ID"))
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
-    @ClonePolicyMap
     @Deprecated
     Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
 
@@ -165,7 +161,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
         joinColumns = @JoinColumn(name = "PAGE_ID"), 
         inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @ClonePolicyCollection
     @Deprecated
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
 
@@ -181,7 +176,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     @AdminPresentationMap(friendlyName = "pageAttributesTitle",
         deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "PageAttributeImpl_Name"
     )
-    @ClonePolicyMap
     protected Map<String, PageAttribute> additionalAttributes = new HashMap<String, PageAttribute>();
 
     @Column(name = "ACTIVE_START_DATE")
