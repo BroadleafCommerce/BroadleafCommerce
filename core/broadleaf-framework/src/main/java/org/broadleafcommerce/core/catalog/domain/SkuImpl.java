@@ -318,8 +318,12 @@ public class SkuImpl implements Sku {
      * This relationship will be non-null if and only if this Sku is contained in the list of
      * additional Skus for a Product (for Skus based on ProductOptions)
      */
-    @ManyToOne(optional = true, targetEntity = ProductSkuXrefImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    protected ProductSkuXref product;
+    @ManyToOne(optional = true, targetEntity = ProductImpl.class)
+    @JoinTable(name = "BLC_PRODUCT_SKU_XREF",
+        joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"),
+        inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+    protected Product product;
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
@@ -445,12 +449,12 @@ public class SkuImpl implements Sku {
     }
 
     protected boolean hasDefaultSku() {
-        return (product != null && product.getProduct().getDefaultSku() != null && !getId().equals(product.getProduct().getDefaultSku().getId()));
+        return (product != null && product.getDefaultSku() != null && !getId().equals(product.getDefaultSku().getId()));
     }
 
     protected Sku lookupDefaultSku() {
-        if (product != null && product.getProduct().getDefaultSku() != null) {
-            return product.getProduct().getDefaultSku();
+        if (product != null && product.getDefaultSku() != null) {
+            return product.getDefaultSku();
         } else {
             return null;
         }
@@ -865,12 +869,12 @@ public class SkuImpl implements Sku {
 
     @Override
     public Product getProduct() {
-        return (getDefaultProduct() != null) ? getDefaultProduct() : this.product.getProduct();
+        return (getDefaultProduct() != null) ? getDefaultProduct() : this.product;
     }
 
     @Override
     public void setProduct(Product product) {
-        this.product = new ProductSkuXrefImpl(product, this);
+        this.product = product;
     }
 
     @Override
