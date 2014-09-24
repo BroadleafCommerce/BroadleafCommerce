@@ -46,6 +46,8 @@ public interface ModuleConfiguration extends Serializable {
     public void setIsDefault(Boolean isDefault);
 
     public Boolean getIsDefault();
+    
+    public boolean isDefault();
 
     public void setPriority(Integer priority);
 
