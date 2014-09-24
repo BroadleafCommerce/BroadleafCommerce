@@ -318,8 +318,9 @@ public class SkuImpl implements Sku {
      * This relationship will be non-null if and only if this Sku is contained in the list of
      * additional Skus for a Product (for Skus based on ProductOptions)
      */
-    @OneToOne(optional = true, targetEntity = ProductSkuXrefImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "sku")
-    protected ProductSkuXref product;
+    @ManyToOne(optional = true, targetEntity = ProductImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "ADDL_PRODUCT_ID")
+    protected Product product;
 
     @OneToMany(mappedBy = "sku", targetEntity = SkuAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blProducts")
@@ -445,12 +446,12 @@ public class SkuImpl implements Sku {
     }
 
     protected boolean hasDefaultSku() {
-        return (product != null && product.getProduct().getDefaultSku() != null && !getId().equals(product.getProduct().getDefaultSku().getId()));
+        return (product != null && product.getDefaultSku() != null && !getId().equals(product.getDefaultSku().getId()));
     }
 
     protected Sku lookupDefaultSku() {
-        if (product != null && product.getProduct().getDefaultSku() != null) {
-            return product.getProduct().getDefaultSku();
+        if (product != null && product.getDefaultSku() != null) {
+            return product.getDefaultSku();
         } else {
             return null;
         }
@@ -865,12 +866,12 @@ public class SkuImpl implements Sku {
 
     @Override
     public Product getProduct() {
-        return (getDefaultProduct() != null) ? getDefaultProduct() : this.product.getProduct();
+        return (getDefaultProduct() != null) ? getDefaultProduct() : this.product;
     }
 
     @Override
     public void setProduct(Product product) {
-        this.product = new ProductSkuXrefImpl(product, this);
+        this.product = product;
     }
 
     @Override

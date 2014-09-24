@@ -248,9 +248,7 @@ public interface Product extends Serializable {
      * 
      * @return the additional Skus for this Product
      * @see {@link ProductOption}, {@link ProductOptionValue}
-     * @deprecated use {@link #getAdditionalSkusXrefs()} instead
      */
-    @Deprecated
     public List<Sku> getAdditionalSkus();
 
     /**
@@ -260,9 +258,7 @@ public interface Product extends Serializable {
      *
      * @param skus - a List of {@link Sku}s to associate with this Product, usually based off of {@link ProductOption}s
      * @see {@link #getAdditionalSkus()}, {@link ProductOption}, {@link ProductOptionValue}
-     * @deprecated use {@link #setAdditionalSkusXrefs(java.util.List)} instead
      */
-    @Deprecated
     public void setAdditionalSkus(List<Sku> skus);
 
     /**
@@ -276,18 +272,6 @@ public interface Product extends Serializable {
      * @return all the Skus associated to this Product
      */
     public List<Sku> getAllSkus();
-
-    /**
-     *
-     * @return
-     */
-    List<ProductSkuXref> getAdditionalSkusXrefs();
-
-    /**
-     *
-     * @param additionalSkusXref
-     */
-    void setAdditionalSkusXrefs(List<ProductSkuXref> additionalSkusXref);
     
     /**
      * Gets the media for this product. This serves as a pass-through to

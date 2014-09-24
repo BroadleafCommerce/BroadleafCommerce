@@ -234,15 +234,12 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         gridVisibleFields = { "defaultSku.name", "promotionMessage" })
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = ProductSkuXrefImpl.class, mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy = "product", cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "ProductImpl_Additional_Skus", order = 1000,
         tab = Presentation.Tab.Name.ProductOptions, tabOrder = Presentation.Tab.Order.ProductOptions)
-    protected List<ProductSkuXref> additionalSkus = new ArrayList<ProductSkuXref>();
-
-    @Transient
-    protected List<Sku> legacyAdditionalSkus = new ArrayList<Sku>();
+    protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -433,9 +430,9 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     public List<Sku> getAllSkus() {
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(getDefaultSku());
-        for (ProductSkuXref additionalSku : additionalSkus) {
-            if (!additionalSku.getSku().getId().equals(getDefaultSku().getId())) {
-                allSkus.add(additionalSku.getSku());
+        for (Sku additionalSku : additionalSkus) {
+            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
+                allSkus.add(additionalSku);
             }
         }
         return Collections.unmodifiableList(allSkus);
@@ -456,34 +453,17 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     }
 
     @Override
-    @Deprecated
     public List<Sku> getAdditionalSkus() {
-        if (legacyAdditionalSkus.size() == 0) {
-            for (ProductSkuXref sku : getAdditionalSkusXrefs()) {
-                legacyAdditionalSkus.add(sku.getSku());
-            }
-        }
-        return Collections.unmodifiableList(legacyAdditionalSkus);
+        return additionalSkus;
     }
 
     @Override
     @Deprecated
     public void setAdditionalSkus(List<Sku> skus) {
         this.additionalSkus.clear();
-        this.legacyAdditionalSkus.clear();
         for(Sku sku : skus){
-            this.additionalSkus.add(new ProductSkuXrefImpl(this, sku));
+            this.additionalSkus.add(sku);
         }
-    }
-
-    @Override
-    public List<ProductSkuXref> getAdditionalSkusXrefs() {
-        return additionalSkus;
-    }
-
-    @Override
-    public void setAdditionalSkusXrefs(List<ProductSkuXref> additionalSkusXrefs) {
-        this.additionalSkus = additionalSkusXrefs;
     }
 
     @Override
