@@ -97,7 +97,6 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     /** The product. */
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
-    @CloneRefreshNode
     protected Product product = new ProductImpl();
 
     /** The display order. */

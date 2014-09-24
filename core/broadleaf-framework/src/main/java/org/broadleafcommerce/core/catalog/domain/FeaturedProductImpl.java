@@ -84,7 +84,6 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
-    @CloneRefreshNode
     protected Product product = new ProductImpl();
 
     @Override

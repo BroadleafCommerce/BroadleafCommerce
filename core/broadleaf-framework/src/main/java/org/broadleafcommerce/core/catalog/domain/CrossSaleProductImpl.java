@@ -89,7 +89,6 @@ public class CrossSaleProductImpl implements RelatedProduct {
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     @Index(name="CROSSSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
-    @CloneRefreshNode
     protected Product relatedSaleProduct = new ProductImpl();
 
     @Override
