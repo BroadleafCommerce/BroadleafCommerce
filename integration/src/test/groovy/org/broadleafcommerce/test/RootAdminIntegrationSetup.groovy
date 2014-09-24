@@ -43,11 +43,16 @@ import spock.lang.Specification
 @ContextConfiguration(name = "adminContexts",
     locations = ["classpath:/bl-open-admin-contentClient-applicationContext.xml",
             "classpath:/bl-open-admin-contentCreator-applicationContext.xml",
-            "classpath:/bl-admin-applicationContext.xml"],
+            "classpath:/bl-admin-applicationContext.xml",
+            "classpath:/bl-cms-contentClient-applicationContext.xml",
+            "classpath:/bl-cms-contentCreator-applicationContext.xml"],
     loader = BroadleafGenericGroovyXmlWebContextLoader.class)
 ])
 @DirtiesContext
 @WebAppConfiguration
-class AdminIntegrationSetup extends Specification {
-
+class RootAdminIntegrationSetup extends Specification {
+    /*
+     * Intentionally left blank. Subclasses should be inheriting from
+     * the configuration annotations defined at the class level
+     */
 }
