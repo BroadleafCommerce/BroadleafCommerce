@@ -58,6 +58,11 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
                 // After the framework applicationContexts are loaded, we want the module ones
                 List<String> additionalContexts = new ArrayList<String>(moduleContexts);
 
+                // We need the content applicationContexts and admin applicationContexts
+                additionalContexts.add("bl-open-admin-contentClient-applicationContext.xml");
+                additionalContexts.add("bl-open-admin-contentCreator-applicationContext.xml");
+                additionalContexts.add("bl-admin-applicationContext.xml");
+                
                 // Lastly, we want the test applicationContext
                 additionalContexts.add("bl-applicationContext-test.xml");
 
