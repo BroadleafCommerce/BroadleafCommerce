@@ -40,7 +40,7 @@ import spock.lang.Specification
  */
 @TransactionConfiguration(transactionManager = "blTransactionManager")
 @ContextHierarchy([
-@ContextConfiguration(name = "adminContexts",
+@ContextConfiguration(name = "adminRoot",
     locations = ["classpath:/bl-open-admin-contentClient-applicationContext.xml",
             "classpath:/bl-open-admin-contentCreator-applicationContext.xml",
             "classpath:/bl-admin-applicationContext.xml",
@@ -50,7 +50,7 @@ import spock.lang.Specification
 ])
 @DirtiesContext
 @WebAppConfiguration
-class RootAdminIntegrationSetup extends Specification {
+class AdminIntegrationSetup extends Specification {
     /*
      * Intentionally left blank. Subclasses should be inheriting from
      * the configuration annotations defined at the class level

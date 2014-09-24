@@ -40,14 +40,14 @@ import spock.lang.Specification
  */
 @TransactionConfiguration(transactionManager = "blTransactionManager")
 @ContextHierarchy([
-@ContextConfiguration(name = "siteContexts", 
+@ContextConfiguration(name = "siteRoot", 
     locations = ["classpath:/bl-open-admin-contentClient-applicationContext.xml",
         "classpath:/bl-cms-contentClient-applicationContext.xml"],
     loader = BroadleafGenericGroovyXmlWebContextLoader.class)
 ])
 @DirtiesContext
 @WebAppConfiguration
-class RootSiteIntegrationSetup extends Specification {
+class SiteIntegrationSetup extends Specification {
     /*
      * Intentionally left blank. Subclasses should be inheriting from
      * the configuration annotations defined at the class level
