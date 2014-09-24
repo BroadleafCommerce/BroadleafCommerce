@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
@@ -12,6 +13,8 @@
     <url>http://www.broadleafcommerce.org</url>
     <properties>
         <project.uri>${project.baseUri}/../</project.uri>
+        <spock.version>1.0-groovy-2.0-SNAPSHOT</spock.version>
+        <groovy.version>2.1.8</groovy.version>
     </properties>
     <licenses>
         <license>
@@ -49,6 +52,13 @@
             <timezone>-6</timezone>
         </developer>
     </developers>
+    <repositories>
+        <repository>
+            <id>maven central snapshots</id>
+            <name>maven central snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -63,6 +73,11 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>1.2</version>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <executions>
@@ -70,7 +85,8 @@
                         <id>default-test</id>
                         <configuration>
                             <skipTests>true</skipTests>
-                            <argLine>-Xmx1024m -XX:MaxPermSize=512m -Dlegacy=true</argLine>
+                            <argLine>-Xmx1024m -XX:MaxPermSize=512m
+                                -Dlegacy=true</argLine>
                         </configuration>
                     </execution>
                     <execution>
@@ -89,8 +105,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Only delete the contents of the target folder so that it doesn't
-                lose its "derived" status in Eclipse -->
+                <!-- Only delete the contents of the target folder so that 
+                    it doesn't lose its "derived" status in Eclipse -->
                 <artifactId>maven-clean-plugin</artifactId>
                 <configuration>
                     <excludeDefaultDirectories>true</excludeDefaultDirectories>
@@ -109,7 +125,8 @@
     </build>
     <profiles>
         <profile>
-            <!-- Skip legacy tests by default, activated with the Maven 'legacy-test' profile -->
+            <!-- Skip legacy tests by default, activated with the Maven 'legacy-test' 
+                profile -->
             <id>legacy-test</id>
             <build>
                 <plugins>
@@ -182,9 +199,12 @@
                                 <id>legacy-test</id>
                                 <configuration>
                                     <argLine>
-                                        -Dlegacy=true 
-                                        -Xmx1024m -XX:MaxPermSize=512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
-                                        -javaagent:${jrebel.path} -Drebel.log.stdout=true
+                                        -Dlegacy=true
+                                        -Xmx1024m
+                                        -XX:MaxPermSize=512m -Xdebug
+                                        -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
+                                        -javaagent:${jrebel.path}
+                                        -Drebel.log.stdout=true
                                     </argLine>
                                 </configuration>
                             </execution>
@@ -192,8 +212,11 @@
                                 <id>non-legacy-test</id>
                                 <configuration>
                                     <argLine>
-                                        -Xmx1024m -XX:MaxPermSize=512m -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083 
-                                        -javaagent:${jrebel.path} -Drebel.log.stdout=true
+                                        -Xmx1024m
+                                        -XX:MaxPermSize=512m -Xdebug
+                                        -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
+                                        -javaagent:${jrebel.path}
+                                        -Drebel.log.stdout=true
                                     </argLine>
                                 </configuration>
                             </execution>
@@ -223,7 +246,7 @@
         <dependency>
             <groupId>org.broadleafcommerce</groupId>
             <artifactId>broadleaf-framework</artifactId>
-            <version>${project.version}</version><!--$NO-MVN-MAN-VER$-->
+            <version>${project.version}</version><!--$NO-MVN-MAN-VER$ -->
             <classifier>tests</classifier>
         </dependency>
         <dependency>
@@ -280,6 +303,25 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
+        </dependency>
+
+        <!-- Spock/Groovy Test Dependencies -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-spring</artifactId>
+            <version>${spock.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.groovy</groupId>
+                    <artifactId>groovy-all</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

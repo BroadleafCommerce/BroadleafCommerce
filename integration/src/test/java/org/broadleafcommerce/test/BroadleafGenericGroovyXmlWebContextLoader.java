@@ -32,6 +32,8 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.MergedContextConfiguration;
 import org.springframework.test.context.support.AbstractContextLoader;
 import org.springframework.test.context.web.AbstractGenericWebContextLoader;
+import org.springframework.test.context.web.GenericGroovyXmlWebContextLoader;
+import org.springframework.test.context.web.GenericXmlWebContextLoader;
 import org.springframework.test.context.web.WebMergedContextConfiguration;
 import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
@@ -40,13 +42,14 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.servlet.ServletContext;
 
 /**
+ * <p>
  * This class was created due to AbstractGenericWebContextLoader utilizing the qualifier "final" for its
  * loadContext(MergedContextConfiguration) method which we needed to override and provide our Broadleaf created
  * MergeXmlWebApplicationContext object in place of the GenericWebApplicationContext it used. Since we are using
  * Groovy/Spock, the other methods included are to support Groovy test classes. As such, are included some methods
  * from the GenericGroovyXmlWebContextLoader and GenericXmlWebContextLoader classes, refactored to compensate for
  * the levels of inheritance between them.
- * 
+ * <p>
  * This class loader should be used with the @ContextConfiguration annotation to be placed in the 'loader'
  * parameter for all Broadleaf integration tests which use the Spock testing framework.
  * 
@@ -60,7 +63,6 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
      * 
      * The set up for the spock/groovy test is as follows. You will need to include the dependencies:
      * spock-spring
-     * spring-beans
      * spring-test
      * javax-servlet
      * integration
@@ -83,7 +85,7 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
      * {@code BroadleafGenericGroovyXmlWebContextLoader} supports the XML merging that
      * Broadleaf's framework features, but this is handled during the .refresh() method
      * in the loadContext method so this method was only pulled from the original class
-     * {@code GenericGroovyXmlWebContextLoader} in case of the Spring-Test framework requiring
+     * {@link GenericGroovyXmlWebContextLoader} in case of the Spring-Test framework requiring
      * this method to have a particular behavior.
      */
     protected String[] getResourceSuffixes() {
@@ -94,7 +96,7 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
      * {@code BroadleafGenericGroovyXmlWebContextLoader} supports the XML merging that
      * Broadleaf's framework features, but this is handled during the .refresh() method
      * in the loadContext method so this method was only pulled from the original class
-     * {@code GenericGroovyXmlWebContextLoader} in case of the Spring-Test framework requiring
+     * {@link GenericGroovyXmlWebContextLoader} in case of the Spring-Test framework requiring
      * this method to have a particular behavior.
      */
     @Override
@@ -107,7 +109,7 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
      * {@code BroadleafGenericGroovyXmlWebContextLoader} supports the XML merging that
      * Broadleaf's framework features, but this is handled during the .refresh() method
      * in the loadContext method so this method was only pulled from the original class
-     * {@code GenericXmlWebContextLoader} in case of the Spring-Test framework requiring
+     * {@link GenericXmlWebContextLoader} in case of the Spring-Test framework requiring
      * this method to have a particular behavior.
      *
      * @see AbstractGenericWebContextLoader#validateMergedContextConfiguration
@@ -166,7 +168,7 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
      * a JVM shutdown hook for it.</li>
      * </ul></p>
      * 
-     * Refactored from {@code org.springframework.test.context.web.AbstractGenericWebContextLoader}
+     * Refactored from {@link org.springframework.test.context.web.AbstractGenericWebContextLoader#loadContext(MergedContextConfiguration)}
      * 
      * @return a new merge xml web application context
      * @see org.springframework.test.context.SmartContextLoader#loadContext(MergedContextConfiguration)
@@ -185,13 +187,19 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
         validateMergedContextConfiguration(webMergedConfig);
 
         MergeXmlWebApplicationContext context = new MergeXmlWebApplicationContext();
+        context.setPatchLocation("");
 
         ApplicationContext parent = mergedConfig.getParentApplicationContext();
         if (parent != null) {
             context.setParent(parent);
+            context.setPatchLocation(StringUtils.removeEnd(((MergeXmlWebApplicationContext) parent).getPatchLocation(), "classpath:/bl-applicationContext-test.xml"));
+            System.out.println(context.getPatchLocation());
         }
-        context.setPatchLocation(StringUtils.join(mergedConfig.getLocations(), ";"));
+        //Calls unique to Broadleaf Implementation of the Smart Context Loader
+        // the ";classpath:/bl-applicationContext-test.xml" is required by all integration tests so we add it here.
+        context.setPatchLocation(context.getPatchLocation() + StringUtils.join(mergedConfig.getLocations(), ";") +";classpath:/bl-applicationContext-test.xml");
         context.setStandardLocationTypes(StandardConfigLocations.TESTCONTEXTTYPE);
+        
         configureWebResources(context, webMergedConfig);
         prepareContext(context, webMergedConfig);
         context.refresh();
