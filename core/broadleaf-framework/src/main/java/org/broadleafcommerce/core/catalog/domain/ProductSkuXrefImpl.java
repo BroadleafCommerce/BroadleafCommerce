@@ -88,7 +88,7 @@ public class ProductSkuXrefImpl implements ProductSkuXref {
     protected Product product;
 
     //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
-    @ManyToOne(targetEntity = SkuImpl.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = SkuImpl.class)
     @JoinColumn(name = "SKU_ID")
     @ClonePolicy
     protected Sku sku;

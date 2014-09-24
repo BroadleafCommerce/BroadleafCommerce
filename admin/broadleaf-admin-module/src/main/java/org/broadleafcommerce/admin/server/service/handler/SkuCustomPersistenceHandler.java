@@ -266,7 +266,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         //but there's a bug preventing this behavior from completely working correctly
         List<String> removeKeys = new ArrayList<String>();
         for (Map.Entry<String, FieldMetadata> entry : map.entrySet()) {
-            if (entry.getKey().contains("defaultProduct.")) {
+            if (entry.getKey().contains("defaultProduct.") || entry.getKey().contains("product.")) {
                 removeKeys.add(entry.getKey());
             }
         }
