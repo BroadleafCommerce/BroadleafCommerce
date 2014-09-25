@@ -105,6 +105,8 @@ public class IdentityExecutionUtils {
 
     public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation) throws G {
         boolean isNew = initRequestContext(null, null);
+        boolean isIgnoringSite = BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSite();
+        BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
 
         activateSession();
 
@@ -116,12 +118,15 @@ public class IdentityExecutionUtils {
             if (isNew) {
                 BroadleafRequestContext.setBroadleafRequestContext(null);
             }
+            BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(isIgnoringSite);
         }
     }
     
     public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation, 
             PlatformTransactionManager transactionManager) throws G {
         boolean isNew = initRequestContext(null, null);
+        boolean isIgnoringSite = BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSite();
+        BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
 
         activateSession();
 
@@ -138,6 +143,7 @@ public class IdentityExecutionUtils {
                 if (isNew) {
                     BroadleafRequestContext.setBroadleafRequestContext(null);
                 }
+                BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(isIgnoringSite);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -147,23 +153,20 @@ public class IdentityExecutionUtils {
     private static boolean initRequestContext(Site site, Catalog catalog) {
         boolean isNew = false;
         BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
+
         if (requestContext == null) {
             requestContext = new BroadleafRequestContext();
             BroadleafRequestContext.setBroadleafRequestContext(requestContext);
             isNew = true;
         }
-        if (site == null) {
-            requestContext.setSite(null);
-            requestContext.setIgnoreSite(true);
-        } else {
-            requestContext.setSite(site);
+
+        requestContext.setSite(site);
+        requestContext.setCurrentCatalog(catalog);
+        
+        if (site != null) {
             requestContext.setIgnoreSite(false);
         }
-        if (catalog == null) {
-            requestContext.setCurrentCatalog(null);
-        } else {
-            requestContext.setCurrentCatalog(catalog);
-        }
+
         return isNew;
     }
 
