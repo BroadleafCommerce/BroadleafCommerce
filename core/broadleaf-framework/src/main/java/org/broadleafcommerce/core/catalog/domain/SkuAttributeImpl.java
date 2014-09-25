@@ -62,7 +62,8 @@ import javax.persistence.Table;
 @Table(name="BLC_SKU_ATTRIBUTE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG, skipOverlaps=true)
 })
 public class SkuAttributeImpl implements SkuAttribute {
 
