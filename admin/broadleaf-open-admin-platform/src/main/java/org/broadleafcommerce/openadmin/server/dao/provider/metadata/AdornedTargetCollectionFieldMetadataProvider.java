@@ -19,13 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.ManyToOne;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -56,6 +49,13 @@ import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.ManyToOne;
 
 /**
  * @author Jeff Fischer
@@ -566,6 +566,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
             adornedTargetList.setTargetObjectPath(targetObjectProperty);
             adornedTargetList.setTargetIdProperty(targetObjectIdProperty);
             adornedTargetList.setJoinEntityClass(joinEntityClass);
+            adornedTargetList.setIdProperty((String) dynamicEntityDao.getIdMetadata(collectionTarget).get("name"));
             adornedTargetList.setAdornedTargetEntityClassname(collectionTarget.getName());
             adornedTargetList.setSortField(sortProperty);
             adornedTargetList.setSortAscending(isAscending);
@@ -573,6 +574,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
         } else {
             AdornedTargetList adornedTargetList = new AdornedTargetList(field.getName(), parentObjectProperty, parentObjectIdProperty, targetObjectProperty, targetObjectIdProperty, collectionTarget.getName(), sortProperty, isAscending);
             adornedTargetList.setJoinEntityClass(joinEntityClass);
+            adornedTargetList.setIdProperty((String) dynamicEntityDao.getIdMetadata(collectionTarget).get("name"));
             adornedTargetList.setMutable(metadata.isMutable());
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.ADORNEDTARGETLIST, adornedTargetList);
         }
