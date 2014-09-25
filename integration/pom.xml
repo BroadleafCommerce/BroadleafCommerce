@@ -86,7 +86,7 @@
                         <configuration>
                             <skipTests>true</skipTests>
                             <argLine>-Xmx1024m -XX:MaxPermSize=512m
-                                -Dlegacy=true</argLine>
+                                -Dlegacy=true ${surefire.argLine}</argLine>
                         </configuration>
                     </execution>
                     <execution>
@@ -99,7 +99,7 @@
                             <excludes>
                                 <exclude>**/Legacy**Test.java</exclude>
                             </excludes>
-                            <argLine>-Xmx1024m -XX:MaxPermSize=512m</argLine>
+                            <argLine>-Xmx1024m -XX:MaxPermSize=512m ${surefire.argLine}</argLine>
                         </configuration>
                     </execution>
                 </executions>
@@ -120,6 +120,10 @@
                     </filesets>
                 </configuration>
                 <version>2.4.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -205,6 +209,7 @@
                                         -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
                                         -javaagent:${jrebel.path}
                                         -Drebel.log.stdout=true
+                                        ${surefire.argLine}
                                     </argLine>
                                 </configuration>
                             </execution>
@@ -217,6 +222,7 @@
                                         -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8083
                                         -javaagent:${jrebel.path}
                                         -Drebel.log.stdout=true
+                                        ${surefire.argLine}
                                     </argLine>
                                 </configuration>
                             </execution>

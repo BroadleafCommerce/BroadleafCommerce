@@ -93,7 +93,13 @@
                     <includes>
                         <include>**/*Spec*</include>
                     </includes>
+                    <argLine>${surefire.argLine}</argLine>
                 </configuration>
+            </plugin>
+            <!-- Jacoco Code Coverage Plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
