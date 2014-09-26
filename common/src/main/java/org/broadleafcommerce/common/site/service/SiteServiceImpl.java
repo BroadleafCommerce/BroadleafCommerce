@@ -243,5 +243,10 @@ public class SiteServiceImpl implements SiteService {
     public Catalog save(Catalog catalog) {
         return siteDao.save(catalog);
     }
+    
+    @Override
+    public List<Catalog> findAllCatalogs() {
+        return siteDao.retrieveAllCatalogs();
+    }
 
 }

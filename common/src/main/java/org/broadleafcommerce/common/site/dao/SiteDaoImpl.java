@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.site.domain.CatalogImpl;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -144,4 +145,12 @@ public class SiteDaoImpl implements SiteDao {
     public Catalog save(Catalog catalog) {
         return em.merge(catalog);
     }
+    
+    @Override
+    public List<Catalog> retrieveAllCatalogs() {
+        TypedQuery<Catalog> q = new TypedQueryBuilder<Catalog>(Catalog.class, "c")
+                .toQuery(em);
+        return q.getResultList();
+    } 
+
 }
