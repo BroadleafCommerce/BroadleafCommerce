@@ -271,15 +271,17 @@ public class OfferImpl implements Offer, AdminMainEntity {
         broadleafEnumeration = "org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType")
     protected String offerItemTargetRuleType;
     
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "BLC_QUAL_CRIT_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID"))
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferQualifyingCriteriaXrefImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Rule",
         group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
-        fieldType = SupportedFieldType.RULE_WITH_QUANTITY, ruleIdentifier = RuleIdentifier.ORDERITEM)
-    protected Set<OfferItemCriteria> qualifyingItemCriteria = new HashSet<OfferItemCriteria>();
-    
+        fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
+        ruleIdentifier = RuleIdentifier.ORDERITEM)
+    protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria = new HashSet<OfferQualifyingCriteriaXref>();
+
+    @Transient
+    protected Set<OfferItemCriteria> legacyQualifyingItemCriteria = new HashSet<OfferItemCriteria>();
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferTargetCriteriaXrefImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Target_Item_Rule",
@@ -710,14 +712,42 @@ public class OfferImpl implements Offer, AdminMainEntity {
     }
 
     @Override
+    @Deprecated
     public Set<OfferItemCriteria> getQualifyingItemCriteria() {
+        if (legacyQualifyingItemCriteria.size() == 0) {
+            for (OfferQualifyingCriteriaXref xref : getQualifyingItemCriteriaXref()) {
+                legacyQualifyingItemCriteria.add(xref.getOfferItemCriteria());
+            }
+        }
+        return Collections.unmodifiableSet(legacyQualifyingItemCriteria);
+    }
+
+    @Override
+    @Deprecated
+    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
+        this.legacyQualifyingItemCriteria.clear();
+        this.qualifyingItemCriteria.clear();
+        for(OfferItemCriteria crit : qualifyingItemCriteria){
+            this.qualifyingItemCriteria.add(new OfferQualifyingCriteriaXrefImpl(this, crit));
+        }
+    }
+
+    @Override
+    public Set<OfferQualifyingCriteriaXref> getQualifyingItemCriteriaXref() {
+        if (OfferType.ORDER_ITEM.equals(getType()) && CollectionUtils.isEmpty(qualifyingItemCriteria)) {
+            OfferItemCriteria oic = new OfferItemCriteriaImpl();
+            oic.setQuantity(1);
+            OfferQualifyingCriteriaXref xref = new OfferQualifyingCriteriaXrefImpl(this, oic);
+            return Collections.unmodifiableSet(Collections.singleton(xref));
+        }
         return qualifyingItemCriteria;
     }
 
     @Override
-    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
-        this.qualifyingItemCriteria = qualifyingItemCriteria;
+    public void setQualifyingItemCriteriaXref(Set<OfferQualifyingCriteriaXref> qualifyingItemCriteriaXref) {
+        this.qualifyingItemCriteria = qualifyingItemCriteriaXref;
     }
+
 
     @Override
     @Deprecated

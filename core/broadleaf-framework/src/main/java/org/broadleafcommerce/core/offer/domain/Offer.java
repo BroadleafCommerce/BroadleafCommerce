@@ -19,17 +19,14 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -269,9 +266,23 @@ public interface Offer extends Status, Serializable {
     @Deprecated
     public void setUses(int uses) ;
 
+    /**
+     * @deprecated use {@link #getQualifyingItemCriteriaXref()} instead
+     * @return
+     */
+    @Deprecated
     public Set<OfferItemCriteria> getQualifyingItemCriteria();
 
+    /**
+     * @deprecated use {@link #setQualifyingItemCriteriaXref(java.util.Set)} instead
+     * @param qualifyingItemCriteria
+     */
+    @Deprecated
     public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
+
+    Set<OfferQualifyingCriteriaXref> getQualifyingItemCriteriaXref();
+
+    void setQualifyingItemCriteriaXref(Set<OfferQualifyingCriteriaXref> qualifyingItemCriteriaXref);
 
     /**
      * @deprecated use {@link #getTargetItemCriteriaXref()} instead
