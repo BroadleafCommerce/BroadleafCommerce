@@ -153,7 +153,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
 
-        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, drs, sectionKey, 0, idProperty, sectionCrumbs);
+        ListGrid listGrid = createListGrid(cmd.getCeilingType(), headerFields, type, drs, sectionKey, 0, idProperty, null, sectionCrumbs);
         
         if (CollectionUtils.isNotEmpty(listGrid.getHeaderFields())) {
             // Set the first column to be able to link to the main entity
@@ -212,6 +212,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean hideIdColumn = false;
         boolean canFilterAndSort = true;
         String idProperty = "id";
+        String altIdProperty = null;
         for (Property property : cmd.getProperties()) {
             if (property.getMetadata() instanceof BasicFieldMetadata &&
                     SupportedFieldType.ID==((BasicFieldMetadata) property.getMetadata()).getFieldType() &&
@@ -284,6 +285,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             AdornedTargetList adornedList = (AdornedTargetList) atcmd.getPersistencePerspective()
                     .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
             sortable = StringUtils.isNotBlank(adornedList.getSortField());
+            idProperty = adornedList.getIdProperty();
+            altIdProperty = BasicPersistenceModule.ALTERNATE_ID_PROPERTY;
         } else if (fmd instanceof MapMetadata) {
             readOnly = !((MapMetadata) fmd).isMutable();
             MapMetadata mmd = (MapMetadata) fmd;
@@ -359,7 +362,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             LOG.error(message);
         }
         
-        ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty, sectionCrumbs);
+        ListGrid listGrid = createListGrid(ceilingType, headerFields, type, drs, sectionKey, fmd.getOrder(), idProperty, altIdProperty, sectionCrumbs);
         listGrid.setSubCollectionFieldName(field.getName());
         listGrid.setFriendlyName(field.getMetadata().getFriendlyName());
         if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
@@ -386,7 +389,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs, 
-            String sectionKey, int order, String idProperty, List<SectionCrumb> sectionCrumbs) {
+            String sectionKey, int order, String idProperty, String altIdProperty, List<SectionCrumb> sectionCrumbs) {
         // Create the list grid and set some basic attributes
         ListGrid listGrid = new ListGrid();
         listGrid.setClassName(className);
@@ -421,7 +424,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
 
             if (e.findProperty(idProperty) != null) {
-                record.setId(e.findProperty(idProperty).getValue());
+                record.setId(e.findProperty(altIdProperty!=null?altIdProperty:idProperty).getValue());
             }
 
             for (Field headerField : headerFields) {
