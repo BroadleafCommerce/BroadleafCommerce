@@ -53,8 +53,9 @@ public class JMSEmailServiceProducerImpl implements JMSEmailServiceProducer {
                     return message;
                 }
             });
+        } else {
+            throw new IllegalArgumentException("The properties map must be Serializable");
         }
-        throw new IllegalArgumentException("The properties map must be Serializable");
     }
 
     /**
