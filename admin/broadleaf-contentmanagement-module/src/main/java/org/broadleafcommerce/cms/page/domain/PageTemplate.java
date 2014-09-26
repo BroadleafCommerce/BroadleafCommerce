@@ -58,7 +58,13 @@ public interface PageTemplate extends Serializable {
      */
     public void setLocale(Locale locale);
 
+    @Deprecated
     public List<FieldGroup> getFieldGroups();
 
+    @Deprecated
     public void setFieldGroups(List<FieldGroup> fieldGroups);
+
+    public List<PageTemplateFieldGroupXref> getFieldGroupXrefs();
+
+    public void setFieldGroupXrefs(List<PageTemplateFieldGroupXref> fieldGroups);
 }

@@ -135,7 +135,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
 
     @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @MapKey(name = "fieldKey")
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @BatchSize(size = 20)
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
     
@@ -148,19 +147,24 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
         group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
     protected Boolean offlineFlag = false;     
 
+    /*
+     * This will not work with Enterprise workflows.  Do not use.
+     */
     @ManyToMany(targetEntity = PageRuleImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_PAGE_RULE_MAP", 
         inverseJoinColumns = @JoinColumn(name = "PAGE_RULE_ID", referencedColumnName = "PAGE_RULE_ID"))
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
     @Deprecated
-    Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
+    protected Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade={CascadeType.ALL})
+    /*
+     * This will not work with Enterprise workflows. Do not use.
+     */
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF", 
         joinColumns = @JoinColumn(name = "PAGE_ID"), 
         inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Deprecated
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
 

@@ -23,13 +23,13 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
-import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageAttribute;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.cms.page.domain.PageRule;
+import org.broadleafcommerce.cms.page.domain.PageTemplateFieldGroupXref;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
@@ -138,8 +138,8 @@ public class PageServiceUtility {
         }
         
         if (page.getPageTemplate() != null) {
-            for (FieldGroup fg : page.getPageTemplate().getFieldGroups()) {
-                for (FieldDefinition fd : fg.getFieldDefinitions()) {
+            for (PageTemplateFieldGroupXref fgXrefs : page.getPageTemplate().getFieldGroupXrefs()) {
+                for (FieldDefinition fd : fgXrefs.getFieldGroup().getFieldDefinitions()) {
                     if (fd.getName().equals(fieldKey)) {
                         return fd;
                     }

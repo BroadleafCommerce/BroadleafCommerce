@@ -20,7 +20,6 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -34,11 +33,11 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -49,11 +48,11 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * Created by bpolster.
@@ -64,6 +63,7 @@ import javax.persistence.Table;
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageTemplateImpl_basePageTemplate")
 @DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
@@ -106,15 +106,14 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
     @Deprecated
     protected Locale locale;
 
-    @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_PGTMPLT_FLDGRP_XREF", joinColumns = @JoinColumn(name = "PAGE_TMPLT_ID",
-            referencedColumnName = "PAGE_TMPLT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "FLD_GROUP_ID", referencedColumnName = "FLD_GROUP_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
-    @OrderColumn(name = "GROUP_ORDER")
+    @OrderBy("groupOrder")
     @BatchSize(size = 20)
-    protected List<FieldGroup> fieldGroups = new ArrayList<FieldGroup>();
+    protected List<PageTemplateFieldGroupXref> fieldGroups = new ArrayList<PageTemplateFieldGroupXref>();
+
+    @Transient
+    protected List<FieldGroup> legacyFieldGroups = new ArrayList<FieldGroup>();
 
     @Override
     public Long getId() {
@@ -167,12 +166,33 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
     }
 
     @Override
+    @Deprecated
     public List<FieldGroup> getFieldGroups() {
+        if (legacyFieldGroups.isEmpty()) {
+            for (PageTemplateFieldGroupXref xref : getFieldGroupXrefs()) {
+                legacyFieldGroups.add(xref.getFieldGroup());
+            }
+        }
+        return Collections.unmodifiableList(legacyFieldGroups);
+    }
+
+    @Override
+    @Deprecated
+    public void setFieldGroups(List<FieldGroup> fieldGroups) {
+        this.legacyFieldGroups.clear();
+        this.fieldGroups.clear();
+        for (FieldGroup group : fieldGroups) {
+            this.fieldGroups.add(new PageTemplateFieldGroupXrefImpl(this, group));
+        }
+    }
+
+    @Override
+    public List<PageTemplateFieldGroupXref> getFieldGroupXrefs() {
         return fieldGroups;
     }
 
     @Override
-    public void setFieldGroups(List<FieldGroup> fieldGroups) {
+    public void setFieldGroupXrefs(List<PageTemplateFieldGroupXref> fieldGroups) {
         this.fieldGroups = fieldGroups;
     }
 

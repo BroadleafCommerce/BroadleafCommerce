@@ -33,7 +33,7 @@ import org.broadleafcommerce.cms.structure.dao.StructuredContentDao;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentStructuredContentRuleXref;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
@@ -412,15 +412,15 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     protected String buildRuleExpression(StructuredContent sc) {
        StringBuffer ruleExpression = null;
-       Map<String, StructuredContentRule> ruleMap = sc.getStructuredContentMatchRules();
+        Map<String, StructuredContentStructuredContentRuleXref> ruleMap = sc.getStructuredContentMatchRuleXref();
        if (ruleMap != null) {
            for (String ruleKey : ruleMap.keySet()) {
-                if (ruleMap.get(ruleKey).getMatchRule() == null) continue;
+                if (ruleMap.get(ruleKey).getStructuredContentRule().getMatchRule() == null) continue;
                if (ruleExpression == null) {
-                   ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
+                    ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getStructuredContentRule().getMatchRule());
                } else {
                    ruleExpression.append(AND);
-                   ruleExpression.append(ruleMap.get(ruleKey).getMatchRule());
+                    ruleExpression.append(ruleMap.get(ruleKey).getStructuredContentRule().getMatchRule());
                }
            }
        }
@@ -469,8 +469,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         scDTO.getValues().put("id", sc.getId());
 
-        for (String fieldKey : sc.getStructuredContentFields().keySet()) {
-            StructuredContentField scf = sc.getStructuredContentFields().get(fieldKey);
+        for (String fieldKey : sc.getStructuredContentFieldXrefs().keySet()) {
+            StructuredContentField scf = sc.getStructuredContentFieldXrefs().get(fieldKey).getStructuredContentField();
             String originalValue = scf.getValue();
             if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
                 //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
@@ -523,7 +523,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                     }
                     scDTO.getValues().put(fieldKey, value);
                 } else {
-                    scDTO.getValues().put(fieldKey,  sc.getStructuredContentFields().get(fieldKey).getValue());
+                    scDTO.getValues().put(fieldKey, sc.getStructuredContentFieldXrefs().get(fieldKey).getStructuredContentField().getValue());
                 }
             }
         }

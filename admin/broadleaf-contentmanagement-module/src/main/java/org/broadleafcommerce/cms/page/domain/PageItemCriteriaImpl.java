@@ -51,7 +51,8 @@ import javax.persistence.Table;
 @Inheritance(strategy=InheritanceType.JOINED)
 @AdminPresentationClass(friendlyName = "PageItemCriteriaImpl_basePageItemCriteria")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class PageItemCriteriaImpl implements PageItemCriteria {
     

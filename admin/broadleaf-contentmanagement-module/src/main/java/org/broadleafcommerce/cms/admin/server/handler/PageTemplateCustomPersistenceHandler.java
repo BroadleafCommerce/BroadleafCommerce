@@ -211,13 +211,13 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         entity.setType(new String[]{PageTemplateImpl.class.getName()});
         List<Property> propertiesList = new ArrayList<Property>();
         for (FieldGroup fieldGroup : getFieldGroups(page, null)) {
-            for (FieldDefinition definition : fieldGroup.getFieldDefinitions()) {
+            for (FieldDefinition def : fieldGroup.getFieldDefinitions()) {
                 Property property = new Property();
                 propertiesList.add(property);
-                property.setName(definition.getName());
+                property.setName(def.getName());
                 String value = null;
                 if (!MapUtils.isEmpty(pageFieldMap)) {
-                    PageField pageField = pageFieldMap.get(definition.getName());
+                    PageField pageField = pageFieldMap.get(def.getName());
                     if (pageField == null) {
                         value = "";
                     } else {
@@ -228,8 +228,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 if (!CollectionUtils.isEmpty(dirtyFields) && dirtyFields.contains(property.getName())) {
                     property.setIsDirty(true);
                 }
-                if (StringUtils.isNotBlank(definition.getAdditionalForeignKeyClass())) {
-                    property.getMetadata().setOwningClass(definition.getAdditionalForeignKeyClass());
+                if (StringUtils.isNotBlank(def.getAdditionalForeignKeyClass())) {
+                    property.getMetadata().setOwningClass(def.getAdditionalForeignKeyClass());
                 }
             }
         }
@@ -279,8 +279,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
 
             List<String> templateFieldNames = new ArrayList<String>(20);
             for (FieldGroup group : getFieldGroups(page, null)) {
-                for (FieldDefinition definition: group.getFieldDefinitions()) {
-                    templateFieldNames.add(definition.getName());
+                for (FieldDefinition def : group.getFieldDefinitions()) {
+                    templateFieldNames.add(def.getName());
                 }
             }
             Map<String, String> dirtyFieldsOrigVals = new HashMap<String, String>();

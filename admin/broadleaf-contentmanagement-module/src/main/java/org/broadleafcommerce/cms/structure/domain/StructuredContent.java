@@ -129,6 +129,7 @@ public interface StructuredContent extends Serializable {
      * @return
      */
     @Nullable
+    @Deprecated
     public Map<String, StructuredContentField> getStructuredContentFields();
 
     /**
@@ -137,7 +138,30 @@ public interface StructuredContent extends Serializable {
      *
      * @param structuredContentFields
      */
+    @Deprecated
     public void setStructuredContentFields(@Nullable Map<String, StructuredContentField> structuredContentFields);
+
+    /**
+     * <b>NOTE: This method is typically only used when wanting to persist new {@link StructuredContentField}s.
+     * Users trying to get a field to render should typically invoke {@link #getFieldValues()}.</b>
+     * 
+     * Gets a map with the custom fields associated with this content item.<br>
+     * The map keys are based on the field types.   For example, consider a content
+     * item with a <code>StructuredContentType</code> of ad which defined a field
+     * named targetUrl.    The field could be accessed with
+     * <code>structuredContentItem.getStructuredContentFields().get("targetUrl")</code>
+     * @return
+     */
+    @Nullable
+    public Map<String, StructuredContentStructuredContentFieldXref> getStructuredContentFieldXrefs();
+
+    /**
+     * Sets the structured content fields for this item.   Would not typically be called
+     * outside of the ContentManagementSystem.
+     *
+     * @param structuredContentFields
+     */
+    public void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentStructuredContentFieldXref> structuredContentFields);
 
     /**
      * Returns the offlineFlag.   Indicates that the item should no longer appear on the site.
@@ -191,12 +215,13 @@ public interface StructuredContent extends Serializable {
     /**
      * Returns a map of the targeting rules associated with this content item.
      *
-     * Targeting rules are defined in the content mangagement system and used to
+     * Targeting rules are defined in the content management system and used to
      * enforce which items are returned to the client.
      *
      * @return
      */
     @Nullable
+    @Deprecated
     public Map<String, StructuredContentRule> getStructuredContentMatchRules();
 
     /**
@@ -204,7 +229,26 @@ public interface StructuredContent extends Serializable {
      *
      * @param structuredContentMatchRules
      */
+    @Deprecated
     public void setStructuredContentMatchRules(@Nullable Map<String, StructuredContentRule> structuredContentMatchRules);
+
+    /**
+     * Returns a map of the targeting rules associated with this content item.
+     *
+     * Targeting rules are defined in the content management system and used to
+     * enforce which items are returned to the client.
+     *
+     * @return
+     */
+    @Nullable
+    public Map<String, StructuredContentStructuredContentRuleXref> getStructuredContentMatchRuleXref();
+
+    /**
+     * Sets the targeting rules for this content item.
+     *
+     * @param structuredContentMatchRules
+     */
+    public void setStructuredContentMatchRuleXrefs(@Nullable Map<String, StructuredContentStructuredContentRuleXref> structuredContentMatchRules);
 
     /**
      * Returns the item (or cart) based rules associated with this content item.
@@ -223,7 +267,7 @@ public interface StructuredContent extends Serializable {
     
     /**
      * Returns the value of the associated {@link StructuredContentField} if the given fieldName
-     * exists in the map returned by {@link #getStructuredContentFields()}, and null otherwise.
+     * exists in the map returned by {@link #getStructuredContentFieldXrefs()}, and null otherwise.
      * 
      * @param fieldName
      * @return the value of the given field

@@ -122,8 +122,8 @@ public class DynamicFieldPersistenceHandlerHelper {
         int fieldCount = 0;
         for (FieldGroup group : fieldGroups) {
             List<FieldDefinition> definitions = group.getFieldDefinitions();
-            for (FieldDefinition definition : definitions) {
-                Property property = buildDynamicProperty(definition, inheritedType);
+            for (FieldDefinition def : definitions) {
+                Property property = buildDynamicProperty(def, inheritedType);
                 BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) property.getMetadata();
                 fieldMetadata.setOrder(fieldCount++);
                 fieldMetadata.setGroup(group.getName());
