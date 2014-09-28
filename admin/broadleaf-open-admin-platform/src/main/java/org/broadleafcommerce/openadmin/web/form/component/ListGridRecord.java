@@ -48,7 +48,11 @@ public class ListGridRecord {
     protected Map<String, Field> fieldMap;
     
     public String getPath() {
-        return listGrid.getPath() + "/" + id;
+        String path = listGrid.getPath() + "/" + id;
+        if (!StringUtils.isEmpty(altId)) {
+            path += "/" + altId;
+        }
+        return path;
     }
     
     public boolean getCanLinkToExternalEntity() {

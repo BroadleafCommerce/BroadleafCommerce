@@ -47,6 +47,7 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -230,7 +231,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     @Override
     public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
-            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumbs)
+            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumbs, String alternateId)
             throws ServiceException {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata(), sectionCrumbs);
 
@@ -249,6 +250,12 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             fasc = new FilterAndSortCriteria(ppr.getAdornedList().getCollectionFieldName() + "Target");
             fasc.setFilterValue(collectionItemId);
             ppr.addFilterAndSortCriteria(fasc);
+
+            if (!StringUtils.isEmpty(alternateId)) {
+                fasc = new FilterAndSortCriteria(ppr.getAdornedList().getIdProperty());
+                fasc.setFilterValue(alternateId);
+                ppr.addFilterAndSortCriteria(fasc);
+            }
 
             response = fetch(ppr);
             Entity[] entities = response.getDynamicResultSet().getRecords();
@@ -450,8 +457,14 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
+    public PersistenceResponse updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property
+            field, Entity parentEntity, String collectionItemId, List<SectionCrumb> sectionCrumb) throws ServiceException, ClassNotFoundException {
+        return updateSubCollectionEntity(entityForm, mainMetadata, field, parentEntity, collectionItemId, null, sectionCrumb);
+    }
+
+    @Override
     public PersistenceResponse updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
-            Entity parentEntity, String collectionItemId, List<SectionCrumb> sectionCrumbs)
+            Entity parentEntity, String collectionItemId, String alternateId, List<SectionCrumb> sectionCrumbs)
             throws ServiceException, ClassNotFoundException {
         List<Property> properties = getPropertiesFromEntityForm(entityForm);
 
@@ -476,6 +489,15 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 if (property.getName().equals(ppr.getAdornedList().getLinkedObjectPath() +
                                     "." + ppr.getAdornedList().getLinkedIdProperty())) {
                     break;
+                }
+            }
+
+            if (!StringUtils.isEmpty(alternateId)) {
+                Property p = new Property();
+                p.setName(BasicPersistenceModule.ALTERNATE_ID_PROPERTY);
+                p.setValue(alternateId);
+                if (!properties.contains(p)) {
+                    properties.add(p);
                 }
             }
         } else if (md instanceof MapMetadata) {
@@ -517,9 +539,14 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public PersistenceResponse removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
-            String priorKey, List<SectionCrumb> sectionCrumbs)
-            throws ServiceException {
+    public PersistenceResponse removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity,
+                String itemId, String priorKey, List<SectionCrumb> sectionCrumbs) throws ServiceException {
+        return removeSubCollectionEntity(mainMetadata, field, parentEntity, itemId, null, priorKey, sectionCrumbs);
+    }
+
+    @Override
+    public PersistenceResponse removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity,
+            String itemId, String alternateId, String priorKey, List<SectionCrumb> sectionCrumbs) throws ServiceException {
         List<Property> properties = new ArrayList<Property>();
 
         Property p;
@@ -555,6 +582,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             p.setName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
             p.setValue(itemId);
             properties.add(p);
+
+            if (!StringUtils.isEmpty(alternateId)) {
+                p = new Property();
+                p.setName(BasicPersistenceModule.ALTERNATE_ID_PROPERTY);
+                p.setValue(alternateId);
+                properties.add(p);
+            }
 
             entity.setType(new String[] { adornedList.getAdornedTargetEntityClassname() });
         } else if (field.getMetadata() instanceof MapMetadata) {

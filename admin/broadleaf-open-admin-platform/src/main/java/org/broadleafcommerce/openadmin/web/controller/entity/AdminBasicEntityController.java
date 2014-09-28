@@ -898,13 +898,24 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}", method = RequestMethod.GET)
+    public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId,
+            @PathVariable(value="alternateId") String alternateId) throws Exception {
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
+                "updateCollectionItem");
+    }
+
     @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}", method = RequestMethod.GET)
     public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
-        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, 
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, null,
                 "updateCollectionItem");
     }
 
@@ -921,13 +932,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return the return view path
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}/view", method = RequestMethod.GET)
     public String showViewCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
-            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
-        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, 
+            @PathVariable(value="collectionItemId") String collectionItemId,
+            @PathVariable(value="alternateId") String alternateId) throws Exception {
+        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, alternateId, collectionItemId,
                 "viewCollectionItem");
         
         // Since this is a read-only view, actions don't make sense in this context
@@ -936,10 +948,36 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         return returnPath;
     }
+
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/view", method = RequestMethod.GET)
+    public String showViewCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
+        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, null, collectionItemId,
+                "viewCollectionItem");
+
+        // Since this is a read-only view, actions don't make sense in this context
+        EntityForm ef = (EntityForm) model.asMap().get("entityForm");
+        ef.removeAllActions();
+
+        return returnPath;
+    }
     
     protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
+            String id, String collectionField, String collectionItemId, String alternateId, String modalHeaderType) throws ServiceException {
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId, modalHeaderType, null, null);
+    }
+
+    protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
             String id, String collectionField, String collectionItemId, String modalHeaderType) throws ServiceException {
-        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, modalHeaderType, null, null);
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, null, modalHeaderType, null, null);
+    }
+
+    protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
+                String id, String collectionField, String collectionItemId, String modalHeaderType, EntityForm entityForm, Entity entity) throws ServiceException {
+        return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, null, modalHeaderType, entityForm, entity);
     }
 
     /**
@@ -959,7 +997,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @throws ServiceException
      */
     protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
-            String id, String collectionField, String collectionItemId, String modalHeaderType, EntityForm entityForm, Entity entity) throws ServiceException {
+            String id, String collectionField, String collectionItemId, String alternateId, String modalHeaderType, EntityForm entityForm, Entity entity) throws ServiceException {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
@@ -1009,7 +1047,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
             if (entity == null) {
                 entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
-                    collectionItemId, sectionCrumbs).getDynamicResultSet().getRecords()[0];
+                    collectionItemId, sectionCrumbs, alternateId).getDynamicResultSet().getRecords()[0];
             }
             
             boolean populateTypeAndId = true;
@@ -1077,7 +1115,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             if (entity == null) {
                 entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty,
-                    collectionItemId, sectionCrumbs).getEntity();
+                    collectionItemId, sectionCrumbs, null).getEntity();
             }
             
             boolean populateTypeAndId = true;
@@ -1107,18 +1145,18 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return "modules/modalContainer";
     }
 
-
-
     /**
      * Updates the specified collection item
-     * 
+     *
      * @param request
      * @param response
      * @param model
      * @param pathVars
      * @param id
      * @param collectionField
+     * @param collectionItemId the collection primary key value (in the case of adorned target collection, this is the primary key value of the target entity)
      * @param entityForm
+     * @param result
      * @return the return view path
      * @throws Exception
      */
@@ -1128,7 +1166,36 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId,
-            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+            @ModelAttribute(value="entityForm") EntityForm entityForm,
+            BindingResult result) throws Exception {
+        return updateCollectionItem(request, response, model, pathVars, id, collectionField, collectionItemId, entityForm, null, result);
+    }
+
+    /**
+     * Updates the specified collection item
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param pathVars
+     * @param id
+     * @param collectionField
+     * @param collectionItemId the collection primary key value (in the case of adorned target collection, this is the primary key value of the target entity)
+     * @param entityForm
+     * @param alternateId in the case of adorned target collections, this is the primary key value of the collection member
+     * @param result
+     * @return the return view path
+     * @throws Exception
+     */
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}", method = RequestMethod.POST)
+    public String updateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId,
+            @ModelAttribute(value="entityForm") EntityForm entityForm,
+            @PathVariable(value="alternateId") String alternateId,
+            BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
@@ -1139,12 +1206,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
         
         // First, we must save the collection entity
-        PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId, sectionCrumbs);
+        PersistenceResponse persistenceResponse = service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId, alternateId, sectionCrumbs);
         Entity savedEntity = persistenceResponse.getEntity();
         entityFormValidator.validate(entityForm, savedEntity, result);
 
         if (result.hasErrors()) {
-            return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, 
+            return showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
                     "updateCollectionItem", entityForm, savedEntity); 
         }
         
@@ -1156,9 +1223,20 @@ public class AdminBasicEntityController extends AdminAbstractController {
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
     }
+
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/sequence", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> updateCollectionItemSequence(HttpServletRequest request,
+            HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId,
+            @RequestParam(value="newSequence") String newSequence) throws Exception {
+        return updateCollectionItemSequence(request, response, model, pathVars, id, collectionField, collectionItemId, newSequence, null);
+    }
     
     /**
-     * Updates the given colleciton item's sequence. This should only be triggered for adorned target collections
+     * Updates the given collection item's sequence. This should only be triggered for adorned target collections
      * where a sort field is specified -- any other invocation is incorrect and will result in an exception.
      * 
      * @param request
@@ -1171,14 +1249,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @return an object explaining the state of the operation
      * @throws Exception
      */
-    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/sequence", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}/sequence", method = RequestMethod.POST)
     public @ResponseBody Map<String, Object> updateCollectionItemSequence(HttpServletRequest request, 
             HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId,
-            @RequestParam(value="newSequence") String newSequence) throws Exception {
+            @RequestParam(value="newSequence") String newSequence,
+            @PathVariable(value="alternateId") String alternateId) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
@@ -1198,7 +1277,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             // Get an entity form for the entity
             EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
             Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
-                    collectionItemId, sectionCrumbs).getDynamicResultSet().getRecords()[0];
+                    collectionItemId, sectionCrumbs, alternateId).getDynamicResultSet().getRecords()[0];
             formService.populateEntityFormFields(entityForm, entity);
             formService.populateAdornedEntityFormFields(entityForm, entity, ppr.getAdornedList());
             
@@ -1208,7 +1287,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             field.setValue(String.valueOf(sequenceValue));
             
             Map<String, Object> responseMap = new HashMap<String, Object>();
-            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId, sectionCrumbs);
+            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId, alternateId, sectionCrumbs);
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);
             return responseMap;
@@ -1245,10 +1324,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     /**
      * Removes the requested collection item
-     * 
-     * Note that the request must contain a parameter called "key" when attempting to remove a collection item from a 
+     *
+     * Note that the request must contain a parameter called "key" when attempting to remove a collection item from a
      * map collection.
-     * 
+     *
      * @param request
      * @param response
      * @param model
@@ -1265,6 +1344,32 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
+        return removeCollectionItem(request, response, model, pathVars, id, collectionField, collectionItemId, null);
+    }
+
+    /**
+     * Removes the requested collection item
+     * 
+     * Note that the request must contain a parameter called "key" when attempting to remove a collection item from a 
+     * map collection.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param pathVars
+     * @param id
+     * @param collectionField
+     * @param collectionItemId
+     * @return the return view path
+     * @throws Exception
+     */
+    @RequestMapping(value = "/{id}/{collectionField:.*}/{collectionItemId}/{alternateId}/delete", method = RequestMethod.POST)
+    public String removeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable  Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @PathVariable(value="collectionItemId") String collectionItemId,
+            @PathVariable(value="alternateId") String alternateId) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String mainClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
@@ -1277,7 +1382,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
 
         // First, we must remove the collection entity
-        PersistenceResponse persistenceResponse = service.removeSubCollectionEntity(mainMetadata, collectionProperty, entity, collectionItemId, priorKey, sectionCrumbs);
+        PersistenceResponse persistenceResponse = service.removeSubCollectionEntity(mainMetadata, collectionProperty, entity, collectionItemId, alternateId, priorKey, sectionCrumbs);
         if (persistenceResponse.getEntity() != null && persistenceResponse.getEntity().isValidationFailure()) {
             // If we failed, we'll return some JSON with the first error
             String error = persistenceResponse.getEntity().getPropertyValidationErrors().values().iterator().next().get(0);

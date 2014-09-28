@@ -201,7 +201,7 @@ public interface AdminEntityService {
      * @throws ServiceException
      */
     public PersistenceResponse getAdvancedCollectionRecord(ClassMetadata containingClassMetadata, Entity containingEntity,
-            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumb)
+            Property collectionProperty, String collectionItemId, List<SectionCrumb> sectionCrumb, String alternateId)
             throws ServiceException;
 
     /**
@@ -284,17 +284,49 @@ public interface AdminEntityService {
             throws ServiceException, ClassNotFoundException;
 
     /**
+     * Updates the specified collection item
+     *
+     * @param entityForm
+     * @param mainMetadata
+     * @param field
+     * @param parentEntity
+     * @param collectionItemId
+     * @param alternateId
+     * @return the persisted Entity
+     * @throws ServiceException
+     * @throws ClassNotFoundException
+     */
+    public PersistenceResponse updateSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
+            Entity parentEntity, String collectionItemId, String alternateId, List<SectionCrumb> sectionCrumb)
+            throws ServiceException, ClassNotFoundException;
+
+    /**
      * Removes the given item from the specified collection.
      * 
      * @param mainMetadata
      * @param field
-     * @param parentId
+     * @param parentEntity
      * @param itemId
      * @param priorKey - only needed for Map type collections
      * @throws ServiceException
      */
     public PersistenceResponse removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity, String itemId,
             String priorKey, List<SectionCrumb> sectionCrumb)
+            throws ServiceException;
+
+    /**
+     * Removes the given item from the specified collection.
+     *
+     * @param mainMetadata
+     * @param field
+     * @param parentEntity
+     * @param itemId
+     * @param alternateId
+     * @param priorKey - only needed for Map type collections
+     * @throws ServiceException
+     */
+    public PersistenceResponse removeSubCollectionEntity(ClassMetadata mainMetadata, Property field, Entity parentEntity,
+            String itemId, String alternateId, String priorKey, List<SectionCrumb> sectionCrumb)
             throws ServiceException;
 
     /**
