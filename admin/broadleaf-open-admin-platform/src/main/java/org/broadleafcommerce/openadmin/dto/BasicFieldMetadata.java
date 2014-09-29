@@ -118,6 +118,9 @@ public class BasicFieldMetadata extends FieldMetadata {
     }
 
     public Boolean getRequired() {
+        if (required == null) {
+            return false;
+        }
         return required;
     }
 
