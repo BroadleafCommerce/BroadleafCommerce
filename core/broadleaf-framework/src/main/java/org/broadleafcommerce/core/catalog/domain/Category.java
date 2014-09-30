@@ -22,8 +22,8 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
-import org.broadleafcommerce.core.search.domain.SearchFacet;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -415,13 +415,13 @@ public interface Category extends Serializable {
      * 
      * @param excludedSearchFacets
      */
-    public void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets);
+    public void setExcludedSearchFacets(List<CategoryExcludedSearchFacet> excludedSearchFacets);
 
     /**
      * Gets the excluded SearchFacets
      * @return the excluded SearchFacets
      */
-    public List<SearchFacet> getExcludedSearchFacets();
+    public List<CategoryExcludedSearchFacet> getExcludedSearchFacets();
 
     /**
      * Returns a list of CategorySearchFacets that takes into consideration the search facets for this Category,

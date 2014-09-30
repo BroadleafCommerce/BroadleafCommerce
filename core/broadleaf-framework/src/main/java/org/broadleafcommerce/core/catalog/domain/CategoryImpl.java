@@ -53,10 +53,10 @@ import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.Locatable;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
+import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
-import org.broadleafcommerce.core.search.domain.SearchFacet;
-import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -66,6 +66,7 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -75,6 +76,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -363,7 +365,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
     
     @OneToMany(mappedBy = "category", targetEntity = CategorySearchFacetImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "categoryFacetsTitle", order = 1000,
@@ -374,21 +375,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @BatchSize(size = 50)
     protected List<CategorySearchFacet> searchFacets  = new ArrayList<CategorySearchFacet>();
 
-    @ManyToMany(targetEntity = SearchFacetImpl.class)
-    @JoinTable(name = "BLC_CAT_SEARCH_FACET_EXCL_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"),
-            inverseJoinColumns = @JoinColumn(name = "SEARCH_FACET_ID", nullable = true))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    @AdminPresentationAdornedTargetCollection(
-            order = 2000,
-            joinEntityClass = "org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl",
-            targetObjectProperty = "searchFacet",
-            parentObjectProperty = "category",
-            friendlyName = "excludedFacetsTitle",
+    @OneToMany(mappedBy = "category", targetEntity = CategoryExcludedSearchFacetImpl.class, cascade = { CascadeType.ALL })
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
+    @OrderBy(value = "sequence")
+    @AdminPresentationAdornedTargetCollection(friendlyName = "excludedFacetsTitle", order = 2000,
             tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets,
-            gridVisibleFields = {"field", "label", "searchDisplayPriority"})
-    protected List<SearchFacet> excludedSearchFacets = new ArrayList<SearchFacet>(10);
+            targetObjectProperty = "searchFacet",
+            sortProperty = "sequence",
+            gridVisibleFields = { "field", "label", "searchDisplayPriority" })
+    @BatchSize(size = 50)
+    protected List<CategoryExcludedSearchFacet> excludedSearchFacets = new ArrayList<CategoryExcludedSearchFacet>(10);
 
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
@@ -941,12 +937,12 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
-    public List<SearchFacet> getExcludedSearchFacets() {
+    public List<CategoryExcludedSearchFacet> getExcludedSearchFacets() {
         return excludedSearchFacets;
     }
 
     @Override
-    public void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets) {
+    public void setExcludedSearchFacets(List<CategoryExcludedSearchFacet> excludedSearchFacets) {
         this.excludedSearchFacets = excludedSearchFacets;
     }
     
