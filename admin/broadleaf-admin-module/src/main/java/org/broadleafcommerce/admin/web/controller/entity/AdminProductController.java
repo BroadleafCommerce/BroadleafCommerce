@@ -283,7 +283,7 @@ public class AdminProductController extends AdminBasicEntityController {
                                                                 .withButtonClass("generate-skus")
                                                                 .withUrlPostfix("/generate-skus");
         
-        ListGrid skusGrid = form.findListGrid("additionalSkuXrefs");
+        ListGrid skusGrid = form.findListGrid("additionalSkus");
         if (skusGrid != null) {
             skusGrid.addToolbarAction(generateSkusAction);
             skusGrid.setCanFilterAndSort(false);
