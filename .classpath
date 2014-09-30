@@ -106,16 +106,16 @@
     <classpathentry kind="lib" path="lib/common/bin/resolver.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/slf4j-api-1.5.0.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/slf4j-log4j12-1.5.0.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-aop-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-beans-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-context-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-context-support-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-core-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-expression-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-jdbc-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-jms-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-orm-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-oxm-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-aop-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-beans-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-context-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-context-support-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-core-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-expression-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-jdbc-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-jms-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-orm-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-oxm-4.1.0.RELEASE.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/spring-security-acl-3.1.1.RELEASE.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/spring-security-aspects-3.1.1.RELEASE.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/spring-security-cas-3.1.1.RELEASE.jar"/>
@@ -127,10 +127,10 @@
     <classpathentry kind="lib" path="lib/common/bin/spring-security-remoting-3.1.1.RELEASE.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/spring-security-taglibs-3.1.1.RELEASE.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/spring-security-web-3.1.1.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-test-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-tx-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-web-4.0.5.RELEASE.jar"/>
-    <classpathentry kind="lib" path="lib/common/bin/spring-webmvc-4.0.5.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-test-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-tx-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-web-4.1.0.RELEASE.jar"/>
+    <classpathentry kind="lib" path="lib/common/bin/spring-webmvc-4.1.0.RELEASE.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/testng-6.8.8.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/USPSV2ShippingRates.jar"/>
     <classpathentry kind="lib" path="lib/common/bin/USPSV3ShippingRates.jar"/>
