@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 
+import java.math.BigDecimal;
+
 /**
  * @author Andre Azzolini (apazzolini)
  */
@@ -68,6 +70,19 @@ public interface CategoryExcludedSearchFacet {
      */
     public void setSearchFacet(SearchFacet searchFacet);
 
+    /**
+     * Gets the priority of this search facet in relationship to other search facets in this category
+     * 
+     * @return the sequence of this search facet
+     */
+    public BigDecimal getSequence();
 
+    /**
+     * Sets the sequence of this search facet
+     * 
+     * @see #getPosition()
+     * @param position
+     */
+    public void setSequence(BigDecimal sequence);
 
 }
