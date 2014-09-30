@@ -24,6 +24,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -43,6 +45,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNotNullPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNullPredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension
+        .BasicFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -64,12 +68,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * @author Jeff Fischer
  */
 @Component("blBasicFieldPersistenceProvider")
 @Scope("prototype")
 public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
+
+    @Resource(name = "blBasicFieldPersistenceProviderExtensionManager")
+    protected BasicFieldPersistenceProviderExtensionManager extensionManager;
 
     protected static final Log LOG = LogFactory.getLog(BasicFieldPersistenceProvider.class);
 
@@ -437,6 +446,16 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         val = extractValueRequest.getFieldManager().getFieldValue
                                 (extractValueRequest.getRequestedValue(), extractValueRequest.getMetadata()
                                         .getForeignKeyProperty()).toString();
+                        if (extensionManager != null) {
+                            ExtensionResultHolder<Serializable> resultHolder = new
+                                    ExtensionResultHolder<Serializable>();
+                            ExtensionResultStatusType result = extensionManager.getProxy().transformForeignKey
+                                    (extractValueRequest, property, resultHolder);
+                            if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
+                                val = String.valueOf(resultHolder.getResult());
+                            }
+                        }
+
                         //see if there's a name property and use it for the display value
                         String entityName = null;
                         if (extractValueRequest.getRequestedValue() instanceof AdminMainEntity) {
@@ -472,6 +491,17 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         }
                     } catch (FieldNotAvailableException e) {
                         throw new IllegalArgumentException(e);
+                    }
+                } else if (SupportedFieldType.ID == extractValueRequest.getMetadata().getFieldType()) {
+                    val = extractValueRequest.getRequestedValue().toString();
+                    if (extensionManager != null) {
+                        ExtensionResultHolder<Serializable> resultHolder = new
+                                ExtensionResultHolder<Serializable>();
+                        ExtensionResultStatusType result = extensionManager.getProxy().transformId
+                                (extractValueRequest, property, resultHolder);
+                        if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
+                            val = String.valueOf(resultHolder.getResult());
+                        }
                     }
                 } else {
                     val = extractValueRequest.getRequestedValue().toString();

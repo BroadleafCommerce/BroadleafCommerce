@@ -23,6 +23,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -34,6 +36,8 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension
+        .MediaFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -67,6 +71,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blMediaFieldPersistenceProviderExtensionManager")
+    protected MediaFieldPersistenceProviderExtensionManager extensionManager;
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.MEDIA;
@@ -154,6 +161,21 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             if (requestedValue instanceof Media) {
                 Media media = (Media) requestedValue;
                 String jsonString = convertMediaToJson(media);
+                if (extensionManager != null) {
+                    ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
+                    ExtensionResultStatusType result = extensionManager.getProxy().transformId(media, resultHolder);
+                    if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
+                        Class<?> type;
+                        if (media.isUnwrappableAs(Media.class)) {
+                            type = media.unwrap(Media.class).getClass();
+                        } else {
+                            type = media.getClass();
+                        }
+                        Media converted = convertJsonToMedia(jsonString, type);
+                        converted.setId(resultHolder.getResult());
+                        jsonString = convertMediaToJson(converted);
+                    }
+                }
                 property.setValue(jsonString);
                 property.setUnHtmlEncodedValue(jsonString);
                 property.setDisplayValue(extractValueRequest.getDisplayVal());

@@ -22,7 +22,9 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.exception.ExceptionHelper;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
@@ -35,6 +37,8 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension
+        .RuleFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -65,9 +69,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 /**
  * Provides persistence (read/write) behavior for rule builder fields. This includes two types: Rule with quantity, and
@@ -96,6 +98,9 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
 
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blRuleFieldPersistenceProviderExtensionManager")
+    protected RuleFieldPersistenceProviderExtensionManager extensionManager;
 
     @Override
     public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
@@ -352,7 +357,15 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             quantityProperty.setValue(quantityBasedRule.getQuantity().toString());
             Property idProperty = new Property();
             idProperty.setName("id");
-            idProperty.setValue(String.valueOf(quantityBasedRule.getId()));
+            Long id = quantityBasedRule.getId();
+            if (extensionManager != null) {
+                ExtensionResultHolder<Long> resultHolder = new ExtensionResultHolder<Long>();
+                ExtensionResultStatusType result = extensionManager.getProxy().transformId(quantityBasedRule, resultHolder);
+                if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
+                    id = resultHolder.getResult();
+                }
+            }
+            idProperty.setValue(String.valueOf(id));
             properties[0] = mvelProperty;
             properties[1] = quantityProperty;
             properties[2] = idProperty;
