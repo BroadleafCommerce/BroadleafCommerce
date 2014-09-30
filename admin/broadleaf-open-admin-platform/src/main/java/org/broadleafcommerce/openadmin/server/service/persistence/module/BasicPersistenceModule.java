@@ -468,7 +468,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             alternateOnEntity.put(entry.getKey(), entry.getValue());
                             List<Property> props2 = new ArrayList<Property>();
                             extractPropertiesFromPersistentEntity(alternateOnEntity, recordEntity, props2);
-                            if (props2.size() == 1) {
+                            if (props2.size() == 1 && !props2.get(0).getName().contains(".")) {
                                 Property alternateIdProp = props2.get(0);
                                 alternateIdProp.setName(ALTERNATE_ID_PROPERTY);
                                 props.add(alternateIdProp);
