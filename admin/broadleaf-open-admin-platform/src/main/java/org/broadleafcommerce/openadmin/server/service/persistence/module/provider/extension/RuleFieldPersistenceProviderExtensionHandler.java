@@ -33,6 +33,12 @@ public interface RuleFieldPersistenceProviderExtensionHandler extends ExtensionH
 
     ExtensionResultStatusType transformId(QuantityBasedRule rule, ExtensionResultHolder<Long> resultHolder);
 
+    ExtensionResultStatusType postAdd(Object rule, ExtensionResultHolder resultHolder);
+
+    ExtensionResultStatusType postUpdate(Object rule);
+
+    ExtensionResultStatusType establishDirtyState(Object rule, ExtensionResultHolder<Boolean> resultHolder);
+
     public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 
 }

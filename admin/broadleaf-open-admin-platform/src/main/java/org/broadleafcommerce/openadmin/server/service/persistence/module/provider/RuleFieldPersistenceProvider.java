@@ -24,7 +24,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
@@ -287,11 +286,19 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         if (!populateValueRequest.getProperty().getName().contains(FieldManager.MAPFIELDSEPARATOR)) {
                             populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), null);
                         } else {
-                            populateValueRequest.getPersistenceManager().getDynamicEntityDao().remove((Serializable) rule);
+                            populateValueRequest.getPersistenceManager().getDynamicEntityDao().remove(rule);
                         }
                     }
                 } else if (rule != null) {
                     dirty = !mvel.equals(rule.getMatchRule());
+                    if (!dirty && extensionManager != null) {
+                        ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
+                        ExtensionResultStatusType result = extensionManager.getProxy().establishDirtyState(rule,
+                                resultHolder);
+                        if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
+                            dirty = resultHolder.getResult();
+                        }
+                    }
                     if (dirty) {
                         updateSimpleRule(populateValueRequest, mvel, persist, rule);
                     }
@@ -339,7 +346,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 translator, RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
                 populateValueRequest.getMetadata().getRuleIdentifier(),
                 populateValueRequest.getProperty().getUnHtmlEncodedValue(), rules, valueType, parent,
-                oneToMany.mappedBy());
+                oneToMany.mappedBy(),
+                populateValueRequest.getProperty());
         return dirty;
     }
 
@@ -420,7 +428,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     protected boolean updateQuantityRule(EntityManager em, DataDTOToMVELTranslator translator, String entityKey,
                                          String fieldService, String jsonPropertyValue,
                                          Collection<QuantityBasedRule> criteriaList, Class<?> memberType,
-                                         Object parent, String mappedBy) {
+                                         Object parent, String mappedBy, Property property) {
         boolean dirty = false;
         if (!StringUtils.isEmpty(jsonPropertyValue)) {
             DataWrapper dw = convertJsonToDataWrapper(jsonPropertyValue);
@@ -433,9 +441,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             //is submitted here
                             //Update Existing Criteria
                             for (QuantityBasedRule quantityBasedRule : criteriaList) {
-                                //make compatible with enterprise module
-                                Long id = sandBoxHelper.getOriginalId(em, quantityBasedRule);
-                                boolean isMatch = dto.getId().equals(id) || dto.getId().equals(quantityBasedRule.getId());
+                                Long id = quantityBasedRule.getId();
+                                boolean isMatch = dto.getId().equals(id);
                                 if (isMatch){
                                     String mvel;
                                     //don't update if the data has not changed
@@ -451,15 +458,22 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                     } catch (MVELTranslationException e) {
                                         throw new RuntimeException(e);
                                     }
-                                    if (dirty) {
-                                        if (id == null) {
-                                            //must not be a clone - persist to generate a clone for enterprise, if applicable
-                                            quantityBasedRule = em.merge(quantityBasedRule);
+                                    if (!dirty && extensionManager != null) {
+                                        ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
+                                        ExtensionResultStatusType result = extensionManager.getProxy().establishDirtyState(quantityBasedRule,
+                                                resultHolder);
+                                        if (ExtensionResultStatusType.NOT_HANDLED != result && resultHolder.getResult() != null) {
+                                            dirty = resultHolder.getResult();
                                         }
+                                    }
+                                    if (dirty) {
+                                        quantityBasedRule = em.merge(quantityBasedRule);
                                         quantityBasedRule.setQuantity(dto.getQuantity());
                                         quantityBasedRule.setMatchRule(mvel);
+                                        if (extensionManager != null) {
+                                            extensionManager.getProxy().postUpdate(quantityBasedRule);
+                                        }
                                     }
-                                    //make compatible with enterprise module
                                     updatedRules.add(quantityBasedRule);
                                     break checkId;
                                 }
@@ -483,6 +497,14 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             throw new RuntimeException(e);
                         }
                         em.persist(quantityBasedRule);
+                        dto.setId(quantityBasedRule.getId());
+                        if (extensionManager != null) {
+                            ExtensionResultHolder resultHolder = new ExtensionResultHolder();
+                            extensionManager.getProxy().postAdd(quantityBasedRule, resultHolder);
+                            if (resultHolder.getResult() != null) {
+                                quantityBasedRule = (QuantityBasedRule) resultHolder.getResult();
+                            }
+                        }
                         updatedRules.add(quantityBasedRule);
                         dirty = true;
                     }
@@ -504,6 +526,14 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         dirty = true;
                     }
                 }
+                ObjectMapper mapper = new ObjectMapper();
+                String json;
+                try {
+                    json = mapper.writeValueAsString(dw);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                property.setValue(json);
             }
         }
         return dirty;
@@ -548,10 +578,17 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         if (!persist) {
             //pre-merge (can result in a clone for enterprise)
             rule = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(rule);
+            if (extensionManager != null) {
+                extensionManager.getProxy().postUpdate(rule);
+            }
         }
         rule.setMatchRule(mvel);
         if (persist) {
             populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(rule);
+            if (extensionManager != null) {
+                ExtensionResultHolder resultHolder = new ExtensionResultHolder();
+                extensionManager.getProxy().postAdd(rule, resultHolder);
+            }
         }
     }
 
