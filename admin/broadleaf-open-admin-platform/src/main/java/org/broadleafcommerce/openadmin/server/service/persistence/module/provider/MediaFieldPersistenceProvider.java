@@ -233,10 +233,16 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         if (!persist) {
             //pre-merge (can result in a clone for enterprise)
             media = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(media);
+            if (extensionManager != null) {
+                extensionManager.getProxy().postUpdate(media);
+            }
         }
         updateMediaFields(media, newMedia);
         if (persist) {
             populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(media);
+            if (extensionManager != null) {
+                extensionManager.getProxy().postAdd(media);
+            }
         }
     }
 

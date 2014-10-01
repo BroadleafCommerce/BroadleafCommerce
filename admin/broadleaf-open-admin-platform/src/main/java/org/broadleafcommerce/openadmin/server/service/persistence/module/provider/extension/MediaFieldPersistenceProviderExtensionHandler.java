@@ -33,6 +33,10 @@ public interface MediaFieldPersistenceProviderExtensionHandler extends Extension
 
     ExtensionResultStatusType transformId(Media media, ExtensionResultHolder<Long> resultHolder);
 
+    ExtensionResultStatusType postAdd(Media media);
+
+    ExtensionResultStatusType postUpdate(Media media);
+
     public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 
 }
