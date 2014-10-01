@@ -24,8 +24,6 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.media.domain.Media;
 
-import java.io.Serializable;
-
 /**
  * For internal usage. Allows extending API calls without subclassing the entity.
  *
