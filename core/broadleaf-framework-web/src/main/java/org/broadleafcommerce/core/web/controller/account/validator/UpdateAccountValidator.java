@@ -54,7 +54,7 @@ public class UpdateAccountValidator implements Validator {
             //check email address to see if it is already in use by another customer
             Customer customerMatchingNewEmail = customerService.readCustomerByEmail(form.getEmailAddress());
 
-            if (customerMatchingNewEmail != null && CustomerState.getCustomer().getId() != customerMatchingNewEmail.getId()) {
+            if (customerMatchingNewEmail != null && !CustomerState.getCustomer().getId().equals(customerMatchingNewEmail.getId())) {
                 //customer found with new email entered, and it is not the current customer
                 errors.rejectValue("emailAddress", "emailAddress.used");
             }
