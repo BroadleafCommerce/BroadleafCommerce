@@ -78,9 +78,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -294,14 +292,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             tab = Presentation.Tab.Name.Products, tabOrder = Presentation.Tab.Order.Products,
             gridVisibleFields = { "defaultSku.name" })
     protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
-
-    @ElementCollection
-    @MapKeyColumn(name="NAME")
-    @Column(name="URL")
-    @CollectionTable(name="BLC_CATEGORY_IMAGE", joinColumns=@JoinColumn(name="CATEGORY_ID"))
-    @BatchSize(size = 50)
-    @Deprecated
-    protected Map<String, String> categoryImages = new HashMap<String, String>(10);
 
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
@@ -688,27 +678,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             }
         }
         return childCategoryIds;
-    }
-
-    @Override
-    @Deprecated
-    public Map<String, String> getCategoryImages() {
-        return categoryImages;
-    }
-
-    @Override
-    @Deprecated
-    public String getCategoryImage(String imageKey) {
-        return categoryImages.get(imageKey);
-    }
-
-    @Override
-    @Deprecated
-    public void setCategoryImages(Map<String, String> categoryImages) {
-        this.categoryImages.clear();
-        for(Map.Entry<String, String> me : categoryImages.entrySet()) {
-            this.categoryImages.put(me.getKey(), me.getValue());
-        }
     }
 
     @Override

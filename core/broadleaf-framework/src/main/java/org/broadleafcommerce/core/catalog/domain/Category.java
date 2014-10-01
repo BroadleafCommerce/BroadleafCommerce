@@ -261,36 +261,6 @@ public interface Category extends Serializable {
     public void setChildCategoryURLMap(@Nonnull Map<String, List<Long>> childCategoryURLMap);
 
     /**
-     * Gets the category images.
-     * @deprecated replaced by {@link #getCategoryMedia()}
-     * 
-     * @return the category images
-     */
-    @Deprecated
-    @Nonnull
-    public Map<String, String> getCategoryImages();
-
-    /**
-     * Gets the category image.
-     * @deprecated replaced by {@link #getCategoryMedia()}
-     *
-     * @param imageKey the image key
-     * @return the category image
-     */
-    @Deprecated
-    @Nullable
-    public String getCategoryImage(@Nonnull String imageKey);
-
-    /**
-     * Sets the category images.
-     * @deprecated replaced by {@link #setCategoryMedia(java.util.Map)}
-     *
-     * @param categoryImages the category images
-     */
-    @Deprecated
-    public void setCategoryImages(@Nonnull Map<String, String> categoryImages);
-
-    /**
      * Gets the category media map. The key is of arbitrary meaning
      * and the {@code Media} instance stores information about the
      * media itself (image url, etc...)
