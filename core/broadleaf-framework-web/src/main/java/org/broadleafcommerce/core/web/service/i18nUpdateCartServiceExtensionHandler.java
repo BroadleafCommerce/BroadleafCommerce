@@ -115,20 +115,19 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
     protected void translateOrderItem(OrderItem orderItem, Sku sku) {
         if (sku != null) {
             orderItem.setName(sku.getName());
-        }
-
-        if (sku.getProductOptionValues() != null) {
-            for (ProductOptionValue optionValue : sku.getProductOptionValues()) {
-                String key = optionValue.getProductOption().getAttributeName();
-                OrderItemAttribute attr = orderItem.getOrderItemAttributes().get(key);
-                if (attr != null) {
-                    attr.setValue(optionValue.getAttributeValue());
-                } else {
-                    OrderItemAttribute attribute = new OrderItemAttributeImpl();
-                    attribute.setName(key);
-                    attribute.setValue(optionValue.getAttributeValue());
-                    attribute.setOrderItem(orderItem);
-                    orderItem.getOrderItemAttributes().put(key, attribute);
+            if (sku.getProductOptionValues() != null) {
+                for (ProductOptionValue optionValue : sku.getProductOptionValues()) {
+                    String key = optionValue.getProductOption().getAttributeName();
+                    OrderItemAttribute attr = orderItem.getOrderItemAttributes().get(key);
+                    if (attr != null) {
+                        attr.setValue(optionValue.getAttributeValue());
+                    } else {
+                        OrderItemAttribute attribute = new OrderItemAttributeImpl();
+                        attribute.setName(key);
+                        attribute.setValue(optionValue.getAttributeValue());
+                        attribute.setOrderItem(orderItem);
+                        orderItem.getOrderItemAttributes().put(key, attribute);
+                    }
                 }
             }
         }
