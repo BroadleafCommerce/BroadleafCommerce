@@ -740,28 +740,6 @@ public class OfferImpl implements Offer, AdminMainEntity {
         this.qualifyingItemCriteria = qualifyingItemCriteriaXref;
     }
 
-
-    //    @Override
-    //    @Deprecated
-    //    public Set<OfferItemCriteria> getTargetItemCriteria() {
-    //        if (legacyTargetItemCriteria.size() == 0) {
-    //            for (OfferTargetCriteriaXref xref : getTargetItemCriteriaXref()) {
-    //                legacyTargetItemCriteria.add(xref.getOfferItemCriteria());
-    //            }
-    //        }
-    //        return Collections.unmodifiableSet(legacyTargetItemCriteria);
-    //    }
-    //
-    //    @Override
-    //    @Deprecated
-    //    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria) {
-    //        this.legacyTargetItemCriteria.clear();
-    //        this.targetItemCriteria.clear();
-    //        for(OfferItemCriteria crit : targetItemCriteria){
-    //            this.targetItemCriteria.add(new OfferTargetCriteriaXrefImpl(this, crit));
-    //        }
-    //    }
-
     @Override
     public Set<OfferTargetCriteriaXref> getTargetItemCriteriaXref() {
         if (OfferType.ORDER_ITEM.equals(getType()) && CollectionUtils.isEmpty(targetItemCriteria)) {
