@@ -44,13 +44,11 @@
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplateImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>
-        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl</class>
-        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentStructuredContentRuleXrefImpl</class>
-        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentStructuredContentFieldXrefImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl</class>        
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldXrefImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteriaImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl</class>
-        <class>org.broadleafcommerce.cms.structure.domain.CriteriaStructuredContentXref</class>
         <class>org.broadleafcommerce.cms.url.domain.URLHandlerImpl</class>
         <exclude-unlisted-classes/>
         <!-- Inherits JPA properties from persistence-common.xml -->

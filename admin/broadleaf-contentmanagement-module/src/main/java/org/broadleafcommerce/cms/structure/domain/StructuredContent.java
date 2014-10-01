@@ -118,14 +118,7 @@ public interface StructuredContent extends Serializable {
     public void setStructuredContentType(@Nonnull StructuredContentType structuredContentType);
 
     /**
-     * <b>NOTE: This method is typically only used when wanting to persist new {@link StructuredContentField}s.
-     * Users trying to get a field to render should typically invoke {@link #getFieldValues()}.</b>
-     * 
-     * Gets a map with the custom fields associated with this content item.<br>
-     * The map keys are based on the field types.   For example, consider a content
-     * item with a <code>StructuredContentType</code> of ad which defined a field
-     * named targetUrl.    The field could be accessed with
-     * <code>structuredContentItem.getStructuredContentFields().get("targetUrl")</code>
+     * @deprecated - use {@link #getStructuredContentFieldXrefs()}
      * @return
      */
     @Nullable
@@ -133,8 +126,7 @@ public interface StructuredContent extends Serializable {
     public Map<String, StructuredContentField> getStructuredContentFields();
 
     /**
-     * Sets the structured content fields for this item.   Would not typically called
-     * outside of the ContentManagementSystem.
+     * @deprecated - Use {@link #setStructuredContentFieldXrefs(Map)}
      *
      * @param structuredContentFields
      */
@@ -153,7 +145,7 @@ public interface StructuredContent extends Serializable {
      * @return
      */
     @Nullable
-    public Map<String, StructuredContentStructuredContentFieldXref> getStructuredContentFieldXrefs();
+    public Map<String, StructuredContentFieldXref> getStructuredContentFieldXrefs();
 
     /**
      * Sets the structured content fields for this item.   Would not typically be called
@@ -161,7 +153,7 @@ public interface StructuredContent extends Serializable {
      *
      * @param structuredContentFields
      */
-    public void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentStructuredContentFieldXref> structuredContentFields);
+    public void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentFieldXref> structuredContentFields);
 
     /**
      * Returns the offlineFlag.   Indicates that the item should no longer appear on the site.
@@ -213,11 +205,10 @@ public interface StructuredContent extends Serializable {
     public void setAuditable(@Nullable AdminAuditable auditable);
 
     /**
-     * Returns a map of the targeting rules associated with this content item.
-     *
-     * Targeting rules are defined in the content management system and used to
-     * enforce which items are returned to the client.
-     *
+     * @deprecated - Not supported - simplifying interface
+     * 
+     * Functionality removed as of BLC 3.2
+     * 
      * @return
      */
     @Nullable
@@ -225,7 +216,9 @@ public interface StructuredContent extends Serializable {
     public Map<String, StructuredContentRule> getStructuredContentMatchRules();
 
     /**
-     * Sets the targeting rules for this content item.
+     * @deprecated - Not supported - simplifying interface
+     * 
+     * Functionality removed as of BLC 3.2
      *
      * @param structuredContentMatchRules
      */
@@ -233,36 +226,24 @@ public interface StructuredContent extends Serializable {
     public void setStructuredContentMatchRules(@Nullable Map<String, StructuredContentRule> structuredContentMatchRules);
 
     /**
-     * Returns a map of the targeting rules associated with this content item.
-     *
-     * Targeting rules are defined in the content management system and used to
-     * enforce which items are returned to the client.
-     *
-     * @return
-     */
-    @Nullable
-    public Map<String, StructuredContentStructuredContentRuleXref> getStructuredContentMatchRuleXref();
-
-    /**
-     * Sets the targeting rules for this content item.
-     *
-     * @param structuredContentMatchRules
-     */
-    public void setStructuredContentMatchRuleXrefs(@Nullable Map<String, StructuredContentStructuredContentRuleXref> structuredContentMatchRules);
-
-    /**
-     * Returns the item (or cart) based rules associated with this content item.
+     * @deprecated - no longer supported - simplifying interface
+     * 
+     * Functionality removed as of BLC 3.2
      *
      * @return
      */
     @Nullable
+    @Deprecated
     public Set<StructuredContentItemCriteria> getQualifyingItemCriteria();
 
     /**
-     * Sets the item (e.g. cart) based rules associated with this content item.
+     * @deprecated - no longer supported - simplifying interface
+     * 
+     * Functionality removed as of BLC 3.2
      *
      * @param qualifyingItemCriteria
      */
+    @Deprecated
     public void setQualifyingItemCriteria(@Nullable Set<StructuredContentItemCriteria> qualifyingItemCriteria);
     
     /**

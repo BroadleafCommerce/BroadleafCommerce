@@ -33,7 +33,7 @@ import org.broadleafcommerce.cms.structure.dao.StructuredContentDao;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteria;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentStructuredContentRuleXref;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
@@ -412,15 +412,17 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     protected String buildRuleExpression(StructuredContent sc) {
        StringBuffer ruleExpression = null;
-        Map<String, StructuredContentStructuredContentRuleXref> ruleMap = sc.getStructuredContentMatchRuleXref();
+        Map<String, StructuredContentRule> ruleMap = sc.getStructuredContentMatchRules();
        if (ruleMap != null) {
            for (String ruleKey : ruleMap.keySet()) {
-                if (ruleMap.get(ruleKey).getStructuredContentRule().getMatchRule() == null) continue;
+                if (ruleMap.get(ruleKey).getMatchRule() == null) {
+                    continue;
+                }
                if (ruleExpression == null) {
-                    ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getStructuredContentRule().getMatchRule());
+                    ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
                } else {
                    ruleExpression.append(AND);
-                    ruleExpression.append(ruleMap.get(ruleKey).getStructuredContentRule().getMatchRule());
+                    ruleExpression.append(ruleMap.get(ruleKey).getMatchRule());
                }
            }
        }

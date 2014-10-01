@@ -43,6 +43,7 @@ import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -66,8 +67,9 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -140,8 +142,10 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @Index(name="CONTENT_PRIORITY_INDEX", columnNames={"PRIORITY"})
     protected Integer priority;
 
-    @OneToMany(targetEntity = StructuredContentStructuredContentRuleXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @MapKey(name = "key")
+    @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_SC_RULE_MAP", inverseJoinColumns = @JoinColumn(name = "SC_RULE_ID", referencedColumnName = "SC_RULE_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @MapKeyColumn(name = "MAP_KEY", nullable = false)
     @AdminPresentationMapFields(
         mapDisplayFields = {
             @AdminPresentationMapField(
@@ -189,12 +193,11 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         }
     )
     @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-    protected Map<String, StructuredContentStructuredContentRuleXref> structuredContentMatchRules = new HashMap<String, StructuredContentStructuredContentRuleXref>();
+    Map<String, StructuredContentRule> structuredContentMatchRules = new HashMap<String, StructuredContentRule>();
 
-    @Transient
-    protected Map<String, StructuredContentRule> legacyStructuredContentMatchRules = new HashMap<String, StructuredContentRule>();
-
-    @OneToMany(mappedBy = "structuredContent", fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade={CascadeType.ALL})
+    @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ID"), inverseJoinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @AdminPresentation(friendlyName = "Generic_Item_Rule", order = 5,
         tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
         group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
@@ -211,11 +214,11 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @AdminPresentationToOneLookup(lookupDisplayProperty = "name", forcePopulateChildProperties = true)
     protected StructuredContentType structuredContentType;
 
-    @OneToMany(targetEntity = StructuredContentStructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(targetEntity = StructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKeyColumn(name = "MAP_KEY")
     @BatchSize(size = 20)
     @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-    protected Map<String, StructuredContentStructuredContentFieldXref> structuredContentFields = new HashMap<String, StructuredContentStructuredContentFieldXref>();
+    protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<String, StructuredContentFieldXref>();
 
     @Transient
     protected Map<String, StructuredContentField> legacyStructuredContentFields = new HashMap<String, StructuredContentField>();
@@ -273,7 +276,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @Deprecated
     public Map<String, StructuredContentField> getStructuredContentFields() {
         if (legacyStructuredContentFields.isEmpty()) {
-            for (Map.Entry<String, StructuredContentStructuredContentFieldXref> entry : getStructuredContentFieldXrefs().entrySet()) {
+            for (Map.Entry<String, StructuredContentFieldXref> entry : getStructuredContentFieldXrefs().entrySet()) {
                 legacyStructuredContentFields.put(entry.getKey(), entry.getValue().getStructuredContentField());
             }
         }
@@ -281,25 +284,24 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     }
     
     @Override
-    @Deprecated
     public void setStructuredContentFields(Map<String, StructuredContentField> structuredContentFields) {
         this.structuredContentFields.clear();
         this.legacyStructuredContentFields.clear();
         for (Map.Entry<String, StructuredContentField> entry : structuredContentFields.entrySet()) {
-            this.structuredContentFields.put(entry.getKey(), new StructuredContentStructuredContentFieldXrefImpl(this, entry.getValue(), entry.getKey()));
+            this.structuredContentFields.put(entry.getKey(), new StructuredContentFieldXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }
     
     @Override
-    public Map<String, StructuredContentStructuredContentFieldXref> getStructuredContentFieldXrefs() {
+    public Map<String, StructuredContentFieldXref> getStructuredContentFieldXrefs() {
         return structuredContentFields;
     }
 
     @Override
-    public void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentStructuredContentFieldXref> structuredContentFields) {
+    public void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentFieldXref> structuredContentFields) {
         this.structuredContentFields = structuredContentFields;
     }
-
+    
     @Override
     public String getFieldValue(String fieldName) {
         if (structuredContentFields.containsKey(fieldName)) {
@@ -317,7 +319,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     public Map<String, String> getFieldValues() {
         if (fieldValuesMap == null) {
             fieldValuesMap = new HashMap<String, String>();
-            for (Entry<String, StructuredContentStructuredContentFieldXref> entry : getStructuredContentFieldXrefs().entrySet()) {
+            for (Entry<String, StructuredContentFieldXref> entry : getStructuredContentFieldXrefs().entrySet()) {
                 fieldValuesMap.put(entry.getKey(), entry.getValue().getStructuredContentField().getValue());
             }
         }
@@ -359,33 +361,12 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     }
 
     @Override
-    @Deprecated
     public Map<String, StructuredContentRule> getStructuredContentMatchRules() {
-        if (legacyStructuredContentMatchRules.size() == 0) {
-            for (Map.Entry<String, StructuredContentStructuredContentRuleXref> entry : getStructuredContentMatchRuleXref().entrySet()) {
-                legacyStructuredContentMatchRules.put(entry.getKey(), entry.getValue().getStructuredContentRule());
-            }
-        }
-        return Collections.unmodifiableMap(legacyStructuredContentMatchRules);
-    }
-
-    @Override
-    @Deprecated
-    public void setStructuredContentMatchRules(Map<String, StructuredContentRule> structuredContentMatchRules) {
-        this.structuredContentMatchRules.clear();
-        this.legacyStructuredContentMatchRules.clear();
-        for (Map.Entry<String, StructuredContentRule> entry : structuredContentMatchRules.entrySet()) {
-            this.structuredContentMatchRules.put(entry.getKey(), new StructuredContentStructuredContentRuleXrefImpl(this, entry.getValue(), entry.getKey()));
-        }
-    }
-
-    @Override
-    public Map<String, StructuredContentStructuredContentRuleXref> getStructuredContentMatchRuleXref() {
         return structuredContentMatchRules;
     }
 
     @Override
-    public void setStructuredContentMatchRuleXrefs(Map<String, StructuredContentStructuredContentRuleXref> structuredContentMatchRules) {
+    public void setStructuredContentMatchRules(Map<String, StructuredContentRule> structuredContentMatchRules) {
         this.structuredContentMatchRules = structuredContentMatchRules;
     }
 

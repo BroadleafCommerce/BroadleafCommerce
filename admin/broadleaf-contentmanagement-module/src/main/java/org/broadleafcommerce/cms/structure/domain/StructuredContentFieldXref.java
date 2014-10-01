@@ -21,7 +21,7 @@ package org.broadleafcommerce.cms.structure.domain;
 
 
 
-public interface StructuredContentStructuredContentFieldXref {
+public interface StructuredContentFieldXref {
 
     public void setId(Long id);
 

@@ -30,6 +30,7 @@ import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.domain.PageTemplateFieldGroupXref;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -114,15 +115,24 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     }
 
     protected List<FieldGroup> getFieldGroups(Page page, PageTemplate template) {
+        List<PageTemplateFieldGroupXref> fieldGroupXrefs = null;
+
+        List<FieldGroup> fieldGroups = new ArrayList<FieldGroup>();
         if (template != null) {
-            return template.getFieldGroups();
+            fieldGroupXrefs = template.getFieldGroupXrefs();
         }
 
         if (page.getPageTemplate() != null) {
-            return page.getPageTemplate().getFieldGroups();
+            fieldGroupXrefs = page.getPageTemplate().getFieldGroupXrefs();
         }
 
-        return new ArrayList<FieldGroup>(0);
+        if (fieldGroupXrefs != null) {
+            for (PageTemplateFieldGroupXref xref : fieldGroupXrefs) {
+                fieldGroups.add(xref.getFieldGroup());
+            }
+        }
+
+        return fieldGroups;
     }
 
     protected List<FieldGroup> getFieldGroups(PersistencePackage pp, DynamicEntityDao dynamicEntityDao) {

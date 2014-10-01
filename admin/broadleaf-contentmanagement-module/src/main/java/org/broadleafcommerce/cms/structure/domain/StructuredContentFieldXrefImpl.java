@@ -56,7 +56,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class StructuredContentStructuredContentFieldXrefImpl implements StructuredContentStructuredContentFieldXref, Serializable {
+public class StructuredContentFieldXrefImpl implements StructuredContentFieldXref, Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -67,8 +67,8 @@ public class StructuredContentStructuredContentFieldXrefImpl implements Structur
             name = "StructuredContentFieldId",
             strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
-                    @Parameter(name = "segment_value", value = "StructuredContentStructuredContentFieldXrefImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.structure.domain.StructuredContentStructuredContentFieldXrefImpl")
+                    @Parameter(name = "segment_value", value = "StructuredContentFieldXrefImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.structure.domain.StructuredContentFieldXrefImpl")
             })
     @Column(name = "BLC_SC_SC_FIELD_ID")
     protected Long id;
@@ -88,11 +88,11 @@ public class StructuredContentStructuredContentFieldXrefImpl implements Structur
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String key;
 
-    public StructuredContentStructuredContentFieldXrefImpl() {
+    public StructuredContentFieldXrefImpl() {
         //Default constructor for JPA...
     }
 
-    public StructuredContentStructuredContentFieldXrefImpl(StructuredContent sc, StructuredContentField scField, String key) {
+    public StructuredContentFieldXrefImpl(StructuredContent sc, StructuredContentField scField, String key) {
         this.structuredContent = sc;
         this.structuredContentField = scField;
         this.key = key;
