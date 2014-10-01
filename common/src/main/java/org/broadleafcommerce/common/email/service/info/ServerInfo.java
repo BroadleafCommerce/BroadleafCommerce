@@ -37,7 +37,7 @@ public class ServerInfo implements Serializable {
     public String getSecureHost() {
         StringBuffer sb = new StringBuffer();
         sb.append(serverName);
-        if (!securePort.equals("443")) {
+        if (!securePort.equals(443)) {
             sb.append(":");
             sb.append(securePort);
         }
@@ -47,7 +47,7 @@ public class ServerInfo implements Serializable {
     public String getHost() {
         StringBuffer sb = new StringBuffer();
         sb.append(serverName);
-        if (!serverPort.equals("80")) {
+        if (!serverPort.equals(80)) {
             sb.append(":");
             sb.append(serverPort);
         }
