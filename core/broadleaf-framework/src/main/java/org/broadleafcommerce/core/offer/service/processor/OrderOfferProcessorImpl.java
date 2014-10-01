@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferRule;
+import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.service.OfferServiceUtilities;
@@ -163,9 +163,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         if (offer.getAppliesToOrderRules() != null && offer.getAppliesToOrderRules().trim().length() != 0) {
             rule = offer.getAppliesToOrderRules();
         } else {
-            OfferRule orderRule = offer.getOfferMatchRules().get(OfferRuleType.ORDER.getType());
-            if (orderRule != null) {
-                rule = orderRule.getMatchRule();
+            OfferOfferRuleXref orderRule = offer.getOfferMatchRulesXref().get(OfferRuleType.ORDER.getType());
+            if (orderRule != null && orderRule.getOfferRule() != null) {
+                rule = orderRule.getOfferRule().getMatchRule();
             }
         }
 

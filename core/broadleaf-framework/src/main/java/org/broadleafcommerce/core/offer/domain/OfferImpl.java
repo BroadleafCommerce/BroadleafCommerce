@@ -76,8 +76,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
@@ -711,35 +709,29 @@ public class OfferImpl implements Offer, AdminMainEntity {
         this.uses = uses;
     }
 
-    @Override
-    @Deprecated
-    public Set<OfferItemCriteria> getQualifyingItemCriteria() {
-        if (legacyQualifyingItemCriteria.size() == 0) {
-            for (OfferQualifyingCriteriaXref xref : getQualifyingItemCriteriaXref()) {
-                legacyQualifyingItemCriteria.add(xref.getOfferItemCriteria());
-            }
-        }
-        return Collections.unmodifiableSet(legacyQualifyingItemCriteria);
-    }
-
-    @Override
-    @Deprecated
-    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
-        this.legacyQualifyingItemCriteria.clear();
-        this.qualifyingItemCriteria.clear();
-        for(OfferItemCriteria crit : qualifyingItemCriteria){
-            this.qualifyingItemCriteria.add(new OfferQualifyingCriteriaXrefImpl(this, crit));
-        }
-    }
+    //    @Override
+    //    @Deprecated
+    //    public Set<OfferItemCriteria> getQualifyingItemCriteria() {
+    //        if (legacyQualifyingItemCriteria.size() == 0) {
+    //            for (OfferQualifyingCriteriaXref xref : getQualifyingItemCriteriaXref()) {
+    //                legacyQualifyingItemCriteria.add(xref.getOfferItemCriteria());
+    //            }
+    //        }
+    //        return Collections.unmodifiableSet(legacyQualifyingItemCriteria);
+    //    }
+    //
+    //    @Override
+    //    @Deprecated
+    //    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria) {
+    //        this.legacyQualifyingItemCriteria.clear();
+    //        this.qualifyingItemCriteria.clear();
+    //        for(OfferItemCriteria crit : qualifyingItemCriteria){
+    //            this.qualifyingItemCriteria.add(new OfferQualifyingCriteriaXrefImpl(this, crit));
+    //        }
+    //    }
 
     @Override
     public Set<OfferQualifyingCriteriaXref> getQualifyingItemCriteriaXref() {
-        if (OfferType.ORDER_ITEM.equals(getType()) && CollectionUtils.isEmpty(qualifyingItemCriteria)) {
-            OfferItemCriteria oic = new OfferItemCriteriaImpl();
-            oic.setQuantity(1);
-            OfferQualifyingCriteriaXref xref = new OfferQualifyingCriteriaXrefImpl(this, oic);
-            return Collections.unmodifiableSet(Collections.singleton(xref));
-        }
         return qualifyingItemCriteria;
     }
 
@@ -749,26 +741,26 @@ public class OfferImpl implements Offer, AdminMainEntity {
     }
 
 
-    @Override
-    @Deprecated
-    public Set<OfferItemCriteria> getTargetItemCriteria() {
-        if (legacyTargetItemCriteria.size() == 0) {
-            for (OfferTargetCriteriaXref xref : getTargetItemCriteriaXref()) {
-                legacyTargetItemCriteria.add(xref.getOfferItemCriteria());
-            }
-        }
-        return Collections.unmodifiableSet(legacyTargetItemCriteria);
-    }
-
-    @Override
-    @Deprecated
-    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria) {
-        this.legacyTargetItemCriteria.clear();
-        this.targetItemCriteria.clear();
-        for(OfferItemCriteria crit : targetItemCriteria){
-            this.targetItemCriteria.add(new OfferTargetCriteriaXrefImpl(this, crit));
-        }
-    }
+    //    @Override
+    //    @Deprecated
+    //    public Set<OfferItemCriteria> getTargetItemCriteria() {
+    //        if (legacyTargetItemCriteria.size() == 0) {
+    //            for (OfferTargetCriteriaXref xref : getTargetItemCriteriaXref()) {
+    //                legacyTargetItemCriteria.add(xref.getOfferItemCriteria());
+    //            }
+    //        }
+    //        return Collections.unmodifiableSet(legacyTargetItemCriteria);
+    //    }
+    //
+    //    @Override
+    //    @Deprecated
+    //    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria) {
+    //        this.legacyTargetItemCriteria.clear();
+    //        this.targetItemCriteria.clear();
+    //        for(OfferItemCriteria crit : targetItemCriteria){
+    //            this.targetItemCriteria.add(new OfferTargetCriteriaXrefImpl(this, crit));
+    //        }
+    //    }
 
     @Override
     public Set<OfferTargetCriteriaXref> getTargetItemCriteriaXref() {
@@ -801,27 +793,6 @@ public class OfferImpl implements Offer, AdminMainEntity {
             this.totalitarianOffer = false;
         } else {
             this.totalitarianOffer = totalitarianOffer;
-        }
-    }
-
-    @Override
-    @Deprecated
-    public Map<String, OfferRule> getOfferMatchRules() {
-        if (legacyOfferMatchRules.size() == 0) {
-            for (Map.Entry<String, OfferOfferRuleXref> entry : getOfferMatchRulesXref().entrySet()) {
-                legacyOfferMatchRules.put(entry.getKey(), entry.getValue().getOfferRule());
-            }
-        }
-        return Collections.unmodifiableMap(legacyOfferMatchRules);
-    }
-
-    @Override
-    @Deprecated
-    public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules) {
-        this.offerMatchRules.clear();
-        this.legacyOfferMatchRules.clear();
-        for(Map.Entry<String, OfferRule> entry : offerMatchRules.entrySet()){
-            this.offerMatchRules.put(entry.getKey(), new OfferOfferRuleXrefImpl(this, entry.getValue(), entry.getKey()));
         }
     }
 

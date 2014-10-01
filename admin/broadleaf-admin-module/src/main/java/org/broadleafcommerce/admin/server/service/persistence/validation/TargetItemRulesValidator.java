@@ -19,9 +19,6 @@
  */
 package org.broadleafcommerce.admin.server.service.persistence.validation;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
@@ -32,6 +29,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.validation.Pro
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.Map;
 
 
 /**
@@ -46,7 +46,8 @@ public class TargetItemRulesValidator implements PropertyValidator {
     public PropertyValidationResult validate(Entity entity, Serializable instance, Map<String, FieldMetadata> entityFieldMetadata, Map<String, String> validationConfiguration, BasicFieldMetadata propertyMetadata, String propertyName, String value) {
         Offer offer = (Offer)instance;
         if (OfferType.ORDER_ITEM.equals(offer.getType())) {
-            return new PropertyValidationResult(CollectionUtils.isNotEmpty(offer.getTargetItemCriteria()), RequiredPropertyValidator.ERROR_MESSAGE);
+            return new PropertyValidationResult(CollectionUtils.isNotEmpty(offer.getTargetItemCriteriaXref()),
+                    RequiredPropertyValidator.ERROR_MESSAGE);
         } else {
             return new PropertyValidationResult(true);
         }

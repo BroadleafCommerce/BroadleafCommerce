@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.FulfillmentGroupOfferPotential;
@@ -103,7 +104,13 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 
     protected boolean couldOfferApplyToFulfillmentGroup(Offer offer, PromotableFulfillmentGroup fulfillmentGroup) {
         boolean appliesToItem = false;
-        OfferRule rule = offer.getOfferMatchRules().get(OfferRuleType.FULFILLMENT_GROUP.getType());
+
+        OfferRule rule = null;
+        OfferOfferRuleXref ruleXref = offer.getOfferMatchRulesXref().get(OfferRuleType.FULFILLMENT_GROUP.getType());
+        if (ruleXref != null && ruleXref.getOfferRule() != null) {
+            rule = ruleXref.getOfferRule();
+        }
+
         if (rule != null && rule.getMatchRule() != null) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
             fulfillmentGroup.updateRuleVariables(vars);

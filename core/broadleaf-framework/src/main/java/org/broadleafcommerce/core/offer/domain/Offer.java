@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -266,37 +267,37 @@ public interface Offer extends Status, Serializable {
     @Deprecated
     public void setUses(int uses) ;
 
-    /**
-     * @deprecated use {@link #getQualifyingItemCriteriaXref()} instead
-     * @return
-     */
-    @Deprecated
-    public Set<OfferItemCriteria> getQualifyingItemCriteria();
-
-    /**
-     * @deprecated use {@link #setQualifyingItemCriteriaXref(java.util.Set)} instead
-     * @param qualifyingItemCriteria
-     */
-    @Deprecated
-    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
+    //    /**
+    //     * @deprecated use {@link #getQualifyingItemCriteriaXref()} instead
+    //     * @return
+    //     */
+    //    @Deprecated
+    //    public Set<OfferItemCriteria> getQualifyingItemCriteria();
+    //
+    //    /**
+    //     * @deprecated use {@link #setQualifyingItemCriteriaXref(java.util.Set)} instead
+    //     * @param qualifyingItemCriteria
+    //     */
+    //    @Deprecated
+    //    public void setQualifyingItemCriteria(Set<OfferItemCriteria> qualifyingItemCriteria);
 
     Set<OfferQualifyingCriteriaXref> getQualifyingItemCriteriaXref();
 
     void setQualifyingItemCriteriaXref(Set<OfferQualifyingCriteriaXref> qualifyingItemCriteriaXref);
 
-    /**
-     * @deprecated use {@link #getTargetItemCriteriaXref()} instead
-     * @return
-     */
-    @Deprecated
-    public Set<OfferItemCriteria> getTargetItemCriteria();
-
-    /**
-     * @deprecated use {@link #setTargetItemCriteriaXref(java.util.Set)} instead
-     * @param targetItemCriteria
-     */
-    @Deprecated
-    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria);
+    //    /**
+    //     * @deprecated use {@link #getTargetItemCriteriaXref()} instead
+    //     * @return
+    //     */
+    //    @Deprecated
+    //    public Set<OfferItemCriteria> getTargetItemCriteria();
+    //
+    //    /**
+    //     * @deprecated use {@link #setTargetItemCriteriaXref(java.util.Set)} instead
+    //     * @param targetItemCriteria
+    //     */
+    //    @Deprecated
+    //    public void setTargetItemCriteria(Set<OfferItemCriteria> targetItemCriteria);
 
     Set<OfferTargetCriteriaXref> getTargetItemCriteriaXref();
 
@@ -305,20 +306,6 @@ public interface Offer extends Status, Serializable {
     public Boolean isTotalitarianOffer();
 
     public void setTotalitarianOffer(Boolean totalitarianOffer);
-
-    /**
-     * @deprecated use {@link #getOfferMatchRulesXref()} instead
-     * @return
-     */
-    @Deprecated
-    public Map<String, OfferRule> getOfferMatchRules();
-
-    /**
-     * @deprecated use {@link #setOfferMatchRulesXref(java.util.Map)} instead
-     * @param offerMatchRules
-     */
-    @Deprecated
-    public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
 
     Map<String, OfferOfferRuleXref> getOfferMatchRulesXref();
 

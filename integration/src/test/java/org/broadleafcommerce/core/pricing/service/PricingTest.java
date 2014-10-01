@@ -36,6 +36,8 @@ import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
+import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
+import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -377,7 +379,12 @@ public class PricingTest extends BaseTest {
         OfferItemCriteria oic = new OfferItemCriteriaImpl();
         oic.setQuantity(1);
         oic.setMatchRule(orderRule);
-        offer.setTargetItemCriteria(Collections.singleton(oic));
+
+        OfferTargetCriteriaXref targetXref = new OfferTargetCriteriaXrefImpl();
+        targetXref.setOffer(offer);
+        targetXref.setOfferItemCriteria(oic);
+
+        offer.setTargetItemCriteriaXref(Collections.singleton(targetXref));
 
         offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(true);
