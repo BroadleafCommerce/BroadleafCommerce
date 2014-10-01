@@ -54,7 +54,7 @@ public class UpdateOrderMultishipOptionActivity extends BaseActivity<ProcessCont
                 FulfillmentGroup fg = orderItem.getOrder().getFulfillmentGroups().get(0);
                 if (fg.getAddress() == null && fg.getFulfillmentOption() == null) {
                     for (FulfillmentGroupItem fgItem : fg.getFulfillmentGroupItems()) {
-                        if (fgItem.getOrderItem().getId() == orderItemId) {
+                        if (fgItem.getOrderItem().getId().equals(orderItemId)) {
                             qty += fgItem.getQuantity();
                         }
                     }
