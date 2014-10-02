@@ -20,6 +20,7 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMapOverride;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -136,6 +137,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @MapKey(name = "fieldKey")
     @BatchSize(size = 20)
+    @ClonePolicyMapOverride
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
     
     @Column(name = "PRIORITY")
