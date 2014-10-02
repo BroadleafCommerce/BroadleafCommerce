@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -90,8 +91,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     @Value("${" + SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":false}")
     protected boolean siteStrictValidateProductionChanges = false;
 
-    @Value("${enterprise.use.production.sandbox.mode}")
-    protected boolean isProductionSandBoxMode;
+    @Resource(name = "blDeployBehaviorUtil")
+    protected DeployBehaviorUtil deployBehaviorUtil;
     
     @Resource(name="blEntityExtensionManagers")
     protected Map<String, ExtensionManager> entityExtensionManagers;
@@ -162,7 +163,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         brc.setLocale(locale);
         brc.setBroadleafCurrency(currency);
         brc.setSandBox(currentSandbox);
-        brc.setDeployBehavior(isProductionSandBoxMode ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
+        brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
 
         // Note that this must happen after the request context is set up as resolving a theme is dependent on site
         Theme theme = themeResolver.resolveTheme(request);

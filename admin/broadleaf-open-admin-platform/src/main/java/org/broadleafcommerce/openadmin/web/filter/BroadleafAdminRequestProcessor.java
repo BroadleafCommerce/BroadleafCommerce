@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafCurrencyResolver;
 import org.broadleafcommerce.common.web.BroadleafLocaleResolver;
@@ -92,12 +93,12 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     
     @Resource(name = "blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
+
+    @Resource(name = "blDeployBehaviorUtil")
+    protected DeployBehaviorUtil deployBehaviorUtil;
     
     @Value("${" + ADMIN_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":true}")
     protected boolean adminStrictValidateProductionChanges = true;
-
-    @Value("${enterprise.use.production.sandbox.mode}")
-    protected boolean isProductionSandBoxMode;
     
     @Resource(name="blEntityExtensionManagers")
     protected Map<String, ExtensionManager<?>> entityExtensionManagers;
@@ -206,7 +207,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 request.setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, sandBox.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
             }
             brc.setSandBox(sandBox);
-            brc.setDeployBehavior(isProductionSandBoxMode ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
+            brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
             brc.getAdditionalProperties().put("adminUser", adminUser);
         }
     }
