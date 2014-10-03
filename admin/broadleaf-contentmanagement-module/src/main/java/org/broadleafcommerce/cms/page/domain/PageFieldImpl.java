@@ -30,6 +30,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -86,7 +87,7 @@ public class PageFieldImpl implements PageField {
     @Type(type = "org.hibernate.type.StringClobType")
     protected String lobValue;
 
-    @ManyToOne(targetEntity = PageImpl.class, optional = false)
+    @ManyToOne(targetEntity = PageImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PAGE_ID")
     protected Page page;
 
