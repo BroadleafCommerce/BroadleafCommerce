@@ -37,6 +37,7 @@ import org.hibernate.annotations.Parameter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,6 +57,7 @@ import javax.persistence.Table;
         @AdminPresentationOverride(name = "priceList.friendlyName", value = @AdminPresentation(excluded = false, friendlyName = "PriceListImpl_Friendly_Name", order=1, group = "SearchFacetRangeImpl_Description", prominent=true, visibility = VisibilityEnum.FORM_HIDDEN))
 })
 @DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
@@ -75,7 +77,7 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
     @Column(name = "SEARCH_FACET_RANGE_ID")
     protected Long id;
     
-    @ManyToOne(targetEntity = SearchFacetImpl.class)
+    @ManyToOne(targetEntity = SearchFacetImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SEARCH_FACET_ID")
     @Index(name="SEARCH_FACET_INDEX", columnNames={"SEARCH_FACET_ID"})
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
