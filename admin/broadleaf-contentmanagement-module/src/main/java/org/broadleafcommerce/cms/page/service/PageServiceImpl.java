@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
@@ -48,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,6 +102,22 @@ public class PageServiceImpl implements PageService {
     @Override
     public Page findPageById(Long pageId) {
         return pageDao.readPageById(pageId);
+    }
+
+    /**
+     * Returns the page with the passed in id.
+     *
+     * @param pageId - The id of the page.
+     * @return The associated page.
+     */
+    @Override
+    public Map<String, PageField> findPageFieldMapByPageId(Long pageId) {
+        Map<String, PageField> returnMap = new HashMap<String, PageField>();
+        List<PageField> pageFields = pageDao.readPageFieldsByPageId(pageId);
+        for (PageField pf : pageFields) {
+            returnMap.put(pf.getFieldKey(), pf);
+        }
+        return returnMap;
     }
 
     @Override

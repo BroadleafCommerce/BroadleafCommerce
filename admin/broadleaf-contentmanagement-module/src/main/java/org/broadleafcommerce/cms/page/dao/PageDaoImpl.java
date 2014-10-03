@@ -20,6 +20,8 @@
 package org.broadleafcommerce.cms.page.dao;
 
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
+import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
@@ -31,6 +33,7 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.dao.TQRestriction;
 import org.broadleafcommerce.common.util.dao.TQRestriction.Mode;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -44,6 +47,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
 /**
@@ -66,6 +70,22 @@ public class PageDaoImpl implements PageDao {
     @Override
     public Page readPageById(Long id) {
         return em.find(PageImpl.class, id);
+    }
+
+    @Override
+    public List<PageField> readPageFieldsByPageId(Long pageId) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+
+        CriteriaQuery<PageField> criteria = builder.createQuery(PageField.class);
+        Root<PageFieldImpl> pageField = criteria.from(PageFieldImpl.class);
+        criteria.select(pageField);
+
+        Path<Object> path = pageField.get("page").get("id");
+        criteria.where(builder.equal(pageField.get("page").get("id"), pageId));
+
+        TypedQuery<PageField> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
     }
 
     @Override

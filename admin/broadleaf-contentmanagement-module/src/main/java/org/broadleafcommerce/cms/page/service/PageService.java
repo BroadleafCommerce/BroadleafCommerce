@@ -22,6 +22,7 @@ package org.broadleafcommerce.cms.page.service;
 import net.sf.ehcache.Cache;
 
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.page.dto.PageDTO;
@@ -43,6 +44,13 @@ public interface PageService {
      * @return The associated page.
      */
     public Page findPageById(Long pageId);
+
+    /**
+     * Returns the page-fields associated with a page.
+     * @param pageId
+     * @return
+     */
+    public Map<String, PageField> findPageFieldMapByPageId(Long pageId);
 
     /**
      * Returns the page template with the passed in id.

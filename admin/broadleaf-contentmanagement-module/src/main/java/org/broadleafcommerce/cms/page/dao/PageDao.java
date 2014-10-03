@@ -20,6 +20,7 @@
 package org.broadleafcommerce.cms.page.dao;
 
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.locale.domain.Locale;
 
@@ -33,6 +34,8 @@ import javax.annotation.Nonnull;
 public interface PageDao {
 
     public Page readPageById(Long id);
+    
+    public List<PageField> readPageFieldsByPageId(Long pageId);
 
     public PageTemplate readPageTemplateById(Long id);
     
