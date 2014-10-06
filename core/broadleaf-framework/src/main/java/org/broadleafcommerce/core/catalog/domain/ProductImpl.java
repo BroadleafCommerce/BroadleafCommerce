@@ -258,7 +258,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "allParentCategoriesTitle", order = 3000,
         tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
-        sortProperty = "displayOrder",
         targetObjectProperty = "category",
         parentObjectProperty = "product",
         gridVisibleFields = { "name" })
