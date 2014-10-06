@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
@@ -84,7 +83,6 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
     protected StructuredContentField structuredContentField;
 
     @Column(name = "MAP_KEY", nullable = false)
-    @Index(name = "SCFIELD_KEY_INDEX", columnNames = { "MAP_KEY" })
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String key;
 

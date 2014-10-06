@@ -214,7 +214,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @AdminPresentationToOneLookup(lookupDisplayProperty = "name", forcePopulateChildProperties = true)
     protected StructuredContentType structuredContentType;
 
-    @OneToMany(targetEntity = StructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKeyColumn(name = "MAP_KEY")
     @BatchSize(size = 20)
     @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
