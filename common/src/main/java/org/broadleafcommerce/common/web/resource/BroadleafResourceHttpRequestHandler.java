@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.common.web.resource;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
@@ -169,21 +168,6 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     public boolean isBundleRequest(HttpServletRequest request) {
 		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         return bundlingService.hasBundle(path);
-    }
-        
-    /**
-     * @return a clone of the locations list that is in {@link ResourceHttpRequestHandler}. Note that we must use
-     * reflection to access this field as it is marked private.
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Resource> getLocations() {
-        try {
-            List<Resource> locations = (List<Resource>) FieldUtils.readField(this, "locations", true);
-            return new ArrayList<Resource>(locations);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
     
     protected void establishThinRequestContext() {
