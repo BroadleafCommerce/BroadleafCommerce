@@ -59,7 +59,8 @@ class ActionableListGridModule extends ListGridModule {
         actionButtons { toolbar.find('button') }
         addButton(required: false) { actionButtons.filter('.sub-list-grid-add') }
         editButton(required: false) { actionButtons.filter('.sub-list-grid-update') }
-        reorderButton(required: false) { actionButtons.filter('.sub-list-grid-remove') }
+        reorderButton(required: false) { actionButtons.filter('.sub-list-grid-reorder') }
+        removeButton(required: false) { actionButtons.filter('.sub-list-grid-remove') }
     }
 }
 

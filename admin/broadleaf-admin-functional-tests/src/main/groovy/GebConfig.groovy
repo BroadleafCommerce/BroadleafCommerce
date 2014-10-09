@@ -35,6 +35,9 @@ if (!System.getProperty(SystemPropertiesBuildAdapter.BASE_URL_PROPERTY_NAME)) {
 if (!System.getProperty(SystemPropertiesBuildAdapter.REPORTS_DIR_PROPERTY_NAME)) {
     reportsDir = 'target/gebreports'
 }
+waiting {
+    timeout = 60
+}
 environments {
 
     // See: http://code.google.com/p/selenium/wiki/ChromeDriver
