@@ -842,7 +842,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional("blTransactionManager")
     public boolean releaseLock(Order order) {
         return orderDao.releaseLock(order);
     }

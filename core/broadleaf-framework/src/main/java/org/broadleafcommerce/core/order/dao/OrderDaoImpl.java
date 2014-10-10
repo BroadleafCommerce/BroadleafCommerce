@@ -19,8 +19,12 @@
  */
 package org.broadleafcommerce.core.order.dao;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
@@ -31,20 +35,25 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.ejb.QueryHints;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
+
+    private static final Log LOG = LogFactory.getLog(OrderDaoImpl.class);
+    private static final String ORDER_LOCK_KEY = UUID.randomUUID().toString();
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -57,6 +66,22 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blOrderDaoExtensionManager")
     protected OrderDaoExtensionManager extensionManager;
+
+    @Resource(name = "blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
+
+    @Value("${order.lock.time.to.live:-1}")
+    protected long orderLockTimeToLive = -1L;
+
+    @Value("${order.lock.session.affinity:true}")
+    protected boolean orderLockSessionAffinity = true;
+
+    protected String orderLockKey;
+
+    @PostConstruct
+    public void init() {
+        orderLockKey = orderLockSessionAffinity?ORDER_LOCK_KEY:"NO_KEY";
+    }
     
     @Override
     public Order readOrderById(final Long orderId) {
@@ -240,22 +265,20 @@ public class OrderDaoImpl implements OrderDao {
         // First, we'll see if there's a record of a lock for this order
         Query q = em.createNamedQuery("BC_ORDER_LOCK_READ");
         q.setParameter("orderId", order.getId());
+        q.setParameter("key", orderLockKey);
         q.setHint(QueryHints.HINT_CACHEABLE, false);
-        OrderLock ol;
-        try {
-            ol = (OrderLock) q.getSingleResult();
-        } catch (NoResultException e) {
-            ol = null;
-        }
+        Long count = (Long) q.getSingleResult();
         
-        if (ol == null) {
+        if (count == 0L) {
             // If there wasn't a lock, we'll try to create one. It's possible that another thread is attempting the
             // same thing at the same time, so we might get a constraint violation exception here. That's ok. If we 
             // successfully inserted a record, that means that we are the owner of the lock right now.
             try {
-                ol = (OrderLock) entityConfiguration.createEntityInstance(OrderLock.class.getName());
+                OrderLock ol = (OrderLock) entityConfiguration.createEntityInstance(OrderLock.class.getName());
                 ol.setOrderId(order.getId());
                 ol.setLocked(true);
+                ol.setKey(orderLockKey);
+                ol.setLastUpdated(System.currentTimeMillis());
                 em.persist(ol);
                 return true;
             } catch (EntityExistsException e) {
@@ -264,10 +287,13 @@ public class OrderDaoImpl implements OrderDao {
         }
 
         // We weren't successful in creating a lock, which means that there was some previously created lock
-        // for this order. We'll attempt to update the status from unlocked to locked. If that is succesful,
+        // for this order. We'll attempt to update the status from unlocked to locked. If that is successful,
         // we acquired the lock. 
         q = em.createNamedQuery("BC_ORDER_LOCK_ACQUIRE");
         q.setParameter("orderId", order.getId());
+        q.setParameter("currentTime", System.currentTimeMillis());
+        q.setParameter("key", orderLockKey);
+        q.setParameter("timeout", orderLockTimeToLive==-1L?orderLockTimeToLive:System.currentTimeMillis() - orderLockTimeToLive);
         q.setHint(QueryHints.HINT_CACHEABLE, false);
         int rowsAffected = q.executeUpdate();
 
@@ -275,11 +301,28 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public boolean releaseLock(Order order) {
-        Query q = em.createNamedQuery("BC_ORDER_LOCK_RELEASE");
-        q.setParameter("orderId", order.getId());
-        q.setHint(QueryHints.HINT_CACHEABLE, false);
-        int rowsAffected = q.executeUpdate();
-        return rowsAffected == 1;
+    public boolean releaseLock(final Order order) {
+        final boolean[] response = {false};
+        try {
+            transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                @Override
+                public void execute() throws Throwable {
+                    Query q = em.createNamedQuery("BC_ORDER_LOCK_RELEASE");
+                    q.setParameter("orderId", order.getId());
+                    q.setParameter("key", orderLockKey);
+                    q.setHint(QueryHints.HINT_CACHEABLE, false);
+                    int rowsAffected = q.executeUpdate();
+                    response[0] = rowsAffected == 1;
+                }
+
+                @Override
+                public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+                    return true;
+                }
+            }, RuntimeException.class);
+        } catch (RuntimeException e) {
+            LOG.error(String.format("Could not release order lock (%s)", order.getId()), e);
+        }
+        return response[0];
     }
 }

@@ -67,6 +67,7 @@ public class DatabaseOrderLockManager implements OrderLockManager {
             if (!lockAcquired) {
                 count++;
                 if (count >= getDatabaseLockAcquisitionNumRetries()) {
+                    LOG.warn(String.format("Exceeded max retries to attempt to acquire a lock on current Order (%s)", order.getId()));
                     throw new RuntimeException("Exceeded max retries to attempt to acquire a lock on current Order");
                 }
                 try {

@@ -19,9 +19,12 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
@@ -33,21 +36,23 @@ public class OrderLockImpl implements OrderLock {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @Column(name = "ORDER_ID")
-    protected Long orderId;
-    
+    @EmbeddedId
+    OrderLockPk orderLockPK = new OrderLockPk();
+
     @Column(name = "LOCKED")
     protected Character locked = 'N';
 
+    @Column(name = "LAST_UPDATED")
+    protected Long lastUpdated;
+
     @Override
     public Long getOrderId() {
-        return orderId;
+        return orderLockPK.getOrderId();
     }
     
     @Override
     public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+        this.orderLockPK.setOrderId(orderId);
     }
 
     @Override
@@ -68,4 +73,45 @@ public class OrderLockImpl implements OrderLock {
         }
     }
 
+    public Long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public String getKey() {
+        return orderLockPK.getKey();
+    }
+
+    public void setKey(String nodeKey) {
+        this.orderLockPK.setKey(nodeKey);
+    }
+
+    @Embeddable
+    public static class OrderLockPk implements Serializable {
+
+        @Column(name = "ORDER_ID")
+        protected Long orderId;
+
+        @Column(name = "LOCK_KEY")
+        protected String key;
+
+        public Long getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(Long orderId) {
+            this.orderId = orderId;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+    }
 }
