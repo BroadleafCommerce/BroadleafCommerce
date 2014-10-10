@@ -52,4 +52,27 @@ public interface OrderLock extends Serializable {
      */
     public void setLocked(Boolean locked);
 
+    /**
+     * @return the last time this lock record was successfully altered
+     */
+    Long getLastUpdated();
+
+    /**
+     * Set the time of alteration
+     *
+     * @param lastUpdated
+     */
+    void setLastUpdated(Long lastUpdated);
+
+    /**
+     * @return the key used to identify the creator of the lock
+     */
+    String getKey();
+
+    /**
+     * Set a key identifying the creator of the lock
+     *
+     * @param nodeKey
+     */
+    void setKey(String nodeKey);
 }
