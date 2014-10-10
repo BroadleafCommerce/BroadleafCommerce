@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -69,19 +70,6 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
-
-    @Value("${order.lock.time.to.live:-1}")
-    protected long orderLockTimeToLive = -1L;
-
-    @Value("${order.lock.session.affinity:true}")
-    protected boolean orderLockSessionAffinity = true;
-
-    protected String orderLockKey;
-
-    @PostConstruct
-    public void init() {
-        orderLockKey = orderLockSessionAffinity?ORDER_LOCK_KEY:"NO_KEY";
-    }
     
     @Override
     public Order readOrderById(final Long orderId) {
@@ -262,6 +250,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public boolean acquireLock(Order order) {
+        String orderLockKey = getOrderLockKey();
         // First, we'll see if there's a record of a lock for this order
         Query q = em.createNamedQuery("BC_ORDER_LOCK_READ");
         q.setParameter("orderId", order.getId());
@@ -293,6 +282,7 @@ public class OrderDaoImpl implements OrderDao {
         q.setParameter("orderId", order.getId());
         q.setParameter("currentTime", System.currentTimeMillis());
         q.setParameter("key", orderLockKey);
+        Long orderLockTimeToLive = getDatabaseOrderLockTimeToLive();
         q.setParameter("timeout", orderLockTimeToLive==-1L?orderLockTimeToLive:System.currentTimeMillis() - orderLockTimeToLive);
         q.setHint(QueryHints.HINT_CACHEABLE, false);
         int rowsAffected = q.executeUpdate();
@@ -309,7 +299,7 @@ public class OrderDaoImpl implements OrderDao {
                 public void execute() throws Throwable {
                     Query q = em.createNamedQuery("BC_ORDER_LOCK_RELEASE");
                     q.setParameter("orderId", order.getId());
-                    q.setParameter("key", orderLockKey);
+                    q.setParameter("key", getOrderLockKey());
                     q.setHint(QueryHints.HINT_CACHEABLE, false);
                     int rowsAffected = q.executeUpdate();
                     response[0] = rowsAffected == 1;
@@ -324,5 +314,17 @@ public class OrderDaoImpl implements OrderDao {
             LOG.error(String.format("Could not release order lock (%s)", order.getId()), e);
         }
         return response[0];
+    }
+
+    protected String getOrderLockKey() {
+        return getDatabaseOrderLockSessionAffinity()?ORDER_LOCK_KEY:"NO_KEY";
+    }
+
+    protected Boolean getDatabaseOrderLockSessionAffinity() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("order.lock.database.session.affinity", true);
+    }
+
+    protected Long getDatabaseOrderLockTimeToLive() {
+        return BLCSystemProperty.resolveLongSystemProperty("order.lock.database.time.to.live", -1L);
     }
 }
