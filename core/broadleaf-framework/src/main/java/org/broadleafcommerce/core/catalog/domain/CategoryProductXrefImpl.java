@@ -89,12 +89,12 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     @Column(name = "CATEGORY_PRODUCT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+    @ManyToOne(targetEntity = CategoryImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category = new CategoryImpl();
 
     /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
+    @ManyToOne(targetEntity = ProductImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
     protected Product product = new ProductImpl();
 

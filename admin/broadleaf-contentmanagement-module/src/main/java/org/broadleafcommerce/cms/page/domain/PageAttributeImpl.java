@@ -30,6 +30,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -73,7 +74,7 @@ public class PageAttributeImpl implements PageAttribute {
     @Column(name = "FIELD_VALUE")
     protected String value;
 
-    @ManyToOne(targetEntity = PageImpl.class, optional = false)
+    @ManyToOne(targetEntity = PageImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PAGE_ID")
     @Index(name="PAGEATTRIBUTE_INDEX", columnNames = { "PAGE_ID" })
     protected Page page;

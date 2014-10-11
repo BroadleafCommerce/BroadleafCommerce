@@ -36,6 +36,7 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -87,7 +88,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
             prominent = true, gridOrder = Presentation.FieldOrder.PRICE_ADJUSTMENT, order = Presentation.FieldOrder.PRICE_ADJUSTMENT)
     protected BigDecimal priceAdjustment;
 
-    @ManyToOne(targetEntity = ProductOptionImpl.class)
+    @ManyToOne(targetEntity = ProductOptionImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     protected ProductOption productOption;
 

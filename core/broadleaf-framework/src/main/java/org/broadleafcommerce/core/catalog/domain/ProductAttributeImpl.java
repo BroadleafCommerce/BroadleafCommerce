@@ -31,6 +31,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -89,7 +90,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     protected Boolean searchable = false;
     
     /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
+    @ManyToOne(targetEntity = ProductImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="PRODUCTATTRIBUTE_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product;

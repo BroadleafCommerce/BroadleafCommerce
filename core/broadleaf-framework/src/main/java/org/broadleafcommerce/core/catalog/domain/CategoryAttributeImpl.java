@@ -31,6 +31,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -85,7 +86,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
     @AdminPresentation(excluded = true)
     protected Boolean searchable = false;
     
-    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+    @ManyToOne(targetEntity = CategoryImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="CATEGORYATTRIBUTE_INDEX", columnNames={"CATEGORY_ID"})
     protected Category category;

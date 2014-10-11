@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.domain;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -73,7 +74,7 @@ public class CategorySearchFacetImpl implements CategorySearchFacet {
     @Column(name = "CATEGORY_SEARCH_FACET_ID")
     protected Long id;
     
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     @AdminPresentation(excluded = true)
     protected Category category;

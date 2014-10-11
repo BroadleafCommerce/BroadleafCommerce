@@ -35,6 +35,7 @@ import org.hibernate.annotations.Parameter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -74,7 +75,7 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
     @Column(name = "CAT_EXCL_SEARCH_FACET_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category;
 

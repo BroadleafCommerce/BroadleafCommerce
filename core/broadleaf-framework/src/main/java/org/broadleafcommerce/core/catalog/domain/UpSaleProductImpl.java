@@ -32,6 +32,7 @@ import org.hibernate.annotations.Parameter;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -75,12 +76,12 @@ public class UpSaleProductImpl implements RelatedProduct {
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     private BigDecimal sequence;
     
-    @ManyToOne(targetEntity = ProductImpl.class)
+    @ManyToOne(targetEntity = ProductImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="UPSALE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     private Product product;
     
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="UPSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     protected Category category;

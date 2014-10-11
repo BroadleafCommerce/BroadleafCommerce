@@ -34,6 +34,7 @@ import org.hibernate.annotations.PolymorphismType;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -72,11 +73,11 @@ public class CategoryXrefImpl implements CategoryXref {
     @Column(name = "CATEGORY_XREF_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+    @ManyToOne(targetEntity = CategoryImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category = new CategoryImpl();
 
-    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+    @ManyToOne(targetEntity = CategoryImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SUB_CATEGORY_ID")
     protected Category subCategory = new CategoryImpl();
 

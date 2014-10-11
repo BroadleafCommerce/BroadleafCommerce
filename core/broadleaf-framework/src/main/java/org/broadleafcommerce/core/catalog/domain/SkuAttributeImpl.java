@@ -30,6 +30,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -101,7 +102,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     protected Boolean searchable = false;
   
     /** The sku. */
-    @ManyToOne(targetEntity = SkuImpl.class, optional=false)
+    @ManyToOne(targetEntity = SkuImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SKU_ID")
     @Index(name="SKUATTR_SKU_INDEX", columnNames={"SKU_ID"})
     protected Sku sku;

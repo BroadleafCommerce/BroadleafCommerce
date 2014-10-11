@@ -251,8 +251,8 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 
-    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product", orphanRemoval = true)
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product", orphanRemoval = true,
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
@@ -273,8 +273,8 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     )
     protected Map<String, ProductAttribute> productAttributes = new HashMap<String, ProductAttribute>();
 
-    @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product")
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product",
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "productOptionsTitle",

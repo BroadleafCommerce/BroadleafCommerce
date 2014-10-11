@@ -82,7 +82,7 @@ public class OfferQualifyingCriteriaXrefImpl implements OfferQualifyingCriteriaX
     protected Long id;
 
     //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
     @AdminPresentation(excluded = true)
     protected Offer offer;
