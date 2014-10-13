@@ -23,11 +23,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.core.catalog.dao.ProductDao;
+import org.broadleafcommerce.core.catalog.dao.SkuDao;
+import org.broadleafcommerce.core.catalog.domain.*;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -53,6 +52,13 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
+    @Resource(name = "blProductDao")
+    protected ProductDao productDao;
+
+    @Resource(name = "blSkuDao")
+    protected SkuDao skuDao;
+
+
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
 
     @Override
@@ -65,6 +71,13 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Override
     public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
         return canHandleAdd(persistencePackage);
+    }
+
+    @Override
+    public Boolean canHandleRemove(PersistencePackage persistencePackage) {
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        String[] customCriteria = persistencePackage.getCustomCriteria();
+        return !ArrayUtils.isEmpty(customCriteria) && "productDirectEdit".equals(customCriteria[0]) && Product.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
@@ -117,7 +130,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            
+
             if (adminInstance instanceof ProductBundle) {
                 removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
             }
@@ -138,7 +151,27 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
     }
-    
+
+    @Override
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            Sku defaultSku = adminInstance.getDefaultSku();
+            //  set the default sku to null
+            adminInstance.setDefaultSku(null);
+            // delete product ( set product status to archive)
+            productDao.delete(adminInstance);
+            // delete the old sku from databse
+            skuDao.delete(defaultSku);
+        } catch (Exception e) {
+            throw new ServiceException("Unable to delete  entity for " + entity.getType()[0], e);
+        }
+    }
+
     /**
      * If the pricing model is of type item_sum, that property should not be required
      * @param adminInstance
@@ -153,4 +186,5 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
         }
     }
+
 }

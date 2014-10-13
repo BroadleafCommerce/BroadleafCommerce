@@ -403,7 +403,10 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable 
 
     @Override
     public void setDefaultSku(Sku defaultSku) {
-        defaultSku.setDefaultProduct(this);
+        if (defaultSku != null) {
+            defaultSku.setDefaultProduct(this);
+
+        }
         this.defaultSku = defaultSku;
     }
 
