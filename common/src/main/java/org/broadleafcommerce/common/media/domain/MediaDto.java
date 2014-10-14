@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.common.media.domain;
 
-import org.hibernate.service.UnknownUnwrapTypeException;
+import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
 
 /**
  * A null safe media object.
