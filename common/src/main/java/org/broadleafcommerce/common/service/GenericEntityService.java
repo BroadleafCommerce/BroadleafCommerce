@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.common.service;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -47,6 +48,13 @@ public interface GenericEntityService {
     public <T> T save(T object);
 
     /**
+     * Persist the new object
+     *
+     * @param object
+     */
+    void persist(Object object);
+
+    /**
      * Finds how many of the given entity class are persisted
      * 
      * @param clazz
@@ -64,4 +72,37 @@ public interface GenericEntityService {
      */
     public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset);
 
+    /**
+     * Retrieve the identifier from the Hibernate entity (the entity must reside in the current session)
+     *
+     * @param entity
+     * @return
+     */
+    Serializable getIdentifier(Object entity);
+
+    /**
+     * Flush changes to the persistence store
+     */
+    void flush();
+
+    /**
+     * Clear level 1 cache
+     */
+    void clear();
+
+    /**
+     * Whether or not the current hibernate session (level 1) contains the object
+     *
+     * @param object
+     * @return
+     */
+    boolean sessionContains(Object object);
+
+    /**
+     * Return the ceiling implementation class for an entity
+     *
+     * @param className
+     * @return
+     */
+    Class<?> getCeilingImplClass(String className);
 }

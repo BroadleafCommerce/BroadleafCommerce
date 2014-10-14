@@ -23,12 +23,16 @@ package org.broadleafcommerce.common.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -66,15 +70,13 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
 
     @Override
     public <T> Long readCountGenericEntity(Class<T> clazz) {
-        TypedQuery<Long> q = new TypedQueryBuilder<T>(clazz, "root")
-            .toCountQuery(em);
+        TypedQuery<Long> q = new TypedQueryBuilder<T>(clazz, "root").toCountQuery(em);
         return q.getSingleResult();
     }
 
     @Override
     public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset) {
-        TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root")
-            .toQuery(em);
+        TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root").toQuery(em);
         q.setMaxResults(limit);
         q.setFirstResult(offset);
         return q.getResultList();
@@ -82,7 +84,12 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
 
     @Override
     public Class<?> getImplClass(String className) {
-        Class<?> clazz = entityConfiguration.lookupEntityClass(className);
+        Class<?> clazz = null;
+        try {
+            clazz = entityConfiguration.lookupEntityClass(className);
+        } catch (NoSuchBeanDefinitionException e) {
+            //do nothing
+        }
         if (clazz == null) {
             try {
                 clazz = Class.forName(className);
@@ -94,9 +101,45 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
     }
     
     @Override
+    public Class<?> getCeilingImplClass(String className) {
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz, em.unwrap(Session.class).getSessionFactory(), true, true);
+        clazz = entitiesFromCeiling[entitiesFromCeiling.length - 1];
+        return clazz;
+    }
+
+    @Override
+    public Serializable getIdentifier(Object entity) {
+        return em.unwrap(Session.class).getIdentifier(entity);
+    }
+    
+    @Override
     public <T> T save(T object) {
         return em.merge(object);
     }
-    
 
+    @Override
+    public void persist(Object object) {
+        em.persist(object);
+    }
+
+    @Override
+    public void flush() {
+        em.flush();
+    }
+
+    @Override
+    public void clear() {
+        em.clear();
+    }
+
+    @Override
+    public boolean sessionContains(Object object) {
+        return em.contains(object);
+    }
 }

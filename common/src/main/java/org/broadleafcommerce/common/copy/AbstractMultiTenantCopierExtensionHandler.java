@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.common.copy;
 
-import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
@@ -27,14 +26,12 @@ public class AbstractMultiTenantCopierExtensionHandler extends AbstractExtension
         implements MultiTenantCopierExtensionHandler {
 
     @Override
-    public ExtensionResultStatusType transformCopy(MultiTenantCopyContext context, Object from, Object to) 
-            throws ServiceException {
+    public ExtensionResultStatusType transformCopy(MultiTenantCopyContext context, Object from, Object to) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType prepareForSave(MultiTenantCopyContext context, Object from, Object to)
-            throws ServiceException {
+    public ExtensionResultStatusType prepareForSave(MultiTenantCopyContext context, Object from, Object to) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

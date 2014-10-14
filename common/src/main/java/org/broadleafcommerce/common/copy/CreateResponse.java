@@ -19,14 +19,24 @@
  */
 package org.broadleafcommerce.common.copy;
 
-import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+/**
+ * @author Jeff Fischer
+ */
+public class CreateResponse<G> {
 
+    public CreateResponse(G clone, boolean alreadyPopulated) {
+        this.clone = clone;
+        this.alreadyPopulated = alreadyPopulated;
+    }
 
-public interface MultiTenantCopierExtensionHandler extends ExtensionHandler {
-    
-    public ExtensionResultStatusType transformCopy(MultiTenantCopyContext context, Object from, Object to);
-    
-    public ExtensionResultStatusType prepareForSave(MultiTenantCopyContext context, Object from, Object to);
+    private G clone;
+    private boolean alreadyPopulated = false;
 
+    public G getClone() {
+        return clone;
+    }
+
+    public boolean isAlreadyPopulated() {
+        return alreadyPopulated;
+    }
 }

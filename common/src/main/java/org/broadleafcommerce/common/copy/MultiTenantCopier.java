@@ -19,8 +19,10 @@
  */
 package org.broadleafcommerce.common.copy;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.service.GenericEntityService;
@@ -30,9 +32,19 @@ import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import org.springframework.core.Ordered;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  * Abstract class for copying entities to a new catalog as required during derived catalog propagation.
@@ -74,7 +86,7 @@ public abstract class MultiTenantCopier implements Ordered {
      * @throws G
      * @throws ServiceException
      */
-    public <T extends Object, G extends Exception> T executeSmartObjectCopy(MultiTenantCopyContext context, T from, 
+    public <T, G extends Exception> T executeSmartObjectCopy(MultiTenantCopyContext context, T from,
             CopyOperation<T, G> operation) throws G, ServiceException {
         if (from instanceof Status && 'Y' == ((Status) from).getArchived()) {
             return null;
@@ -98,6 +110,77 @@ public abstract class MultiTenantCopier implements Ordered {
 
         context.storeEquivalentMapping(operation.getCacheClass().getName(), fromId, operation.getId(copy));
         return copy;
+    }
+
+    public void persistCopyObjectTree(Object copy, MultiTenantCopyContext context) {
+        persistCopyObjectTree(copy, new HashSet(), context);
+    }
+
+    protected void persistCopyObjectTree(Object copy, Set library, MultiTenantCopyContext context) {
+        if (library.contains(copy)) {
+            return;
+        }
+        library.add(copy);
+        Field[] allFields = getAllFields(copy.getClass());
+        for (Field field : allFields) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                field.setAccessible(true);
+                Object newTarget;
+                try {
+                    newTarget = field.get(copy);
+                } catch (IllegalAccessException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+                if (newTarget != null) {
+                    if (field.getAnnotation(ManyToOne.class) != null || field.getAnnotation(OneToOne.class) != null) {
+                        persistCopyObjectTree(newTarget, library, context);
+                    } else if (field.getAnnotation(ManyToMany.class) != null || field.getAnnotation(OneToMany.class)
+                            != null) {
+                        if (newTarget instanceof Collection) {
+                            Collection newCollection = (Collection) newTarget;
+                            for (Object member : newCollection) {
+                                persistCopyObjectTree(member, library, context);
+                            }
+                        } else if (newTarget instanceof Map) {
+                            Map newMap = (Map) newTarget;
+                            for (Object key : newMap.keySet()) {
+                                persistCopyObjectTree(newMap.get(key), library, context);
+                            }
+                        } else {
+                            throw new IllegalArgumentException(String.format("During copy object persistence, " +
+                                    "an unrecognized type was detected for a OneToMany or ManyToMany field. The system currently only " +
+                                    "recognizes Collection and Map. (%s.%s)", copy.getClass().getName(), field.getName()));
+                        }
+                    }
+                }
+            }
+        }
+        if (!genericEntityService.sessionContains(copy)) {
+            Object original = genericEntityService.readGenericEntity(copy.getClass().getName(), context.removeOriginalIdentifier(copy));
+            extensionManager.getProxy().transformCopy(context, original, copy);
+            extensionManager.getProxy().prepareForSave(context, original, copy);
+            genericEntityService.persist(copy);
+            context.storeEquivalentMapping(original.getClass().getName(), context.getIdentifier(original), context.getIdentifier(copy));
+        }
+        //the context contains a counter, which will be thread safe for this circumstance
+        context.checkLevel1Cache();
+    }
+
+    public Field[] getAllFields(Class<?> targetClass) {
+        Field[] allFields = new Field[]{};
+        boolean eof = false;
+        Class<?> currentClass = targetClass;
+        while (!eof) {
+            Field[] fields = currentClass.getDeclaredFields();
+            allFields = (Field[]) ArrayUtils.addAll(allFields, fields);
+            if (currentClass.getSuperclass() != null) {
+                currentClass = currentClass.getSuperclass();
+            } else {
+                eof = true;
+            }
+        }
+
+        return allFields;
     }
     
     /**

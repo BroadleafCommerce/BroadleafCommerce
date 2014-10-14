@@ -23,6 +23,7 @@ package org.broadleafcommerce.common.service;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -45,6 +46,10 @@ public class GenericEntityServiceImpl implements GenericEntityService {
         return genericEntityDao.save(object);
     }
 
+    public void persist(Object object) {
+        genericEntityDao.persist(object);
+    }
+
     @Override
     public <T> Long readCountGenericEntity(Class<T> clazz) {
         return genericEntityDao.readCountGenericEntity(clazz);
@@ -53,6 +58,31 @@ public class GenericEntityServiceImpl implements GenericEntityService {
     @Override
     public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset) {
         return genericEntityDao.readAllGenericEntity(clazz, limit, offset);
+    }
+
+    @Override
+    public Serializable getIdentifier(Object entity) {
+        return genericEntityDao.getIdentifier(entity);
+    }
+
+    @Override
+    public void flush() {
+        genericEntityDao.flush();
+    }
+
+    @Override
+    public void clear() {
+        genericEntityDao.clear();
+    }
+
+    @Override
+    public boolean sessionContains(Object object) {
+        return genericEntityDao.sessionContains(object);
+    }
+
+    @Override
+    public Class<?> getCeilingImplClass(String className) {
+        return genericEntityDao.getCeilingImplClass(className);
     }
 
 }
