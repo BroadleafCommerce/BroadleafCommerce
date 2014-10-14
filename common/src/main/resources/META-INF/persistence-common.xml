@@ -47,7 +47,6 @@
         <class>org.broadleafcommerce.common.config.domain.SystemPropertyImpl</class>
         <class>org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl</class>
         <class>org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration</class>
-        <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntryImpl</class>

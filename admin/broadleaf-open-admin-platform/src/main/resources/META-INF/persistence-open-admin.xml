@@ -33,7 +33,6 @@
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminUserAttributeImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl</class>
         <class>org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl</class>
-        <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <!-- Other properties inherited from persistence-common.xml -->
