@@ -48,7 +48,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_OFFER_RULE_MAP")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")

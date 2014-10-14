@@ -30,8 +30,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Polymorphism;
-import org.hibernate.annotations.PolymorphismType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,7 +43,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_RULE_MAP")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")

@@ -62,7 +62,6 @@ import javax.persistence.Table;
  * @author btaylor
  */
 @Entity
-@Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_PRODUCT_XREF")
 @AdminPresentationClass(excludeFromPolymorphism = false)

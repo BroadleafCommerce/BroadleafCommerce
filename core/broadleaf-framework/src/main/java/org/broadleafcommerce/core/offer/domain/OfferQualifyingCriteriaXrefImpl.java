@@ -45,7 +45,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_QUAL_CRIT_OFFER_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
