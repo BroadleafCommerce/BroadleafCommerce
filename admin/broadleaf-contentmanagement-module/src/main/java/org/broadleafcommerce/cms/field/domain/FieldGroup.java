@@ -19,13 +19,15 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by bpolster.
  */
-public interface FieldGroup extends Serializable {
+public interface FieldGroup extends Serializable, MultiTenantCloneable<FieldGroup> {
 
     public Long getId();
 

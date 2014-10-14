@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.enumeration.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -140,5 +142,20 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     @Override
     public void setType(DataDrivenEnumeration type) {
         this.type = type;
+    }
+
+    @Override
+    public <G extends DataDrivenEnumerationValue> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        DataDrivenEnumerationValue cloned = createResponse.getClone();
+        cloned.setKey(key);
+        cloned.setDisplay(display);
+        cloned.setHidden(hidden);
+        //don't clone type - it will be replace (if applicable) on the other side of the relationship
+        cloned.setType(type);
+        return createResponse;
     }
 }

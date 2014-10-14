@@ -20,6 +20,7 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.locale.domain.Locale;
 
 import java.io.Serializable;
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * Created by bpolster.
  */
-public interface PageTemplate extends Serializable {
+public interface PageTemplate extends Serializable, MultiTenantCloneable<PageTemplate> {
 
     public Long getId();
 
@@ -67,4 +68,5 @@ public interface PageTemplate extends Serializable {
     public List<PageTemplateFieldGroupXref> getFieldGroupXrefs();
 
     public void setFieldGroupXrefs(List<PageTemplateFieldGroupXref> fieldGroups);
+
 }

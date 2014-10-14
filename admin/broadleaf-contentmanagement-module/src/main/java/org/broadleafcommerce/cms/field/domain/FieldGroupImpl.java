@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.cms.page.domain.PageTemplateFieldGroupXref;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -122,5 +125,22 @@ public class FieldGroupImpl implements FieldGroup {
         this.fieldDefinitions = fieldDefinitions;
     }
 
+    @Override
+    public <G extends FieldGroup> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FieldGroup cloned = createResponse.getClone();
+        cloned.setInitCollapsedFlag(initCollapsedFlag);
+        cloned.setName(name);
+        for (FieldDefinition fieldDefinition : fieldDefinitions) {
+            FieldDefinition clonedDef = fieldDefinition.createOrRetrieveCopyInstance(context).getClone();
+            clonedDef.setFieldGroup(cloned);
+            cloned.getFieldDefinitions().add(clonedDef);
+        }
+        return createResponse;
+    }
 }
 

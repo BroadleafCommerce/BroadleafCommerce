@@ -21,6 +21,8 @@ package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -34,7 +36,6 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.CascadeType;
@@ -49,7 +50,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Polymorphism(type = PolymorphismType.EXPLICIT)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PGTMPLT_FLDGRP_XREF")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCMSElements")
@@ -57,9 +57,8 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXref, Serializable {
+public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXref {
 
-    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -137,4 +136,17 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
         return groupOrder;
     }
 
+    @Override
+    public <G extends PageTemplateFieldGroupXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        PageTemplateFieldGroupXref cloned = createResponse.getClone();
+        //don't clone pageTemplate - it will be replaced (if applicable) on the other side of the relationship
+        cloned.setPageTemplate(pageTemplate);
+        cloned.setFieldGroup(fieldGroup.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setGroupOrder(groupOrder);
+        return createResponse;
+    }
 }
