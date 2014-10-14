@@ -30,18 +30,22 @@ public interface MultiTenantCloneable<T> {
      * Clone this entity for the purpose of multiple tenancy. Note, extending classes should follow this pattern:
      * </p>
      * <code>
-     * public MyObject clone(MultiTenantCopyContext context, boolean save) throws CloneNotSupportedException {
-     *      //we don't want the superclass to persist, we'll take care of that when we're done adding our fields to the clone
-     *      MyObject cloned = super.clone(context, false)
-     *      //copy extended field values here
-     *      return context.conditionallySaveClone(this, cloned, MyObject.class, save);
+     * public CreateResponse&lt;MyClass&gt; createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+     *      CreateResponse&lt;MyClass&gt; createResponse = super.createOrRetrieveCopyInstance(this);
+     *      if (createResponse.isAlreadyPopulated()) {
+     *          return createResponse;
+     *      }
+     *      MyClass myClone = createResponse.getClone();
+     *
+     *      //copy extended field values on myClone here
+     *
+     *      return CreateResponse&lt;MyClass&gt;;
      * }
      * </code>
      *
      * @param context a context object providing persistence and library functionality for copying entities
-     * @param save whether or not the clone should be saved directly after this clone operation
-     * @return the resulting copy, possibly persisted
-     * @throws CloneNotSupportedException
+     * @return the resulting copy container, possibly already persisted
+     * @throws CloneNotSupportedException if there's a problem detected with the cloning configuration
      */
     public <G extends T> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException;
 }
