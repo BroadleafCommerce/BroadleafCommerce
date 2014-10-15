@@ -90,7 +90,13 @@ import javax.persistence.Table;
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
                                     overrideValue = "NOT_REQUIRED"),
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
-                                                overrideValue = "PhoneImpl_Fax_Phone")})
+                                                overrideValue = "PhoneImpl_Fax_Phone")}),
+        @AdminPresentationMergeOverride(name = "state", mergeEntries =
+                    @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                            booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "country", mergeEntries =
+                    @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                                            booleanOverrideValue = true))
     }
 )
 @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
@@ -151,6 +157,7 @@ public class AddressImpl implements Address {
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
     @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
+    @AdminPresentation(friendlyName = "StateImpl_State", order=70, group = "AddressImpl_Address", prominent = true)
     @Deprecated
     protected State state;
 
@@ -169,6 +176,7 @@ public class AddressImpl implements Address {
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class)
     @JoinColumn(name = "COUNTRY")
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
+    @AdminPresentation(friendlyName = "CountryImpl_Country", order=110, group = "AddressImpl_Address", prominent = true, translatable = true)
     @Deprecated
     protected Country country;
 
@@ -176,6 +184,7 @@ public class AddressImpl implements Address {
     @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
     @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
     @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=110, group = "AddressImpl_Address")
+    @AdminPresentationToOneLookup
     protected ISOCountry isoCountryAlpha2;
 
     @Column(name = "POSTAL_CODE")
