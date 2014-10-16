@@ -431,6 +431,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                          Object parent, String mappedBy, Property property) {
         boolean dirty = false;
         if (!StringUtils.isEmpty(jsonPropertyValue)) {
+            //avoid lazy init exception on the criteria list for criteria created during an add
+            criteriaList.size();
             DataWrapper dw = convertJsonToDataWrapper(jsonPropertyValue);
             if (dw != null && StringUtils.isEmpty(dw.getError())) {
                 List<QuantityBasedRule> updatedRules = new ArrayList<QuantityBasedRule>();
@@ -513,8 +515,9 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 //if an item was not included in the comprehensive submit from the client, we can assume that the
                 //listing was deleted, so we remove it here.
                 Iterator<QuantityBasedRule> itr = criteriaList.iterator();
-                while(itr.hasNext()) {
-                    checkForRemove: {
+                while (itr.hasNext()) {
+                    checkForRemove:
+                    {
                         QuantityBasedRule original = itr.next();
                         for (QuantityBasedRule quantityBasedRule : updatedRules) {
                             Long id = sandBoxHelper.getOriginalId(em, quantityBasedRule);
