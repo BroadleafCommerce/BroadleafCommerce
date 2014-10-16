@@ -38,6 +38,8 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
+import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -424,7 +426,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             Entity[] payload = helper.getRecords(originalProps, records);
 
             int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
-
+            
             //Now fill out the relevant properties for the product options for the Skus that were returned
             for (int i = 0; i < records.size(); i++) {
                 Sku sku = (Sku) records.get(i);
@@ -472,7 +474,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         
         if (productOptionValueFilterIDs.size() > 0) {
             FilterMapping filterMapping = new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + ".productOptionValues.id"))
+                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + ".productOptionValueXrefs.productOptionValue.id"))
                 .withDirectFilterValues(productOptionValueFilterIDs)
                 .withRestriction(new Restriction()
                     .withPredicateProvider(new PredicateProvider() {
@@ -488,7 +490,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
         if (productOptionValueFilterValues.size() > 0) {
             FilterMapping filterMapping = new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + ".productOptionValues.attributeValue"))
+                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + ".productOptionValueXrefs.productOptionValue.attributeValue"))
                 .withDirectFilterValues(productOptionValueFilterValues)
                 .withRestriction(new Restriction()
                     .withPredicateProvider(new PredicateProvider() {
@@ -616,7 +618,10 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         //Associate the product option values from the form with the Sku
         for (Long id : productOptionValueIds) {
             //Simply find the changed ProductOptionValues directly - seems to work better with sandboxing code
-            adminInstance.getProductOptionValues().add((ProductOptionValue) dynamicEntityDao.find(ProductOptionValueImpl.class, id));
+            ProductOptionValue pov = (ProductOptionValue) dynamicEntityDao.find(ProductOptionValueImpl.class, id);
+            SkuProductOptionValueXref xref = new SkuProductOptionValueXrefImpl(adminInstance, pov);
+            xref = dynamicEntityDao.merge(xref);
+            adminInstance.getProductOptionValueXrefs().add(xref);
         }
     }
 

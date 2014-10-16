@@ -401,6 +401,7 @@ public interface Sku extends Serializable {
      *
      * @return the ProductOptionValues for this Sku
      * @see {@link ProductOptionValue}, {@link ProductOption}
+     * @deprecated use {@link #getProductOptionValueXrefs()} instead
      */
     Set<ProductOptionValue> getProductOptionValuesCollection();
 
@@ -409,8 +410,24 @@ public interface Sku extends Serializable {
      *
      * @param productOptionValues
      * @see {@link ProductOptionValue}, {@link ProductOption}
+     * @deprecated use {@link #setProductOptionValueXrefs(Set)} instead
      */
     void setProductOptionValuesCollection(Set<ProductOptionValue> productOptionValues);
+
+    /**
+     * Returns the ProductOptionValues that should be mapped to this Sku using the middle 
+     * XREF entity, {@link SkuProductOptionValueXref}
+     * 
+     * @return the Set of {@link SkuProductOptionValueXref}s
+     */
+    public Set<SkuProductOptionValueXref> getProductOptionValueXrefs();
+
+    /**
+     * Sets the ProductOptionValues that should be mapped to this Sku using the middle 
+     * XREF entity, {@link SkuProductOptionValueXref}
+     */
+    public void setProductOptionValueXrefs(Set<SkuProductOptionValueXref> productOptionValueXrefs);
+
 
     /**
      * This will be a value if and only if this Sku is the defaultSku of a Product (and thus has a @OneToOne relationship with a Product).

@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
 import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseConfigValidation;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -333,14 +334,15 @@ public class SkuImpl implements Sku {
         deleteEntityUponRemove = true, forceFreeFormKeys = true)
     protected Map<String, SkuAttribute> skuAttributes = new HashMap<String, SkuAttribute>();
 
-    @ManyToMany(targetEntity = ProductOptionValueImpl.class)
-    @JoinTable(name = "BLC_SKU_OPTION_VALUE_XREF", 
-        joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID",referencedColumnName = "PRODUCT_OPTION_VALUE_ID"))
+    @OneToMany(targetEntity = SkuProductOptionValueXrefImpl.class, cascade = CascadeType.ALL, mappedBy = "sku")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
+    @ClonePolicyCollectionOverride
     //Use a Set instead of a List - see https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917
-    protected Set<ProductOptionValue> productOptionValues = new HashSet<ProductOptionValue>();
+    protected Set<SkuProductOptionValueXref> productOptionValueXrefs = new HashSet<SkuProductOptionValueXref>();
+
+    @Transient
+    protected Set<ProductOptionValue> legacyProductOptionValues = new HashSet<ProductOptionValue>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuFeeImpl.class)
     @JoinTable(name = "BLC_SKU_FEE_XREF",
@@ -875,15 +877,34 @@ public class SkuImpl implements Sku {
     public void setProduct(Product product) {
         this.product = product;
     }
+    
+    @Override
+    public Set<SkuProductOptionValueXref> getProductOptionValueXrefs() {
+        return productOptionValueXrefs;
+    }
+
+    @Override
+    public void setProductOptionValueXrefs(Set<SkuProductOptionValueXref> productOptionValueXrefs) {
+        this.productOptionValueXrefs = productOptionValueXrefs;
+    }
 
     @Override
     public Set<ProductOptionValue> getProductOptionValuesCollection() {
-        return productOptionValues;
+        if (legacyProductOptionValues.size() == 0) {
+            for (SkuProductOptionValueXref xref : productOptionValueXrefs) {
+                legacyProductOptionValues.add(xref.getProductOptionValue());
+            }
+        }
+        return Collections.unmodifiableSet(legacyProductOptionValues);
     }
 
     @Override
     public void setProductOptionValuesCollection(Set<ProductOptionValue> productOptionValues) {
-        this.productOptionValues = productOptionValues;
+        this.legacyProductOptionValues.clear();
+        this.productOptionValueXrefs.clear();
+        for (ProductOptionValue val : productOptionValues) {
+            this.productOptionValueXrefs.add(new SkuProductOptionValueXrefImpl(this, val));
+        }
     }
 
     @Override
@@ -895,7 +916,7 @@ public class SkuImpl implements Sku {
         return (List<ProductOptionValue>) Proxy.newProxyInstance(getClass().getClassLoader(), new Class<?>[]{List.class}, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                return MethodUtils.invokeMethod(productOptionValues, method.getName(), args, method.getParameterTypes());
+                return MethodUtils.invokeMethod(getProductOptionValuesCollection(), method.getName(), args, method.getParameterTypes());
             }
         });
     }
@@ -903,7 +924,7 @@ public class SkuImpl implements Sku {
     @Override
     @Deprecated
     public void setProductOptionValues(List<ProductOptionValue> productOptionValues) {
-        this.productOptionValues = new HashSet<ProductOptionValue>(productOptionValues);
+        setProductOptionValuesCollection(new HashSet<ProductOptionValue>(productOptionValues));
     }
 
     @Override

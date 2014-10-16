@@ -56,6 +56,7 @@
         <class>org.broadleafcommerce.core.catalog.domain.ProductBundleImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
