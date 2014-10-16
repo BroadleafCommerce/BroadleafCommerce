@@ -955,7 +955,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="id") String id,
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
-        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, null, collectionItemId,
+        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, null,
                 "viewCollectionItem");
 
         // Since this is a read-only view, actions don't make sense in this context
