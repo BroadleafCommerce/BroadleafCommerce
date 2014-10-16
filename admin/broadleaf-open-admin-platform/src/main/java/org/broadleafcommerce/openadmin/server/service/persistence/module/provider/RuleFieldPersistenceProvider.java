@@ -191,15 +191,17 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 val = (String) extractValueRequest.getRequestedValue();
                 property.setValue(val);
                 property.setDisplayValue(extractValueRequest.getDisplayVal());
-            }
-            Object simpleRule = extractValueRequest.getRequestedValue();
-            if (simpleRule != null) {
-                if (simpleRule instanceof SimpleRule) {
-                    val = ((SimpleRule) simpleRule).getMatchRule();
-                    property.setValue(val);
-                    property.setDisplayValue(extractValueRequest.getDisplayVal());
-                } else {
-                    throw new UnsupportedOperationException("RULE_SIMPLE type is currently only supported on fields of type SimpleRule");
+            } else {
+                Object simpleRule = extractValueRequest.getRequestedValue();
+                if (simpleRule != null) {
+                    if (simpleRule instanceof SimpleRule) {
+                        val = ((SimpleRule) simpleRule).getMatchRule();
+                        property.setValue(val);
+                        property.setDisplayValue(extractValueRequest.getDisplayVal());
+                    } else {
+                        throw new UnsupportedOperationException("RULE_SIMPLE type is currently only supported on " +
+                                "fields of type SimpleRule");
+                    }
                 }
             }
         }
