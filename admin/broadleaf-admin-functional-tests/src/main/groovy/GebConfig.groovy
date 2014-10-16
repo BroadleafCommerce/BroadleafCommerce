@@ -29,7 +29,7 @@ println 'Loading default Broadleaf GebConfig'
 // Use the FirefoxDriver by default
 driver = { new FirefoxDriver() }
 if (!System.getProperty(SystemPropertiesBuildAdapter.BASE_URL_PROPERTY_NAME)) {
-    baseUrl = 'http://demo75ip6w.broadleafcommerce.org/admin/'
+    baseUrl = 'http://demo75ip2w.blcqa.com/admin/'
 }
 
 if (!System.getProperty(SystemPropertiesBuildAdapter.REPORTS_DIR_PROPERTY_NAME)) {

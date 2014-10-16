@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.browsertest.page
 
+import geb.Browser
 import geb.Module
 
 
@@ -45,6 +46,25 @@ class ListGridModule extends Module {
     def boolean isEmpty() {
         return rows.size() == 0 || rows[0].cells[0].hasClass('list-grid-no-results')
     }
+    
+    def scrollToIndex(int number) {
+        if (id == null || id.isEmpty()) {
+            js.exec 'BLCAdmin.listGrid.paginate.scrollToIndex($(\'.listgrid-body-wrapper tbody\'), ' + number + ');'
+        } else {
+            js.exec 'BLCAdmin.listGrid.paginate.scrollToIndex($(\'.' + id + ' .listgrid-body-wrapper tbody\'), ' + number + ');'
+        }
+    }
+    
+    def scrollToEntry(String entry) {
+        if (this.rows.size() > 25) {
+            def number = 25
+            while (this.rows.find({it.text().contains(entry)}) == null) {
+                scrollToIndex(number)
+                number += 25
+            }
+        }
+        scrollToIndex(this.rows.findIndexOf({it.text().contains(entry)}) - 1)
+    }
 }
 
 /**
@@ -62,6 +82,20 @@ class ActionableListGridModule extends ListGridModule {
         reorderButton(required: false) { actionButtons.filter('.sub-list-grid-reorder') }
         removeButton(required: false) { actionButtons.filter('.sub-list-grid-remove') }
     }
+    
+    def reorderDragAndDrop(int row1, int row2) {
+        def element1 = this.rows[row1]
+        def element2 = this.rows[row2]
+        Browser.drive {
+            interact {
+                clickAndHold(element1)
+                moveToElement(element2)
+                moveByOffset(0, 1)
+                release()
+            }
+        }
+    }
+    
 }
 
 /**
