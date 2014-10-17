@@ -610,8 +610,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
 
         //remove the current list of product option values from the Sku
-        if (adminInstance.getProductOptionValues().size() > 0) {
-            adminInstance.getProductOptionValues().clear();
+        if (adminInstance.getProductOptionValueXrefs().size() > 0) {
+            adminInstance.getProductOptionValueXrefs().clear();
             dynamicEntityDao.merge(adminInstance);
         }
 

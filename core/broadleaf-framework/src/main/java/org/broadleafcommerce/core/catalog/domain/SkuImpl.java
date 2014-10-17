@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
 import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseConfigValidation;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -338,6 +339,7 @@ public class SkuImpl implements Sku {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
     @ClonePolicyCollectionOverride
+    @ClonePolicyArchive
     //Use a Set instead of a List - see https://github.com/BroadleafCommerce/BroadleafCommerce/issues/917
     protected Set<SkuProductOptionValueXref> productOptionValueXrefs = new HashSet<SkuProductOptionValueXref>();
 
