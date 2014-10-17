@@ -582,6 +582,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
         preValidateCartOperation(findOrderById(orderId));
+        preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
         if (orderItemRequestDTO.getQuantity() == 0) {
             return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
         }
@@ -888,6 +889,17 @@ public class OrderServiceImpl implements OrderService {
     public void preValidateCartOperation(Order cart) {
         ExtensionResultHolder erh = new ExtensionResultHolder();
         extensionManager.getProxy().preValidateCartOperation(cart, erh);
+        if (erh.getThrowable() instanceof IllegalCartOperationException) {
+            throw ((IllegalCartOperationException) erh.getThrowable());
+        } else if (erh.getThrowable() != null) {
+            throw new RuntimeException(erh.getThrowable());
+        }
+    }
+
+    @Override
+    public void preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto) {
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().preValidateUpdateQuantityOperation(cart, dto, erh);
         if (erh.getThrowable() instanceof IllegalCartOperationException) {
             throw ((IllegalCartOperationException) erh.getThrowable());
         } else if (erh.getThrowable() != null) {
