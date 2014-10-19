@@ -22,6 +22,8 @@ package org.broadleafcommerce.common.web.expression;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.broadleafcommerce.common.crossapp.service.CrossAppAuthService;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.site.domain.Catalog;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,30 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
             return brc.getSandBox();
+        }
+        return null;
+    }
+
+    public Site getSite() {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc != null) {
+            return brc.getNonPersistentSite();
+        }
+        return null;
+    }
+
+    public Site getCurrentProfile() {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc != null) {
+            return brc.getCurrentProfile();
+        }
+        return null;
+    }
+
+    public Catalog getCurrentCatalog() {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc != null) {
+            return brc.getCurrentCatalog();
         }
         return null;
     }

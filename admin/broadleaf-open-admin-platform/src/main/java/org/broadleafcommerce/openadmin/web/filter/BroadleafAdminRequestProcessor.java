@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.web.filter;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,11 +27,14 @@ import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.sandbox.service.SandBoxService;
+import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.service.SiteService;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
@@ -50,8 +54,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import javax.annotation.Resource;
@@ -66,6 +72,9 @@ import javax.annotation.Resource;
 public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestProcessor {
 
     public static final String SANDBOX_REQ_PARAM = "blSandBoxId";
+    public static final String PROFILE_REQ_PARAM = "blProfileId";
+    public static final String CATALOG_REQ_PARAM = "blCatalogId";
+
     private static final String ADMIN_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "admin.strict.validate.production.changes";
 
     protected final Log LOG = LogFactory.getLog(getClass());
@@ -88,6 +97,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     @Resource(name = "blSandBoxService")
     protected SandBoxService sandBoxService;
 
+    @Resource(name = "blSiteService")
+    protected SiteService siteService;
+
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
     
@@ -102,6 +114,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     
     @Resource(name="blEntityExtensionManagers")
     protected Map<String, ExtensionManager<?>> entityExtensionManagers;
+
+    @Resource(name = "blAdminRequestProcessorExtensionManager")
+    protected AdminRequestProcessorExtensionManager extensionManager;
 
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
@@ -139,6 +154,112 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         brc.setBroadleafCurrency(currency);
 
         prepareSandBox(request, brc);
+        prepareProfile(request, brc);
+        prepareCatalog(request, brc);
+    }
+
+    protected void prepareProfile(WebRequest request, BroadleafRequestContext brc) {
+        AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
+        if (adminUser == null) {
+            //clear any profile
+            if (BLCRequestUtils.isOKtoUseSession(request)) {
+                request.removeAttribute(PROFILE_REQ_PARAM, WebRequest.SCOPE_GLOBAL_SESSION);
+            }
+        } else {
+            Site profile = null;
+            if (StringUtils.isNotBlank(request.getParameter(PROFILE_REQ_PARAM))) {
+                Long profileId = Long.parseLong(request.getParameter(PROFILE_REQ_PARAM));
+                profile = siteService.retrievePersistentSiteById(profileId);
+                if (profile == null) {
+                    throw new IllegalArgumentException(String.format("Unable to find the requested profile: %s", profileId));
+                }
+            }
+
+            if (profile == null) {
+                Long previouslySetProfileId = null;
+                if (BLCRequestUtils.isOKtoUseSession(request)) {
+                    previouslySetProfileId = (Long) request.getAttribute(PROFILE_REQ_PARAM,
+                        WebRequest.SCOPE_GLOBAL_SESSION);
+                }
+                if (previouslySetProfileId != null) {
+                    profile = siteService.retrievePersistentSiteById(previouslySetProfileId);
+                }
+            }
+
+            if (profile == null) {
+                List<Site> profiles = new ArrayList<Site>();
+                if (brc.getNonPersistentSite() != null) {
+                    Site currentSite = siteService.retrievePersistentSiteById(brc.getNonPersistentSite().getId());
+                    if (extensionManager != null) {
+                        ExtensionResultHolder<Set<Site>> profilesResult = new ExtensionResultHolder<Set<Site>>();
+                        extensionManager.getProxy().retrieveProfiles(currentSite, profilesResult);
+                        if (!CollectionUtils.isEmpty(profilesResult.getResult())) {
+                            profiles.addAll(profilesResult.getResult());
+                        }
+                    }
+                }
+                if (profiles.size() == 1) {
+                    profile = profiles.get(0);
+                }
+            }
+
+            if (BLCRequestUtils.isOKtoUseSession(request) && profile != null) {
+                request.setAttribute(PROFILE_REQ_PARAM, profile.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+                brc.setCurrentProfile(profile);
+            }
+        }
+    }
+
+    protected void prepareCatalog(WebRequest request, BroadleafRequestContext brc) {
+        AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
+        if (adminUser == null) {
+            //clear any catalog
+            if (BLCRequestUtils.isOKtoUseSession(request)) {
+                request.removeAttribute(CATALOG_REQ_PARAM, WebRequest.SCOPE_GLOBAL_SESSION);
+            }
+        } else {
+            Catalog catalog = null;
+            if (StringUtils.isNotBlank(request.getParameter(CATALOG_REQ_PARAM))) {
+                Long catalogId = Long.parseLong(request.getParameter(CATALOG_REQ_PARAM));
+                catalog = siteService.findCatalogById(catalogId);
+                if (catalog == null) {
+                    throw new IllegalArgumentException(String.format("Unable to find the requested catalog: %s", catalogId));
+                }
+            }
+
+            if (catalog == null) {
+                Long previouslySetCatalogId = null;
+                if (BLCRequestUtils.isOKtoUseSession(request)) {
+                    previouslySetCatalogId = (Long) request.getAttribute(CATALOG_REQ_PARAM,
+                        WebRequest.SCOPE_GLOBAL_SESSION);
+                }
+                if (previouslySetCatalogId != null) {
+                    catalog = siteService.findCatalogById(previouslySetCatalogId);
+                }
+            }
+
+            if (catalog == null) {
+                List<Catalog> catalogs = new ArrayList<Catalog>();
+                if (brc.getNonPersistentSite() != null) {
+                    Site currentSite = siteService.retrievePersistentSiteById(brc.getNonPersistentSite().getId());
+                    if (extensionManager != null) {
+                        ExtensionResultHolder<Set<Catalog>> catalogResult = new ExtensionResultHolder<Set<Catalog>>();
+                        extensionManager.getProxy().retrieveCatalogs(currentSite, catalogResult);
+                        if (!CollectionUtils.isEmpty(catalogResult.getResult())) {
+                            catalogs.addAll(catalogResult.getResult());
+                        }
+                    }
+                }
+                if (catalogs.size() == 1) {
+                    catalog = catalogs.get(0);
+                }
+            }
+
+            if (BLCRequestUtils.isOKtoUseSession(request) && catalog != null) {
+                request.setAttribute(CATALOG_REQ_PARAM, catalog.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+                brc.setCurrentCatalog(catalog);
+            }
+        }
     }
 
     protected void prepareSandBox(WebRequest request, BroadleafRequestContext brc) {

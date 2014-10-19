@@ -93,6 +93,7 @@ public class BroadleafRequestContext {
     protected java.util.Locale javaLocale;
     protected Currency javaCurrency;
     protected Catalog currentCatalog;
+    protected Site currentProfile;
     protected Boolean ignoreSite = false;
     protected Map<String, Object> additionalProperties = new HashMap<String, Object>();
     protected MessageSource messageSource;
@@ -329,6 +330,14 @@ public class BroadleafRequestContext {
 
     public void setCurrentCatalog(Catalog currentCatalog) {
         this.currentCatalog = currentCatalog;
+    }
+
+    public Site getCurrentProfile() {
+        return currentProfile;
+    }
+
+    public void setCurrentProfile(Site currentProfile) {
+        this.currentProfile = currentProfile;
     }
 
     @SuppressWarnings("unchecked")
