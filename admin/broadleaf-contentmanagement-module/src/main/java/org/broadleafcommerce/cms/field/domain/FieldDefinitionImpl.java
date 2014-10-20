@@ -123,7 +123,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Column(name="FLD_ORDER")
     @AdminPresentation(friendlyName = "FieldDefinitionImpl_fieldOrder", order = 3000)
-    protected Integer fieldOrder;
+    protected Integer fieldOrder = 0;
 
     @Column (name = "TOOLTIP")
     protected String tooltip;
@@ -303,6 +303,9 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Override
     public int getFieldOrder() {
+        if (fieldOrder == null) {
+            return 0;
+        }
         return fieldOrder;
     }
 
