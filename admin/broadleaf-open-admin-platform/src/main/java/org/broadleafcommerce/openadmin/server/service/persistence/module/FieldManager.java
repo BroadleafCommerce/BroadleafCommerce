@@ -99,7 +99,10 @@ public class FieldManager {
                         }
                     }
                     if (matchedClasses.size() > 1) {
-                        LOG.warn("Found the property (" + peekAheadToken + ") in more than one class of an inheritance hierarchy. This may lead to unwanted behavior, as the system does not know which class was intended. Do not use the same property name in different levels of the inheritance hierarchy. Defaulting to the first class found (" + matchedClasses.get(0).getName() + ")");
+                        LOG.warn("Found the property (" + peekAheadToken + ") in more than one class of an inheritance hierarchy. " +
+                                "This may lead to unwanted behavior, as the system does not know which class was intended. Do not " +
+                                "use the same property name in different levels of the inheritance hierarchy. Defaulting to the " +
+                                "first class found (" + matchedClasses.get(0).getName() + ")");
                     }
                     if (matchedClasses.isEmpty()) {
                         //probably an artificial field (i.e. passwordConfirm on AdminUserImpl)
@@ -224,14 +227,16 @@ public class FieldManager {
                             field.set(value, newEntity);
                             componentClass = newEntity.getClass();
                             value = newEntity;
-                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. Using the most extended form of this class identified as ("+entities[0].getName()+")");
+                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                                    "Using the most extended form of this class identified as ("+entities[0].getName()+")");
                         } else {
                             //Just use the field type
                             Object newEntity = field.getType().newInstance();
                             field.set(value, newEntity);
                             componentClass = newEntity.getClass();
                             value = newEntity;
-                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. Using the type of this class.");
+                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                                    "Using the type of this class.");
                         }
                     }
                 }
@@ -242,6 +247,30 @@ public class FieldManager {
         
         return value;
 
+    }
+
+    public Class<?> getFieldType(Field field) {
+        //consult the entity configuration manager to see if there is a user
+        //configured entity for this class
+        Class<?> response;
+        try {
+            response = entityConfiguration.lookupEntityClass(field.getType().getName());
+        } catch (Exception e) {
+            //Use the most extended type based on the field type
+            PersistenceManager persistenceManager = getPersistenceManager();
+            Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
+            if (!ArrayUtils.isEmpty(entities)) {
+                response = entities[entities.length-1];
+                LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                        "Using the most extended form of this class identified as ("+entities[0].getName()+")");
+            } else {
+                //Just use the field type
+                response = field.getType();
+                LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                        "Using the type of this class.");
+            }
+        }
+        return response;
     }
     
     public Map<String, Serializable> persistMiddleEntities() throws InstantiationException, IllegalAccessException {
