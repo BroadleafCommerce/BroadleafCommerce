@@ -146,7 +146,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Override
     public String getName() {
-        return name;
+        return (name != null) ? name : "";
     }
 
     @Override
