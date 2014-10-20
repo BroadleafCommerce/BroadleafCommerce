@@ -81,6 +81,9 @@ public class CustomerStateRequestProcessor extends AbstractBroadleafWebRequestPr
         }
         if (overrideId != null) {
             customer = customerService.readCustomerById(overrideId);
+            if (customer != null && !customer.isRegistered() && !customer.isLoggedIn() && !customer.isCookied()) {
+                customer.setAnonymous(true);
+            }
         } else {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if ((authentication != null) && !(authentication instanceof AnonymousAuthenticationToken)) {
