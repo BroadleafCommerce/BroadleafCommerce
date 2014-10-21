@@ -51,6 +51,7 @@ public class UriPropertyValidator extends ValidationConfigurationBasedPropertyVa
 
     protected String ERROR_KEY_BEGIN_WITH_SLASH = "uriPropertyValidatorMustBeginWithSlashError";
     protected String ERROR_KEY_CANNOT_END_WITH_SLASH = "uriPropertyValidatorCannotEndWithSlashError";
+    protected String ERROR_KEY_CANNOT_CONTAIN_SPACES = "uriPropertyValidatorCannotContainSpacesError";
 
     protected boolean getIgnoreFullUrls() {
         return BLCSystemProperty.resolveBooleanSystemProperty("uriPropertyValidator.ignoreFullUrls");
@@ -85,6 +86,10 @@ public class UriPropertyValidator extends ValidationConfigurationBasedPropertyVa
         
         if (value == null) {
             return new PropertyValidationResult(succeedForNullValues);
+        }
+
+        if (value.contains(" ")) {
+            return new PropertyValidationResult(false, ERROR_KEY_CANNOT_CONTAIN_SPACES);
         }
         
         if (isFullUrl(value) && getIgnoreFullUrls()) {
