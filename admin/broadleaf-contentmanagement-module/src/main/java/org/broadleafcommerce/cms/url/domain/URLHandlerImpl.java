@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -58,7 +59,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity {
+public class URLHandlerImpl implements URLHandler, Locatable, Serializable, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -132,6 +133,41 @@ public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity
     @Override
     public String getMainEntityName() {
         return getIncomingURL();
+    }
+
+    @Override
+    public String getLocation() {
+        String location = getIncomingURL();
+        if (location == null) {
+            return null;
+        } else if (hasRegExCharacters(location)) {
+            return getNewURL();
+        } else {
+            return location;
+        }
+    }
+
+    /**
+     * In a preview environment, {@link #getLocation()} attempts to navigate to the 
+     * provided URL.    If the URL contains a Regular Expression, then we can't 
+     * navigate to it. 
+     * 
+     * @param location
+     * @return
+     */
+    protected boolean hasRegExCharacters(String location) {
+        return location.contains(".") ||
+                location.contains("(") ||
+                location.contains(")") ||
+                location.contains("?") ||
+                location.contains("*") ||
+                location.contains("^") ||
+                location.contains("$") ||
+                location.contains("[") ||
+                location.contains("{") ||
+                location.contains("|") ||
+                location.contains("+") ||
+                location.contains("\\");
     }
 
 }
