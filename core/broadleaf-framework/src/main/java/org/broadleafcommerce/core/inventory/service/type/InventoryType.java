@@ -43,7 +43,7 @@ public class InventoryType implements Serializable, BroadleafEnumerationType {
     
     public static final InventoryType ALWAYS_AVAILABLE  = new InventoryType("ALWAYS_AVAILABLE", "Always Available");
     public static final InventoryType UNAVAILABLE  = new InventoryType("UNAVAILABLE", "Unavailable");
-    public static final InventoryType CHECK_QUANTITY  = new InventoryType("CHECK_QUANTITY", "Check Quantity");
+    public static final InventoryType CHECK_QUANTITY = new InventoryType("CHECK_QUANTITY", "Check Quantity");
 
     public static InventoryType getInstance(final String type) {
         return TYPES.get(type);

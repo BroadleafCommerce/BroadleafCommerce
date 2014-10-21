@@ -391,7 +391,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
-            helpText = "inventoryTypeHelpText",
+            helpText = "categoryInventoryTypeHelpText",
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,

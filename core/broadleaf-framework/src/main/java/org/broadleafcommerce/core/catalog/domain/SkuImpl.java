@@ -375,8 +375,7 @@ public class SkuImpl implements Sku {
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "SkuImpl_Sku_InventoryType",
-        helpText = "inventoryTypeHelpText",
-        tooltip = "skuInventoryTypeTooltip",
+            helpText = "skuInventoryTypeHelpText",
         order = 1000,
         tab = ProductImpl.Presentation.Tab.Name.Inventory, tabOrder = ProductImpl.Presentation.Tab.Order.Inventory,
         group = ProductImpl.Presentation.Group.Name.Inventory, groupOrder = ProductImpl.Presentation.Group.Order.Inventory,

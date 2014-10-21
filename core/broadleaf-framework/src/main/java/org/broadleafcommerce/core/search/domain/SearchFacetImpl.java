@@ -77,27 +77,38 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
-    @ManyToOne(optional=false, targetEntity = FieldImpl.class)
-    @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_field",  order = 2, group = "SearchFacetImpl_description", prominent = true, gridOrder = 1)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "propertyName")
-    protected Field field;
-    
     @Column(name = "LABEL")
     @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description",
-            groupOrder = 1, prominent = true, translatable = true, gridOrder = 2)
+            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000)
     protected String label;
+
+    @ManyToOne(optional=false, targetEntity = FieldImpl.class)
+    @JoinColumn(name = "FIELD_ID")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = "SearchFacetImpl_description",
+            prominent = true, gridOrder = 2000)
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
+    protected Field field;
     
     @Column(name =  "SHOW_ON_SEARCH")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4, group = "SearchFacetImpl_description", groupOrder = 1,prominent=false)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4000,
+            group = "SearchFacetImpl_description", groupOrder = 1, prominent = false,
+            tooltip = "SearchFacetImpl_showOnSearchTooltip")
     protected Boolean showOnSearch = false;
     
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority", order = 5, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority",
+            order = 5000,
+            group = "SearchFacetImpl_description",
+            groupOrder = 1,
+            prominent = true,
+            tooltip = "SearchFacetImpl_searchPriorityTooltip")
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6, group = "SearchFacetImpl_description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6000,
+            group = "SearchFacetImpl_description",
+            groupOrder = 1,
+            tooltip = "SearchFacetImpl_multiselectTooltip")
     protected Boolean canMultiselect = true;
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
@@ -114,7 +125,11 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
     
     @Column(name = "REQUIRES_ALL_DEPENDENT")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets",
+            order = 7000,
+            group = "SearchFacetImpl_description",
+            groupOrder = 1,
+            tooltip = "SearchFacetImpl_requiresAllDependentFacetsTooltip")
     protected Boolean requiresAllDependentFacets = false;
     
     @Override
