@@ -1017,8 +1017,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     + " or nullable=true within the @JoinColumn annotation");
                         }
                         Field manyToField = fieldManager.getField(instance.getClass(), foreignKey.getManyToField());
-                        manyToField.set(instance, null);
-                        instance = persistenceManager.getDynamicEntityDao().merge(instance);
+                        Object manyToObject = manyToField.get(instance);
+                        if (manyToObject != null && !(manyToObject instanceof Collection) && !(manyToObject instanceof Map)) {
+                            manyToField.set(instance, null);
+                            instance = persistenceManager.getDynamicEntityDao().merge(instance);
+                        }
                     }
                     break;
                 case BASIC:

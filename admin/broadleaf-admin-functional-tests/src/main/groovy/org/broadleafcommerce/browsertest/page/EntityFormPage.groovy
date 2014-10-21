@@ -97,6 +97,8 @@ class EntityFormPage extends AdminPage {
         def field = form.find(convertFieldName(fieldName))
         if (!field.displayed && makeVisible) {
             clickTab(field)
+            def element = field.getElement(0)
+            js.exec (element, 'arguments[0].scrollIntoView();')
         }
         return field
     }
