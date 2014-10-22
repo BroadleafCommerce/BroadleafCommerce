@@ -306,15 +306,15 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                                 !pageField.getValue().trim().equals(property.getValue().trim()))) {
                             dirtyFields.add(property.getName());
                             dirtyFieldsOrigVals.put(property.getName(), pageField.getValue());
+                            pageField.setValue(property.getValue());
+                            pageField = dynamicEntityDao.merge(pageField);
                         }
-                        pageField.setValue(property.getValue());
                     } else {
                         pageField = new PageFieldImpl();
                         pageField.setFieldKey(property.getName());
                         pageField.setValue(property.getValue());
                         pageField.setPage(page);
                         dynamicEntityDao.persist(pageField);
-                        pageFieldMap.put(property.getName(), pageField);
                         dirtyFields.add(property.getName());
                     }
                 }
