@@ -241,8 +241,9 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                                 !structuredContentField.getValue().trim().equals(property.getValue().trim()))) {
                             dirtyFields.add(property.getName());
                             dirtyFieldsOrigVals.put(property.getName(), structuredContentField.getValue());
+                            structuredContentField.setValue(property.getValue());
+                            scXref = dynamicEntityDao.merge(scXref);
                         }
-                        structuredContentField.setValue(property.getValue());
                     } else {
                         StructuredContentField structuredContentField = new StructuredContentFieldImpl();
                         structuredContentField.setFieldKey(property.getName());
@@ -254,8 +255,6 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                         scfx.setStrucuturedContentField(structuredContentField);
 
                         scfx = dynamicEntityDao.persist(scfx);
-
-                        structuredContentFieldMap.put(property.getName(), scfx);
                         dirtyFields.add(property.getName());
                     }
                 }

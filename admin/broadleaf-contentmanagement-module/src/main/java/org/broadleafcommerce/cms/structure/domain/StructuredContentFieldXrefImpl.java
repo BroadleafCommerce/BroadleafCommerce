@@ -71,7 +71,7 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
     @Column(name = "BLC_SC_SC_FIELD_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = StructuredContentImpl.class, optional = false)
+    @ManyToOne(targetEntity = StructuredContentImpl.class, optional = false, cascade = { CascadeType.REFRESH })
     @JoinColumn(name = "SC_ID")
     @AdminPresentation(excluded = true)
     protected StructuredContent structuredContent;

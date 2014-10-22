@@ -20,6 +20,8 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMapOverride;
 import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseConfigValidation;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -71,6 +73,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -218,9 +221,11 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     protected StructuredContentType structuredContentType;
 
     @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
-    @MapKeyColumn(name = "MAP_KEY")
+    @MapKey(name = "key")
     @BatchSize(size = 20)
     @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+    @ClonePolicyMapOverride
+    @ClonePolicyArchive
     protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<String, StructuredContentFieldXref>();
 
     @Transient
