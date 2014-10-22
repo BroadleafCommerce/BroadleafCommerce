@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
@@ -33,6 +34,7 @@ import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
@@ -120,7 +122,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                 }
             }
         } catch (Exception e) {
-            throw new PersistenceException(e);
+            throw ExceptionHelper.refineException(PersistenceException.class, PersistenceException.class, e);
         }
         populateValueRequest.getProperty().setIsDirty(dirty);
 
@@ -262,20 +264,17 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     rule = (SimpleRule) populateValueRequest.getFieldManager().getFieldValue(instance,
                             populateValueRequest.getProperty().getName());
                     if (rule == null) {
-                        try {
-                            rule = (SimpleRule) valueType.newInstance();
-                            Field field = populateValueRequest.getFieldManager().getField(instance.getClass(),
-                                    prop.substring(0, prop.indexOf(FieldManager.MAPFIELDSEPARATOR)));
-                            OneToMany oneToMany = field.getAnnotation(OneToMany.class);
-                            Object parent = extractParent(populateValueRequest, instance);
-                            populateValueRequest.getFieldManager().setFieldValue(rule, oneToMany.mappedBy(), parent);
-                            populateValueRequest.getFieldManager().setFieldValue(rule, populateValueRequest.getMetadata().
-                                    getMapKeyValueProperty(), prop.substring(prop.indexOf(
-                                    FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
-                                    prop.length()));
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
+                        rule = (SimpleRule) valueType.newInstance();
+                        Field field = populateValueRequest.getFieldManager().getField(instance.getClass(),
+                                prop.substring(0, prop.indexOf(FieldManager.MAPFIELDSEPARATOR)));
+                        OneToMany oneToMany = field.getAnnotation(OneToMany.class);
+                        Object parent = extractParent(populateValueRequest, instance);
+                        populateValueRequest.getFieldManager().setFieldValue(rule, oneToMany.mappedBy(), parent);
+                        populateValueRequest.getFieldManager().setFieldValue(rule, populateValueRequest.getMetadata().
+                                getMapKeyValueProperty(), prop.substring(prop.indexOf(
+                                FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
+                                prop.length()));
+
                         persist = true;
                     }
                 } catch (FieldNotAvailableException e) {
@@ -318,7 +317,11 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     parentName.substring(0, parentName.lastIndexOf(".")));
         }
         if (!populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().contains(parent)) {
-            populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
+            try {
+                populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
+            } catch (Exception e) {
+                throw new ParentEntityPersistenceException("Unable to Persist the parent entity during rule builder field population", e);
+            }
         }
         return parent;
     }

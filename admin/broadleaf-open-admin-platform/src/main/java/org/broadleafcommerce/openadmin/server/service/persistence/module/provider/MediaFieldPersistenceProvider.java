@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
@@ -134,7 +135,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 throw new UnsupportedOperationException("MediaFields only work with Media types.");
             }
         } catch (Exception e) {
-            throw new PersistenceException(e);
+            throw ExceptionHelper.refineException(PersistenceException.class, PersistenceException.class, e);
         }
         populateValueRequest.getProperty().setIsDirty(dirty);
 
@@ -325,7 +326,11 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     parentName.substring(0, parentName.lastIndexOf(".")));
         }
         if (!populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().contains(parent)) {
-            populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
+            try {
+                populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
+            } catch (Exception e) {
+                throw new ParentEntityPersistenceException("Unable to Persist the parent entity during rule builder field population", e);
+            }
         }
         return parent;
     }
