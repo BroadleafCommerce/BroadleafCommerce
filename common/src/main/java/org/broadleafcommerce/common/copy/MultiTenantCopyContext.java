@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.common.copy;
 
-import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
-import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.service.GenericEntityService;
@@ -73,7 +71,7 @@ public class MultiTenantCopyContext {
 
                 return (T) genericEntityService.readGenericEntity(clazz.getName(), cloneId);
             }
-        }, getToSite(), getToCatalog());
+        }, getToSite(), getToSite(), getToCatalog());
     }
 
     

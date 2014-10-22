@@ -54,7 +54,7 @@ public class IdentityExecutionUtils {
         context.setIdentifier(site);
         IdentityUtilContext.setUtilContext(context);
 
-        boolean isNew = initRequestContext(site, catalog);
+        boolean isNew = initRequestContext(site, null, catalog);
 
         activateSession();
 
@@ -83,7 +83,28 @@ public class IdentityExecutionUtils {
         context.setIdentifier(site);
         IdentityUtilContext.setUtilContext(context);
 
-        boolean isNew = initRequestContext(site, catalog);
+        boolean isNew = initRequestContext(site, null, catalog);
+
+        activateSession();
+
+        try {
+            return operation.execute();
+        } catch (RuntimeException e) {
+            throw e;
+        } finally {
+            IdentityUtilContext.setUtilContext(null);
+            if (isNew) {
+                BroadleafRequestContext.setBroadleafRequestContext(null);
+            }
+        }
+    }
+
+    public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Site profile, Catalog catalog) throws G {
+        IdentityUtilContext context = new IdentityUtilContext();
+        context.setIdentifier(site);
+        IdentityUtilContext.setUtilContext(context);
+
+        boolean isNew = initRequestContext(site, profile, catalog);
 
         activateSession();
 
@@ -100,11 +121,32 @@ public class IdentityExecutionUtils {
     }
 
     public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site) throws G {
-        return runOperationByIdentifier(operation, site, null);
+        IdentityUtilContext context = new IdentityUtilContext();
+        context.setIdentifier(site);
+        IdentityUtilContext.setUtilContext(context);
+
+        boolean isNew = initRequestContext(site, null, null);
+
+        activateSession();
+
+        try {
+            return operation.execute();
+        } catch (RuntimeException e) {
+            throw e;
+        } finally {
+            IdentityUtilContext.setUtilContext(null);
+            if (isNew) {
+                BroadleafRequestContext.setBroadleafRequestContext(null);
+            }
+        }
+    }
+
+    public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Site profile) throws G {
+        return runOperationByIdentifier(operation, site, profile, null);
     }
 
     public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation) throws G {
-        boolean isNew = initRequestContext(null, null);
+        boolean isNew = initRequestContext(null, null, null);
         boolean isIgnoringSite = BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSite();
         BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
 
@@ -124,7 +166,7 @@ public class IdentityExecutionUtils {
     
     public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation, 
             PlatformTransactionManager transactionManager) throws G {
-        boolean isNew = initRequestContext(null, null);
+        boolean isNew = initRequestContext(null, null, null);
         boolean isIgnoringSite = BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSite();
         BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
 
@@ -150,7 +192,7 @@ public class IdentityExecutionUtils {
         }
     }
 
-    private static boolean initRequestContext(Site site, Catalog catalog) {
+    private static boolean initRequestContext(Site site, Site profile, Catalog catalog) {
         boolean isNew = false;
         BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
 
@@ -162,6 +204,7 @@ public class IdentityExecutionUtils {
 
         requestContext.setSite(site);
         requestContext.setCurrentCatalog(catalog);
+        requestContext.setCurrentProfile(profile);
         
         if (site != null) {
             requestContext.setIgnoreSite(false);

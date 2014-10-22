@@ -197,7 +197,7 @@ public abstract class MultiTenantCopier implements Ordered {
             public T execute() throws ServiceException {
                 return genericEntityService.save(object);
             }
-        }, context.getToSite(), context.getToCatalog());
+        }, context.getToSite(), context.getToSite(), context.getToCatalog());
     }
     
     /**
