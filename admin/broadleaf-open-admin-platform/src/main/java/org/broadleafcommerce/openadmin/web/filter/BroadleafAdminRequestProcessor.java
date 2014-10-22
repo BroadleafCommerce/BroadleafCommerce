@@ -203,8 +203,10 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 }
             }
 
-            if (BLCRequestUtils.isOKtoUseSession(request) && profile != null) {
-                request.setAttribute(PROFILE_REQ_PARAM, profile.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+            if (profile != null) {
+                if (BLCRequestUtils.isOKtoUseSession(request)) {
+                    request.setAttribute(PROFILE_REQ_PARAM, profile.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+                }
                 brc.setCurrentProfile(profile);
             }
         }
@@ -255,8 +257,10 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 }
             }
 
-            if (BLCRequestUtils.isOKtoUseSession(request) && catalog != null) {
-                request.setAttribute(CATALOG_REQ_PARAM, catalog.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+            if (catalog != null) {
+                if (BLCRequestUtils.isOKtoUseSession(request)) {
+                    request.setAttribute(CATALOG_REQ_PARAM, catalog.getId(), WebRequest.SCOPE_GLOBAL_SESSION);
+                }
                 brc.setCurrentCatalog(catalog);
             }
         }
