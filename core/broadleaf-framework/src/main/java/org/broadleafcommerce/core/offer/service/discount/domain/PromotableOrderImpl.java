@@ -304,13 +304,6 @@ public class PromotableOrderImpl implements PromotableOrder {
             return false;
         }
         
-        Money currentOrderAdjustmentTotal = calculateOrderAdjustmentTotal();
-        Money orderAdjustmentTotalWithOffer = currentOrderAdjustmentTotal.add(offer.getPotentialSavings());
-        
-        if (orderAdjustmentTotalWithOffer.greaterThan(getOrder().getSubTotal())) {
-            return false;
-        }
-        
         if (!offer.isCombinable() || offer.isTotalitarian()) {
             // Only allow a combinable or totalitarian offer if this is the first adjustment.
             return candidateOrderOfferAdjustments.size() == 0;
