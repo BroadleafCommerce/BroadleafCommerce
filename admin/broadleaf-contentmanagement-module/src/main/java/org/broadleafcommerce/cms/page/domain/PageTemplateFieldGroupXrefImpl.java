@@ -75,7 +75,7 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
     @Column(name = "PG_TMPLT_FLD_GRP_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = PageTemplateImpl.class, optional = false)
+    @ManyToOne(targetEntity = PageTemplateImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PAGE_TMPLT_ID")
     @AdminPresentation(excluded = true)
     protected PageTemplate pageTemplate;
