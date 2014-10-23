@@ -478,9 +478,6 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                         quantityBasedRule = em.merge(quantityBasedRule);
                                         quantityBasedRule.setQuantity(dto.getQuantity());
                                         quantityBasedRule.setMatchRule(mvel);
-                                        if (extensionManager != null) {
-                                            extensionManager.getProxy().postUpdate(quantityBasedRule);
-                                        }
                                     }
                                     updatedRules.add(quantityBasedRule);
                                     break checkId;
@@ -587,9 +584,6 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         if (!persist) {
             //pre-merge (can result in a clone for enterprise)
             rule = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(rule);
-            if (extensionManager != null) {
-                extensionManager.getProxy().postUpdate(rule);
-            }
         }
         rule.setMatchRule(mvel);
         if (persist) {
