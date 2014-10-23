@@ -74,6 +74,10 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     protected void computeAdjustmentValue() {
         adjustmentValue = new Money(promotableOrder.getOrderCurrency());
         Money currentOrderValue = promotableOrder.calculateSubtotalWithAdjustments();
+        
+        // We also need to consider order offers that have been applied when figuring out if the current value of this
+        // adjustment will be more than the current subtotal of the order
+        currentOrderValue = currentOrderValue.subtract(promotableOrder.calculateOrderAdjustmentTotal());
 
         // Note: FIXED_PRICE not calculated as this is not a valid option for offers.
         if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
