@@ -46,6 +46,7 @@ public class URLHandlerServiceTest extends TestCase {
 
         handlerList.add(createHandler("/simple_url", "/NewSimpleUrl"));
         handlerList.add(createHandler("^/simple_regex$", "/NewSimpleRegex"));
+        handlerList.add(createHandler("/blogs/(.*)/(.*)$", "/newblogs/$2/$1"));
         return handlerList;
     }
 
@@ -88,6 +89,13 @@ public class URLHandlerServiceTest extends TestCase {
     public void testFoundBadMatchComplexUrl() {
         URLHandler h = handlerService.checkForMatches("/simple_regex/test");
         assertTrue(h == null);
+    }
+
+    @Test
+    public void testRegEx() {
+        URLHandler h = handlerService.checkForMatches("/blogs/first/second");
+        assertTrue(h != null);
+        assertTrue(h.getNewURL().equals("/newblogs/second/first"));
     }
 
 }
