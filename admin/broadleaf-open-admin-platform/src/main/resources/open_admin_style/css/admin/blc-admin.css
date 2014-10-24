@@ -607,7 +607,7 @@ table.table-hover tbody tr.draggable:hover {
     padding: 0;
     border: 1px solid #cccccc;
     border-radius: 4px;
-    z-index: 40;
+    z-index: 1050;
     right: 0;
 }
 
