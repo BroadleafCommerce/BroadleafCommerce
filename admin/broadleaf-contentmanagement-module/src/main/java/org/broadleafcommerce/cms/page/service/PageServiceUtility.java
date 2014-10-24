@@ -186,7 +186,10 @@ public class PageServiceUtility {
             if (entry.getValue() instanceof String && ((String) entry.getValue()).startsWith(FOREIGN_LOOKUP)) {
                 String clazz = ((String) entry.getValue()).split("\\|")[1];
                 String id = ((String) entry.getValue()).split("\\|")[2];
-                Object newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
+                Object newValue = null;
+                if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(id) && !"null".equals(id)) {
+                    newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
+                }
                 entry.setValue(newValue);
             }
         }
