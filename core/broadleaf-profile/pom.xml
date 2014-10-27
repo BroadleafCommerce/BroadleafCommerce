@@ -3,7 +3,7 @@
     <parent>
         <artifactId>core</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.2.0-ALPHA-ENT-5</version>
+        <version>3.2.0-ALPHA-ENT-6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-profile</artifactId>
