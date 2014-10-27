@@ -469,6 +469,8 @@ var BLCAdmin = (function($) {
          *     value becomes null
          *   - additionalChangeAction (fn) - A function to execute when the value of the parent field changes. The args
          *     passed to the function will be [$parentField, $childField, shouldShow, parentValue]
+         *   - additionalChangeAction-runOnInitialization (boolean) - If set to true, will invoke the 
+         *     additionalChangeAction on initialization
          */
         addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldSelector, childFieldSelector, 
                 showIfValue, options) {
@@ -502,7 +504,9 @@ var BLCAdmin = (function($) {
                         // Toggle the visiblity of the child field appropriately
                         $childField.toggle(shouldShow);
                         
-                        if (options != null && options['additionalChangeAction'] && !event.initialization) {
+                        if (options != null 
+                                && options['additionalChangeAction'] 
+                                && (options['additionalChangeAction-runOnInitialization'] || !event.initialization)) {
                             options['additionalChangeAction']($parentField, $childField, shouldShow, parentValue);
                         }
                     };
