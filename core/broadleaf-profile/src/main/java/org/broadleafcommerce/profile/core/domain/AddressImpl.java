@@ -162,28 +162,28 @@ public class AddressImpl implements Address {
     protected State state;
 
     @Column(name = "ISO_COUNTRY_SUB")
-    @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order=80, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order=110, group = "AddressImpl_Address")
     protected String isoCountrySubdivision;
 
     @Column(name = "SUB_STATE_PROV_REG")
-    @AdminPresentation(friendlyName = "AddressImpl_State_Province_Region", order=90, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_State_Province_Region", order=80, group = "AddressImpl_Address")
     protected String stateProvinceRegion;
 
     @Column(name = "COUNTY")
-    @AdminPresentation(friendlyName = "AddressImpl_County", order=100, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_County", order=90, group = "AddressImpl_Address")
     protected String county;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class)
     @JoinColumn(name = "COUNTRY")
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
-    @AdminPresentation(friendlyName = "CountryImpl_Country", order=110, group = "AddressImpl_Address", prominent = true, translatable = true)
+    @AdminPresentation(friendlyName = "CountryImpl_Country", order=100, group = "AddressImpl_Address", prominent = true, translatable = true)
     @Deprecated
     protected Country country;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ISOCountryImpl.class, optional = false)
     @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
     @Index(name="ADDRESS_ISO_COUNTRY_IDX", columnNames={"ISO_COUNTRY_ALPHA2"})
-    @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=110, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order=100, group = "AddressImpl_Address")
     @AdminPresentationToOneLookup
     protected ISOCountry isoCountryAlpha2;
 

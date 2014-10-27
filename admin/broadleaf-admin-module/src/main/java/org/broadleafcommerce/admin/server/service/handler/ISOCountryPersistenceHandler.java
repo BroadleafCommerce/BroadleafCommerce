@@ -36,12 +36,18 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 /**
  * By default, we will filter all ISOCountries to return only those that have names.
@@ -70,21 +76,41 @@ public class ISOCountryPersistenceHandler extends CustomPersistenceHandlerAdapte
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto,
                                   DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         FilterMapping filterMapping = new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty("name"))
-                .withDirectFilterValues(new EmptyFilterValues())
-                .withRestriction(new Restriction()
-                        .withPredicateProvider(new PredicateProvider<Character, Character>() {
-                            @Override
-                            public Predicate buildPredicate(CriteriaBuilder builder,
-                                                            FieldPathBuilder fieldPathBuilder,
-                                                            From root, String ceilingEntity,
-                                                            String fullPropertyName, Path<Character> explicitPath,
-                                                            List<Character> directValues) {
-                                return builder.isNotNull(explicitPath);
-                            }
-                        })
-                );
+            .withFieldPath(new FieldPath().withTargetProperty("name"))
+            .withDirectFilterValues(new EmptyFilterValues())
+            .withRestriction(new Restriction()
+                .withPredicateProvider(new PredicateProvider<Character, Character>() {
+                    @Override
+                    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, 
+                            From root, String ceilingEntity, String fullPropertyName, Path<Character> explicitPath, 
+                            List<Character> directValues) {
+                        return builder.isNotNull(explicitPath);
+                    }
+                })
+            );
         cto.getAdditionalFilterMappings().add(filterMapping);
+        
+        FilterMapping countryRestrictionMapping = new FilterMapping()
+            .withDirectFilterValues(new EmptyFilterValues())
+            .withRestriction(new Restriction()
+                .withPredicateProvider(new PredicateProvider<Character, Character>() {
+                    @Override
+                    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, 
+                            From root, String ceilingEntity, String fullPropertyName, Path<Character> explicitPath, 
+                            List<Character> directValues) {
+                        CriteriaQuery<Serializable> criteria = fieldPathBuilder.getCriteria();
+                        
+                        Root<CountryImpl> blcCountry = criteria.from(CountryImpl.class);
+                        Predicate join = builder.equal(
+                            root.get("alpha2").as(String.class), 
+                            blcCountry.get("abbreviation").as(String.class)
+                        );
+                        
+                        return join;
+                    }
+                })
+            );
+        cto.getAdditionalFilterMappings().add(countryRestrictionMapping);
 
         PersistenceModule myModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
         return myModule.fetch(persistencePackage, cto);
