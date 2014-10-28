@@ -197,7 +197,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, criteria);
         
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        if (!isCount) {
+        if (!isCount && !isMax) {
             criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
             //If someone provides a firstResult value, then there is generally pagination going on.
             //In order to produce consistent results, especially with certain databases such as PostgreSQL, 
@@ -215,7 +215,7 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         }
         TypedQuery<Serializable> response = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
 
-        if (!isCount) {
+        if (!isCount && !isMax) {
             addPaging(response, firstResult, maxResults);
         }
 
