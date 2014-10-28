@@ -475,9 +475,9 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                         }
                                     }
                                     if (dirty) {
-                                        quantityBasedRule = em.merge(quantityBasedRule);
                                         quantityBasedRule.setQuantity(dto.getQuantity());
                                         quantityBasedRule.setMatchRule(mvel);
+                                        quantityBasedRule = em.merge(quantityBasedRule);
                                     }
                                     updatedRules.add(quantityBasedRule);
                                     break checkId;
