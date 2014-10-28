@@ -346,7 +346,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
         cloned.setActiveEndDate(activeEndDate);
         cloned.setActiveStartDate(activeStartDate);
         cloned.setDescription(description);
-        cloned.setExcludeFromSiteMap(excludeFromSiteMap);
+        cloned.setExcludeFromSiteMap(getExcludeFromSiteMap());
         cloned.setFullUrl(fullUrl);
         cloned.setMetaDescription(metaDescription);
         cloned.setOfflineFlag(offlineFlag);
