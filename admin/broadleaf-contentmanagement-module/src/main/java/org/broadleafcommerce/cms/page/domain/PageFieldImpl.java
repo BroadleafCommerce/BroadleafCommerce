@@ -170,7 +170,7 @@ public class PageFieldImpl implements PageField {
         PageField cloned = createResponse.getClone();
         cloned.setPage(page);
         cloned.setFieldKey(fieldKey);
-        cloned.setValue(lobValue);
+        cloned.setValue(getValue());
 
         return createResponse;
 
