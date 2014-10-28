@@ -21,6 +21,8 @@ package org.broadleafcommerce.cms.url.domain;
 
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -170,4 +172,17 @@ public class URLHandlerImpl implements URLHandler, Locatable, Serializable, Admi
                 location.contains("\\");
     }
 
+    @Override
+    public <G extends URLHandler> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        URLHandler cloned = createResponse.getClone();
+        cloned.setIncomingURL(incomingURL);
+        cloned.setNewURL(newURL);
+        cloned.setUrlRedirectType( URLRedirectType.getInstance(urlRedirectType));
+
+        return createResponse;
+    }
 }

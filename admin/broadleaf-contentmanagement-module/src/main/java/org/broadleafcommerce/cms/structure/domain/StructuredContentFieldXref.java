@@ -20,8 +20,9 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
-public interface StructuredContentFieldXref {
+public interface StructuredContentFieldXref extends MultiTenantCloneable<StructuredContentFieldXref> {
 
     public void setId(Long id);
 

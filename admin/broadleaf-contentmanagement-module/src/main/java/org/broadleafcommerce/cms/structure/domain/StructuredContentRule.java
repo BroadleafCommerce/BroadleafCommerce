@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.rule.SimpleRule;
 
 import javax.annotation.Nonnull;
@@ -38,7 +39,7 @@ import javax.annotation.Nullable;
  * @author bpolster
  *
  */
-public interface StructuredContentRule extends SimpleRule {
+public interface StructuredContentRule extends SimpleRule,MultiTenantCloneable<StructuredContentRule> {
 
     /**
      * Gets the primary key.

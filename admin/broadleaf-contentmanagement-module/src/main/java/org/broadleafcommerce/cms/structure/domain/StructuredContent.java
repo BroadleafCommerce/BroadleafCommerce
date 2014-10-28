@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
@@ -55,7 +56,7 @@ import javax.annotation.Nullable;
  * @author Jeff Fischer
  *
  */
-public interface StructuredContent extends Serializable {
+public interface StructuredContent extends Serializable,MultiTenantCloneable<StructuredContent> {
 
     /**
      * Gets the primary key.

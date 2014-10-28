@@ -20,6 +20,8 @@
 package org.broadleafcommerce.cms.url.domain;
 
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 
 
 /**
@@ -72,5 +74,18 @@ public class URLHandlerDTO implements URLHandler {
     @Override
     public void setUrlRedirectType(URLRedirectType redirectType) {
         this.urlRedirectType = redirectType.getType();
+    }
+
+    @Override
+    public <G extends URLHandler> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        URLHandler cloned = createResponse.getClone();
+        cloned.setIncomingURL(incomingURL);
+        cloned.setNewURL(newURL);
+        cloned.setUrlRedirectType( URLRedirectType.getInstance(urlRedirectType));
+        return  createResponse;
     }
 }

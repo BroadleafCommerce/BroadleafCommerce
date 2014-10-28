@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -174,4 +176,16 @@ public class PageItemCriteriaImpl implements PageItemCriteria {
         return newField;
     }
 
+    @Override
+    public <G extends PageItemCriteria> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        PageItemCriteria cloned = createResponse.getClone();
+        cloned.setPage(page);
+        cloned.setMatchRule(orderItemMatchRule);
+        cloned.setQuantity(quantity);
+        return createResponse;
+    }
 }

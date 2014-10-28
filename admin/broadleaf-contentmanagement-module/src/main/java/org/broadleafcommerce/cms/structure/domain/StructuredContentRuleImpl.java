@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -143,5 +145,16 @@ public class StructuredContentRuleImpl implements StructuredContentRule {
         newField.matchRule = matchRule;
 
         return newField;
+    }
+
+    @Override
+    public <G extends StructuredContentRule> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StructuredContentRule cloned = createResponse.getClone();
+        cloned.setMatchRule(matchRule);
+        return  createResponse;
     }
 }

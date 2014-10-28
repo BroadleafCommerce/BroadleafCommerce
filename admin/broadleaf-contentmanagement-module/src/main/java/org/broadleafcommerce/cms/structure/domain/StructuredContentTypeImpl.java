@@ -30,6 +30,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -129,6 +131,19 @@ public class StructuredContentTypeImpl implements StructuredContentType, AdminMa
     @Override
     public String getMainEntityName() {
         return getName();
+    }
+
+    @Override
+    public <G extends StructuredContentType> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StructuredContentType cloned = createResponse.getClone();
+        cloned.setDescription(description);
+        cloned.setName(name);
+        CreateResponse<StructuredContentFieldTemplate> clonedTemplate = structuredContentFieldTemplate.createOrRetrieveCopyInstance(context);
+        return createResponse;
     }
 }
 

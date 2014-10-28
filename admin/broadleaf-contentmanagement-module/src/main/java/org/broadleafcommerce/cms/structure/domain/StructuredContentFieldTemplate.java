@@ -20,6 +20,7 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,7 +37,7 @@ import java.util.List;
  *
  * @author bpolster
  */
-public interface StructuredContentFieldTemplate extends Serializable {
+public interface StructuredContentFieldTemplate extends Serializable, MultiTenantCloneable<StructuredContentFieldTemplate> {
 
     /**
      * Gets the primary key.
