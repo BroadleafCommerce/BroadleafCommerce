@@ -20,20 +20,15 @@
 package org.broadleafcommerce.common.i18n.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.i18n.service.type.ISOCodeStatusType;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -167,5 +162,20 @@ public class ISOCountryImpl implements ISOCountry, AdminMainEntity {
     @Override
     public String getMainEntityName() {
         return getName();
+    }
+
+    @Override
+    public <G extends ISOCountry> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        ISOCountry cloned = createResponse.getClone();
+        cloned.setAlpha2(alpha2);
+        cloned.setAlpha3(alpha3);
+        cloned.setName(name);
+        cloned.setNumericCode(numericCode);
+        cloned.setStatus(getStatus());
+        return createResponse;
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.i18n.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.i18n.service.type.ISOCodeStatusType;
 import java.io.Serializable;
 
@@ -34,7 +35,7 @@ import java.io.Serializable;
  *
  * @author Elbert Bautista (elbertbautista)
  */
-public interface ISOCountry extends Serializable {
+public interface ISOCountry extends Serializable,MultiTenantCloneable<ISOCountry> {
 
     public String getAlpha2();
 
