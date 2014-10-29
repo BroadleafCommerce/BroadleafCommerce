@@ -104,5 +104,13 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         return (brc == null) ? false : (brc.getSandBox() != null);
     }
+    
+    public Object getAdditionalProperty(String propertyName) {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc != null) {
+            return brc.getAdditionalProperties().get(propertyName);
+        }
+        return null;
+    }
 
 }
