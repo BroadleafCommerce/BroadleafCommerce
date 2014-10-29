@@ -96,15 +96,13 @@ public class FieldManager {
             if (field != null && j < tokens.length - 1) {
                 Class<?>[] fieldEntities = persistenceManager.getUpDownInheritance(field.getType());
                 if (!ArrayUtils.isEmpty(fieldEntities)) {
-                    myClass = getClassForField(persistenceManager, tokens[j + 1], field, fieldEntities);
-                    if (myClass == null) {
+                    clazz = getClassForField(persistenceManager, tokens[j + 1], field, fieldEntities);
+                    if (clazz == null) {
                         return null;
-                    } else {
-                        break;
                     }
                 } else {
                     //may be an embedded class - try the class directly
-                    myClass = field.getType();
+                    clazz = field.getType();
                 }
             } else {
                 break;
