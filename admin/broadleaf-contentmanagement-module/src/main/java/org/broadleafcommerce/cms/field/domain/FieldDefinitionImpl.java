@@ -28,6 +28,9 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -56,6 +59,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @ProfileEntity
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE)
 public class FieldDefinitionImpl implements FieldDefinition {
 
     private static final long serialVersionUID = 1L;
@@ -85,6 +89,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @AdminPresentation(fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration = "org.broadleafcommerce.common.presentation.client.DynamicSupportedFieldType",
         prominent = true, gridOrder = 3000, order = 1000,
+        requiredOverride = RequiredOverride.REQUIRED,
         friendlyName = "FieldDefinitionImpl_fieldType")
     protected String fieldType;
 
@@ -112,7 +117,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Column(name = "REQUIRED_FLAG")
     protected Boolean requiredFlag = false;
 
-    @ManyToOne (targetEntity = DataDrivenEnumerationImpl.class)
+    @ManyToOne(targetEntity = DataDrivenEnumerationImpl.class)
     @JoinColumn(name = "ENUM_ID")
     protected DataDrivenEnumeration dataDrivenEnumeration;
 
