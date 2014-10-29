@@ -81,58 +81,81 @@ public class FieldManager {
 
         for (int j=0;j<tokens.length;j++) {
             String propertyName = tokens[j];
-            field = getSingleField(clazz, propertyName);
+            Class<?>[] myEntities = persistenceManager.getUpDownInheritance(clazz);
+            Class<?> myClass;
+            if (ArrayUtils.isEmpty(myEntities)) {
+                myClass = clazz;
+            } else {
+                myClass = getClassForField(persistenceManager, propertyName, null, myEntities);
+            }
+            if (myClass == null) {
+                LOG.warn(String.format("Unable to find the field (%s) anywhere in the inheritance hierarchy for (%s)", propertyName, clazz.getName()));
+                return null;
+            }
+            field = getSingleField(myClass, propertyName);
             if (field != null && j < tokens.length - 1) {
-                Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
-                if (!ArrayUtils.isEmpty(entities)) {
-                    String peekAheadToken = tokens[j+1];
-                    List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
-                    for (Class<?> entity : entities) {
-                        Field peekAheadField = null;
-                        try {
-                            peekAheadField = entity.getDeclaredField(peekAheadToken);
-                        } catch (NoSuchFieldException nsf) {
-                            //do nothing
-                        }
-                        if (peekAheadField != null) {
-                            matchedClasses.add(entity);
-                        }
-                    }
-                    if (matchedClasses.size() > 1) {
-                        LOG.warn("Found the property (" + peekAheadToken + ") in more than one class of an inheritance hierarchy. This may lead to unwanted behavior, as the system does not know which class was intended. Do not use the same property name in different levels of the inheritance hierarchy. Defaulting to the first class found (" + matchedClasses.get(0).getName() + ")");
-                    }
-                    if (matchedClasses.isEmpty()) {
-                        //probably an artificial field (i.e. passwordConfirm on AdminUserImpl)
+                Class<?>[] fieldEntities = persistenceManager.getUpDownInheritance(field.getType());
+                if (!ArrayUtils.isEmpty(fieldEntities)) {
+                    myClass = getClassForField(persistenceManager, tokens[j + 1], field, fieldEntities);
+                    if (myClass == null) {
                         return null;
-                    }
-                    if (getSingleField(matchedClasses.get(0), peekAheadToken) != null) {
-                        clazz = matchedClasses.get(0);
-                        Class<?>[] entities2 = persistenceManager.getUpDownInheritance(clazz);
-                        if (!ArrayUtils.isEmpty(entities2) && matchedClasses.size() == 1 && clazz.isInterface()) {
-                            try {
-                                clazz = entityConfiguration.lookupEntityClass(field.getType().getName());
-                            } catch (Exception e) {
-                                // Do nothing - we'll use the matchedClass
-                            }
-                        }
-                    } else {
-                        clazz = field.getType();
                     }
                 } else {
                     //may be an embedded class - try the class directly
-                    clazz = field.getType();
+                    myClass = field.getType();
                 }
             } else {
                 break;
             }
         }
-        
+
         if (field != null) {
             field.setAccessible(true);
         }
         return field;
     }
-    
+
+    protected Class<?> getClassForField(PersistenceManager persistenceManager, String token, Field field, Class<?>[] entities) {
+        Class<?> clazz;
+        List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
+        for (Class<?> entity : entities) {
+            Field peekAheadField = null;
+            try {
+                peekAheadField = entity.getDeclaredField(token);
+            } catch (NoSuchFieldException nsf) {
+                //do nothing
+            }
+            if (peekAheadField != null) {
+                matchedClasses.add(entity);
+            }
+        }
+        if (matchedClasses.size() > 1) {
+            LOG.warn("Found the property (" + token + ") in more than one class of an inheritance hierarchy. " +
+                    "This may lead to unwanted behavior, as the system does not know which class was intended. Do not " +
+                    "use the same property name in different levels of the inheritance hierarchy. Defaulting to the " +
+                    "first class found (" + matchedClasses.get(0).getName() + ")");
+        }
+        if (matchedClasses.isEmpty()) {
+            //probably an artificial field (i.e. passwordConfirm on AdminUserImpl)
+            return null;
+        }
+        Class<?> myClass = field != null?field.getType():entities[0];
+        if (getSingleField(matchedClasses.get(0), token) != null) {
+            clazz = matchedClasses.get(0);
+            Class<?>[] entities2 = persistenceManager.getUpDownInheritance(clazz);
+            if (!ArrayUtils.isEmpty(entities2) && matchedClasses.size() == 1 && clazz.isInterface()) {
+                try {
+                    clazz = entityConfiguration.lookupEntityClass(myClass.getName());
+                } catch (Exception e) {
+                    // Do nothing - we'll use the matchedClass
+                }
+            }
+        } else {
+            clazz = myClass;
+        }
+        return clazz;
+    }
+
     public Object getFieldValue(Object bean, String fieldName) throws IllegalAccessException, FieldNotAvailableException {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
@@ -224,14 +247,16 @@ public class FieldManager {
                             field.set(value, newEntity);
                             componentClass = newEntity.getClass();
                             value = newEntity;
-                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. Using the most extended form of this class identified as ("+entities[0].getName()+")");
+                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                                    "Using the most extended form of this class identified as ("+entities[0].getName()+")");
                         } else {
                             //Just use the field type
                             Object newEntity = field.getType().newInstance();
                             field.set(value, newEntity);
                             componentClass = newEntity.getClass();
                             value = newEntity;
-                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. Using the type of this class.");
+                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                                    "Using the type of this class.");
                         }
                     }
                 }
