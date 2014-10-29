@@ -99,6 +99,8 @@ public class FieldManager {
                     myClass = getClassForField(persistenceManager, tokens[j + 1], field, fieldEntities);
                     if (myClass == null) {
                         return null;
+                    } else {
+                        break;
                     }
                 } else {
                     //may be an embedded class - try the class directly
