@@ -8,6 +8,8 @@
         </div>
 
         <ul class="right">
+            <li th:substituteby="layout/partials/additionalHeaderMenu" />
+
             <li class="has-dropdown" th:inline="text">
                 <blc_admin:admin_user resultVar="adminUser" />
                 <a href="#">[[${adminUser.name}]]</a>
@@ -15,6 +17,7 @@
                     <li><a href="#" th:href="@{/changePassword}" th:text="#{header.password.change} + '...'" /></li>                   
                 </ul>
             </li>
+
             <li class="logout">
                 <a class="small button radius dark" th:href="@{/adminLogout.htm}" th:text="#{header.logout}" />
             </li>
