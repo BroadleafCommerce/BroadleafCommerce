@@ -27,7 +27,7 @@
 
     <div class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
         <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
-            <b>[[#{__${tab.key}__}]]</b>
+            <b>[[${tab.key}]]</b>
             <span th:if="${#lists.size(field.value) &gt; 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">
                 <span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:each="message : ${field.value}">[[#{__${message}__}]]</span>
             </span>
@@ -55,7 +55,7 @@
             th:inline="text">
             
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
-                <legend th:text="#{${group.title}}" />
+                <legend th:text="${group.title}" />
 
                 <div th:each="field : ${group.fields}" 
                      th:if="${field.name}" 
