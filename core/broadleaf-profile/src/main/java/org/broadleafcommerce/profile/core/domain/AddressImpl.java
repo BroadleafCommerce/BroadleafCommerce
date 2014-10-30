@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -711,5 +713,41 @@ public class AddressImpl implements Address {
         result = prime * result + ((isoCountrySubdivision == null) ? 0 : isoCountrySubdivision.hashCode());
         result = prime * result + ((stateProvinceRegion == null) ? 0 : stateProvinceRegion.hashCode());
         return result;
+    }
+
+    @Override
+    public <G extends Address> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        Address cloned = createResponse.getClone();
+        cloned.setActive(isActive);
+        cloned.setAddressLine1(addressLine1);
+        cloned.setAddressLine2(addressLine2);
+        cloned.setAddressLine3(addressLine3);
+        cloned.setBusiness(isBusiness);
+        cloned.setCity(city);
+        cloned.setCompanyName(companyName);
+        cloned.setCounty(county);
+        cloned.setDefault(isDefault);
+        cloned.setEmailAddress(emailAddress);
+        cloned.setFirstName(firstName);
+        cloned.setFullName(fullName);
+        cloned.setIsoCountryAlpha2(isoCountryAlpha2.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setIsoCountrySubdivision(isoCountrySubdivision);
+        cloned.setStreet(isStreet);
+        cloned.setZipFour(zipFour);
+        cloned.setPhoneFax(phoneFax);
+        cloned.setPhonePrimary(phonePrimary);
+        cloned.setPostalCode(postalCode);
+        cloned.setFax(fax);
+        cloned.setMailing(isMailing);
+        cloned.setStandardized(standardized);
+        cloned.setTokenizedAddress(tokenizedAddress);
+        cloned.setVerificationLevel(verificationLevel);
+        cloned.setStateProvinceRegion(stateProvinceRegion);
+        cloned.setPhoneSecondary(phoneSecondary);
+        return createResponse;
     }
 }

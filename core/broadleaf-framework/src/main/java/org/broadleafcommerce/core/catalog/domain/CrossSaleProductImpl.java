@@ -19,29 +19,23 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
-import java.math.BigDecimal;
-
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -51,7 +45,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CrossSaleProductImpl implements RelatedProduct {
+public class CrossSaleProductImpl implements RelatedProduct, MultiTenantCloneable<CrossSaleProductImpl> {
 
     protected static final long serialVersionUID = 1L;
 
@@ -149,5 +143,21 @@ public class CrossSaleProductImpl implements RelatedProduct {
     @Override
     public void setRelatedProduct(Product relatedSaleProduct) {
         this.relatedSaleProduct = relatedSaleProduct;
+    }
+
+    @Override
+    public <G extends CrossSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CrossSaleProductImpl cloned = createResponse.getClone();
+        // dont clone parent
+        cloned.setProduct(product);
+        cloned.setCategory(category);
+        cloned.setPromotionMessage(promotionMessage);
+        cloned.setSequence(sequence);
+        cloned.setRelatedProduct(relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
+        return createResponse;
     }
 }

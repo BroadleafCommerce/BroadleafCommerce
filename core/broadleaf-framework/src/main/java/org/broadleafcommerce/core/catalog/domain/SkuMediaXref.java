@@ -26,7 +26,7 @@ import java.io.Serializable;
 /**
  * @author Jeff Fischer
  */
-public interface SkuMediaXref extends Serializable {
+public interface SkuMediaXref extends Serializable{
 
     Long getId();
 

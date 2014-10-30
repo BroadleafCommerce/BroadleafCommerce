@@ -19,10 +19,12 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 import java.util.Map;
 
-public interface CustomerPayment extends Serializable {
+public interface CustomerPayment extends Serializable, MultiTenantCloneable<CustomerPayment> {
 
     public void setId(Long id);
 

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.rule.SimpleRule;
 
 /**
@@ -26,7 +27,7 @@ import org.broadleafcommerce.common.rule.SimpleRule;
  * @author jfischer
  *
  */
-public interface OfferRule extends SimpleRule {
+public interface OfferRule extends SimpleRule, MultiTenantCloneable<OfferRule> {
 
     public Long getId();
 

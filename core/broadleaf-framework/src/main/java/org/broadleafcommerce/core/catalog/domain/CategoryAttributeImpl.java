@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -192,4 +194,18 @@ public class CategoryAttributeImpl implements CategoryAttribute {
         return true;
     }
 
+    @Override
+    public <G extends CategoryAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CategoryAttribute cloned = createResponse.getClone();
+        // dont clone
+        cloned.setCategory(category);
+        cloned.setName(name);
+        cloned.setValue(value);
+        cloned.setSearchable(searchable);
+        return  createResponse;
+    }
 }

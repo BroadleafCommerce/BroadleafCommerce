@@ -21,6 +21,7 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
@@ -31,7 +32,7 @@ import java.util.Map;
 /**
  * Created by bpolster.
  */
-public interface StaticAsset extends Serializable {
+public interface StaticAsset extends Serializable, MultiTenantCloneable<StaticAsset> {
 
     /**
      * Returns the id of the static asset.

@@ -19,10 +19,12 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 import java.util.Map;
 
-public interface OfferInfo extends Serializable{
+public interface OfferInfo extends Serializable, MultiTenantCloneable<OfferInfo>{
 
     public Long getId();
 

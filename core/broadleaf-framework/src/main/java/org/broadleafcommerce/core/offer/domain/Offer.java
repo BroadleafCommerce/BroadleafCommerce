@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
@@ -33,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public interface Offer extends Status, Serializable {
+public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> {
 
     public void setId(Long id);
 

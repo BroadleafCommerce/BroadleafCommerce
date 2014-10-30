@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -241,4 +243,18 @@ public class SkuAttributeImpl implements SkuAttribute {
         return true;
     }
 
+    @Override
+    public <G extends SkuAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SkuAttribute cloned = createResponse.getClone();
+        cloned.setName(name);
+        // dont clone
+        cloned.setSku(sku);
+        cloned.setSearchable(getSearchable());
+        cloned.setValue(value);
+        return createResponse;
+    }
 }

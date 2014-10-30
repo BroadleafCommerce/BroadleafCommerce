@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 public interface Phone extends Serializable {

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -142,5 +144,16 @@ public class PageRuleImpl implements PageRule {
         newField.matchRule = matchRule;
 
         return newField;
+    }
+
+    @Override
+    public <G extends PageRule> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        PageRule cloned = createResponse.getClone();
+        cloned.setMatchRule(matchRule);
+        return createResponse;
     }
 }

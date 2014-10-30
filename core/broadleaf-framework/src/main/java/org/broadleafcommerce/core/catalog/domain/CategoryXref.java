@@ -19,10 +19,12 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public interface CategoryXref extends Serializable {
+public interface CategoryXref extends Serializable, MultiTenantCloneable<CategoryXref> {
 
     public BigDecimal getDisplayOrder();
 

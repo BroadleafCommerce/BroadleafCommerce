@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -157,6 +159,22 @@ public class PageFieldImpl implements PageField {
     public void setPage(Page page) {
         this.page = page;
     }
-    
+
+    @Override
+    public <G extends PageField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        PageField cloned = createResponse.getClone();
+        cloned.setPage(page);
+        cloned.setFieldKey(fieldKey);
+        cloned.setValue(getValue());
+
+        return createResponse;
+
+
+    }
 }
 

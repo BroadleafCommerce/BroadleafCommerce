@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.config.domain;
 
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;
 
@@ -29,7 +30,7 @@ import java.io.Serializable;
  * User: Kelly Tisdell
  * Date: 6/20/12
  */
-public interface SystemProperty extends Serializable {
+public interface SystemProperty extends Serializable, MultiTenantCloneable<SystemProperty> {
 
     /**
      * Unique id of the DB record

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -29,21 +31,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Polymorphism;
-import org.hibernate.annotations.PolymorphismType;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * The Class CategoryProductXrefImpl is the default implmentation of {@link Category}.
@@ -153,5 +143,20 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
         int result = category != null ? category.hashCode() : 0;
         result = 31 * result + (product != null ? product.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public <G extends CategoryProductXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CategoryProductXref cloned = createResponse.getClone();
+        cloned.setDisplayOrder(displayOrder);
+        // don't clone
+        cloned.setProduct(product);
+        // don't clone
+        cloned.setCategory(category);
+        return createResponse;
     }
 }

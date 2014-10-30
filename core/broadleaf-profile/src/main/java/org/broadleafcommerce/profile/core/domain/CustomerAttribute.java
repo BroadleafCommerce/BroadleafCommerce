@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.value.ValueAssignable;
 
 
@@ -32,7 +33,7 @@ import org.broadleafcommerce.common.value.ValueAssignable;
  * @author bpolster
  *
  */
-public interface CustomerAttribute extends ValueAssignable<String> {
+public interface CustomerAttribute extends ValueAssignable<String>, MultiTenantCloneable<CustomerAttribute> {
 
     /**
      * Gets the id.

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -226,5 +228,20 @@ public class ProductAttributeImpl implements ProductAttribute {
         } else if (!value.equals(other.value))
             return false;
         return true;
+    }
+
+    @Override
+    public <G extends ProductAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        ProductAttribute cloned = createResponse.getClone();
+        // dont clone
+        cloned.setProduct(product);
+        cloned.setName(name);
+        cloned.setSearchable(searchable);
+        cloned.setValue(value);
+        return  createResponse;
     }
 }

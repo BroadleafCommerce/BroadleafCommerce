@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.value.Searchable;
 
 
@@ -36,7 +37,7 @@ import org.broadleafcommerce.common.value.Searchable;
  * @author btaylor
  *
  */
-public interface SkuAttribute extends Searchable<String> {
+public interface SkuAttribute extends Searchable<String>, MultiTenantCloneable<SkuAttribute> {
 
     /**
      * Gets the id.

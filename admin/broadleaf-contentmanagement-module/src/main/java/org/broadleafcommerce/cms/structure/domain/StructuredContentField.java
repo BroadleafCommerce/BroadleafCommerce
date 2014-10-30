@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
 import java.io.Serializable;
@@ -38,7 +39,7 @@ import javax.annotation.Nullable;
  * @author bpolster
  *
  */
-public interface StructuredContentField extends Serializable, Cloneable {
+public interface StructuredContentField extends Serializable, Cloneable,MultiTenantCloneable<StructuredContentField> {
 
     /**
      * Gets the primary key.

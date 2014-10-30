@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 
@@ -30,7 +31,7 @@ import java.io.Serializable;
  * and stackability concerns once the order has been processed
  * through the promotion engine.
  */
-public interface CandidateItemOffer extends Serializable {
+public interface CandidateItemOffer extends Serializable, MultiTenantCloneable<CandidateItemOffer> {
     
     public Long getId();
 

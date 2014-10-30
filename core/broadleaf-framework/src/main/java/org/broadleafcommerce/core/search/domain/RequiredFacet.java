@@ -19,12 +19,14 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
  */
-public interface RequiredFacet extends Serializable {
+public interface RequiredFacet extends Serializable, MultiTenantCloneable<RequiredFacet> {
 
     Long getId();
 

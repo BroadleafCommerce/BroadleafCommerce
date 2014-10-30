@@ -20,10 +20,11 @@
 package org.broadleafcommerce.cms.url.domain;
 
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;
 
-public interface URLHandler extends  Serializable{
+public interface URLHandler extends  Serializable,MultiTenantCloneable<URLHandler> {
 
     public abstract Long getId();
 

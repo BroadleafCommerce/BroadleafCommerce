@@ -19,24 +19,15 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -113,5 +104,19 @@ public class OfferInfoImpl implements OfferInfo {
         } else if (!fieldValues.equals(other.fieldValues))
             return false;
         return true;
+    }
+
+    @Override
+    public <G extends OfferInfo> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OfferInfo cloned = createResponse.getClone();
+        for(Map.Entry<String,String> entry : fieldValues.entrySet())
+        {
+            cloned.getFieldValues().put(entry.getKey(),entry.getValue());
+        }
+        return  createResponse;
     }
 }

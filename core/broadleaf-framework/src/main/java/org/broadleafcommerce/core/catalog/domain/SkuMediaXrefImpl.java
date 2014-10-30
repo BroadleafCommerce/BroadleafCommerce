@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -205,4 +207,24 @@ public class SkuMediaXrefImpl implements SkuMediaXref, Media {
         }
         throw new UnknownUnwrapTypeException(unwrapType);
     }
+
+    public <G extends SkuMediaXrefImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SkuMediaXrefImpl cloned = createResponse.getClone();
+        Media clonedMedia = ((MediaImpl)media).createOrRetrieveCopyInstance(context).getClone();
+        cloned.setMedia(clonedMedia);
+        cloned.setAltText(getAltText());
+        cloned.setKey(key);
+        // dont clone -- let sku set itself
+        cloned.setSku(sku);
+        cloned.setTags(getTags());
+        cloned.setUrl(getUrl());
+        cloned.setTitle(getTitle());
+        return createResponse;
+    }
+
+
 }

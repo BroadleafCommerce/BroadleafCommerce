@@ -19,20 +19,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -43,12 +31,12 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+
+import javax.persistence.*;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -223,4 +211,18 @@ public class CustomerAddressImpl implements CustomerAddress {
     }
 
 
+    @Override
+    public <G extends CustomerAddress> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CustomerAddress cloned = createResponse.getClone();
+        cloned.setAddressName(addressName);
+        // dont clone
+        cloned.setCustomer(customer);
+        cloned.setArchived(getArchived());
+        cloned.setAddress(address.createOrRetrieveCopyInstance(context).getClone());
+        return createResponse;
+    }
 }

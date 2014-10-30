@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.core.catalog.domain.Category;
 
 import java.math.BigDecimal;
@@ -26,7 +27,7 @@ import java.math.BigDecimal;
 /**
  * @author Andre Azzolini (apazzolini)
  */
-public interface CategoryExcludedSearchFacet {
+public interface CategoryExcludedSearchFacet extends MultiTenantCloneable<CategoryExcludedSearchFacet>{
 
     /**
      * Gets the internal id

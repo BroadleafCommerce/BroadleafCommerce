@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -30,15 +32,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
@@ -49,42 +43,16 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.common.web.Locatable;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -855,7 +823,73 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         String manufacturer = getManufacturer();
         return StringUtils.isBlank(manufacturer) ? getName() : manufacturer + " " + getName();
     }
-    
+
+    @Override
+    public <G extends Product> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        Product cloned = createResponse.getClone();
+        cloned.setActiveEndDate(getActiveEndDate());
+        cloned.setActiveStartDate(getActiveStartDate());
+        cloned.setContainer(getContainer());
+        cloned.setCanSellWithoutOptions(canSellWithoutOptions);
+        cloned.setFeaturedProduct(isFeaturedProduct());
+        cloned.setDepth(getDepth());
+        cloned.setDimension(getDimension());
+        cloned.setUrl(url);
+        cloned.setUrlKey(urlKey);
+        cloned.setWeight(getWeight());
+        cloned.setHeight(getHeight());
+        cloned.setGirth(getGirth());
+        cloned.setTaxCode(getTaxCode());
+        cloned.setSize(getSize());
+        cloned.setDescription(getDescription());
+        cloned.setManufacturer(manufacturer);
+        cloned.setPromoMessage(promoMessage);
+        cloned.setDefaultCategory(defaultCategory);
+        cloned.setModel(model);
+        for(RelatedProduct entry : crossSaleProducts){
+            CrossSaleProductImpl clonedEntry = ((CrossSaleProductImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setProduct(cloned);
+            cloned.getCrossSaleProducts().add(clonedEntry);
+        }
+        for(RelatedProduct entry : upSaleProducts){
+            UpSaleProductImpl clonedEntry = ((UpSaleProductImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setProduct(cloned);
+            cloned.getUpSaleProducts().add(clonedEntry);
+        }
+
+        cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());
+        for(Sku entry : additionalSkus){
+            Sku clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setProduct(cloned);
+            cloned.getAdditionalSkus().add(clonedEntry);
+        }
+        for(ProductOptionXref entry : productOptions){
+            ProductOptionXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setProduct(cloned);
+            cloned.getProductOptionXrefs().add(clonedEntry);
+
+        }
+        for(Map.Entry<String,Set<String>> entry : productOptionMap.entrySet()){
+           cloned.getProductOptionValuesMap().put(entry.getKey(),entry.getValue());
+        }
+        for(CategoryProductXref entry : allParentCategoryXrefs){
+            CategoryProductXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setProduct(cloned);
+            cloned.getAllParentCategoryXrefs().add(clonedEntry);
+        }
+        for(Map.Entry<String, ProductAttribute> entry : productAttributes.entrySet()){
+            ProductAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setProduct(cloned);
+            cloned.getProductAttributes().put(entry.getKey(),clonedEntry);
+        }
+
+        return createResponse;
+    }
+
     public static class Presentation {
         public static class Tab {
             public static class Name {

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -30,18 +32,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -133,5 +125,20 @@ public class CategoryXrefImpl implements CategoryXref {
         int result = category != null ? category.hashCode() : 0;
         result = 31 * result + (subCategory != null ? subCategory.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public <G extends CategoryXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CategoryXref cloned = createResponse.getClone();
+        cloned.setCategory(category);
+        Category clonedSub = subCategory.createOrRetrieveCopyInstance(context).getClone();
+        clonedSub.getAllParentCategoryXrefs().add(cloned);
+        cloned.setSubCategory(clonedSub);
+        cloned.setDisplayOrder(displayOrder);
+        return createResponse;
     }
 }

@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -184,6 +186,22 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     @Override
     public String getTaxCode() {
         return this.taxCode;
+    }
+
+    @Override
+    public <G extends FulfillmentOption> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FulfillmentOption cloned = createResponse.getClone();
+        cloned.setFulfillmentType(getFulfillmentType());
+        cloned.setName(name);
+        cloned.setTaxCode(taxCode);
+        cloned.setUseFlatRates(useFlatRates);
+        cloned.setTaxable(taxable);
+        cloned.setLongDescription(longDescription);
+        return createResponse;
     }
 
     public static class Presentation {

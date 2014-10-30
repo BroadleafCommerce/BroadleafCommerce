@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 /**
@@ -26,7 +28,7 @@ import java.io.Serializable;
  * persisted with the order.
  *
  */
-public interface OrderAttribute extends Serializable {
+public interface OrderAttribute extends Serializable, MultiTenantCloneable<OrderAttribute> {
 
     /**
      * Gets the id.
