@@ -49,6 +49,7 @@
         <class>org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryMediaXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl</class>

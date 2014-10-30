@@ -27,13 +27,11 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
-import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseConfigValidation;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
-import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -87,12 +85,9 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -294,6 +289,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             gridVisibleFields = { "defaultSku.name" })
     protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
 
+    /*
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
     @MapKeyColumn(name = "MAP_KEY")
@@ -318,6 +314,33 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     )
     @IgnoreEnterpriseConfigValidation
     protected Map<String, Media> categoryMedia = new HashMap<String , Media>(10);
+    */
+
+    @OneToMany(mappedBy = "category", targetEntity = CategoryMediaXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @MapKey(name = "key")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
+    @BatchSize(size = 50)
+    @AdminPresentationMap(friendlyName = "CategoryImpl_Category_Media",
+        tab = Presentation.Tab.Name.Media, tabOrder = Presentation.Tab.Order.Media,
+        keyPropertyFriendlyName = "CategoryImpl_Category_Media_Key",
+        deleteEntityUponRemove = true,
+        mediaField = "media.url",
+        toOneTargetProperty = "media",
+        toOneParentProperty = "category",
+        keys = {
+            @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary"),
+            @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate1"),
+            @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate2"),
+            @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate3"),
+            @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate4"),
+            @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate5"),
+            @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
+        }
+    )
+    protected Map<String, CategoryMediaXref> categoryMedia = new HashMap<String, CategoryMediaXref>();
+
+    @Transient
+    protected Map<String, Media> legacyCategoryMedia = new HashMap<String, Media>();
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
@@ -963,16 +986,34 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
+    @Deprecated
     public Map<String, Media> getCategoryMedia() {
+        if (legacyCategoryMedia.size() == 0) {
+            for (Map.Entry<String, CategoryMediaXref> entry : getCategoryMediaXref().entrySet()) {
+                legacyCategoryMedia.put(entry.getKey(), entry.getValue().getMedia());
+            }
+        }
+        return Collections.unmodifiableMap(legacyCategoryMedia);
+    }
+
+    @Override
+    @Deprecated
+    public void setCategoryMedia(Map<String, Media> categoryMedia) {
+        this.categoryMedia.clear();
+        this.legacyCategoryMedia.clear();
+        for(Map.Entry<String, Media> entry : categoryMedia.entrySet()){
+            this.categoryMedia.put(entry.getKey(), new CategoryMediaXrefImpl(this, entry.getValue(), entry.getKey()));
+        }
+    }
+    
+    @Override
+    public Map<String, CategoryMediaXref> getCategoryMediaXref() {
         return categoryMedia;
     }
 
     @Override
-    public void setCategoryMedia(Map<String, Media> categoryMedia) {
-        this.categoryMedia.clear();
-        for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
-            this.categoryMedia.put(me.getKey(), me.getValue());
-        }
+    public void setCategoryMediaXref(Map<String, CategoryMediaXref> categoryMediaXref) {
+        this.categoryMedia = categoryMediaXref;
     }
     
     @Override

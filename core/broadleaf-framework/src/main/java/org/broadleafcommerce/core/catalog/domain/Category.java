@@ -265,10 +265,32 @@ public interface Category extends Serializable {
      * and the {@code Media} instance stores information about the
      * media itself (image url, etc...)
      * 
+     * @deprecated use {@link #getCategoryMediaXref()} instead
      * @return the category Media
      */
     @Nonnull
+    @Deprecated
     public Map<String, Media> getCategoryMedia() ;
+
+    /**
+     * Sets the category media. The key is of arbitrary meaning
+     * and the {@code Media} instance stores information about the
+     * media itself (image url, etc...)
+     * 
+     * @deprecated use {@link #setCategoryMediaXref(Map)} instead
+     * @param categoryMedia the category media
+     */
+    @Deprecated
+    public void setCategoryMedia(@Nonnull Map<String, Media> categoryMedia);
+
+    /**
+     * Gets the category media map. The key is of arbitrary meaning
+     * and the {@code Media} instance stores information about the
+     * media itself (image url, etc...)
+     * 
+     * @return the category Media
+     */
+    public Map<String, CategoryMediaXref> getCategoryMediaXref();
 
     /**
      * Sets the category media. The key is of arbitrary meaning
@@ -277,7 +299,7 @@ public interface Category extends Serializable {
      * 
      * @param categoryMedia the category media
      */
-    public void setCategoryMedia(@Nonnull Map<String, Media> categoryMedia);
+    public void setCategoryMediaXref(Map<String, CategoryMediaXref> categoryMediaXref);
 
     /**
      * Gets the long description.
@@ -674,4 +696,5 @@ public interface Category extends Serializable {
      * @param externalId
      */
     public void setExternalId(String externalId);
+
 }
