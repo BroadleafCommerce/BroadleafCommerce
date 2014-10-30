@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 /**
@@ -26,7 +28,7 @@ import java.io.Serializable;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface SkuProductOptionValueXref extends Serializable {
+public interface SkuProductOptionValueXref extends Serializable, MultiTenantCloneable<SkuProductOptionValueXref> {
 
     public Long getId();
 

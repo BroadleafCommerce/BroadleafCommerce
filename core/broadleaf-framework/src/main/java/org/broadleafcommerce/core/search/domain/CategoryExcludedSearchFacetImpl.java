@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -32,19 +34,9 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -126,5 +118,18 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
     public void setSequence(BigDecimal sequence) {
         this.sequence = sequence;
     }
-    
+
+    @Override
+    public <G extends CategoryExcludedSearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CategoryExcludedSearchFacet cloned = createResponse.getClone();
+        cloned.setSearchFacet(searchFacet.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setSequence(sequence);
+        // dont clone
+        cloned.setCategory(getCategory());
+        return createResponse;
+    }
 }

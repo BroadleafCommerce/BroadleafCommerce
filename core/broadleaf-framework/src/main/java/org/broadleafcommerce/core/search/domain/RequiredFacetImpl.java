@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -102,5 +104,18 @@ public class RequiredFacetImpl implements RequiredFacet {
     @Override
     public void setSearchFacet(SearchFacet searchFacet) {
         this.searchFacet = searchFacet;
+    }
+
+    @Override
+    public <G extends RequiredFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        RequiredFacet cloned = createResponse.getClone();
+        cloned.setRequiredFacet(requiredFacet.createOrRetrieveCopyInstance(context).getClone());
+        //dont clone
+        cloned.setSearchFacet(searchFacet);
+        return  createResponse;
     }
 }

@@ -20,9 +20,11 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.math.BigDecimal;
 
-public interface FeaturedProduct extends PromotableProduct {
+public interface FeaturedProduct extends PromotableProduct, MultiTenantCloneable<FeaturedProduct> {
 
     Long getId();
 

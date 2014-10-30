@@ -20,6 +20,8 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
@@ -379,4 +381,8 @@ public class NullOrderImpl implements Order {
         throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 
+    @Override
+    public <G extends Order> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        return null;
+    }
 }

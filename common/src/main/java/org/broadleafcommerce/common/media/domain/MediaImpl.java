@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.common.media.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -47,7 +50,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class MediaImpl implements Media {
+public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     
     private static final long serialVersionUID = 1L;
 
@@ -191,4 +194,17 @@ public class MediaImpl implements Media {
         return true;
     }
 
+    @Override
+    public <G extends MediaImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        MediaImpl cloned = createResponse.getClone();
+        cloned.setAltText(altText);
+        cloned.setTags(tags);
+        cloned.setTitle(title);
+        cloned.setUrl(url);
+        return  createResponse;
+    }
 }

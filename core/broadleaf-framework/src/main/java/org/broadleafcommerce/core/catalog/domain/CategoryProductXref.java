@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -36,7 +38,7 @@ import java.math.BigDecimal;
  *  @author btaylor
  * 
  */
-public interface CategoryProductXref extends Serializable {
+public interface CategoryProductXref extends Serializable,MultiTenantCloneable<CategoryProductXref> {
 
     /**
      * Gets the category.

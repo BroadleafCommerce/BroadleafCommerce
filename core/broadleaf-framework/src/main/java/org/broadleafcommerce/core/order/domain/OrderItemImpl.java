@@ -23,18 +23,16 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -49,32 +47,19 @@ import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 
 @Entity
@@ -92,7 +77,7 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
+public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable, MultiTenantCloneable<OrderItemImpl> {
 
     private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
     private static final long serialVersionUID = 1L;
@@ -869,6 +854,51 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             return false;
         }
         return true;
+    }
+
+    @Override
+    public <G extends OrderItemImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OrderItem cloned = createResponse.getClone();
+        cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setName(name);
+        cloned.setOrderItemType(getOrderItemType());
+        cloned.setDiscountingAllowed(discountsAllowed);
+        cloned.setTaxable(isTaxable());
+        cloned.setSalePriceOverride(salePriceOverride);
+        cloned.setSalePrice(getSalePrice());
+        cloned.setRetailPrice(getRetailPrice());
+        cloned.setRetailPriceOverride(retailPriceOverride);
+        cloned.setQuantity(quantity);
+        cloned.setPersonalMessage(personalMessage);
+        // dont clone
+        cloned.setParentOrderItem(parentOrderItem);
+        for(OrderItem entry : childOrderItems){
+            OrderItem clonedEntry = ((OrderItemImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setParentOrderItem(clonedEntry);
+            cloned.getChildOrderItems().add(clonedEntry);
+        }
+        for(CandidateItemOffer entry : candidateItemOffers){
+            CandidateItemOffer clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setOrderItem(cloned);
+            cloned.getCandidateItemOffers().add(clonedEntry);
+        }
+        for(Map.Entry<String,OrderItemAttribute> entry : orderItemAttributeMap.entrySet()){
+            OrderItemAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setOrderItem(cloned);
+            cloned.getOrderItemAttributes().put(entry.getKey(),clonedEntry);
+        }
+        // dont clone
+        cloned.setGiftWrapOrderItem(giftWrapOrderItem);
+        for(OrderItemPriceDetail entry : orderItemPriceDetails){
+            OrderItemPriceDetail clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setOrderItem(cloned);
+            cloned.getOrderItemPriceDetails().add(clonedEntry);
+        }
+        return createResponse;
     }
 
     public static class Presentation {

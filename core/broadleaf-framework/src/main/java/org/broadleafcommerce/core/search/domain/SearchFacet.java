@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.util.List;
 
 /**
@@ -27,7 +29,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface SearchFacet {
+public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
 
     /**
      * Returns the internal id

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.core.catalog.domain.Category;
 
 import java.io.Serializable;
@@ -27,7 +28,7 @@ import java.math.BigDecimal;
 /**
  * @author Andre Azzolini (apazzolini)
  */
-public interface CategorySearchFacet extends Serializable {
+public interface CategorySearchFacet extends Serializable, MultiTenantCloneable<CategorySearchFacet> {
 
     /**
      * Gets the internal id

@@ -95,4 +95,6 @@ public class MediaDto implements Media {
     public <T> T unwrap(Class<T> unwrapType) {
         throw new UnknownUnwrapTypeException(unwrapType);
     }
+
+
 }

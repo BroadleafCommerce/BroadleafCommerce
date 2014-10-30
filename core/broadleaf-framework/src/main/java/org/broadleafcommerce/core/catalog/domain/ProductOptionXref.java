@@ -19,12 +19,14 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
  */
-public interface ProductOptionXref extends Serializable {
+public interface ProductOptionXref extends Serializable, MultiTenantCloneable<ProductOptionXref> {
 
     Long getId();
 

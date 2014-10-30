@@ -21,28 +21,21 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER")
@@ -205,4 +198,18 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         return true;
     }
 
+    @Override
+    public <G extends CandidateItemOffer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CandidateItemOffer cloned = createResponse.getClone();
+        cloned.setDiscountedPrice(getDiscountedPrice());
+        // Don't clone
+        cloned.setOrderItem(orderItem);
+        // TODO clone here?
+        cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
+        return  createResponse;
+    }
 }

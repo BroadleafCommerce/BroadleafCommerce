@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -30,26 +32,16 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -238,4 +230,30 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         return getField().equals(other.getField());
     }
 
+    @Override
+    public <G extends SearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SearchFacet cloned = createResponse.getClone();
+        cloned.setCanMultiselect(canMultiselect);
+        cloned.setLabel(label);
+        cloned.setRequiresAllDependentFacets(requiresAllDependentFacets);
+        cloned.setShowOnSearch(showOnSearch);
+        cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
+        for(RequiredFacet entry : requiredFacets){
+            RequiredFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setSearchFacet(cloned);
+            cloned.getRequiredFacets().add(clonedEntry);
+        }
+        cloned.setSearchDisplayPriority(searchDisplayPriority);
+        for(SearchFacetRange entry : searchFacetRanges){
+            SearchFacetRange clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setSearchFacet(cloned);
+            cloned.getSearchFacetRanges().add(clonedEntry);
+        }
+
+        return createResponse;
+    }
 }

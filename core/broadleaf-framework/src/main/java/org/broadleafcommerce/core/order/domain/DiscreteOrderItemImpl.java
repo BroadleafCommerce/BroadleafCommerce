@@ -19,43 +19,27 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
-import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
-import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
-import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.hibernate.annotations.BatchSize;
+import org.broadleafcommerce.core.catalog.domain.*;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -429,6 +413,25 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             }
         }
         return null;
+    }
+
+    @Override
+    public CreateResponse<DiscreteOrderItemImpl> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<DiscreteOrderItemImpl> createResponse = super.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        DiscreteOrderItem cloned = createResponse.getClone();
+        cloned.setBaseRetailPrice(getBaseRetailPrice());
+        cloned.setBaseSalePrice(getBaseSalePrice());
+        cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setDiscountingAllowed(discountsAllowed);
+        cloned.setName(name);
+        // dont clone
+        cloned.setOrder(order);
+        return  createResponse;
     }
 
     public static class Presentation {

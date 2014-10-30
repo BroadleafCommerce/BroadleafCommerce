@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -45,7 +46,7 @@ import javax.annotation.Nullable;
  * @author Jeff Fischer
  * 
  */
-public interface Category extends Serializable {
+public interface Category extends Serializable, MultiTenantCloneable<Category> {
 
     /**
      * Gets the primary key.

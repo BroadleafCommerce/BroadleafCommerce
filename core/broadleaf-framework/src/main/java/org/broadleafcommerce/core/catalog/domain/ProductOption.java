@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
@@ -50,7 +51,7 @@ import java.util.List;
  *
  *  @author bpolster
  */
-public interface ProductOption extends Serializable {
+public interface ProductOption extends Serializable, MultiTenantCloneable<ProductOption> {
     
     /**
      * Returns unique identifier of the product option.

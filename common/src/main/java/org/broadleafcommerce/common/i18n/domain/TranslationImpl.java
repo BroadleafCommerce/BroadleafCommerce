@@ -20,6 +20,8 @@
 
 package org.broadleafcommerce.common.i18n.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -28,22 +30,13 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Table;
-import org.hibernate.annotations.Type;
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
+import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -166,4 +159,18 @@ public class TranslationImpl implements Serializable, Translation {
         this.translatedValue = translatedValue;
     }
 
+    @Override
+    public <G extends Translation> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        Translation cloned = createResponse.getClone();
+        cloned.setEntityId(entityId);
+        cloned.setFieldName(fieldName);
+        cloned.setLocaleCode(localeCode);
+        cloned.setTranslatedValue(translatedValue);
+        cloned.setEntityType(getEntityType());
+        return createResponse;
+    }
 }

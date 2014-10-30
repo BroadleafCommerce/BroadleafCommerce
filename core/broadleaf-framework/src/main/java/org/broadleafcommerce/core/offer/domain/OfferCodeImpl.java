@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -33,29 +35,16 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
@@ -265,4 +254,24 @@ public class OfferCodeImpl implements OfferCode {
     }
 
 
+    @Override
+    public <G extends OfferCode> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OfferCode cloned = createResponse.getClone();
+        cloned.setEndDate(offerCodeEndDate);
+        cloned.setMaxUses(maxUses);
+        // No clone
+        cloned.setOffer(offer);
+        // TODO MANY-TO-MANY
+        cloned.setOrders(orders);
+        cloned.setStartDate(offerCodeStartDate);
+        cloned.setArchived(getArchived());
+        cloned.setOfferCode(offerCode);
+
+        cloned.setUses(uses);
+        return  createResponse;
+    }
 }

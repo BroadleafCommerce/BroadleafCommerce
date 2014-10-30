@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
@@ -56,7 +57,7 @@ import java.io.Serializable;
  * @author Phillip Verheyden
  * @see {@link FulfillmentPricingProvider}, {@link FulfillmentGroup}
  */
-public interface FulfillmentOption extends Serializable {
+public interface FulfillmentOption extends Serializable, MultiTenantCloneable<FulfillmentOption> {
     
     public Long getId();
     

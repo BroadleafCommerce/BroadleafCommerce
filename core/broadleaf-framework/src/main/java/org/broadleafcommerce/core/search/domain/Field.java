@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface Field {
+public interface Field extends MultiTenantCloneable<Field> {
     
     /**
      * Gets the id

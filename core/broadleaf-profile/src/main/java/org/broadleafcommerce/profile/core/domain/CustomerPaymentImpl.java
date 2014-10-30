@@ -19,25 +19,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -47,10 +30,15 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -161,5 +149,23 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @Override
     public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
+    }
+
+    @Override
+    public <G extends CustomerPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CustomerPayment cloned = createResponse.getClone();
+        // dont clone
+        cloned.setCustomer(customer);
+        cloned.setBillingAddress(billingAddress.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setDefault(isDefault);
+        cloned.setPaymentToken(paymentToken);
+        for(Map.Entry<String,String> entry : additionalFields.entrySet()){
+            cloned.getAdditionalFields().put(entry.getKey(),entry.getValue());
+        }
+        return createResponse;
     }
 }

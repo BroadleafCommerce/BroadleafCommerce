@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
@@ -50,7 +51,7 @@ import java.util.Set;
  * @author btaylor
  *
  */
-public interface Sku extends Serializable {
+public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
 
     /**
      * Returns the id of this sku

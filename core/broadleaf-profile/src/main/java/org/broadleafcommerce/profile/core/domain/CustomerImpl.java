@@ -24,6 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -31,39 +33,20 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
 import org.broadleafcommerce.common.persistence.Previewable;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
-import org.hibernate.annotations.Where;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
@@ -520,6 +503,54 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
         int result = 1;
         result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
+    }
+
+    @Override
+    public <G extends Customer> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        Customer cloned = createResponse.getClone();
+        cloned.setAnonymous(anonymous);
+        cloned.setChallengeAnswer(challengeAnswer);
+        cloned.setChallengeQuestion(challengeQuestion);
+        cloned.setCookied(cookied);
+        for(CustomerAddress entry : customerAddresses){
+            CustomerAddress clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCustomer(cloned);
+            cloned.getCustomerAddresses().add(clonedEntry);
+
+        }
+        for(Map.Entry<String, CustomerAttribute> entry : customerAttributes.entrySet()){
+            CustomerAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCustomer(cloned);
+            cloned.getCustomerAttributes().put(entry.getKey(),clonedEntry);
+        }
+        cloned.setLoggedIn(loggedIn);
+        cloned.setUsername(username);
+        cloned.setUnencodedPassword(unencodedPassword);
+        cloned.setTaxExemptionCode(taxExemptionCode);
+        cloned.setUnencodedChallengeAnswer(unencodedChallengeAnswer);
+        cloned.setRegistered(registered);
+        cloned.setReceiveEmail(receiveEmail);
+        cloned.setPasswordChangeRequired(passwordChangeRequired);
+        cloned.setPassword(password);
+        cloned.setLastName(lastName);
+        cloned.setFirstName(firstName);
+        cloned.setEmailAddress(emailAddress);
+        cloned.setDeactivated(deactivated);
+        for(CustomerPayment entry : customerPayments){
+            CustomerPayment clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCustomer(cloned);
+            cloned.getCustomerPayments().add(clonedEntry);
+        }
+        for(CustomerPhone entry : customerPhones){
+            CustomerPhone clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCustomer(cloned);
+            cloned.getCustomerPhones().add(clonedEntry);
+        }
+        return createResponse;
     }
 
     public static class Presentation {

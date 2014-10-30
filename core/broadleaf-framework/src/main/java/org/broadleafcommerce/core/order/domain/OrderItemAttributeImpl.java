@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -29,17 +31,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.*;
 import java.lang.reflect.Method;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * Arbitrary attributes to add to an order-item.
@@ -175,5 +168,19 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
         }
         
         return value.equals(((OrderItemAttribute) obj).getValue());
+    }
+
+    @Override
+    public <G extends OrderItemAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OrderItemAttribute cloned = createResponse.getClone();
+        cloned.setName(name);
+        cloned.setValue(value);
+        // dont clone
+        cloned.setOrderItem(orderItem);
+        return  createResponse;
     }
 }

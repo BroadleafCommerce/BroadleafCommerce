@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
@@ -42,7 +43,7 @@ import java.util.Set;
  * @author btaylor
  * @see {@link ProductImpl},{@link Sku}, {@link Category}
  */
-public interface Product extends Serializable {
+public interface Product extends Serializable, MultiTenantCloneable<Product> {
 
     /**
      * The id of the Product.

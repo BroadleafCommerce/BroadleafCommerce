@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -113,4 +115,16 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
         this.productOptionValue = productOptionValue;
     }
 
+    @Override
+    public <G extends SkuProductOptionValueXref> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SkuProductOptionValueXref cloned = createResponse.getClone();
+        // dont clone
+        cloned.setSku(sku);
+        cloned.setProductOptionValue(productOptionValue.createOrRetrieveCopyInstance(context).getClone());
+        return createResponse;
+    }
 }

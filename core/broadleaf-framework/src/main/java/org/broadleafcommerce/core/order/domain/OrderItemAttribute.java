@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.value.ValueAssignable;
 
 /**
@@ -32,7 +33,7 @@ import org.broadleafcommerce.common.value.ValueAssignable;
  *   Number of minutes for someone purchasing a rate plan.
  *
  */
-public interface OrderItemAttribute extends ValueAssignable<String> {
+public interface OrderItemAttribute extends ValueAssignable<String>, MultiTenantCloneable<OrderItemAttribute> {
 
     /**
      * Gets the id.

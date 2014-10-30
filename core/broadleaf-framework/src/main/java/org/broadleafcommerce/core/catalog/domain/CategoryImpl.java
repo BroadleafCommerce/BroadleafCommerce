@@ -27,6 +27,8 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseConfigValidation;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -36,16 +38,7 @@ import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.template.TemplatePathContainer;
@@ -58,45 +51,16 @@ import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
 import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import java.util.*;
 
 /**
  * @author bTaylor
@@ -1083,6 +1047,85 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             return o1.getSequence().compareTo(o2.getSequence());
         }
     };
+
+    @Override
+    public <G extends Category> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        Category cloned = createResponse.getClone();
+        cloned.setActiveEndDate(activeEndDate);
+        cloned.setActiveStartDate(activeStartDate);
+        cloned.setFulfillmentType(getFulfillmentType());
+        cloned.setTaxCode(taxCode);
+        cloned.setUrl(url);
+        cloned.setUrlKey(urlKey);
+        cloned.setOverrideGeneratedUrl(getOverrideGeneratedUrl());
+        cloned.setName(name);
+        cloned.setLongDescription(longDescription);
+        cloned.setInventoryType(getInventoryType());
+        cloned.setExternalId(externalId);
+        cloned.setDisplayTemplate(displayTemplate);
+        cloned.setDescription(description);
+        // let parents refs add themselves
+        cloned.setAllParentCategoryXrefs(allParentCategoryXrefs);
+        // child shouldn't create parent
+        cloned.setDefaultParentCategory(defaultParentCategory);
+
+        for(CategoryXref entry : allChildCategoryXrefs){
+            CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCategory(cloned);
+            cloned.getAllChildCategoryXrefs().add(clonedEntry);
+        }
+
+        for(FeaturedProduct entry : featuredProducts){
+            FeaturedProduct clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCategory(cloned);
+            cloned.getFeaturedProducts().add(clonedEntry);
+        }
+        for(RelatedProduct entry : crossSaleProducts){
+            CrossSaleProductImpl clonedEntry = ((CrossSaleProductImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCategory(cloned);
+            cloned.getCrossSaleProducts().add(clonedEntry);
+        }
+        for(RelatedProduct entry : upSaleProducts){
+            UpSaleProductImpl clonedEntry = ((UpSaleProductImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCategory(cloned);
+            cloned.getUpSaleProducts().add(clonedEntry);
+        }
+        for(CategoryProductXref entry : allProductXrefs){
+            CategoryProductXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCategory(cloned);
+            cloned.getActiveProductXrefs().add(clonedEntry);
+        }
+        for(Map.Entry<String,CategoryAttribute> entry : categoryAttributes.entrySet()){
+            CategoryAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCategory(cloned);
+            cloned.getCategoryAttributes().add(clonedEntry);
+            cloned.getCategoryAttributesMap().put(entry.getKey(),clonedEntry);
+        }
+        for(CategorySearchFacet entry : searchFacets){
+            CategorySearchFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCategory(cloned);
+            cloned.getSearchFacets().add(clonedEntry);
+        }
+        for(CategoryExcludedSearchFacet entry : excludedSearchFacets){
+            CategoryExcludedSearchFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setCategory(cloned);
+            cloned.getExcludedSearchFacets().add(clonedEntry);
+        }
+        for(Map.Entry<String,Media> entry : categoryMedia.entrySet()){
+            MediaImpl clonedEntry = ((MediaImpl)entry.getValue()).createOrRetrieveCopyInstance(context).getClone();
+            cloned.getCategoryMedia().put(entry.getKey(),clonedEntry);
+        }
+
+
+
+
+
+        return createResponse;
+    }
 
     public static class Presentation {
 

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 
@@ -28,7 +29,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
  * @author bpolster
  *
  */
-public interface OrderItemPriceDetailAdjustment extends Adjustment {
+public interface OrderItemPriceDetailAdjustment extends Adjustment, MultiTenantCloneable<OrderItemPriceDetailAdjustment> {
 
     /**
      * Stores the offer name at the time the adjustment was made.   Primarily to simplify display 
