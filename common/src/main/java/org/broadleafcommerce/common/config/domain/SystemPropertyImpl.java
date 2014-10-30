@@ -21,6 +21,8 @@ package org.broadleafcommerce.common.config.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -183,4 +185,19 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
         return getName();
     }
 
+    @Override
+    public <G extends SystemProperty> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SystemProperty cloned = createResponse.getClone();
+        cloned.setFriendlyGroup(friendlyGroup);
+        cloned.setFriendlyName(friendlyName);
+        cloned.setFriendlyTab(friendlyTab);
+        cloned.setName(name);
+        cloned.setValue(value);
+        cloned.setPropertyType(getPropertyType());
+        return createResponse;
+    }
 }
