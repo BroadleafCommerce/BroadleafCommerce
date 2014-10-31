@@ -341,7 +341,17 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         if (payment == null) {
             throw new IllegalArgumentException("Could not find payment with id " + orderPaymentId);
         }
-        orderPaymentService.delete(payment);
+        // Do not do an actual delete here, otherwise Hibernate will screw up the relationships by setting parent transactions
+        // to null because of the cascades. This manifests itself when you have an AUTHORIZE_AND_CAPTURE transaction and
+        // then an immediate VOID (like if there is an exception in the checkout workflow). The VOID transaction should
+        // have its parent set to the AUTHORIZE_AND_CAPTURE transaction which works up until we call Hibernate's delete
+        // on the payment. By cascading down to the transaction, Hibernate goes and removes the parentTransaction relationship
+        // from the VOID transaction
+        // The fix is to set archived statuses manually and not rely on Hibernate's @SqlDelete
+        payment.setArchived('Y');
+        for (PaymentTransaction transaction : payment.getTransactions()) {
+            transaction.setArchived('Y');
+        }
     }
 
     @Override
