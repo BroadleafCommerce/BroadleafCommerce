@@ -143,7 +143,7 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
             if (rollbackResponseTransactions.containsKey(payment)) {
                 PaymentTransaction rollbackTX = rollbackResponseTransactions.get(payment);
                 payment.addTransaction(rollbackTX);
-                orderPaymentService.save(payment);
+                payment = orderPaymentService.save(payment);
                 paymentsToInvalidate.add(payment);
                 if (!rollbackTX.getSuccess()) {
                     rollbackFailure = true;
