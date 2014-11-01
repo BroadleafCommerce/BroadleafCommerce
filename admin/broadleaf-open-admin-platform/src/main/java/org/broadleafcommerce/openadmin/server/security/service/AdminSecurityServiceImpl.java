@@ -1,21 +1,25 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.service;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +29,7 @@ import org.broadleafcommerce.common.security.util.PasswordChange;
 import org.broadleafcommerce.common.security.util.PasswordUtils;
 import org.broadleafcommerce.common.service.GenericResponse;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminPermissionDao;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminRoleDao;
 import org.broadleafcommerce.openadmin.server.security.dao.AdminUserDao;
@@ -35,20 +40,23 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityTokenImpl;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.SaltSource;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  *
@@ -72,16 +80,25 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     protected ForgotPasswordSecurityTokenDao forgotPasswordSecurityTokenDao;
 
     @Resource(name = "blAdminPermissionDao")
-    AdminPermissionDao adminPermissionDao;
+    protected AdminPermissionDao adminPermissionDao;
 
     @Resource(name="blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
     
     /**
      * Optional password salt to be used with the passwordEncoder
+     * @deprecated use {@link #saltSource} instead
      */
+    @Deprecated
     protected String salt;
-
+    
+    /**
+     * Use a Salt Source ONLY if there's one configured
+     */
+    @Autowired(required=false)
+    @Qualifier("blAdminSaltSource")
+    protected SaltSource saltSource;
+    
     @Resource(name="blEmailService")
     protected EmailService emailService;
 
@@ -91,12 +108,13 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Resource(name="blSendAdminUsernameEmailInfo")
     protected EmailInfo sendUsernameEmailInfo;
 
-    // Variables to set via external configuration.
-    @Value("${tokenExpiredMinutes}")
-    protected int tokenExpiredMinutes = 30;
+    protected int getTokenExpiredMinutes() {
+        return BLCSystemProperty.resolveIntSystemProperty("tokenExpiredMinutes");
+    }    
 
-    @Value("${resetPasswordURL}")
-    protected String resetPasswordURL;
+    protected String getResetPasswordURL() {
+        return BLCSystemProperty.resolveSystemProperty("resetPasswordURL");
+    }
 
     @Override
     @Transactional("blTransactionManager")
@@ -146,10 +164,32 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Override
     @Transactional("blTransactionManager")
     public AdminUser saveAdminUser(AdminUser user) {
+        boolean encodePasswordNeeded = false;
+        String unencodedPassword = user.getUnencodedPassword();
+
         if (user.getUnencodedPassword() != null) {
-            user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), getSalt(user)));
+            encodePasswordNeeded = true;
+            user.setPassword(unencodedPassword);
         }
-        return adminUserDao.saveAdminUser(user);
+
+        // If no password is set, default to a secure password.
+        if (user.getPassword() == null) {
+            user.setPassword(generateSecurePassword());
+        }
+
+        AdminUser returnUser = adminUserDao.saveAdminUser(user);
+
+        if (encodePasswordNeeded) {
+            returnUser.setPassword(passwordEncoder.encodePassword(unencodedPassword, getSalt(returnUser, unencodedPassword)));
+        }
+
+
+
+        return adminUserDao.saveAdminUser(returnUser);
+    }
+
+    protected String generateSecurePassword() {
+        return RandomStringUtils.randomAlphanumeric(16);
     }
 
     @Override
@@ -167,7 +207,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Override
     public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
-        return adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
+        boolean response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
+        if (!response) {
+            response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(ceilingEntityFullyQualifiedName);
+        }
+        return response;
     }
 
     @Override
@@ -178,6 +222,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Override
     public AdminUser readAdminUserByUserName(String userName) {
         return adminUserDao.readAdminUserByUserName(userName);
+    }
+
+    @Override
+    public List<AdminUser> readAdminUsersByEmail(String email) {
+        return adminUserDao.readAdminUserByEmail(email);
     }
 
     @Override
@@ -320,7 +369,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
     
     protected void checkExistingPassword(String password, AdminUser user, GenericResponse response) {
-        if (!passwordEncoder.isPasswordValid(user.getPassword(), password, getSalt(user))) {
+        if (!passwordEncoder.isPasswordValid(user.getPassword(), password, getSalt(user, password))) {
             response.addErrorCode("invalidPassword");
         }
     }
@@ -330,15 +379,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         long currentTimeInMillis = now.getTime();
         long tokenSaveTimeInMillis = fpst.getCreateDate().getTime();
         long minutesSinceSave = (currentTimeInMillis - tokenSaveTimeInMillis)/60000;
-        return minutesSinceSave > tokenExpiredMinutes;
-    }
-
-    public int getTokenExpiredMinutes() {
-        return tokenExpiredMinutes;
-    }
-
-    public void setTokenExpiredMinutes(int tokenExpiredMinutes) {
-        this.tokenExpiredMinutes = tokenExpiredMinutes;
+        return minutesSinceSave > getTokenExpiredMinutes();
     }
 
     public static int getPASSWORD_TOKEN_LENGTH() {
@@ -347,14 +388,6 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     public static void setPASSWORD_TOKEN_LENGTH(int PASSWORD_TOKEN_LENGTH) {
         AdminSecurityServiceImpl.PASSWORD_TOKEN_LENGTH = PASSWORD_TOKEN_LENGTH;
-    }
-
-    public String getResetPasswordURL() {
-        return resetPasswordURL;
-    }
-
-    public void setResetPasswordURL(String resetPasswordURL) {
-        this.resetPasswordURL = resetPasswordURL;
     }
 
     public EmailInfo getSendUsernameEmailInfo() {
@@ -373,24 +406,33 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         this.resetPasswordEmailInfo = resetPasswordEmailInfo;
     }
     
-    /**
-     * Optionally provide a salt based on a a specific AdminUser.  By default, this returns
-     * the salt property of this class
-     * 
-     * @param customer
-     * @return
-     * @see {@link AdminSecurityServiceImpl#getSalt()}
-     */
-    public String getSalt(AdminUser user) {
-        return getSalt();
+    @Override
+    public Object getSalt(AdminUser user, String unencodedPassword) {
+        Object salt = null;
+        if (saltSource != null) {
+            salt = saltSource.getSalt(new AdminUserDetails(user.getId(), user.getLogin(), unencodedPassword, new ArrayList<GrantedAuthority>()));
+        }
+        return salt;
     }
     
+    @Override
     public String getSalt() {
         return salt;
     }
     
+    @Override
     public void setSalt(String salt) {
         this.salt = salt;
+    }
+
+    @Override
+    public SaltSource getSaltSource() {
+        return saltSource;
+    }
+    
+    @Override
+    public void setSaltSource(SaltSource saltSource) {
+        this.saltSource = saltSource;
     }
 
     @Override
@@ -404,7 +446,10 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         }
         checkUser(user, response);
         checkPassword(password, confirmPassword, response);
-        checkExistingPassword(oldPassword, user, response);
+
+        if (!response.getHasErrors()) {
+            checkExistingPassword(oldPassword, user, response);
+        }
 
         if (!response.getHasErrors()) {
             user.setUnencodedPassword(password);

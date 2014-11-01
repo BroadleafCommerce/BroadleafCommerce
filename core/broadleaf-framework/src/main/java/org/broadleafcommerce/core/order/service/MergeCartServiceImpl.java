@@ -1,19 +1,22 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,12 +33,12 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * The 2.0 implementation of merge cart service. Instead of merging items directly from one cart to another, we will
@@ -54,6 +57,9 @@ public class MergeCartServiceImpl implements MergeCartService {
 
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
+
+    @Resource(name = "blMergeCartServiceExtensionManager")
+    protected MergeCartServiceExtensionManager extensionManager;
 
     @Override
     public MergeCartResponse mergeCart(Customer customer, Order anonymousCart)
@@ -84,7 +90,20 @@ public class MergeCartServiceImpl implements MergeCartService {
         } else if (anonymousCart == null || anonymousCart.getOrderItems().size() == 0) {
             // The anonymous cart is of no use, use the customer cart
             mergeCartResponse.setOrder(customerCart);
+            
+            // The anonymous cart is owned by a different customer, so there is no chance for a single customer to have
+            // multiple IN_PROCESS carts. We can go ahead and clean up this empty cart anyway since it's empty
+            if (anonymousCart != null) {
+                orderService.cancelOrder(anonymousCart);
+            }
+            
         } else if (customerCart == null || customerCart.getOrderItems().size() == 0) {
+            // Delete the saved customer order since it is completely empty anyway. We do not want 2 IN_PROCESS orders
+            // hanging around
+            if (customerCart != null) {
+                orderService.cancelOrder(customerCart);
+            }
+            
             // The customer cart is of no use, use the anonymous cart
             setNewCartOwnership(anonymousCart, customer);
             mergeCartResponse.setOrder(anonymousCart);
@@ -105,7 +124,7 @@ public class MergeCartServiceImpl implements MergeCartService {
         
         return mergeCartResponse;
     }
-
+    
     @Override
     public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder)
             throws PricingException, RemoveFromCartException {
@@ -170,6 +189,8 @@ public class MergeCartServiceImpl implements MergeCartService {
         if (cart != null && StringUtils.isNotBlank(customer.getEmailAddress())) {
             cart.setEmailAddress(customer.getEmailAddress());
         }
+        
+        extensionManager.getProxy().setNewCartOwnership(cart, customer);
     }
 
     /**

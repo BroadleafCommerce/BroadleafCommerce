@@ -1,33 +1,37 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.email.domain;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.Date;
 
 /**
  * @author jfischer
@@ -41,8 +45,15 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "ClickId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "ClickId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "EmailTrackingClicksImpl", allocationSize = 50)
+    @GeneratedValue(generator = "ClickId")
+    @GenericGenerator(
+        name="ClickId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="EmailTrackingClicksImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl")
+        }
+    )
     @Column(name = "CLICK_ID")
     protected Long id;
 
@@ -67,6 +78,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -74,6 +86,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -81,6 +94,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#getDateClicked()
      */
+    @Override
     public Date getDateClicked() {
         return dateClicked;
     }
@@ -88,6 +102,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#setDateClicked(java.util.Date)
      */
+    @Override
     public void setDateClicked(Date dateClicked) {
         this.dateClicked = dateClicked;
     }
@@ -95,6 +110,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#getDestinationUri()
      */
+    @Override
     public String getDestinationUri() {
         return destinationUri;
     }
@@ -102,6 +118,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#setDestinationUri(java.lang.String)
      */
+    @Override
     public void setDestinationUri(String destinationUri) {
         this.destinationUri = destinationUri;
     }
@@ -109,6 +126,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#getQueryString()
      */
+    @Override
     public String getQueryString() {
         return queryString;
     }
@@ -116,6 +134,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#setQueryString(java.lang.String)
      */
+    @Override
     public void setQueryString(String queryString) {
         this.queryString = queryString;
     }
@@ -123,6 +142,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#getEmailTracking()
      */
+    @Override
     public EmailTracking getEmailTracking() {
         return emailTracking;
     }
@@ -130,6 +150,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTrackingClicks#setEmailTracking(org.broadleafcommerce.common.email.domain.EmailTrackingImpl)
      */
+    @Override
     public void setEmailTracking(EmailTracking emailTracking) {
         this.emailTracking = emailTracking;
     }
@@ -137,6 +158,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /**
      * @return the customer
      */
+    @Override
     public String getCustomerId() {
         return customerId;
     }
@@ -144,6 +166,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     /**
      * @param customerId the customer to set
      */
+    @Override
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
@@ -165,7 +188,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         EmailTrackingClicksImpl other = (EmailTrackingClicksImpl) obj;
 

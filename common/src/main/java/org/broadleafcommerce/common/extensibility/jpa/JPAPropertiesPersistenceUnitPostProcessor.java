@@ -1,29 +1,33 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.extensibility.jpa;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
-
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 
 /**
  *   This class allows us to override Persistence Unit properties on a per-environment basis. Spring's
@@ -77,6 +81,8 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
     protected String blPUHibernateCacheUse_query_cache;
     @Value("${blPU.hibernate.hbm2ddl.import_files}")
     protected String blPUHibernateHbm2ddlImport_files;
+    @Value("${blPU.hibernate.hbm2ddl.import_files_sql_extractor}")
+    protected String blPUHibernateHbm2ddlImport_files_sql_extractor;
 
     @Value("${blCMSStorage.hibernate.hbm2ddl.auto}")
     protected String blCMSStorageHibernateHbm2ddlAuto;
@@ -90,6 +96,8 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
     protected String blCMSStorageHibernateCacheUse_query_cache;
     @Value("${blCMSStorage.hibernate.hbm2ddl.import_files}")
     protected String blCMSStorageHibernateHbm2ddlImport_files;
+    @Value("${blCMSStorage.hibernate.hbm2ddl.import_files_sql_extractor}")
+    protected String blCMSStorageHibernateHbm2ddlImport_files_sql_extractor;
 
     @Value("${blSecurePU.hibernate.hbm2ddl.auto}")
     protected String blSecurePUHibernateHbm2ddlAuto;
@@ -103,6 +111,8 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
     protected String blSecurePUHibernateCacheUse_query_cache;
     @Value("${blSecurePU.hibernate.hbm2ddl.import_files}")
     protected String blSecurePUHibernateHbm2ddlImport_files;
+    @Value("${blSecurePU.hibernate.hbm2ddl.import_files_sql_extractor}")
+    protected String blSecurePUHibernateHbm2ddlImport_files_sql_extractor;
 
     @PostConstruct
     public void populatePresetProperties() {
@@ -112,6 +122,7 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
         if (!blPUHibernateCacheUse_second_level_cache.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.cache.use_second_level_cache", blPUHibernateCacheUse_second_level_cache);
         if (!blPUHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.cache.use_query_cache", blPUHibernateCacheUse_query_cache);
         if (!blPUHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files", blPUHibernateHbm2ddlImport_files);
+        if (!blPUHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blPU.hibernate.hbm2ddl.import_files_sql_extractor", blPUHibernateHbm2ddlImport_files_sql_extractor);
 
         if (!blCMSStorageHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.auto", blCMSStorageHibernateHbm2ddlAuto);
         if (!blCMSStorageHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.dialect", blCMSStorageHibernateDialect);
@@ -119,6 +130,7 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
         if (!blCMSStorageHibernateCacheUse_second_level_cache.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.cache.use_second_level_cache", blCMSStorageHibernateCacheUse_second_level_cache);
         if (!blCMSStorageHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.cache.use_query_cache", blCMSStorageHibernateCacheUse_query_cache);
         if (!blCMSStorageHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.import_files", blCMSStorageHibernateHbm2ddlImport_files);
+        if (!blCMSStorageHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blCMSStorage.hibernate.hbm2ddl.import_files_sql_extractor", blCMSStorageHibernateHbm2ddlImport_files_sql_extractor);
 
         if (!blSecurePUHibernateHbm2ddlAuto.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.auto", blSecurePUHibernateHbm2ddlAuto);
         if (!blSecurePUHibernateDialect.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.dialect", blSecurePUHibernateDialect);
@@ -126,6 +138,7 @@ public class JPAPropertiesPersistenceUnitPostProcessor implements org.springfram
         if (!blSecurePUHibernateCacheUse_second_level_cache.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.cache.use_second_level_cache", blSecurePUHibernateCacheUse_second_level_cache);
         if (!blSecurePUHibernateCacheUse_query_cache.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.cache.use_query_cache", blSecurePUHibernateCacheUse_query_cache);
         if (!blSecurePUHibernateHbm2ddlImport_files.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.import_files", blSecurePUHibernateHbm2ddlImport_files);
+        if (!blSecurePUHibernateHbm2ddlImport_files_sql_extractor.startsWith("${")) persistenceUnitProperties.put("blSecurePU.hibernate.hbm2ddl.import_files_sql_extractor", blSecurePUHibernateHbm2ddlImport_files_sql_extractor);
 
         persistenceUnitProperties.putAll(overrideProperties);
     }

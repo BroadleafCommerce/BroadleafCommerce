@@ -7,8 +7,10 @@ bl-framework-applicationContext-persistence.xml
 #persistence xml files should appear first to ensure that entity managers are loaded first
 bl-common-applicationContext.xml
 bl-profile-applicationContext.xml
+bl-profile-web-applicationContext.xml
 bl-framework-applicationContext.xml
 bl-framework-applicationContext-workflow.xml
+bl-framework-applicationContext-workflow-payment.xml
 bl-framework-web-applicationContext.xml
 bl-framework-web-applicationContext-api-wrapper.xml
 #The application context files below are not added by default to the BLC runtime

@@ -1,21 +1,27 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -39,7 +45,10 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_OFFER_RULE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+})
 public class OfferRuleImpl implements OfferRule {
 
     private static final long serialVersionUID = 1L;
@@ -50,11 +59,7 @@ public class OfferRuleImpl implements OfferRule {
         name="OfferRuleId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="OfferRuleImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.offer.domain.OfferRuleImpl")
         }
     )
@@ -63,12 +68,13 @@ public class OfferRuleImpl implements OfferRule {
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "MATCH_RULE")
+    @Column(name = "MATCH_RULE", length = Integer.MAX_VALUE - 1)
     protected String matchRule;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferRule#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -76,6 +82,7 @@ public class OfferRuleImpl implements OfferRule {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferRule#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -83,6 +90,7 @@ public class OfferRuleImpl implements OfferRule {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferRule#getMatchRule()
      */
+    @Override
     public String getMatchRule() {
         return matchRule;
     }
@@ -90,6 +98,7 @@ public class OfferRuleImpl implements OfferRule {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.OfferRule#setMatchRule(java.lang.String)
      */
+    @Override
     public void setMatchRule(String matchRule) {
         this.matchRule = matchRule;
     }
@@ -109,7 +118,7 @@ public class OfferRuleImpl implements OfferRule {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OfferRuleImpl other = (OfferRuleImpl) obj;
         

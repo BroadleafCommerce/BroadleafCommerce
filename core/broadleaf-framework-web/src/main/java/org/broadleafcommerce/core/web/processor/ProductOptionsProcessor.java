@@ -1,24 +1,27 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
-import net.entropysoft.transmorph.cache.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
@@ -27,12 +30,12 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.stereotype.Component;
+import org.codehaus.jackson.map.util.LRUMap;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -44,6 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * This processor will add the following information to the model, available for consumption by a template:
  * -pricing for a sku based on the product option values selected
@@ -52,11 +57,13 @@ import java.util.Map;
  * @author jfridye
  *
  */
-@Component("blProductOptionsProcessor")
 public class ProductOptionsProcessor extends AbstractModelVariableModifierProcessor {
+    
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
-    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
+    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(100, 500));
 
     public ProductOptionsProcessor() {
         super("product_options");
@@ -69,8 +76,9 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
 
     @Override
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        CatalogService catalogService = ProcessorUtils.getCatalogService(arguments);
-        Long productId = (Long) StandardExpressionProcessor.processExpression(arguments, element.getAttributeValue("productId"));
+        Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+                .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue("productId"));
+        Long productId = (Long) expression.execute(arguments.getConfiguration(), arguments);
         Product product = catalogService.findProductById(productId);
         if (product != null) {
             addAllProductOptionsToModel(arguments, product);
@@ -144,9 +152,8 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
         }
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getJavaLocale() != null) {
-            NumberFormat format = NumberFormat.getCurrencyInstance(brc.getJavaLocale());
-            format.setCurrency(price.getCurrency());
-            return format.format(price.getAmount());
+            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency()).format
+                                (price.getAmount());
         } else {
             // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
             return "$ " + price.getAmount().toString();
@@ -191,7 +198,8 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof ProductOptionDTO)) return false;
+            if (o == null) return false;
+            if (!getClass().isAssignableFrom(o.getClass())) return false;
 
             ProductOptionDTO that = (ProductOptionDTO) o;
 
@@ -235,7 +243,8 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof ProductOptionPricingDTO)) return false;
+            if (o == null) return false;
+            if (!getClass().isAssignableFrom(o.getClass())) return false;
 
             ProductOptionPricingDTO that = (ProductOptionPricingDTO) o;
 

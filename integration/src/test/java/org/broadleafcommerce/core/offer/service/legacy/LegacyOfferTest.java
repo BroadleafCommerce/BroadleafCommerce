@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Integration
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service.legacy;
 
 import org.broadleafcommerce.common.money.Money;
@@ -62,11 +65,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * This integration test class is kept to guarantee backwards
@@ -147,7 +150,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("20.5 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20.5, null, null, true, true, 10));
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         // 20% results in $240.  20.5% off results in $238.50
         assert ( order.getSubTotal().equals(new Money(238.50D) ));
@@ -166,7 +169,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
@@ -185,7 +188,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, false, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(252D)));
     }
@@ -198,18 +201,19 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
+        // Only one of the "not-combinable" orders can apply.
         order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == " + sku1, true, true, 1));
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == " + sku1, true, false, 1));
         order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != " + sku1, true, false, 1));
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(280D)));
     }
 
-    @Test(groups =  {"testOfferLowerSalePriceLegacy"}, dependsOnGroups = { "testOfferNotCombinableItemOffersLegacy"})
+    @Test(groups = { "testOfferLowerSalePriceLegacy" })
     @Transactional
     public void testOfferLowerSalePrice() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -223,12 +227,12 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != " + sku1, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(212D)));
     }
 
-    @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOfferLegacy"}, dependsOnGroups = { "testOfferLowerSalePriceLegacy"})
+    @Test(groups = { "testOfferLowerSalePriceWithNotCombinableOfferLegacy" })
     @Transactional
     public void testOfferLowerSalePriceWithNotCombinableOffer() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -240,12 +244,12 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, false, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(240D)));
     }
 
-    @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOfferAndInformationLegacy"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOfferLegacy"})
+    @Test(groups = { "testOfferLowerSalePriceWithNotCombinableOfferAndInformationLegacy" })
     @Transactional
     public void testOfferLowerSalePriceWithNotCombinableOfferAndInformation() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -258,6 +262,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
 
         order.addOfferCode(offerCode1);
         order.addOfferCode(offerCode2);
+        order = orderService.save(order, false);
 
         OfferInfo info1 = offerDao.createOfferInfo();
         info1.getFieldValues().put("key1", "value1");
@@ -265,6 +270,8 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         OfferInfo info2 = offerDao.createOfferInfo();
         info2.getFieldValues().put("key2", "value2");
         order.getAdditionalOfferInformation().put(offerCode2.getOffer(), info2);
+
+        order = orderService.save(order, false);
         
         order = orderService.save(order, true);
 
@@ -274,7 +281,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         assert(order.getAdditionalOfferInformation().get(offerCode1.getOffer()).equals(info1));
     }
 
-    @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOffer2Legacy"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOfferLegacy"})
+    @Test(groups = { "testOfferLowerSalePriceWithNotCombinableOffer2Legacy" })
     @Transactional
     public void testOfferLowerSalePriceWithNotCombinableOffer2() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -288,31 +295,13 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(130D));
     }
 
-    @Test(groups =  {"testOfferNotStackableOrderOffersLegacy"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer2Legacy"})
-    @Transactional
-    public void testOfferNotStackableOrderOffers() throws Exception {
-        Order order = orderService.createNewCartForCustomer(createCustomer());
-        
-        order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2, order));
-        order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2, order));
 
-        order.addOfferCode(createOfferUtility.createOfferCode("20 Percent Off Order Offer", OfferType.ORDER, OfferDiscountType.PERCENT_OFF, 20, null, "order.subTotal.getAmount() >= 400", true, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, "order.subTotal.getAmount() >= 400", false, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("100 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 100, null, "order.subTotal.getAmount() >= 400", false, true, 1));
-        order.addOfferCode(createOfferUtility.createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, "order.subTotal.getAmount() < 400", false, true, 1));
-        
-        List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
-
-        assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(240D));
-    }
-
-    @Test(groups =  {"testOfferNotCombinableOrderOffersLegacy"}, dependsOnGroups = { "testOfferNotStackableOrderOffersLegacy"})
+    @Test(groups = { "testOfferNotCombinableOrderOffersLegacy" })
     @Transactional
     public void testOfferNotCombinableOrderOffers() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -325,12 +314,12 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, false, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(290D));
     }
 
-    @Test(groups =  {"testOfferNotCombinableOrderOffersWithItemOfferLegacy"}, dependsOnGroups = { "testOfferNotCombinableOrderOffersLegacy"})
+    @Test(groups = { "testOfferNotCombinableOrderOffersWithItemOfferLegacy" })
     @Transactional
     public void testOfferNotCombinableOrderOffersWithItemOffer() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -345,12 +334,12 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, true, 1));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
-        assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(310D));
+        assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(210D));
     }
 
-    @Test(groups =  {"testGlobalOffersLegacy"}, dependsOnGroups = { "testOfferNotCombinableOrderOffersWithItemOfferLegacy"})
+    @Test(groups = { "testGlobalOffersLegacy" })
     @Transactional
     public void testGlobalOffers() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -363,15 +352,16 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         
         Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer.setDeliveryType(OfferDeliveryType.AUTOMATIC);
+        offer.setAutomaticallyAdded(true);
         offer = offerService.save(offer);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
 
-    @Test(groups =  {"testCustomerAssociatedOffersLegacy"}, dependsOnGroups = { "testGlobalOffersLegacy"})
+    @Test(groups = { "testCustomerAssociatedOffersLegacy" })
     @Transactional
     public void testCustomerAssociatedOffers() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -391,12 +381,12 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         customerOffer = customerOfferDao.save(customerOffer);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
     }
 
-    @Test(groups =  {"testCustomerAssociatedOffers2Legacy"}, dependsOnGroups = { "testCustomerAssociatedOffersLegacy"})
+    @Test(groups = { "testCustomerAssociatedOffers2Legacy" })
     @Transactional
     public void testCustomerAssociatedOffers2() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -423,12 +413,12 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         customerOfferDao.save(customerOffer2);
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(33D)));
     }
 
-    @Test(groups =  {"testFulfillmentGroupOffersLegacy"}, dependsOnGroups = { "testCustomerAssociatedOffers2Legacy"})
+    @Test(groups = { "testFulfillmentGroupOffersLegacy" })
     @Transactional
     public void testFulfillmentGroupOffers() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());
@@ -442,13 +432,13 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         order.addOfferCode(createOfferUtility.createOfferCode("3 Dollars Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.AMOUNT_OFF, 3, null, null, true, true, 10));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
-        offerService.applyOffersToOrder(offers, order);
-        offerService.applyFulfillmentGroupOffersToOrder(offers, order);
+        offerService.applyAndSaveOffersToOrder(offers, order);
+        offerService.applyAndSaveFulfillmentGroupOffersToOrder(offers, order);
 
         assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(1.6D)));
     }
 
-    @Test(groups =  {"testOfferDeleteLegacy"}, dependsOnGroups = { "testFulfillmentGroupOffersLegacy"})
+    @Test(groups = { "testOfferDeleteLegacy" })
     @Transactional
     public void testOfferDelete() throws Exception {
         CustomerOffer customerOffer = customerOfferDao.create();
@@ -484,7 +474,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         assert customerOffer == null || ((OfferImpl) customerOffer).getArchived() == 'Y';
     }
 
-    @Test(groups =  {"testReadAllOffersLegacy"}, dependsOnGroups = { "testOfferDeleteLegacy"})
+    @Test(groups = { "testReadAllOffersLegacy" })
     @Transactional
     public void testReadAllOffers() throws Exception {
         Offer offer = createOfferUtility.createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
@@ -494,7 +484,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         assert allOffers != null && allOffers.isEmpty() == false;
     }
 
-    @Test(groups =  {"testOfferCodeDaoLegacy"}, dependsOnGroups = { "testReadAllOffersLegacy"})
+    @Test(groups = { "testOfferCodeDaoLegacy" })
     @Transactional
     public void testOfferCodeDao() throws Exception {
         String offerCodeString = "AJ's Code";
@@ -520,7 +510,7 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         assert deletedOfferCode == null;
     }
 
-    @Test(groups =  {"testCustomerOffersLegacy"}, dependsOnGroups = { "testOfferCodeDaoLegacy"})
+    @Test(groups = { "testCustomerOffersLegacy" })
     @Transactional
     public void testCustomerOffers() throws Exception {
         Order order = orderService.createNewCartForCustomer(createCustomer());

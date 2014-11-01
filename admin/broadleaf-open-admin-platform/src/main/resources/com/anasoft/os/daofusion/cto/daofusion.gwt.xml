@@ -1,4 +1,0 @@
-<module>
-    <inherits name="com.google.gwt.user.User" />
-    <source path="client" />
-</module>

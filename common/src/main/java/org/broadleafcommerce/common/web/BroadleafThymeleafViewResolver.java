@@ -1,23 +1,27 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -27,12 +31,13 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.thymeleaf.spring3.view.AbstractThymeleafView;
 import org.thymeleaf.spring3.view.ThymeleafViewResolver;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class extends the default ThymeleafViewResolver to facilitate rendering
@@ -44,6 +49,11 @@ import java.util.Map.Entry;
  */
 public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
     private static final Log LOG = LogFactory.getLog(BroadleafThymeleafViewResolver.class);
+    
+    @Resource(name = "blBroadleafThymeleafViewResolverExtensionManager")
+    protected BroadleafThymeleafViewResolverExtensionManager extensionManager;
+    
+    public static final String EXTENSION_TEMPLATE_ATTR_NAME = "extensionTemplateAttr";
     
     /**
      * <p>
@@ -113,7 +123,7 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
             addStaticVariable(BroadleafControllerUtility.BLC_REDIRECT_ATTRIBUTE, redirectUrl);
             return super.loadView(viewName, locale);
         } else {
-            return new RedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());
+            return new RedirectView(redirectUrl, false, isRedirectHttp10Compatible());
         }
     }
     
@@ -143,8 +153,19 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
                 viewName = getFullPageLayout();
             }
         }
+
+        AbstractThymeleafView view = null;
         
-        AbstractThymeleafView view = (AbstractThymeleafView) super.loadView(viewName, locale);
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().overrideView(erh);
+        String templateOverride = (String) erh.getContextMap().get(EXTENSION_TEMPLATE_ATTR_NAME);
+
+        if (templateOverride != null && isAjaxRequest()) {
+            view = (AbstractThymeleafView) super.loadView(templateOverride, locale);
+            view.addStaticVariable("wrappedTemplate", viewName);
+        } else {
+            view = (AbstractThymeleafView) super.loadView(viewName, locale);
+        }
         
         if (!isAjaxRequest()) {
             view.addStaticVariable("templateName", originalViewName);
@@ -153,21 +174,45 @@ public class BroadleafThymeleafViewResolver extends ThymeleafViewResolver {
         return view;
     }
     
+    @Override
+    protected Object getCacheKey(String viewName, Locale locale) {
+        return viewName + "_" + locale + "_" + isAjaxRequest();
+    }
+    
     protected boolean isIFrameRequest() {
-        if (BroadleafRequestContext.getBroadleafRequestContext() != null && BroadleafRequestContext.getBroadleafRequestContext().getRequest() != null) {
-            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-            String iFrameParameter = request.getParameter("blcIFrame");
-            return  (iFrameParameter != null && "true".equals(iFrameParameter));
-        }
-        return false;
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String iFrameParameter = request.getParameter("blcIFrame");
+        return (iFrameParameter != null && "true".equals(iFrameParameter));
     }
     
     protected boolean isAjaxRequest() {
-        if (BroadleafRequestContext.getBroadleafRequestContext() != null && BroadleafRequestContext.getBroadleafRequestContext().getRequest() != null) {
-            HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-            return BroadleafControllerUtility.isAjaxRequest(request);
+        // First, let's try to get it from the BroadleafRequestContext
+        HttpServletRequest request = null;
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            HttpServletRequest brcRequest = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+            if (brcRequest != null) {
+                request = brcRequest;
+            }
         }
-        return false;
+        
+        // If we didn't find it there, we might be outside of a security-configured uri. Let's see if the filter got it
+        if (request == null) {
+            try {
+                request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest(); 
+            } catch (ClassCastException e) {
+                // In portlet environments, we won't be able to cast to a ServletRequestAttributes. We don't want to 
+                // blow up in these scenarios.
+                LOG.warn("Unable to cast to ServletRequestAttributes and the request in BroadleafRequestContext " + 
+                         "was not set. This may introduce incorrect AJAX behavior.");
+            }
+        }
+        
+        // If we still don't have a request object, we'll default to non-ajax
+        if (request == null) {
+            return false;
+        }
+                
+        return BroadleafControllerUtility.isAjaxRequest(request);
     }
 
     /**

@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.presentation;
 
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -23,6 +26,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import javax.persistence.MapKey;
 
 /**
  * This annotation is used to describe a persisted map structure for use in the
@@ -95,27 +100,25 @@ public @interface AdminPresentationMap {
     int order() default 99999;
 
     /**
-     * <p>Optional - only required if you want the resulting collection grid element to
-     * appear somewhere other than below the main detail form</p>
-     *
-     * <p>Specify a UI element Id to which the collection grid should be added. This is useful
-     * if, for example, you want the resulting collection grid to appear in another tab, or
-     * some other location in the admin tool UI.</p>
-     *
-     * @return UI element Id to which the collection grid should be added
+     * Optional - only required if you want the field to appear under a different tab
+     * 
+     * Specify a GUI tab for this field
+     * 
+     * @return the tab for this field
      */
-    String targetUIElementId() default "";
+    String tab() default "General";
 
     /**
-     * <p>Optional - unique name for the backing datasource. If unspecified, the datasource
-     * name will be the JPA entity field name with "AdvancedCollectionDS" appended to the end.</p>
-     *
-     * <p>The datasource can be retrieved programatically in admin code via
-     * PresenterSequenceSetupManager.getDataSource(..)</p>
-     *
-     * @return unique name for the backing datasource
+     * Optional - only required if you want to order the appearance of the tabs in the UI
+     * 
+     * Specify an order for this tab. Tabs will be sorted int he resulting form in 
+     * ascending order based on this parameter.
+     * 
+     * The default tab will render with an order of 100.
+     * 
+     * @return the order for this tab
      */
-    String dataSourceName() default "";
+    int tabOrder() default 100;
 
     /**
      * <p>Optional - only required if the type for the key of this map
@@ -127,6 +130,14 @@ public @interface AdminPresentationMap {
      * @return The type for the key of this map
      */
     Class<?> keyClass() default void.class;
+    
+    /**
+     * <p>Optional - only required if you wish to specify a key different from the one on the
+     * {@link MapKey} annotation for the same field.
+     * 
+     * @return the property for the key
+     */
+    String mapKeyValueProperty() default "";
 
     /**
      * <p>Optional - only required if the key field title for this
@@ -214,6 +225,27 @@ public @interface AdminPresentationMap {
     AdminPresentationMapKey[] keys() default {};
 
     /**
+     * <p>Optional - only required when you want to allow the user to create his/her own
+     * key value, rather than select from a pre-defined list. The default is to
+     * force selection from a pre-defined list.</p>
+     *
+     * @return whether or not the user will create their own key values.
+     */
+    boolean forceFreeFormKeys() default false;
+
+    /**
+     * <p>Optional - only required with a complex value class that has a bi-directional
+     * association back to the parent class containing the map. This can generally
+     * be inferred by the system from a "mappedBy" attribute for maps of a OneToMany
+     * type. For map configurations without a mappedBy value, or if you wish to
+     * explicitly set a bi-directional association field on the complex value, use
+     * this property.</p>
+     *
+     * @return the bi-directional association field on the complex value, if any
+     */
+    String manyToField() default "";
+
+    /**
      * <p>Optional - only required when the user should select from a list of database
      * persisted values for keys when adding/editing this map. Either this value, or the
      * keys parameter should be user - not both</p>
@@ -286,8 +318,8 @@ public @interface AdminPresentationMap {
      * Optional - If you have FieldType set to SupportedFieldType.MONEY,      *
      * then you can specify a money currency property field.
      *
-     *
      * @return the currency property field
      */
     String currencyCodeField() default "";
+
 }

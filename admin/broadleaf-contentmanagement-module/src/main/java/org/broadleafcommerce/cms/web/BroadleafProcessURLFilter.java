@@ -1,24 +1,24 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.web;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,22 +27,18 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.time.FixedTimeSource;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.util.StatusExposingServletResponse;
-import org.broadleafcommerce.openadmin.server.service.persistence.SandBoxService;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -57,6 +53,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * @deprecated In favor of org.broadleafcommerce.common.web.BroadleafRequestFilter.
@@ -76,6 +80,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author bpolster
  */
+@Deprecated
 public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     private final Log LOG = LogFactory.getLog(BroadleafProcessURLFilter.class);
 
@@ -144,6 +149,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
      *
      * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
      */
+    @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
         if (!shouldProcessURL(request, request.getRequestURI())) {
@@ -176,7 +182,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
 
         BroadleafRequestContext brc = new BroadleafRequestContext();
         brc.setLocale(determineLocale(request, site));
-        brc.setSandbox(currentSandbox);
+        brc.setSandBox(currentSandbox);
         brc.setRequest(request);
         brc.setResponse(response);
         BroadleafRequestContext.setBroadleafRequestContext(brc);
@@ -246,6 +252,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
                    .concurrencyLevel(maxCacheConcurrency)
                    .expireAfterWrite(cacheExpirationSeconds, TimeUnit.SECONDS)
                    .build(new CacheLoader<String,URLProcessor>() {
+                        @Override
                         public URLProcessor load(String key) throws IOException, ServletException {
                             if (LOG.isDebugEnabled()) {
                                 LOG.debug("Loading URL processor into Cache");
@@ -322,16 +329,16 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
                 request.getSession().removeAttribute(SANDBOX_ID_VAR);
             }
             if (sandboxId != null) {
-                currentSandbox = sandBoxService.retrieveSandboxById(sandboxId);
+                currentSandbox = sandBoxService.retrieveSandBoxById(sandboxId);
                 request.setAttribute(SANDBOX_VAR, currentSandbox);
                 if (currentSandbox != null && !SandBoxType.PRODUCTION.equals(currentSandbox.getSandBoxType())) {
                     setContentTime(request);
                 }
             }
 
-            if (currentSandbox == null && site != null) {
-                currentSandbox = site.getProductionSandbox();
-            }
+//            if (currentSandbox == null && site != null) {
+//                currentSandbox = site.getProductionSandbox();
+//            }
         }
 
         if (LOG.isTraceEnabled()) {

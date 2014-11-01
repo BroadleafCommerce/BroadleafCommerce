@@ -1,0 +1,63 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+/* Off canvas layout CSS/JS provided by or adapted from work by Jason Weaver and Luke Wroblewski Requires globals.css grid.css */
+body.off-canvas { padding: 0; margin: 0; }
+
+.container { width: 100%; }
+
+.row { overflow: visible; }
+
+.row .row { overflow: visible; }
+
+.paneled .container { overflow: hidden; }
+
+.paneled .row { width: 100%; }
+
+[role="main"]:before { content: " "; position: absolute; z-index: -1; top: 0; left: -100%; width: 100%; height: 100%; }
+
+[role="complementary"], [role="main"] { width: 100%; padding: 0 8px; display: block; position: relative; z-index: 1; -webkit-transition: 0.25s all ease-in; -moz-transition: 0.25s all ease-in; -o-transition: 0.25s all ease-in; transition: 0.25s all ease-in; }
+
+.paneled [role="main"] { padding: 0; }
+
+.page-panel { width: 100%; padding: 0 15px; -webkit-transition: 0.3s margin ease-in-out; -moz-transition: 0.3s margin ease-in-out; -o-transition: 0.3s margin ease-in-out; transition: 0.3s margin ease-in-out; background: #fff; }
+
+#switchPanels { margin: 0 -15px; }
+
+.hide-extras [role="complementary"] { display: block; }
+
+[role="navigation"]#topMenu { -webkit-transition: 0.25s all ease-in; -moz-transition: 0.25s all ease-in; -o-transition: 0.25s all ease-in; transition: 0.25s all ease-in; }
+
+[role="navigation"]#topMenu ul { margin-top: 0; }
+
+[role="complementary"] { margin-left: 0; width: 20%; float: left; z-index: 2; padding: 0 8px; }
+
+[role="main"] { width: 80%; margin-left: 0; float: right; z-index: 1; position: relative; padding: 0 15px; }
+
+.paneled [role="main"] { background: #fff; width: 500%; overflow: hidden; float: none; position: relative; left: 0; -webkit-transition: 0.15s all ease-in; -moz-transition: 0.15s all ease-in; -o-transition: 0.15s all ease-in; transition: 0.15s all ease-in; }
+
+.page-panel { min-height: 400px; float: left; margin: 0; width: 20%; }
+
+.active [role="complementary"] { margin-left: 0; }
+
+.active [role="main"] { margin-right: -80%; }
+
+.active-menu [role="navigation"]#topMenu { margin-top: 0 !important; }
+
+[role="navigation"]#topMenu { display: none; }

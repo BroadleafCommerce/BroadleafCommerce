@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.service;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -48,15 +51,33 @@ public interface CatalogService {
      */
     public List<Product> findProductsByName(String searchName, int limit, int offset);
 
+    public List<Product> findActiveProductsByCategory(Category category);
+
+    /**
+     * @deprecated Use findActiveProductsByCategory
+     * 
+     * @param category
+     * @param currentDate
+     * @return
+     */
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate);
     
     /**
      * Given a category and a ProudctSearchCriteria, returns the appropriate matching products
      * 
      * @param category
-     * @param currentDate
      * @param searchCriteria
      * @return the matching products
+     */
+    public List<Product> findFilteredActiveProductsByCategory(Category category, ProductSearchCriteria searchCriteria);
+
+    /**
+     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, ProductSearchCriteria)}
+     * 
+     * @param category
+     * @param currentDate
+     * @param searchCriteria
+     * @return
      */
     public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria);
     
@@ -64,12 +85,29 @@ public interface CatalogService {
      * Given a search query and a ProductSearchCriteria, returns the appropriate matching products
      * 
      * @param query
-     * @param currentDate
      * @param searchCriteria
      * @return the matching products
      */
+    public List<Product> findFilteredActiveProductsByQuery(String query, ProductSearchCriteria searchCriteria);
+
+    /**
+     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, ProductSearchCriteria)}
+     */
     public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
 
+    /**
+     * Same as {@link #findActiveProductsByCategory(Category)} but allowing for pagination.
+     * 
+     * @param category
+     * @param limit
+     * @param offset
+     * @return
+     */
+    public List<Product> findActiveProductsByCategory(Category category, int limit, int offset);
+
+    /**
+     * @deprecated Use {@link #findActiveProductsByCategory(Category, limit, offset}
+     */
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
 
     /**
@@ -88,6 +126,8 @@ public interface CatalogService {
     public Category saveCategory(Category category);
     
     public void removeCategory(Category category);
+
+    public void removeProduct(Product product);
 
     public Category findCategoryById(Long categoryId);
 
@@ -145,6 +185,14 @@ public interface CatalogService {
 
     public Sku findSkuById(Long skuId);
 
+    /**
+     * Get a hierarchical map of all child categories keyed on the url
+     *
+     * @param categoryId the parent category to which the children belong
+     * @return hierarchical map of all child categories
+     * @deprecated this approach is inherently inefficient - don't use.
+     */
+    @Deprecated
     public Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId);
 
     public Category createCategory();
@@ -153,6 +201,8 @@ public interface CatalogService {
     
     public Product createProduct(ProductType productType);
 
+    public List<Category> findAllParentCategories();
+    
     public List<Category> findAllSubCategories(Category category);
 
     public List<Category> findAllSubCategories(Category category, int limit, int offset);
@@ -162,6 +212,8 @@ public interface CatalogService {
     public List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset);
     
     public List<ProductOption> readAllProductOptions();
+    
+    public ProductOption saveProductOption(ProductOption option);
     
     public ProductOption findProductOptionById(Long productOptionId);
     
@@ -185,7 +237,4 @@ public interface CatalogService {
      */    
     public Product findProductByURI(String uri);
 
-
-
-    
 }

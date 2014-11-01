@@ -1,20 +1,25 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.catalog;
+
+import java.net.URLDecoder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +28,7 @@ import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * This handler mapping works with the Category entity to determine if a category has been configured for
@@ -40,17 +46,23 @@ public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
     
     private String controllerName="blCategoryController";
     
+    protected String defaultTemplateName = "catalog/category";
+
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;
     
     public static final String CURRENT_CATEGORY_ATTRIBUTE_NAME = "category";
+
+    @Value("${request.uri.encoding}")
+    public String charEncoding;
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request)
             throws Exception {      
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
-            Category category = catalogService.findCategoryByURI(context.getRequestURIWithoutContext());
+            String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
+            Category category = catalogService.findCategoryByURI(requestUri);
 
             if (category != null) {
                 context.getRequest().setAttribute(CURRENT_CATEGORY_ATTRIBUTE_NAME, category);
@@ -58,5 +70,13 @@ public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
             }
         }
         return null;
+    }
+
+    public String getDefaultTemplateName() {
+        return defaultTemplateName;
+    }
+
+    public void setDefaultTemplateName(String defaultTemplateName) {
+        this.defaultTemplateName = defaultTemplateName;
     }
 }

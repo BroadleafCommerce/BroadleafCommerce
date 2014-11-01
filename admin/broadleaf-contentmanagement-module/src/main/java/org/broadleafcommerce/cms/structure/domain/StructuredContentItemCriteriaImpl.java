@@ -1,20 +1,35 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.structure.domain;
+
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,13 +43,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-
 /**
  * 
  * @author jfischer
@@ -44,6 +52,10 @@ import org.hibernate.annotations.Type;
 @Table(name = "BLC_SC_ITEM_CRITERIA")
 @Inheritance(strategy=InheritanceType.JOINED)
 @AdminPresentationClass(friendlyName = "StructuredContentItemCriteriaImpl_baseStructuredContentItemCriteria")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+})
+@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 public class StructuredContentItemCriteriaImpl implements StructuredContentItemCriteria {
     
     public static final long serialVersionUID = 1L;
@@ -54,11 +66,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         name="SCItemCriteriaId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="StructuredContentItemCriteriaImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl")
         }
     )
@@ -72,7 +80,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @Column(name = "ORDER_ITEM_MATCH_RULE")
+    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Order_Item_Match_Rule", group = "StructuredContentItemCriteriaImpl_Description", visibility = VisibilityEnum.HIDDEN_ALL)
     protected String orderItemMatchRule;
     
@@ -83,6 +91,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getId()
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -90,6 +99,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setId(java.lang.Long)
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -97,6 +107,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getReceiveQuantity()
      */
+    @Override
     public Integer getQuantity() {
         return quantity;
     }
@@ -104,28 +115,27 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setReceiveQuantity(java.lang.Integer)
      */
+    @Override
     public void setQuantity(Integer receiveQuantity) {
         this.quantity = receiveQuantity;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getOrderItemMatchRule()
-     */
-    public String getOrderItemMatchRule() {
+    @Override
+    public String getMatchRule() {
         return orderItemMatchRule;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setOrderItemMatchRule(java.lang.String)
-     */
-    public void setOrderItemMatchRule(String orderItemMatchRule) {
-        this.orderItemMatchRule = orderItemMatchRule;
+    @Override
+    public void setMatchRule(String matchRule) {
+        this.orderItemMatchRule = matchRule;
     }
 
+    @Override
     public StructuredContent getStructuredContent() {
         return structuredContent;
     }
 
+    @Override
     public void setStructuredContent(StructuredContent structuredContent) {
         this.structuredContent = structuredContent;
     }
@@ -146,7 +156,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         StructuredContentItemCriteriaImpl other = (StructuredContentItemCriteriaImpl) obj;
         
@@ -167,6 +177,7 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
         return true;
     }
 
+    @Override
     public StructuredContentItemCriteria cloneEntity() {
         StructuredContentItemCriteriaImpl newField = new StructuredContentItemCriteriaImpl();
         newField.quantity = quantity;

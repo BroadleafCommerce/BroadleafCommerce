@@ -1,20 +1,26 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web.controller;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author bpolster
  */
 public class BroadleafControllerUtility {
+    protected static final Log LOG = LogFactory.getLog(BroadleafControllerUtility.class);
     
     public static final String BLC_REDIRECT_ATTRIBUTE = "blc_redirect";
     public static final String BLC_AJAX_PARAMETER = "blcAjax";
@@ -48,8 +55,23 @@ public class BroadleafControllerUtility {
      */
     public static boolean isAjaxRequest(HttpServletRequest request) {
         String ajaxParameter = request.getParameter(BLC_AJAX_PARAMETER);
-        return (ajaxParameter != null && "true".equals(ajaxParameter)) ||
-            "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+        String requestedWithHeader = request.getHeader("X-Requested-With");
+        boolean result = (ajaxParameter != null && "true".equals(ajaxParameter))
+                || "XMLHttpRequest".equals(requestedWithHeader);
+        
+        if (LOG.isTraceEnabled()) {
+            StringBuilder sb = new StringBuilder()
+                .append("Request URL: [").append(request.getServletPath()).append("]")
+                .append(" - ")
+                .append("ajaxParam: [").append(String.valueOf(ajaxParameter)).append("]")
+                .append(" - ")
+                .append("X-Requested-With: [").append(requestedWithHeader).append("]")
+                .append(" - ")
+                .append("Returning: [").append(result).append("]");
+            LOG.trace(sb.toString());
+        }
+        
+        return result;
     }
     
 }

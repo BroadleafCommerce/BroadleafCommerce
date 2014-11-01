@@ -1,25 +1,28 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.util;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +35,7 @@ public class WeightUnitOfMeasureType implements Serializable, BroadleafEnumerati
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, WeightUnitOfMeasureType> TYPES = new HashMap<String, WeightUnitOfMeasureType>();
+    private static final Map<String, WeightUnitOfMeasureType> TYPES = new LinkedHashMap<String, WeightUnitOfMeasureType>();
 
     public static final WeightUnitOfMeasureType POUNDS  = new WeightUnitOfMeasureType("POUNDS", "Pounds");
     public static final WeightUnitOfMeasureType KILOGRAMS  = new WeightUnitOfMeasureType("KILOGRAMS", "Kilograms");
@@ -82,7 +85,7 @@ public class WeightUnitOfMeasureType implements Serializable, BroadleafEnumerati
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         WeightUnitOfMeasureType other = (WeightUnitOfMeasureType) obj;
         if (type == null) {

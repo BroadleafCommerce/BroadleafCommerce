@@ -1,49 +1,60 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+})
 public class FieldImpl implements Field,Serializable {
     
     /**
@@ -52,8 +63,15 @@ public class FieldImpl implements Field,Serializable {
     private static final long serialVersionUID = 2915813511754425605L;
 
     @Id
-    @GeneratedValue(generator = "FieldId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FieldId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldImpl", allocationSize = 50)
+    @GeneratedValue(generator = "FieldId")
+    @GenericGenerator(
+        name="FieldId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="FieldImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.FieldImpl")
+        }
+    )
     @Column(name = "FIELD_ID")
     @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_descrpition",visibility=VisibilityEnum.HIDDEN_ALL)
     protected Long id;
@@ -61,13 +79,14 @@ public class FieldImpl implements Field,Serializable {
     // This is a broadleaf enumeration
     @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_descrpition", order = 2, prominent = true)
     @Column(name = "ENTITY_TYPE", nullable = false)
+    @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
     protected String entityType;
     
     @Column(name = "PROPERTY_NAME", nullable = false)
     @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 1, prominent = true)
     protected String propertyName;
     
-    @Column(name = "ABBREVIATION", unique = true)
+    @Column(name = "ABBREVIATION")
     @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition", order = 3, prominent = true)
     protected String abbreviation;
     
@@ -86,6 +105,7 @@ public class FieldImpl implements Field,Serializable {
     @Column(name="SEARCHABLE_FIELD_TYPE")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @BatchSize(size = 50)
     protected List<String> searchableFieldTypes = new ArrayList<String>();
     
     @Column(name = "TRANSLATABLE")
@@ -154,7 +174,7 @@ public class FieldImpl implements Field,Serializable {
 
     @Override
     public void setFacetFieldType(FieldType facetFieldType) {
-        this.facetFieldType = facetFieldType.getType();
+        this.facetFieldType = facetFieldType == null ? null : facetFieldType.getType();
     }
 
     @Override
@@ -203,7 +223,7 @@ public class FieldImpl implements Field,Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         Field other = (Field) obj;

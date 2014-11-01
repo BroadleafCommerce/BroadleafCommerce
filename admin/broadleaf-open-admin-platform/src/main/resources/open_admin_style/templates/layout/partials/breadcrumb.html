@@ -1,0 +1,34 @@
+<div class="breadcrumb-container">
+    <ul class="breadcrumbs" th:if="${currentAdminModule}">
+        <li>
+            <span th:text="#{${currentAdminModule.moduleKey}}" />
+        </li>
+        <li>
+            <a blc_admin:admin_section_href="${currentAdminSection}" th:inline="text">
+                [[#{${currentAdminSection.sectionKey}}]]
+            </a>
+        </li>
+        <li th:if="${entityForm}">
+            <span th:text="${entityForm.mainEntityName}" />
+        </li>
+    </ul>
+
+    <ul class="breadcrumbs" th:unless="${currentAdminModule}">
+        <li>
+            <span th:text="#{breadcrumb.unavailable}" />
+        </li>
+    </ul>
+
+    <div th:if="${entityForm}" class="entity-form-actions">
+        <button th:each="action : ${entityForm.actions}" 
+            class="small button radius dark" 
+            th:attr="data-url=@{${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}"
+            th:type="${action.buttonType}"
+            th:classappend="${action.buttonClass}">
+            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+        </button>
+        <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />
+    </div>
+
+    <div class="clear"></div>
+</div>

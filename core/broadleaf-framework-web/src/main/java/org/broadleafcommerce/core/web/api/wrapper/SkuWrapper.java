@@ -1,20 +1,27 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.api.wrapper;
+
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 
 import java.util.Date;
 
@@ -23,9 +30,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * This is a JAXB wrapper to wrap Sku.
@@ -41,13 +46,21 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
     protected Long id;
 
     @XmlElement
+    @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
     protected Date activeStartDate;
 
     @XmlElement
+    @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
     protected Date activeEndDate;
 
     @XmlElement
     protected String name;
+
+    @XmlElement
+    protected Boolean active;
+    
+    @XmlElement
+    protected String inventoryType;
 
     @XmlElement
     protected String description;
@@ -65,7 +78,7 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
     protected DimensionWrapper dimension;
     
     @Override
-    public void wrap(Sku model, HttpServletRequest request) {
+    public void wrapDetails(Sku model, HttpServletRequest request) {
         this.id = model.getId();
         this.activeStartDate = model.getActiveStartDate();
         this.activeEndDate = model.getActiveEndDate();
@@ -73,15 +86,24 @@ public class SkuWrapper extends BaseWrapper implements APIWrapper<Sku> {
         this.description = model.getDescription();
         this.retailPrice = model.getRetailPrice();
         this.salePrice = model.getSalePrice();
-
+        this.active = model.isActive();
+        if (model.getInventoryType() != null) {
+            this.inventoryType = model.getInventoryType().getType();
+        }
+        
         if (model.getWeight() != null){
             weight = (WeightWrapper)context.getBean(WeightWrapper.class.getName());
-            weight.wrap(model.getWeight(), request);
+            weight.wrapDetails(model.getWeight(), request);
         }
 
         if (model.getDimension() != null){
             dimension = (DimensionWrapper)context.getBean(DimensionWrapper.class.getName());
-            dimension.wrap(model.getDimension(), request);
+            dimension.wrapDetails(model.getDimension(), request);
         }
+    }
+
+    @Override
+    public void wrapSummary(Sku model, HttpServletRequest request) {
+        wrapDetails(model, request);
     }
 }

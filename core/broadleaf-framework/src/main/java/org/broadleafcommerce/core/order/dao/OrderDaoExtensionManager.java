@@ -1,55 +1,44 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.dao;
 
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.profile.core.domain.Customer;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 
 /**
- * @author Andre Azzolini (apazzolini)
+ * @author Andre Azzolini (apazzolini), bpolster
  */
-public class OrderDaoExtensionManager implements OrderDaoExtensionListener {
-    
-    protected List<OrderDaoExtensionListener> listeners = new ArrayList<OrderDaoExtensionListener>();
+@Service("blOrderDaoExtensionManager")
+public class OrderDaoExtensionManager extends ExtensionManager<OrderDaoExtensionHandler> {
 
+    public OrderDaoExtensionManager() {
+        super(OrderDaoExtensionHandler.class);
+    }
+
+    /**
+     * By default, this manager will allow other handlers to process the method when a handler returns
+     * HANDLED.
+     */
     @Override
-    public void attachAdditionalDataToNewCart(Customer customer, Order cart) {
-        for (OrderDaoExtensionListener listener : listeners) {
-            listener.attachAdditionalDataToNewCart(customer, cart);
-        }
+    public boolean continueOnHandled() {
+        return true;
     }
-
-    @Override
-    public void applyAdditionalOrderLookupFilter(Customer customer, String name, List<Order> orders) {
-        for (OrderDaoExtensionListener listener : listeners) {
-            listener.applyAdditionalOrderLookupFilter(customer, name, orders);
-        }
-    }
-    
-    public List<OrderDaoExtensionListener> getListeners() {
-        return listeners;
-    }
-
-    public void setListeners(List<OrderDaoExtensionListener> listeners) {
-        this.listeners = listeners;
-    }
-
 }

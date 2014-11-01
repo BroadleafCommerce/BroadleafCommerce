@@ -1,20 +1,30 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.locale.domain;
+
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,13 +34,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Created by jfischer
@@ -46,22 +49,36 @@ public class LocaleImpl implements Locale {
 
     @Id
     @Column (name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "LocaleImpl_Locale_Code", order=1, group = "LocaleImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Locale_Code", order = 1, 
+        group = "LocaleImpl_Details", 
+        prominent = true, gridOrder = 2)
     protected String localeCode;
 
     @Column (name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "LocaleImpl_Name", order=2, group = "LocaleImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Name", order = 2, 
+        group = "LocaleImpl_Details", 
+        prominent = true, gridOrder = 1)
     protected String friendlyName;
 
     @Column (name = "DEFAULT_FLAG")
-    @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order=3, group = "LocaleImpl_Details", prominent=true)
-    protected Boolean defaultFlag;
+    @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order = 3, 
+        group = "LocaleImpl_Details", 
+        prominent = true, gridOrder = 3)
+    protected Boolean defaultFlag = false;
 
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "LocaleImpl_Currency", order=4, group = "LocaleImpl_Details", prominent=true)
+    @AdminPresentation(friendlyName = "LocaleImpl_Currency", order = 4, 
+        group = "LocaleImpl_Details", 
+        prominent = true)
     protected BroadleafCurrency defaultCurrency;
 
+    @Column (name = "USE_IN_SEARCH_INDEX")
+    @AdminPresentation(friendlyName = "LocaleImpl_Use_In_Search_Index", order = 5, 
+        group = "LocaleImpl_Details", 
+        prominent = true, gridOrder = 3)
+    protected Boolean useInSearchIndex = false;
+    
     @Override
     public String getLocaleCode() {
         return localeCode;
@@ -89,7 +106,11 @@ public class LocaleImpl implements Locale {
 
     @Override
     public Boolean getDefaultFlag() {
-        return defaultFlag;
+        if (defaultFlag == null) {
+            return Boolean.FALSE;
+        } else {
+            return defaultFlag;
+        }
     }
 
     @Override
@@ -101,13 +122,24 @@ public class LocaleImpl implements Locale {
     public void setDefaultCurrency(BroadleafCurrency defaultCurrency) {
         this.defaultCurrency = defaultCurrency;
     }
+    
+    @Override
+    public Boolean getUseCountryInSearchIndex() {
+        return useInSearchIndex == null ? false : useInSearchIndex;
+    }
+
+    @Override
+    public void setUseCountryInSearchIndex(Boolean useInSearchIndex) {
+        this.useInSearchIndex = useInSearchIndex;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Locale)) {
+        if (o == null) return false;
+        if (!getClass().isAssignableFrom(o.getClass())) {
             return false;
         }
 

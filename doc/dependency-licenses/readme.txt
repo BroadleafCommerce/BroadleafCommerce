@@ -8,3 +8,7 @@ This product includes software developed by the Visigoth Software Society (http:
 This product includes software developed by the Apache Software Foundation (http://www.apache.org/).
 
 This product includes software developed by the Indiana University Extreme! Lab (http://www.extreme.indiana.edu/).
+
+This product includes software developed by the Indiana University Extreme! Lab (http://www.extreme.indiana.edu/).
+
+This product includes several javascript libraries.   The license for each of these can be found in the subdirectory named javascript-libraries.

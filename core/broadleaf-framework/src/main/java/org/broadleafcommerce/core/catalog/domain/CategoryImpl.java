@@ -1,41 +1,62 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.cache.Hydrated;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyAdornedTargetCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.OptionFilterParam;
+import org.broadleafcommerce.common.presentation.OptionFilterParamType;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.Locatable;
+import org.broadleafcommerce.core.catalog.extension.CategoryEntityExtensionManager;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.media.domain.Media;
-import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
@@ -45,31 +66,11 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
-import org.hibernate.annotations.MapKey;
-import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,6 +82,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 /**
  * @author bTaylor
  * @author Jeff Fischer
@@ -88,10 +111,15 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_CATEGORY")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
 @AdminPresentationClass(friendlyName = "CategoryImpl_baseCategory")
 @SQLDelete(sql="UPDATE BLC_CATEGORY SET ARCHIVED = 'Y' WHERE CATEGORY_ID = ?")
-public class CategoryImpl implements Category, Status {
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRECLONE_INFORMATION),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+})
+public class CategoryImpl implements Category, Status, AdminMainEntity, Locatable {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
@@ -128,8 +156,8 @@ public class CategoryImpl implements Category, Status {
         newCategoryList.add(category.getId());
 
         categoryUrlMap.put(currentPath, newCategoryList);
-        for (Category currentCategory : category.getChildCategories()) {
-            fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
+        for (CategoryXref currentCategory : category.getChildCategoryXrefs()) {
+            fillInURLMapForCategory(categoryUrlMap, currentCategory.getSubCategory(), currentPath, newCategoryList);
         }
     }
 
@@ -139,153 +167,282 @@ public class CategoryImpl implements Category, Status {
         name="CategoryId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="CategoryImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.CategoryImpl")
         }
     )
     @Column(name = "CATEGORY_ID")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_ID", group = "CategoryImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order=1, group = "CategoryImpl_Description", prominent=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order = 1000,
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            prominent = true, gridOrder = 1, columnWidth = "300px",
+            translatable = true)
     protected String name;
 
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order=5, group = "Seo_Group", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 2000,
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            prominent = true, gridOrder = 2, columnWidth = "300px",
+            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
+    @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key", order=6, group = "Seo_Group", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+            excluded = true)
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Description", order=2, group = "CategoryImpl_Description", largeEntry=true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Description",
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            largeEntry = true,
+            excluded = true,
+            translatable = true)
     protected String description;
 
+    @Column(name = "TAX_CODE")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_TaxCode", order = 4000,
+            group = Presentation.Group.Name.Advanced)
+    @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionFilterParams = { @OptionFilterParam(
+            param = "type.key", value = "TAX_CODE", paramType = OptionFilterParamType.STRING) })
+    protected String taxCode;
+
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order=11, group = "CategoryImpl_Active_Date_Range", groupOrder = 4)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order = 1000,
+            group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order=12, group = "CategoryImpl_Active_Date_Range", groupOrder = 4)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order = 2000,
+            group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange)
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order=3, group = "CategoryImpl_Description", groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order = 1000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected String displayTemplate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order=4, group = "CategoryImpl_Description", largeEntry=true,fieldType=SupportedFieldType.HTML_BASIC, groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order = 3000,
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            largeEntry = true,
+            fieldType = SupportedFieldType.HTML_BASIC,
+            translatable = true)
     protected String longDescription;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_Default_Parent", order=13, group = "CategoryImpl_Description", excluded = true, visibility = VisibilityEnum.HIDDEN_ALL, groupOrder = 2)
+    @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 4000,
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General)
+    @AdminPresentationToOneLookup()
     protected Category defaultParentCategory;
 
-    @ManyToMany(targetEntity = CategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
+    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "category", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "DISPLAY_ORDER")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OrderBy(value="displayOrder")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @BatchSize(size = 50)
-    protected List<Category> allChildCategories = new ArrayList<Category>(10);
+    @AdminPresentationAdornedTargetCollection(
+            targetObjectProperty = "subCategory",
+            parentObjectProperty = "category",
+            friendlyName = "allChildCategoriesTitle",
+            sortProperty = "displayOrder",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            gridVisibleFields = { "name" })
+    @ClonePolicyAdornedTargetCollection(unowned = true)
+    protected List<CategoryXref> allChildCategoryXrefs = new ArrayList<CategoryXref>(10);
 
-    @ManyToMany(targetEntity = CategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
+    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "subCategory", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "DISPLAY_ORDER")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OrderBy(value="displayOrder")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @BatchSize(size = 50)
-    protected List<Category> allParentCategories = new ArrayList<Category>(10);
+    @AdminPresentationAdornedTargetCollection(
+            targetObjectProperty = "category",
+            parentObjectProperty = "subCategory",
+            friendlyName = "allParentCategoriesTitle",
+            sortProperty = "displayOrder",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            gridVisibleFields = { "name" })
+    @ClonePolicyAdornedTargetCollection(unowned = true)
+    protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<CategoryXref>(10);
 
-    @ManyToMany(targetEntity = ProductImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", nullable = true))
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "category", orphanRemoval = true)
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @OrderBy(clause = "DISPLAY_ORDER")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OrderBy(value="displayOrder")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @BatchSize(size = 50)
-    protected List<Product> allProducts = new ArrayList<Product>(10);
+    @AdminPresentationAdornedTargetCollection(
+            targetObjectProperty = "product",
+            parentObjectProperty = "category",
+            friendlyName = "allProductsTitle",
+            sortProperty = "displayOrder",
+            tab = Presentation.Tab.Name.Products, tabOrder = Presentation.Tab.Order.Products,
+            gridVisibleFields = { "defaultSku.name" })
+    @ClonePolicyAdornedTargetCollection(unowned = true)
+    protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
 
-    @CollectionOfElements
-    @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
-    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
-    @Column(name = "URL")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @ElementCollection
+    @MapKeyColumn(name="NAME")
+    @Column(name="URL")
+    @CollectionTable(name="BLC_CATEGORY_IMAGE", joinColumns=@JoinColumn(name="CATEGORY_ID"))
     @BatchSize(size = 50)
     @Deprecated
     protected Map<String, String> categoryImages = new HashMap<String, String>(10);
 
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
-    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
+    @MapKeyColumn(name = "MAP_KEY")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @BatchSize(size = 50)
+    @AdminPresentationMap(
+            friendlyName = "SkuImpl_Sku_Media",
+            tab = Presentation.Tab.Name.Media, tabOrder = Presentation.Tab.Order.Media,
+            keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
+            deleteEntityUponRemove = true,
+            mediaField = "url",
+            keys = {
+                    @AdminPresentationMapKey(keyName = "primary", friendlyKeyName = "mediaPrimary"),
+                    @AdminPresentationMapKey(keyName = "alt1", friendlyKeyName = "mediaAlternate1"),
+                    @AdminPresentationMapKey(keyName = "alt2", friendlyKeyName = "mediaAlternate2"),
+                    @AdminPresentationMapKey(keyName = "alt3", friendlyKeyName = "mediaAlternate3"),
+                    @AdminPresentationMapKey(keyName = "alt4", friendlyKeyName = "mediaAlternate4"),
+                    @AdminPresentationMapKey(keyName = "alt5", friendlyKeyName = "mediaAlternate5"),
+                    @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
+            }
+    )
+    @ClonePolicyMap
     protected Map<String, Media> categoryMedia = new HashMap<String , Media>(10);
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})   
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @OrderBy(value="sequence")
     @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(friendlyName = "featuredProductsTitle", order = 1000,
+            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+            targetObjectProperty = "product",
+            sortProperty = "sequence",
+            maintainedAdornedTargetFields = { "promotionMessage" },
+            gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @ClonePolicyAdornedTargetCollection
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
     
     @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @OrderBy(value="sequence")
+    @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle", order = 2000,
+            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+            targetObjectProperty = "relatedSaleProduct",
+            sortProperty = "sequence",
+            maintainedAdornedTargetFields = { "promotionMessage" },
+            gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @ClonePolicyAdornedTargetCollection
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @OrderBy(value="sequence")
+    @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 3000,
+            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+            targetObjectProperty = "relatedSaleProduct",
+            sortProperty = "sequence",
+            maintainedAdornedTargetFields = { "promotionMessage" },
+            gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @ClonePolicyAdornedTargetCollection
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
     
     @OneToMany(mappedBy = "category", targetEntity = CategorySearchFacetImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @OrderBy(value="sequence")
+    @AdminPresentationAdornedTargetCollection(friendlyName = "categoryFacetsTitle", order = 1000,
+            tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets,
+            targetObjectProperty = "searchFacet",
+            sortProperty = "sequence",
+            gridVisibleFields = { "field", "label", "searchDisplayPriority" })
+    @BatchSize(size = 50)
+    @ClonePolicyAdornedTargetCollection
     protected List<CategorySearchFacet> searchFacets  = new ArrayList<CategorySearchFacet>();
     
     @ManyToMany(targetEntity = SearchFacetImpl.class)
-    @JoinTable(name = "BLC_CAT_SEARCH_FACET_EXCL_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SEARCH_FACET_ID", nullable = true))
+    @JoinTable(name = "BLC_CAT_SEARCH_FACET_EXCL_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"),
+            inverseJoinColumns = @JoinColumn(name = "SEARCH_FACET_ID", nullable = true))
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
+    @AdminPresentationAdornedTargetCollection(
+            order = 2000,
+            joinEntityClass = "org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl",
+            targetObjectProperty = "searchFacet",
+            parentObjectProperty = "category",
+            friendlyName = "excludedFacetsTitle",
+            tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets,
+            gridVisibleFields = {"field", "label", "searchDisplayPriority"})
+    @ClonePolicyAdornedTargetCollection
     protected List<SearchFacet> excludedSearchFacets = new ArrayList<SearchFacet>(10);
     
-    @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
+    @MapKey(name="name")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "categoryAttributesTitle", dataSourceName = "categoryAttributeDS", order = 87)
-    protected List<CategoryAttribute> categoryAttributes  = new ArrayList<CategoryAttribute>();
+    @AdminPresentationMap(friendlyName = "categoryAttributesTitle",
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
+    )
+    @ClonePolicyMap
+    protected Map<String, CategoryAttribute> categoryAttributes = new HashMap<String, CategoryAttribute>();
 
     @Column(name = "INVENTORY_TYPE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", group = "CategoryImpl_Sku_Inventory", order=10, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.inventory.service.type.InventoryType")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
+            helpText = "inventoryTypeHelpText",
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
     protected String inventoryType;
     
     @Column(name = "FULFILLMENT_TYPE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", group = "CategoryImpl_Sku_Inventory", order=11, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentType")
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", order = 3000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     @Transient
-    @Hydrated(factoryMethod = "createChildCategoryURLMap")
-    protected Map<String, List<Long>> childCategoryURLMap;        
+    @Deprecated
+    protected Map<String, List<Long>> childCategoryURLMap;
 
     @Transient
-    protected List<Category> childCategories = new ArrayList<Category>(50);
+    @Hydrated(factoryMethod = "createChildCategoryIds")
+    protected List<Long> childCategoryIds;
+
+    @Transient
+    protected List<CategoryXref> childCategoryXrefs = new ArrayList<CategoryXref>(50);
+
+    @Transient
+    protected List<Category> legacyChildCategories = new ArrayList<Category>(50);
+
+    @Transient
+    protected List<Category> allLegacyChildCategories = new ArrayList<Category>(50);
 
     @Transient
     protected List<FeaturedProduct> filteredFeaturedProducts = null;
@@ -308,7 +465,7 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public String getName() {
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
@@ -357,7 +514,7 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public String getDescription() {
-        return description;
+        return DynamicTranslationProvider.getValue(this, "description", description);
     }
 
     @Override
@@ -375,7 +532,7 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public void setActiveStartDate(Date activeStartDate) {
-        this.activeStartDate = new Date(activeStartDate.getTime());
+        this.activeStartDate = (activeStartDate == null) ? null : new Date(activeStartDate.getTime());
     }
 
     @Override
@@ -385,7 +542,7 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public void setActiveEndDate(Date activeEndDate) {
-        this.activeEndDate = new Date(activeEndDate.getTime());
+        this.activeEndDate = (activeEndDate == null) ? null : new Date(activeEndDate.getTime());
     }
 
     @Override
@@ -413,7 +570,7 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public String getLongDescription() {
-        return longDescription;
+        return DynamicTranslationProvider.getValue(this, "longDescription", longDescription);
     }
 
     @Override
@@ -432,46 +589,168 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
+    public List<CategoryXref> getAllChildCategoryXrefs(){
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getAllChildCategoryXrefs(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<CategoryXref>) holder.getResult();
+            }
+        }
+        return allChildCategoryXrefs;
+    }
+
+    @Override
+    public List<CategoryXref> getChildCategoryXrefs() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getChildCategoryXrefs(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<CategoryXref>) holder.getResult();
+            }
+        }
+        if (childCategoryXrefs.isEmpty()) {
+            for (CategoryXref category : allChildCategoryXrefs) {
+                if (category.getSubCategory().isActive()) {
+                    childCategoryXrefs.add(category);
+                }
+            }
+        }
+        return Collections.unmodifiableList(childCategoryXrefs);
+    }
+
+    @Override
+    public void setChildCategoryXrefs(List<CategoryXref> childCategories) {
+        this.childCategoryXrefs.clear();
+        for(CategoryXref category : childCategories){
+            this.childCategoryXrefs.add(category);
+        }
+    }
+
+    @Override
+    public void setAllChildCategoryXrefs(List<CategoryXref> childCategories){
+        allChildCategoryXrefs.clear();
+        for(CategoryXref category : childCategories){
+            allChildCategoryXrefs.add(category);
+        }
+    }
+
+    @Override
+    @Deprecated
     public List<Category> getAllChildCategories(){
-        return allChildCategories;
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getAllChildCategories(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<Category>) holder.getResult();
+            }
+        }
+        if (allLegacyChildCategories.isEmpty()) {
+            for (CategoryXref category : allChildCategoryXrefs) {
+                allLegacyChildCategories.add(category.getSubCategory());
+            }
+        }
+        return Collections.unmodifiableList(allLegacyChildCategories);
     }
 
     @Override
     public boolean hasAllChildCategories(){
-        return !allChildCategories.isEmpty();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().hasAllChildCategories(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Boolean) holder.getResult();
+            }
+        }
+        return !allChildCategoryXrefs.isEmpty();
     }
 
     @Override
+    @Deprecated
     public void setAllChildCategories(List<Category> childCategories){
-        allChildCategories.clear();
-        for(Category category : childCategories){
-            allChildCategories.add(category);
-        }       
+        throw new UnsupportedOperationException("Not Supported - Use setAllChildCategoryXrefs()");
     }
 
     @Override
+    @Deprecated
     public List<Category> getChildCategories() {
-        if (childCategories.isEmpty()) {
-            for (Category category : allChildCategories) {
-                if (category.isActive()) {
-                    childCategories.add(category);
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getChildCategories(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<Category>) holder.getResult();
+            }
+        }
+        if (legacyChildCategories.isEmpty()) {
+            for (CategoryXref category : allChildCategoryXrefs) {
+                if (category.getSubCategory().isActive()) {
+                    legacyChildCategories.add(category.getSubCategory());
                 }
             }
         }
-        return childCategories;
+        return Collections.unmodifiableList(legacyChildCategories);
     }
 
     @Override
     public boolean hasChildCategories() {
-        return !getChildCategories().isEmpty();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().hasChildCategories(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Boolean) holder.getResult();
+            }
+        }
+        return !getChildCategoryXrefs().isEmpty();
     }
 
     @Override
+    @Deprecated
     public void setChildCategories(List<Category> childCategories) {
-        this.childCategories.clear();
-        for(Category category : childCategories){
-            this.childCategories.add(category);
+        throw new UnsupportedOperationException("Not Supported - Use setChildCategoryXrefs()");
+    }
+
+    @Override
+    public List<Long> getChildCategoryIds() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getChildCategoryIds(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<Long>) holder.getResult();
+            }
         }
+        if (childCategoryIds == null) {
+            HydratedSetup.populateFromCache(this, "childCategoryIds");
+        }
+        return childCategoryIds;
+    }
+
+    @Override
+    public void setChildCategoryIds(List<Long> childCategoryIds) {
+        this.childCategoryIds = childCategoryIds;
+    }
+
+    public List<Long> createChildCategoryIds() {
+        childCategoryIds = new ArrayList<Long>();
+        for (CategoryXref category : allChildCategoryXrefs) {
+            if (category.getSubCategory().isActive()) {
+                childCategoryIds.add(category.getSubCategory().getId());
+            }
+        }
+        return childCategoryIds;
     }
 
     @Override
@@ -496,9 +775,19 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
+    @Deprecated
     public Map<String, List<Long>> getChildCategoryURLMap() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getChildCategoryURLMap(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (Map<String, List<Long>>) holder.getResult();
+            }
+        }
         if (childCategoryURLMap == null) {
-            HydratedSetup.populateFromCache(this);
+            createChildCategoryURLMap();
         }
         return childCategoryURLMap;
     }
@@ -514,6 +803,7 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
+    @Deprecated
     public void setChildCategoryURLMap(Map<String, List<Long>> childCategoryURLMap) {
         this.childCategoryURLMap = childCategoryURLMap;
     }
@@ -526,13 +816,15 @@ public class CategoryImpl implements Category, Status {
         }
         
         List<Category> myParentCategories = new ArrayList<Category>();
-        if (defaultParentCategory != null) {
-            myParentCategories.add(defaultParentCategory);
+        if (getDefaultParentCategory() != null) {
+            myParentCategories.add(getDefaultParentCategory());
         }
-        if (allParentCategories != null && allParentCategories.size() > 0) {
-            myParentCategories.addAll(allParentCategories);
+        if (!CollectionUtils.isEmpty(getAllParentCategoryXrefs())) {
+            for (CategoryXref parent : getAllParentCategoryXrefs()) {
+                myParentCategories.add(parent.getCategory());
+            }
         }
-        
+
         for (Category category : myParentCategories) {
             if (!currentHierarchy.contains(category)) {
                 currentHierarchy.add(category);
@@ -549,39 +841,70 @@ public class CategoryImpl implements Category, Status {
             currentHierarchy = new ArrayList<Category>();
             currentHierarchy.add(this);
         }
-        if (defaultParentCategory != null && ! currentHierarchy.contains(defaultParentCategory)) {
-            currentHierarchy.add(defaultParentCategory);
-            defaultParentCategory.buildCategoryHierarchy(currentHierarchy);
+        if (getDefaultParentCategory() != null && ! currentHierarchy.contains(getDefaultParentCategory())) {
+            currentHierarchy.add(getDefaultParentCategory());
+            getDefaultParentCategory().buildCategoryHierarchy(currentHierarchy);
         }
         return currentHierarchy;
     }
 
     @Override
-    public List<Category> getAllParentCategories() {
-        return allParentCategories;
+    public List<CategoryXref> getAllParentCategoryXrefs() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategoryXrefs(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<CategoryXref>) holder.getResult();
+            }
+        }
+        return allParentCategoryXrefs;
     }
 
     @Override
-    public void setAllParentCategories(List<Category> allParentCategories) {
-        this.allParentCategories.clear();
-        for(Category category : allParentCategories){
-            this.allParentCategories.add(category);
+    public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories) {
+        this.allParentCategoryXrefs.clear();
+        allParentCategoryXrefs.addAll(allParentCategories);
+    }
+
+    @Override
+    @Deprecated
+    public List<Category> getAllParentCategories() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategories(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<Category>) holder.getResult();
+            }
         }
+        List<Category> parents = new ArrayList<Category>(allParentCategoryXrefs.size());
+        for (CategoryXref xref : allParentCategoryXrefs) {
+            parents.add(xref.getCategory());
+        }
+        return Collections.unmodifiableList(parents);
+    }
+
+    @Override
+    @Deprecated
+    public void setAllParentCategories(List<Category> allParentCategories) {
+        throw new UnsupportedOperationException("Not Supported - Use setAllParentCategoryXrefs()");
     }
 
     @Override
     public List<FeaturedProduct> getFeaturedProducts() {
-        if (filteredFeaturedProducts == null && featuredProducts != null) {
-            filteredFeaturedProducts = new ArrayList<FeaturedProduct>(featuredProducts.size());
-            filteredFeaturedProducts.addAll(featuredProducts);
-            CollectionUtils.filter(featuredProducts, new Predicate() {
-                @Override
-                public boolean evaluate(Object arg) {
-                    return 'Y' != ((Status) ((FeaturedProduct) arg).getProduct()).getArchived();
-                }
-            });
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getFeaturedProducts(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<FeaturedProduct>) holder.getResult();
+            }
         }
-        return filteredFeaturedProducts;
+        return featuredProducts;
     }
 
     @Override
@@ -594,17 +917,16 @@ public class CategoryImpl implements Category, Status {
     
     @Override
     public List<RelatedProduct> getCrossSaleProducts() {
-        if (filteredCrossSales == null && crossSaleProducts != null) {
-            filteredCrossSales = new ArrayList<RelatedProduct>(crossSaleProducts.size());
-            filteredCrossSales.addAll(crossSaleProducts);
-            CollectionUtils.filter(crossSaleProducts, new Predicate() {
-                @Override
-                public boolean evaluate(Object arg) {
-                    return 'Y'!=((Status)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
-                }
-            });
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getCrossSaleProducts(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<RelatedProduct>) holder.getResult();
+            }
         }
-        return filteredCrossSales;
+        return crossSaleProducts;
     }
 
     @Override
@@ -617,17 +939,16 @@ public class CategoryImpl implements Category, Status {
 
     @Override
     public List<RelatedProduct> getUpSaleProducts() {
-        if (filteredUpSales == null && upSaleProducts != null) {
-            filteredUpSales = new ArrayList<RelatedProduct>(upSaleProducts.size());
-            filteredUpSales.addAll(upSaleProducts);
-            CollectionUtils.filter(upSaleProducts, new Predicate() {
-                @Override
-                public boolean evaluate(Object arg) {
-                    return 'Y'!=((Status)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
-                }
-            });
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getUpSaleProducts(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<RelatedProduct>) holder.getResult();
+            }
         }
-        return filteredUpSales;
+        return upSaleProducts;
     }
     
     @Override
@@ -673,27 +994,89 @@ public class CategoryImpl implements Category, Status {
     }
 
     @Override
-    public List<Product> getActiveProducts() {
-        List<Product> result = new ArrayList<Product>();
-        for (Product product : allProducts) {
-            if (product.isActive()) {
+    public List<CategoryProductXref> getActiveProductXrefs() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getActiveProductXrefs(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<CategoryProductXref>) holder.getResult();
+            }
+        }
+        List<CategoryProductXref> result = new ArrayList<CategoryProductXref>();
+        for (CategoryProductXref product : allProductXrefs) {
+            if (product.getProduct().isActive()) {
                 result.add(product);
             }
         }
-        return result;
-    }
-    
-    @Override
-    public List<Product> getAllProducts() {
-        return allProducts;
+        return Collections.unmodifiableList(result);
     }
 
     @Override
-    public void setAllProducts(List<Product> allProducts) {
-        this.allProducts.clear();
-        for(Product product : allProducts){
-            this.allProducts.add(product);
+    public List<CategoryProductXref> getAllProductXrefs() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getAllProductXrefs(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<CategoryProductXref>) holder.getResult();
+            }
         }
+        return allProductXrefs;
+    }
+
+    @Override
+    public void setAllProductXrefs(List<CategoryProductXref> allProducts) {
+        this.allProductXrefs.clear();
+        allProductXrefs.addAll(allProducts);
+    }
+
+    @Override
+    @Deprecated
+    public List<Product> getActiveProducts() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getActiveProducts(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<Product>) holder.getResult();
+            }
+        }
+        List<Product> result = new ArrayList<Product>();
+        for (CategoryProductXref product : allProductXrefs) {
+            if (product.getProduct().isActive()) {
+                result.add(product.getProduct());
+            }
+        }
+        return Collections.unmodifiableList(result);
+    }
+    
+    @Override
+    @Deprecated
+    public List<Product> getAllProducts() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blCategoryEntityExtensionManager")) {
+            CategoryEntityExtensionManager extensionManager = (CategoryEntityExtensionManager) context.getAdditionalProperties().get("blCategoryEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getAllProducts(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<Product>) holder.getResult();
+            }
+        }
+        List<Product> result = new ArrayList<Product>();
+        for (CategoryProductXref product : allProductXrefs) {
+            result.add(product.getProduct());
+        }
+        return Collections.unmodifiableList(result);
+    }
+
+    @Override
+    @Deprecated
+    public void setAllProducts(List<Product> allProducts) {
+        throw new UnsupportedOperationException("Not Supported - Use setAllProductXrefs()");
     }
     
     @Override
@@ -741,7 +1124,7 @@ public class CategoryImpl implements Category, Status {
         final List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();
         returnFacets.addAll(getSearchFacets());
         Collections.sort(returnFacets, facetPositionComparator);
-        
+
         // Add in parent facets unless they are excluded
         List<CategorySearchFacet> parentFacets = null;
         if (defaultParentCategory != null) {
@@ -775,13 +1158,27 @@ public class CategoryImpl implements Category, Status {
     }
     
     @Override
-    public List<CategoryAttribute> getCategoryAttributes() {
+    public Map<String, CategoryAttribute> getCategoryAttributesMap() {
         return categoryAttributes;
+    }
+    
+    @Override
+    public void setCategoryAttributesMap(Map<String, CategoryAttribute> categoryAttributes) {
+        this.categoryAttributes = categoryAttributes;
+    }
+
+    @Override
+    public List<CategoryAttribute> getCategoryAttributes() {
+        List<CategoryAttribute> ca = new ArrayList<CategoryAttribute>(categoryAttributes.values());
+        return Collections.unmodifiableList(ca);
     }
 
     @Override
     public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes) {
-        this.categoryAttributes = categoryAttributes;
+        this.categoryAttributes = new HashMap<String, CategoryAttribute>();
+        for (CategoryAttribute categoryAttribute : categoryAttributes) {
+            this.categoryAttributes.put(categoryAttribute.getName(), categoryAttribute);
+        }
     }
     
     @Override
@@ -836,7 +1233,7 @@ public class CategoryImpl implements Category, Status {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         CategoryImpl other = (CategoryImpl) obj;
@@ -868,5 +1265,66 @@ public class CategoryImpl implements Category, Status {
             return o1.getSequence().compareTo(o2.getSequence());
         }
     };
+
+    public static class Presentation {
+
+        public static class Tab {
+
+            public static class Name {
+
+                public static final String Marketing = "CategoryImpl_Marketing_Tab";
+                public static final String Media = "CategoryImpl_Media_Tab";
+                public static final String Advanced = "CategoryImpl_Advanced_Tab";
+                public static final String Products = "CategoryImpl_Products_Tab";
+                public static final String SearchFacets = "CategoryImpl_categoryFacetsTab";
+            }
+
+            public static class Order {
+
+                public static final int Marketing = 2000;
+                public static final int Media = 3000;
+                public static final int Advanced = 4000;
+                public static final int Products = 5000;
+                public static final int SearchFacets = 3500;
+            }
+        }
+
+        public static class Group {
+
+            public static class Name {
+
+                public static final String General = "CategoryImpl_Category_Description";
+                public static final String ActiveDateRange = "CategoryImpl_Active_Date_Range";
+                public static final String Advanced = "CategoryImpl_Advanced";
+            }
+
+            public static class Order {
+
+                public static final int General = 1000;
+                public static final int ActiveDateRange = 2000;
+                public static final int Advanced = 1000;
+            }
+        }
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getName();
+    }
+
+    @Override
+    public String getTaxCode() {
+        return this.taxCode;
+    }
+
+    @Override
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    @Override
+    public String getLocation() {
+        return getUrl();
+    }
 
 }

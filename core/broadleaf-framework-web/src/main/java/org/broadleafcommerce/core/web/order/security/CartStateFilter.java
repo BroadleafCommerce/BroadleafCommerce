@@ -1,123 +1,197 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.OrderLockManager;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.broadleafcommerce.core.order.service.call.UpdateCartResponse;
-import org.broadleafcommerce.core.web.service.UpdateCartService;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.web.core.security.CustomerStateFilter;
+import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.core.web.order.security.exception.OrderLockAcquisitionFailureException;
 import org.springframework.core.Ordered;
+import org.springframework.security.web.util.AntPathRequestMatcher;
+import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.GenericFilterBean;
+
+import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-@Component("blCartStateFilter")
 /**
  * <p>
  * This filter should be configured after the BroadleafCommerce CustomerStateFilter listener from Spring Security.
  * Retrieves the cart for the current BroadleafCommerce Customer based using the authenticated user OR creates an empty non-modifiable cart and
  * stores it in the request.
  * </p>
+ * 
+ * <p>
+ * This filter is also responsible for establishing a session-wide lock for operations that require a lock, indicated
+ * by {@link #requestRequiresLock(ServletRequest)}. By default, this is configured for all POST requests. Requests that
+ * are marked as requiring a lock will execute strictly serially as defined by the configured {@link OrderLockManager}.
+ * </p>
  *
  * @author bpolster
+ * @author Andre Azzolini (apazzolini)
  */
+@Component("blCartStateFilter")
 public class CartStateFilter extends GenericFilterBean implements  Ordered {
 
-    /** Logger for this class and subclasses */
-    protected final Log LOG = LogFactory.getLog(getClass());
+    protected static final Log LOG = LogFactory.getLog(CartStateFilter.class);
 
-    public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
+    @Resource(name = "blCartStateRequestProcessor")
+    protected CartStateRequestProcessor cartStateProcessor;
 
-    protected static boolean copyCartWhenSpecifiedStateChanges = false;
-
-    @Resource(name="blOrderService")
+    @Resource(name = "blOrderLockManager")
+    protected OrderLockManager orderLockManager;
+    
+    @Resource(name = "blOrderService")
     protected OrderService orderService;
 
-    @Resource(name="blUpdateCartService")
-    protected UpdateCartService updateCartService;
-    
-    private static String cartRequestAttributeName = "cart";
+    protected List<String> excludedOrderLockRequestPatterns;
 
-    @SuppressWarnings("unchecked")
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {        
-        Customer customer = (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+            throws IOException, ServletException {        
+        cartStateProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
         
-        if (customer != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Looking up cart for customer " + customer.getId());
-            }
-            Order cart = orderService.findCartForCustomer(customer);
-            
-            if (cart == null) { 
-                cart = orderService.getNullOrder();
-            } else {
-                try {
-                    updateCartService.validateCart(cart);
-                } catch (IllegalArgumentException e){
-                    if (copyCartWhenSpecifiedStateChanges) {
-                        UpdateCartResponse updateCartResponse = updateCartService.copyCartToCurrentContext(cart);
-                        request.setAttribute("updateCartResponse", updateCartResponse);
-                    } else {
-                        orderService.cancelOrder(cart);
-                        cart = orderService.createNewCartForCustomer(customer);
-                    }
-                }
-            }
-
-            request.setAttribute(cartRequestAttributeName, cart);
-
-            // Setup cart for content rule processing
-            Map<String,Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
-            if (ruleMap == null) {
-                ruleMap = new HashMap<String,Object>();
-            }
-            ruleMap.put("cart", cart);
-            request.setAttribute(BLC_RULE_MAP_PARAM, ruleMap);
+        if (!requestRequiresLock(request)) {
+            chain.doFilter(request, response);
+            return;
         }
 
-        chain.doFilter(request, response);
+        Order order = CartState.getCart();
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Thread[" + Thread.currentThread().getId() + "] attempting to lock order[" + order.getId() + "]");
+        }
+
+        Object lockObject = null;
+        try {
+            if (getErrorInsteadOfQueue()) {
+                lockObject = orderLockManager.acquireLockIfAvailable(order);
+                if (lockObject == null) {
+                    // We weren't able to acquire the lock immediately because some other thread has it. Because the
+                    // order.lock.errorInsteadOfQueue property was set to true, we're going to throw an exception now.
+                    throw new OrderLockAcquisitionFailureException("Thread[" + Thread.currentThread().getId() + 
+                            "] could not acquire lock for order[" + order.getId() + "]");
+                }
+            } else {
+                lockObject = orderLockManager.acquireLock(order);
+            }
+    
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Thread[" + Thread.currentThread().getId() + "] grabbed lock for order[" + order.getId() + "]");
+            }
+
+            // When we have a hold of the lock for the order, we want to reload the order from the database.
+            // This is because a different thread could have modified the order in between the time we initially
+            // read it for this thread and now, resulting in the order being stale. Additionally, we want to make
+            // sure we detach the order from the EntityManager and forcefully reload the order.
+            CartState.setCart(orderService.reloadOrder(order));
+
+            chain.doFilter(request, response);
+        } finally {
+            if (lockObject != null) {
+                orderLockManager.releaseLock(lockObject);
+            }
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + order.getId() +"]");
+            }
+        }
     }
 
+    /**
+     * By default, all POST requests that are not matched by the {@link #getExcludedOrderLockRequestPatterns()} list
+     * (using the {@link AntPathRequestMatcher}) will be marked as requiring a lock on the Order.
+     * 
+     * @param req
+     * @return whether or not the current request requires a lock on the order
+     */
+    protected boolean requestRequiresLock(ServletRequest req) {
+        if (!(req instanceof HttpServletRequest)) {
+               return false;
+        }
+        
+        if (!orderLockManager.isActive()) {
+            return false;
+        }
+
+        HttpServletRequest request = (HttpServletRequest) req;
+
+        if (!request.getMethod().equalsIgnoreCase("post")) {
+            return false;
+        }
+        
+        if (excludedOrderLockRequestPatterns != null && excludedOrderLockRequestPatterns.size() > 0) {
+            for (String pattern : excludedOrderLockRequestPatterns) {
+                RequestMatcher matcher = new AntPathRequestMatcher(pattern);
+                if (matcher.matches(request)){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    @Override
     public int getOrder() {
         //FilterChainOrder has been dropped from Spring Security 3
         //return FilterChainOrder.REMEMBER_ME_FILTER+1;
         return 1502;
     }
-    
-    public static String getCartRequestAttributeName() {
-        return cartRequestAttributeName;
+
+    public List<String> getExcludedOrderLockRequestPatterns() {
+        return excludedOrderLockRequestPatterns;
     }
 
-    public static void setCartRequestAttributeName(String cartRequestAttributeName) {
-        CartStateFilter.cartRequestAttributeName = cartRequestAttributeName;
+    /**
+     * This allows you to declaratively set a list of excluded Request Patterns
+     *
+     * <bean id="blCartStateFilter" class="org.broadleafcommerce.core.web.order.security.CartStateFilter">
+     *     <property name="excludedOrderLockRequestPatterns">
+     *         <list>
+     *             <value>/exclude-me/**</value>
+     *         </list>
+     *     </property>
+     * </bean>
+     *
+     **/
+    public void setExcludedOrderLockRequestPatterns(List<String> excludedOrderLockRequestPatterns) {
+        this.excludedOrderLockRequestPatterns = excludedOrderLockRequestPatterns;
     }
 
+    protected boolean getErrorInsteadOfQueue() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("order.lock.errorInsteadOfQueue");
+    }
 
 }

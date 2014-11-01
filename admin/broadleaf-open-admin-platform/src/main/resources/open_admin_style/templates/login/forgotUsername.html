@@ -1,0 +1,25 @@
+<div>
+    <div th:fragment="messages">    
+         <div class="alert-box alert" th:switch="${errorCode}" th:unless="${#strings.isEmpty(errorCode)}"> 
+            <div th:case="'notFound'" th:text="#{password.notFound}" />
+            <div th:case="'inactiveUser'" th:text="#{password.inactiveUser}" />
+            <div th:case="*" th:inline="text">[[#{password.unknown}]] <span th:text="${errorCode}"/></div>
+         </div>
+    </div>
+
+    <blc:form th:fragment="form" action="#" th:action="@{forgotUsername}" method="POST">
+
+        <label th:text="#{password.email}" />
+        <input type="email" id="emailAddress" name="emailAddress" autofocus="autofocus" class="twelve" />
+
+        <input type="submit" class="button radius right" value="Send Username"/>
+    </blc:form>
+
+    <div th:fragment="options">
+        <ul class="inline-list">
+            <li><a href="#" th:href="@{forgotPassword}" th:text="#{password.forgotPassword}" /></li>
+            <li class="divider">&nbsp;</li>
+            <li><a href="#" th:href="@{login}" th:text="#{password.login}" /></li>
+        </ul>
+    </div>
+</div>

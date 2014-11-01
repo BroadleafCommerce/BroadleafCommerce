@@ -1,27 +1,27 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -38,14 +38,14 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 /**
  * This pricing workflow step will automatically bundle items in the cart.
@@ -57,13 +57,7 @@ import java.util.Set;
  * This only occurs if the ProductBundle is set to "automatically" bundle.
  *
  */
-public class AutoBundleActivity extends BaseActivity {
-
-    private static Log LOG = LogFactory.getLog(AutoBundleActivity.class);
-
-    @Resource(name="blOfferService")
-    private OfferService offerService;
-
+public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
 
@@ -76,13 +70,12 @@ public class AutoBundleActivity extends BaseActivity {
     @Resource(name="blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((PricingContext)context).getSeedData();
+    public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
+        Order order = context.getSeedData();
         order = handleAutomaticBundling(order);
-        ((PricingContext) context).setSeedData(order);
+        context.setSeedData(order);
         return context;
     }
-
 
     public Order handleAutomaticBundling(Order order) throws PricingException, RemoveFromCartException {
         boolean itemsHaveBeenUnbundled = false;
@@ -165,9 +158,8 @@ public class AutoBundleActivity extends BaseActivity {
                         DiscreteOrderItem newOrderItem = (DiscreteOrderItem) item.clone();
                         newOrderItem.setQuantity(item.getQuantity() * bundleOrderItem.getQuantity());
                         newOrderItem.setSkuBundleItem(null);
-                        newOrderItem.setBundleOrderItem(null);
-                        newOrderItem.updatePrices();
-                        newOrderItem.assignFinalPrice();
+                        newOrderItem.setBundleOrderItem(null);   
+                        newOrderItem.updateSaleAndRetailPrices();
                         newOrderItem.setOrder(order);
                         unbundledItems.add(newOrderItem);
                     }
@@ -199,7 +191,6 @@ public class AutoBundleActivity extends BaseActivity {
 
         // make a copy of the fulfillment group items since they will be deleted when the order items are removed
         Map<Long, FulfillmentGroupItem> skuIdFulfillmentGroupMap = new HashMap<Long, FulfillmentGroupItem>();
-        List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 if (fulfillmentGroupItem.getOrderItem() instanceof DiscreteOrderItem) {
@@ -252,13 +243,12 @@ public class AutoBundleActivity extends BaseActivity {
                 newOrderItem.setQuantity(skuMatches - skusRequired);
                 newOrderItem = (DiscreteOrderItem) orderItemDao.save(newOrderItem);
                 newOrderItem.setOrder(order);
-                newOrderItem.updatePrices();
-                newOrderItem.assignFinalPrice();
+                newOrderItem.updateSaleAndRetailPrices();
 
                 // Re-associate fulfillment group item to newOrderItem
                 FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(newSkuBundleItem.getSku().getId());
                 if (fulfillmentGroupItem != null) {
-                    FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
+                    FulfillmentGroupItem newFulfillmentGroupItem = fulfillmentGroupItem.clone();
                     newFulfillmentGroupItem.setOrderItem(newOrderItem);
                     newFulfillmentGroupItem.setQuantity(newOrderItem.getQuantity());
                     newFulfillmentGroupItem = fulfillmentGroupItemDao.save(newFulfillmentGroupItem);
@@ -276,8 +266,7 @@ public class AutoBundleActivity extends BaseActivity {
             }
         }
 
-        bundleOrderItem.updatePrices();
-        bundleOrderItem.assignFinalPrice();
+        bundleOrderItem.updateSaleAndRetailPrices();
 
         order.getOrderItems().add(bundleOrderItem);
         order =  orderService.save(order, false);
@@ -289,7 +278,7 @@ public class AutoBundleActivity extends BaseActivity {
                     // Re-associate fulfillment group item to newly created skuBundles
                     FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(discreteOrderItem.getSku().getId());
                     if (fulfillmentGroupItem != null) {
-                        FulfillmentGroupItem newFulfillmentGroupItem = (FulfillmentGroupItem) fulfillmentGroupItem.clone();
+                        FulfillmentGroupItem newFulfillmentGroupItem = fulfillmentGroupItem.clone();
                         newFulfillmentGroupItem.setOrderItem(discreteOrderItem);
                         newFulfillmentGroupItem.setQuantity(discreteOrderItem.getQuantity());
 
@@ -374,4 +363,5 @@ public class AutoBundleActivity extends BaseActivity {
 
         return skuMatches / skuBundleItem.getQuantity();
     }
+
 }

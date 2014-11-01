@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.search.service;
 
 import net.sf.ehcache.Cache;
@@ -22,7 +25,6 @@ import net.sf.ehcache.Element;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
@@ -38,8 +40,6 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,6 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
 
 @Service("blSearchService")
 public class DatabaseSearchServiceImpl implements SearchService {
@@ -78,7 +80,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
     public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
         ProductSearchResult result = new ProductSearchResult();
         setQualifiedKeys(searchCriteria);
-        List<Product> products = catalogService.findFilteredActiveProductsByCategory(category, SystemTime.asDate(), searchCriteria);
+        List<Product> products = catalogService.findFilteredActiveProductsByCategory(category, searchCriteria);
         List<SearchFacetDTO> facets = getCategoryFacets(category);
         setActiveFacets(facets, searchCriteria);
         result.setProducts(products);
@@ -93,7 +95,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
     public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) {
         ProductSearchResult result = new ProductSearchResult();
         setQualifiedKeys(searchCriteria);
-        List<Product> products = catalogService.findFilteredActiveProductsByQuery(query, SystemTime.asDate(), searchCriteria);
+        List<Product> products = catalogService.findFilteredActiveProductsByQuery(query, searchCriteria);
         List<SearchFacetDTO> facets = getSearchFacets();
         setActiveFacets(facets, searchCriteria);
         result.setProducts(products);
@@ -156,8 +158,10 @@ public class DatabaseSearchServiceImpl implements SearchService {
         Map<String, String[]> convertedFilterCriteria = new HashMap<String, String[]>();
         for (Entry<String, String[]> entry : criteria.getFilterCriteria().entrySet()) {
             Field field = fieldDao.readFieldByAbbreviation(entry.getKey());
-            String qualifiedFieldName = getDatabaseQualifiedFieldName(field.getQualifiedFieldName());
-            convertedFilterCriteria.put(qualifiedFieldName, entry.getValue());
+            if (field != null) {
+                String qualifiedFieldName = getDatabaseQualifiedFieldName(field.getQualifiedFieldName());
+                convertedFilterCriteria.put(qualifiedFieldName, entry.getValue());
+            }
         }
         criteria.setFilterCriteria(convertedFilterCriteria);
         

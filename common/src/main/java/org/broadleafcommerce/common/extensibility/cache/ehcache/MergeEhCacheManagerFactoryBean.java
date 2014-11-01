@@ -1,25 +1,27 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.extensibility.cache.ehcache;
 
+import net.sf.ehcache.CacheManager;
 import org.broadleafcommerce.common.extensibility.context.ResourceInputStream;
-import org.broadleafcommerce.common.extensibility.context.merge.ImportProcessor;
 import org.broadleafcommerce.common.extensibility.context.merge.MergeXmlConfigResource;
-import org.broadleafcommerce.common.extensibility.context.merge.exceptions.MergeException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
@@ -28,8 +30,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
-
-import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,28 @@ public class MergeEhCacheManagerFactoryBean extends EhCacheManagerFactoryBean im
     protected Set<String> mergedCacheConfigLocations;
 
     protected List<Resource> configLocations;
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        try {
+            CacheManager cacheManager = getObject();
+            Field cacheManagerTimer = CacheManager.class.getDeclaredField("cacheManagerTimer");
+            cacheManagerTimer.setAccessible(true);
+            Object failSafeTimer = cacheManagerTimer.get(cacheManager);
+            Field timer = failSafeTimer.getClass().getDeclaredField("timer");
+            timer.setAccessible(true);
+            Object time = timer.get(failSafeTimer);
+            Field thread = time.getClass().getDeclaredField("thread");
+            thread.setAccessible(true);
+            Thread item = (Thread) thread.get(time);
+            item.setContextClassLoader(Thread.currentThread().getContextClassLoader().getParent());
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @PostConstruct
     public void configureMergedItems() {

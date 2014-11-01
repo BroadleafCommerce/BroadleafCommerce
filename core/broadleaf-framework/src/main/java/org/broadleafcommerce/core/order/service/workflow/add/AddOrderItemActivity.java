@@ -1,23 +1,24 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service.workflow.add;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -28,17 +29,17 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.ProductBundleOrderItemRequest;
-import org.broadleafcommerce.core.order.service.workflow.CartOperationContext;
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 
 import javax.annotation.Resource;
 
-public class AddOrderItemActivity extends BaseActivity {
-    private static Log LOG = LogFactory.getLog(AddOrderItemActivity.class);
+public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
     
     @Resource(name = "blOrderService")
     protected OrderService orderService;
@@ -50,14 +51,17 @@ public class AddOrderItemActivity extends BaseActivity {
     protected CatalogService catalogService;
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        CartOperationRequest request = ((CartOperationContext) context).getSeedData();
+    public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
+        CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
 
-        // Order and sku have been verified in a previous activity -- the values 
-        // in the request can be trusted
+        // Order has been verified in a previous activity -- the values in the request can be trusted
         Order order = request.getOrder();
-        Sku sku = catalogService.findSkuById(orderItemRequestDTO.getSkuId());
+        
+        Sku sku = null;
+        if (orderItemRequestDTO.getSkuId() != null) {
+            sku = catalogService.findSkuById(orderItemRequestDTO.getSkuId());
+        }
         
         Product product = null;
         if (orderItemRequestDTO.getProductId() != null) {
@@ -74,7 +78,16 @@ public class AddOrderItemActivity extends BaseActivity {
         }
 
         OrderItem item;
-        if (product == null || !(product instanceof ProductBundle)) {
+        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO) {
+            NonDiscreteOrderItemRequestDTO ndr = (NonDiscreteOrderItemRequestDTO) orderItemRequestDTO;
+            OrderItemRequest itemRequest = new OrderItemRequest();
+            itemRequest.setQuantity(ndr.getQuantity());
+            itemRequest.setRetailPriceOverride(ndr.getOverrideRetailPrice());
+            itemRequest.setSalePriceOverride(ndr.getOverrideSalePrice());
+            itemRequest.setItemName(ndr.getItemName());
+            itemRequest.setOrder(order);
+            item = orderItemService.createOrderItem(itemRequest);
+        } else if (product == null || !(product instanceof ProductBundle)) {
             DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
             itemRequest.setCategory(category);
             itemRequest.setProduct(product);
@@ -82,6 +95,8 @@ public class AddOrderItemActivity extends BaseActivity {
             itemRequest.setQuantity(orderItemRequestDTO.getQuantity());
             itemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
             itemRequest.setOrder(order);
+            itemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
+            itemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
             item = orderItemService.createDiscreteOrderItem(itemRequest);
         } else {
             ProductBundleOrderItemRequest bundleItemRequest = new ProductBundleOrderItemRequest();
@@ -92,15 +107,20 @@ public class AddOrderItemActivity extends BaseActivity {
             bundleItemRequest.setItemAttributes(orderItemRequestDTO.getItemAttributes());
             bundleItemRequest.setName(product.getName());
             bundleItemRequest.setOrder(order);
-            item = orderItemService.createBundleOrderItem(bundleItemRequest);
+            bundleItemRequest.setSalePriceOverride(orderItemRequestDTO.getOverrideSalePrice());
+            bundleItemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
+            item = orderItemService.createBundleOrderItem(bundleItemRequest, false);
         }
         
-        item = orderItemService.saveOrderItem(item);
-        order.getOrderItems().add(item);
-        order = orderService.save(order, false);
+        OrderItem parent = null;
+        if (orderItemRequestDTO.getParentOrderItemId() != null) {
+            parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
+            item.setParentOrderItem(parent);
+        }
         
-        request.setOrder(order);
-        request.setAddedOrderItem(item);
+        order.getOrderItems().add(item);
+
+        request.setOrderItem(item);
         return context;
     }
 

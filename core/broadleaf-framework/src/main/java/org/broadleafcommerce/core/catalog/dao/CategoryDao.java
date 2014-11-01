@@ -1,27 +1,31 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.dao;
 
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+
+import javax.annotation.Nonnull;
 
 /**
  * {@code CategoryDao} provides persistence access to {@code Category} instances.
@@ -54,6 +58,11 @@ public interface CategoryDao {
     @Nonnull
     @Deprecated
     public Category readCategoryByName(@Nonnull String categoryName);
+    
+    /**
+     * @return a list of all categories that do not have a defaultParentCategory set
+     */
+    public List<Category> readAllParentCategories();
 
     /**
      * Retrieve a list of {@code Category} instances by name.
@@ -182,23 +191,24 @@ public interface CategoryDao {
     @Nonnull
     public List<Category> readActiveSubCategoriesByCategory(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
 
+    public Category findCategoryByURI(String uri);
+
     /**
-     * Retrieve the value in milliseconds for how long the current data/time is cached when performing
-     * an active category query. By caching the current date/time, the same query can be generated
-     * repeatedly, which allows the query cache to be utilized. The default value is 10000 milliseconds.
+     * Returns the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
      *
-     * @return the value in milliseconds for how long the current date/time is cached
+     * @return the milliseconds to cache the current date/time
      */
-    @Nonnull
     public Long getCurrentDateResolution();
 
     /**
-     * Set the value in milliseconds for how long the current date/time is cached when performing
-     * an active category query. The default value is 10000 milliseconds.
+     * Sets the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
      *
-     * @param currentDateResolution the value in milliseconds for how long the current date/time is cached
+     * @param currentDateResolution the milliseconds to cache the current date/time
      */
-    public void setCurrentDateResolution(@Nonnull  Long currentDateResolution);
-    @Nonnull
-    Category findCategoryByURI(String uri);
+    public void setCurrentDateResolution(Long currentDateResolution);
+
 }

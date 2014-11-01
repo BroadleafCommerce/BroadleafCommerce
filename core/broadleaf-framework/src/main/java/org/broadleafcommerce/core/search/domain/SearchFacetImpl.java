@@ -1,21 +1,28 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -25,12 +32,17 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -38,35 +50,41 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SEARCH_FACET")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+})
 public class SearchFacetImpl implements SearchFacet, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SearchFacetId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "SearchFacetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchFacetImpl", allocationSize = 50)
+    @GeneratedValue(generator = "SearchFacetId")
+    @GenericGenerator(
+        name="SearchFacetId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="SearchFacetImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchFacetImpl")
+        }
+    )
     @Column(name = "SEARCH_FACET_ID")
     @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_field",  order = 2, group = "SearchFacetImpl_description")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_field",  order = 2, group = "SearchFacetImpl_description", prominent = true, gridOrder = 1)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "propertyName")
     protected Field field;
     
     @Column(name = "LABEL")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description", groupOrder = 1, prominent = true)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description",
+            groupOrder = 1, prominent = true, translatable = true, gridOrder = 2)
     protected String label;
     
     @Column(name =  "SHOW_ON_SEARCH")
@@ -78,23 +96,23 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6, group = "SearchFacetImpl_description", groupOrder = 1)
     protected Boolean canMultiselect = true;
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "newRangeTitle", dataSourceName = "searchFacetRangeDS")
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "newRangeTitle")
     protected List<SearchFacetRange> searchFacetRanges  = new ArrayList<SearchFacetRange>();
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = RequiredFacetImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "requiredFacet", friendlyName = "requiredFacetTitle", dataSourceName = "requiredFacetDS", gridVisibleFields = {"label", "searchDisplayPriority", "canMultiselect", "requiresAllDependentFacets"})
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "requiredFacet", friendlyName = "requiredFacetTitle", gridVisibleFields = { "label", "searchDisplayPriority", "canMultiselect", "requiresAllDependentFacets" })
     protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
     
     @Column(name = "REQUIRES_ALL_DEPENDENT")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1)
     protected Boolean requiresAllDependentFacets = false;
     
     @Override
@@ -119,7 +137,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
 
     @Override
     public String getLabel() {
-        return label;
+        return DynamicTranslationProvider.getValue(this, "label", label);
     }
 
     @Override
@@ -157,10 +175,12 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         this.canMultiselect = canMultiselect;
     }
 
+    @Override
     public List<RequiredFacet> getRequiredFacets() {
         return requiredFacets;
     }
 
+    @Override
     public void setRequiredFacets(List<RequiredFacet> requiredFacets) {
         this.requiredFacets = requiredFacets;
     }
@@ -193,7 +213,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         SearchFacet other = (SearchFacet) obj;

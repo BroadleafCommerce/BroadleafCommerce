@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Integration
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service;
 
 import org.broadleafcommerce.common.time.SystemTime;
@@ -21,12 +24,16 @@ import org.broadleafcommerce.core.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Collections;
 
 @SuppressWarnings("deprecation")
 public class CreateOfferUtility {
@@ -68,7 +75,16 @@ public class CreateOfferUtility {
         offer.setValue(BigDecimal.valueOf(value));
         offer.setDeliveryType(OfferDeliveryType.CODE);
         offer.setStackable(stackable);
-        offer.setAppliesToOrderRules(orderRule);
+        if (stackable) {
+            offer.setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
+            offer.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
+        }
+        
+        OfferItemCriteria oic = new OfferItemCriteriaImpl();
+        oic.setQuantity(1);
+        oic.setMatchRule(orderRule);
+        offer.setTargetItemCriteria(Collections.singleton(oic));
+        
         offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(combinable);
         offer.setPriority(priority);

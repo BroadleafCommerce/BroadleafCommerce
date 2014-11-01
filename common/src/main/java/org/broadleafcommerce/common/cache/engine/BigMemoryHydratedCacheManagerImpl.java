@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.cache.engine;
 
 import net.sf.ehcache.Cache;
@@ -24,7 +27,7 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cache.CacheKey;
+import org.hibernate.cache.spi.CacheKey;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -55,7 +58,7 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
         //CacheManager.getInstance() and CacheManager.create() cannot be called in this constructor because it will create two cache manager instances
     }
     
-    private Cache getHeap() {
+    private synchronized Cache getHeap() {
         if (offHeap == null) {
             if (CacheManager.getInstance().cacheExists("hydrated-offheap-cache")) {
                 offHeap = CacheManager.getInstance().getCache("hydrated-offheap-cache");

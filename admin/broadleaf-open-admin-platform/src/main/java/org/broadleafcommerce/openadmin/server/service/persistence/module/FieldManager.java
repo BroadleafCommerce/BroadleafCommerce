@@ -1,34 +1,44 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.hibernate.mapping.PersistentClass;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
+import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
+
+import javax.persistence.EntityManager;
 
 /**
  * 
@@ -39,13 +49,16 @@ public class FieldManager {
     
     private static final Log LOG = LogFactory.getLog(FieldManager.class);
 
+    public static final String MAPFIELDSEPARATOR = "---";
+
     protected EntityConfiguration entityConfiguration;
-    protected DynamicEntityDao dynamicEntityDao;
+    protected EntityManager entityManager;
+    protected DynamicDaoHelper helper = new DynamicDaoHelperImpl();
     protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
 
-    public FieldManager(EntityConfiguration entityConfiguration, DynamicEntityDao dynamicEntityDao) {
+    public FieldManager(EntityConfiguration entityConfiguration, EntityManager entityManager) {
         this.entityConfiguration = entityConfiguration;
-        this.dynamicEntityDao = dynamicEntityDao;
+        this.entityManager = entityManager;
     }
 
     public static Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {
@@ -62,6 +75,7 @@ public class FieldManager {
     }
 
     public Field getField(Class<?> clazz, String fieldName) throws IllegalStateException {
+        PersistenceManager persistenceManager = getPersistenceManager();
         String[] tokens = fieldName.split("\\.");
         Field field = null;
 
@@ -69,8 +83,8 @@ public class FieldManager {
             String propertyName = tokens[j];
             field = getSingleField(clazz, propertyName);
             if (field != null && j < tokens.length - 1) {
-                Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
-                if (entities.length > 0) {
+                Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
+                if (!ArrayUtils.isEmpty(entities)) {
                     String peekAheadToken = tokens[j+1];
                     List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
                     for (Class<?> entity : entities) {
@@ -87,19 +101,19 @@ public class FieldManager {
                     if (matchedClasses.size() > 1) {
                         LOG.warn("Found the property (" + peekAheadToken + ") in more than one class of an inheritance hierarchy. This may lead to unwanted behavior, as the system does not know which class was intended. Do not use the same property name in different levels of the inheritance hierarchy. Defaulting to the first class found (" + matchedClasses.get(0).getName() + ")");
                     }
-                    if (getSingleField(entities[0], peekAheadToken) != null) {
-                        Class<?> matchedClass = entities[0];
-                        PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(matchedClass.getName());
-                        if (persistentClass != null && matchedClasses.size() == 1) {
-                            Class<?> entityClass;
+                    if (matchedClasses.isEmpty()) {
+                        //probably an artificial field (i.e. passwordConfirm on AdminUserImpl)
+                        return null;
+                    }
+                    if (getSingleField(matchedClasses.get(0), peekAheadToken) != null) {
+                        clazz = matchedClasses.get(0);
+                        Class<?>[] entities2 = persistenceManager.getUpDownInheritance(clazz);
+                        if (!ArrayUtils.isEmpty(entities2) && matchedClasses.size() == 1 && clazz.isInterface()) {
                             try {
-                                entityClass = entityConfiguration.lookupEntityClass(field.getType().getName());
-                                clazz = entityClass;
+                                clazz = entityConfiguration.lookupEntityClass(field.getType().getName());
                             } catch (Exception e) {
-                                clazz = matchedClass;
+                                // Do nothing - we'll use the matchedClass
                             }
-                        } else {
-                            clazz = matchedClass;
                         }
                     } else {
                         clazz = field.getType();
@@ -126,18 +140,26 @@ public class FieldManager {
         Object value = bean;
 
         while (tokens.hasMoreTokens()) {
-            String token = tokens.nextToken();
-            field = getSingleField(componentClass, token);
+            String fieldNamePart = tokens.nextToken();
+            String mapKey = null;
+            if (fieldNamePart.contains(FieldManager.MAPFIELDSEPARATOR)) {
+                mapKey = fieldNamePart.substring(fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), fieldNamePart.length());
+                fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR));
+            }
+            field = getSingleField(componentClass, fieldNamePart);
             if (field != null) {
                 field.setAccessible(true);
                 value = field.get(value);
+                if (value != null && mapKey != null) {
+                    value = ((Map) value).get(mapKey);
+                }
                 if (value != null) {
                     componentClass = value.getClass();
                 } else {
                     break;
                 }
             } else {
-                throw new FieldNotAvailableException("Unable to find field (" + token + ") on the class (" + componentClass + ")");
+                throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
             }
         }
 
@@ -148,16 +170,34 @@ public class FieldManager {
     public Object setFieldValue(Object bean, String fieldName, Object newValue) throws IllegalAccessException, InstantiationException {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
-        Field field = null;
+        Field field;
         Object value = bean;
         
         int count = tokens.countTokens();
         int j=0;
+        StringBuilder sb = new StringBuilder();
         while (tokens.hasMoreTokens()) {
-            field = getSingleField(componentClass, tokens.nextToken());
+            String fieldNamePart = tokens.nextToken();
+            sb.append(fieldNamePart);
+            String mapKey = null;
+            if (fieldNamePart.contains(FieldManager.MAPFIELDSEPARATOR)) {
+                mapKey = fieldNamePart.substring(fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), fieldNamePart.length());
+                fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR));
+            }
+
+            field = getSingleField(componentClass, fieldNamePart);
             field.setAccessible(true);
             if (j == count - 1) {
-                field.set(value, newValue);
+                if (mapKey != null) {
+                    Map map = (Map) field.get(value);
+                    if (newValue == null) {
+                        map.remove(mapKey);
+                    } else {
+                        map.put(mapKey, newValue);
+                    }
+                } else {
+                    field.set(value, newValue);
+                }
             } else {
                 Object myValue = field.get(value);
                 if (myValue != null) {
@@ -168,17 +208,18 @@ public class FieldManager {
                     //configured entity for this class
                     try {
                         Object newEntity = entityConfiguration.createEntityInstance(field.getType().getName());
-                        SortableValue val = new SortableValue((Serializable) newEntity, j);
+                        SortableValue val = new SortableValue(bean, (Serializable) newEntity, j, sb.toString());
                         middleFields.add(val);
                         field.set(value, newEntity);
                         componentClass = newEntity.getClass();
                         value = newEntity;
                     } catch (Exception e) {
                         //Use the most extended type based on the field type
-                        Class<?>[] entities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(field.getType());
+                        PersistenceManager persistenceManager = getPersistenceManager();
+                        Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
                         if (!ArrayUtils.isEmpty(entities)) {
-                            Object newEntity = entities[0].newInstance();
-                            SortableValue val = new SortableValue((Serializable) newEntity, j);
+                            Object newEntity = entities[entities.length-1].newInstance();
+                            SortableValue val = new SortableValue(bean, (Serializable) newEntity, j, sb.toString());
                             middleFields.add(val);
                             field.set(value, newEntity);
                             componentClass = newEntity.getClass();
@@ -195,6 +236,7 @@ public class FieldManager {
                     }
                 }
             }
+            sb.append(".");
             j++;
         }
         
@@ -202,15 +244,31 @@ public class FieldManager {
 
     }
     
-    public void persistMiddleEntities() {
+    public Map<String, Serializable> persistMiddleEntities() throws InstantiationException, IllegalAccessException {
+        Map<String, Serializable> persistedEntities = new HashMap<String, Serializable>();
+        
         Collections.sort(middleFields);
         for (SortableValue val : middleFields) {
-            dynamicEntityDao.merge(val.entity);
+            Serializable s = entityManager.merge(val.entity);
+            persistedEntities.put(val.getContainingPropertyName(), s);
+            setFieldValue(val.getBean(), val.getContainingPropertyName(), s);
         }
+        
+        return persistedEntities;
     }
 
     public EntityConfiguration getEntityConfiguration() {
         return entityConfiguration;
+    }
+
+    protected PersistenceManager getPersistenceManager() {
+        PersistenceManager persistenceManager;
+        try {
+            persistenceManager = PersistenceManagerFactory.getPersistenceManager();
+        } catch (IllegalStateException e) {
+            persistenceManager = PersistenceManagerFactory.getPersistenceManager(TargetModeType.SANDBOX);
+        }
+        return persistenceManager;
     }
     
     private class SortableValue implements Comparable<SortableValue> {
@@ -218,15 +276,27 @@ public class FieldManager {
         private Integer pos;
         private Serializable entity;
         private Class<?> entityClass;
+        private String containingPropertyName;
+        private Object bean;
         
-        public SortableValue(Serializable entity, Integer pos) {
+        public SortableValue(Object bean, Serializable entity, Integer pos, String containingPropertyName) {
+            this.bean = bean;
             this.entity = entity;
             this.pos = pos;
             this.entityClass = entity.getClass();
+            this.containingPropertyName = containingPropertyName;
         }
 
         public int compareTo(SortableValue o) {
             return pos.compareTo(o.pos) * -1;
+        }
+        
+        public String getContainingPropertyName() {
+            return containingPropertyName;
+        }
+
+        private Object getBean() {
+            return bean;
         }
 
         @Override
@@ -245,7 +315,7 @@ public class FieldManager {
                 return true;
             if (obj == null)
                 return false;
-            if (getClass() != obj.getClass())
+            if (!getClass().isAssignableFrom(obj.getClass()))
                 return false;
             SortableValue other = (SortableValue) obj;
             if (!getOuterType().equals(other.getOuterType()))

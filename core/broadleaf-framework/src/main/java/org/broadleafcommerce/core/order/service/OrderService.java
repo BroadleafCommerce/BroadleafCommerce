@@ -1,21 +1,26 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.logging.Log;
+import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -26,9 +31,8 @@ import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.RemoveFromCartException;
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
-import org.broadleafcommerce.core.payment.domain.Referenced;
-import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
+import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -94,6 +98,15 @@ public interface OrderService {
      * @return the requested Order
      */
     public Order findOrderById(Long orderId);
+
+    /**
+     * Looks up an Order by its database id
+     * and optionally calls refresh to ensure that the entity manager pulls the instance from the DB and not from cache
+     *
+     * @param orderId
+     * @return the requested Order
+     */
+    public Order findOrderById(Long orderId, boolean refresh);
     
     /**
      * Looks up the current shopping cart for the customer. Note that a shopping cart is
@@ -134,24 +147,24 @@ public interface OrderService {
     public Order findOrderByOrderNumber(String orderNumber);
     
     /**
-     * Returns all PaymentInfo objects that are associated with the given order
+     * Returns all OrderPayment objects that are associated with the given order
      * 
      * @param order
-     * @return the list of all PaymentInfo objects
+     * @return the list of all OrderPayment objects
      */
-    public List<PaymentInfo> findPaymentInfosForOrder(Order order);
+    public List<OrderPayment> findPaymentsForOrder(Order order);
 
     /**
-     * Associates a given PaymentInfo with an Order. Note that it is acceptable for the 
+     * Associates a given OrderPayment with an Order and then saves the order. Note that it is acceptable for the 
      * securePaymentInfo to be null. For example, if the secure credit card details are 
      * handled by a third party, a given application may never have associated securePaymentInfos
      * 
      * @param order
      * @param payment
      * @param securePaymentInfo - null if it doesn't exist
-     * @return the persisted version of the PaymentInfo
+     * @return the persisted version of the OrderPayment
      */
-    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo);
+    public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo);
     
     /**
      * Persists the given order to the database. If the priceOrder flag is set to true,
@@ -178,7 +191,7 @@ public interface OrderService {
     public void cancelOrder(Order order);
     
     /**
-     * Adds the given OfferCode to the order. Optionally prices the order as well
+     * Adds the given OfferCode to the order. Optionally prices the order as well.
      * 
      * @param order
      * @param offerCode
@@ -189,6 +202,18 @@ public interface OrderService {
      */
     public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
     
+    /**
+     * Adds the given OfferCodes to the order. Optionally prices the order as well.
+     * 
+     * @param order
+     * @param offerCodes
+     * @param priceOrder
+     * @return
+     * @throws PricingException
+     * @throws OfferMaxUseExceededException
+     */
+    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
+
     /**
      * Remove the given OfferCode for the order. Optionally prices the order as well.
      * 
@@ -293,6 +318,12 @@ public interface OrderService {
      *
      * When priceOrder is false, the system will not reprice the order.   This is more performant in
      * cases such as bulk adds where the repricing could be done for the last item only.
+     * 
+     * This method differs from the {@link #addItemWithPriceOverrides(Long, OrderItemRequestDTO, boolean)} in that it
+     * will clear any values set on the {@link OrderItemRequestDTO} for the overrideSalePrice or overrideRetailPrice.
+     * 
+     * This design is intended to ensure that override pricing is not called by mistake.   Implementors should
+     * use this method when no manual price overrides are allowed.
      *
      * @see OrderItemRequestDTO
      * @param orderId
@@ -304,6 +335,34 @@ public interface OrderService {
      */
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
     
+    /**
+     * Initiates the addItem workflow that will attempt to add the given quantity of the specified item
+     * to the Order. The item to be added can be determined in a few different ways. For example, the 
+     * SKU can be specified directly or it can be determine based on a Product and potentially some
+     * specified ProductOptions for that given product.
+     *
+     * The minimum required parameters for OrderItemRequest are: productId and quantity or alternatively, skuId and quantity
+     *
+     * When priceOrder is false, the system will not reprice the order.   This is more performant in
+     * cases such as bulk adds where the repricing could be done for the last item only.
+     * 
+     * As opposed to the {@link #addItem(Long, OrderItemRequestDTO, boolean)} method, this method allows
+     * the passed in {@link OrderItemRequestDTO} to contain values for the overrideSale or overrideRetail
+     * price fields.
+     * 
+     * This design is intended to ensure that override pricing is not called by mistake.   Implementors should
+     * use this method when manual price overrides are allowed.
+     *
+     * @see OrderItemRequestDTO
+     * @param orderId
+     * @param orderItemRequest
+     * @param priceOrder
+     * @return the order the item was added to
+     * @throws WorkflowException 
+     * @throws Throwable 
+     */
+    public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException;
+
     /**
      * Initiates the updateItem workflow that will attempt to update the item quantity for the specified
      * OrderItem in the given Order. The new quantity is specified in the OrderItemRequestDTO
@@ -420,21 +479,71 @@ public interface OrderService {
     public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException;
 
     /**
-     * Deletes all the Payment Info's on the order.
+     * Deletes all the OrderPayment Info's on the order.
      *
      * @param order
      */
     public void removeAllPaymentsFromOrder(Order order);
 
     /**
-     * Deletes the Payment Info of the passed in type from the order
-     * Note that this method will also delete any associated Secure Payment Infos if necessary.
+     * Deletes the OrderPayment Info of the passed in type from the order
+     * Note that this method will also delete any associated Secure OrderPayment Infos if necessary.
      *
      * @param order
      * @param paymentInfoType
      */
-    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
+    public void removePaymentsFromOrder(Order order, PaymentType paymentInfoType);
+
+    /**
+     * Deletes the OrderPayment Info from the order.
+     * Note that this method will also delete any associated Secure OrderPayment Infos if necessary.
+     *
+     * @param order
+     * @param paymentInfo
+     */
+    public void removePaymentFromOrder(Order order, OrderPayment paymentInfo);
 
     public void deleteOrder(Order cart);
+
+    Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException;
+
+    /**
+     * Since required product option can be added after the item is in the cart, we use this method 
+     * to apply product option on an existing item in the cart. No validation will happen at this time, as the validation 
+     * at checkout will take care of any missing product options. 
+     * 
+     * @param orderId
+     * @param orderItemRequestDTO
+     * @param priceOrder
+     * @return Order
+     * @throws UpdateCartException
+     */
+    Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException;
+
+    /**
+     * This debugging method will print out a console-suitable representation of the current state of the order, including
+     * the items in the order and all pricing related information for the order.
+     * 
+     * @param order the order to debug
+     * @param log the Log to use to print a debug-level message
+     */
+    public void printOrder(Order order, Log log);
+
+    /**
+     * Invokes the extension handler of the same name to provide the ability for a module to throw an exception
+     * and interrupt a cart operation.
+     * 
+     * @param cart
+     */
+    public void preValidateCartOperation(Order cart);
+    
+    /**
+     * Detaches the given order from the current entity manager and then reloads a fresh version from
+     * the database.
+     * 
+     * @param order
+     * @return the newly read order
+     */
+    public Order reloadOrder(Order order);
 
 }

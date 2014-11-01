@@ -1,0 +1,53 @@
+<!--
+  #%L
+  BroadleafCommerce Framework Web
+  %%
+  Copyright (C) 2009 - 2014 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+<dialect xmlns="http://www.thymeleaf.org/extras/dialect"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.thymeleaf.org/extras/dialect
+                             http://www.thymeleaf.org/xsd/thymeleaf-extras-dialect-2.1.xsd"
+         prefix="blc"
+         namespace-uri="http://www.broadleafcommerce.com/"
+         class="org.broadleafcommerce.common.web.dialect.BLCDialect">
+    
+    <!-- Element processors -->
+    <element-processor name="categories" class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
+    <element-processor name="form" class="org.broadleafcommerce.core.web.processor.FormProcessor" />
+    <element-processor name="googleanalytics" class="org.broadleafcommerce.core.web.processor.GoogleAnalyticsProcessor" />
+    <element-processor name="google_universal_analytics" class="org.broadleafcommerce.core.web.processor.GoogleUniversalAnalyticsProcessor" />
+    <element-processor name="head" class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
+    <element-processor name="named_order" class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
+    <element-processor name="one_page_checkout" class="org.broadleafcommerce.core.web.processor.OnePageCheckoutProcessor" />
+    <element-processor name="product_option_display" class="org.broadleafcommerce.core.web.processor.ProductOptionDisplayProcessor" />
+    <element-processor name="product_options" class="org.broadleafcommerce.core.web.processor.ProductOptionsProcessor" />
+    <element-processor name="ratings" class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
+    <element-processor name="related_products" class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
+    <element-processor name="uncacheabledata" class="org.broadleafcommerce.core.web.processor.UncacheableDataProcessor" />
+    
+    <!-- Attribute processors -->
+    <attribute-processor name="addsortlink" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
+    <attribute-processor name="cache" class="org.broadleafcommerce.core.web.processor.BroadleafCacheProcessor" />
+    <attribute-processor name="addsortlink" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
+    <attribute-processor name="paginationpagelink" class="org.broadleafcommerce.core.web.processor.PaginationPageLinkProcessor" />
+    <attribute-processor name="pagination-size-link" class="org.broadleafcommerce.core.web.processor.PaginationSizeLinkProcessor" />
+    <attribute-processor name="pagination-sort-link" class="org.broadleafcommerce.core.web.processor.PaginationSortLinkProcessor" />
+    <attribute-processor name="price" class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
+    <attribute-processor name="togglefacetlink" class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
+    <attribute-processor name="removefacetvalueslink" class="org.broadleafcommerce.core.web.processor.RemoveFacetValuesLinkProcessor" />
+    
+</dialect>

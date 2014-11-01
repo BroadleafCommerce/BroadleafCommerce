@@ -1,29 +1,35 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.lang.reflect.Method;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +40,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.lang.reflect.Method;
 
 /**
  * Arbitrary attributes to add to an order-item.
@@ -57,11 +62,7 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
         name="OrderItemAttributeId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="OrderItemAttributeImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.OrderItemAttributeImpl")
         }
     )
@@ -69,7 +70,7 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
     protected Long id;
     
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemAttributeImpl_Attribute_Name", order=1, group = "OrderItemAttributeImpl_Description", prominent=true)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 
     @Column(name = "VALUE", nullable=false)
@@ -166,13 +167,13 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         
         if (value == null) {
             return false;
         }
         
-        return value.equals(((OrderAttribute) obj).getValue());
+        return value.equals(((OrderItemAttribute) obj).getValue());
     }
 }

@@ -1,89 +1,109 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
-import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.file.service.StaticAssetPathService;
+import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryAttribute;
+import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute;
-import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuAttribute;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.core.inventory.service.InventoryService;
+import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
+import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.CategoriesWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.CategoryWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.InventoryWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.MediaWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductAttributeWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.ProductBundleWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ProductWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.RelatedProductWrapper;
+import org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+
 /**
  * This class exposes catalog services as RESTful APIs.  It is dependent on
- * a JAX-RS implementation such as Jersey.  This class has to be in a war, with
- * appropriate configuration to ensure that it is delegated requests from the
- * servlet.
+ * a JAX-RS implementation such as Jersey.  This class must be extended, with appropriate JAX-RS 
+ * annotations, such as: <br></br> 
+ * 
+ * <code>javax.ws.rs.@Scope</code> <br></br> 
+ * <code>javax.ws.rs.@Path</code> <br></br> 
+ * <code>javax.ws.rs.@Produces</code> <br></br> 
+ * <code>javax.ws.rs.@Consumes</code> <br></br> 
+ * <code>javax.ws.rs.@Context</code> <br></br> 
+ * etc... <br></br>
+ * 
+ * ... in the subclass.  The subclass must also be a Spring Bean.  The subclass can then override 
+ * the methods, and specify custom inputs and outputs.  It will also specify 
+ * <code>javax.ws.rs.@Path annotations</code>, <code>javax.ws.rs.@Context</code>, 
+ * <code>javax.ws.rs.@PathParam</code>, <code>javax.ws.rs.@QueryParam</code>, 
+ * <code>javax.ws.rs.@GET</code>, <code>javax.ws.rs.@POST</code>, etc...  Essentially, the subclass 
+ * will override and extend the methods of this class, add new methods, and control the JAX-RS behavior 
+ * using annotations according to the JAX-RS specification.
  *
  * User: Kelly Tisdell
  */
-@Component("blRestCatalogEndpoint")
-@Scope("singleton")
-@Path("/catalog/")
-@Produces(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-@Consumes(value={MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-public class CatalogEndpoint implements ApplicationContextAware {
+public abstract class CatalogEndpoint extends BaseEndpoint {
 
     @Resource(name="blCatalogService")
-    private CatalogService catalogService;
+    protected CatalogService catalogService;
 
-    private ApplicationContext context;
+    @Resource(name = "blSearchService")
+    protected SearchService searchService;
 
-    //We don't inject this here because of a few dependency issues. Instead, we look this up dynamically
-    //using the ApplicationContext
-    private StaticAssetService staticAssetService;
+    @Resource(name = "blSearchFacetDTOService")
+    protected SearchFacetDTOService facetService;
+
+    @Resource(name = "blExploitProtectionService")
+    protected ExploitProtectionService exploitProtectionService;
+
+    @Resource(name = "blStaticAssetPathService")
+    protected StaticAssetPathService staticAssetPathService;
+    
+    @Resource(name = "blInventoryService")
+    protected InventoryService inventoryService;
 
     /**
      * Search for {@code Product} by product id
@@ -91,61 +111,113 @@ public class CatalogEndpoint implements ApplicationContextAware {
      * @param id the product id
      * @return the product instance with the given product id
      */
-    @GET
-    @Path("product/{id}")
-    public ProductWrapper findProductById(@Context HttpServletRequest request, @PathParam("id") Long id) {
+    public ProductWrapper findProductById(HttpServletRequest request, Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             ProductWrapper wrapper;
-            if (product instanceof ProductBundle) {
-                wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
-            } else {
-                wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
-                
-            }
-            wrapper.wrap(product, request);
+            wrapper = (ProductWrapper) context.getBean(ProductWrapper.class.getName());
+            wrapper.wrapDetails(product, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
     /**
-     * Search for {@code Product} instances whose name starts with
-     * or is equal to the passed in product name.
-     *
-     * @param name
-     * @param limit the maximum number of results, defaults to 20
-     * @param offset the starting point in the record set, defaults to 0
-     * @return the list of product instances that fit the search criteria
+     * This uses Broadleaf's search service to search for products within a category.
+     * @param request
+     * @param q
+     * @param categoryId
+     * @param pageSize
+     * @param page
+     * @return
      */
-    @GET
-    @Path("products")
-    public List<ProductWrapper> findProductsByName(@Context HttpServletRequest request,
-                                                   @QueryParam("name") String name,
-                                                   @QueryParam("limit") @DefaultValue("20") int limit,
-                                                   @QueryParam("offset") @DefaultValue("0") int offset) {
-        List<Product> result;
-        if (name == null) {
-            result = catalogService.findAllProducts(limit, offset);
-        } else {
-            result = catalogService.findProductsByName(name, limit, offset);
+    public SearchResultsWrapper findProductsByCategoryAndQuery(HttpServletRequest request,
+            Long categoryId,
+            String q,
+            Integer pageSize,
+            Integer page) {
+        try {
+            if (StringUtils.isNotEmpty(q)) {
+                q = StringUtils.trim(q);
+                q = exploitProtectionService.cleanString(q);
+            } else {
+                throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                        .addMessage(BroadleafWebServicesException.SEARCH_QUERY_EMPTY);
+            }
+        } catch (ServiceException e) {
+            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
         }
 
-        List<ProductWrapper> out = new ArrayList<ProductWrapper>();
-        if (result != null) {
-            for (Product product : result) {
-                ProductWrapper wrapper;
-                if (product instanceof ProductBundle) {
-                    wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
-                } else {
-                    wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
-                    
-                }
-                wrapper.wrap(product, request);
-                out.add(wrapper);
-            }
+        if (categoryId == null) {
+            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
         }
-        return out;
+
+        Category category = null;
+        category = catalogService.findCategoryById(categoryId);
+        if (category == null) {
+            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
+        }
+
+        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
+        ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        try {
+            ProductSearchResult result = null;
+            result = getSearchService().findProductsByCategoryAndQuery(category, q, searchCriteria);
+            facetService.setActiveFacetResults(result.getFacets(), request);
+
+            SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
+            wrapper.wrapDetails(result, request);
+            return wrapper;
+        } catch (ServiceException e) {
+            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        }
+    }
+
+    /**
+     * Queries the products. The parameter q, which represents the query, is required. It can be any 
+     * string, but is typically a name or keyword, similar to a search engine search.
+     * @param request
+     * @param q
+     * @param pageSize
+     * @param page
+     * @return
+     */
+    public SearchResultsWrapper findProductsByQuery(HttpServletRequest request,
+            String q,
+            Integer pageSize,
+            Integer page) {
+        try {
+            if (StringUtils.isNotEmpty(q)) {
+                q = StringUtils.trim(q);
+                q = exploitProtectionService.cleanString(q);
+            } else {
+                throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                        .addMessage(BroadleafWebServicesException.SEARCH_QUERY_EMPTY);
+            }
+        } catch (ServiceException e) {
+            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
+        }
+
+        List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
+        ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        try {
+            ProductSearchResult result = null;
+            result = getSearchService().findProductsByQuery(q, searchCriteria);
+            facetService.setActiveFacetResults(result.getFacets(), request);
+
+            SearchResultsWrapper wrapper = (SearchResultsWrapper) context.getBean(SearchResultsWrapper.class.getName());
+            wrapper.wrapDetails(result, request);
+            return wrapper;
+        } catch (ServiceException e) {
+            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                    .addMessage(BroadleafWebServicesException.SEARCH_ERROR);
+
+        }
     }
 
     /**
@@ -154,9 +226,7 @@ public class CatalogEndpoint implements ApplicationContextAware {
      * @param id
      * @return the list of sku instances for the product
      */
-    @GET
-    @Path("product/{id}/skus")
-    public List<SkuWrapper> findSkusByProductById(@Context HttpServletRequest request, @PathParam("id") Long id) {
+    public List<SkuWrapper> findSkusByProductById(HttpServletRequest request, Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             List<Sku> skus = product.getAllSkus();
@@ -164,33 +234,31 @@ public class CatalogEndpoint implements ApplicationContextAware {
             if (skus != null) {
                 for (Sku sku : skus) {
                     SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-                    wrapper.wrap(sku, request);
+                    wrapper.wrapSummary(sku, request);
                     out.add(wrapper);
                 }
                 return out;
             }
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
     
-    @GET
-    @Path("product/{id}/defaultSku")
-    public SkuWrapper findDefaultSkuByProductId(@Context HttpServletRequest request, @PathParam("id") Long id) {
+    public SkuWrapper findDefaultSkuByProductId(HttpServletRequest request, Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null && product.getDefaultSku() != null) {
             SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-            wrapper.wrap(product.getDefaultSku(), request);
+            wrapper.wrapDetails(product.getDefaultSku(), request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
-    @GET
-    @Path("categories")
-    public CategoriesWrapper findAllCategories(@Context HttpServletRequest request,
-                                               @QueryParam("name") String name,
-                                               @QueryParam("limit") @DefaultValue("20") int limit,
-                                               @QueryParam("offset") @DefaultValue("0") int offset) {
+    public CategoriesWrapper findAllCategories(HttpServletRequest request,
+            String name,
+            int limit,
+            int offset) {
         List<Category> categories;
         if (name != null) {
             categories = catalogService.findCategoriesByName(name, limit, offset);
@@ -198,17 +266,15 @@ public class CatalogEndpoint implements ApplicationContextAware {
             categories = catalogService.findAllCategories(limit, offset);
         }
         CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
-        wrapper.wrap(categories, request);
+        wrapper.wrapDetails(categories, request);
         return wrapper;
     }
 
-    @GET
-    @Path("category/{id}/categories")
-    public CategoriesWrapper findSubCategories(@Context HttpServletRequest request,
-                                               @PathParam("id") Long id,
-                                               @QueryParam("limit") @DefaultValue("20") int limit,
-                                               @QueryParam("offset") @DefaultValue("0") int offset,
-                                               @QueryParam("active") @DefaultValue("true") boolean active) {
+    public CategoriesWrapper findSubCategories(HttpServletRequest request,
+            Long id,
+            int limit,
+            int offset,
+            boolean active) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             List<Category> categories;
@@ -218,38 +284,27 @@ public class CatalogEndpoint implements ApplicationContextAware {
             } else {
                 categories = catalogService.findAllSubCategories(category, limit, offset);
             }
-            wrapper.wrap(categories, request);
+            wrapper.wrapDetails(categories, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
 
     }
 
-    @GET
-    @Path("category/{id}/activeSubcategories")
-    public CategoriesWrapper findActiveSubCategories(@Context HttpServletRequest request,
-                                                     @PathParam("id") Long id,
-                                                     @QueryParam("limit") @DefaultValue("20") int limit,
-                                                     @QueryParam("offset") @DefaultValue("0") int offset) {
-        Category category = catalogService.findCategoryById(id);
-        if (category != null) {
-            List<Category> categories = catalogService.findActiveSubCategoriesByCategory(category, limit, offset);
-            CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
-            wrapper.wrap(categories, request);
-            return wrapper;
-        }
-
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+    public CategoriesWrapper findActiveSubCategories(HttpServletRequest request,
+            Long id,
+            int limit,
+            int offset) {
+        return findSubCategories(request, id, limit, offset, true);
     }
 
-    @GET
-    @Path("category/{id}")
-    public CategoryWrapper findCategoryById(@Context HttpServletRequest request,
-                                            @PathParam("id") Long id,
-                                            @QueryParam("productLimit") @DefaultValue("20") int productLimit,
-                                            @QueryParam("productOffset") @DefaultValue("0") int productOffset,                                            @QueryParam("subcategoryLimit") @DefaultValue("20") int subcategoryLimit,
-                                            @QueryParam("subcategoryOffset") @DefaultValue("0") int subcategoryOffset,
-                                            @QueryParam("subcategoryDepth") @DefaultValue("1") int subcategoryDepth) {
+    public CategoryWrapper findCategoryById(HttpServletRequest request,
+            Long id,
+            int productLimit,
+            int productOffset,
+            int subcategoryLimit,
+            int subcategoryOffset) {
         Category cat = catalogService.findCategoryById(id);
         if (cat != null) {
 
@@ -258,74 +313,82 @@ public class CatalogEndpoint implements ApplicationContextAware {
             request.setAttribute("productOffset", productOffset);
             request.setAttribute("subcategoryLimit", subcategoryLimit);
             request.setAttribute("subcategoryOffset", subcategoryOffset);
-            request.setAttribute("subcategoryDepth", subcategoryDepth);
 
             CategoryWrapper wrapper = (CategoryWrapper)context.getBean(CategoryWrapper.class.getName());
-            wrapper.wrap(cat, request);
+            wrapper.wrapDetails(cat, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
     }
 
-    @GET
-    @Path("category/{id}/product-attributes")
-    public List<CategoryAttributeWrapper> findCategoryAttributesForCategory(@Context HttpServletRequest request,
-                                                                         @PathParam("id") Long id) {
+    /**
+     * Allows you to search for a category by ID or by name.
+     * @param request
+     * @param searchParameter
+     * @param productLimit
+     * @param productOffset
+     * @param subcategoryLimit
+     * @param subcategoryOffset
+     * @return
+     */
+    public CategoryWrapper findCategoryByIdOrName(HttpServletRequest request,
+            String searchParameter,
+            int productLimit,
+            int productOffset,
+            int subcategoryLimit,
+            int subcategoryOffset) {
+
+        Category cat = null;
+
+        if (searchParameter != null) {
+            try {
+                cat = catalogService.findCategoryById(Long.parseLong(searchParameter));
+            } catch (NumberFormatException e) {
+                List<Category> categories = catalogService.findCategoriesByName(searchParameter);
+                if (categories != null && !categories.isEmpty()) {
+                    cat = categories.get(0);
+                }
+            }
+        }
+        if (cat != null) {
+
+            //Explicitly setting these request attributes because the CategoryWrapper.wrap() method needs them
+            request.setAttribute("productLimit", productLimit);
+            request.setAttribute("productOffset", productOffset);
+            request.setAttribute("subcategoryLimit", subcategoryLimit);
+            request.setAttribute("subcategoryOffset", subcategoryOffset);
+
+            CategoryWrapper wrapper = (CategoryWrapper) context.getBean(CategoryWrapper.class.getName());
+            wrapper.wrapDetails(cat, request);
+            return wrapper;
+        }
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, searchParameter);
+    }
+
+    public List<CategoryAttributeWrapper> findCategoryAttributesForCategory(HttpServletRequest request,
+            Long id) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             ArrayList<CategoryAttributeWrapper> out = new ArrayList<CategoryAttributeWrapper>();
             if (category.getCategoryAttributes() != null) {
                 for (CategoryAttribute attribute : category.getCategoryAttributes()) {
                     CategoryAttributeWrapper wrapper = (CategoryAttributeWrapper)context.getBean(CategoryAttributeWrapper.class.getName());
-                    wrapper.wrap(attribute, request);
+                    wrapper.wrapSummary(attribute, request);
                     out.add(wrapper);
                 }
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
-    }
-    
-    @GET
-    @Path("category/{id}/products")
-    public List<ProductWrapper> findProductsForCategory(@Context HttpServletRequest request,
-                                                        @PathParam("id") Long id,
-                                                        @QueryParam("limit") @DefaultValue("20") int limit,
-                                                        @QueryParam("offset") @DefaultValue("0") int offset,
-                                                        @QueryParam("activeOnly") @DefaultValue("true") boolean activeOnly) {
-        Category category = catalogService.findCategoryById(id);
-        if (category != null) {
-            List<Product> products;
-            ArrayList<ProductWrapper> out = new ArrayList<ProductWrapper>();
-            if (activeOnly) {
-                products = catalogService.findActiveProductsByCategory(category, new Date(), limit, offset);
-            } else {
-                products = catalogService.findProductsForCategory(category, limit, offset);
-            }
-            if (products != null) {
-                for (Product product : products) {
-                    ProductWrapper wrapper;
-                    if (product instanceof ProductBundle) {
-                        wrapper = (ProductWrapper)context.getBean(ProductBundleWrapper.class.getName());
-                    } else {
-                        wrapper = (ProductWrapper)context.getBean(ProductWrapper.class.getName());
-                        
-                    }
-                    wrapper.wrap(product, request);
-                    out.add(wrapper);
-                }
-            }
-            return out;
-        }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
     }
 
-    @GET
-    @Path("product/{id}/related-products/upsale")
-    public List<RelatedProductWrapper> findUpSaleProductsByProduct(@Context HttpServletRequest request,
-                                                                   @PathParam("id") Long id,
-                                                                   @QueryParam("limit") @DefaultValue("20") int limit,
-                                                                   @QueryParam("offset") @DefaultValue("0") int offset) {
+    public List<RelatedProductWrapper> findUpSaleProductsByProduct(HttpServletRequest request,
+            Long id,
+            int limit,
+            int offset) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             List<RelatedProductWrapper> out = new ArrayList<RelatedProductWrapper>();
@@ -335,21 +398,20 @@ public class CatalogEndpoint implements ApplicationContextAware {
             if (relatedProds != null) {
                 for (RelatedProduct prod : relatedProds) {
                     RelatedProductWrapper wrapper = (RelatedProductWrapper)context.getBean(RelatedProductWrapper.class.getName());
-                    wrapper.wrap(prod,request);
+                    wrapper.wrapSummary(prod, request);
                     out.add(wrapper);
                 }
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
-    @GET
-    @Path("product/{id}/related-products/crosssale")
-    public List<RelatedProductWrapper> findCrossSaleProductsByProduct(@Context HttpServletRequest request,
-                                                                      @PathParam("id") Long id,
-                                                                      @QueryParam("limit") @DefaultValue("20") int limit,
-                                                                      @QueryParam("offset") @DefaultValue("0") int offset) {
+    public List<RelatedProductWrapper> findCrossSaleProductsByProduct(HttpServletRequest request,
+            Long id,
+            int limit,
+            int offset) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             List<RelatedProductWrapper> out = new ArrayList<RelatedProductWrapper>();
@@ -359,92 +421,103 @@ public class CatalogEndpoint implements ApplicationContextAware {
             if (xSellProds != null) {
                 for (RelatedProduct prod : xSellProds) {
                     RelatedProductWrapper wrapper = (RelatedProductWrapper)context.getBean(RelatedProductWrapper.class.getName());
-                    wrapper.wrap(prod, request);
+                    wrapper.wrapSummary(prod, request);
                     out.add(wrapper);
                 }
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
     
-    @GET
-    @Path("product/{id}/product-attributes")
-    public List<ProductAttributeWrapper> findProductAttributesForProduct(@Context HttpServletRequest request,
-                                                                         @PathParam("id") Long id) {
+    public List<ProductAttributeWrapper> findProductAttributesForProduct(HttpServletRequest request,
+            Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             ArrayList<ProductAttributeWrapper> out = new ArrayList<ProductAttributeWrapper>();
             if (product.getProductAttributes() != null) {
-                for (ProductAttribute attribute : product.getProductAttributes()) {
+                for (Map.Entry<String, ProductAttribute> entry : product.getProductAttributes().entrySet()) {
                     ProductAttributeWrapper wrapper = (ProductAttributeWrapper)context.getBean(ProductAttributeWrapper.class.getName());
-                    wrapper.wrap(attribute, request);
+                    wrapper.wrapSummary(entry.getValue(), request);
                     out.add(wrapper);
                 }
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
-    @GET
-    @Path("sku/{id}/sku-attributes")
-    public List<SkuAttributeWrapper> findSkuAttributesForSku(@Context HttpServletRequest request,
-                                                             @PathParam("id") Long id) {
+    public List<SkuAttributeWrapper> findSkuAttributesForSku(HttpServletRequest request,
+            Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
             ArrayList<SkuAttributeWrapper> out = new ArrayList<SkuAttributeWrapper>();
             if (sku.getSkuAttributes() != null) {
-                for (SkuAttribute attribute : sku.getSkuAttributes()) {
+                for (Map.Entry<String, SkuAttribute> entry : sku.getSkuAttributes().entrySet()) {
                     SkuAttributeWrapper wrapper = (SkuAttributeWrapper)context.getBean(SkuAttributeWrapper.class.getName());
-                    wrapper.wrap(attribute, request);
+                    wrapper.wrapSummary(entry.getValue(), request);
                     out.add(wrapper);
                 }
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
     }
 
-    @GET
-    @Path("sku/{id}/media")
-    public List<MediaWrapper> findMediaForSku(@Context HttpServletRequest request,
-                                              @PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForSku(HttpServletRequest request,
+            Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
             List<MediaWrapper> medias = new ArrayList<MediaWrapper>();
             if (sku.getSkuMedia() != null && ! sku.getSkuMedia().isEmpty()) {
                 for (Media media : sku.getSkuMedia().values()) {
                     MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
-                    wrapper.wrap(media, request);
+                    wrapper.wrapSummary(media, request);
                     if (wrapper.isAllowOverrideUrl()){
-                        wrapper.setUrl(getStaticAssetService().convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
+                        wrapper.setUrl(staticAssetPathService.convertAssetPath(media.getUrl(), request.getContextPath(), request.isSecure()));
                     }
                     medias.add(wrapper);
                 }
             }
             return medias;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
     }
 
-    @GET
-    @Path("sku/{id}")
-    public SkuWrapper findSkuById(@Context HttpServletRequest request,
-                                  @PathParam("id") Long id) {
+    public SkuWrapper findSkuById(HttpServletRequest request,
+            Long id) {
         Sku sku = catalogService.findSkuById(id);
         if (sku != null) {
             SkuWrapper wrapper = (SkuWrapper)context.getBean(SkuWrapper.class.getName());
-            wrapper.wrap(sku, request);
+            wrapper.wrapDetails(sku, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
+    }
+    
+    public List<InventoryWrapper> findInventoryForSkus(HttpServletRequest request, List<Long> ids) {
+        List<Sku> skus = catalogService.findSkusByIds(ids);
+        if (CollectionUtils.isNotEmpty(skus)) {
+            Map<Sku, Integer> quantities = inventoryService.retrieveQuantitiesAvailable(new HashSet<Sku>(skus));
+            List<InventoryWrapper> out = new ArrayList<InventoryWrapper>();
+            for (Map.Entry<Sku, Integer> entry : quantities.entrySet()) {
+                InventoryWrapper wrapper = (InventoryWrapper)context.getBean(InventoryWrapper.class.getName());
+                wrapper.wrapSummary(entry.getKey(), entry.getValue(), request);
+                out.add(wrapper);
+            }
+            return out;
+        }
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, skus.toArray());
     }
 
-    @GET
-    @Path("product/{id}/media")
-    public List<MediaWrapper> findMediaForProduct(@Context HttpServletRequest request,
-                                                  @PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForProduct(HttpServletRequest request,
+            Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
@@ -452,59 +525,54 @@ public class CatalogEndpoint implements ApplicationContextAware {
             if (media != null) {
                 for (Media med : media.values()) {
                     MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
-                    wrapper.wrap(med, request);
+                    wrapper.wrapSummary(med, request);
                     if (wrapper.isAllowOverrideUrl()){
-                        wrapper.setUrl(getStaticAssetService().convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
+                        wrapper.setUrl(staticAssetPathService.convertAssetPath(med.getUrl(), request.getContextPath(), request.isSecure()));
                     }
                     out.add(wrapper);
                 }
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
-    @GET
-    @Path("category/{id}/media")
-    public List<MediaWrapper> findMediaForCategory(@Context HttpServletRequest request,
-                                                   @PathParam("id") Long id) {
+    public List<MediaWrapper> findMediaForCategory(HttpServletRequest request,
+            Long id) {
         Category category = catalogService.findCategoryById(id);
         if (category != null) {
             ArrayList<MediaWrapper> out = new ArrayList<MediaWrapper>();
             Map<String, Media> media = category.getCategoryMedia();
             for (Media med : media.values()) {
                 MediaWrapper wrapper = (MediaWrapper)context.getBean(MediaWrapper.class.getName());
-                wrapper.wrap(med, request);
+                wrapper.wrapSummary(med, request);
                 out.add(wrapper);
             }
             return out;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
     }
 
-    @GET
-    @Path("product/{id}/categories")
-    public CategoriesWrapper findParentCategoriesForProduct(@Context HttpServletRequest request,
-                                                            @PathParam("id") Long id) {
+    public CategoriesWrapper findParentCategoriesForProduct(HttpServletRequest request,
+            Long id) {
         Product product = catalogService.findProductById(id);
         if (product != null) {
             CategoriesWrapper wrapper = (CategoriesWrapper)context.getBean(CategoriesWrapper.class.getName());
-            wrapper.wrap(product.getAllParentCategories(), request);
+            List<Category> categories = new ArrayList<Category>();
+            for (CategoryProductXref categoryXref : product.getAllParentCategoryXrefs()) {
+                categories.add(categoryXref.getCategory());
+            }
+            wrapper.wrapDetails(categories, request);
             return wrapper;
         }
-        throw new WebApplicationException(Response.Status.NOT_FOUND);
+        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
-    }
-
-    private StaticAssetService getStaticAssetService() {
-        if (staticAssetService == null) {
-            staticAssetService = (StaticAssetService)this.context.getBean("blStaticAssetService");
-        }
-        return staticAssetService;
+    protected SearchService getSearchService() {
+        return searchService;
     }
 }
 

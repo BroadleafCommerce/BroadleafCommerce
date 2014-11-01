@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Common Libraries
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common"/>
+
+    <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
+        <property name="xsrfProtectionEnabled" value="${exploitProtection.xsrfEnabled}" />
+        <property name="xssProtectionEnabled" value="${exploitProtection.xssEnabled}" />
+    </bean>
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
 
@@ -16,11 +41,44 @@
     <bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">
         <constructor-arg ref="blMailSender"/>
     </bean>
-    
+
+    <bean id="blDirectCopyIgnorePatterns" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern">
+                    <property name="patterns">
+                        <array>
+                            <value>org\.apache.*</value>
+                            <value>javassist.*</value>
+                        </array>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blDirectCopyTransformTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
+        </property>
+    </bean>
+
+    <!--This class transformer is responsible for picking up @DirectCopyTransform annotations on entities -->
+    <bean id="blAnnotationDirectCopyClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyClassTransformer">
+        <constructor-arg name="moduleName" value="Annotated Transformation" />
+        <property name="templateTokens" ref="blDirectCopyTransformTokenMap"/>
+    </bean>
+
+    <bean id="blEntityMarkerClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer" />
+
     <!-- to be overriden by 3rd party modules -->
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
-            <list />
+            <list>
+                <ref bean="blAnnotationDirectCopyClassTransformer"/>
+                <ref bean="blEntityMarkerClassTransformer"/>
+            </list>
         </property>
     </bean>
 
@@ -41,6 +99,10 @@
         </property>
     </bean>
 
+    <!-- This mail sender will log the html content generated for the email to the console  -->
+    <!-- To enable logging set log level in Log4j to INFO  -->
+    <bean id="blLoggingMailSender" class="org.broadleafcommerce.common.email.service.LoggingMailSender" />
+
     <bean id="blVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
       <property name="velocityProperties">
          <value>
@@ -59,11 +121,19 @@
     
     <bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
     <bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
-
-    <aop:config>
-        <aop:pointcut id="blLocaleServiceOperation" expression="execution(* org.broadleafcommerce.common.locale.service.LocaleService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blLocaleServiceOperation"/>
-    </aop:config>         
+    
+    <bean id="blWebCommonClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <property name="prefix" value="common_style/templates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />        
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="order" value="500"/> 
+    </bean>  
+    
+    <bean id="blSiteResolver" class="org.broadleafcommerce.common.web.NullBroadleafSiteResolver" />
+    <bean id="blThemeResolver" class="org.broadleafcommerce.common.web.NullBroadleafThemeResolver" />
     
 <!--  Message creator for velocity templates.  Now should be defined in client properties file. -->
     <!-- bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.VelocityMessageCreator">
@@ -99,4 +169,130 @@
             </map>
         </constructor-arg>
     </bean  -->
+    
+    <bean id="blJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_style/js/</value>
+                <value>classpath:/extensions/js/</value><!-- To allow a common place for modules or extensions to put js files. -->
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_style/css/</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blFontLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_style/fonts/</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blImageLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_style/img/</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blJsFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blAdminJsLibFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blCssFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blJsHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blBLCJSResourceHandler" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blCssHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blFileServiceProviders" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blPaymentGatewayConfigurationServices" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blVariableExpressionEvaluator" class="org.broadleafcommerce.common.web.expression.BroadleafVariableExpressionEvaluator" />
+    <bean id="blDataDrivenEnumerationProcessor" class="org.broadleafcommerce.common.web.processor.DataDrivenEnumerationProcessor" />
+    <bean id="blResourceBundleProcessor" class="org.broadleafcommerce.common.web.processor.ResourceBundleProcessor" />
+    <bean id="blConfigVariableProcessor" class="org.broadleafcommerce.common.web.processor.ConfigVariableProcessor" />
+    
+    <!-- This core Broadleaf dialect should not be extended by implementors. Instead, define your -->
+    <!-- own dialect and add your processors there. -->
+    <bean id="blDialectProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blDataDrivenEnumerationProcessor" />
+                <ref bean="blResourceBundleProcessor" />
+                <ref bean="blConfigVariableProcessor" />
+            </set>
+        </property>
+    </bean>
+    
+    <bean id="blSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blCustomSiteMapGenerator" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blStatisticsService" class="org.broadleafcommerce.common.cache.StatisticsServiceImpl">
+        <property name="appName">
+            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
+                <property name="jndiName">
+                    <value>java:comp/env/appName</value>
+                </property>
+                <property name="defaultObject" value="broadleaf"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
+        </property>
+    </bean>
 </beans>

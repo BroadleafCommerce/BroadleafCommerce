@@ -1,28 +1,43 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.catalog;
 
+import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
+import org.broadleafcommerce.common.template.TemplateType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.TemplateTypeAware;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.web.catalog.ProductHandlerMapping;
-import org.hibernate.tool.hbm2x.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,10 +47,18 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author bpolster
  */
-public class BroadleafProductController extends BroadleafAbstractController implements Controller {
+public class BroadleafProductController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
     
     protected String defaultProductView = "catalog/product";
-    protected static String MODEL_ATTRIBUTE_NAME = "product";    
+    protected static String MODEL_ATTRIBUTE_NAME = "product";
+    protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
+    
+    @Autowired(required = false)
+    @Qualifier("blProductDeepLinkService")
+    protected DeepLinkService<Product> deepLinkService;
+    
+    @Resource(name = "blTemplateOverrideExtensionManager")
+    protected TemplateOverrideExtensionManager templateOverrideManager;
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -44,8 +67,18 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         assert(product != null);
         
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
+        Set<Product> allProductsSet = new HashSet<Product>();
+        allProductsSet.add(product);
+        model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(allProductsSet));
 
-        if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
+        addDeepLink(model, deepLinkService, product);
+        
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        templateOverrideManager.getProxy().getOverrideTemplate(erh, product);
+        
+        if (StringUtils.isNotBlank(erh.getResult())) {
+            model.setViewName(erh.getResult());
+        } else if (StringUtils.isNotEmpty(product.getDisplayTemplate())) {
             model.setViewName(product.getDisplayTemplate());    
         } else {
             model.setViewName(getDefaultProductView());
@@ -61,4 +94,21 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         this.defaultProductView = defaultProductView;
     }
     
+    @Override
+    public String getExpectedTemplateName(HttpServletRequest request) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null) {
+            Product product = (Product) context.getRequest().getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
+            if (product != null && product.getDisplayTemplate() != null) {
+                return product.getDisplayTemplate();
+            }
+        }
+        return getDefaultProductView();
+    }
+
+    @Override
+    public TemplateType getTemplateType(HttpServletRequest request) {
+        return TemplateType.PRODUCT;
+    }
+
 }

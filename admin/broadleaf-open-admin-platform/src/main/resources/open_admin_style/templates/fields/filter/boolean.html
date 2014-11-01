@@ -1,0 +1,21 @@
+<div class="boolean-input-container">
+    <input type="hidden" class="listgrid-criteria-input" th:attr="data-name=${fieldName}" />
+
+    <label th:inline="text" style="font-weight: 400; display: inline-block; margin-right: 10px;">
+        <input type="radio" 
+               style="width: auto;"
+               th:name="${fieldName}" 
+               th:value="${true}" 
+               class="radio-input" />
+        <span th:text="#{Yes}" />
+    </label>
+        
+    <label th:inline="text" style="font-weight: 400; display: inline-block;">
+        <input type="radio" 
+               style="width: auto;"
+               th:name="${fieldName}" 
+               th:value="${false}" 
+               class="radio-input" /> 
+        <span style="margin-right: 10px;" th:text="#{No}" />
+    </label>
+</div>

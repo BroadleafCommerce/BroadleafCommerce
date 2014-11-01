@@ -1,25 +1,30 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -32,10 +37,10 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.model.AddToCartItem;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * Author: jerryocanas
@@ -51,7 +56,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
     protected OrderService orderService;
     
     @Resource(name = "blUpdateCartServiceExtensionManager")
-    protected UpdateCartServiceExtensionListener extensionManager;
+    protected UpdateCartServiceExtensionManager extensionManager;
 
     @Override
     public boolean currencyHasChanged() {
@@ -142,19 +147,34 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     @Override
     public void validateCart(Order cart) {
-        if (BroadleafRequestContext.hasLocale()) {
-            BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-            String validationMsg;
-            if (!brc.getLocale().getLocaleCode().matches(cart.getLocale().getLocaleCode())) {
-                validationMsg = "The cart Locale [" + cart.getLocale().getLocaleCode() +
-                        "] does not match the current locale [" + brc.getLocale().getLocaleCode() + "]";
-                LOG.error(validationMsg);
-                throw new IllegalArgumentException(validationMsg);
-            }
-        }
-        
+        // hook to allow override
+    }
+
+    @Override
+    public void updateAndValidateCart(Order cart) {
         if (extensionManager != null) {
-            extensionManager.validateCart(cart);
+            ExtensionResultHolder erh = new ExtensionResultHolder();
+            extensionManager.getProxy().updateAndValidateCart(cart, erh);
+            Boolean clearCart = (Boolean) erh.getContextMap().get("clearCart");
+            Boolean repriceCart = (Boolean) erh.getContextMap().get("repriceCart");
+            Boolean saveCart = (Boolean) erh.getContextMap().get("saveCart");
+            if (clearCart != null && clearCart.booleanValue()) {
+                orderService.cancelOrder(cart);
+                cart = orderService.createNewCartForCustomer(cart.getCustomer());
+            } else {
+                try {
+                    if (repriceCart != null && repriceCart.booleanValue()) {
+                        cart.updatePrices();
+                        orderService.save(cart, true);
+                    } else if (saveCart != null && saveCart.booleanValue()) {
+                        orderService.save(cart, false);
+                    }
+                } catch (PricingException pe) {
+                    LOG.error("Pricing Exception while validating cart.   Clearing cart.", pe);
+                    orderService.cancelOrder(cart);
+                    cart = orderService.createNewCartForCustomer(cart.getCustomer());
+                }
+            }
         }
     }
 
@@ -167,7 +187,8 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     protected boolean checkAvailabilityInLocale(DiscreteOrderItem doi, BroadleafCurrency currency) {
         if (doi.getSku() != null && extensionManager != null) {
-            return extensionManager.isAvailable(doi, currency);
+            Sku sku = doi.getSku();
+            return sku.isAvailable();
         }
         
         return false;

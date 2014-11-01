@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.audit.Auditable;
@@ -26,8 +29,9 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.Date;
@@ -92,17 +96,12 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
-    public Money calculateOrderItemsFinalPrice(boolean includeNonTaxableItems) {
-        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
-    }
-
-    @Override
     public Money getTotal() {
         return null;
     }
 
     @Override
-    public Money getRemainingTotal() {
+    public Money getTotalAfterAppliedPayments() {
         return null;
     }
 
@@ -197,12 +196,12 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
-    public List<PaymentInfo> getPaymentInfos() {
+    public List<OrderPayment> getPayments() {
         return null;
     }
 
     @Override
-    public void setPaymentInfos(List<PaymentInfo> paymentInfos) {
+    public void setPayments(List<OrderPayment> paymentInfos) {
         throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 
@@ -316,16 +315,15 @@ public class NullOrderImpl implements Order {
         return 0;
     }
 
-       @Override
-        public BroadleafCurrency getCurrency() {
-              return null;
-        }
+    @Override
+    public BroadleafCurrency getCurrency() {
+        return null;
+    }
 
-        @Override
-        public void setCurrency(BroadleafCurrency currency) {
-            throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
-        }
-
+    @Override
+    public void setCurrency(BroadleafCurrency currency) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
 
     @Override
     public Locale getLocale() {
@@ -335,4 +333,50 @@ public class NullOrderImpl implements Order {
     @Override
     public void setLocale(Locale locale) {
     }
+
+    @Override
+    public Money calculateSubTotal() {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
+    @Override
+    public Money getTotalFulfillmentCharges() {
+        return null;
+    }
+
+    @Override
+    public void setTotalFulfillmentCharges(Money totalFulfillmentCharges) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
+    @Override
+    public boolean finalizeItemPrices() {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
+    @Override
+    public boolean getHasOrderAdjustments() {
+        return false;
+    }
+
+    @Override
+    public List<ActivityMessageDTO> getOrderMessages() {
+        return null;
+    }
+
+    @Override
+    public void setOrderMessages(List<ActivityMessageDTO> orderMessages) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
+    @Override
+    public Boolean getTaxOverride() {
+        return false;
+    }
+
+    @Override
+    public void setTaxOverride(Boolean taxOverride) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    }
+
 }

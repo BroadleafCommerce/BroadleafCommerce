@@ -4,13 +4,16 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>2.2.0-GA</version>
+        <version>3.1.8-GA</version>
     </parent>
     <artifactId>broadleaf-admin-module</artifactId>
     <packaging>jar</packaging>
     <name>BroadleafCommerce Admin Module</name>
     <description>BroadleafCommerce Admin Module</description>
     <url>http://www.broadleafcommerce.org</url>
+    <properties>
+        <project.uri>${project.baseUri}/../../</project.uri>
+    </properties>
     <licenses>
         <license>
             <name>Apache 2</name>
@@ -52,7 +55,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
+                <version>${maven.source.plugin.version}</version>
                 <executions>
                   <execution>
                     <id>attach-sources</id>
@@ -66,7 +69,16 @@
         </plugins>
         <resources>
             <resource>
+                <directory>src/main/resources/admin_style</directory>
+                <filtering>false</filtering>
+                <targetPath>admin_style</targetPath>
+            </resource>
+            <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>open_admin_style/**</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/java</directory>
@@ -106,16 +118,20 @@
             <artifactId>broadleaf-open-admin-platform</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.broadleafcommerce</groupId>
-            <artifactId>broadleaf-contentmanagement-module</artifactId>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
         </dependency>
     </dependencies>
 </project>

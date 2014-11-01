@@ -1,19 +1,22 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
@@ -22,15 +25,16 @@ import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
-import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.springframework.stereotype.Component;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.standard.expression.StandardExpressionProcessor;
+import org.thymeleaf.standard.expression.Expression;
+import org.thymeleaf.standard.expression.StandardExpressions;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 
 /**
@@ -53,8 +57,10 @@ import java.util.List;
  *      
  * @author bpolster
  */
-@Component("blRelatedProductProcessor")
 public class RelatedProductProcessor extends AbstractModelVariableModifierProcessor {
+    
+    @Resource(name = "blRelatedProductsService")
+    protected RelatedProductsService relatedProductsService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -73,10 +79,20 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
      * Controller method for the processor that readies the service call and adds the results to the model.
      */
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        RelatedProductsService relatedProductsService = ProcessorUtils.getRelatedProductsService(arguments);
         List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(arguments, element));
         addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
         addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
+        addCollectionToExistingSet(arguments, "blcAllProducts", buildProductList(relatedProducts));
+    }
+
+    protected List<Product> buildProductList(List<? extends PromotableProduct> relatedProducts) {
+        List<Product> productList = new ArrayList<Product>();
+        if (relatedProducts != null) {
+            for (PromotableProduct promProduct : relatedProducts) {
+                productList.add(promProduct.getRelatedProduct());
+            }
+        }
+        return productList;
     }
     
     protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {
@@ -113,7 +129,9 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         String typeStr = element.getAttributeValue("type"); 
         
         if (productIdStr != null) {
-            Object productId = StandardExpressionProcessor.processExpression(args, productIdStr);
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
+                    .parseExpression(args.getConfiguration(), args, productIdStr);
+            Object productId = expression.execute(args.getConfiguration(), args);
             if (productId instanceof BigDecimal) {
                 productId = new Long(((BigDecimal) productId).toPlainString());
             }
@@ -121,7 +139,9 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         }
         
         if (categoryIdStr != null) {
-            Object categoryId = StandardExpressionProcessor.processExpression(args, categoryIdStr);
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
+                    .parseExpression(args.getConfiguration(), args, categoryIdStr);
+            Object categoryId = expression.execute(args.getConfiguration(), args);
             if (categoryId instanceof BigDecimal) {
                 categoryId = new Long(((BigDecimal) categoryId).toPlainString());
             }
@@ -129,11 +149,26 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         }
         
         if (quantityStr != null) {
-            relatedProductDTO.setQuantity(((BigDecimal) StandardExpressionProcessor.processExpression(args, quantityStr)).intValue());          
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
+                    .parseExpression(args.getConfiguration(), args, quantityStr);
+            Object quantityExp = expression.execute(args.getConfiguration(), args);
+            int quantity = 0;
+            if (quantityExp instanceof String) {
+                quantity = Integer.parseInt((String)quantityExp);
+            } else {
+                quantity = ((BigDecimal)expression.execute(args.getConfiguration(), args)).intValue();
+            }
+            relatedProductDTO.setQuantity(quantity);          
         }       
                 
-        if (typeStr != null && RelatedProductTypeEnum.getInstance(typeStr) != null) {
-            relatedProductDTO.setType(RelatedProductTypeEnum.getInstance(typeStr));         
+        if (typeStr != null ) {
+            Expression expression = (Expression) StandardExpressions.getExpressionParser(args.getConfiguration())
+                    .parseExpression(args.getConfiguration(), args, typeStr);
+            Object typeExp = expression.execute(args.getConfiguration(), args);
+            if (typeExp instanceof String && RelatedProductTypeEnum.getInstance((String)typeExp) != null) {
+                relatedProductDTO.setType(RelatedProductTypeEnum.getInstance((String)typeExp));
+            }
+
         }
         
         if ("false".equalsIgnoreCase(element.getAttributeValue("cumulativeResults"))) {

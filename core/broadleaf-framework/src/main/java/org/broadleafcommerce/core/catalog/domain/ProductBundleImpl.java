@@ -1,19 +1,38 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 package org.broadleafcommerce.core.catalog.domain;
+
+import org.broadleafcommerce.common.money.BankersRounding;
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -27,30 +46,23 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.common.money.BankersRounding;
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_BUNDLE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductImpl_bundleProduct")
 public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     private static final long serialVersionUID = 1L;
 
     @Column(name = "PRICING_MODEL")
-    @AdminPresentation(friendlyName = "productBundlePricingModel", helpText="productBundlePricingModelHelp", requiredOverride=RequiredOverride.REQUIRED, group="productBundleGroup", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType")
+    @AdminPresentation(friendlyName = "productBundlePricingModel", 
+            group = ProductImpl.Presentation.Group.Name.Price,
+            order = 1,
+        helpText = "productBundlePricingModelHelp", 
+        fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType",
+        requiredOverride = RequiredOverride.REQUIRED)
     protected String pricingModel;
 
     @Column(name = "AUTO_BUNDLE")
@@ -71,8 +83,10 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
     @BatchSize(size = 50)
+    @AdminPresentationCollection(friendlyName = "skuBundleItemsTitle")
+    @ClonePolicyCollection
     protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
     
     @Override
@@ -92,6 +106,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         this.pricingModel = pricingModel == null ? null : pricingModel.getType();
     }
 
+    @Override
     public Money getRetailPrice() {
         if (ProductBundlePricingModelType.ITEM_SUM.equals(getPricingModel())) {
             return getBundleItemsRetailPrice();
@@ -101,6 +116,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
         return null;
     }
     
+    @Override
     public Money getSalePrice() {
         if (ProductBundlePricingModelType.ITEM_SUM.equals(getPricingModel())) {
             return getBundleItemsSalePrice();

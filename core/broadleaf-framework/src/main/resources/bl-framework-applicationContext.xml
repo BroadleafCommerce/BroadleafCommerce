@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:task="http://www.springframework.org/schema/task"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
     
     <context:component-scan base-package="org.broadleafcommerce.core">
-<!--          <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/> -->
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.*"/> 
     </context:component-scan>
     
-    <task:annotation-driven/>
+    <bean id="blPasswordEncoder" class="${password.site.encoder}"/>
+    
+    <!-- Bean for encrypting PCI data -->
+    <bean id="blEncryptionModule" class="org.broadleafcommerce.common.encryption.PassthroughEncryptionModule"/>
     
     <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
         <property name="autodetect" value="true"/>
@@ -23,7 +46,7 @@
         <constructor-arg>
             <bean class="org.springframework.jndi.JndiObjectFactoryBean">
                 <property name="jndiName">
-                    <value>java:/comp/env/appName</value>
+                    <value>java:comp/env/appName</value>
                 </property>
                 <property name="defaultObject" value="broadleaf"/>
             </bean>
@@ -93,14 +116,53 @@
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <set>
-                <bean class="org.broadleafcommerce.openadmin.server.util.LocaleConverter" />
+                <bean class="org.broadleafcommerce.common.locale.util.LocaleConverter" />
             </set>
         </property>
     </bean>
     
-    <bean id="blSolrSearchServiceExtensionManager" class="org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionManager" />
-    <bean id="blOrderServiceExtensionManager" class="org.broadleafcommerce.core.order.service.OrderServiceExtensionManager" />
-    <bean id="blOrderDaoExtensionManager" class="org.broadleafcommerce.core.order.dao.OrderDaoExtensionManager" />
-    <bean id="blOfferServiceExtensionManager" class="org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager" />
+    <bean id="blFrameworkSiteMapGenerators" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blCategorySiteMapGenerator" />
+                <ref bean="blProductSiteMapGenerator" />
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blFrameworkSiteMapGenerators" />
+        <property name="targetRef" value="blSiteMapGenerators" />
+    </bean>
+
+    <bean id="blFrameworkEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="blCategoryEntityExtensionManager" value-ref="blCategoryEntityExtensionManager"/>
+                <entry key="blOfferEntityExtensionManager" value-ref="blOfferEntityExtensionManager"/>
+                <entry key="blProductOptionEntityExtensionManager" value-ref="blProductOptionEntityExtensionManager"/>
+                <entry key="blProductEntityExtensionManager" value-ref="blProductEntityExtensionManager"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blFrameworkEntityExtensionManagers"/>
+        <property name="targetRef" value="blEntityExtensionManagers"/>
+    </bean>
+
+    <!-- Add a default implementation for payments of type PaymentGatewayType.PASSTHROUGH -->
+    <bean id="blPassthroughPaymentConfigurationServiceList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blPassthroughPaymentConfigurationService"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blPassthroughPaymentConfigurationServiceList"/>
+        <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
+    </bean>
 
 </beans>

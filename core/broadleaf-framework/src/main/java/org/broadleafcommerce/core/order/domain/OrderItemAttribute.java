@@ -1,22 +1,25 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.order.domain;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.value.ValueAssignable;
 
 /**
  * The Interface OrderItemAttribute.   Allows for arbitrary data to be
@@ -29,7 +32,7 @@ import java.io.Serializable;
  *   Number of minutes for someone purchasing a rate plan.
  *
  */
-public interface OrderItemAttribute extends Serializable {
+public interface OrderItemAttribute extends ValueAssignable<String> {
 
     /**
      * Gets the id.
@@ -46,20 +49,6 @@ public interface OrderItemAttribute extends Serializable {
     void setId(Long id);
 
     /**
-     * Gets the value.
-     * 
-     * @return the value
-     */
-    String getValue();
-
-    /**
-     * Sets the value.
-     * 
-     * @param value the new value
-     */
-    void setValue(String value);
-
-    /**
      * Gets the parent orderItem
      * 
      * @return the orderItem
@@ -72,21 +61,6 @@ public interface OrderItemAttribute extends Serializable {
      * @param orderItem the associated orderItem
      */
     void setOrderItem(OrderItem orderItem);
-
-    /**
-     * Gets the name.
-     * 
-     * @return the name
-     */
-    String getName();
-
-    /**
-     * Sets the name.
-     * 
-     * @param name the new name
-     */
-    void setName(String name);
-
 
     /**
      * Provide support for a deep copy of an order item.

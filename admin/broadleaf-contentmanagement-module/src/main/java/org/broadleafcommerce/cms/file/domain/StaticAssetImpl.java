@@ -1,40 +1,26 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.file.domain;
 
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.openadmin.audit.AdminAuditable;
-import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Index;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,19 +28,39 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.broadleafcommerce.cms.field.type.StorageType;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
+import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 /**
  * Created by bpolster.
@@ -76,11 +82,24 @@ import java.util.Map;
         }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-public class StaticAssetImpl implements StaticAsset {
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
+public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
+
+    private static final long serialVersionUID = 6990685254640110350L;
 
     @Id
-    @GeneratedValue(generator = "StaticAssetId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "StaticAssetId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StaticAssetFolderImpl", allocationSize = 10)
+    @GeneratedValue(generator = "StaticAssetId")
+    @GenericGenerator(
+        name="StaticAssetId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="StaticAssetImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.file.domain.StaticAssetImpl")
+        }
+    )
     @Column(name = "STATIC_ASSET_ID")
     protected Long id;
 
@@ -88,225 +107,232 @@ public class StaticAssetImpl implements StaticAsset {
     @AdminPresentation(excluded = true)
     protected AdminAuditable auditable = new AdminAuditable();
 
-    @Column (name = "NAME", nullable = false)
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Item_Name", order=1, group = "StaticAssetImpl_Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
+    @Column(name = "NAME", nullable = false)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Item_Name",
+            order = Presentation.FieldOrder.NAME,
+            requiredOverride = RequiredOverride.NOT_REQUIRED,
+            gridOrder = Presentation.FieldOrder.NAME,
+            prominent = true)
     protected String name;
 
-    /*@ManyToOne(targetEntity = SiteImpl.class)
-    @JoinColumn(name="SITE_ID")*/
-    @Transient
-    @AdminPresentation(excluded = true)
-    protected Site site;
-
     @Column(name ="FULL_URL", nullable = false)
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL", order=2, group = "StaticAssetImpl_Details", requiredOverride = RequiredOverride.NOT_REQUIRED)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Full_URL",
+            order = Presentation.FieldOrder.URL,
+            gridOrder = Presentation.FieldOrder.URL,
+            requiredOverride = RequiredOverride.REQUIRED,
+            fieldType = SupportedFieldType.ASSET_URL,
+            prominent = true)
     @Index(name="ASST_FULL_URL_INDX", columnNames={"FULL_URL"})
     protected String fullUrl;
 
-    @Column(name = "FILE_SIZE")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_File_Size_Bytes", order=3, group = "StaticAssetImpl_Details", readOnly = true)
-    protected Long fileSize;
+    @Column(name = "TITLE", nullable = true)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Title",
+            order = Presentation.FieldOrder.TITLE,
+            translatable = true)
+    protected String title;
+
+    @Column(name = "ALT_TEXT", nullable = true)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Alt_Text",
+            order = Presentation.FieldOrder.ALT_TEXT,
+            translatable = true)
+    protected String altText;
 
     @Column(name = "MIME_TYPE")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Mime_Type", order=4, group = "StaticAssetImpl_Details", readOnly = true)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_Mime_Type",
+            order = Presentation.FieldOrder.MIME_TYPE,
+            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            readOnly = true)
     protected String mimeType;
 
+    @Column(name = "FILE_SIZE")
+    @AdminPresentation(friendlyName = "StaticAssetImpl_File_Size_Bytes",
+            order = Presentation.FieldOrder.FILE_SIZE,
+            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            readOnly = true)
+    protected Long fileSize;
+
     @Column(name = "FILE_EXTENSION")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_File_Extension", order=5, group = "StaticAssetImpl_Details", readOnly = true)
+    @AdminPresentation(friendlyName = "StaticAssetImpl_File_Extension",
+            order = Presentation.FieldOrder.FILE_EXTENSION,
+            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            readOnly = true)
     protected String fileExtension;
 
     @ManyToMany(targetEntity = StaticAssetDescriptionImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_ASSET_DESC_MAP", joinColumns = @JoinColumn(name = "STATIC_ASSET_ID"), inverseJoinColumns = @JoinColumn(name = "STATIC_ASSET_DESC_ID"))
-    @org.hibernate.annotations.MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
+    @JoinTable(name = "BLC_ASSET_DESC_MAP", joinColumns = @JoinColumn(name = "STATIC_ASSET_ID"),
+            inverseJoinColumns = @JoinColumn(name = "STATIC_ASSET_DESC_ID"))
+    @MapKeyColumn(name = "MAP_KEY")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @BatchSize(size = 20)
     @AdminPresentationMap(
+        excluded = true,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
         friendlyName = "assetDescriptionTitle",
-        dataSourceName = "staticAssetDescriptionMapDS",
         keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
         deleteEntityUponRemove = true,
         mapKeyOptionEntityClass = LocaleImpl.class,
         mapKeyOptionEntityDisplayField = "friendlyName",
         mapKeyOptionEntityValueField = "localeCode"
-    )
+)
     protected Map<String,StaticAssetDescription> contentMessageValues = new HashMap<String,StaticAssetDescription>();
 
-    @ManyToOne (targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "SANDBOX_ID")
+    @Column(name = "STORAGE_TYPE")
     @AdminPresentation(excluded = true)
-    protected SandBox sandbox;
+    protected String storageType;
 
-    @ManyToOne(targetEntity = SandBoxImpl.class)
-    @JoinColumn(name = "ORIG_SANDBOX_ID")
-    @AdminPresentation(excluded = true)
-    protected SandBox originalSandBox;
-
-    @Column (name = "ARCHIVED_FLAG")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Archived_Flag", visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ASST_ARCHVD_FLG_INDX", columnNames={"ARCHIVED_FLAG"})
-    protected Boolean archivedFlag = false;
-
-    @Column (name = "DELETED_FLAG")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Deleted_Flag", visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ASST_DLTD_FLG_INDX", columnNames={"DELETED_FLAG"})
-    protected Boolean deletedFlag = false;
-
-    @Column (name = "LOCKED_FLAG")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Is_Locked", visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ASST_LCKD_FLG_INDX", columnNames={"LOCKED_FLAG"})
-    protected Boolean lockedFlag = false;
-
-    @Column (name = "ORIG_ASSET_ID")
-    @AdminPresentation(friendlyName = "StaticAssetImpl_Original_Asset_ID", visibility = VisibilityEnum.HIDDEN_ALL)
-    @Index(name="ORIG_ASSET_ID_INDX", columnNames={"ORIG_ASSET_ID"})
-    protected Long originalAssetId;
-
+    @Override
     public String getFullUrl() {
         return fullUrl;
     }
 
+    @Override
     public void setFullUrl(String fullUrl) {
         this.fullUrl = fullUrl;
     }
 
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
+    public String getAltText() {
+        return altText;
+    }
+
+    @Override
+    public void setAltText(String altText) {
+        this.altText = altText;
+    }
+
+    @Override
     public Long getFileSize() {
         return fileSize;
     }
 
+    @Override
     public void setFileSize(Long fileSize) {
         this.fileSize = fileSize;
     }
 
+    @Override
     public Map<String, StaticAssetDescription> getContentMessageValues() {
         return contentMessageValues;
     }
 
+    @Override
     public void setContentMessageValues(Map<String, StaticAssetDescription> contentMessageValues) {
         this.contentMessageValues = contentMessageValues;
     }
 
-    public Boolean getArchivedFlag() {
-        if (archivedFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return archivedFlag;
-        }
-    }
-
-    public void setArchivedFlag(Boolean archivedFlag) {
-        this.archivedFlag = archivedFlag;
-    }
-
-    public Long getOriginalAssetId() {
-        return originalAssetId;
-    }
-
-    public void setOriginalAssetId(Long originalAssetId) {
-        this.originalAssetId = originalAssetId;
-    }
-
-    public SandBox getSandbox() {
-        return sandbox;
-    }
-
-    public void setSandbox(SandBox sandbox) {
-        this.sandbox = sandbox;
-    }
-
+    @Override
     public String getMimeType() {
         return mimeType;
     }
 
+    @Override
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
 
+    @Override
     public String getFileExtension() {
         return fileExtension;
     }
 
+    @Override
     public void setFileExtension(String fileExtension) {
         this.fileExtension = fileExtension;
     }
 
-    public SandBox getOriginalSandBox() {
-        return originalSandBox;
-    }
-
-    public void setOriginalSandBox(SandBox originalSandBox) {
-        this.originalSandBox = originalSandBox;
-    }
-
+    @Override
     public AdminAuditable getAuditable() {
         return auditable;
     }
 
+    @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }
 
-    public Boolean getDeletedFlag() {
-        return deletedFlag;
-    }
-
-    public void setDeletedFlag(Boolean deletedFlag) {
-        this.deletedFlag = deletedFlag;
-    }
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Boolean getLockedFlag() {
-        return lockedFlag;
-    }
-
-    public void setLockedFlag(Boolean lockedFlag) {
-        this.lockedFlag = lockedFlag;
-    }
-
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    public Site getSite() {
-        return site;
-    }
-
-    public void setSite(Site site) {
-        this.site = site;
+    @Override
+    public StorageType getStorageType() {
+        StorageType st = StorageType.getInstance(storageType);
+        if (st == null) {
+            return StorageType.DATABASE;
+        } else {
+            return st;
+        }
     }
 
     @Override
-    public StaticAsset cloneEntity() {
-        StaticAssetImpl asset = new StaticAssetImpl();
-        asset.name = name;
-        asset.site = site;
-        asset.archivedFlag = archivedFlag;
-        asset.deletedFlag = deletedFlag;
-        asset.fullUrl = fullUrl;
-        asset.fileSize = fileSize;
-        asset.mimeType = mimeType;
-        asset.sandbox = sandbox;
-        asset.originalSandBox = originalSandBox;
-        asset.originalAssetId = originalAssetId;
-        asset.fileExtension = fileExtension;
+    public void setStorageType(StorageType storageType) {
+        this.storageType = storageType.getType();
+    }
 
-        for (String key : contentMessageValues.keySet()) {
-            StaticAssetDescription oldAssetDescription = contentMessageValues.get(key);
-            StaticAssetDescription newAssetDescription = oldAssetDescription.cloneEntity();
-            asset.getContentMessageValues().put(key, newAssetDescription);
+    public static class Presentation {
+
+        public static class Tab {
+
+            public static class Name {
+
+                public static final String File_Details = "StaticAssetImpl_FileDetails_Tab";
+                public static final String Advanced = "StaticAssetImpl_Advanced_Tab";
+            }
+
+            public static class Order {
+
+                public static final int File_Details = 2000;
+                public static final int Advanced = 3000;
+            }
         }
 
-        return asset;
+        public static class FieldOrder {
+
+            // General Fields
+            public static final int NAME = 1000;
+            public static final int URL = 2000;
+            public static final int TITLE = 3000;
+            public static final int ALT_TEXT = 4000;
+
+            public static final int MIME_TYPE = 5000;
+            public static final int FILE_EXTENSION = 6000;
+            public static final int FILE_SIZE = 7000;
+            
+            // Used by subclasses to know where the last field is.
+            public static final int LAST = 7000;
+
+        }
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getName();
     }
 }

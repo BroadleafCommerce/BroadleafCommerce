@@ -1,25 +1,28 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.time;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +34,7 @@ public class MinuteType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, MinuteType> TYPES = new HashMap<String, MinuteType>();
+    private static final Map<String, MinuteType> TYPES = new LinkedHashMap<String, MinuteType>();
 
     public static final MinuteType ZERO  = new MinuteType("0", "00");
     public static final MinuteType ONE  = new MinuteType("1", "01");
@@ -93,7 +96,7 @@ public class MinuteType implements Serializable, BroadleafEnumerationType {
     public static final MinuteType FIFTYSEVEN  = new MinuteType("57", "57");
     public static final MinuteType FIFTYEIGHT  = new MinuteType("58", "58");
     public static final MinuteType FIFTYNINE  = new MinuteType("59", "59");
-
+    
     public static MinuteType getInstance(final String type) {
         return TYPES.get(type);
     }
@@ -141,7 +144,7 @@ public class MinuteType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         MinuteType other = (MinuteType) obj;
         if (type == null) {

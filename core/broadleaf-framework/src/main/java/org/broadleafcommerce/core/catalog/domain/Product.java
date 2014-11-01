@@ -1,26 +1,28 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.core.media.domain.Media;
 
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -294,20 +296,6 @@ public interface Product extends Serializable {
      * @return all of the Media for all of the Skus for this Product
      */
     public Map<String, Media> getAllSkuMedia();
-
-    /**
-     * Returns all parent {@link Category}(s) this product is associated with.
-     *
-     * @return the all parent categories for this product
-     */
-    public List<Category> getAllParentCategories();
-
-    /**
-     * Sets all parent {@link Category}s this product is associated with.
-     *
-     * @param allParentCategories - a List of all parent {@link Category}(s) to associate this product with
-     */
-    public void setAllParentCategories(List<Category> allParentCategories);
      
     /**
      * Returns the default {@link Category} this product is associated with.
@@ -580,16 +568,16 @@ public interface Product extends Serializable {
     /**
      * Generic key-value pair of attributes to associate to this Product for maximum
      * extensibility.
-     * 
+     *
      * @return the attributes for this Product
      */
-    public List<ProductAttribute> getProductAttributes();
+    public Map<String, ProductAttribute> getProductAttributes();
 
     /**
      * Sets a generic list of key-value pairs for Product
      * @param productAttributes
      */
-    public void setProductAttributes(List<ProductAttribute> productAttributes);
+    public void setProductAttributes(Map<String, ProductAttribute> productAttributes);
 
     /**
      * Gets the promotional message for this Product. For instance, this could be a limited-time
@@ -613,18 +601,26 @@ public interface Product extends Serializable {
      * (which could be "small" "medium" "large", "blue", "yellow", "green").  For specific pricing or
      * inventory needs on a per-value basis, multiple Skus can be associated to this Product based
      * off of the {@link ProductOptionValue}s
-     * 
+     *
+     * @deprecated use getProductOptionXrefs instead
      * @return the {@link ProductOption}s for this Product
      * @see Product#getAdditionalSkus(), {@link ProductOption}, {@link ProductOptionValue}
      */
+    @Deprecated
     public List<ProductOption> getProductOptions();
+
+    public List<ProductOptionXref> getProductOptionXrefs();
 
     /**
      * Sets the list of available ProductOptions for this Product
-     * 
+     *
+     * @deprecated use setProductOptionXrefs instead
      * @param productOptions
      */
+    @Deprecated
     public void setProductOptions(List<ProductOption> productOptions);
+
+    public void setProductOptionXrefs(List<ProductOptionXref> productOptions);
 
     /**
      * A product can have a designated URL.   When set, the ProductHandlerMapping will check for this
@@ -679,19 +675,6 @@ public interface Product extends Serializable {
      * Builds the url by combining the url of the default category with the getUrlKey() of this product.
      */
     public String getGeneratedUrl();
-
-    /**
-     * Looks at all ProductAttributes for this product and returns the attribute that matches the given name
-     * 
-     * @param name the name of the attribute
-     * @return the matching ProductAttribute (null if no match)
-     */
-    public ProductAttribute getProductAttributeByName(String name);
-
-    /**
-     * @return a Map of all the product attributes on this product keyed by the attribute name
-     */
-    public Map<String, ProductAttribute> getMappedProductAttributes();
     
     /** 
      * Returns a list of the cross sale products for this product as well
@@ -714,4 +697,37 @@ public interface Product extends Serializable {
      */
     public void clearDynamicPrices();
 
+    public List<CategoryProductXref> getAllParentCategoryXrefs();
+
+    public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories);
+
+    /**
+     * Returns all parent {@link Category}(s) this product is associated with.
+     *
+     * @deprecated Use getAllParentCategoryXrefs() instead.
+     * @return the all parent categories for this product
+     */
+    @Deprecated
+    public List<Category> getAllParentCategories();
+
+    /**
+     * Sets all parent {@link Category}s this product is associated with.
+     *
+     * @deprecated Use setAllParentCategoryXrefs() instead.
+     * @param allParentCategories - a List of all parent {@link Category}(s) to associate this product with
+     */
+    @Deprecated
+    public void setAllParentCategories(List<Category> allParentCategories);
+
+    /**
+     * Returns the tax code of the product. If the tax code is null, then returns the tax code of this products category.
+     * @return taxCode
+     */
+    public String getTaxCode();
+
+    /**
+     * Sets the tax code for this product.
+     * @param taxCode
+     */
+    public void setTaxCode(String taxCode);
 }

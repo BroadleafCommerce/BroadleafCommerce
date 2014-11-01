@@ -1,41 +1,49 @@
-/**
- * Copyright 2012 the original author or authors.
- *
+/*
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 package org.broadleafcommerce.core.inventory.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Enumeration to specify whether inventory should be checked or not.
  * 
  * @author Kelly Tisdell
- *
  */
 public class InventoryType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, InventoryType> TYPES = new HashMap<String, InventoryType>();
-
+    private static final Map<String, InventoryType> TYPES = new LinkedHashMap<String, InventoryType>();
+    
+    @Deprecated
     public static final InventoryType NONE = new InventoryType("NONE", "None");
+    @Deprecated
     public static final InventoryType BASIC = new InventoryType("BASIC", "Basic");
-
+    
+    public static final InventoryType ALWAYS_AVAILABLE  = new InventoryType("ALWAYS_AVAILABLE", "Always Available");
+    public static final InventoryType UNAVAILABLE  = new InventoryType("UNAVAILABLE", "Unavailable");
+    public static final InventoryType CHECK_QUANTITY  = new InventoryType("CHECK_QUANTITY", "Check Quantity");
 
     public static InventoryType getInstance(final String type) {
         return TYPES.get(type);
@@ -53,10 +61,12 @@ public class InventoryType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
         return friendlyType;
     }
@@ -84,7 +94,7 @@ public class InventoryType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         InventoryType other = (InventoryType) obj;
         if (type == null) {

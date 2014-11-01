@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Integration
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.pricing.service;
 
 import org.broadleafcommerce.common.money.Money;
@@ -28,6 +31,8 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -63,12 +68,13 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
 public class PricingTest extends BaseTest {
@@ -212,7 +218,7 @@ public class PricingTest extends BaseTest {
 
         assert order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).equals(new Money(31.80D));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D))); // Shipping is not taxable
+        assert (order.getTotalTax().equals(order.getSubTotal().subtract(order.getOrderAdjustmentsValue()).multiply(0.05D))); // Shipping is not taxable
         //determine the total cost of the fulfillment group fees
         Money fulfillmentGroupFeeTotal = getFulfillmentGroupFeeTotal(order);
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping()).add(fulfillmentGroupFeeTotal).subtract(order.getOrderAdjustmentsValue())));
@@ -286,8 +292,6 @@ public class PricingTest extends BaseTest {
         order.setTotal(total);
 
         DiscreteOrderItem item = new DiscreteOrderItemImpl();
-        item.setPrice(new Money(10D));
-        item.setRetailPrice(new Money(15D));
         Sku sku = new SkuImpl();
         sku.setRetailPrice(new Money(15D));
         sku.setDiscountable(true);
@@ -359,7 +363,12 @@ public class PricingTest extends BaseTest {
         offer.setValue(BigDecimal.valueOf(value));
         offer.setDeliveryType(OfferDeliveryType.CODE);
         offer.setStackable(true);
-        offer.setAppliesToOrderRules(orderRule);
+
+        OfferItemCriteria oic = new OfferItemCriteriaImpl();
+        oic.setQuantity(1);
+        oic.setMatchRule(orderRule);
+        offer.setTargetItemCriteria(Collections.singleton(oic));
+
         offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(true);
         offer = offerService.save(offer);

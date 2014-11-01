@@ -1,37 +1,30 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.rating.service;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.rating.dao.RatingSummaryDao;
 import org.broadleafcommerce.core.rating.dao.ReviewDetailDao;
 import org.broadleafcommerce.core.rating.domain.RatingDetail;
-import org.broadleafcommerce.core.rating.domain.RatingDetailImpl;
 import org.broadleafcommerce.core.rating.domain.RatingSummary;
-import org.broadleafcommerce.core.rating.domain.RatingSummaryImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.domain.ReviewDetailImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
@@ -40,6 +33,14 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 @Service("blRatingService")
 public class RatingServiceImpl implements RatingService {
@@ -50,11 +51,13 @@ public class RatingServiceImpl implements RatingService {
     @Resource(name="blReviewDetailDao")
     protected ReviewDetailDao reviewDetailDao;
 
+    @Override
     @Transactional("blTransactionManager")
     public void deleteRatingSummary(RatingSummary ratingSummary) {
         ratingSummaryDao.deleteRatingSummary(ratingSummary);
     }
 
+    @Override
     @Transactional("blTransactionManager")
     public void markReviewHelpful(Long reviewId, Customer customer, Boolean helpful) {
         ReviewDetail reviewDetail = reviewDetailDao.readReviewDetailById(reviewId);
@@ -70,18 +73,19 @@ public class RatingServiceImpl implements RatingService {
 
     }
 
+    @Override
     @Transactional("blTransactionManager")
     public void rateItem(String itemId, RatingType type, Customer customer, Double rating) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
         if (ratingSummary == null) {
-            ratingSummary = new RatingSummaryImpl(itemId, type);
+            ratingSummary = ratingSummaryDao.createSummary(itemId, type);
         }
 
         RatingDetail ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
 
         if (ratingDetail == null) {
-            ratingDetail = new RatingDetailImpl(ratingSummary, rating, SystemTime.asDate(), customer);
+            ratingDetail = ratingSummaryDao.createDetail(ratingSummary, rating, SystemTime.asDate(), customer);
         }
 
         ratingDetail.setRating(rating);
@@ -90,10 +94,12 @@ public class RatingServiceImpl implements RatingService {
         ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
+    @Override
     public RatingSummary readRatingSummary(String itemId, RatingType type) {
         return ratingSummaryDao.readRatingSummary(itemId, type);
     }
 
+    @Override
     public Map<String, RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type) {
         List<RatingSummary> ratings = ratingSummaryDao.readRatingSummaries(itemIds, type);
         Map<String, RatingSummary> ratingsMap = new HashMap<String, RatingSummary>();
@@ -105,6 +111,7 @@ public class RatingServiceImpl implements RatingService {
         return ratingsMap;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<ReviewDetail> readReviews(String itemId, RatingType type, int start, int finish, RatingSortType sortBy) {
         RatingSummary summary = this.readRatingSummary(itemId, type);
@@ -133,23 +140,25 @@ public class RatingServiceImpl implements RatingService {
         return reviewsToReturn;
     }
 
+    @Override
     @Transactional("blTransactionManager")
     public RatingSummary saveRatingSummary(RatingSummary ratingSummary) {
         return ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
+    @Override
     @Transactional("blTransactionManager")
     public void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
         if (ratingSummary == null) {
-            ratingSummary = new RatingSummaryImpl(itemId, type);
+            ratingSummary = ratingSummaryDao.createSummary(itemId, type);
         }
 
         RatingDetail ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
 
         if (ratingDetail == null) {
-            ratingDetail = new RatingDetailImpl(ratingSummary, rating, SystemTime.asDate(), customer);
+            ratingDetail = ratingSummaryDao.createDetail(ratingSummary, rating, SystemTime.asDate(), customer);
         } else {
             ratingDetail.setRating(rating);         
         }

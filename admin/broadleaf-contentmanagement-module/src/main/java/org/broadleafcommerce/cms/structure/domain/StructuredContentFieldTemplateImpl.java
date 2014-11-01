@@ -1,20 +1,39 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.structure.domain;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OrderColumn;
+import javax.persistence.Table;
 
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
@@ -25,22 +44,8 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderColumn;
-import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.List;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 /**
  * Created by bpolster.
@@ -55,13 +60,20 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "StructuredContentFieldTemplateImpl", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "StructuredContentFieldTemplateImpl", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "StructuredContentFieldTemplateImpl", allocationSize = 10)
+    @GeneratedValue(generator = "StructuredContentFieldTemplateId")
+    @GenericGenerator(
+        name="StructuredContentFieldTemplateId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="StructuredContentFieldTemplateImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplateImpl")
+        }
+    )
     @Column(name = "SC_FLD_TMPLT_ID")
     protected Long id;
 
     @Column (name = "NAME")
-    @AdminPresentation(friendlyName = "StructuredContentFieldTemplateImpl_Field_Template_Name", order=1, group = "StructuredContentFieldTemplateImpl_Details",prominent=true)
+    @AdminPresentation(friendlyName = "StructuredContentFieldTemplateImpl_Field_Template_Name", order = 1, gridOrder = 2, group = "StructuredContentFieldTemplateImpl_Details", prominent = true)
     protected String name;
 
     @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
@@ -70,7 +82,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
     @OrderColumn(name = "GROUP_ORDER")
     @BatchSize(size = 20)
-    protected List<FieldGroup> fieldGroups;
+    protected List<FieldGroup> fieldGroups = new ArrayList<FieldGroup>();
 
     @Override
     public Long getId() {

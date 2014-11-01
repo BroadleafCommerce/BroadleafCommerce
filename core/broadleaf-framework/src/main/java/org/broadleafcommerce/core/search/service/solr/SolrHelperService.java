@@ -1,26 +1,33 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
+
+import java.util.List;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -73,6 +80,15 @@ public interface SolrHelperService {
      * @return the property name for the facet type of this field
      */
     public String getPropertyNameForFieldFacet(Field field, String prefix);
+    
+    /**
+     * Returns the searchable field types for the given field. If there were none configured, will return
+     * a list with TEXT FieldType.
+     * 
+     * @param field
+     * @return the searchable field types for the given field
+     */
+    public List<FieldType> getSearchableFieldTypes(Field field);
 
     /**
      * Returns the property name for the given field and field type. This will apply the global prefix to the field,
@@ -94,6 +110,12 @@ public interface SolrHelperService {
      * @return the property name for the facet type of this field
      */
     public String getPropertyNameForFieldFacet(Field field);
+    
+    /**
+     * @param product
+     * @return the Solr id of this product
+     */
+    public String getSolrDocumentId(SolrInputDocument document, Product product);
 
     /**
      * @return the name of the field that keeps track what namespace this document belongs to
@@ -104,6 +126,11 @@ public interface SolrHelperService {
      * @return the id field name, with the global prefix as appropriate
      */
     public String getIdFieldName();
+    
+    /**
+     * @return the productId field name
+     */
+    public String getProductIdFieldName();
 
     /**
      * @return the category field name, with the global prefix as appropriate
@@ -116,21 +143,16 @@ public interface SolrHelperService {
     public String getExplicitCategoryFieldName();
 
     /**
-     * @param prefix
-     * @return the searchable field name, with the global and specific prefix as appropriate
-     */
-    public String getSearchableFieldName(String prefix);
-
-    /**
-     * @return the searchable field name, with the global and locale prefixes as appropriate
-     */
-    public String getSearchableFieldName();
-
-    /**
      * @param category
      * @return the default sort field name for this category
      */
     public String getCategorySortFieldName(Category category);
+
+    /**
+     * @param categoryId
+     * @return the default sort field name for this category
+     */
+    public String getCategorySortFieldName(Long categoryId);
 
     /**
      * Determines if there is a locale prefix that needs to be applied to the given field for this particular request.
@@ -159,5 +181,23 @@ public interface SolrHelperService {
      * @return the default locale
      */
     public Locale getDefaultLocale();
+
+    /**
+     * In certain cases, the category id used for Solr indexing is different than the direct id on the product.
+     * This method provides a hook to substitute the category id if necessary.
+     * 
+     * @param tentativeCategoryId
+     * @return the category id to use
+     */
+    public Long getCategoryId(Long tentativeCategoryId);
+
+    /**
+     * In certain cases, the product id used for Solr indexing is different than the direct id on the product.
+     * This method provides a hook to substitute the product id if necessary.
+     * 
+     * @param tentativeCategoryId
+     * @return the category id to use
+     */
+    public Long getProductId(Long tentativeProductId);
 
 }

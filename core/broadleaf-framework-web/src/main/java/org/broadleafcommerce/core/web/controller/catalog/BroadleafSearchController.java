@@ -1,25 +1,29 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
 import org.broadleafcommerce.core.search.domain.ProductSearchResult;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
@@ -30,18 +34,19 @@ import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.springframework.ui.Model;
 
-import javax.annotation.Resource;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Handles searching the catalog for a given search term. Will apply product search criteria
@@ -53,14 +58,14 @@ public class BroadleafSearchController extends AbstractCatalogController {
 
     @Resource(name = "blSearchService")
     protected SearchService searchService;
-    
+
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
     
     @Resource(name = "blSearchFacetDTOService")
     protected SearchFacetDTOService facetService;
     @Resource(name = "blSearchRedirectService")
-    private SearchRedirectService searchRedirectService;
+    protected SearchRedirectService searchRedirectService;
     protected static String searchView = "catalog/search";
     
     protected static String PRODUCTS_ATTRIBUTE_NAME = "products";  
@@ -68,6 +73,7 @@ public class BroadleafSearchController extends AbstractCatalogController {
     protected static String PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME = "result";  
     protected static String ACTIVE_FACETS_ATTRIBUTE_NAME = "activeFacets";  
     protected static String ORIGINAL_QUERY_ATTRIBUTE_NAME = "originalQuery";  
+    protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
 
     public String search(Model model, HttpServletRequest request, HttpServletResponse response,String query) throws ServletException, IOException, ServiceException {
         try {
@@ -120,9 +126,9 @@ public class BroadleafSearchController extends AbstractCatalogController {
             }
 
             if (StringUtils.isNotEmpty(query)) {
-                List<SearchFacetDTO> availableFacets = searchService.getSearchFacets();
+                List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
                 ProductSearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
-                ProductSearchResult result = searchService.findProductsByQuery(query, searchCriteria);
+                ProductSearchResult result = getSearchService().findProductsByQuery(query, searchCriteria);
                 
                 facetService.setActiveFacetResults(result.getFacets(), request);
                 
@@ -130,6 +136,9 @@ public class BroadleafSearchController extends AbstractCatalogController {
                 model.addAttribute(FACETS_ATTRIBUTE_NAME, result.getFacets());
                 model.addAttribute(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME, result);
                 model.addAttribute(ORIGINAL_QUERY_ATTRIBUTE_NAME, query);
+                if (result.getProducts() != null) {
+                    model.addAttribute(ALL_PRODUCTS_ATTRIBUTE_NAME, new HashSet<Product>(result.getProducts()));
+                }
             }
             
         }
@@ -139,6 +148,10 @@ public class BroadleafSearchController extends AbstractCatalogController {
     public String getSearchView() {
         return searchView;
     }
-    
+
+    protected SearchService getSearchService() {
+        return searchService;
+    }
+
 }
 

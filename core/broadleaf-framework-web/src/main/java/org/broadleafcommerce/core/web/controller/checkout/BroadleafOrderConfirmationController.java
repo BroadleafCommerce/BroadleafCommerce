@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -32,6 +35,9 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
     @Resource(name = "blOrderService")
     protected OrderService orderService;
     
+    @Resource(name = "blConfirmationControllerExtensionManager")
+    protected ConfirmationControllerExtensionManager extensionManager;
+    
     protected static String orderConfirmationView = "checkout/confirmation";
 
     public String displayOrderConfirmationByOrderNumber(String orderNumber, Model model,
@@ -40,6 +46,8 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
         if (customer != null) {
             Order order = orderService.findOrderByOrderNumber(orderNumber);
             if (order != null && customer.equals(order.getCustomer())) {
+                extensionManager.getProxy().processAdditionalConfirmationActions(order);
+
                 model.addAttribute("order", order);
                 return getOrderConfirmationView();
             }
@@ -54,6 +62,8 @@ public class BroadleafOrderConfirmationController extends BroadleafAbstractContr
         if (customer != null) {
             Order order = orderService.findOrderById(orderId);
             if (order != null && customer.equals(order.getCustomer())) {
+                extensionManager.getProxy().processAdditionalConfirmationActions(order);
+
                 model.addAttribute("order", order);
                 return getOrderConfirmationView();
             }

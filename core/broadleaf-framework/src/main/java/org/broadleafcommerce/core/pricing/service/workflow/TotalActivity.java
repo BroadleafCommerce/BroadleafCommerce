@@ -1,19 +1,22 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.pricing.service.workflow;
 
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -36,11 +39,11 @@ import java.math.BigDecimal;
  * @author aazzolini
  *
  */
-public class TotalActivity extends BaseActivity {
+public class TotalActivity extends BaseActivity<ProcessContext<Order>> {
 
     @Override
-    public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((PricingContext) context).getSeedData();
+    public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
+        Order order = context.getSeedData();
         
         setTaxSums(order);
         
@@ -76,6 +79,39 @@ public class TotalActivity extends BaseActivity {
     }
     
     protected void setTaxSums(Order order) {
+        if (order.getTaxOverride()) {
+            Money zeroMoney = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
+
+            for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+                if (fg.getTaxes() != null) {
+                    fg.getTaxes().clear();
+                }
+                fg.setTotalTax(zeroMoney);
+                
+                for (FulfillmentGroupItem fgi : fg.getFulfillmentGroupItems()) {
+                    if (fgi.getTaxes() != null) {
+                        fgi.getTaxes().clear();
+                    }
+                    fgi.setTotalTax(zeroMoney);
+                }
+                
+                for (FulfillmentGroupFee fee : fg.getFulfillmentGroupFees()) {
+                    if (fee.getTaxes() != null) {
+                        fee.getTaxes().clear();
+                    }
+                    fee.setTotalTax(zeroMoney);
+                }
+
+                fg.setTotalFulfillmentGroupTax(zeroMoney);
+                fg.setTotalItemTax(zeroMoney);
+                fg.setTotalFeeTax(zeroMoney);
+            }
+
+            order.setTotalTax(zeroMoney);
+
+            return;
+        }
+
         Money orderTotalTax = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, order.getCurrency());
         
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {

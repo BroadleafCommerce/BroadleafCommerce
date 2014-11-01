@@ -1,66 +1,92 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.enumeration.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_DATA_DRVN_ENUM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "DataDrivenEnumerationImpl_friendyName")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
 public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "DataDrivenEnumerationId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "DataDrivenEnumerationId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "DataDrivenEnumerationId", allocationSize = 50)
+    @GeneratedValue(generator = "DataDrivenEnumerationId")
+    @GenericGenerator(
+        name="DataDrivenEnumerationId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="DataDrivenEnumerationImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl")
+        }
+    )
     @Column(name = "ENUM_ID")
     protected Long id;
     
     @Column(name = "ENUM_KEY")
     @Index(name = "ENUM_KEY_INDEX", columnNames = {"KEY"})
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Key", order = 1, gridOrder = 1, prominent = true)
     protected String key;
     
     @Column(name = "MODIFIABLE")
-    protected Boolean modifiable;
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Modifiable", order = 2, gridOrder = 2, prominent = true)
+    protected Boolean modifiable = false;
 
     @OneToMany(mappedBy = "type", targetEntity = DataDrivenEnumerationValueImpl.class, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    protected List<DataDrivenEnumerationValue> orderItems = new ArrayList<DataDrivenEnumerationValue>();
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "DataDrivenEnumerationImpl_Enum_Values", order = 3)
+    @ClonePolicyCollection
+    protected List<DataDrivenEnumerationValue> enumValues = new ArrayList<DataDrivenEnumerationValue>();
     
     @Override
     public Long getId() {
@@ -84,7 +110,11 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
 
     @Override
     public Boolean getModifiable() {
-        return modifiable;
+        if (modifiable == null) {
+            return Boolean.FALSE;
+        } else {
+            return modifiable;
+        }
     }
 
     @Override
@@ -93,12 +123,24 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     }
 
     @Override
-    public List<DataDrivenEnumerationValue> getOrderItems() {
-        return orderItems;
+    public List<DataDrivenEnumerationValue> getEnumValues() {
+        return enumValues;
     }
 
     @Override
+    public void setEnumValues(List<DataDrivenEnumerationValue> enumValues) {
+        this.enumValues = enumValues;
+    }
+
+    @Override
+    @Deprecated
+    public List<DataDrivenEnumerationValue> getOrderItems() {
+        return enumValues;
+    }
+
+    @Override
+    @Deprecated
     public void setOrderItems(List<DataDrivenEnumerationValue> orderItems) {
-        this.orderItems = orderItems;
+        this.enumValues = orderItems;
     }
 }

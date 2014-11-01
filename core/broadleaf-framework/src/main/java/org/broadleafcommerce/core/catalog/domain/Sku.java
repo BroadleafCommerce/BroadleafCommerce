@@ -1,34 +1,42 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
+import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
-import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as
@@ -82,11 +90,20 @@ public interface Sku extends Serializable {
     public void setSalePrice(Money salePrice);
 
     /**
+     * Determines if there is a sale price.  In other words, determines whether salePrice is null. Returns true if 
+     * salePrice is not null.  Returns false otherwise.
+     * @return
+     */
+    public boolean hasSalePrice();
+
+    /**
      * Returns the Retail Price of the Sku.  The Retail Price is the MSRP of the sku. If {@link SkuPricingConsiderationContext}
      * is set, this uses the DynamicSkuPricingService to calculate what this should actually be rather than use the property
-     * itself
+     * itself.
      * 
-     * @see SkuPricingConsiderationContext, DynamicSkuPricingService
+     * @throws IllegalStateException if retail price is null. 
+     * 
+     * @see SkuPricingConsiderationContext, DynamicSkuPricingService, Sku.hasRetailPrice()
      */
     public Money getRetailPrice();
 
@@ -97,6 +114,22 @@ public interface Sku extends Serializable {
      * @param retail price for the Sku
      */
     public void setRetailPrice(Money retailPrice);
+
+    /**
+     * Provides a way of determining if a Sku has a retail price without getting an IllegalStateException. Returns true if 
+     * retailPrice is not null.  Returns false otherwise.
+     * @see Sku.getRetailPrice()
+     * @return
+     */
+    public boolean hasRetailPrice();
+
+    /**
+     * Resolves the price of the Sku. If the Sku is on sale (that is, isOnSale() returns true), the
+     * return value will be the result of getSalePrice(). Otherwise, the return value will be the result of
+     * getRetailPrice().
+     * @return the price of the Sku
+     */
+    public Money getPrice();
 
     /**
      * Returns the List Price of the Sku.  The List Price is the MSRP of the sku.
@@ -172,18 +205,34 @@ public interface Sku extends Serializable {
     public void setDiscountable(Boolean discountable);
 
     /**
-     * Returns whether the Sku is available.
+     * <p>Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
+     * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
+     * it. This defaults to true</p>
+     * 
+     * <p>This method only checks that this Sku is not marked as {@link InventoryType#UNAVAILABLE}. If {@link #getInventoryType()}
+     * is set to {@link InventoryType#CHECK_QUANTITY} then this will return true.</p>
+     * 
+     * @deprecated use {@link #getInventoryType()} or {@link InventoryService#isAvailable(Sku, int)} instead.
      */
+    @Deprecated
     public Boolean isAvailable();
 
     /**
      * Convenience that passes through to isAvailable
+     * @see {@link #isAvailable()}
+     * @deprecated use {@link #getInventoryType()} instead
      */
+    @Deprecated
     public Boolean getAvailable();
     
     /**
-     * Sets the whether the Sku is available.
+     * Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
+     * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
+     * it. This defaults to true
+     * 
+     * @deprecated use {@link #setInventoryType(InventoryType)} instead
      */
+    @Deprecated
     public void setAvailable(Boolean available);
 
     /**
@@ -270,17 +319,17 @@ public interface Sku extends Serializable {
      * Denormalized set of key-value pairs to attach to a Sku. If you are looking for setting up
      * a {@link ProductOption} scenario (like colors, sizes, etc) see {@link getProductOptionValues()}
      * and {@link setProductOptionValues()}
-     * 
+     *
      * @return the attributes for this Sku
      */
-    public List<SkuAttribute> getSkuAttributes();
+    public Map<String, SkuAttribute> getSkuAttributes();
 
     /**
      * Sets the denormalized set of key-value pairs on a Sku
-     * 
+     *
      * @param skuAttributes
      */
-    public void setSkuAttributes(List<SkuAttribute> skuAttributes);
+    public void setSkuAttributes(Map<String, SkuAttribute> skuAttributes);
 
     /**
      * Gets the ProductOptionValues used to map to this Sku. For instance, this Sku could hold specific
@@ -288,7 +337,9 @@ public interface Sku extends Serializable {
      * 
      * @return the ProductOptionValues for this Sku
      * @see {@link ProductOptionValue}, {@link ProductOption}
+     * @deprecated use {@link #getProductOptionValuesCollection()} instead
      */
+    @Deprecated
     public List<ProductOptionValue> getProductOptionValues();
 
     /**
@@ -296,8 +347,27 @@ public interface Sku extends Serializable {
      * 
      * @param productOptionValues
      * @see {@link ProductOptionValue}, {@link ProductOption}
+     * @deprecated use {@link #setProductOptionValuesCollection(java.util.Set)} instead
      */
+    @Deprecated
     public void setProductOptionValues(List<ProductOptionValue> productOptionValues);
+
+    /**
+     * Gets the ProductOptionValues used to map to this Sku. For instance, this Sku could hold specific
+     * inventory, price and image information for a "Blue" "Extra-Large" shirt
+     *
+     * @return the ProductOptionValues for this Sku
+     * @see {@link ProductOptionValue}, {@link ProductOption}
+     */
+    Set<ProductOptionValue> getProductOptionValuesCollection();
+
+    /**
+     * Sets the ProductOptionValues that should be mapped to this Sku
+     *
+     * @param productOptionValues
+     * @see {@link ProductOptionValue}, {@link ProductOption}
+     */
+    void setProductOptionValuesCollection(Set<ProductOptionValue> productOptionValues);
 
     /**
      * This will be a value if and only if this Sku is the defaultSku of a Product (and thus has a @OneToOne relationship with a Product).
@@ -350,7 +420,10 @@ public interface Sku extends Serializable {
     public void setProduct(Product product);
 
     /**
-     * A product is on sale provided the sale price is not null, non-zero, and less than the retail price
+     * A product is on sale provided the sale price is not null, non-zero, and less than the retail price.
+     * 
+     * Note that this flag should always be checked before showing or using a sale price as it is possible 
+     * for a sale price to be greater than the retail price from a purely data perspective.
      * 
      * @return whether or not the product is on sale
      */
@@ -360,16 +433,32 @@ public interface Sku extends Serializable {
      * Whether this Sku can be sorted by a machine
      * 
      * @return <b>true</b> if this Sku can be sorted by a machine
+     * @deprecated use {@link #getIsMachineSortable()} instead since that is the correct bean notation
      */
+    @Deprecated
     public Boolean isMachineSortable();
+
+    /**
+     * Whether this Sku can be sorted by a machine
+     * 
+     */
+    public Boolean getIsMachineSortable();
 
     /**
      * Sets whether or not this Sku can be sorted by a machine
      * 
      * @param isMachineSortable
+     * @deprecated use {@link #setIsMachineSortable(Boolean)} instead since that is the correct bean notation
      */
+    @Deprecated
     public void setMachineSortable(Boolean isMachineSortable);
     
+    /**
+     * Sets whether or not this Sku can be sorted by a machine
+     * @param isMachineSortable
+     */
+    public void setIsMachineSortable(Boolean isMachineSortable);
+
     /**
      * Gets all the extra fees for this particular Sku. If the fee type is FULFILLMENT, these are stored
      * on {@link FulfillmentGroup#getFulfillmentGroupFees()} for an Order
@@ -419,18 +508,6 @@ public interface Sku extends Serializable {
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
 
     /**
-     * Convenience method to return a given sku attribute by its name
-     * @param name
-     * @return the SkuAttribute
-     */
-    public SkuAttribute getSkuAttributeByName(String name);
-
-    /**
-     * @return a Map of all the sku attributes on this sku keyed by the attribute name
-     */
-    public Map<String, SkuAttribute> getMappedSkuAttributes();
-
-    /**
      * Returns the type of inventory for this sku
      * @return the {@link org.broadleafcommerce.core.inventory.service.type.InventoryType} for this sku
      */
@@ -441,6 +518,29 @@ public interface Sku extends Serializable {
      * @param inventoryType the {@link InventoryType} for this sku
      */
     public void setInventoryType(InventoryType inventoryType);
+    
+    /**
+     * <p>Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
+     * This field is checked within the {@link CheckAvailabilityActivity} to determine if inventory is actually available
+     * for this Sku.</p>
+     * 
+     * <p>In order to enable this feature in a Broadleaf 3.1.1+ installation, you must hook up the {@link QuantityAvailableSkuTemplate}
+     * to dynamically weave in the quantityAvailable field or override this method in a subclass. This is enabled out of the
+     * box in Broadleaf 3.2+</p>
+     */
+    public Integer getQuantityAvailable();
+    
+    /**
+     * <p>Used in conjunction with {@link InventoryType#CHECK_QUANTITY} from {@link #getInventoryType()}. This sets how much
+     * inventory is available for this Sku.</p>
+     * 
+     * <p>In order to enable this feature in a Broadleaf 3.1.1+ installation, you must hook up the {@link QuantityAvailableSkuTemplate}
+     * to dynamically weave in the quantityAvailable field or override this method in a subclass. This is enabled out of the
+     * box in Broadleaf 3.2+</p>
+     * 
+     * @param quantityAvailable the quantity available for this sku 
+     */
+    public void setQuantityAvailable(Integer quantityAvailable);
     
     /**
      * Returns the fulfillment type for this sku. May be null.
@@ -458,5 +558,40 @@ public interface Sku extends Serializable {
      * Clears any currently stored dynamic pricing
      */
     public void clearDynamicPrices();
+
+    /**
+     * Sets the currency for this Sku
+     * 
+     * Note: Currency is ignored when using dynamic pricing
+     * 
+     * @param currency
+     */
+    public void setCurrency(BroadleafCurrency currency);
+
+    /**
+     * Returns the currency for this sku if there is one set. If there is not, it will return the currency for the
+     * default sku if this is not the default sku. Note that it is possible for this method to return null.
+     * 
+     * <b>Note: When using dynamic pricing, this method is unreliable and should not be called outside of the 
+     * Broadleaf admin</b>
+     * 
+     * @return the currency for this sku
+     */
+    public BroadleafCurrency getCurrency();
+
+    /**
+     * Returns the Tax Code for this particular Entity.
+     * 
+     *  If the current Tax Code on the Sku is null, the Product tax code will be returned.
+     * @return taxCode
+     */
+    public String getTaxCode();
+
+    /**
+     * Sets the tax code for this SKU
+     * 
+     * @param taxCode
+     */
+    public void setTaxCode(String taxCode);
 
 }

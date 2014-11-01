@@ -1,29 +1,35 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 package org.broadleafcommerce.common.web.security;
 
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafControllerUtility;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
 
 /** 
  * If the incoming request is an ajax request, the system will add the desired redirect path to the session and
@@ -43,7 +49,9 @@ public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectS
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
         if (BroadleafControllerUtility.isAjaxRequest(request)) {
-            request.getSession().setAttribute("BLC_REDIRECT_URL", url);
+            if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+                request.getSession().setAttribute("BLC_REDIRECT_URL", url);
+            }
             url = getRedirectPath();
         }
         redirectStrategy.sendRedirect(request, response, url);

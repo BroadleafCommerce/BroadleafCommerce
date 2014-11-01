@@ -1,29 +1,32 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
-import java.io.Serializable;
+import org.broadleafcommerce.common.value.Searchable;
 
 
 /**
  * 
  * @author Phillip Verheyden
  */
-public interface CategoryAttribute extends Serializable {
+public interface CategoryAttribute extends Searchable<String> {
 
     /**
      * Gets the id.
@@ -52,22 +55,6 @@ public interface CategoryAttribute extends Serializable {
      * @param value the new value
      */
     public void setValue(String value);
-
-    /**
-     * Gets the searchable.
-     * 
-     * @deprecated in favor of Field configuration since 2.0
-     * @return the searchable
-     */
-    public Boolean getSearchable();
-
-    /**
-     * Sets the searchable.
-     * 
-     * @deprecated in favor of Field configuration since 2.0
-     * @param searchable the new searchable
-     */
-    public void setSearchable(Boolean searchable);
 
     /**
      * Gets the {@link Category}.

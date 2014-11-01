@@ -1,33 +1,49 @@
 /*
- * Copyright 2008-2009 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.common.email.domain.EmailTrackingImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  *
@@ -44,8 +60,15 @@ public class AdminSectionImpl implements AdminSection {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "AdminSectionId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "AdminSectionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminSectionImpl", allocationSize = 50)
+    @GeneratedValue(generator = "AdminSectionId")
+    @GenericGenerator(
+        name="AdminSectionId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="AdminSectionImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl")
+        }
+    )
     @Column(name = "ADMIN_SECTION_ID")
     @AdminPresentation(friendlyName = "AdminSectionImpl_Admin_Section_ID", group = "AdminSectionImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
@@ -74,13 +97,32 @@ public class AdminSectionImpl implements AdminSection {
     @BatchSize(size = 50)
     protected List<AdminPermission> permissions = new ArrayList<AdminPermission>();
 
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
     @Column(name = "DISPLAY_CONTROLLER", nullable=true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Controller", order=4, group = "AdminSectionImpl_Section")
     protected String displayController;
 
-    @Column(name = "USE_DEFAULT_HANDLER", nullable=false)
+    /**
+     * No longer needed after GWT removal
+     * @param displayController
+     */
+    @Deprecated
+    @Column(name = "USE_DEFAULT_HANDLER", nullable = true)
     @AdminPresentation(friendlyName = "AdminSectionImpl_Use_Default_Handler", order=5, group = "AdminSectionImpl_Section")
     protected Boolean useDefaultHandler = Boolean.TRUE;
+
+    @Column(name = "CEILING_ENTITY", nullable = true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Ceiling_Entity", order = 6, group = "AdminSectionImpl_Section")
+    protected String ceilingEntity;
+
+    @Column(name = "DISPLAY_ORDER", nullable = true)
+    @AdminPresentation(friendlyName = "AdminSectionImpl_Display_Order", order = 7, group = "AdminSectionImpl_Section",
+            prominent = true)
+    protected Integer displayOrder;
 
     @Override
     public Long getId() {
@@ -141,23 +183,47 @@ public class AdminSectionImpl implements AdminSection {
         this.permissions = permissions;
     }
 
+    @Deprecated
     @Override
     public String getDisplayController() {
         return displayController;
     }
 
+    @Deprecated
     @Override
     public void setDisplayController(String displayController) {
         this.displayController = displayController;
     }
 
+    @Deprecated
     @Override
     public Boolean getUseDefaultHandler() {
         return useDefaultHandler;
     }
 
+    @Deprecated
     @Override
     public void setUseDefaultHandler(Boolean useDefaultHandler) {
         this.useDefaultHandler = useDefaultHandler;
+    }
+
+    @Override
+    public String getCeilingEntity() {
+        return ceilingEntity;
+    }
+
+    @Override
+    public void setCeilingEntity(String ceilingEntity) {
+        this.ceilingEntity = ceilingEntity;
+    }
+
+    @Override
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    @Override
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }

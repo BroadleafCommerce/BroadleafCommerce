@@ -1,0 +1,34 @@
+<!-- <div th:if="${!listGrid.sortable}" th:remove="tag" >
+    <li>
+        <div class="sort-fields">
+            <button class="listgrid-sort tiny radius dark button down" th:text="#{Sort_AZ}" />
+            <button class="listgrid-sort tiny radius dark button up" th:text="#{Sort_ZA}" />
+            <button class="listgrid-clear-sort tiny radius dark button" disabled="disabled" th:inline="text">
+                <i class="icon-remove"></i>[[#{Sort_Clear}]]
+            </button>
+        </div>
+    </li>
+    <li class="divider"></li>
+</div> -->
+<li>
+    <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
+        <input type="hidden" class="sort-property" data-name="sortProperty" th:value="${fieldName}" />
+        <input type="hidden" class="sort-direction" data-name="sortDirection" />
+
+        <div class="listgrid-criteria" th:attr="data-field-index=${index}">
+            <div class="listgrid-criteria-container">
+                <div th:remove="element"
+                th:substituteby="${'fields/filter/' + #strings.toLowerCase(fieldType)}" />
+            </div>
+        </div>
+        
+        <div th:style="${#strings.toLowerCase(fieldType) == 'additional_foreign_key'} ? 'display: none;'">
+            <button class="listgrid-filter tiny radius dark button" th:inline="text">
+                <i class="icon-search"></i>[[#{Filter}]]
+            </button>
+            <button class="listgrid-clear-filter tiny radius dark button" disabled="disabled" th:inline="text">
+                <i class="icon-remove"></i>[[#{Filter_Clear}]]
+            </button>
+        </div>
+    </div>
+</li>

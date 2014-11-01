@@ -1,26 +1,29 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,7 +35,7 @@ public class RelatedProductTypeEnum implements Serializable, BroadleafEnumeratio
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, RelatedProductTypeEnum> TYPES = new HashMap<String, RelatedProductTypeEnum>();
+    private static final Map<String, RelatedProductTypeEnum> TYPES = new LinkedHashMap<String, RelatedProductTypeEnum>();
 
     public static final RelatedProductTypeEnum FEATURED = new RelatedProductTypeEnum("FEATURED", "Featured");
     public static final RelatedProductTypeEnum UP_SALE = new RelatedProductTypeEnum("UP_SALE", "Up sale");
@@ -86,7 +89,7 @@ public class RelatedProductTypeEnum implements Serializable, BroadleafEnumeratio
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         RelatedProductTypeEnum other = (RelatedProductTypeEnum) obj;
         if (type == null) {

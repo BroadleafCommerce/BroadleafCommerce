@@ -1,22 +1,32 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -27,6 +37,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.springframework.util.ClassUtils;
+
+import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,13 +53,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import java.lang.reflect.Proxy;
-import java.math.BigDecimal;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_BUNDLE_ITEM")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE)
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+})
 public class SkuBundleItemImpl implements SkuBundleItem {
 
     private static final long serialVersionUID = 1L;
@@ -53,23 +69,27 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     /** The id. */
     @Id
     @GeneratedValue(generator = "SkuBundleItemId")
-    @GenericGenerator(name = "SkuBundleItemId", strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator", parameters = {
-          @Parameter(name = "table_name", value = "SEQUENCE_GENERATOR"),
-          @Parameter(name = "segment_column_name", value = "ID_NAME"),
-          @Parameter(name = "value_column_name", value = "ID_VAL"),
-          @Parameter(name = "segment_value", value = "SkuBundleItemImpl"),
-          @Parameter(name = "increment_size", value = "50"),
-          @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl") })
+    @GenericGenerator(
+        name="SkuBundleItemId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name = "segment_value", value = "SkuBundleItemImpl"),
+            @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl")
+        }
+    )
     @Column(name = "SKU_BUNDLE_ITEM_ID")
     @AdminPresentation(friendlyName = "SkuBundleItemImpl_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "bundleItemQuantity", requiredOverride=RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "bundleItemQuantity", prominent = true,
+        requiredOverride = RequiredOverride.REQUIRED)
     protected Integer quantity;
 
     @Column(name = "ITEM_SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "bundleItemSalePrice", tooltip="bundleItemSalePriceTooltip", fieldType = SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName = "bundleItemSalePrice", prominent = true,
+        tooltip="bundleItemSalePriceTooltip", 
+        fieldType = SupportedFieldType.MONEY)
     protected BigDecimal itemSalePrice;
 
     @ManyToOne(targetEntity = ProductBundleImpl.class, optional = false)
@@ -78,7 +98,10 @@ public class SkuBundleItemImpl implements SkuBundleItem {
 
     @ManyToOne(targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID")
-    private Sku sku;
+    @AdminPresentation(friendlyName = "Sku", prominent = true, 
+        order = 0, gridOrder = 0)
+    @AdminPresentationToOneLookup()
+    protected Sku sku;
 
     @Transient
     protected DynamicSkuPrices dynamicPrices = null;
@@ -110,9 +133,8 @@ public class SkuBundleItemImpl implements SkuBundleItem {
             if (dynamicPrices != null) {
                 returnPrice = dynamicPrices.getSalePrice();
             } else {
-                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku);
-                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), getClass().getInterfaces(), handler);
-                
+                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(sku, salePrice);
+                Sku proxy = (Sku) Proxy.newProxyInstance(sku.getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(sku.getClass()), handler);
                 dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
                 returnPrice = dynamicPrices.getSalePrice();
             }
@@ -134,6 +156,7 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     }
 
 
+    @Override
     public Money getSalePrice() {
         if (itemSalePrice == null) {
             return sku.getSalePrice();

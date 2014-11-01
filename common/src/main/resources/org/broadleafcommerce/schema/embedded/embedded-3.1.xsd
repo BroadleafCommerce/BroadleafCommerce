@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns="http://schema.broadleafcommerce.org/embedded"
+            targetNamespace="http://schema.broadleafcommerce.org/embedded"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="location">
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="mergeImport">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="location" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

@@ -1,29 +1,30 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.presentation.client;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * 
  * @author jfischer
  *
  */
-public enum SupportedFieldType implements IsSerializable {
+public enum SupportedFieldType {
     UNKNOWN,
     ID,
     BOOLEAN,
@@ -32,6 +33,7 @@ public enum SupportedFieldType implements IsSerializable {
     DECIMAL,
     STRING,
     PASSWORD,
+    PASSWORD_CONFIRM,
     EMAIL,
     FOREIGN_KEY,
     ADDITIONAL_FOREIGN_KEY,
@@ -44,6 +46,13 @@ public enum SupportedFieldType implements IsSerializable {
     HTML_BASIC,
     UPLOAD,
     HIDDEN,
-    ASSET,
-    ASSET_URL
+    ASSET_URL,
+    ASSET_LOOKUP,
+    MEDIA,
+    RULE_SIMPLE,
+    RULE_WITH_QUANTITY,
+    STRING_LIST,
+    IMAGE,
+    COLOR,
+    CODE
 }

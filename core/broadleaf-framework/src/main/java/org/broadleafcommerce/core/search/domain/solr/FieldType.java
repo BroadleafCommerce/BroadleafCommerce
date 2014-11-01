@@ -1,25 +1,28 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.search.domain.solr;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +34,7 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, FieldType> TYPES = new HashMap<String, FieldType>();
+    private static final Map<String, FieldType> TYPES = new LinkedHashMap<String, FieldType>();
 
     public static final FieldType ID = new FieldType("id", "ID");
     public static final FieldType CATEGORY = new FieldType("category", "Category");
@@ -51,10 +54,10 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
     public static final FieldType PRICE = new FieldType("p", "Price");
     public static final FieldType DATE = new FieldType("dt", "Date");
     public static final FieldType DATES = new FieldType("dts", "Date (Multi)");
-    public static final FieldType TRIEINT = new FieldType("tint", "Trie Integer");
-    public static final FieldType TRIELONG = new FieldType("tlong", "Trie Long");
-    public static final FieldType TRIEDOUBLE = new FieldType("tdouble", "Trie Double");
-    public static final FieldType TRIEDATE = new FieldType("tdate", "Trie Date");
+    public static final FieldType TRIEINT = new FieldType("ti", "Trie Integer");
+    public static final FieldType TRIELONG = new FieldType("tl", "Trie Long");
+    public static final FieldType TRIEDOUBLE = new FieldType("td", "Trie Double");
+    public static final FieldType TRIEDATE = new FieldType("tdt", "Trie Date");
 
     public static FieldType getInstance(final String type) {
         return TYPES.get(type);
@@ -72,10 +75,12 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    @Override
     public String getType() {
         return type;
     }
 
+    @Override
     public String getFriendlyType() {
         return friendlyType;
     }
@@ -101,7 +106,7 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         FieldType other = (FieldType) obj;
         if (type == null) {

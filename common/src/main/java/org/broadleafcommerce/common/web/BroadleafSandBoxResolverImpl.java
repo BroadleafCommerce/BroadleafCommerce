@@ -1,20 +1,40 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.common.web;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.crossapp.service.CrossAppAuthService;
+import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.time.FixedTimeSource;
+import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,18 +43,6 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
-import org.broadleafcommerce.common.site.domain.Site;
-import org.broadleafcommerce.common.time.FixedTimeSource;
-import org.broadleafcommerce.common.time.SystemTime;
-import org.springframework.stereotype.Component;
 
 /**
  * Responsible for determining the SandBox to use for the current request. 
@@ -57,7 +65,6 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     protected Boolean sandBoxPreviewEnabled = true;
     
     // Request Parameters and Attributes for Sandbox Mode properties - mostly values to manage dates.
-    private static String SANDBOX_ID_VAR = "blSandboxId";
     private static String SANDBOX_DATE_TIME_VAR = "blSandboxDateTime";
     private static final SimpleDateFormat CONTENT_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmm");
     private static final SimpleDateFormat CONTENT_DATE_DISPLAY_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
@@ -75,9 +82,13 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * Request attribute to store the current sandbox
      */
     public static String SANDBOX_VAR = "blSandbox";
-    
+
     @Resource(name = "blSandBoxDao")
     private SandBoxDao sandBoxDao;
+
+    @Autowired(required = false)
+    @Qualifier("blCrossAppAuthService")
+    protected CrossAppAuthService crossAppAuthService;
     
     /**
      * Determines the current sandbox based on other parameters on the request such as
@@ -87,36 +98,62 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * SandBox. 
      * 
      */
+    @Override
     public SandBox resolveSandBox(HttpServletRequest request, Site site) {
+        return resolveSandBox(new ServletWebRequest(request), site);
+    }
+    
+    @Override
+    public SandBox resolveSandBox(WebRequest request, Site site) {
+        Long previousSandBoxId = null;
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            previousSandBoxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
         SandBox currentSandbox = null;
         if (!sandBoxPreviewEnabled) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Sandbox preview disabled. Setting sandbox to production");
             }
-            request.setAttribute(SANDBOX_VAR, currentSandbox);
+            request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
+        } else if (crossAppAuthService != null && !crossAppAuthService.isAuthedFromAdmin()) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Sandbox preview attempted without authentication");
+            }
+            request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
+        } else if (crossAppAuthService != null && crossAppAuthService.hasCsrPermission()) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Sandbox preview attempted in CSR mode");
+            }
+            request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
         } else {
             Long sandboxId = null;
             // Clear the sandBox - second parameter is to support legacy implementations.
-            if ( (request.getParameter("blClearSandBox") == null) || (request.getParameter("blSandboxDateTimeRibbonProduction") == null)) {
+            if ((request.getParameter("blClearSandBox") == null) && (request.getParameter("blSandboxDateTimeRibbonProduction") == null)) {
                 sandboxId = lookupSandboxId(request);
             } else {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Removing sandbox from session.");
                 }
-                request.getSession().removeAttribute(SANDBOX_DATE_TIME_VAR);
-                request.getSession().removeAttribute(SANDBOX_ID_VAR);
+                if (BLCRequestUtils.isOKtoUseSession(request)) {
+                    request.removeAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+                    request.removeAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+                }
             }
             if (sandboxId != null) {
+                if (previousSandBoxId != null && !previousSandBoxId.equals(sandboxId)) {
+                    request.setAttribute(BroadleafRequestProcessor.REPROCESS_PARAM_NAME, true, WebRequest.SCOPE_REQUEST);
+                }
+
                 currentSandbox = sandBoxDao.retrieve(sandboxId);
-                request.setAttribute(SANDBOX_VAR, currentSandbox);
+                request.setAttribute(SANDBOX_VAR, currentSandbox, WebRequest.SCOPE_REQUEST);
                 if (currentSandbox != null && !SandBoxType.PRODUCTION.equals(currentSandbox.getSandBoxType())) {
                     setContentTime(request);
                 }
             }
 
-            if (currentSandbox == null && site != null) {
-                currentSandbox = site.getProductionSandbox();
-            }
+//            if (currentSandbox == null && site != null) {
+//                currentSandbox = site.getProductionSandbox();
+//            }
         }
 
         if (LOG.isTraceEnabled()) {
@@ -130,10 +167,10 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         Date currentSystemDateTime = SystemTime.asDate(true);
         Calendar sandboxDateTimeCalendar = Calendar.getInstance();
         sandboxDateTimeCalendar.setTime(currentSystemDateTime);
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM, CONTENT_DATE_DISPLAY_FORMATTER.format(currentSystemDateTime));
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM, CONTENT_DATE_DISPLAY_HOURS_FORMATTER.format(currentSystemDateTime));
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM, CONTENT_DATE_DISPLAY_MINUTES_FORMATTER.format(currentSystemDateTime));
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM, sandboxDateTimeCalendar.get(Calendar.AM_PM));
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM, CONTENT_DATE_DISPLAY_FORMATTER.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM, CONTENT_DATE_DISPLAY_HOURS_FORMATTER.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM, CONTENT_DATE_DISPLAY_MINUTES_FORMATTER.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM, sandboxDateTimeCalendar.get(Calendar.AM_PM), WebRequest.SCOPE_REQUEST);
         return currentSandbox;
     }
 
@@ -142,10 +179,9 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * Otherwise, the request parameter is checked followed by the session attribute.
      *
      * @param request
-     * @param site
      * @return
      */
-    private Long lookupSandboxId(HttpServletRequest request) {
+    private Long lookupSandboxId(WebRequest request) {
         String sandboxIdStr = request.getParameter(SANDBOX_ID_VAR);
         Long sandboxId = null;
 
@@ -160,20 +196,19 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
             }
         }
 
-        if (sandboxId == null) {
-            // check the session
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                sandboxId = (Long) session.getAttribute(SANDBOX_ID_VAR);
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            if (sandboxId == null) {
+                // check the session            
+                sandboxId = (Long) request.getAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+
                 if (LOG.isTraceEnabled()) {
                     if (sandboxId != null) {
                         LOG.trace("SandboxId found in session " + sandboxId);
                     }
                 }
+            } else {
+                request.setAttribute(SANDBOX_ID_VAR, sandboxId, WebRequest.SCOPE_GLOBAL_SESSION);
             }
-        } else {
-            HttpSession session = request.getSession();
-            session.setAttribute(SANDBOX_ID_VAR, sandboxId);
         }
         return sandboxId;
     }
@@ -183,9 +218,9 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
      * 
      * @param request
      */
-    private void setContentTime(HttpServletRequest request) {
+    private void setContentTime(WebRequest request) {
         String sandboxDateTimeParam = request.getParameter(SANDBOX_DATE_TIME_VAR);
-        if (sandBoxPreviewEnabled) {
+        if (!sandBoxPreviewEnabled) {
             sandboxDateTimeParam = null;
         }
         Date overrideTime = null;
@@ -203,19 +238,16 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
             LOG.debug(e);
         }
 
-        if (overrideTime == null) {
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                overrideTime = (Date) session.getAttribute(SANDBOX_DATE_TIME_VAR);
+        if (BLCRequestUtils.isOKtoUseSession(request)) {
+            if (overrideTime == null) {
+                overrideTime = (Date) request.getAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Setting date-time for sandbox mode to " + overrideTime + " for sandboxDateTimeParam = " + sandboxDateTimeParam);
+                }
+                request.setAttribute(SANDBOX_DATE_TIME_VAR, overrideTime, WebRequest.SCOPE_GLOBAL_SESSION);
             }
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Setting date-time for sandbox mode to " + overrideTime + " for sandboxDateTimeParam = " + sandboxDateTimeParam);
-            }
-            HttpSession session = request.getSession();
-            session.setAttribute(SANDBOX_DATE_TIME_VAR, overrideTime);
         }
-
 
         if (overrideTime != null) {
             FixedTimeSource ft = new FixedTimeSource(overrideTime.getTime());
@@ -225,7 +257,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         }
     }
 
-    private Date readDateFromRequest(HttpServletRequest request) throws ParseException {
+    private Date readDateFromRequest(WebRequest request) throws ParseException {
         String date = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM);
         String minutes = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM);
         String hours = request.getParameter(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM);

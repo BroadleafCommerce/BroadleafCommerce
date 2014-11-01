@@ -1,19 +1,22 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -28,11 +31,14 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
+import org.apache.solr.client.solrj.response.Group;
+import org.apache.solr.client.solrj.response.GroupCommand;
+import org.apache.solr.client.solrj.response.GroupResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -50,6 +56,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
 import org.xml.sax.SAXException;
@@ -102,21 +109,29 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     protected SolrIndexService solrIndexService;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
-    protected SolrSearchServiceExtensionListener extensionManager;
+    protected SolrSearchServiceExtensionManager extensionManager;
 
     public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
         if ("solrhome".equals(solrServer)) {
+
             final String baseTempPath = System.getProperty("java.io.tmpdir");
 
-            File tempDir = new File(baseTempPath + File.separator + "solrhome");
+            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome");
+            if (System.getProperty("tmpdir.solrhome") != null) {
+                //allow for an override of tmpdir
+                tempDir = new File(System.getProperty("tmpdir.solrhome"));
+            }
             if (!tempDir.exists()) {
-                tempDir.mkdir();
+                tempDir.mkdirs();
             }
 
             solrServer = tempDir.getAbsolutePath();
         }
-
-        File solrXml = copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrServer, "solr-default.xml");
+        
+        File solrXml = new File(new File(solrServer), "solr.xml");
+        if (!solrXml.exists()) {
+            copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrXml);
+        }
 
         LOG.debug(String.format("Using [%s] as solrhome", solrServer));
         LOG.debug(String.format("Using [%s] as solr.xml", solrXml.getAbsoluteFile()));
@@ -142,16 +157,17 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             LOG.trace("Done printing solr.xml");
         }
 
-        CoreContainer coreContainer = new CoreContainer(solrServer, solrXml);
+        CoreContainer coreContainer = CoreContainer.createAndLoad(solrServer, solrXml);
         EmbeddedSolrServer primaryServer = new EmbeddedSolrServer(coreContainer, SolrContext.PRIMARY);
         EmbeddedSolrServer reindexServer = new EmbeddedSolrServer(coreContainer, SolrContext.REINDEX);
 
         SolrContext.setPrimaryServer(primaryServer);
         SolrContext.setReindexServer(reindexServer);
+        //NOTE: There is no reason to set the admin server here as the SolrContext will return the primary server
+        //if the admin server is not set...
     }
 
-    public File copyConfigToSolrHome(InputStream configIs, String parentDir, String configFileSimpleName) throws IOException {
-        File destFile = new File(new File(parentDir), configFileSimpleName);
+    public void copyConfigToSolrHome(InputStream configIs, File destFile) throws IOException {
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
         try {
@@ -183,17 +199,53 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 }
             }
         }
-
-        return destFile;
     }
 
     public SolrSearchServiceImpl(SolrServer solrServer) {
         SolrContext.setPrimaryServer(solrServer);
     }
 
+    /**
+     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
+     * By having this and then simply disregarding the second parameter, we can more easily support 2-core
+     * Solr configurations that use embedded/standalone per environment.
+     * 
+     * @param solrServer
+     * @param reindexServer
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     */
+    public SolrSearchServiceImpl(String solrServer, String reindexServer)
+            throws IOException, ParserConfigurationException, SAXException {
+        this(solrServer);
+    }
+
+    /**
+     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
+     * By having this and then simply disregarding the second and third parameters, we can more easily support 2-core
+     * Solr configurations that use embedded/standalone per environment, along with an admin server.
+     * 
+     * @param solrServer
+     * @param reindexServer
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
+     * @throws IOException 
+     */
+    public SolrSearchServiceImpl(String solrServer, String reindexServer, String adminServer)
+            throws IOException, ParserConfigurationException, SAXException {
+        this(solrServer);
+    }
+
     public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer) {
         SolrContext.setPrimaryServer(solrServer);
         SolrContext.setReindexServer(reindexServer);
+    }
+
+    public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer, SolrServer adminServer) {
+        SolrContext.setPrimaryServer(solrServer);
+        SolrContext.setReindexServer(reindexServer);
+        SolrContext.setAdminServer(adminServer);
     }
 
     @Override
@@ -212,26 +264,23 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
             throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getExplicitCategoryFieldName() + ":" + category.getId();
-        return findProducts(query, facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc");
+        String query = shs.getExplicitCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
+        return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
     public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
             throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getCategoryFieldName() + ":" + category.getId();
-        return findProducts(query, facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc");
+        String query = shs.getCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
+        return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
     public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria)
             throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
-
-        query = sanitizeQuery(query);
-
-        query = shs.getSearchableFieldName() + ":(" + query + ")";
+        query = "(" + sanitizeQuery(query) + ")";
         return findProducts(query, facets, searchCriteria, null);
     }
 
@@ -240,19 +289,52 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             ProductSearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
 
-        query = sanitizeQuery(query);
+        String catFq = shs.getCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
+        query = "(" + sanitizeQuery(query) + ")";
+        
+        return findProducts(query, facets, searchCriteria, null, catFq);
+    }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(shs.getCategoryFieldName()).append(":").append(category.getId())
-                .append(" AND ")
-                .append(shs.getSearchableFieldName()).append(":(").append(query).append(")");
-        return findProducts(sb.toString(), facets, searchCriteria, null);
+    public String getLocalePrefix() {
+        if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
+            Locale locale = BroadleafRequestContext.getBroadleafRequestContext().getLocale();
+            if (locale != null) {
+                return locale.getLocaleCode() + "_";
+            }
+        }
+        return "";
+    }
+
+    protected String buildQueryFieldsString() {
+        StringBuilder queryBuilder = new StringBuilder();
+        List<Field> fields = fieldDao.readAllProductFields();
+        for (Field currentField : fields) {
+            if (currentField.getSearchable()) {
+                appendFieldToQuery(queryBuilder, currentField);
+            }
+        }
+        return queryBuilder.toString();
+    }
+
+    protected void appendFieldToQuery(StringBuilder queryBuilder, Field currentField) {
+        List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(currentField);
+        for (FieldType currentType : searchableFieldTypes) {
+            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, currentType)).append(" ");
+        }
+    }
+
+    /**
+     * @deprecated in favor of the other findProducts() method
+     */
+    protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
+            ProductSearchCriteria searchCriteria, String defaultSort) throws ServiceException {
+        return findProducts(qualifiedSolrQuery, facets, searchCriteria, defaultSort, null);
     }
 
     /**
      * Given a qualified solr query string (such as "category:2002"), actually performs a solr search. It will
      * take into considering the search criteria to build out facets / pagination / sorting.
-     * 
+     *
      * @param qualifiedSolrQuery
      * @param facets
      * @param searchCriteria
@@ -260,21 +342,31 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @throws ServiceException
      */
     protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
-            ProductSearchCriteria searchCriteria, String defaultSort) throws ServiceException {
+            ProductSearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Build the basic query
         SolrQuery solrQuery = new SolrQuery()
                 .setQuery(qualifiedSolrQuery)
-                .setFields(shs.getIdFieldName())
+                .setFields(shs.getProductIdFieldName())
                 .setRows(searchCriteria.getPageSize())
-                .setFilterQueries(shs.getNamespaceFieldName() + ":" + shs.getCurrentNamespace())
                 .setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
+        if (filterQueries != null) {
+            solrQuery.setFilterQueries(filterQueries);
+        }
+        solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")");
+        solrQuery.set("defType", "edismax");
+        solrQuery.set("qf", buildQueryFieldsString());
 
         // Attach additional restrictions
         attachSortClause(solrQuery, searchCriteria, defaultSort);
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap);
+        
+        modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
+        
+        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
+                searchCriteria, defaultSort);
 
         if (LOG.isTraceEnabled()) {
             try {
@@ -286,12 +378,17 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
         // Query solr
         QueryResponse response;
+        List<SolrDocument> responseDocuments;
+        int numResults = 0;
         try {
             response = SolrContext.getServer().query(solrQuery);
+            responseDocuments = getResponseDocuments(response);
+            numResults = (int) response.getResults().getNumFound();
+
             if (LOG.isTraceEnabled()) {
                 LOG.trace(response.toString());
 
-                for (SolrDocument doc : response.getResults()) {
+                for (SolrDocument doc : responseDocuments) {
                     LOG.trace(doc);
                 }
             }
@@ -304,13 +401,48 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         sortFacetResults(namedFacetMap);
 
         // Get the products
-        List<Product> products = getProducts(response);
+        List<Product> products = getProducts(responseDocuments);
 
         ProductSearchResult result = new ProductSearchResult();
         result.setFacets(facets);
         result.setProducts(products);
-        setPagingAttributes(result, response, searchCriteria);
+        setPagingAttributes(result, numResults, searchCriteria);
         return result;
+    }
+
+    /**
+     * Provides a hook point for implementations to modify all SolrQueries before they're executed.
+     * Modules should leverage the extension manager method of the same name,
+     * {@link SolrSearchServiceExtensionHandler#modifySolrQuery(SolrQuery, String, List, ProductSearchCriteria, String)}
+     * 
+     * @param query
+     * @param qualifiedSolrQuery
+     * @param facets
+     * @param searchCriteria
+     * @param defaultSort
+     */
+    protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
+            List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria, String defaultSort) {
+    }
+    
+    protected List<SolrDocument> getResponseDocuments(QueryResponse response) {
+        List<SolrDocument> docs;
+        
+        if (response.getGroupResponse() == null) {
+            docs = response.getResults();
+        } else {
+            docs = new ArrayList<SolrDocument>();
+            GroupResponse gr = response.getGroupResponse();
+            for (GroupCommand gc : gr.getValues()) {
+                for (Group g : gc.getValues()) {
+                    for (SolrDocument d : g.getResult()) {
+                        docs.add(d);
+                    }
+                }
+            }
+        }
+        
+        return docs;
     }
 
     @Override
@@ -421,7 +553,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
 
             if (extensionManager != null) {
-                extensionManager.filterSearchFacetRanges(dto, facetRanges);
+                extensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
             }
 
             if (facetRanges != null && facetRanges.size() > 0) {
@@ -436,7 +568,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Builds out the DTOs for facet results from the search. This will then be used by the view layer to
-     * display which values are avaialble given the current constraints as well as the count of the values.
+     * display which values are available given the current constraints as well as the count of the values.
      * 
      * @param namedFacetMap
      * @param response
@@ -510,9 +642,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param response
      * @param searchCriteria
      */
-    public void setPagingAttributes(ProductSearchResult result, QueryResponse response,
-            ProductSearchCriteria searchCriteria) {
-        result.setTotalResults(new Long(response.getResults().getNumFound()).intValue());
+    public void setPagingAttributes(ProductSearchResult result, int numResults, ProductSearchCriteria searchCriteria) {
+        result.setTotalResults(numResults);
         result.setPage(searchCriteria.getPage());
         result.setPageSize(searchCriteria.getPageSize());
     }
@@ -525,11 +656,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param response
      * @return the actual Product instances as a result of the search
      */
-    protected List<Product> getProducts(QueryResponse response) {
+    protected List<Product> getProducts(List<SolrDocument> responseDocuments) {
         final List<Long> productIds = new ArrayList<Long>();
-        SolrDocumentList docs = response.getResults();
-        for (SolrDocument doc : docs) {
-            productIds.add((Long) doc.getFieldValue(shs.getIdFieldName()));
+        for (SolrDocument doc : responseDocuments) {
+            productIds.add((Long) doc.getFieldValue(shs.getProductIdFieldName()));
         }
 
         List<Product> products = productDao.readProductsByIds(productIds);
@@ -538,7 +668,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         if (products != null) {
             Collections.sort(products, new Comparator<Product>() {
                 public int compare(Product o1, Product o2) {
-                    return new Integer(productIds.indexOf(o1.getId())).compareTo(productIds.indexOf(o2.getId()));
+                    Long o1id = shs.getProductId(o1.getId());
+                    Long o2id = shs.getProductId(o2.getId());
+                    return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
                 }
             });
         }

@@ -1,20 +1,28 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.util.domain;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,10 +32,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "BLC_CODE_TYPES")
@@ -40,7 +44,14 @@ public class CodeTypeImpl implements CodeType {
 
     @Id
     @GeneratedValue(generator = "CodeTypeId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CodeTypeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CodeTypeId", allocationSize = 50)
+    @GenericGenerator(
+        name="CodeTypeId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="CodeTypeImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.core.util.domain.CodeTypeImpl")
+        }
+    )
     @Column(name = "CODE_ID")
     protected Long id;
 
@@ -56,48 +67,59 @@ public class CodeTypeImpl implements CodeType {
     @Column(name = "MODIFIABLE")
     protected Character modifiable;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
+    @Override
     public String getCodeType() {
         return codeType;
     }
 
+    @Override
     public void setCodeType(String codeType) {
         this.codeType = codeType;
     }
 
+    @Override
     public String getKey() {
         return key;
     }
 
+    @Override
     public void setKey(String key) {
         this.key = key;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public Boolean isModifiable() {
         if(modifiable == null)
             return null;
         return modifiable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
+    @Override
     public Boolean getModifiable() {
         return isModifiable();
     }
 
+    @Override
     public void setModifiable(Boolean modifiable) {
         if(modifiable == null) {
             this.modifiable = null;
@@ -127,7 +149,7 @@ public class CodeTypeImpl implements CodeType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         CodeTypeImpl other = (CodeTypeImpl) obj;
         if (codeType == null) {

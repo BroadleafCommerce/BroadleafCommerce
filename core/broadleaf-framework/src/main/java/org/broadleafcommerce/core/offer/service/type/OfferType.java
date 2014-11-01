@@ -1,40 +1,43 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.offer.service.type;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.broadleafcommerce.common.BroadleafEnumerationType;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * An extendible enumeration of offer types.
  *
  */
-public class OfferType implements Serializable, BroadleafEnumerationType {
+public class OfferType implements Serializable, BroadleafEnumerationType, Comparable<OfferType> {
     
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferType> TYPES = new HashMap<String, OfferType>();
+    private static final Map<String, OfferType> TYPES = new LinkedHashMap<String, OfferType>();
+    public static final OfferType ORDER_ITEM = new OfferType("ORDER_ITEM", "Order Item", 1000);
+    public static final OfferType ORDER = new OfferType("ORDER", "Order", 2000);
+    public static final OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP", "Fulfillment Group", 3000);
 
-    public static final OfferType ORDER = new OfferType("ORDER", "Order");
-    public static final OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP", "Fulfillment Group");
-    public static final OfferType ORDER_ITEM = new OfferType("ORDER_ITEM", "Order Item");
 
     public static OfferType getInstance(final String type) {
         return TYPES.get(type);
@@ -42,14 +45,16 @@ public class OfferType implements Serializable, BroadleafEnumerationType {
 
     private String type;
     private String friendlyType;
+    private int order;    
 
     public OfferType() {
         //do nothing
     }
 
-    public OfferType(final String type, final String friendlyType) {
+    public OfferType(final String type, final String friendlyType, int order) {
         this.friendlyType = friendlyType;
         setType(type);
+        setOrder(order);
     }
 
     public void setType(final String type) {
@@ -66,6 +71,14 @@ public class OfferType implements Serializable, BroadleafEnumerationType {
     public String getFriendlyType() {
         return friendlyType;
     }
+    
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
     @Override
     public int hashCode() {
@@ -81,7 +94,7 @@ public class OfferType implements Serializable, BroadleafEnumerationType {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         OfferType other = (OfferType) obj;
         if (type == null) {
@@ -90,6 +103,11 @@ public class OfferType implements Serializable, BroadleafEnumerationType {
         } else if (!type.equals(other.type))
             return false;
         return true;
+    }
+    
+    @Override
+    public int compareTo(OfferType arg0) {
+        return this.order - arg0.order;
     }
 
 }

@@ -1,32 +1,39 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
+import org.broadleafcommerce.core.order.domain.NullOrderImpl;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.MergeCartService;
+import org.broadleafcommerce.core.order.service.OrderService;
+import org.broadleafcommerce.core.pricing.service.exception.PricingException;
+import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
-import org.broadleafcommerce.profile.web.core.service.LoginService;
-import org.springframework.security.core.Authentication;
+import org.broadleafcommerce.profile.web.core.service.login.LoginService;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -49,7 +56,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafRegisterController extends BroadleafAbstractController {
         
-    private boolean useEmailForLogin = true;
+    protected boolean useEmailForLogin = true;
     protected static String registerSuccessView = "ajaxredirect:/";
     protected static String registerView = "authentication/register";
     
@@ -59,11 +66,11 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     @Resource(name="blRegisterCustomerValidator")
     protected RegisterCustomerValidator registerCustomerValidator;
 
-    @Resource(name="blMergeCartProcessor")
-    protected MergeCartProcessor mergeCartProcessor;
-    
     @Resource(name="blLoginService")
-    protected LoginService loginService;    
+    protected LoginService loginService;
+
+    @Resource(name = "blOrderService")
+    protected OrderService orderService;
     
     public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request, 
             HttpServletResponse response, Model model) {
@@ -75,8 +82,8 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     }
     
     public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, 
-            HttpServletRequest request, HttpServletResponse response, Model model) 
-            throws ServiceException {
+            HttpServletRequest request, HttpServletResponse response, Model model)
+            throws ServiceException, PricingException {
         
         if (useEmailForLogin) {
             Customer customer = registerCustomerForm.getCustomer();
@@ -91,8 +98,14 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
             
             // The next line needs to use the customer from the input form and not the customer returned after registration
             // so that we still have the unencoded password for use by the authentication mechanism.
-            Authentication auth = loginService.loginCustomer(registerCustomerForm.getCustomer());
-            mergeCartProcessor.execute(request, response, auth);            
+            loginService.loginCustomer(registerCustomerForm.getCustomer());
+
+            // Need to ensure that the Cart on CartState is owned by the newly registered customer.
+            Order cart = CartState.getCart();
+            if (cart != null && !(cart instanceof NullOrderImpl) && cart.getEmailAddress() == null) {
+                cart.setEmailAddress(newCustomer.getEmailAddress());
+                orderService.save(cart, false);
+            }
             
             String redirectUrl = registerCustomerForm.getRedirectUrl();
             if (StringUtils.isNotBlank(redirectUrl) && redirectUrl.contains(":")) {

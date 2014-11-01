@@ -1,36 +1,41 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce CMS Module
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
+import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 /**
  * Created by bpolster.
@@ -44,8 +49,15 @@ public class FieldDefinitionImpl implements FieldDefinition {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FieldDefinitionId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FieldDefinitionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FieldDefinitionImpl", allocationSize = 10)
+    @GeneratedValue(generator = "FieldDefinitionId")
+    @GenericGenerator(
+        name="FieldDefinitionId",
+        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        parameters = {
+            @Parameter(name="segment_value", value="FieldDefinitionImpl"),
+            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl")
+        }
+    )
     @Column(name = "FLD_DEF_ID")
     protected Long id;
 
@@ -78,10 +90,13 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Column (name = "TEXT_AREA_FLAG")
     protected Boolean textAreaFlag = false;
+    
+    @Column(name = "REQUIRED_FLAG")
+    protected Boolean requiredFlag = false;
 
-    @ManyToOne (targetEntity = FieldEnumerationImpl.class)
-    @JoinColumn(name = "FLD_ENUM_ID")
-    protected FieldEnumeration fieldEnumeration;
+    @ManyToOne (targetEntity = DataDrivenEnumerationImpl.class)
+    @JoinColumn(name = "ENUM_ID")
+    protected DataDrivenEnumeration dataDrivenEnumeration;
 
     @Column (name = "ALLOW_MULTIPLES")
     protected Boolean allowMultiples = false;
@@ -115,8 +130,35 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Override
     public SupportedFieldType getFieldType() {
-        return fieldType!=null?SupportedFieldType.valueOf(fieldType):null;
+        if (fieldType == null) {
+            return null;
+        }
+        
+        if (fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+            return SupportedFieldType.ADDITIONAL_FOREIGN_KEY;
+        }
+        
+        return SupportedFieldType.valueOf(fieldType);
     }
+    
+    @Override
+    public String getAdditionalForeignKeyClass() {
+        if (fieldType == null || !fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+            return null;
+        }
+        
+        return fieldType.substring(fieldType.indexOf('|') + 1);
+    }
+    
+    @Override
+    public void setAdditionalForeignKeyClass(String className) {
+        if (fieldType == null || !fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+            throw new IllegalArgumentException("Cannot set an additional foreign key class when the field type is not ADDITIONAL_FOREIGN_KEY");
+        }
+        
+        this.fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|' + className;
+    }
+    
 
     @Override
     public void setFieldType(SupportedFieldType fieldType) {
@@ -182,6 +224,16 @@ public class FieldDefinitionImpl implements FieldDefinition {
     public void setTextAreaFlag(Boolean textAreaFlag) {
         this.textAreaFlag = textAreaFlag;
     }
+    
+    @Override
+    public Boolean getRequiredFlag() {
+        return requiredFlag;
+    }
+
+    @Override
+    public void setRequiredFlag(Boolean requiredFlag) {
+        this.requiredFlag = requiredFlag;
+    }
 
     @Override
     public Boolean getAllowMultiples() {
@@ -234,13 +286,13 @@ public class FieldDefinitionImpl implements FieldDefinition {
     }
 
     @Override
-    public FieldEnumeration getFieldEnumeration() {
-        return fieldEnumeration;
+    public DataDrivenEnumeration getDataDrivenEnumeration() {
+        return dataDrivenEnumeration;
     }
 
     @Override
-    public void setFieldEnumeration(FieldEnumeration fieldEnumeration) {
-        this.fieldEnumeration = fieldEnumeration;
+    public void setDataDrivenEnumeration(DataDrivenEnumeration dataDrivenEnumeration) {
+        this.dataDrivenEnumeration = dataDrivenEnumeration;
     }
 }
 

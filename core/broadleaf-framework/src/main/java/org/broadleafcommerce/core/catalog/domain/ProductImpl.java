@@ -1,42 +1,56 @@
 /*
- * Copyright 2008-2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyAdornedTargetCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.DateUtil;
-import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.core.media.domain.Media;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.Locatable;
+import org.broadleafcommerce.core.catalog.extension.ProductEntityExtensionManager;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -45,6 +59,15 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,21 +79,12 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
-import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -91,11 +105,22 @@ import java.util.Map;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_PRODUCT")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@javax.persistence.Table(name="BLC_PRODUCT")
+//multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
+@org.hibernate.annotations.Table(appliesTo = "BLC_PRODUCT", indexes = {
+    @Index(name = "PRODUCT_URL_INDEX",
+            columnNames = {"URL","URL_KEY"}
+    )
+})
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
 @SQLDelete(sql="UPDATE BLC_PRODUCT SET ARCHIVED = 'Y' WHERE PRODUCT_ID = ?")
-public class ProductImpl implements Product, Status {
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRECLONE_INFORMATION),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+})
+public class ProductImpl implements Product, Status, AdminMainEntity, Locatable {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
@@ -108,53 +133,66 @@ public class ProductImpl implements Product, Status {
         name="ProductId",
         strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="table_name", value="SEQUENCE_GENERATOR"),
-            @Parameter(name="segment_column_name", value="ID_NAME"),
-            @Parameter(name="value_column_name", value="ID_VAL"),
             @Parameter(name="segment_value", value="ProductImpl"),
-            @Parameter(name="increment_size", value="50"),
             @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductImpl")
         }
     )
     @Column(name = "PRODUCT_ID")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_ID", group = "ProductImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "URL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order=1, group = "Seo_Group",groupOrder=2, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order = Presentation.FieldOrder.URL,
+        group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
+        prominent = true, gridOrder = 3, columnWidth = "200px",
+            requiredOverride = RequiredOverride.REQUIRED,
+            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String url;
 
     @Column(name = "URL_KEY")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey", order=2, group = "Seo_Group",groupOrder=2)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_UrlKey",
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
+        excluded = true)
     protected String urlKey;
 
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", order=9, group = "ProductImpl_Product_Description",groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Display_Template", 
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected String displayTemplate;
 
-    /** The product model number */
     @Column(name = "MODEL")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Model", order=7, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Model",
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected String model;
 
-    /** The manufacture name */
     @Column(name = "MANUFACTURE")
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order=6, group = "ProductImpl_Product_Description", prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Manufacturer", order = Presentation.FieldOrder.MANUFACTURER,
+        group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
+        prominent = true, gridOrder = 4)
     protected String manufacturer;
     
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
-    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", order=5, group = "ProductImpl_Product_Description", prominent=false, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", requiredOverride = RequiredOverride.NOT_REQUIRED,
+        tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+        group = Presentation.Group.Name.Badges, groupOrder = Presentation.Group.Order.Badges)
     protected Boolean isFeaturedProduct = false;
     
-    @OneToOne(optional = false, targetEntity = SkuImpl.class, cascade={CascadeType.ALL}, mappedBy = "defaultProduct")
+    @OneToOne(targetEntity = SkuImpl.class, cascade={CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
+    @JoinColumn(name = "DEFAULT_SKU_ID")
+    @ClonePolicy(toOneProperty = "defaultProduct")
     protected Sku defaultSku;
     
     @Column(name = "CAN_SELL_WITHOUT_OPTIONS")
-    @AdminPresentation(friendlyName = "ProductImpl_Can_Sell_Without_Options", order=8, group = "ProductImpl_Product_Description", prominent=false, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Can_Sell_Without_Options",
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
     protected Boolean canSellWithoutOptions = false;
     
-    /** The skus. */
     @Transient
     protected List<Sku> skus = new ArrayList<Sku>();
     
@@ -163,50 +201,84 @@ public class ProductImpl implements Product, Status {
 
     @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "crossSaleProductsTitle", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence", dataSourceName = "crossSaleProductsDS", maintainedAdornedTargetFields = {"promotionMessage"}, gridVisibleFields = {"defaultSku.name", "promotionMessage"})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
+    @OrderBy(value="sequence")
+    @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle", order = 1000,
+        tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+        targetObjectProperty = "relatedSaleProduct", 
+        sortProperty = "sequence", 
+        maintainedAdornedTargetFields = { "promotionMessage" }, 
+        gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @ClonePolicyAdornedTargetCollection
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @OrderBy(value="sequence")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "relatedSaleProduct", friendlyName = "upsaleProductsTitle", targetUIElementId = "productSkuCrossLayout", sortProperty = "sequence", dataSourceName = "upSaleProductsDS", maintainedAdornedTargetFields = {"promotionMessage"}, gridVisibleFields = {"defaultSku.name", "promotionMessage"})
+    @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 2000,
+        tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+        targetObjectProperty = "relatedSaleProduct", 
+        sortProperty = "sequence",
+        maintainedAdornedTargetFields = { "promotionMessage" }, 
+        gridVisibleFields = { "defaultSku.name", "promotionMessage" })
+    @ClonePolicyAdornedTargetCollection
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
-    /** The all skus. */
     @OneToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, mappedBy="product")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
+    @AdminPresentationCollection(friendlyName="ProductImpl_Additional_Skus", order = 1000,
+        tab = Presentation.Tab.Name.ProductOptions, tabOrder = Presentation.Tab.Order.ProductOptions)
+    @ClonePolicyCollection
     protected List<Sku> additionalSkus = new ArrayList<Sku>();
 
-    /** The default category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order=4, group = "ProductImpl_Product_Description", requiredOverride = RequiredOverride.REQUIRED, groupOrder=1)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = Presentation.FieldOrder.DEFAULT_CATEGORY,
+        group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
+        prominent = true, gridOrder = 2, 
+        requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable=true))
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product", orphanRemoval = true)
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OrderBy(value="displayOrder")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
-    protected List<Category> allParentCategories = new ArrayList<Category>();
-    
-    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationAdornedTargetCollection(friendlyName = "allParentCategoriesTitle", order = 3000,
+        tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+        sortProperty = "displayOrder",
+        targetObjectProperty = "category",
+        parentObjectProperty = "product",
+        gridVisibleFields = { "name" })
+    @ClonePolicyAdornedTargetCollection(unowned = true)
+    protected List<CategoryProductXref> allParentCategoryXrefs = new ArrayList<CategoryProductXref>();
+
+    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
+    @MapKey(name="name")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "productAttributesTitle", dataSourceName = "productAttributeDS")
-    protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
-    
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductOptionImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_OPTION_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_OPTION_ID", referencedColumnName = "PRODUCT_OPTION_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @AdminPresentationMap(friendlyName = "productAttributesTitle",
+        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
+    )
+    @ClonePolicyMap
+    protected Map<String, ProductAttribute> productAttributes = new HashMap<String, ProductAttribute>();
+
+    @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "product")
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
     @BatchSize(size = 50)
-    protected List<ProductOption> productOptions = new ArrayList<ProductOption>();
+    @AdminPresentationAdornedTargetCollection(friendlyName = "productOptionsTitle",
+        tab = Presentation.Tab.Name.ProductOptions, tabOrder = Presentation.Tab.Order.ProductOptions,
+        joinEntityClass = "org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl",
+        targetObjectProperty = "productOption",
+        parentObjectProperty = "product",
+        gridVisibleFields = {"label", "required"})
+    protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -404,7 +476,7 @@ public class ProductImpl implements Product, Status {
         Map<String, Media> result = new HashMap<String, Media>();
         result.putAll(getMedia());
         for (Sku additionalSku : getAdditionalSkus()) {
-            if (additionalSku.getId() != getDefaultSku().getId()) {
+            if (!additionalSku.getId().equals(getDefaultSku().getId())) {
                 result.putAll(additionalSku.getSkuMedia());
             }
         }
@@ -417,16 +489,48 @@ public class ProductImpl implements Product, Status {
     }
 
     @Override
-    public List<Category> getAllParentCategories() {
-        return allParentCategories;
+    public List<CategoryProductXref> getAllParentCategoryXrefs() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
+            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategoryXrefs(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<CategoryProductXref>) holder.getResult();
+            }
+        }
+        return allParentCategoryXrefs;
     }
 
     @Override
-    public void setAllParentCategories(List<Category> allParentCategories) {        
-        this.allParentCategories.clear();
-        for(Category category : allParentCategories){
-            this.allParentCategories.add(category);
+    public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories) {
+        this.allParentCategoryXrefs.clear();
+        allParentCategoryXrefs.addAll(allParentCategories);
+    }
+
+    @Override
+    @Deprecated
+    public List<Category> getAllParentCategories() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
+            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getAllParentCategories(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<Category>) holder.getResult();
+            }
         }
+        List<Category> parents = new ArrayList<Category>();
+        for (CategoryProductXref xref : allParentCategoryXrefs) {
+            parents.add(xref.getCategory());
+        }
+        return Collections.unmodifiableList(parents);
+    }
+
+    @Override
+    @Deprecated
+    public void setAllParentCategories(List<Category> allParentCategories) {
+        throw new UnsupportedOperationException("Not Supported - Use setAllParentCategoryXrefs()");
     }
 
     @Override
@@ -516,17 +620,16 @@ public class ProductImpl implements Product, Status {
 
     @Override
     public List<RelatedProduct> getCrossSaleProducts() {
-        List<RelatedProduct> returnProducts = new ArrayList<RelatedProduct>();
-        if (crossSaleProducts != null) {
-            returnProducts.addAll(crossSaleProducts);
-             CollectionUtils.filter(returnProducts, new Predicate() {
-                 @Override
-                 public boolean evaluate(Object arg) {
-                     return 'Y'!=((Status)((CrossSaleProductImpl) arg).getRelatedProduct()).getArchived();
-                 }
-             });            
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
+            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getCrossSaleProducts(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<RelatedProduct>) holder.getResult();
+            }
         }
-        return returnProducts;
+        return crossSaleProducts;
     }
 
     @Override
@@ -539,17 +642,16 @@ public class ProductImpl implements Product, Status {
 
     @Override
     public List<RelatedProduct> getUpSaleProducts() {
-        List<RelatedProduct> returnProducts = new ArrayList<RelatedProduct>();
-        if (upSaleProducts != null) {
-            returnProducts.addAll(upSaleProducts);
-            CollectionUtils.filter(returnProducts, new Predicate() {
-                 @Override
-                 public boolean evaluate(Object arg) {
-                     return 'Y'!=((Status)((UpSaleProductImpl) arg).getRelatedProduct()).getArchived();
-                 }
-             });            
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
+            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getUpSaleProducts(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<RelatedProduct>) holder.getResult();
+            }
         }
-        return returnProducts;
+        return upSaleProducts;
     }
 
     @Override
@@ -600,23 +702,55 @@ public class ProductImpl implements Product, Status {
     }
 
     @Override
-    public List<ProductAttribute> getProductAttributes() {
+    public Map<String, ProductAttribute> getProductAttributes() {
         return productAttributes;
     }
 
     @Override
-    public void setProductAttributes(List<ProductAttribute> productAttributes) {
+    public void setProductAttributes(Map<String, ProductAttribute> productAttributes) {
         this.productAttributes = productAttributes;
     }
-    
+
     @Override
-    public List<ProductOption> getProductOptions() {
+    public List<ProductOptionXref> getProductOptionXrefs() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
+            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getProductOptionXrefs(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<ProductOptionXref>) holder.getResult();
+            }
+        }
         return productOptions;
     }
 
     @Override
-    public void setProductOptions(List<ProductOption> productOptions) {
+    public void setProductOptionXrefs(List<ProductOptionXref> productOptions) {
         this.productOptions = productOptions;
+    }
+
+    @Override
+    public List<ProductOption> getProductOptions() {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getAdditionalProperties().containsKey("blProductEntityExtensionManager")) {
+            ProductEntityExtensionManager extensionManager = (ProductEntityExtensionManager) context.getAdditionalProperties().get("blProductEntityExtensionManager");
+            ExtensionResultHolder holder = new ExtensionResultHolder();
+            ExtensionResultStatusType result = extensionManager.getProxy().getProductOptions(this, holder);
+            if (ExtensionResultStatusType.HANDLED.equals(result)) {
+                return (List<ProductOption>) holder.getResult();
+            }
+        }
+        List<ProductOption> response = new ArrayList<ProductOption>();
+        for (ProductOptionXref xref : productOptions) {
+            response.add(xref.getProductOption());
+        }
+        return Collections.unmodifiableList(response);
+    }
+
+    @Override
+    public void setProductOptions(List<ProductOption> productOptions) {
+        throw new UnsupportedOperationException("Use setProductOptionXrefs(..) instead");
     }
     
     @Override
@@ -641,26 +775,6 @@ public class ProductImpl implements Product, Status {
     @Override
     public void setDisplayTemplate(String displayTemplate) {
         this.displayTemplate = displayTemplate;
-    }
-    
-    @Override
-    public ProductAttribute getProductAttributeByName(String name) {
-        for (ProductAttribute attribute : getProductAttributes()) {
-            if (attribute.getName().equals(name)) {
-                return attribute;
-            }
-        }
-        return null;
-    }
-    
-    @Override
-    public Map<String, ProductAttribute> getMappedProductAttributes() {
-        return BLCMapUtils.keyedMap(getProductAttributes(), new TypedClosure<String, ProductAttribute>() {
-            @Override
-            public String getKey(ProductAttribute value) {
-                return value.getName();
-            }
-        });
     }
 
     @Override
@@ -693,7 +807,7 @@ public class ProductImpl implements Product, Status {
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
         ProductImpl other = (ProductImpl) obj;
 
@@ -747,6 +861,85 @@ public class ProductImpl implements Product, Status {
         for (Sku sku : getAllSkus()) {
             sku.clearDynamicPrices();
         }
+    }
+    
+    @Override
+    public String getMainEntityName() {
+        String manufacturer = getManufacturer();
+        return StringUtils.isBlank(manufacturer) ? getName() : manufacturer + " " + getName();
+    }
+    
+    public static class Presentation {
+        public static class Tab {
+            public static class Name {
+                public static final String Marketing = "ProductImpl_Marketing_Tab";
+                public static final String Media = "SkuImpl_Media_Tab";
+                public static final String ProductOptions = "ProductImpl_Product_Options_Tab";
+                public static final String Inventory = "ProductImpl_Inventory_Tab";
+                public static final String Shipping = "ProductImpl_Shipping_Tab";
+                public static final String Advanced = "ProductImpl_Advanced_Tab";
+
+            }
+            
+            public static class Order {
+                public static final int Marketing = 2000;
+                public static final int Media = 3000;
+                public static final int ProductOptions = 4000;
+                public static final int Inventory = 5000;
+                public static final int Shipping = 6000;
+                public static final int Advanced = 7000;
+            }
+        }
+            
+        public static class Group {
+            public static class Name {
+                public static final String General = "ProductImpl_Product_Description";
+                public static final String Price = "SkuImpl_Price";
+                public static final String ActiveDateRange = "ProductImpl_Product_Active_Date_Range";
+                public static final String Advanced = "ProductImpl_Advanced";
+                public static final String Inventory = "SkuImpl_Sku_Inventory";
+                public static final String Badges = "ProductImpl_Badges";
+                public static final String Shipping = "ProductWeight_Shipping";
+                public static final String Financial = "ProductImpl_Financial";
+            }
+            
+            public static class Order {
+                public static final int General = 1000;
+                public static final int Price = 2000;
+                public static final int ActiveDateRange = 3000;
+                public static final int Advanced = 1000;
+                public static final int Inventory = 1000;
+                public static final int Badges = 1000;
+                public static final int Shipping = 1000;
+            }
+
+        }
+
+        public static class FieldOrder {
+
+            public static final int NAME = 1000;
+            public static final int SHORT_DESCRIPTION = 2000;
+            public static final int PRIMARY_MEDIA = 3000;
+            public static final int LONG_DESCRIPTION = 4000;
+            public static final int DEFAULT_CATEGORY = 5000;
+            public static final int MANUFACTURER = 6000;
+            public static final int URL = 7000;
+        }
+    }
+
+    @Override
+    public String getTaxCode() {
+        return getDefaultSku().getTaxCode();
+    }
+
+    @Override
+    public void setTaxCode(String taxCode) {
+        getDefaultSku().setTaxCode(taxCode);
+    }
+
+    @Override
+    public String getLocation() {
+        return getUrl();
     }
 
 }

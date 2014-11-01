@@ -1,21 +1,28 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -27,6 +34,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,40 +46,45 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import java.math.BigDecimal;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION_VALUE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
 @AdminPresentationClass(friendlyName = "Product Option Value")
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+})
 public class ProductOptionValueImpl implements ProductOptionValue {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "ProductOptionValueId")
+    @GeneratedValue(generator = "ProductOptionValueId")
     @GenericGenerator(
-        name="ProductOptionValueId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+        name = "ProductOptionValueId",
+        strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
         parameters = {
-            @Parameter(name="segment_value", value="ProductOptionValueImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl")
-        }
-    )
+                @Parameter(name = "segment_value", value = "ProductOptionValueImpl"),
+                @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl")
+        })
     @Column(name = "PRODUCT_OPTION_VALUE_ID")
     protected Long id;
 
     @Column(name = "ATTRIBUTE_VALUE")
-    @AdminPresentation(friendlyName = "Attribute_Value")
+    @AdminPresentation(friendlyName = "productOptionValue_attributeValue", 
+            prominent = true, order = Presentation.FieldOrder.ATTRIBUTE_VALUE,
+            translatable = true, gridOrder = Presentation.FieldOrder.ATTRIBUTE_VALUE)
     protected String attributeValue;
 
-    @Column(name ="DISPLAY_ORDER")
-    @AdminPresentation(friendlyName = "Display_Order")
+    @Column(name = "DISPLAY_ORDER")
+    @AdminPresentation(friendlyName = "productOptionValue_displayOrder", prominent = true,
+            gridOrder = Presentation.FieldOrder.DISPLAY_ORDER, order = Presentation.FieldOrder.DISPLAY_ORDER)
     protected Long displayOrder;
-    
-    @Column(name = "PRICE_ADJUSTMENT", precision=19, scale=5)
-    @AdminPresentation(friendlyName="Adjustment", fieldType=SupportedFieldType.MONEY)
+
+    @Column(name = "PRICE_ADJUSTMENT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "productOptionValue_adjustment", fieldType = SupportedFieldType.MONEY,
+            prominent = true, gridOrder = Presentation.FieldOrder.PRICE_ADJUSTMENT, order = Presentation.FieldOrder.PRICE_ADJUSTMENT)
     protected BigDecimal priceAdjustment;
 
     @ManyToOne(targetEntity = ProductOptionImpl.class)
@@ -89,7 +103,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
 
     @Override
     public String getAttributeValue() {
-        return attributeValue;
+        return DynamicTranslationProvider.getValue(this, "attributeValue", attributeValue);
     }
 
     @Override
@@ -106,24 +120,23 @@ public class ProductOptionValueImpl implements ProductOptionValue {
     public void setDisplayOrder(Long displayOrder) {
         this.displayOrder = displayOrder;
     }
-    
+
     @Override
     public Money getPriceAdjustment() {
 
-      Money returnPrice = null;
-        
-       
+        Money returnPrice = null;
+
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-         
-                DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustment(this,priceAdjustment == null ? null : new Money(priceAdjustment), SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
-                returnPrice = dynamicPrices.getPriceAdjustment(); 
-          
+
+            DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getPriceAdjustment(this, priceAdjustment == null ? null : new Money(priceAdjustment), SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+            returnPrice = dynamicPrices.getPriceAdjustment();
+
         } else {
             if (priceAdjustment != null) {
-                returnPrice = new Money(priceAdjustment,Money.defaultCurrency());
+                returnPrice = new Money(priceAdjustment, Money.defaultCurrency());
             }
         }
-        
+
         return returnPrice;
     }
 
@@ -150,7 +163,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!getClass().isAssignableFrom(obj.getClass())) {
             return false;
         }
         ProductOptionValueImpl other = (ProductOptionValueImpl) obj;
@@ -167,6 +180,16 @@ public class ProductOptionValueImpl implements ProductOptionValue {
             return false;
         }
         return true;
+    }
+
+    public static class Presentation {
+
+        public static class FieldOrder {
+
+            public static final int ATTRIBUTE_VALUE = 1000;
+            public static final int DISPLAY_ORDER = 3000;
+            public static final int PRICE_ADJUSTMENT = 2000;
+        }
     }
 
 }

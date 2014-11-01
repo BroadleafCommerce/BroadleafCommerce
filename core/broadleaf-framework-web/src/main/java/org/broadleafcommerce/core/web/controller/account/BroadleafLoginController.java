@@ -1,32 +1,35 @@
 /*
- * Copyright 2012 the original author or authors.
- *
+ * #%L
+ * BroadleafCommerce Framework Web
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.security.MergeCartProcessor;
 import org.broadleafcommerce.common.service.GenericResponse;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.validator.ResetPasswordValidator;
-import org.broadleafcommerce.profile.web.core.service.LoginService;
-import org.springframework.security.core.Authentication;
+import org.broadleafcommerce.profile.web.core.service.login.LoginService;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -51,9 +54,6 @@ public class BroadleafLoginController extends BroadleafAbstractController {
     
     @Resource(name="blLoginService")
     protected LoginService loginService;
-    
-    @Resource(name="blMergeCartProcessor")
-    protected MergeCartProcessor mergeCartProcessor;
     
     protected static String loginView = "authentication/login";
     protected static String forgotPasswordView = "authentication/forgotPassword";
@@ -109,7 +109,9 @@ public class BroadleafLoginController extends BroadleafAbstractController {
              model.addAttribute("errorCode", errorCode);             
              return getForgotPasswordView();
         } else {
-            request.getSession(true).setAttribute("forgot_password_username", username);
+            if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+                request.getSession(true).setAttribute("forgot_password_username", username);
+            }
             return getForgotPasswordSuccessView();
         }
     }   
@@ -201,8 +203,7 @@ public class BroadleafLoginController extends BroadleafAbstractController {
             return getResetPasswordView();
         } else {            
             // The reset password was successful, so log this customer in.          
-            Authentication auth = loginService.loginCustomer(resetPasswordForm.getUsername(), resetPasswordForm.getPassword());
-            mergeCartProcessor.execute(request, response, auth);            
+            loginService.loginCustomer(resetPasswordForm.getUsername(), resetPasswordForm.getPassword());
 
             return getResetPasswordSuccessView();
         }
@@ -231,7 +232,10 @@ public class BroadleafLoginController extends BroadleafAbstractController {
      */
     public ResetPasswordForm initResetPasswordForm(HttpServletRequest request) {
         ResetPasswordForm resetPasswordForm = new ResetPasswordForm();
-        String username = (String) request.getSession(true).getAttribute("forgot_password_username");
+        String username = null;
+        if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+            username = (String) request.getSession(true).getAttribute("forgot_password_username");
+        }
         String token = request.getParameter("token");
         resetPasswordForm.setToken(token);
         resetPasswordForm.setUsername(username);
