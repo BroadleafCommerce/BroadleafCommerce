@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.copy;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
@@ -26,6 +27,8 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import org.springframework.core.Ordered;
@@ -33,8 +36,10 @@ import org.springframework.core.Ordered;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,6 +68,9 @@ public abstract class MultiTenantCopier implements Ordered {
     
     @Resource(name = "blMultiTenantCopierExtensionManager")
     protected MultiTenantCopierExtensionManager extensionManager;
+
+    @Resource(name="blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
     
     protected int order = 0;
 
@@ -87,26 +95,22 @@ public abstract class MultiTenantCopier implements Ordered {
         this.order = order;
     }
 
-    protected <T, G extends Exception> void persistCopyObjectTree(CopyOperation<T,G> copyOperation, Class<T> clazz, Long id, MultiTenantCopyContext context) throws G {
+    protected <T, G extends Exception> void persistCopyObjectTree(CopyOperation<T,G> copyOperation, Class<T> clazz, T original, MultiTenantCopyContext context) throws G {
         try {
             //don't persist if there is already an equivalent present
-            if (context.getEquivalentId(clazz.getName(), id) != null) {
+            if (context.getEquivalentId(clazz.getName(), genericEntityService.getIdentifier(original)) != null) {
                 return;
             }
 
             context.clearOriginalIdentifiers();
-            genericEntityService.flush();
-            genericEntityService.clear();
             genericEntityService.clearAutoFlushMode();
-            Object copy = copyOperation.execute(genericEntityService.readGenericEntity(clazz, id));
+            Object copy = copyOperation.execute(original);
             persistCopyObjectTreeInternal(copy, new HashSet<Integer>(), context);
-            genericEntityService.flush();
         } catch (Exception e) {
             LOG.error("Unable to persist the copy object tree", e);
             throw ExceptionHelper.refineException(e);
         } finally {
             context.clearOriginalIdentifiers();
-            genericEntityService.clear();
             genericEntityService.enableAutoFlushMode();
         }
     }
@@ -196,16 +200,55 @@ public abstract class MultiTenantCopier implements Ordered {
      * @throws ServiceException
      * @throws CloneNotSupportedException
      */
-    protected <T extends MultiTenantCloneable> void copyEntitiesOfType(Class<T> clazz, Site fromSite, Catalog fromCatalog, final MultiTenantCopyContext context)
+    protected <T extends MultiTenantCloneable> void copyEntitiesOfType(final Class<T> clazz, final Site fromSite, final Catalog fromCatalog, final MultiTenantCopyContext context)
             throws ServiceException, CloneNotSupportedException {
-        for (Long id : readAllIds(clazz, fromSite, fromCatalog)) {
-            persistCopyObjectTree(new CopyOperation<T, CloneNotSupportedException>() {
-                @Override
-                public T execute(T original) throws CloneNotSupportedException {
-                    return (T) original.createOrRetrieveCopyInstance(context).getClone();
+        genericEntityService.flush();
+        genericEntityService.clear();
+        transUtil.runStreamingTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public Object[] retrievePage(int startPos, int pageSize) {
+                try {
+                    Object[] temp = new Object[1];
+                    List<T> results = readAll(clazz, pageSize, startPos, fromSite, fromCatalog);
+                    temp[0] = results;
+                    return temp;
+                } catch (ServiceException e) {
+                    throw ExceptionHelper.refineException(e);
                 }
-            }, clazz, id, context);
-        }
+            }
+
+            @Override
+            public void pagedExecute(Object[] param) throws Throwable {
+                try {
+                    List<T> results = (List<T>) param[0];
+                    for (T result : results) {
+                        persistCopyObjectTree(new CopyOperation<T, CloneNotSupportedException>() {
+                            @Override
+                            public T execute(T original) throws CloneNotSupportedException {
+                                return (T) original.createOrRetrieveCopyInstance(context).getClone();
+                            }
+                        }, clazz, result, context);
+                        genericEntityService.flush();
+                    }
+                } finally {
+                    genericEntityService.clear();
+                }
+            }
+
+            @Override
+            public Long retrieveTotalCount() {
+                try {
+                    return readCount(clazz, fromSite, fromCatalog);
+                } catch (ServiceException e) {
+                    throw ExceptionHelper.refineException(e);
+                }
+            }
+
+            @Override
+            public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+                return true;
+            }
+        }, RuntimeException.class);
     }
     
     /**
