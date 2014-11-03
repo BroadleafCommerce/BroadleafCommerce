@@ -20,12 +20,15 @@
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.broadleafcommerce.common.service.GenericResponse;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminMenu;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
+import org.broadleafcommerce.openadmin.server.security.service.AdminUserDetails;
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.web.form.ResetPasswordForm;
 import org.springframework.security.core.Authentication;
@@ -70,7 +73,7 @@ public class AdminLoginController extends BroadleafAbstractController {
     protected static String forgotPasswordView = "login/forgotPassword";
     protected static String forgotUsernameView = "login/forgotUsername";
     protected static String resetPasswordView  = "login/resetPassword";
-    protected static String changePasswordView  = "login/changePassword";
+    protected static String changePasswordView  = "login/changePasswordPopup";
     protected static String loginRedirect = "login";
     protected static String resetPasswordRedirect = "resetPassword";
     protected static String noAccessView = "noAccess";
@@ -163,22 +166,30 @@ public class AdminLoginController extends BroadleafAbstractController {
 
     @RequestMapping(value="/changePassword", method=RequestMethod.GET)
     public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return getChangePasswordView();
+        SecurityContext c = SecurityContextHolder.getContext();
+        model.addAttribute("username", ((AdminUserDetails) c.getAuthentication().getPrincipal()).getUsername());
+        return "login/changePasswordPopup";
     }
 
     @RequestMapping(value="/changePassword", method=RequestMethod.POST)
     public String processchangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
-        GenericResponse errorResponse = adminSecurityService
-                .changePassword(resetPasswordForm.getUsername(),
-                        resetPasswordForm.getOldPassword(),
-                        resetPasswordForm.getPassword(),
-                        resetPasswordForm.getConfirmPassword());
+        GenericResponse errorResponse = adminSecurityService.changePassword(resetPasswordForm.getUsername(),
+                resetPasswordForm.getOldPassword(),
+                resetPasswordForm.getPassword(),
+                resetPasswordForm.getConfirmPassword());
+        
         if (errorResponse.getHasErrors()) {
-            setErrors(errorResponse, request);
-            return getChangePasswordView();
+            String errorCode = errorResponse.getErrorCodesList().get(0);
+            return new JsonResponse(response)
+                .with("status", "error")
+                .with("errorText", BLCMessageUtils.getMessage("password." + errorCode))
+                .done();
         } else {
-            return redirectToLoginWithMessage("passwordReset");
+            return new JsonResponse(response)
+                .with("data.status", "ok")
+                .with("successMessage", BLCMessageUtils.getMessage("PasswordChange_success"))
+                .done();
         }
     }
 

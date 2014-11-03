@@ -339,7 +339,8 @@ input[type="text"][readonly], input[type="password"][readonly], input[type="date
 .top-bar .attached {
     padding: 0 0 0 23px;
     max-width: 1280px;
-    z-index: 0 !important;
+    z-index: 1000 !important;
+    position: relative;
 }
 
 .top-bar .attached > .brand {
@@ -1743,6 +1744,12 @@ div.action-popup a.action-popup-cancel {
 	line-height: 27px;
 }
 
+div.action-popup span.submit-error.success {
+	color: #8EAA2B;
+	font-weight: bold;
+}
+
+
 div.action-popup span.submit-error,
 div.action-popup span.sync-ok {
 	line-height: 27px;
@@ -1786,4 +1793,10 @@ div.action-popup img.ajax-loader {
     float: right;
     margin-right: 10px;
     display: none;
+}
+
+div.action-popup.change-password {
+	top: 20px;
+	right: 0;
+	width: 330px;
 }

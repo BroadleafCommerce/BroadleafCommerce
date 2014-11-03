@@ -14,7 +14,7 @@
                 <blc_admin:admin_user resultVar="adminUser" />
                 <a href="#">[[${adminUser.name}]]</a>
                 <ul class="dropdown">
-                    <li><a href="#" th:href="@{/changePassword}" th:text="#{header.password.change} + '...'" /></li>                   
+                    <li><a href="#" class="change-password" th:href="@{/changePassword}" th:text="#{header.password.change} + '...'" /></li>                   
                 </ul>
             </li>
 

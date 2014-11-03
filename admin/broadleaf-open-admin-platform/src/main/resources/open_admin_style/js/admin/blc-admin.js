@@ -694,3 +694,74 @@ $(document).keyup(function(e){
         }
     }
 });
+
+$('body').on('click', 'a.change-password', function(event) {
+    event.preventDefault();
+    var $this = $(this);
+    BLC.ajax({
+        url : $this.attr('href')
+    }, function(data) {
+        $this.closest('div.attached').append(data);
+        /*$this.parent().find('div.action-popup').find('div.generated-url-container').each(function(idx, el) {
+            if ($(el).data('overridden-url') != true) {
+                BLCAdmin.generatedUrl.registerUrlGenerator($(el));
+            }
+        })
+        */
+    });
+    
+});
+
+$('body').on('click', 'button.change-password-confirm', function(event) {
+    var $this = $(this);
+    var $form = $this.closest('form');
+    
+	BLC.ajax({
+		url: $form.attr('action'),
+		type: "POST",
+		data: $form.serialize(),
+		error: function(data) {
+            $this.closest('.actions').show();
+            $this.closest('.workflow-comment-prompt').find('img.ajax-loader').hide();
+    		BLC.defaultErrorHandler(data);
+		}
+	}, function(data) {
+	    if (data instanceof Object && data.hasOwnProperty('status') && data.status == 'error') {
+            $this.closest('div.action-popup')
+                .find('span.submit-error')
+                    .text(data.errorText)
+                    .show();
+
+            $this.closest('.actions').show();
+            $this.closest('.workflow-comment-prompt').find('img.ajax-loader').hide();
+		} else {
+            $this.closest('div.action-popup')
+                .find('span.submit-error')
+                    .text(data.successMessage)
+                    .addClass('success')
+                    .show();
+
+            $this.closest('.action-popup').find('img.ajax-loader').show();
+            
+            setTimeout(function() {
+                $this.closest('div.action-popup')
+                    .find('a.action-popup-cancel')
+                    .click();
+            }, 2000);
+            
+		    /*
+            $ef.find('input[name="fields[\'name\'].value"]').val($form.find('input[name="name"]').val());
+            $ef.find('input[name="fields[\'path\'].value"]').val($form.find('input[name="path"]').val());
+            $ef.find('input[name="fields[\'overrideGeneratedPath\'].value"]').val($form.find('input[name="overrideGeneratedPath"]').val());
+            $ef.append($('<input type="hidden" name="fields[\'saveAsNew\'].value" value="true" />'));
+            */
+            
+		    $this.closest('')
+            $this.closest('.actions').hide();
+            
+            //$ef.submit();
+		}
+    });
+	
+    event.preventDefault();
+});
