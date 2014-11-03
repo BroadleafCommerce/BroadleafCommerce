@@ -19,12 +19,10 @@
  */
 package org.broadleafcommerce.common.copy;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.service.GenericEntityService;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
@@ -43,14 +41,16 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.Embeddable;
-import javax.persistence.EntityExistsException;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
- * Abstract class for copying entities to a new catalog as required during derived catalog propagation.
+ * Abstract class for copying entities to a new catalog as required during derived catalog propagation. Subclasses generally
+ * call {@link #copyEntitiesOfType(Class, org.broadleafcommerce.common.site.domain.Site, org.broadleafcommerce.common.site.domain.Catalog, MultiTenantCopyContext)}
+ * one or more times inside of their {@link #copyEntities(MultiTenantCopyContext)} implementation to clone and persist
+ * an entity object tree.
  * 
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
@@ -66,7 +66,28 @@ public abstract class MultiTenantCopier implements Ordered {
     
     protected int order = 0;
 
-    public <T, G extends Exception> void persistCopyObjectTree(CopyOperation<T,G> copyOperation, Class<T> clazz, Long id, MultiTenantCopyContext context) throws G {
+    /**
+     * Main method that should be implemented by each {@link MultiTenantCopier} to drive the logic of
+     * copying that particular entity to the new derived catalog.
+     *
+     * @param context
+     */
+    public abstract void copyEntities(MultiTenantCopyContext context) throws Exception;
+
+    /**
+     *
+     * @return the order of this {@link MultiTenantCopier}
+     */
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    protected <T, G extends Exception> void persistCopyObjectTree(CopyOperation<T,G> copyOperation, Class<T> clazz, Long id, MultiTenantCopyContext context) throws G {
         try {
             //don't persist if there is already an equivalent present
             if (context.getEquivalentId(clazz.getName(), id) != null) {
@@ -76,9 +97,9 @@ public abstract class MultiTenantCopier implements Ordered {
             context.clearOriginalIdentifiers();
             genericEntityService.flush();
             genericEntityService.clear();
-            context.clearAutoFlushMode();
+            genericEntityService.clearAutoFlushMode();
             Object copy = copyOperation.execute(genericEntityService.readGenericEntity(clazz, id));
-            persistCopyObjectTree(copy, new HashSet<Integer>(), context);
+            persistCopyObjectTreeInternal(copy, new HashSet<Integer>(), context);
             genericEntityService.flush();
         } catch (Exception e) {
             LOG.error("Unable to persist the copy object tree", e);
@@ -86,11 +107,11 @@ public abstract class MultiTenantCopier implements Ordered {
         } finally {
             context.clearOriginalIdentifiers();
             genericEntityService.clear();
-            context.enableAutoFlushMode();
+            genericEntityService.enableAutoFlushMode();
         }
     }
 
-    protected void persistCopyObjectTree(Object copy, Set<Integer> library, MultiTenantCopyContext context) {
+    protected void persistCopyObjectTreeInternal(Object copy, Set<Integer> library, MultiTenantCopyContext context) {
         if (library.contains(System.identityHashCode(copy))) {
             return;
         }
@@ -112,31 +133,31 @@ public abstract class MultiTenantCopier implements Ordered {
                 if (newTarget != null) {
                     if (field.getAnnotation(ManyToOne.class) != null || field.getAnnotation(OneToOne.class) != null) {
                         if (library.contains(System.identityHashCode(newTarget))) {
-                            persistPart(newTarget, context);
+                            persistNode(newTarget, context);
                             continue;
                         }
-                        persistCopyObjectTree(newTarget, library, context);
+                        persistCopyObjectTreeInternal(newTarget, library, context);
                     } else if (field.getAnnotation(ManyToMany.class) != null || field.getAnnotation(OneToMany.class) != null) {
                         collections.add(new Object[]{field, newTarget});
                     } else if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
-                        persistCopyObjectTree(newTarget, library, context);
+                        persistCopyObjectTreeInternal(newTarget, library, context);
                     }
                 }
             }
         }
         if (copy.getClass().getAnnotation(Embeddable.class) == null) {
-            persistPart(copy, context);
+            persistNode(copy, context);
         }
         for (Object[] collectionItem : collections) {
             if (collectionItem[1] instanceof Collection) {
                 Collection newCollection = (Collection) collectionItem[1];
                 for (Object member : newCollection) {
-                    persistCopyObjectTree(member, library, context);
+                    persistCopyObjectTreeInternal(member, library, context);
                 }
             } else if (collectionItem[1] instanceof Map) {
                 Map newMap = (Map) collectionItem[1];
                 for (Object key : newMap.keySet()) {
-                    persistCopyObjectTree(newMap.get(key), library, context);
+                    persistCopyObjectTreeInternal(newMap.get(key), library, context);
                 }
             } else {
                 throw new IllegalArgumentException(String.format("During copy object persistence, " +
@@ -146,7 +167,7 @@ public abstract class MultiTenantCopier implements Ordered {
         }
     }
 
-    protected void persistPart(final Object copy, MultiTenantCopyContext context) {
+    protected void persistNode(final Object copy, MultiTenantCopyContext context) {
         if (!genericEntityService.sessionContains(copy) && !genericEntityService.idAssigned(copy)) {
             Object original = genericEntityService.readGenericEntity(copy.getClass().getName(), context.removeOriginalIdentifier(copy));
             extensionManager.getProxy().transformCopy(context, original, copy);
@@ -161,6 +182,29 @@ public abstract class MultiTenantCopier implements Ordered {
             }, context.getToSite(), context.getToSite(), context.getToCatalog());
 
             context.storeEquivalentMapping(original.getClass().getName(), context.getIdentifier(original), context.getIdentifier(copy));
+        }
+    }
+
+    /**
+     * Subclasses will generally call this method in their {@link #copyEntities(MultiTenantCopyContext)} implementation.
+     *
+     * @param clazz
+     * @param fromSite
+     * @param fromCatalog
+     * @param context
+     * @param <T>
+     * @throws ServiceException
+     * @throws CloneNotSupportedException
+     */
+    protected <T extends MultiTenantCloneable> void copyEntitiesOfType(Class<T> clazz, Site fromSite, Catalog fromCatalog, final MultiTenantCopyContext context)
+            throws ServiceException, CloneNotSupportedException {
+        for (Long id : readAllIds(clazz, fromSite, fromCatalog)) {
+            persistCopyObjectTree(new CopyOperation<T, CloneNotSupportedException>() {
+                @Override
+                public T execute(T original) throws CloneNotSupportedException {
+                    return (T) original.createOrRetrieveCopyInstance(context).getClone();
+                }
+            }, clazz, id, context);
         }
     }
     
@@ -212,6 +256,15 @@ public abstract class MultiTenantCopier implements Ordered {
         return readAll(clazz, Integer.MAX_VALUE, 0, site, catalog);
     }
 
+    /**
+     * Returns the primary key values for all entities of the specified type in the site or catalog.
+     *
+     * @param clazz
+     * @param site
+     * @param catalog
+     * @return
+     * @throws ServiceException
+     */
     protected List<Long> readAllIds(final Class<?> clazz, Site site, Catalog catalog) throws ServiceException {
         return IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<List<Long>, ServiceException>() {
             @Override
@@ -241,42 +294,6 @@ public abstract class MultiTenantCopier implements Ordered {
                 return genericEntityService.readAllGenericEntity(clazz, limit, offset);
             }
         }, site, site, catalog);
-    }
-
-
-    /**
-     * Main method that should be implemented by each {@link MultiTenantCopier} to drive the logic of
-     * copying that particular entity to the new derived catalog.
-     * 
-     * @param context
-     */
-    public abstract void copyEntities(MultiTenantCopyContext context) throws Exception;
-
-    /**
-     * 
-     * @return the order of this {@link MultiTenantCopier}
-     */
-    @Override
-    public int getOrder() {
-        return order;
-    }
-    
-    public void setOrder(int order) {
-        this.order = order;
-    }
-
-    protected <T extends MultiTenantCloneable> void copyEntitiesOfType(Class<T> clazz, Site fromSite,
-                                                                       Catalog fromCatalog,
-                                                                       final MultiTenantCopyContext context)
-            throws ServiceException, CloneNotSupportedException {
-        for (Long id : readAllIds(clazz, fromSite, fromCatalog)) {
-            persistCopyObjectTree(new CopyOperation<T, CloneNotSupportedException>() {
-                @Override
-                public T execute(T original) throws CloneNotSupportedException {
-                    return (T) original.createOrRetrieveCopyInstance(context).getClone();
-                }
-            }, clazz, id, context);
-        }
     }
 
 }

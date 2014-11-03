@@ -31,7 +31,6 @@ import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -50,7 +49,6 @@ public class MultiTenantCopyContext {
     protected MultiTenantCopierExtensionManager extensionManager;
     protected BiMap<Integer, String> currentEquivalentMap = HashBiMap.create();
     protected Map<Integer, Object> currentCloneMap = new HashMap<Integer, Object>();
-    
     protected Map<String, Map<Object, Object>> equivalentsMap;
     protected GenericEntityService genericEntityService;
     
@@ -89,7 +87,6 @@ public class MultiTenantCopyContext {
     }
 
     public void storeEquivalentMapping(String className, Object fromId, Object toId) {
-        //TODO remove this ceiling entity detection when all the copy code is migrated to the new format
         String ceilingImpl = genericEntityService.getCeilingImplClass(className).getName();
         Map<Object, Object> keys = equivalentsMap.get(ceilingImpl);
         if (keys == null) {
@@ -103,32 +100,6 @@ public class MultiTenantCopyContext {
         
         keys.put(fromId, toId);
     }
-
-//    public <T> T conditionallySaveClone(Object from, Object copy, Class<T> clazz, boolean shouldSave) {
-//        if (shouldSave) {
-//            extensionManager.getProxy().transformCopy(this, from, copy);
-//            extensionManager.getProxy().prepareForSave(this, from, copy);
-//            copy = save(copy);
-//            storeEquivalentMapping(from.getClass().getName(), getIdentifier(from), getIdentifier(copy));
-//            if (count % 20 == 0) {
-//                //Make sure level 1 cache does not get out of hand for memory
-//                genericEntityService.flush();
-//                genericEntityService.clear();
-//                count = 0;
-//            }
-//            count++;
-//        }
-//        return (T) copy;
-//    }
-
-//    protected <T> T save(final T object) {
-//        return IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<T, RuntimeException>() {
-//            @Override
-//            public T execute() {
-//                return genericEntityService.save(object);
-//            }
-//        }, getToSite(), getToCatalog());
-//    }
 
     public Long getIdentifier(Object entity) {
         return (Long) genericEntityService.getIdentifier(entity);
@@ -251,14 +222,6 @@ public class MultiTenantCopyContext {
         return new CreateResponse<G>(response, alreadyPopulate);
     }
 
-    public Serializable getOriginalIdentifier(Object copy) {
-        if (currentEquivalentMap.containsKey(System.identityHashCode(copy))) {
-            String valKey = currentEquivalentMap.get(System.identityHashCode(copy));
-            return Long.parseLong(valKey.substring(valKey.indexOf("_") + 1, valKey.length()));
-        }
-        return null;
-    }
-
     public void clearOriginalIdentifiers() {
         currentEquivalentMap.clear();
         currentCloneMap.clear();
@@ -289,12 +252,4 @@ public class MultiTenantCopyContext {
 
         return allFields;
     }
-
-    public void clearAutoFlushMode() {
-        genericEntityService.clearAutoFlushMode();
-    }
-
-    public void enableAutoFlushMode() {
-            genericEntityService.enableAutoFlushMode();
-        }
 }
