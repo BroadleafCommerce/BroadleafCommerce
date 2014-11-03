@@ -224,7 +224,6 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
         for (PageTemplateFieldGroupXref fieldGroup : fieldGroups) {
             CreateResponse<PageTemplateFieldGroupXref> clonedGroupResponse = fieldGroup.createOrRetrieveCopyInstance(context);
             PageTemplateFieldGroupXref clonedGroup = clonedGroupResponse.getClone();
-            clonedGroup.setPageTemplate(cloned);
             cloned.getFieldGroupXrefs().add(clonedGroup);
         }
         return createResponse;

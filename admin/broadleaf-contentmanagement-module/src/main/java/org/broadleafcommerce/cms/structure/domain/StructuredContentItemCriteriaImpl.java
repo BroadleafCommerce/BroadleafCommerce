@@ -92,33 +92,21 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
     @JoinColumn(name = "SC_ID")
     protected StructuredContent structuredContent;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getId()
-     */
     @Override
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setId(java.lang.Long)
-     */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#getReceiveQuantity()
-     */
     @Override
     public Integer getQuantity() {
         return quantity;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentItemCriteria#setReceiveQuantity(java.lang.Integer)
-     */
     @Override
     public void setQuantity(Integer receiveQuantity) {
         this.quantity = receiveQuantity;
@@ -197,7 +185,9 @@ public class StructuredContentItemCriteriaImpl implements StructuredContentItemC
             return createResponse;
         }
         StructuredContentItemCriteria cloned = createResponse.getClone();
-        cloned.setStructuredContent(structuredContent);
+        if (structuredContent != null) {
+            cloned.setStructuredContent(structuredContent.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setMatchRule(orderItemMatchRule);
         cloned.setQuantity(quantity);
         return createResponse;

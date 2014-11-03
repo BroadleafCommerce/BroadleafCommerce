@@ -128,7 +128,6 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
             CreateResponse<FieldGroup> clonedGroupRsp = entry.createOrRetrieveCopyInstance(context);
             FieldGroup clonedGroup = clonedGroupRsp.getClone();
             cloned.getFieldGroups().add(clonedGroup);
-
         }
 
         return createResponse;

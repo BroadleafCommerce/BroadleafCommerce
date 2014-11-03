@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicy;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -55,7 +58,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CategoryMediaXrefImpl implements CategoryMediaXref, Media {
+public class CategoryMediaXrefImpl implements CategoryMediaXref, Media, MultiTenantCloneable<CategoryMediaXrefImpl> {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -204,5 +207,26 @@ public class CategoryMediaXrefImpl implements CategoryMediaXref, Media {
             return (T) media;
         }
         throw new UnknownUnwrapTypeException(unwrapType);
+    }
+
+    @Override
+    public <G extends CategoryMediaXrefImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CategoryMediaXrefImpl cloned = createResponse.getClone();
+        if (media != null) {
+            cloned.setMedia(((MediaImpl) media).createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setAltText(getAltText());
+        cloned.setKey(key);
+        if (category != null) {
+            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setTags(getTags());
+        cloned.setUrl(getUrl());
+        cloned.setTitle(getTitle());
+        return createResponse;
     }
 }

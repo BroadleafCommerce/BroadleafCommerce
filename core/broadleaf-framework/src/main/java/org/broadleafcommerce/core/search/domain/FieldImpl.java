@@ -244,7 +244,8 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     }
 
     @Override
-    public <G extends Field> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends Field> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws
+            CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -256,10 +257,10 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
         cloned.setPropertyName(propertyName);
         cloned.setSearchable(searchable);
         cloned.setTranslatable(translatable);
-        for(FieldType entry : getSearchableFieldTypes()){
-          cloned.getSearchableFieldTypes().add(entry);
+        for (String entry : searchableFieldTypes) {
+            ((FieldImpl) cloned).searchableFieldTypes.add(entry);
         }
         cloned.setEntityType(getEntityType());
-        return  createResponse;
+        return createResponse;
     }
 }

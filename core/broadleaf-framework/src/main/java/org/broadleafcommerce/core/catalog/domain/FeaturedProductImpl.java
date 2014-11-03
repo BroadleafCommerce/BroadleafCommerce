@@ -142,9 +142,12 @@ public class FeaturedProductImpl implements FeaturedProduct {
             return createResponse;
         }
         FeaturedProduct cloned = createResponse.getClone();
-        // dont clone category
-        cloned.setCategory(category);
-        cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        if (category != null) {
+            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (product != null) {
+            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setPromotionMessage(promotionMessage);
         cloned.setSequence(sequence);
         return createResponse;

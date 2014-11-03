@@ -168,7 +168,9 @@ public class PageFieldImpl implements PageField {
             return createResponse;
         }
         PageField cloned = createResponse.getClone();
-        cloned.setPage(page);
+        if (page != null) {
+            cloned.setPage(page.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setFieldKey(fieldKey);
         cloned.setValue(getValue());
 

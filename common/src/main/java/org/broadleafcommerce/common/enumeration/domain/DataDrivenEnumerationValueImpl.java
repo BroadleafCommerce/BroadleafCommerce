@@ -154,8 +154,9 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
         cloned.setKey(key);
         cloned.setDisplay(display);
         cloned.setHidden(hidden);
-        //don't clone type - it will be replace (if applicable) on the other side of the relationship
-        cloned.setType(type);
+        if (type != null) {
+            cloned.setType(type.createOrRetrieveCopyInstance(context).getClone());
+        }
         return createResponse;
     }
 }

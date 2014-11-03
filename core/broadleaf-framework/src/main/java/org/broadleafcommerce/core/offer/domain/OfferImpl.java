@@ -855,7 +855,9 @@ public class OfferImpl implements Offer, AdminMainEntity {
         }
         Offer cloned = createResponse.getClone();
         cloned.setApplyDiscountToSalePrice(applyToSalePrice);
-        cloned.setAutomaticallyAdded(automaticallyAdded);
+        if (automaticallyAdded != null) {
+            cloned.setAutomaticallyAdded(automaticallyAdded);
+        }
         cloned.setDescription(description);
         cloned.setDiscountType(getDiscountType());
         cloned.setEndDate(endDate);
@@ -880,18 +882,14 @@ public class OfferImpl implements Offer, AdminMainEntity {
         cloned.setType(getType());
         for(OfferCode entry : offerCodes){
             OfferCode clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setOffer(cloned);
             cloned.getOfferCodes().add(clonedEntry);
         }
-
         for(OfferQualifyingCriteriaXref entry : qualifyingItemCriteria){
             OfferQualifyingCriteriaXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setOffer(cloned);
             cloned.getQualifyingItemCriteriaXref().add(clonedEntry);
         }
         for(Map.Entry<String, OfferOfferRuleXref> entry : offerMatchRules.entrySet()){
             OfferOfferRuleXref clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setOffer(cloned);
             cloned.getOfferMatchRulesXref().put(entry.getKey(),clonedEntry);
         }
 

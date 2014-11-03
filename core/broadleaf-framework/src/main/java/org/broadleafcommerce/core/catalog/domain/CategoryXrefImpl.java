@@ -134,10 +134,12 @@ public class CategoryXrefImpl implements CategoryXref {
             return createResponse;
         }
         CategoryXref cloned = createResponse.getClone();
-        cloned.setCategory(category);
-        Category clonedSub = subCategory.createOrRetrieveCopyInstance(context).getClone();
-        clonedSub.getAllParentCategoryXrefs().add(cloned);
-        cloned.setSubCategory(clonedSub);
+        if (category != null) {
+            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (subCategory != null) {
+            cloned.setSubCategory(subCategory.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setDisplayOrder(displayOrder);
         return createResponse;
     }

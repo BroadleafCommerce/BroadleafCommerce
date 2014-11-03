@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.money.BankersRounding;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.*;
@@ -227,4 +229,22 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     }
 
+    @Override
+    public CreateResponse<ProductBundle> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws
+            CloneNotSupportedException {
+        CreateResponse<ProductBundle> createResponse = super.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        ProductBundle cloned = createResponse.getClone();
+        cloned.setAutoBundle(autoBundle);
+        cloned.setBundlePromotable(bundlePromotable);
+        cloned.setItemsPromotable(itemsPromotable);
+        cloned.setPriority(priority);
+        cloned.setPricingModel(getPricingModel());
+        for (SkuBundleItem item : skuBundleItems) {
+            cloned.getSkuBundleItems().add(item.createOrRetrieveCopyInstance(context).getClone());
+        }
+        return createResponse;
+    }
 }

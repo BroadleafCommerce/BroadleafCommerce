@@ -24,9 +24,6 @@ package org.broadleafcommerce.common.copy;
  */
 public interface CopyOperation<T, G extends Exception> {
 
-    T execute() throws G;
-    
-    Object getId(T object);
+    T execute(T original) throws G;
 
-    Class<T> getCacheClass();
 }

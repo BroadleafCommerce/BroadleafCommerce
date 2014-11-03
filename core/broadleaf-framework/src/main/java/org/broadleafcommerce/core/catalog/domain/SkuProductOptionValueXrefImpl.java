@@ -122,9 +122,12 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
             return createResponse;
         }
         SkuProductOptionValueXref cloned = createResponse.getClone();
-        // dont clone
-        cloned.setSku(sku);
-        cloned.setProductOptionValue(productOptionValue.createOrRetrieveCopyInstance(context).getClone());
+        if (sku != null) {
+            cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (productOptionValue != null) {
+            cloned.setProductOptionValue(productOptionValue.createOrRetrieveCopyInstance(context).getClone());
+        }
         return createResponse;
     }
 }

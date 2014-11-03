@@ -32,8 +32,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Polymorphism;
-import org.hibernate.annotations.PolymorphismType;
 
 import java.io.Serializable;
 
@@ -147,9 +145,14 @@ public class StructuredContentFieldXrefImpl implements StructuredContentFieldXre
         }
         StructuredContentFieldXref cloned = createResponse.getClone();
         cloned.setKey(key);
-        cloned.setStructuredContent(structuredContent);
-        CreateResponse<StructuredContentField> clonedFieldRsp = structuredContentField.createOrRetrieveCopyInstance(context);
-        cloned.setStrucuturedContentField(clonedFieldRsp.getClone());
+        if (structuredContent != null) {
+            cloned.setStructuredContent(structuredContent.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (structuredContentField != null) {
+            CreateResponse<StructuredContentField> clonedFieldRsp = structuredContentField
+                    .createOrRetrieveCopyInstance(context);
+            cloned.setStrucuturedContentField(clonedFieldRsp.getClone());
+        }
         return createResponse;
     }
 }

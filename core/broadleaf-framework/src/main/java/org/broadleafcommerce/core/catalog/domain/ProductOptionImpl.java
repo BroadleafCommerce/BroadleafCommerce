@@ -307,12 +307,10 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
         cloned.setProductOptionValidationType(getProductOptionValidationType());
         for(ProductOptionValue entry : allowedValues){
             ProductOptionValue clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setProductOption(cloned);
             cloned.getAllowedValues().add(clonedEntry);
         }
         for(ProductOptionXref entry : products){
             ProductOptionXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setProductOption(cloned);
             cloned.getProductXrefs().add(clonedEntry);
         }
 

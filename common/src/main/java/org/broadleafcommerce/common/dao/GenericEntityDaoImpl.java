@@ -20,26 +20,34 @@
 
 package org.broadleafcommerce.common.dao;
 
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
+import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 
 @Repository("blGenericEntityDao")
@@ -54,8 +62,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
     protected DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
     
     @Override
-    @SuppressWarnings("rawtypes")
-    public Object readGenericEntity(Class<?> clazz, Object id) {
+    public <T> T readGenericEntity(Class<T> clazz, Object id) {
         Map<String, Object> md = daoHelper.getIdMetadata(clazz, (HibernateEntityManager) em);
         AbstractSingleColumnStandardBasicType type = (AbstractSingleColumnStandardBasicType) md.get("type");
         
@@ -80,6 +87,17 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
         q.setMaxResults(limit);
         q.setFirstResult(offset);
         return q.getResultList();
+    }
+
+    @Override
+    public List<Long> readAllGenericEntityId(Class<?> clazz) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root root = criteria.from(clazz);
+        criteria.select(root.get(getIdField(clazz).getName()).as(Long.class));
+        criteria.orderBy(builder.asc(root.get(getIdField(clazz).getName())));
+
+        return em.createQuery(criteria).getResultList();
     }
 
     @Override
@@ -115,7 +133,22 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
 
     @Override
     public Serializable getIdentifier(Object entity) {
-        return em.unwrap(Session.class).getIdentifier(entity);
+        if (entity.getClass().getAnnotation(Entity.class) != null) {
+            Field idField = getIdField(entity.getClass());
+            try {
+                return (Serializable) idField.get(entity);
+            } catch (IllegalAccessException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+        }
+        return null;
+    }
+
+    protected Field getIdField(Class<?> clazz) {
+        ClassMetadata metadata = em.unwrap(Session.class).getSessionFactory().getClassMetadata(clazz);
+        Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
+        idField.setAccessible(true);
+        return idField;
     }
     
     @Override
@@ -134,6 +167,16 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
     }
 
     @Override
+    public void clearAutoFlushMode() {
+        em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
+    }
+
+    @Override
+    public void enableAutoFlushMode() {
+        em.unwrap(Session.class).setFlushMode(FlushMode.AUTO);
+    }
+
+    @Override
     public void clear() {
         em.clear();
     }
@@ -141,5 +184,10 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
     @Override
     public boolean sessionContains(Object object) {
         return em.contains(object);
+    }
+
+    @Override
+    public boolean idAssigned(Object object) {
+        return getIdentifier(object) != null;
     }
 }

@@ -831,61 +831,34 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
             return createResponse;
         }
         Product cloned = createResponse.getClone();
-        cloned.setActiveEndDate(getActiveEndDate());
-        cloned.setActiveStartDate(getActiveStartDate());
-        cloned.setContainer(getContainer());
         cloned.setCanSellWithoutOptions(canSellWithoutOptions);
-        cloned.setFeaturedProduct(isFeaturedProduct());
-        cloned.setDepth(getDepth());
-        cloned.setDimension(getDimension());
+        cloned.setFeaturedProduct(isFeaturedProduct);
         cloned.setUrl(url);
         cloned.setUrlKey(urlKey);
-        cloned.setWeight(getWeight());
-        cloned.setHeight(getHeight());
-        cloned.setGirth(getGirth());
-        cloned.setTaxCode(getTaxCode());
-        cloned.setSize(getSize());
-        cloned.setDescription(getDescription());
         cloned.setManufacturer(manufacturer);
         cloned.setPromoMessage(promoMessage);
-        cloned.setDefaultCategory(defaultCategory);
+        if (defaultCategory != null) {
+            cloned.setDefaultCategory(defaultCategory.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setModel(model);
-        for(RelatedProduct entry : crossSaleProducts){
-            CrossSaleProductImpl clonedEntry = ((CrossSaleProductImpl)entry).createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setProduct(cloned);
-            cloned.getCrossSaleProducts().add(clonedEntry);
+        if (defaultSku != null) {
+            cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());
         }
-        for(RelatedProduct entry : upSaleProducts){
-            UpSaleProductImpl clonedEntry = ((UpSaleProductImpl)entry).createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setProduct(cloned);
-            cloned.getUpSaleProducts().add(clonedEntry);
-        }
-
-        cloned.setDefaultSku(defaultSku.createOrRetrieveCopyInstance(context).getClone());
         for(Sku entry : additionalSkus){
             Sku clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setProduct(cloned);
             cloned.getAdditionalSkus().add(clonedEntry);
         }
         for(ProductOptionXref entry : productOptions){
             ProductOptionXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setProduct(cloned);
             cloned.getProductOptionXrefs().add(clonedEntry);
 
         }
-        for(Map.Entry<String,Set<String>> entry : productOptionMap.entrySet()){
-           cloned.getProductOptionValuesMap().put(entry.getKey(),entry.getValue());
-        }
-        for(CategoryProductXref entry : allParentCategoryXrefs){
-            CategoryProductXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setProduct(cloned);
-            cloned.getAllParentCategoryXrefs().add(clonedEntry);
-        }
         for(Map.Entry<String, ProductAttribute> entry : productAttributes.entrySet()){
             ProductAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setProduct(cloned);
             cloned.getProductAttributes().put(entry.getKey(),clonedEntry);
         }
+
+        //Don't clone references to other Product and Category collections - those will be handled by another MultiTenantCopier call
 
         return createResponse;
     }

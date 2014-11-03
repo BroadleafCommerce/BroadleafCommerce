@@ -354,20 +354,16 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
         for(Map.Entry<String, PageField> entry : pageFields.entrySet()){
             CreateResponse<PageField> clonedPageField = entry.getValue().createOrRetrieveCopyInstance(context);
             PageField pageField = clonedPageField.getClone();
-            pageField.setPage(cloned);
             cloned.getPageFields().put(entry.getKey(),pageField);
-
         }
         for(Map.Entry<String,PageRule> entry : pageMatchRules.entrySet()){
             CreateResponse<PageRule> clonedRsp = entry.getValue().createOrRetrieveCopyInstance(context);
             PageRule clonedRule = clonedRsp.getClone();
-
             cloned.getPageMatchRules().put(entry.getKey(),clonedRule);
         }
-        if(pageTemplate != null){
+        if (pageTemplate != null){
             CreateResponse<PageTemplate> clonedTemplateRsp = pageTemplate.createOrRetrieveCopyInstance(context);
             cloned.setPageTemplate(clonedTemplateRsp.getClone());
-
         }
         return createResponse;
     }

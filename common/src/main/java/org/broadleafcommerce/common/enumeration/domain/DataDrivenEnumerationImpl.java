@@ -156,7 +156,6 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
         cloned.setModifiable(modifiable);
         for (DataDrivenEnumerationValue value : enumValues) {
             DataDrivenEnumerationValue clonedValue = value.createOrRetrieveCopyInstance(context).getClone();
-            clonedValue.setType(cloned);
             cloned.getEnumValues().add(clonedValue);
         }
         return createResponse;

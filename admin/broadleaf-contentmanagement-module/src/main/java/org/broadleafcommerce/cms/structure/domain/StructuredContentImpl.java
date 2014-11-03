@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMapOverride;
-import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseConfigValidation;
+import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -201,7 +201,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         }
     )
     @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-    @IgnoreEnterpriseConfigValidation
+    @IgnoreEnterpriseBehavior
     Map<String, StructuredContentRule> structuredContentMatchRules = new HashMap<String, StructuredContentRule>();
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade={CascadeType.ALL})
@@ -213,7 +213,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM)
     @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-    @IgnoreEnterpriseConfigValidation
+    @IgnoreEnterpriseBehavior
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
@@ -408,15 +408,13 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         cloned.setLocale(locale);
         cloned.setOfflineFlag(offlineFlag);
         cloned.setPriority(priority);
-        for(Entry<String,String> entry :fieldValuesMap.entrySet()){
-            cloned.getFieldValues().put(entry.getKey(),entry.getValue());
+        if (structuredContentType != null) {
+            CreateResponse<StructuredContentType> clonedType = structuredContentType.createOrRetrieveCopyInstance(context);
+            cloned.setStructuredContentType(clonedType.getClone());
         }
-        CreateResponse<StructuredContentType> clonedType = structuredContentType.createOrRetrieveCopyInstance(context);
-        cloned.setStructuredContentType(clonedType.getClone());
         for(StructuredContentItemCriteria itemCriteria : qualifyingItemCriteria){
             CreateResponse<StructuredContentItemCriteria> clonedItem = itemCriteria.createOrRetrieveCopyInstance(context);
             StructuredContentItemCriteria clonedCritera = clonedItem.getClone();
-            clonedCritera.setStructuredContent(cloned);
             cloned.getQualifyingItemCriteria().add(clonedCritera);
         }
         for(Entry<String, StructuredContentRule> entry : structuredContentMatchRules.entrySet()){
@@ -428,10 +426,8 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         for(Entry<String, StructuredContentFieldXref> entry : structuredContentFields.entrySet() ){
             CreateResponse<StructuredContentFieldXref> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
             StructuredContentFieldXref clonedContentFieldXref = clonedItem.getClone();
-            clonedContentFieldXref.setStructuredContent(cloned);
             cloned.getStructuredContentFieldXrefs().put(entry.getKey(),clonedContentFieldXref);
         }
-
 
         return createResponse;
     }

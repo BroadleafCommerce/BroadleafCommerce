@@ -263,14 +263,12 @@ public class OfferCodeImpl implements OfferCode {
         OfferCode cloned = createResponse.getClone();
         cloned.setEndDate(offerCodeEndDate);
         cloned.setMaxUses(maxUses);
-        // No clone
-        cloned.setOffer(offer);
-        // TODO MANY-TO-MANY
-        cloned.setOrders(orders);
+        if (offer != null) {
+            cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setStartDate(offerCodeStartDate);
         cloned.setArchived(getArchived());
         cloned.setOfferCode(offerCode);
-
         cloned.setUses(uses);
         return  createResponse;
     }

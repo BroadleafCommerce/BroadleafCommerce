@@ -133,8 +133,11 @@ public class StructuredContentTypeImpl implements StructuredContentType, AdminMa
         StructuredContentType cloned = createResponse.getClone();
         cloned.setDescription(description);
         cloned.setName(name);
-        CreateResponse<StructuredContentFieldTemplate> clonedTemplate = structuredContentFieldTemplate.createOrRetrieveCopyInstance(context);
-        cloned.setStructuredContentFieldTemplate(clonedTemplate.getClone());
+        if (structuredContentFieldTemplate != null) {
+            CreateResponse<StructuredContentFieldTemplate> clonedTemplate = structuredContentFieldTemplate
+                    .createOrRetrieveCopyInstance(context);
+            cloned.setStructuredContentFieldTemplate(clonedTemplate.getClone());
+        }
         return createResponse;
     }
 }

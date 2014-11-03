@@ -31,7 +31,7 @@ public interface MultiTenantCloneable<T> {
      * </p>
      * <code>
      * public CreateResponse&lt;MyClass&gt; createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-     *      CreateResponse&lt;MyClass&gt; createResponse = super.createOrRetrieveCopyInstance(this);
+     *      CreateResponse&lt;MyClass&gt; createResponse = super.createOrRetrieveCopyInstance(context);
      *      if (createResponse.isAlreadyPopulated()) {
      *          return createResponse;
      *      }
@@ -39,7 +39,7 @@ public interface MultiTenantCloneable<T> {
      *
      *      //copy extended field values on myClone here
      *
-     *      return CreateResponse&lt;MyClass&gt;;
+     *      return createResponse;
      * }
      * </code>
      *

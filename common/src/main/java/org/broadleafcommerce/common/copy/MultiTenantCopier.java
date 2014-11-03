@@ -34,6 +34,7 @@ import org.springframework.core.Ordered;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +42,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.Embeddable;
+import javax.persistence.EntityExistsException;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -48,18 +51,9 @@ import javax.persistence.OneToOne;
 
 /**
  * Abstract class for copying entities to a new catalog as required during derived catalog propagation.
- * Implementations of this class should take care to:
- * 
- * <ul>
- *   <li>Make sure that all reads are happening in the appropriate context</li>
- *   
- *   <li>Make sure that the clone method is invoked via an implementation of {@link CopyOperation}
- *       and is fed through {@link #executeSmartObjectCopy(MultiTenantCopyContext, Object, CopyOperation)}</li>
- *       
- *   <li></li>
- * </ul>
  * 
  * @author Andre Azzolini (apazzolini)
+ * @author Jeff Fischer
  */
 public abstract class MultiTenantCopier implements Ordered {
     protected static final Log LOG = LogFactory.getLog(MultiTenantCopier.class);
@@ -71,58 +65,42 @@ public abstract class MultiTenantCopier implements Ordered {
     protected MultiTenantCopierExtensionManager extensionManager;
     
     protected int order = 0;
-    
-    /**
-     * Wrapper method that should be used for all cloning operations. This method will take care of mapping
-     * original object ids, associating the created object as a clone of the original in the context, and calling
-     * a database save on the cloned object.
-     * 
-     * This method will return null if the given from object already has a corresponding clone in the context map.
-     * 
-     * @param context
-     * @param from
-     * @param operation
-     * @return the cloned object, or null if it had previously been cloned
-     * @throws G
-     * @throws ServiceException
-     */
-    public <T, G extends Exception> T executeSmartObjectCopy(MultiTenantCopyContext context, T from,
-            CopyOperation<T, G> operation) throws G, ServiceException {
-        if (from instanceof Status && 'Y' == ((Status) from).getArchived()) {
-            return null;
-        }
-        
-        final Object fromId = operation.getId(from);
-        final Object copyId = context.getEquivalentId(operation.getCacheClass().getName(), fromId);
-        
-        if (copyId != null) {
-            return context.getClonedVersion(operation.getCacheClass(), fromId);
-        }
 
-        T copy = operation.execute();
-        if (copy == null) {
-            return null;
-        }
-        
-        extensionManager.getProxy().prepareForSave(context, from, copy);
-        
-        copy = save(context, copy);
+    public <T, G extends Exception> void persistCopyObjectTree(CopyOperation<T,G> copyOperation, Class<T> clazz, Long id, MultiTenantCopyContext context) throws G {
+        try {
+            //don't persist if there is already an equivalent present
+            if (context.getEquivalentId(clazz.getName(), id) != null) {
+                return;
+            }
 
-        context.storeEquivalentMapping(operation.getCacheClass().getName(), fromId, operation.getId(copy));
-        return copy;
+            context.clearOriginalIdentifiers();
+            genericEntityService.flush();
+            genericEntityService.clear();
+            context.clearAutoFlushMode();
+            Object copy = copyOperation.execute(genericEntityService.readGenericEntity(clazz, id));
+            persistCopyObjectTree(copy, new HashSet<Integer>(), context);
+            genericEntityService.flush();
+        } catch (Exception e) {
+            LOG.error("Unable to persist the copy object tree", e);
+            throw ExceptionHelper.refineException(e);
+        } finally {
+            context.clearOriginalIdentifiers();
+            genericEntityService.clear();
+            context.enableAutoFlushMode();
+        }
     }
 
-    public void persistCopyObjectTree(Object copy, MultiTenantCopyContext context) {
-        persistCopyObjectTree(copy, new HashSet(), context);
-    }
-
-    protected void persistCopyObjectTree(Object copy, Set library, MultiTenantCopyContext context) {
-        if (library.contains(copy)) {
+    protected void persistCopyObjectTree(Object copy, Set<Integer> library, MultiTenantCopyContext context) {
+        if (library.contains(System.identityHashCode(copy))) {
             return;
         }
-        library.add(copy);
-        Field[] allFields = getAllFields(copy.getClass());
+        library.add(System.identityHashCode(copy));
+        List<Object[]> collections = new ArrayList<Object[]>();
+        Field[] allFields = context.getAllFields(copy.getClass());
         for (Field field : allFields) {
+            if (field.getName().equals("embeddableSiteDiscriminator")) {
+                continue;
+            }
             if (!Modifier.isStatic(field.getModifiers())) {
                 field.setAccessible(true);
                 Object newTarget;
@@ -133,54 +111,57 @@ public abstract class MultiTenantCopier implements Ordered {
                 }
                 if (newTarget != null) {
                     if (field.getAnnotation(ManyToOne.class) != null || field.getAnnotation(OneToOne.class) != null) {
-                        persistCopyObjectTree(newTarget, library, context);
-                    } else if (field.getAnnotation(ManyToMany.class) != null || field.getAnnotation(OneToMany.class)
-                            != null) {
-                        if (newTarget instanceof Collection) {
-                            Collection newCollection = (Collection) newTarget;
-                            for (Object member : newCollection) {
-                                persistCopyObjectTree(member, library, context);
-                            }
-                        } else if (newTarget instanceof Map) {
-                            Map newMap = (Map) newTarget;
-                            for (Object key : newMap.keySet()) {
-                                persistCopyObjectTree(newMap.get(key), library, context);
-                            }
-                        } else {
-                            throw new IllegalArgumentException(String.format("During copy object persistence, " +
-                                    "an unrecognized type was detected for a OneToMany or ManyToMany field. The system currently only " +
-                                    "recognizes Collection and Map. (%s.%s)", copy.getClass().getName(), field.getName()));
+                        if (library.contains(System.identityHashCode(newTarget))) {
+                            persistPart(newTarget, context);
+                            continue;
                         }
+                        persistCopyObjectTree(newTarget, library, context);
+                    } else if (field.getAnnotation(ManyToMany.class) != null || field.getAnnotation(OneToMany.class) != null) {
+                        collections.add(new Object[]{field, newTarget});
+                    } else if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
+                        persistCopyObjectTree(newTarget, library, context);
                     }
                 }
             }
         }
-        if (!genericEntityService.sessionContains(copy)) {
+        if (copy.getClass().getAnnotation(Embeddable.class) == null) {
+            persistPart(copy, context);
+        }
+        for (Object[] collectionItem : collections) {
+            if (collectionItem[1] instanceof Collection) {
+                Collection newCollection = (Collection) collectionItem[1];
+                for (Object member : newCollection) {
+                    persistCopyObjectTree(member, library, context);
+                }
+            } else if (collectionItem[1] instanceof Map) {
+                Map newMap = (Map) collectionItem[1];
+                for (Object key : newMap.keySet()) {
+                    persistCopyObjectTree(newMap.get(key), library, context);
+                }
+            } else {
+                throw new IllegalArgumentException(String.format("During copy object persistence, " +
+                        "an unrecognized type was detected for a OneToMany or ManyToMany field. The system currently only " +
+                        "recognizes Collection and Map. (%s.%s)", copy.getClass().getName(), ((Field) collectionItem[0]).getName()));
+            }
+        }
+    }
+
+    protected void persistPart(final Object copy, MultiTenantCopyContext context) {
+        if (!genericEntityService.sessionContains(copy) && !genericEntityService.idAssigned(copy)) {
             Object original = genericEntityService.readGenericEntity(copy.getClass().getName(), context.removeOriginalIdentifier(copy));
             extensionManager.getProxy().transformCopy(context, original, copy);
             extensionManager.getProxy().prepareForSave(context, original, copy);
-            genericEntityService.persist(copy);
+
+            IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<Void, RuntimeException>() {
+                @Override
+                public Void execute() {
+                    genericEntityService.persist(copy);
+                    return null;
+                }
+            }, context.getToSite(), context.getToSite(), context.getToCatalog());
+
             context.storeEquivalentMapping(original.getClass().getName(), context.getIdentifier(original), context.getIdentifier(copy));
         }
-        //the context contains a counter, which will be thread safe for this circumstance
-        context.checkLevel1Cache();
-    }
-
-    public Field[] getAllFields(Class<?> targetClass) {
-        Field[] allFields = new Field[]{};
-        boolean eof = false;
-        Class<?> currentClass = targetClass;
-        while (!eof) {
-            Field[] fields = currentClass.getDeclaredFields();
-            allFields = (Field[]) ArrayUtils.addAll(allFields, fields);
-            if (currentClass.getSuperclass() != null) {
-                currentClass = currentClass.getSuperclass();
-            } else {
-                eof = true;
-            }
-        }
-
-        return allFields;
     }
     
     /**
@@ -215,7 +196,7 @@ public abstract class MultiTenantCopier implements Ordered {
             public Long execute() throws ServiceException {
                 return genericEntityService.readCountGenericEntity(clazz);
             }
-        }, site, catalog);
+        }, site, site, catalog);
     }
     
     /**
@@ -229,6 +210,15 @@ public abstract class MultiTenantCopier implements Ordered {
      */
     protected <T> List<T> readAll(Class<T> clazz, Site site, Catalog catalog) throws ServiceException {
         return readAll(clazz, Integer.MAX_VALUE, 0, site, catalog);
+    }
+
+    protected List<Long> readAllIds(final Class<?> clazz, Site site, Catalog catalog) throws ServiceException {
+        return IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<List<Long>, ServiceException>() {
+            @Override
+            public List<Long> execute() throws ServiceException {
+                return genericEntityService.readAllGenericEntityId(clazz);
+            }
+        }, site, site, catalog);
     }
 
     /**
@@ -250,7 +240,7 @@ public abstract class MultiTenantCopier implements Ordered {
             public List<T> execute() throws ServiceException {
                 return genericEntityService.readAllGenericEntity(clazz, limit, offset);
             }
-        }, site, catalog);
+        }, site, site, catalog);
     }
 
 
@@ -273,6 +263,20 @@ public abstract class MultiTenantCopier implements Ordered {
     
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    protected <T extends MultiTenantCloneable> void copyEntitiesOfType(Class<T> clazz, Site fromSite,
+                                                                       Catalog fromCatalog,
+                                                                       final MultiTenantCopyContext context)
+            throws ServiceException, CloneNotSupportedException {
+        for (Long id : readAllIds(clazz, fromSite, fromCatalog)) {
+            persistCopyObjectTree(new CopyOperation<T, CloneNotSupportedException>() {
+                @Override
+                public T execute(T original) throws CloneNotSupportedException {
+                    return (T) original.createOrRetrieveCopyInstance(context).getClone();
+                }
+            }, clazz, id, context);
+        }
     }
 
 }

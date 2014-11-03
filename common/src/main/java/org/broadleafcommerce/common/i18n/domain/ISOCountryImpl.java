@@ -170,18 +170,4 @@ public class ISOCountryImpl implements ISOCountry, AdminMainEntity {
         return getName();
     }
 
-    @Override
-    public <G extends ISOCountry> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
-        if (createResponse.isAlreadyPopulated()) {
-            return createResponse;
-        }
-        ISOCountry cloned = createResponse.getClone();
-        cloned.setAlpha2(alpha2);
-        cloned.setAlpha3(alpha3);
-        cloned.setName(name);
-        cloned.setNumericCode(numericCode);
-        cloned.setStatus(getStatus());
-        return createResponse;
-    }
 }

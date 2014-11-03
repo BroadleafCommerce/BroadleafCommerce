@@ -152,10 +152,16 @@ public class UpSaleProductImpl implements RelatedProduct, MultiTenantCloneable<U
             return createResponse;
         }
         UpSaleProductImpl cloned = createResponse.getClone();
-        cloned.setProduct(product);
-        cloned.setCategory(category);
+        if (product != null) {
+            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (category != null) {
+            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setPromotionMessage(promotionMessage);
-        cloned.setRelatedProduct(relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
+        if (relatedSaleProduct != null) {
+            cloned.setRelatedProduct(relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setSequence(sequence);
         return createResponse;
     }

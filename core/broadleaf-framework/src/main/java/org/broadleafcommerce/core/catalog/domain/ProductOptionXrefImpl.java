@@ -116,10 +116,12 @@ public class ProductOptionXrefImpl implements ProductOptionXref {
             return createResponse;
         }
         ProductOptionXref cloned = createResponse.getClone();
-        // dont set
-        cloned.setProduct(product);
-        // dont set
-        cloned.setProductOption(productOption);
+        if (product != null) {
+            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (productOption != null) {
+            cloned.setProductOption(productOption.createOrRetrieveCopyInstance(context).getClone());
+        }
         return createResponse;
     }
 }

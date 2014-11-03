@@ -151,9 +151,12 @@ public class OfferQualifyingCriteriaXrefImpl implements OfferQualifyingCriteriaX
             return createResponse;
         }
         OfferQualifyingCriteriaXref cloned = createResponse.getClone();
-        // don't clone
-        cloned.setOffer(offer);
-        cloned.setOfferItemCriteria(offerItemCriteria.createOrRetrieveCopyInstance(context).getClone());
+        if (offer != null) {
+            cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (offerItemCriteria != null) {
+            cloned.setOfferItemCriteria(offerItemCriteria.createOrRetrieveCopyInstance(context).getClone());
+        }
         return  createResponse;
     }
 }

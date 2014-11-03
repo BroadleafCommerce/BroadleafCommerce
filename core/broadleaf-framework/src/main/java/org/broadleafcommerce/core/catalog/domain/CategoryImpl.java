@@ -36,7 +36,16 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.*;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.OptionFilterParam;
+import org.broadleafcommerce.common.presentation.OptionFilterParamType;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.template.TemplatePathContainer;
@@ -49,12 +58,29 @@ import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
 import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Type;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -67,7 +93,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import java.util.*;
+import javax.persistence.Transient;
 
 /**
  * @author bTaylor
@@ -1121,61 +1147,35 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         cloned.setExternalId(externalId);
         cloned.setDisplayTemplate(displayTemplate);
         cloned.setDescription(description);
-        // let parents refs add themselves
-        cloned.setAllParentCategoryXrefs(allParentCategoryXrefs);
-        // child shouldn't create parent
-        cloned.setDefaultParentCategory(defaultParentCategory);
-
+        for(CategoryXref entry : allParentCategoryXrefs){
+            CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getAllParentCategoryXrefs().add(clonedEntry);
+        }
+        if (defaultParentCategory != null) {
+            cloned.setDefaultParentCategory(defaultParentCategory.createOrRetrieveCopyInstance(context).getClone());
+        }
         for(CategoryXref entry : allChildCategoryXrefs){
             CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCategory(cloned);
             cloned.getAllChildCategoryXrefs().add(clonedEntry);
-        }
-
-        for(FeaturedProduct entry : featuredProducts){
-            FeaturedProduct clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCategory(cloned);
-            cloned.getFeaturedProducts().add(clonedEntry);
-        }
-        for(RelatedProduct entry : crossSaleProducts){
-            CrossSaleProductImpl clonedEntry = ((CrossSaleProductImpl)entry).createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCategory(cloned);
-            cloned.getCrossSaleProducts().add(clonedEntry);
-        }
-        for(RelatedProduct entry : upSaleProducts){
-            UpSaleProductImpl clonedEntry = ((UpSaleProductImpl)entry).createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCategory(cloned);
-            cloned.getUpSaleProducts().add(clonedEntry);
-        }
-        for(CategoryProductXref entry : allProductXrefs){
-            CategoryProductXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCategory(cloned);
-            cloned.getActiveProductXrefs().add(clonedEntry);
         }
         for(Map.Entry<String,CategoryAttribute> entry : categoryAttributes.entrySet()){
             CategoryAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCategory(cloned);
-            cloned.getCategoryAttributes().add(clonedEntry);
             cloned.getCategoryAttributesMap().put(entry.getKey(),clonedEntry);
         }
         for(CategorySearchFacet entry : searchFacets){
             CategorySearchFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCategory(cloned);
             cloned.getSearchFacets().add(clonedEntry);
         }
         for(CategoryExcludedSearchFacet entry : excludedSearchFacets){
             CategoryExcludedSearchFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setCategory(cloned);
             cloned.getExcludedSearchFacets().add(clonedEntry);
         }
-        for(Map.Entry<String,Media> entry : categoryMedia.entrySet()){
-            MediaImpl clonedEntry = ((MediaImpl)entry.getValue()).createOrRetrieveCopyInstance(context).getClone();
-            cloned.getCategoryMedia().put(entry.getKey(),clonedEntry);
+        for(Map.Entry<String, CategoryMediaXref> entry : categoryMedia.entrySet()){
+            CategoryMediaXrefImpl clonedEntry = ((CategoryMediaXrefImpl)entry.getValue()).createOrRetrieveCopyInstance(context).getClone();
+            cloned.getCategoryMediaXref().put(entry.getKey(),clonedEntry);
         }
 
-
-
-
+        //Don't clone the references to products - those will be handled by another MultiTenantCopier call
 
         return createResponse;
     }

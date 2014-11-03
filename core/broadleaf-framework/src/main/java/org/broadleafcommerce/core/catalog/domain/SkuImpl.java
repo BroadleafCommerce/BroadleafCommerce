@@ -29,7 +29,7 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
-import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseConfigValidation;
+import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -277,7 +277,7 @@ public class SkuImpl implements Sku {
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL})
     @JoinColumn(name = "DEFAULT_PRODUCT_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProducts")
-    @IgnoreEnterpriseConfigValidation
+    @IgnoreEnterpriseBehavior
     protected Product defaultProduct;
 
     /**
@@ -984,13 +984,16 @@ public class SkuImpl implements Sku {
             } else if (getProduct() != null && getProduct().getDefaultCategory() != null) {
                 return getProduct().getDefaultCategory().getFulfillmentType();
             }
+            return null;
         }
         return FulfillmentType.getInstance(this.fulfillmentType);
     }
 
     @Override
     public void setFulfillmentType(FulfillmentType fulfillmentType) {
-        this.fulfillmentType = fulfillmentType.getType();
+        if (fulfillmentType != null) {
+            this.fulfillmentType = fulfillmentType.getType();
+        }
     }
 
     @Override
@@ -1110,23 +1113,22 @@ public class SkuImpl implements Sku {
         cloned.setFulfillmentType(getFulfillmentType());
         cloned.setIsMachineSortable(isMachineSortable);
         cloned.setLongDescription(longDescription);
-        // set by product
-        cloned.setDefaultProduct(product);
-        //set by additional sku on product
-        cloned.setProduct(product);
+        if (product != null) {
+            cloned.setDefaultProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (product != null) {
+            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        }
         for(Map.Entry<String, SkuAttribute> entry : skuAttributes.entrySet()){
             SkuAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setSku(cloned);
             cloned.getSkuAttributes().put(entry.getKey(),clonedEntry);
         }
         for(SkuProductOptionValueXref entry : productOptionValueXrefs){
             SkuProductOptionValueXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setSku(cloned);
             cloned.getProductOptionValueXrefs().add(clonedEntry);
         }
         for(Map.Entry<String, SkuMediaXref> entry : skuMedia.entrySet()){
             SkuMediaXrefImpl clonedEntry = ((SkuMediaXrefImpl)entry.getValue()).createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setSku(cloned);
             cloned.getSkuMediaXref().put(entry.getKey(),clonedEntry);
         }
         for(FulfillmentOption entry : excludedFulfillmentOptions){

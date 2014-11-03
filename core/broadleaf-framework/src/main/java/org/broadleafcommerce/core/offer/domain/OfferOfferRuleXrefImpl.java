@@ -158,9 +158,12 @@ public class OfferOfferRuleXrefImpl implements OfferOfferRuleXref, SimpleRule {
         }
         OfferOfferRuleXref cloned = createResponse.getClone();
         cloned.setKey(key);
-        // dont clone
-        cloned.setOffer(offer);
-        cloned.setOfferRule(offerRule.createOrRetrieveCopyInstance(context).getClone());
+        if (offer != null) {
+            cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (offerRule != null) {
+            cloned.setOfferRule(offerRule.createOrRetrieveCopyInstance(context).getClone());
+        }
         return  createResponse;
     }
 }

@@ -201,8 +201,9 @@ public class CategoryAttributeImpl implements CategoryAttribute {
             return createResponse;
         }
         CategoryAttribute cloned = createResponse.getClone();
-        // dont clone
-        cloned.setCategory(category);
+        if (category != null) {
+            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setName(name);
         cloned.setValue(value);
         cloned.setSearchable(searchable);

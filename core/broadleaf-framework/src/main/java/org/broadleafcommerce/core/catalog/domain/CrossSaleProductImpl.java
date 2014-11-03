@@ -152,12 +152,17 @@ public class CrossSaleProductImpl implements RelatedProduct, MultiTenantCloneabl
             return createResponse;
         }
         CrossSaleProductImpl cloned = createResponse.getClone();
-        // dont clone parent
-        cloned.setProduct(product);
-        cloned.setCategory(category);
+        if (product != null) {
+            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (category != null) {
+            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setPromotionMessage(promotionMessage);
         cloned.setSequence(sequence);
-        cloned.setRelatedProduct(relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
+        if (relatedSaleProduct != null) {
+            cloned.setRelatedProduct(relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
+        }
         return createResponse;
     }
 }

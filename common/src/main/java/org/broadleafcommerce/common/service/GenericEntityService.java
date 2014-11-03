@@ -39,6 +39,8 @@ public interface GenericEntityService {
      */
     public Object readGenericEntity(String className, Object id);
 
+    <T> T readGenericEntity(Class<T> clazz, Object id);
+
     /**
      * Saves a generic entity
      * 
@@ -72,6 +74,8 @@ public interface GenericEntityService {
      */
     public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset);
 
+    List<Long> readAllGenericEntityId(Class<?> clazz);
+
     /**
      * Retrieve the identifier from the Hibernate entity (the entity must reside in the current session)
      *
@@ -85,6 +89,10 @@ public interface GenericEntityService {
      */
     void flush();
 
+    void clearAutoFlushMode();
+
+    void enableAutoFlushMode();
+
     /**
      * Clear level 1 cache
      */
@@ -97,6 +105,13 @@ public interface GenericEntityService {
      * @return
      */
     boolean sessionContains(Object object);
+
+    /**
+     * Whether or not this object is an {@link javax.persistence.Entity} and whether or not it already has an id assigned
+     * @param object
+     * @return
+     */
+    boolean idAssigned(Object object);
 
     /**
      * Return the ceiling implementation class for an entity

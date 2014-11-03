@@ -244,13 +244,11 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
         for(RequiredFacet entry : requiredFacets){
             RequiredFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setSearchFacet(cloned);
             cloned.getRequiredFacets().add(clonedEntry);
         }
         cloned.setSearchDisplayPriority(searchDisplayPriority);
         for(SearchFacetRange entry : searchFacetRanges){
             SearchFacetRange clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
-            clonedEntry.setSearchFacet(cloned);
             cloned.getSearchFacetRanges().add(clonedEntry);
         }
 

@@ -113,9 +113,12 @@ public class RequiredFacetImpl implements RequiredFacet {
             return createResponse;
         }
         RequiredFacet cloned = createResponse.getClone();
-        cloned.setRequiredFacet(requiredFacet.createOrRetrieveCopyInstance(context).getClone());
-        //dont clone
-        cloned.setSearchFacet(searchFacet);
+        if (requiredFacet != null) {
+            cloned.setRequiredFacet(requiredFacet.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (searchFacet != null) {
+            cloned.setSearchFacet(searchFacet.createOrRetrieveCopyInstance(context).getClone());
+        }
         return  createResponse;
     }
 }

@@ -185,8 +185,9 @@ public class ProductOptionValueImpl implements ProductOptionValue {
         cloned.setAttributeValue(attributeValue);
         cloned.setDisplayOrder(displayOrder);
         cloned.setPriceAdjustment(getPriceAdjustment());
-       // dont set here -- product option will set
-        cloned.setProductOption(productOption);
+        if (productOption != null) {
+            cloned.setProductOption(productOption.createOrRetrieveCopyInstance(context).getClone());
+        }
         
         return  createResponse;
     }

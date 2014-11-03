@@ -734,7 +734,7 @@ public class AddressImpl implements Address {
         cloned.setEmailAddress(emailAddress);
         cloned.setFirstName(firstName);
         cloned.setFullName(fullName);
-        cloned.setIsoCountryAlpha2(isoCountryAlpha2.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setIsoCountryAlpha2(isoCountryAlpha2);
         cloned.setIsoCountrySubdivision(isoCountrySubdivision);
         cloned.setStreet(isStreet);
         cloned.setZipFour(zipFour);

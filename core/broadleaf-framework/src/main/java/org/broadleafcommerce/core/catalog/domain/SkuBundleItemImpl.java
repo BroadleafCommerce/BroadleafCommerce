@@ -192,9 +192,12 @@ public class SkuBundleItemImpl implements SkuBundleItem {
         SkuBundleItem cloned = createResponse.getClone();
         cloned.setQuantity(quantity);
         cloned.setSalePrice(getSalePrice());
-        cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
-        // TODO: clone ProductBundle Somehow
-        cloned.setBundle(bundle);
+        if (sku != null) {
+            cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (bundle != null) {
+            cloned.setBundle((ProductBundle) bundle.createOrRetrieveCopyInstance(context).getClone());
+        }
         return createResponse;
     }
 }

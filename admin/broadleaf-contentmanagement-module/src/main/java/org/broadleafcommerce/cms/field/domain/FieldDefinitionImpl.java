@@ -380,10 +380,13 @@ public class FieldDefinitionImpl implements FieldDefinition {
         cloned.setColumnWidth(columnWidth);
         cloned.setTextAreaFlag(textAreaFlag);
         cloned.setRequiredFlag(requiredFlag);
-        cloned.setDataDrivenEnumeration(dataDrivenEnumeration.createOrRetrieveCopyInstance(context).getClone());
+        if (dataDrivenEnumeration != null) {
+            cloned.setDataDrivenEnumeration(dataDrivenEnumeration.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setAllowMultiples(allowMultiples);
-        //don't clone fieldGroup - it will be replaced (if applicable) on the other side of the relationship
-        cloned.setFieldGroup(fieldGroup);
+        if (fieldGroup != null) {
+            cloned.setFieldGroup(fieldGroup.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setFieldOrder(fieldOrder);
         cloned.setTooltip(tooltip);
         cloned.setHelpText(helpText);

@@ -40,6 +40,11 @@ public class GenericEntityServiceImpl implements GenericEntityService {
         Class<?> clazz = genericEntityDao.getImplClass(className);
         return genericEntityDao.readGenericEntity(clazz, id);
     }
+
+    @Override
+    public <T> T readGenericEntity(Class<T> clazz, Object id) {
+        return genericEntityDao.readGenericEntity(clazz, id);
+    }
     
     @Override
     public <T> T save(T object) {
@@ -61,6 +66,11 @@ public class GenericEntityServiceImpl implements GenericEntityService {
     }
 
     @Override
+    public List<Long> readAllGenericEntityId(Class<?> clazz) {
+        return genericEntityDao.readAllGenericEntityId(clazz);
+    }
+
+    @Override
     public Serializable getIdentifier(Object entity) {
         return genericEntityDao.getIdentifier(entity);
     }
@@ -68,6 +78,16 @@ public class GenericEntityServiceImpl implements GenericEntityService {
     @Override
     public void flush() {
         genericEntityDao.flush();
+    }
+
+    @Override
+    public void clearAutoFlushMode() {
+        genericEntityDao.clearAutoFlushMode();
+    }
+
+    @Override
+    public void enableAutoFlushMode() {
+        genericEntityDao.enableAutoFlushMode();
     }
 
     @Override
@@ -85,4 +105,8 @@ public class GenericEntityServiceImpl implements GenericEntityService {
         return genericEntityDao.getCeilingImplClass(className);
     }
 
+    @Override
+    public boolean idAssigned(Object object) {
+        return genericEntityDao.idAssigned(object);
+    }
 }

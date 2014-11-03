@@ -34,7 +34,7 @@ public interface GenericEntityDao {
      * @param id
      * @return the entity
      */
-    public Object readGenericEntity(Class<?> clazz, Object id);
+    public <T> T readGenericEntity(Class<T> clazz, Object id);
 
     /**
      * For a given className, finds the parent implementation class as defined in the {@link EntityConfiguration}
@@ -85,6 +85,8 @@ public interface GenericEntityDao {
      */
     public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset);
 
+    List<Long> readAllGenericEntityId(Class<?> clazz);
+
     /**
      * Retrieve the identifier from the Hibernate entity (the entity must reside in the current session)
      *
@@ -98,6 +100,10 @@ public interface GenericEntityDao {
      */
     void flush();
 
+    void clearAutoFlushMode();
+
+    void enableAutoFlushMode();
+
     /**
      * Clear level 1 cache
      */
@@ -110,4 +116,11 @@ public interface GenericEntityDao {
      * @return
      */
     boolean sessionContains(Object object);
+
+    /**
+     * Whether or not this object is an {@link javax.persistence.Entity} and whether or not it already has an id assigned
+     * @param object
+     * @return
+     */
+    boolean idAssigned(Object object);
 }

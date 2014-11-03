@@ -145,9 +145,12 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
             return createResponse;
         }
         PageTemplateFieldGroupXref cloned = createResponse.getClone();
-        //don't clone pageTemplate - it will be replaced (if applicable) on the other side of the relationship
-        cloned.setPageTemplate(pageTemplate);
-        cloned.setFieldGroup(fieldGroup.createOrRetrieveCopyInstance(context).getClone());
+        if (pageTemplate != null) {
+            cloned.setPageTemplate(pageTemplate.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (fieldGroup != null) {
+            cloned.setFieldGroup(fieldGroup.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setGroupOrder(groupOrder);
         return createResponse;
     }

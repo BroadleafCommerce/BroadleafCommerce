@@ -251,8 +251,9 @@ public class SkuAttributeImpl implements SkuAttribute {
         }
         SkuAttribute cloned = createResponse.getClone();
         cloned.setName(name);
-        // dont clone
-        cloned.setSku(sku);
+        if (sku != null) {
+            cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
+        }
         cloned.setSearchable(getSearchable());
         cloned.setValue(value);
         return createResponse;

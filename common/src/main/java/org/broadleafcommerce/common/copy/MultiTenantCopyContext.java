@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.copy;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.service.GenericEntityService;
@@ -27,10 +28,16 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.Embeddable;
 
 public class MultiTenantCopyContext {
 
@@ -41,8 +48,8 @@ public class MultiTenantCopyContext {
     protected Site fromSite;
     protected Site toSite;
     protected MultiTenantCopierExtensionManager extensionManager;
-    protected int count = 1;
-    protected Map<Object, Serializable> currentEquivalentMap = new HashMap<Object, Serializable>();
+    protected BiMap<Integer, String> currentEquivalentMap = HashBiMap.create();
+    protected Map<Integer, Object> currentCloneMap = new HashMap<Integer, Object>();
     
     protected Map<String, Map<Object, Object>> equivalentsMap;
     protected GenericEntityService genericEntityService;
@@ -193,8 +200,24 @@ public class MultiTenantCopyContext {
             throw new CloneNotSupportedException("Attempting to clone an archived instance");
         }
         Class<?> instanceClass = instance.getClass();
-        Object originalId = getIdentifier(instance);
-        Object previousClone = getClonedVersion(instanceClass, originalId);
+        if (instanceClass.getAnnotation(Embeddable.class) != null) {
+            G response;
+            try {
+                response = (G) instanceClass.newInstance();
+            } catch (InstantiationException e) {
+                throw ExceptionHelper.refineException(e);
+            } catch (IllegalAccessException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+            return new CreateResponse<G>(response, false);
+        }
+        Long originalId = getIdentifier(instance);
+        Object previousClone;
+        if (currentEquivalentMap.inverse().containsKey(instanceClass.getName() + "_" + originalId)) {
+            previousClone = currentCloneMap.get(currentEquivalentMap.inverse().get(instanceClass.getName() + "_" + originalId));
+        } else {
+            previousClone = getClonedVersion(instanceClass, originalId);
+        }
         G response;
         boolean alreadyPopulate;
         if (previousClone != null) {
@@ -210,29 +233,68 @@ public class MultiTenantCopyContext {
             }
             checkCloneable(response);
             alreadyPopulate = false;
-            currentEquivalentMap.put(response, getIdentifier(instance));
+            currentEquivalentMap.put(System.identityHashCode(response), instanceClass.getName() + "_" + originalId);
+            currentCloneMap.put(System.identityHashCode(response), response);
+            try {
+                for (Field field : getAllFields(instanceClass)) {
+                    if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
+                        Object embeddable = field.get(instance);
+                        if (embeddable != null) {
+                            field.set(response, ((MultiTenantCloneable) embeddable).createOrRetrieveCopyInstance(this).getClone());
+                        }
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                throw ExceptionHelper.refineException(e);
+            }
         }
         return new CreateResponse<G>(response, alreadyPopulate);
     }
 
     public Serializable getOriginalIdentifier(Object copy) {
-        return currentEquivalentMap.get(copy);
+        if (currentEquivalentMap.containsKey(System.identityHashCode(copy))) {
+            String valKey = currentEquivalentMap.get(System.identityHashCode(copy));
+            return Long.parseLong(valKey.substring(valKey.indexOf("_") + 1, valKey.length()));
+        }
+        return null;
     }
 
     public void clearOriginalIdentifiers() {
         currentEquivalentMap.clear();
+        currentCloneMap.clear();
     }
 
     public Object removeOriginalIdentifier(Object copy) {
-        return currentEquivalentMap.remove(copy);
+        if (currentEquivalentMap.containsKey(System.identityHashCode(copy))) {
+            currentCloneMap.remove(System.identityHashCode(copy));
+            String valKey = currentEquivalentMap.remove(System.identityHashCode(copy));
+            return Long.parseLong(valKey.substring(valKey.indexOf("_") + 1, valKey.length()));
+        }
+        return null;
     }
 
-    public void checkLevel1Cache() {
-        if (count % 20 == 0) {
-            count = 0;
-            genericEntityService.flush();
-            genericEntityService.clear();
+    public Field[] getAllFields(Class<?> targetClass) {
+        Field[] allFields = new Field[]{};
+        boolean eof = false;
+        Class<?> currentClass = targetClass;
+        while (!eof) {
+            Field[] fields = currentClass.getDeclaredFields();
+            allFields = (Field[]) ArrayUtils.addAll(allFields, fields);
+            if (currentClass.getSuperclass() != null) {
+                currentClass = currentClass.getSuperclass();
+            } else {
+                eof = true;
+            }
         }
-        count++;
+
+        return allFields;
     }
+
+    public void clearAutoFlushMode() {
+        genericEntityService.clearAutoFlushMode();
+    }
+
+    public void enableAutoFlushMode() {
+            genericEntityService.enableAutoFlushMode();
+        }
 }

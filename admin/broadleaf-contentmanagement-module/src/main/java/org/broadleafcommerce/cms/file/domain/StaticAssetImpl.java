@@ -285,6 +285,7 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
             return createResponse;
         }
         StaticAsset cloned = createResponse.getClone();
+        cloned.setName(name);
         cloned.setAltText(altText);
         cloned.setFileExtension(fileExtension);
         cloned.setFileSize(fileSize);

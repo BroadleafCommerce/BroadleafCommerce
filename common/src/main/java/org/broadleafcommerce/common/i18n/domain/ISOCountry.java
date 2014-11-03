@@ -35,7 +35,7 @@ import java.io.Serializable;
  *
  * @author Elbert Bautista (elbertbautista)
  */
-public interface ISOCountry extends Serializable, MultiTenantCloneable<ISOCountry> {
+public interface ISOCountry extends Serializable {
 
     public String getAlpha2();
 
