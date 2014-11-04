@@ -55,7 +55,7 @@
             th:inline="text">
             
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
-                <legend th:text="#{${group.title}}" />
+                <legend th:text="${group.title}" />
 
                 <comment th:remove="all">
                 <!-- *** IMPORTANT *** -->
