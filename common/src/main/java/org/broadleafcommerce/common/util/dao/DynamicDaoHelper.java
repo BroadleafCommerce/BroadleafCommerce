@@ -24,8 +24,12 @@ import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.type.Type;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.EntityManager;
 
 /**
  * Provides utility methods for interacting with dynamic entities
@@ -47,5 +51,9 @@ public interface DynamicDaoHelper {
     public Class<?>[] sortEntities(Class<?> ceilingClass, List<Class<?>> entities);
 
     public boolean isExcludeClassFromPolymorphism(Class<?> clazz);
+
+    Serializable getIdentifier(Object entity, EntityManager em);
+
+    Field getIdField(Class<?> clazz, EntityManager em);
 
 }

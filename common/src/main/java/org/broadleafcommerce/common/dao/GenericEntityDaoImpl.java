@@ -20,20 +20,17 @@
 
 package org.broadleafcommerce.common.dao;
 
-import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.ejb.HibernateEntityManager;
-import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.ReflectionUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -41,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -133,22 +129,11 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
 
     @Override
     public Serializable getIdentifier(Object entity) {
-        if (entity.getClass().getAnnotation(Entity.class) != null) {
-            Field idField = getIdField(entity.getClass());
-            try {
-                return (Serializable) idField.get(entity);
-            } catch (IllegalAccessException e) {
-                throw ExceptionHelper.refineException(e);
-            }
-        }
-        return null;
+        return daoHelper.getIdentifier(entity, em);
     }
 
     protected Field getIdField(Class<?> clazz) {
-        ClassMetadata metadata = em.unwrap(Session.class).getSessionFactory().getClassMetadata(clazz);
-        Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
-        idField.setAccessible(true);
-        return idField;
+        return daoHelper.getIdField(clazz, em);
     }
     
     @Override

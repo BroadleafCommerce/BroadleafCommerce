@@ -47,12 +47,12 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     }
 
     @Override
-    public Long getProdSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent) {
+    public Long getCascadedProductionStateId(EntityManager em, Class<?> linkedObjectType, Long requestedParent) {
         return requestedParent;
     }
 
     @Override
-    public Long getProdSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent, Boolean
+    public Long getCascadedProductionStateId(EntityManager em, Class<?> linkedObjectType, Long requestedParent, Boolean
             includeSandBoxInheritance) {
         return requestedParent;
     }

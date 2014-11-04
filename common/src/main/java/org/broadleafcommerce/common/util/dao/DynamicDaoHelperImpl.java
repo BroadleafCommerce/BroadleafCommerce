@@ -21,12 +21,17 @@ package org.broadleafcommerce.common.util.dao;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang3.ArrayUtils;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.Type;
+import org.springframework.util.ReflectionUtils;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +39,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 
 
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
@@ -197,4 +205,24 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         return entityManager.getSession().getSessionFactory();
     }
 
+    @Override
+    public Serializable getIdentifier(Object entity, EntityManager em) {
+        if (entity.getClass().getAnnotation(Entity.class) != null) {
+            Field idField = getIdField(entity.getClass(), em);
+            try {
+                return (Serializable) idField.get(entity);
+            } catch (IllegalAccessException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Field getIdField(Class<?> clazz, EntityManager em) {
+        ClassMetadata metadata = em.unwrap(Session.class).getSessionFactory().getClassMetadata(clazz);
+        Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
+        idField.setAccessible(true);
+        return idField;
+    }
 }
