@@ -79,7 +79,7 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
         group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 1000)
     protected String name;
 
-    @Column(name= "PROPERTY_VALUE", nullable = false)
+    @Column(name= "PROPERTY_VALUE")
     @AdminPresentation(friendlyName = "SystemPropertyImpl_value", order = 3000,
         group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 3000)
     protected String value;
