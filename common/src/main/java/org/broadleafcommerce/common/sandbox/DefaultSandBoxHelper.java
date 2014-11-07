@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.sandbox;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.BiMap;
@@ -123,5 +124,10 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
     @Override
     public void optionallyIncludeDeletedItemsInQueriesAndCollections(Runnable runnable, boolean includeDeleted) {
         runnable.run();
+    }
+
+    @Override
+    public Long getProductionRecordIdIfApplicable(EntityManager em, Object startFieldValue) {
+        return (Long) em.unwrap(Session.class).getIdentifier(startFieldValue);
     }
 }

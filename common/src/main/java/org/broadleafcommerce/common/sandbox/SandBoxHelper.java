@@ -173,6 +173,14 @@ public interface SandBoxHelper {
      */
     void optionallyIncludeDeletedItemsInQueriesAndCollections(Runnable runnable, boolean includeDeleted);
 
+    /**
+     *
+     * @param em
+     * @param startFieldValue
+     * @return
+     */
+    Long getProductionRecordIdIfApplicable(EntityManager em, Object startFieldValue);
+
     public class OriginalIdResponse {
 
         private boolean recordFound = false;
