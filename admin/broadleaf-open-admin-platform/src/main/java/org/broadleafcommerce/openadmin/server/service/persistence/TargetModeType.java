@@ -42,6 +42,10 @@ public class TargetModeType implements Serializable {
         return TYPES.get(type);
     }
 
+    public static Map<String, TargetModeType> getTypes() {
+        return TYPES;
+    }
+
     private String type;
     private String friendlyType;
 
