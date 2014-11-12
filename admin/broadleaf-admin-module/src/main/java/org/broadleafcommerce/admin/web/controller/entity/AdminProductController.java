@@ -92,6 +92,12 @@ public class AdminProductController extends AdminBasicEntityController {
 
     @Override
     protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
+        Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
+        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+    }
+
+    @Override
+    protected void modifyAddEntityForm(EntityForm ef, Map<String, String> pathVars) {
         String defaultCategoryUrlPrefix = null;
         Field defaultCategory = ef.findField("defaultCategory");
         if (StringUtils.isNotBlank(defaultCategory.getValue())) {
@@ -109,11 +115,6 @@ public class AdminProductController extends AdminBasicEntityController {
             .withAttribute("prefix-selector", "#field-defaultCategory")
             .withAttribute("prefix", defaultCategoryUrlPrefix)
             .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
-    }
-
-    @Override
-    protected void modifyAddEntityForm(EntityForm ef, Map<String, String> pathVars) {
-        modifyEntityForm(ef, pathVars);
     }
     
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
