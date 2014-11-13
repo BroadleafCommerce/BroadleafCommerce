@@ -109,12 +109,14 @@ public class AdminProductController extends AdminBasicEntityController {
         overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
         boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
         Field fullUrl = ef.findField("url");
-        fullUrl.withAttribute("overriddenUrl", overriddenUrl)
-            .withAttribute("sourceField", "defaultSku--name")
-            .withAttribute("toggleField", "overrideGeneratedUrl")
-            .withAttribute("prefix-selector", "#field-defaultCategory")
-            .withAttribute("prefix", defaultCategoryUrlPrefix)
-            .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+        if (fullUrl != null) {
+            fullUrl.withAttribute("overriddenUrl", overriddenUrl)
+                .withAttribute("sourceField", "defaultSku--name")
+                .withAttribute("toggleField", "overrideGeneratedUrl")
+                .withAttribute("prefix-selector", "#field-defaultCategory")
+                .withAttribute("prefix", defaultCategoryUrlPrefix)
+                .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+        }
     }
     
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
