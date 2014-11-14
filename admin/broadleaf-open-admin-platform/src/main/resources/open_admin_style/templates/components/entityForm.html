@@ -40,7 +40,7 @@
 
     <div class="tabs-container" th:if="${renderTabs}">
         <dl class="tabs" th:classappend="${additionalTabClasses}">
-            <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'">
+            <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:if="${tab.isVisible}">
                 <a th:href="'#tab' + ${tabStat.count}" 
                    th:classappend="${tab.tabClass}"
                    th:text="#{${tab.title}}" /> 
