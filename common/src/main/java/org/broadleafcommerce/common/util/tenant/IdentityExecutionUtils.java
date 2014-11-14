@@ -146,6 +146,11 @@ public class IdentityExecutionUtils {
     }
 
     public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation) throws G {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Site previousSite = brc.getSite();
+        Catalog previousCatalog = brc.getCurrentCatalog();
+        Site previousProfile = brc.getCurrentProfile();
+    
         boolean isNew = initRequestContext(null, null, null);
         boolean isIgnoringSite = BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSite();
         BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
@@ -161,6 +166,9 @@ public class IdentityExecutionUtils {
                 BroadleafRequestContext.setBroadleafRequestContext(null);
             }
             BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(isIgnoringSite);
+            BroadleafRequestContext.getBroadleafRequestContext().setSite(previousSite);
+            BroadleafRequestContext.getBroadleafRequestContext().setCurrentCatalog(previousCatalog);
+            BroadleafRequestContext.getBroadleafRequestContext().setCurrentProfile(previousProfile);
         }
     }
     
