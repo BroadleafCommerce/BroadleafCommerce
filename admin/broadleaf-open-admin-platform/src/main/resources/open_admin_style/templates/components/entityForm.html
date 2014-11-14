@@ -40,7 +40,7 @@
 
     <div class="tabs-container" th:if="${renderTabs}">
         <dl class="tabs" th:classappend="${additionalTabClasses}">
-            <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'" th:if="${tab.isVisible}">
+            <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'">
                 <a th:href="'#tab' + ${tabStat.count}" 
                    th:classappend="${tab.tabClass}"
                    th:text="#{${tab.title}}" /> 
@@ -50,7 +50,6 @@
     
     <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
         <li th:each="tab : ${entityForm.tabs}" 
-            th:if="${tab.isVisible}"
             th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}" 
             th:classappend="${tabStat.first}? 'active'"
             th:inline="text">
