@@ -65,7 +65,7 @@ public class BroadleafCommonAddressValidator {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.lastName", "lastName.required");
         }
 
-        if (address.getIsoCountryAlpha2() == null) {
+        if (address.getIsoCountryAlpha2() == null && address.getCountry() == null) {
             errors.rejectValue("address.isoCountryAlpha2", "country.required", null, null);
         }
     }
