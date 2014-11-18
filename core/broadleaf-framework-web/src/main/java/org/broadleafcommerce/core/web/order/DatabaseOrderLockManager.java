@@ -71,13 +71,12 @@ public class DatabaseOrderLockManager implements OrderLockManager {
                     throw new RuntimeException("Exceeded max retries to attempt to acquire a lock on current Order");
                 }
                 try {
-                    int msToSleep = getDatabaseLockPollingIntervalMs();
+                    long msToSleep = getDatabaseLockPollingIntervalMs();
 
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Thread[" + Thread.currentThread().getId() + "] Could not acquire order lock for order[" +
                                 order.getId() + "] - sleeping for " + msToSleep + " ms");
                     }
-
                     Thread.sleep(msToSleep);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -116,8 +115,8 @@ public class DatabaseOrderLockManager implements OrderLockManager {
         }
     }
 
-    protected int getDatabaseLockPollingIntervalMs() {
-        return BLCSystemProperty.resolveIntSystemProperty("order.lock.databaseLockPollingIntervalMs");
+    protected long getDatabaseLockPollingIntervalMs() {
+        return BLCSystemProperty.resolveLongSystemProperty("order.lock.databaseLockPollingIntervalMs");
     }
     
     protected int getDatabaseLockAcquisitionNumRetries() {
@@ -128,5 +127,4 @@ public class DatabaseOrderLockManager implements OrderLockManager {
     public boolean isActive() {
         return true;
     }
-
 }
