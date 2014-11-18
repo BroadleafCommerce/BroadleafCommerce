@@ -17,12 +17,19 @@
  * limitations under the License.
  * #L%
  */
-if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
+if (!RedactorPlugins) var RedactorPlugins = {};
 
-RedactorPlugins.selectasset = {
-    init: function()
+(function($)
+{
+    RedactorPlugins.selectasset = function()
     {
-        this.buttonAddBefore('video', 'selectasset', BLCAdmin.messages.selectUploadAsset, BLCAdmin.asset.selectButtonClickedRedactor);
-        this.buttonAwesome('selectasset', 'icon-picture');
-    }
-};
+        return {
+            init: function()
+            {
+                var button = this.button.addAfter('video', 'selectasset', BLCAdmin.messages.selectUploadAsset);
+                this.button.addCallback(button, BLCAdmin.asset.selectButtonClickedRedactor);
+                this.button.setAwesome('selectasset', 'icon-picture');
+            }
+        };
+    };
+})(jQuery);

@@ -343,16 +343,14 @@ var BLCAdmin = (function($) {
     	    
     	    // Set up rich-text HTML editors
             $container.find('.redactor').redactor({
-                buttons : ['html', 'formatting', 'bold', 'italic', 'deleted', 
-                           'unorderedlist', 'orderedlist', 'outdent', 'indent',
-                           'video', 'file', 'table', 'link',
-                           'fontfamily', 'fontcolor', 'alignment', 'horizontalrule'],
-                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize'],
-                convertDivs : false,
-                xhtml       : true,
-                paragraphy  : false,
-                minHeight   : 140,
-                deniedTags  : []
+                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize', 'video', 'table'],
+                replaceDivs : false,
+                buttonSource: true,
+                paragraphize: false,
+                minHeight: 140,
+                tabKey: true,
+                tabsAsSpaces: 4,
+                deniedTags: []
             });
             
             $container.find('textarea.autosize').autosize();
