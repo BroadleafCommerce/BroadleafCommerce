@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.catalog.service;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
@@ -30,7 +31,6 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.hibernate.tool.hbm2x.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

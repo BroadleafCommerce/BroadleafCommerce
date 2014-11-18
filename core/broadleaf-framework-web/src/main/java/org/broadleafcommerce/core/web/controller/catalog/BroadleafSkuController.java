@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.controller.catalog;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.template.TemplateType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.TemplateTypeAware;
@@ -26,7 +27,6 @@ import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.web.catalog.SkuHandlerMapping;
-import org.hibernate.tool.hbm2x.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.ModelAndView;
