@@ -1409,16 +1409,16 @@ form.custom div.conditional div.custom.dropdown {
 	padding-bottom: 0;
 }
 
-body .redactor_toolbar li a.re-selectasset { 
+body .redactor-toolbar li a.re-selectasset { 
 	background-position: -200px; 
 }
 
-body .redactor_toolbar li a.redactor_btn_font { 
+body .redactor-toolbar li a.redactor_btn_font { 
 	background-image: url('../../img/admin/font-selection.png');
 	background-position-x: 0;
 }
 
-body .redactor_redactor {
+body .redactor-redactor {
     max-width: 934px;
 }
 
