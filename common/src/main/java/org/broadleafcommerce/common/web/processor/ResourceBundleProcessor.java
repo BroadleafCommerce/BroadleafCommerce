@@ -91,7 +91,28 @@ import javax.annotation.Resource;
  * </pre>
  * 
  * <p>
- * The files are presented without any additional processing done on them. This 
+ * The files are presented without any additional processing done on them. This is beneficial for development when things
+ * like Javascript debugging is necessary.
+ * 
+ * <p>
+ * As of 3.1.9-GA, this also supports producing the 'async' and 'defer' attributes for Javascript files. For instance:
+ * 
+ * <pre>
+ * {@code
+ * <blc:bundle name="lib.js" 
+ *             async="true"
+ *             defer="true"
+ *             mapping-prefix="/js/"
+ *             files="plugins.js,
+ *                    libs/jquery.MetaData.js,
+ *                    libs/jquery.rating.pack.js,
+ *                    libs/jquery.dotdotdot-1.5.1.js" />
+ *  }
+ * </pre>
+ * 
+ * <p>
+ * If bundling is turned on, the single output file contains the 'async' and 'defer' name-only attributes. When bundling is
+ * turned off, then those name-only attributes are applied to each individual file reference.
  * 
  * <p>
  * This processor only supports files that end in <b>.js</b> and <b>.css</b>
@@ -128,6 +149,8 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     protected ProcessorResult processElement(Arguments arguments, Element element) {
         String name = element.getAttributeValue("name");
         String mappingPrefix = element.getAttributeValue("mapping-prefix");
+        boolean async = element.hasAttribute("async");
+        boolean defer = element.hasAttribute("defer");
         NestableNode parent = element.getParent();
         List<String> files = new ArrayList<String>();
         for (String file : element.getAttributeValue("files").split(",")) {
@@ -147,7 +170,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
                     .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + versionedBundle + "'}");
             String value = (String) expression.execute(arguments.getConfiguration(), arguments);
-            Element e = getElement(value);
+            Element e = getElement(value, async, defer);
             parent.insertAfter(element, e);
         } else {
             List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
@@ -159,7 +182,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
                 Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
                         .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + file + "'}");
                 String value = (String) expression.execute(arguments.getConfiguration(), arguments);
-                Element e = getElement(value);
+                Element e = getElement(value, async, defer);
                 parent.insertBefore(element, e);
             }
         }
@@ -168,10 +191,24 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         return ProcessorResult.OK;
     }
     
+    /**
+     * @deprecated use {@link #getScriptElement(String, boolean, boolean)} instead
+     */
+    @Deprecated
     protected Element getScriptElement(String src) {
+        return getScriptElement(src, false, false);
+    }
+    
+    protected Element getScriptElement(String src, boolean async, boolean defer) {
         Element e = new Element("script");
         e.setAttribute("type", "text/javascript");
         e.setAttribute("src", src);
+        if (async) {
+            e.setAttribute("async", true, null);
+        }
+        if (defer) {
+            e.setAttribute("defer", true, null);
+        }
         return e;
     }
     
@@ -182,13 +219,21 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         return e;
     }
     
+    /**
+     * @deprecated use {@link #getElement(String, boolean, boolean)} instead
+     */
+    @Deprecated
     protected Element getElement(String src) {
+        return getElement(src, false, false);
+    }
+    
+    protected Element getElement(String src, boolean async, boolean defer) {
         if (src.contains(";")) {
             src = src.substring(0, src.indexOf(';'));
         }
         
         if (src.endsWith(".js")) {
-            return getScriptElement(src);
+            return getScriptElement(src, async, defer);
         } else if (src.endsWith(".css")) {
             return getLinkElement(src);
         } else {
