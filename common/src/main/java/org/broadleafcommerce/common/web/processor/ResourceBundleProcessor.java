@@ -63,6 +63,8 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     protected ProcessorResult processElement(Arguments arguments, Element element) {
         String name = element.getAttributeValue("name");
         String mappingPrefix = element.getAttributeValue("mapping-prefix");
+        boolean async = element.hasAttribute("async");
+        boolean defer = element.hasAttribute("defer");
         NestableNode parent = element.getParent();
         List<String> files = new ArrayList<String>();
         for (String file : element.getAttributeValue("files").split(",")) {
@@ -81,7 +83,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             }
             
             String value = (String) StandardExpressionProcessor.processExpression(arguments, "@{'" + mappingPrefix + versionedBundle + "'}");
-            Element e = getElement(value);
+            Element e = getElement(value, async, defer);
             parent.insertAfter(element, e);
         } else {
             List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
@@ -91,7 +93,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             for (String file : files) {
                 file = file.trim();
                 String value = (String) StandardExpressionProcessor.processExpression(arguments, "@{'" + mappingPrefix + file + "'}");
-                Element e = getElement(value);
+                Element e = getElement(value, async, defer);
                 parent.insertBefore(element, e);
             }
         }
@@ -100,10 +102,24 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         return ProcessorResult.OK;
     }
     
+    /**
+     * @deprecated use {@link #getScriptElement(String, boolean, boolean)} instead
+     */
+    @Deprecated
     protected Element getScriptElement(String src) {
+        return getScriptElement(src, false, false);
+    }
+    
+    protected Element getScriptElement(String src, boolean async, boolean defer) {
         Element e = new Element("script");
         e.setAttribute("type", "text/javascript");
         e.setAttribute("src", src);
+        if (async) {
+            e.setAttribute("async", true, null);
+        }
+        if (defer) {
+            e.setAttribute("defer", true, null);
+        }
         return e;
     }
     
@@ -114,13 +130,21 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         return e;
     }
     
+    /**
+     * @deprecated use {@link #getElement(String, boolean, boolean)} instead
+     */
+    @Deprecated
     protected Element getElement(String src) {
+        return getElement(src, false, false);
+    }
+    
+    protected Element getElement(String src, boolean async, boolean defer) {
         if (src.contains(";")) {
             src = src.substring(0, src.indexOf(';'));
         }
         
         if (src.endsWith(".js")) {
-            return getScriptElement(src);
+            return getScriptElement(src, async, defer);
         } else if (src.endsWith(".css")) {
             return getLinkElement(src);
         } else {
