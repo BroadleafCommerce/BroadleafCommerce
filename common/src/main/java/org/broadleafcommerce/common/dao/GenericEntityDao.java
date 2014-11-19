@@ -68,6 +68,13 @@ public interface GenericEntityDao {
     void persist(Object object);
 
     /**
+     * Remove the entity
+     *
+     * @param object
+     */
+    void remove(Object object);
+
+    /**
      * Finds how many of the given entity class are persisted
      * 
      * @param clazz

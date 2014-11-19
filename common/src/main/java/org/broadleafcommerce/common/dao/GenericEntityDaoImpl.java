@@ -147,6 +147,11 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
     }
 
     @Override
+    public void remove(Object object) {
+        em.remove(object);
+    }
+
+    @Override
     public void flush() {
         em.flush();
     }
