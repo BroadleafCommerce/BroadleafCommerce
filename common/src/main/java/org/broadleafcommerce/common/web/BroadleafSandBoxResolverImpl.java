@@ -17,6 +17,7 @@
 package org.broadleafcommerce.common.web;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
@@ -31,7 +32,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -61,11 +61,11 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     // Request Parameters and Attributes for Sandbox Mode properties - mostly values to manage dates.
     private static String SANDBOX_ID_VAR = "blSandboxId";
     private static String SANDBOX_DATE_TIME_VAR = "blSandboxDateTime";
-    private static final SimpleDateFormat CONTENT_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmm");
-    private static final SimpleDateFormat CONTENT_DATE_DISPLAY_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
-    private static final SimpleDateFormat CONTENT_DATE_DISPLAY_HOURS_FORMATTER = new SimpleDateFormat("h");
-    private static final SimpleDateFormat CONTENT_DATE_DISPLAY_MINUTES_FORMATTER = new SimpleDateFormat("mm");
-    private static final SimpleDateFormat CONTENT_DATE_PARSE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
+    private static final FastDateFormat CONTENT_DATE_FORMATTER = FastDateFormat.getInstance("yyyyMMddHHmm");
+    private static final FastDateFormat CONTENT_DATE_DISPLAY_FORMATTER = FastDateFormat.getInstance("MM/dd/yyyy");
+    private static final FastDateFormat CONTENT_DATE_DISPLAY_HOURS_FORMATTER = FastDateFormat.getInstance("h");
+    private static final FastDateFormat CONTENT_DATE_DISPLAY_MINUTES_FORMATTER = FastDateFormat.getInstance("mm");
+    private static final FastDateFormat CONTENT_DATE_PARSE_FORMAT = FastDateFormat.getInstance("MM/dd/yyyy hh:mm aa");
     private static String SANDBOX_DATE_TIME_RIBBON_OVERRIDE_PARAM = "blSandboxDateTimeRibbonOverride";
     private static final String SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM = "blSandboxDisplayDateTimeDate";
     private static final String SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM = "blSandboxDisplayDateTimeHours";
