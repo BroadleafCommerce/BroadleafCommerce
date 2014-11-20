@@ -37,17 +37,6 @@ import javax.persistence.EntityManager;
 public interface SandBoxHelper {
 
     /**
-     * A query hint that can be passed to Query.setHint(). Should
-     * be a regular expression matching Hibernate filter names. This
-     * drives which sandbox filters will be active for the query.
-     */
-    public static class QueryHints {
-
-        public static final String FILTER_INCLUDE = "filterInclude";
-
-    }
-
-    /**
      * Retrieve a list of values that includes the the original ids passed in and any
      * sandbox versions of those ids, if available. This is useful for some queries that
      * require search values for both the original id and the sandbox id.
