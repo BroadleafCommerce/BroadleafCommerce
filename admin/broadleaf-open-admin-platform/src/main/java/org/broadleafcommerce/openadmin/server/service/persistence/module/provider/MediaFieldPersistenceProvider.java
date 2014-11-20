@@ -247,23 +247,20 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
     }
 
+    protected boolean checkEquality(Object one, Object two) {
+        return one == null && two == null || !(one == null || two == null) && one.equals(two);
+    }
+
     protected boolean establishDirtyState(Media newMedia, Media media) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        boolean dirty = false;
-        Map description = BeanUtils.describe(media);
-        for (Object temp : description.keySet()) {
-            String property = (String) temp;
-            //ignore id and SandBoxDiscriminator fields
-            String[] ignoredProperties = sandBoxHelper.getSandBoxDiscriminatorFieldList();
-            ignoredProperties = (String[]) ArrayUtils.add(ignoredProperties, "id");
-            Arrays.sort(ignoredProperties);
-            if (Arrays.binarySearch(ignoredProperties, property) < 0) {
-                String prop1 = String.valueOf(description.get(property));
-                String prop2 = String.valueOf(BeanUtils.getProperty(newMedia, property));
-                if (!prop1.equals(prop2)) {
-                    dirty = true;
-                    break;
-                }
-            }
+        boolean dirty = !checkEquality(newMedia.getAltText(), media.getAltText());
+        if (!dirty) {
+            dirty = !checkEquality(newMedia.getTags(), media.getTags());
+        }
+        if (!dirty) {
+            dirty = !checkEquality(newMedia.getTitle(), media.getTitle());
+        }
+        if (!dirty) {
+            dirty = !checkEquality(newMedia.getUrl(), media.getUrl());
         }
         return dirty;
     }
