@@ -66,17 +66,17 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
     
     // Request Parameters and Attributes for Sandbox Mode properties - mostly values to manage dates.
     private static String SANDBOX_DATE_TIME_VAR = "blSandboxDateTime";
-    private static final SimpleDateFormat CONTENT_DATE_FORMATTER = new SimpleDateFormat("yyyyMMddHHmm");
-    private static final SimpleDateFormat CONTENT_DATE_DISPLAY_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
-    private static final SimpleDateFormat CONTENT_DATE_DISPLAY_HOURS_FORMATTER = new SimpleDateFormat("h");
-    private static final SimpleDateFormat CONTENT_DATE_DISPLAY_MINUTES_FORMATTER = new SimpleDateFormat("mm");
-    private static final SimpleDateFormat CONTENT_DATE_PARSE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
     private static String SANDBOX_DATE_TIME_RIBBON_OVERRIDE_PARAM = "blSandboxDateTimeRibbonOverride";
     private static final String SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM = "blSandboxDisplayDateTimeDate";
     private static final String SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM = "blSandboxDisplayDateTimeHours";
     private static final String SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM = "blSandboxDisplayDateTimeMinutes";
     private static final String SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM = "blSandboxDisplayDateTimeAMPM";
 
+    private final SimpleDateFormat contentDateFormatter = new SimpleDateFormat("yyyyMMddHHmm");
+    private final SimpleDateFormat contentDateDisplayFormatter = new SimpleDateFormat("MM/dd/yyyy");
+    private final SimpleDateFormat contentDateDisplayHoursFormatter = new SimpleDateFormat("h");
+    private final SimpleDateFormat contentDateDisplayMinutesFormatter = new SimpleDateFormat("mm");
+    private final SimpleDateFormat contentDateParseFormatter = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
     
     /**
      * Request attribute to store the current sandbox
@@ -167,9 +167,9 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
         Date currentSystemDateTime = SystemTime.asDate(true);
         Calendar sandboxDateTimeCalendar = Calendar.getInstance();
         sandboxDateTimeCalendar.setTime(currentSystemDateTime);
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM, CONTENT_DATE_DISPLAY_FORMATTER.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM, CONTENT_DATE_DISPLAY_HOURS_FORMATTER.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
-        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM, CONTENT_DATE_DISPLAY_MINUTES_FORMATTER.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_DATE_PARAM, contentDateDisplayFormatter.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM, contentDateDisplayHoursFormatter.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
+        request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM, contentDateDisplayMinutesFormatter.format(currentSystemDateTime), WebRequest.SCOPE_REQUEST);
         request.setAttribute(SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM, sandboxDateTimeCalendar.get(Calendar.AM_PM), WebRequest.SCOPE_REQUEST);
         return currentSandbox;
     }
@@ -232,7 +232,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Setting date/time using " + sandboxDateTimeParam);
                 }
-                overrideTime = CONTENT_DATE_FORMATTER.parse(sandboxDateTimeParam);
+                overrideTime = contentDateFormatter.parse(sandboxDateTimeParam);
             }
         } catch (ParseException e) {
             LOG.debug(e);
@@ -277,7 +277,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
             LOG.debug("Setting date/time using " + dateString);
         }
 
-        Date parsedDate = CONTENT_DATE_PARSE_FORMAT.parse(dateString);
+        Date parsedDate = contentDateParseFormatter.parse(dateString);
         return parsedDate;
     }
     
