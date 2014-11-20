@@ -92,6 +92,8 @@ public interface GenericEntityDao {
      */
     public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset);
 
+    <T> List<T> readAllGenericEntity(Class<T> clazz);
+
     List<Long> readAllGenericEntityId(Class<?> clazz);
 
     /**

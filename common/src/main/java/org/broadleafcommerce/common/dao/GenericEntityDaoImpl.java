@@ -86,6 +86,12 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
     }
 
     @Override
+    public <T> List<T> readAllGenericEntity(Class<T> clazz) {
+        TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root").toQuery(em);
+        return q.getResultList();
+    }
+
+    @Override
     public List<Long> readAllGenericEntityId(Class<?> clazz) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
