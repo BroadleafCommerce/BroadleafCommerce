@@ -19,12 +19,12 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder.statement;
 
-import java.text.ParseException;
-
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.RuleBuilderFormatUtil;
+
+import java.text.ParseException;
 
 /**
  * @author jfischer
@@ -309,8 +309,8 @@ public class PhraseTranslator {
                         isNegation
                 ) {
             return BLCOperator.INOT_CONTAINS;
-//        } else if (operator.equals("contains") && isNegation) {
-//            return BLCOperator.NOT_CONTAINS;
+        } else if (operator.equals("contains") && isNegation) {
+            return BLCOperator.NOT_CONTAINS;
         } else if (
                 isIgnoreCase &&
                         operator.equals("contains")
@@ -318,16 +318,16 @@ public class PhraseTranslator {
             return BLCOperator.ICONTAINS;
         } else if (operator.equals("contains") && isFieldComparison) {
             return BLCOperator.CONTAINS_FIELD;
-//        } else if (operator.equals("contains")) {
-//            return BLCOperator.CONTAINS;
+        } else if (operator.equals("contains")) {
+            return BLCOperator.CONTAINS;
         } else if (
                 isIgnoreCase &&
                         operator.equals("startsWith") &&
                         isNegation
                 ) {
             return BLCOperator.INOT_STARTS_WITH;
-//        } else if (operator.equals("startsWith") && isNegation) {
-//            return BLCOperator.NOT_STARTS_WITH;
+        } else if (operator.equals("startsWith") && isNegation) {
+            return BLCOperator.NOT_STARTS_WITH;
         } else if (
                 isIgnoreCase &&
                         operator.equals("startsWith")
@@ -335,16 +335,16 @@ public class PhraseTranslator {
             return BLCOperator.ISTARTS_WITH;
         } else if (operator.equals("startsWith") && isFieldComparison) {
             return BLCOperator.STARTS_WITH_FIELD;
-//        } else if (operator.equals("startsWith")) {
-//            return BLCOperator.STARTS_WITH;
+        } else if (operator.equals("startsWith")) {
+            return BLCOperator.STARTS_WITH;
         } else if (
                 isIgnoreCase &&
                         operator.equals("endsWith") &&
                         isNegation
                 ) {
             return BLCOperator.INOT_ENDS_WITH;
-//        } else if (operator.equals("endsWith") && isNegation) {
-//            return BLCOperator.NOT_ENDS_WITH;
+        } else if (operator.equals("endsWith") && isNegation) {
+            return BLCOperator.NOT_ENDS_WITH;
         } else if (
                 isIgnoreCase &&
                         operator.equals("endsWith")
@@ -352,8 +352,8 @@ public class PhraseTranslator {
             return BLCOperator.IENDS_WITH;
         } else if (operator.equals("endsWith") && isFieldComparison) {
             return BLCOperator.ENDS_WITH_FIELD;
-//        } else if (operator.equals("endsWith")) {
-//            return BLCOperator.ENDS_WITH;
+        } else if (operator.equals("endsWith")) {
+            return BLCOperator.ENDS_WITH;
         } else if (operator.equals(".size()>")) {
             return BLCOperator.COUNT_GREATER_THAN;
         } else if (operator.equals(".size()>=")) {
