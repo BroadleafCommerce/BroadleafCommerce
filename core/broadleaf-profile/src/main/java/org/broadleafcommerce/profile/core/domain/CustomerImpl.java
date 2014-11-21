@@ -173,6 +173,7 @@ public class CustomerImpl implements Customer, AdminMainEntity {
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Payments", order = 3000,
             addType = AddMethodType.PERSIST,
+            readOnly = true,
             tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
     protected List<CustomerPayment> customerPayments  = new ArrayList<CustomerPayment>();
 
