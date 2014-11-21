@@ -32,17 +32,20 @@
     
     <div class="tabs-container" th:if="${renderTabs}">
         <dl class="tabs" th:classappend="${additionalTabClasses}">
-            <dd th:each="tab : ${entityForm.tabs}" th:class="${tabStat.first}? 'active'">
+            <dd th:each="tab : ${entityForm.tabs}"
+                th:class="${(tabStat.first and tab.isVisible) or ((not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
+                th:if="${tab.isVisible}">
                 <a th:href="'#tab' + ${tabStat.count}" th:text="#{${tab.title}}" />
             </dd>
         </dl> 
     </div>
     
     <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
-        <li th:each="tab : ${entityForm.tabs}" 
+        <li th:each="tab : ${entityForm.tabs}"
             th:class="'tab' + ${tabStat.count} + 'Tab'" 
-            th:classappend="${tabStat.first}? 'active'"
-            th:inline="text">
+            th:classappend="${(tabStat.first and tab.isVisible) or ((not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
+            th:inline="text"
+            th:if="${tab.isVisible}">
             
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="${group.title}" />
