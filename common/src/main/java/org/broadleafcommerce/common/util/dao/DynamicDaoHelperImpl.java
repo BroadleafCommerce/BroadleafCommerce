@@ -219,8 +219,29 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     }
 
     @Override
+    public Serializable getIdentifier(Object entity, Session session) {
+        if (entity.getClass().getAnnotation(Entity.class) != null) {
+            Field idField = getIdField(entity.getClass(), session);
+            try {
+                return (Serializable) idField.get(entity);
+            } catch (IllegalAccessException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Field getIdField(Class<?> clazz, EntityManager em) {
         ClassMetadata metadata = em.unwrap(Session.class).getSessionFactory().getClassMetadata(clazz);
+        Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
+        idField.setAccessible(true);
+        return idField;
+    }
+
+    @Override
+    public Field getIdField(Class<?> clazz, Session session) {
+        ClassMetadata metadata = session.getSessionFactory().getClassMetadata(clazz);
         Field idField = ReflectionUtils.findField(clazz, metadata.getIdentifierPropertyName());
         idField.setAccessible(true);
         return idField;

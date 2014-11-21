@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.common.util.dao;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.type.Type;
@@ -54,6 +55,10 @@ public interface DynamicDaoHelper {
 
     Serializable getIdentifier(Object entity, EntityManager em);
 
+    Serializable getIdentifier(Object entity, Session session);
+
     Field getIdField(Class<?> clazz, EntityManager em);
+
+    Field getIdField(Class<?> clazz, Session session);
 
 }
