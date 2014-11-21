@@ -176,6 +176,7 @@
         <property name="sourceList">
             <list>
                 <ref bean="blBasicFieldTypeValidator"/>
+                <ref bean="blRuleFieldValidator"/>
             </list>
         </property>
     </bean>
