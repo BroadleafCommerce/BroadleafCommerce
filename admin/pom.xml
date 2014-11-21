@@ -4,7 +4,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.2.0-ALPHA-ENT-11</version>
+        <version>3.2.0-ALPHA-ENT-PERF-1</version>
     </parent>
     <artifactId>admin</artifactId>
     <packaging>pom</packaging>
