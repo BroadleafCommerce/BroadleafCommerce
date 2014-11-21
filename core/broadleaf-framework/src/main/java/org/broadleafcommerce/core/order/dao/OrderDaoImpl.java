@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -196,6 +197,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public Order updatePrices(Order order) {
         order = em.merge(order);
         if (order.updatePrices()) {

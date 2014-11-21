@@ -19,12 +19,14 @@ package org.broadleafcommerce.core.order.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.order.domain.OrderMultishipOption;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.List;
 
 @Repository("blOrderMultishipOptionDao")
 public class OrderMultishipOptionDaoImpl implements OrderMultishipOptionDao {
@@ -36,6 +38,7 @@ public class OrderMultishipOptionDaoImpl implements OrderMultishipOptionDao {
     protected EntityConfiguration entityConfiguration;
 
     @Override
+    @Transactional("blTransactionManager")
     public OrderMultishipOption save(final OrderMultishipOption orderMultishipOption) {
         return em.merge(orderMultishipOption);
     }
@@ -60,6 +63,7 @@ public class OrderMultishipOptionDaoImpl implements OrderMultishipOptionDao {
     }
     
     @Override
+    @Transactional("blTransactionManager")
     public void deleteAll(List<OrderMultishipOption> options) {
         for (OrderMultishipOption option : options) {
             em.remove(option);

@@ -19,9 +19,11 @@ package org.broadleafcommerce.profile.core.service;
 import org.broadleafcommerce.profile.core.dao.RoleDao;
 import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Service("blRoleService")
 public class RoleServiceImpl implements RoleService {
@@ -29,6 +31,8 @@ public class RoleServiceImpl implements RoleService {
     @Resource(name="blRoleDao")
     protected RoleDao roleDao;
 
+    @Override
+    @Transactional("blTransactionManager")
     public List<CustomerRole> findCustomerRolesByCustomerId(Long customerId) {
         return roleDao.readCustomerRolesByCustomerId(customerId);
     }
