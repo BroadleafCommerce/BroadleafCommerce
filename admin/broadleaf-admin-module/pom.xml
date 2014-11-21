@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.2.0-ALPHA-ENT-11</version>
+        <version>3.2.0-ALPHA-ENT-12</version>
     </parent>
     <artifactId>broadleaf-admin-module</artifactId>
     <packaging>jar</packaging>
