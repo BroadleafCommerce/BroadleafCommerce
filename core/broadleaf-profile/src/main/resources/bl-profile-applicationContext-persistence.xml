@@ -107,19 +107,4 @@
         </tx:attributes>
     </tx:advice>
 
-    <aop:config>
-        <aop:pointcut id="blIdGenerationDaoOperation" expression="execution(* org.broadleafcommerce.profile.core.dao.IdGenerationDao.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blIdGenerationDaoOperation"/>
-    </aop:config>
-
-    <aop:config>
-        <aop:pointcut id="blRoleServiceOperation" expression="execution(* org.broadleafcommerce.profile.core.service.RoleService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRoleServiceOperation"/>
-    </aop:config>
-    
-    <aop:config>
-        <aop:pointcut id="blChallengeQuestionServiceOperation" expression="execution(* org.broadleafcommerce.profile.core.service.ChallengeQuestionService.*(..))"/>
-        <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blChallengeQuestionServiceOperation"/>
-    </aop:config>
-
 </beans>

@@ -175,7 +175,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readAllSubCategories(Category category) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
-        query.setParameter("defaultParentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
+        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
@@ -185,7 +185,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readAllSubCategories(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
-        query.setParameter("defaultParentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
+        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
@@ -197,7 +197,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readActiveSubCategoriesByCategory(Category category) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
-        query.setParameter("defaultParentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
+        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
         query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
@@ -208,7 +208,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
-        query.setParameter("defaultParentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
+        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
         query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
