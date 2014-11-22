@@ -32,7 +32,7 @@
     <named-query name="BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY" >
         <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
                 LEFT OUTER JOIN category.allParentCategoryXrefs xref
-                WHERE (category.defaultParentCategory.id = :parentCategoryId OR xref.categoryXrefPK.category = :parentCategoryId)
+                WHERE (category.defaultParentCategory.id = :parentCategoryId OR xref.categoryXrefPK.category.id = :parentCategoryId)
                 AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N')           
                 AND (category.activeStartDate &lt; :currentDate)
                 AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; :currentDate) 
