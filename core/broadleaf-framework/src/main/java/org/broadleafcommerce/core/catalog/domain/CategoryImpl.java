@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
@@ -981,7 +982,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         for (Category category : categoryHierarchy) {
             returnProductsSet.addAll(category.getCrossSaleProducts());
         }
-        return new ArrayList<RelatedProduct>(returnProductsSet);
+        ArrayList<RelatedProduct> result = new ArrayList<RelatedProduct>(returnProductsSet);
+        // all of the individual result sets were sorted, we need to sort the full result set
+        Collections.sort(result, sequenceComparator);
+        return result;
     }
     
     @Override
@@ -992,7 +996,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         for (Category category : categoryHierarchy) {
             returnProductsSet.addAll(category.getUpSaleProducts());
         }
-        return new ArrayList<RelatedProduct>(returnProductsSet);
+        ArrayList<RelatedProduct> result = new ArrayList<RelatedProduct>(returnProductsSet);
+        // all of the individual result sets were sorted, we need to sort the full result set
+        Collections.sort(result, sequenceComparator);
+        return result;
     }
 
     @Override
@@ -1003,7 +1010,10 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         for (Category category : categoryHierarchy) {
             returnProductsSet.addAll(category.getFeaturedProducts());
         }
-        return new ArrayList<FeaturedProduct>(returnProductsSet);
+        ArrayList<FeaturedProduct> result = new ArrayList<FeaturedProduct>(returnProductsSet);
+        // all of the individual result sets were sorted, we need to sort the full result set
+        Collections.sort(result, sequenceComparator);
+        return result;
     }
     
     @Override
@@ -1285,6 +1295,19 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         @Override
         public int compare(CategorySearchFacet o1, CategorySearchFacet o2) {
             return o1.getSequence().compareTo(o2.getSequence());
+        }
+    };
+    
+    protected static Comparator sequenceComparator = new Comparator() {
+
+        @Override
+        public int compare(Object o1, Object o2) {
+            try {
+                return ((Comparable) PropertyUtils.getProperty(o1, "sequence")).compareTo(PropertyUtils.getProperty(o2, "sequence"));
+            } catch (Exception e) {
+                LOG.warn("Trying to compare objects that do not have a sequence property, assuming they are the same order");
+                return 0;
+            }
         }
     };
 

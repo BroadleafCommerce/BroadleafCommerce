@@ -740,11 +740,17 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     // Build the options map
                     Map<String, String> options = new HashMap<String, String>();
                     for (Entity row : rows) {
-                        String displayValue = row.findProperty(displayProp).getDisplayValue();
-                        if (StringUtils.isBlank(displayValue)) {
-                            displayValue = row.findProperty(displayProp).getValue();
+                        Property prop = row.findProperty(displayProp);
+                        if (prop == null) {
+                            LOG.warn("Could not find displayProp [" + displayProp + "] on entity [" + 
+                                    ef.getCeilingEntityClassname() + "]");
+                        } else {
+                            String displayValue = prop.getDisplayValue();
+                            if (StringUtils.isBlank(displayValue)) {
+                                displayValue = prop.getValue();
+                            }
+                            options.put(row.findProperty(idProp).getValue(), displayValue);
                         }
-                        options.put(row.findProperty(idProp).getValue(), displayValue);
                     }
                     
                     // Set the options on the entity field

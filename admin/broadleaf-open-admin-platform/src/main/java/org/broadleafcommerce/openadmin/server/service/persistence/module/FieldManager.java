@@ -89,7 +89,7 @@ public class FieldManager {
                 myClass = getClassForField(persistenceManager, propertyName, null, myEntities);
             }
             if (myClass == null) {
-                LOG.warn(String.format("Unable to find the field (%s) anywhere in the inheritance hierarchy for (%s)", propertyName, clazz.getName()));
+                LOG.debug(String.format("Unable to find the field (%s) anywhere in the inheritance hierarchy for (%s)", propertyName, clazz.getName()));
                 return null;
             }
             field = getSingleField(myClass, propertyName);
@@ -312,6 +312,7 @@ public class FieldManager {
             this.containingPropertyName = containingPropertyName;
         }
 
+        @Override
         public int compareTo(SortableValue o) {
             return pos.compareTo(o.pos) * -1;
         }
