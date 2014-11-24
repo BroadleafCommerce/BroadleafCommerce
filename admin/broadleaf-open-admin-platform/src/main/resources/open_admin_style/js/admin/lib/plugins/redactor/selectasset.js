@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.util.sql;
+if (!RedactorPlugins) var RedactorPlugins = {};
 
-import org.apache.tools.ant.Task;
-
-/**
- * 
- * @author jfischer
- *
- */
-public class FileSystemApplicationContextTask extends Task {
-
-    private String path;
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-}
+(function($)
+{
+    RedactorPlugins.selectasset = function()
+    {
+        return {
+            init: function()
+            {
+                var button = this.button.addAfter('video', 'selectasset', BLCAdmin.messages.selectUploadAsset);
+                this.button.addCallback(button, BLCAdmin.asset.selectButtonClickedRedactor);
+                this.button.setAwesome('selectasset', 'icon-picture');
+            }
+        };
+    };
+})(jQuery);

@@ -749,7 +749,7 @@ div#headerDetailedMsgContainer div#headerDetailedMsgBody {
     padding: 0;
     border: 1px solid #cccccc;
     border-radius: 4px;
-    z-index: 40;
+    z-index: 1050;
     right: 0;
 }
 
@@ -1555,16 +1555,16 @@ form.custom div.conditional div.custom.dropdown {
 	padding-bottom: 0;
 }
 
-body .redactor_toolbar li a.re-selectasset { 
+body .redactor-toolbar li a.re-selectasset { 
 	background-position: -200px; 
 }
 
-body .redactor_toolbar li a.redactor_btn_font { 
+body .redactor-toolbar li a.redactor_btn_font { 
 	background-image: url('../../img/admin/font-selection.png');
 	background-position: 0 -5px;
 }
 
-body .redactor_redactor {
+body .redactor-redactor {
     max-width: 934px;
 }
 

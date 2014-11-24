@@ -150,6 +150,14 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
         }
         return this.isDefault;
     }
+    
+    @Override
+    public boolean isDefault() {
+    	if (getIsDefault() != null) {
+    		return getIsDefault();
+    	}
+    	return false;
+    }
 
     @Override
     public void setIsDefault(Boolean isDefault) {
@@ -222,5 +230,4 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     public void setPriority(Integer priority) {
         this.priority = priority;
     }
-
 }

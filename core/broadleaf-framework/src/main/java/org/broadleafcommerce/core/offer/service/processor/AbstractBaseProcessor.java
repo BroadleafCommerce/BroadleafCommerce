@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.offer.service.processor;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -41,7 +42,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.hibernate.tool.hbm2x.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;

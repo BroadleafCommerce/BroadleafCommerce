@@ -36,6 +36,7 @@
         <mapping-file>config/bc/jpa/domain/Role.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/State.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/CountrySubdivision.orm.xml</mapping-file>
+        <class>org.broadleafcommerce.profile.core.domain.AccountImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.AddressImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl</class>
         <class>org.broadleafcommerce.profile.core.domain.CountryImpl</class>

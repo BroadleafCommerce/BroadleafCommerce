@@ -36,7 +36,7 @@ public class AdminAuditableListener {
     @PrePersist
     public void setAuditCreatedBy(Object entity) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
-            Field field = getSingleField(entity.getClass(), "auditable");
+            Field field = getSingleField(entity.getClass(), getAuditableFieldName());
             field.setAccessible(true);
             if (field.isAnnotationPresent(Embedded.class)) {
                 Object auditable = field.get(entity);
@@ -57,7 +57,7 @@ public class AdminAuditableListener {
     @PreUpdate
     public void setAuditUpdatedBy(Object entity) throws Exception {
         if (entity.getClass().isAnnotationPresent(Entity.class)) {
-            Field field = getSingleField(entity.getClass(), "auditable");
+            Field field = getSingleField(entity.getClass(), getAuditableFieldName());
             field.setAccessible(true);
             if (field.isAnnotationPresent(Embedded.class)) {
                 Object auditable = field.get(entity);
@@ -91,6 +91,10 @@ public class AdminAuditableListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    protected String getAuditableFieldName() {
+        return "auditable";
     }
 
     private Field getSingleField(Class<?> clazz, String fieldName) throws IllegalStateException {

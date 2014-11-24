@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>core</artifactId>
         <groupId>org.broadleafcommerce</groupId>
@@ -56,24 +57,24 @@
                 <artifactId>maven-source-plugin</artifactId>
                 <version>${maven.source.plugin.version}</version>
                 <executions>
-                  <execution>
-                    <id>attach-sources</id>
-                    <phase>verify</phase>
-                    <goals>
-                      <goal>jar-no-fork</goal>
-                    </goals>
-                  </execution>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                  <excludes>
-                    <include>**/*.gwt.xml</include>
-                  </excludes>
+                    <excludes>
+                        <include>**/*.gwt.xml</include>
+                    </excludes>
                 </configuration>
-                     <executions>
+                <executions>
                     <execution>
                         <goals>
                             <goal>test-jar</goal>
@@ -93,7 +94,13 @@
                     <includes>
                         <include>**/*Spec*</include>
                     </includes>
+                    <argLine>${surefire.argLine}</argLine>
                 </configuration>
+            </plugin>
+            <!-- Jacoco Code Coverage Plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -114,7 +121,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                   
+
                     </plugin>
                 </plugins>
             </build>
@@ -128,6 +135,27 @@
         <dependency>
             <artifactId>solr-core</artifactId>
             <groupId>org.apache.solr</groupId>
+            <exclusions>
+                <!-- The jdk.tools transitive dependency uses system scope -->
+                <!-- which has to be resolved in a platform agnostic way -->
+                <!-- in order to have a clean compile in Eclipse. That -->
+                <!-- turned out to be surprisingly difficult to achieve. -->
+
+                <!-- From the dependency tree below we can see that -->
+                <!-- jdk.tools is pulled in by hadoop-annotations -->
+                <!-- and since this is a normal JDK system jar we can avoid the -->
+                <!-- problem by excluding the jdk.tools dependency. -->
+
+                <!-- Relevant output from mvn dependency:tree follows -->
+                <!-- +- org.broadleafcommerce:broadleaf-framework:jar:{version}:compile -->
+                <!--    +- org.apache.solr:solr-core:jar:4.4.0:compile -->
+                <!--        +- org.apache.hadoop:hadoop-annotations:jar:2.0.5-alpha:compile -->
+                <!--            \- jdk.tools:jdk.tools:jar:1.6:system -->
+                <exclusion>
+                    <groupId>jdk.tools</groupId>
+                    <artifactId>jdk.tools</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mvel</groupId>

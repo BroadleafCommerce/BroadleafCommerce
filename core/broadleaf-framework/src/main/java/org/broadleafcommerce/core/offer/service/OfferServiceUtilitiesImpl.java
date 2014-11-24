@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.offer.service;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
@@ -59,6 +61,7 @@ import javax.annotation.Resource;
  */
 @Service("blOfferServiceUtilities")
 public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
+    protected static final Log LOG = LogFactory.getLog(OfferServiceUtilitiesImpl.class);
 
     @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
@@ -330,9 +333,27 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     @Override
     public Map<Long, OrderItemPriceDetailAdjustment> buildItemDetailAdjustmentMap(OrderItemPriceDetail itemDetail) {
         Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = new HashMap<Long, OrderItemPriceDetailAdjustment>();
+        
+        List<OrderItemPriceDetailAdjustment> adjustmentsToRemove = new ArrayList<OrderItemPriceDetailAdjustment>();
         for (OrderItemPriceDetailAdjustment adjustment : itemDetail.getOrderItemPriceDetailAdjustments()) {
-            itemAdjustmentMap.put(adjustment.getOffer().getId(), adjustment);
+            if (itemAdjustmentMap.containsKey(adjustment.getOffer().getId())) {
+                if (LOG.isDebugEnabled()) {
+                    StringBuilder sb = new StringBuilder("Detected collisions for item adjustments with ids ")
+                        .append(itemAdjustmentMap.get(adjustment.getOffer().getId()).getId())
+                        .append(" and ")
+                        .append(adjustment.getId());
+                    LOG.debug(sb.toString());
+                }
+                adjustmentsToRemove.add(adjustment);
+            } else {
+                itemAdjustmentMap.put(adjustment.getOffer().getId(), adjustment);
+            }
         }
+        
+        for (OrderItemPriceDetailAdjustment adjustment : adjustmentsToRemove) {
+            itemDetail.getOrderItemPriceDetailAdjustments().remove(adjustment);
+        }
+        
         return itemAdjustmentMap;
     }
 
