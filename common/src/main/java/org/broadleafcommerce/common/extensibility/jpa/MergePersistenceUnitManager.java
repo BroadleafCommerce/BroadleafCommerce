@@ -244,7 +244,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             for (PersistenceUnitInfo pui : mergedPus.values()) {
                 for (String managedClassName : pui.getManagedClassNames()) {
                     if (!entityMarkerClassTransformer.getTransformedClassNames().contains(managedClassName)) {
-                        LOG.trace("Should have transformed " + managedClassName + " but didn't");
+                        LOG.error("Should have transformed " + managedClassName + " but didn't");
                     }
                 }
             }
