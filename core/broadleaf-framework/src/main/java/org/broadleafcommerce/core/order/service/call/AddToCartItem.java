@@ -17,9 +17,8 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.order.model;
+package org.broadleafcommerce.core.order.service.call;
 
-import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
 public class AddToCartItem extends OrderItemRequestDTO {
     
