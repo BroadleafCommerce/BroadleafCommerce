@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -37,8 +35,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPe
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension
-        .MediaFieldPersistenceProviderExtensionManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension.MediaFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -261,6 +258,11 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
         if (!dirty) {
             dirty = !checkEquality(newMedia.getUrl(), media.getUrl());
+        }
+        if (!dirty && extensionManager != null) {
+            ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
+            extensionManager.getProxy().checkDirtyState(media, newMedia, resultHolder);
+            dirty = resultHolder.getResult() != null && resultHolder.getResult();
         }
         return dirty;
     }
