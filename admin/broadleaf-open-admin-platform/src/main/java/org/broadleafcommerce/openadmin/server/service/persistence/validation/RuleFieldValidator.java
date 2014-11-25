@@ -100,7 +100,7 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                             if (dto.getId() != null) {
                                 boolean foundIdToUpdate = false;
                                 for (QuantityBasedRule quantityBasedRule : existingRules) {
-                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(em, quantityBasedRule.getClass(), dto.getId());
+                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(quantityBasedRule.getClass(), dto.getId());
                                     if (sandBoxVersionId == null) {
                                         sandBoxVersionId = dto.getId();
                                     }
