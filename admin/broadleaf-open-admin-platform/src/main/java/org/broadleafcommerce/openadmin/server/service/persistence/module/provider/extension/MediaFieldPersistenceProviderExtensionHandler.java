@@ -37,6 +37,8 @@ public interface MediaFieldPersistenceProviderExtensionHandler extends Extension
 
     ExtensionResultStatusType postUpdate(Media media);
 
+    ExtensionResultStatusType checkDirtyState(Media oldMedia, Media newMedia, ExtensionResultHolder<Boolean> resultHolder);
+
     public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 
 }
