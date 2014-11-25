@@ -294,6 +294,7 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         mockOrderService = Mock()
         order = context.seedData.order
         mockOrderPaymentService.createTransaction() >> { new PaymentTransactionImpl() }
+        mockOrderPaymentService.save(_) >> { args -> return args[0] }
 
         RollbackHandler rollbackHandler = new ConfirmPaymentsRollbackHandler().with {
             paymentConfigurationServiceProvider = mockPaymentConfigurationServiceProvider
@@ -345,7 +346,7 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         then: "No exceptions are encountered and the orderService and orderPaymentService successfully saves the results"
         1 * mockPaymentGatewayCheckoutService.markPaymentAsInvalid(_)
         1 * mockOrderService.save(_,_)
-        1 * mockOrderPaymentService.save(_)
+        1 * mockOrderPaymentService.save(_) >> { args -> return args[0] }
         order.getPayments().size() == 0
     }
 }

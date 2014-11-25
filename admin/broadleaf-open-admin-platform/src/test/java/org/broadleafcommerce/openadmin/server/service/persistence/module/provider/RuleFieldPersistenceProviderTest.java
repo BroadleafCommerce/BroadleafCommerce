@@ -55,8 +55,8 @@ public class RuleFieldPersistenceProviderTest {
         leftSide.setGroups(new ArrayList<DataDTO>(Arrays.asList((DataDTO) rightSide)));
         expected.setData(new ArrayList<DataDTO>(Arrays.asList(leftSide)));
         
-        RuleFieldPersistenceProvider provider = new RuleFieldPersistenceProvider();
-        DataWrapper wrapper = provider.convertJsonToDataWrapper(json);
+        RuleFieldExtractionUtility extractor = new RuleFieldExtractionUtility();
+        DataWrapper wrapper = extractor.convertJsonToDataWrapper(json);
         
         assertEquals(expected, wrapper);
         // This JSON is slightly different than the JSON above since it contains the full serialization result of an ExpressionDTO
@@ -66,7 +66,7 @@ public class RuleFieldPersistenceProviderTest {
         assertEquals(expectedJson, serializedWrapperJson);
         
         // ensure that serialized can go back to the original data wrapper
-        DataWrapper serializedWrapper = provider.convertJsonToDataWrapper(serializedWrapperJson);
+        DataWrapper serializedWrapper = extractor.convertJsonToDataWrapper(serializedWrapperJson);
         assertEquals(expected, serializedWrapper);
     }
     

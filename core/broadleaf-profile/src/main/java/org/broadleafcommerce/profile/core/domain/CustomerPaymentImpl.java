@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
@@ -30,26 +31,43 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name="CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = {"CUSTOMER_ID", "PAYMENT_TOKEN"}))
+@Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }))
 @AdminPresentationMergeOverrides(
-    {
+{
         @AdminPresentationMergeOverride(name = "billingAddress.addressLine1", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true))
-    }
-)
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "billingAddress.", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = CustomerPaymentImpl.Presentation.Tab.Name.BILLING_ADDRESS),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentImpl.Presentation.Tab.Order.BILLING_ADDRESS)                
+        })
+})
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class CustomerPaymentImpl implements CustomerPayment {
 
@@ -58,17 +76,16 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @Id
     @GeneratedValue(generator = "CustomerPaymentId")
     @GenericGenerator(
-        name="CustomerPaymentId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="CustomerPaymentImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl")
-        }
-    )
+            name = "CustomerPaymentId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CustomerPaymentImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl")
+            })
     @Column(name = "CUSTOMER_PAYMENT_ID")
     protected Long id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     @AdminPresentation(excluded = true)
     protected Customer customer;
@@ -78,17 +95,33 @@ public class CustomerPaymentImpl implements CustomerPayment {
     protected Address billingAddress;
 
     @Column(name = "PAYMENT_TOKEN")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_paymentToken",
+            tooltip = "CustomerPaymentImpl_paymentToken_tooltip",
+            tab = Presentation.Tab.Name.PAYMENT,
+            tabOrder = Presentation.Tab.Order.PAYMENT,
+            group = Presentation.Group.Name.PAYMENT,
+            groupOrder = Presentation.Group.Order.PAYMENT)
     protected String paymentToken;
 
     @Column(name = "IS_DEFAULT")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_isDefault",
+            tab = Presentation.Tab.Name.PAYMENT,
+            tabOrder = Presentation.Tab.Order.PAYMENT,
+            group = Presentation.Group.Name.PAYMENT,
+            groupOrder = Presentation.Group.Order.PAYMENT)
     protected boolean isDefault = false;
 
     @ElementCollection
-    @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns=@JoinColumn(name="CUSTOMER_PAYMENT_ID"))
+    @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns = @JoinColumn(name = "CUSTOMER_PAYMENT_ID"))
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
-    @Column(name="FIELD_VALUE")
+    @Column(name = "FIELD_VALUE")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+    @AdminPresentationMap(friendlyName = "CustomerPaymentImpl_additionalFields",
+            tab = Presentation.Tab.Name.PAYMENT,
+            tabOrder = Presentation.Tab.Order.PAYMENT,
+            keyPropertyFriendlyName = "CustomerPaymentImpl_additional_field_key",
+            forceFreeFormKeys = true)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Override
@@ -150,7 +183,6 @@ public class CustomerPaymentImpl implements CustomerPayment {
     public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
     }
-
     @Override
     public <G extends CustomerPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
@@ -168,4 +200,32 @@ public class CustomerPaymentImpl implements CustomerPayment {
         }
         return createResponse;
     }
+
+    public static class Presentation {
+        public static class Group {
+            public static class Name {
+                public static final String PAYMENT = "CustomerPaymentImpl_payment";
+
+            }
+            
+            public static class Order {
+                public static final int PAYMENT = 1000;
+            }
+
+        }
+        
+        public static class Tab {
+            public static class Name {
+                public static final String PAYMENT = "CustomerPaymentImpl_payment";
+                public static final String BILLING_ADDRESS = "CustomerPaymentImpl_billingAddress";
+            }
+            
+            public static class Order {
+                public static final int PAYMENT = 1000;
+                public static final int BILLING_ADDRESS = 2000;
+            }
+        }
+
+    }
+
 }

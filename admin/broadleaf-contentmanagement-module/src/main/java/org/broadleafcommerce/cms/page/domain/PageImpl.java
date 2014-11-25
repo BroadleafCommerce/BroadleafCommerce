@@ -128,6 +128,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     @Column (name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "PageImpl_Description", order = 1000, 
         group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+            requiredOverride = RequiredOverride.REQUIRED,
         prominent = true, gridOrder = 1)
     protected String description;
 

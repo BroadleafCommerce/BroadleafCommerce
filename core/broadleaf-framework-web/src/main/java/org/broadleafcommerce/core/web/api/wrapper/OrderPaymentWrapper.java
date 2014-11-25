@@ -31,6 +31,11 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.springframework.context.ApplicationContext;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -38,10 +43,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.List;
 
 /**
  * This is a JAXB wrapper around OrderPayment.
@@ -137,7 +138,8 @@ public class OrderPaymentWrapper extends BaseWrapper implements APIWrapper<Order
         if (order != null) {
             payment.setOrder(order);
         }
-
+        
+        payment.setId(this.id);
         payment.setType(PaymentType.getInstance(this.type));
         payment.setPaymentGatewayType(PaymentGatewayType.getInstance(this.gatewayType));
         payment.setReferenceNumber(this.referenceNumber);

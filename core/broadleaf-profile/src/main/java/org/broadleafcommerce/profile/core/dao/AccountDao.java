@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Common Libraries
+ * BroadleafCommerce Profile
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,16 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.util.sql;
+package org.broadleafcommerce.profile.core.dao;
 
-import org.apache.tools.ant.Task;
+import org.broadleafcommerce.profile.core.domain.Account;
 
-/**
- * 
- * @author jfischer
- *
- */
-public class ClassPathApplicationContextTask extends Task {
+public interface AccountDao {
 
-    private String path;
+    public Account create();
 
-    public String getPath() {
-        return path;
-    }
+    public Account readAccountById(Long id);
 
-    public void setPath(String path) {
-        this.path = path;
-    }
+    public Account save(Account account);
+
 }

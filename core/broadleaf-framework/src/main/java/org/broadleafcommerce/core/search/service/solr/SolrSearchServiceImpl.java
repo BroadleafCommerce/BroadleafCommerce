@@ -528,38 +528,40 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      */
     protected void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap,
             SearchCriteria searchCriteria) {
-        for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
-            String solrKey = null;
-            for (Entry<String, SearchFacetDTO> dtoEntry : namedFacetMap.entrySet()) {
-                if (dtoEntry.getValue().getFacet().getField().getAbbreviation().equals(entry.getKey())) {
-                    solrKey = dtoEntry.getKey();
-                    dtoEntry.getValue().setActive(true);
-                }
-            }
-
-            if (solrKey != null) {
-                String[] selectedValues = entry.getValue().clone();
-                for (int i = 0; i < selectedValues.length; i++) {
-                    if (selectedValues[i].contains("range[")) {
-                        String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
-                                selectedValues[i].indexOf(']'));
-                        String[] rangeValues = StringUtils.split(rangeValue, ':');
-                        BigDecimal minValue = new BigDecimal(rangeValues[0]);
-                        BigDecimal maxValue = null;
-                        if (!rangeValues[1].equals("null")) {
-                            maxValue = new BigDecimal(rangeValues[1]);
-                        }
-                        selectedValues[i] = "{!" + getSolrRangeFunctionString(minValue, maxValue) + "}field(" + solrKey + ")";
-                    } else {
-                        selectedValues[i] = solrKey + ":\"" + selectedValues[i] + "\"";
+        if (searchCriteria.getFilterCriteria() != null) {
+            for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
+                String solrKey = null;
+                for (Entry<String, SearchFacetDTO> dtoEntry : namedFacetMap.entrySet()) {
+                    if (dtoEntry.getValue().getFacet().getField().getAbbreviation().equals(entry.getKey())) {
+                        solrKey = dtoEntry.getKey();
+                        dtoEntry.getValue().setActive(true);
                     }
                 }
-                String valueString = StringUtils.join(selectedValues, " OR ");
 
-                StringBuilder sb = new StringBuilder();
-                sb.append("(").append(valueString).append(")");
+                if (solrKey != null) {
+                    String[] selectedValues = entry.getValue().clone();
+                    for (int i = 0; i < selectedValues.length; i++) {
+                        if (selectedValues[i].contains("range[")) {
+                            String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
+                                    selectedValues[i].indexOf(']'));
+                            String[] rangeValues = StringUtils.split(rangeValue, ':');
+                            BigDecimal minValue = new BigDecimal(rangeValues[0]);
+                            BigDecimal maxValue = null;
+                            if (!rangeValues[1].equals("null")) {
+                                maxValue = new BigDecimal(rangeValues[1]);
+                            }
+                            selectedValues[i] = "{!" + getSolrRangeFunctionString(minValue, maxValue) + "}field(" + solrKey + ")";
+                        } else {
+                            selectedValues[i] = solrKey + ":\"" + selectedValues[i] + "\"";
+                        }
+                    }
+                    String valueString = StringUtils.join(selectedValues, " OR ");
 
-                query.addFilterQuery(sb.toString());
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("(").append(valueString).append(")");
+
+                    query.addFilterQuery(sb.toString());
+                }
             }
         }
     }

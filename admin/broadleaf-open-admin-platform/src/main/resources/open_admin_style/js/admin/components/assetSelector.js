@@ -51,15 +51,15 @@
         
         selectButtonClickedRedactor : function(obj, event, key) {
             currentRedactor = this;
-            currentRedactor.selectionSave();
+            currentRedactor.selection.save();
             var $redactor = this.$element;
             
             $redactor.on('assetInfoSelected', function(event, fields) {
-                currentRedactor.selectionRestore();
+                currentRedactor.selection.restore();
                 var assetUrl =   fields['assetUrl'];
                 if (assetUrl.charAt(0) == "/") assetUrl = assetUrl.substr(1);
                 var $img = $('<img>', { 'src' : assetUrl });
-                currentRedactor.insertHtml($img.outerHTML());
+                currentRedactor.insert.html($img.outerHTML());
                 BLCAdmin.hideCurrentModal();
             });
 

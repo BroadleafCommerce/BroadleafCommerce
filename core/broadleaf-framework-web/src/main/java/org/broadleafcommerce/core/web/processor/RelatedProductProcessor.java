@@ -124,7 +124,7 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
                         
                     }
                 } else {
-                    if(numSkus == maxQuantity) {
+                    if(numSkus.equals(maxQuantity)) {
                         break;
                     }
                     relatedSkus.add(relatedProduct.getDefaultSku());

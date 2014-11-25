@@ -30,6 +30,7 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -86,17 +87,19 @@ public class CategoriesProcessor extends AbstractModelVariableModifierProcessor 
         if (categories != null && categories.size() > 0) {
             // gets child categories in order ONLY if they are in the xref table and active
             List<CategoryXref> subcategories = categories.get(0).getChildCategoryXrefs();
+            List<Category> results = Collections.emptyList();
             if (subcategories != null && !subcategories.isEmpty()) {
+                results = new ArrayList<Category>(subcategories.size());
                 if (StringUtils.isNotEmpty(unparsedMaxResults)) {
                     int maxResults = Integer.parseInt(unparsedMaxResults);
                     if (subcategories.size() > maxResults) {
                         subcategories = subcategories.subList(0, maxResults);
                     }
                 }
-            }
-            List<Category> results = new ArrayList<Category>(subcategories.size());
-            for (CategoryXref xref : subcategories) {
-                results.add(xref.getSubCategory());
+                
+                for (CategoryXref xref : subcategories) {
+                    results.add(xref.getSubCategory());
+                }
             }
             
             addToModel(arguments, resultVar, results);

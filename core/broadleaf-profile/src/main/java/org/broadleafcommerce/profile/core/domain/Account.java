@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Profile
  * %%
  * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
@@ -17,12 +17,22 @@
  * limitations under the License.
  * #L%
  */
-if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
+package org.broadleafcommerce.profile.core.domain;
 
-RedactorPlugins.selectasset = {
-    init: function()
-    {
-        this.buttonAddBefore('video', 'selectasset', BLCAdmin.messages.selectUploadAsset, BLCAdmin.asset.selectButtonClickedRedactor);
-        this.buttonAwesome('selectasset', 'icon-picture');
-    }
-};
+import java.io.Serializable;
+
+public interface Account extends Serializable {
+
+    public Long getId();
+
+    public void setId(Long id);
+
+    public String getName();
+
+    public void setName(String name);
+
+    public String getAccountNumber();
+
+    public void setAccountNumber(String accountNumber);
+
+}
