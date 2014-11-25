@@ -595,6 +595,11 @@ public class AdminEntityServiceImpl implements AdminEntityService {
             MapMetadata fmd = (MapMetadata) field.getMetadata();
 
             p = new Property();
+            p.setName("id");
+            p.setValue(itemId);
+            properties.add(p);
+
+            p = new Property();
             p.setName("symbolicId");
             p.setValue(getContextSpecificRelationshipId(mainMetadata, parentEntity, field.getName()));
             properties.add(p);
