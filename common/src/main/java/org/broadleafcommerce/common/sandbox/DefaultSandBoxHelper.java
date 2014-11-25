@@ -38,73 +38,56 @@ import javax.persistence.EntityManager;
 public class DefaultSandBoxHelper implements SandBoxHelper {
 
     @Override
-    public Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent) {
+    public Long getSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent) {
         return requestedParent;
     }
 
     @Override
-    public Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance) {
+    public Long getCascadedProductionStateId(Class<?> linkedObjectType, Long requestedParent) {
         return requestedParent;
     }
 
-    @Override
-    public Long getCascadedProductionStateId(EntityManager em, Class<?> linkedObjectType, Long requestedParent) {
-        return requestedParent;
-    }
+//    @Override
+//    public Long getCombinedSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent) {
+//        return requestedParent;
+//    }
 
     @Override
-    public Long getCascadedProductionStateId(EntityManager em, Class<?> linkedObjectType, Long requestedParent, Boolean
-            includeSandBoxInheritance) {
-        return requestedParent;
-    }
-
-    @Override
-    public Long getCombinedSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent) {
-        return requestedParent;
-    }
-
-    @Override
-    public Long getCombinedSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent,
-                                            Boolean includeSandBoxInheritance) {
-        return requestedParent;
-    }
-
-    @Override
-    public List<Long> mergeCloneIds(EntityManager em, Class<?> type, Long... originalIds) {
+    public List<Long> mergeCloneIds(Class<?> type, Long... originalIds) {
         return Arrays.asList(originalIds);
     }
 
     @Override
-    public BiMap<Long, Long> getSandBoxToOriginalMap(EntityManager em, Class<?> type, Long... originalIds) {
+    public BiMap<Long, Long> getSandBoxToOriginalMap(Class<?> type, Long... originalIds) {
         return HashBiMap.create();
     }
 
     @Override
-    public OriginalIdResponse getOriginalId(EntityManager em, Class<?> type, Long id) {
+    public OriginalIdResponse getOriginalId(Class<?> type, Long id) {
         OriginalIdResponse response = new OriginalIdResponse();
         response.setOriginalId(id);
         return response;
     }
 
     @Override
-    public Long getOriginalId(EntityManager em, Object test) {
+    public Long getOriginalId(Object test) {
         return null;
     }
 
-    @Override
-    public void setupSandBoxState(Object clone, EntityManager em) {
-        //do nothing
-    }
-
-    @Override
-    public void archiveObject(Object start, EntityManager em) {
-        //do nothing
-    }
-
-    @Override
-    public String[] getSandBoxDiscriminatorFieldList() {
-        return new String[]{};
-    }
+//    @Override
+//    public void setupSandBoxState(Object clone, EntityManager em) {
+//        //do nothing
+//    }
+//
+//    @Override
+//    public void archiveObject(Object start, EntityManager em) {
+//        //do nothing
+//    }
+//
+//    @Override
+//    public String[] getSandBoxDiscriminatorFieldList() {
+//        return new String[]{};
+//    }
 
     @Override
     public boolean isSandBoxable(String className) {

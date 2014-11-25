@@ -61,7 +61,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
         Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
 
         Long[] products = productIds.toArray(new Long[productIds.size()]);
-        BiMap<Long, Long> sandBoxProductToOriginalMap = sandBoxHelper.getSandBoxToOriginalMap(em, ProductImpl.class, products);
+        BiMap<Long, Long> sandBoxProductToOriginalMap = sandBoxHelper.getSandBoxToOriginalMap(ProductImpl.class, products);
         int batchSize = 800;
         int count = 0;
         int pos = 0;
@@ -71,7 +71,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
             Long[] temp = new Long[mySize];
             System.arraycopy(products, pos, temp, 0, mySize);
             TypedQuery<ParentCategoryByProduct> query = em.createNamedQuery("BC_READ_PARENT_CATEGORY_IDS_BY_PRODUCTS", ParentCategoryByProduct.class);
-            query.setParameter("productIds", sandBoxHelper.mergeCloneIds(em, ProductImpl.class, temp));
+            query.setParameter("productIds", sandBoxHelper.mergeCloneIds(ProductImpl.class, temp));
 
             List<ParentCategoryByProduct> results = query.getResultList();
             for (ParentCategoryByProduct item : results) {
@@ -85,7 +85,8 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                         parentCategoriesByProduct.put(sandBoxProductVal, new HashSet<Long>());
                     }
                     //We only want the sandbox parent - if applicable
-                    Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(em, CategoryImpl.class, item.getParent());
+                    //Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(CategoryImpl.class, item.getParent());
+                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(CategoryImpl.class, item.getParent());
                     if (sandBoxVal == null) {
                         sandBoxVal = item.getParent();
                     }
@@ -135,7 +136,7 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
 
     protected List<ProductsByCategoryWithOrder> readProductIdsByCategory(Long categoryId) {
         TypedQuery<ProductsByCategoryWithOrder> query = em.createNamedQuery("BC_READ_PRODUCT_IDS_BY_CATEGORY_WITH_ORDER", ProductsByCategoryWithOrder.class);
-        query.setParameter("categoryIds", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, categoryId));
+        query.setParameter("categoryIds", sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId));
         return query.getResultList();
     }
 
@@ -156,11 +157,12 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
             Long[] temp = new Long[mySize];
             System.arraycopy(categoryIds, pos, temp, 0, mySize);
             TypedQuery<ParentCategoryByCategory> query = em.createNamedQuery("BC_READ_PARENT_CATEGORY_IDS_BY_CATEGORIES", ParentCategoryByCategory.class);
-            query.setParameter("categoryIds", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, temp));
+            query.setParameter("categoryIds", sandBoxHelper.mergeCloneIds(CategoryImpl.class, temp));
             List<ParentCategoryByCategory> results = query.getResultList();
             for (ParentCategoryByCategory item : results) {
                 //only the sandbox child
-                Long childSandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(em, CategoryImpl.class, item.getChild());
+                //Long childSandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(CategoryImpl.class, item.getChild());
+                Long childSandBoxVal = sandBoxHelper.getSandBoxVersionId(CategoryImpl.class, item.getChild());
                 if (childSandBoxVal == null) {
                     childSandBoxVal = item.getChild();
                 }
@@ -175,7 +177,8 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                 Set<Long> hierarchy = categoryHierarchy.get(childSandBoxVal);
                 if (item.getParent() != null) {
                     //We only want the sandbox parent - if applicable
-                    Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(em, CategoryImpl.class, item.getParent());
+                    //Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(CategoryImpl.class, item.getParent());
+                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(CategoryImpl.class, item.getParent());
                     if (sandBoxVal == null) {
                         sandBoxVal = item.getParent();
                     }
@@ -186,7 +189,8 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                 }
                 if (item.getDefaultParent() != null) {
                     //We only want the sandbox parent - if applicable
-                    Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(em, CategoryImpl.class, item.getDefaultParent());
+                    //Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(CategoryImpl.class, item.getDefaultParent());
+                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(CategoryImpl.class, item.getDefaultParent());
                     if (sandBoxVal == null) {
                         sandBoxVal = item.getDefaultParent();
                     }

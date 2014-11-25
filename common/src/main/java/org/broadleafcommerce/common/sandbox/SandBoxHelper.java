@@ -41,94 +41,88 @@ public interface SandBoxHelper {
      * sandbox versions of those ids, if available. This is useful for some queries that
      * require search values for both the original id and the sandbox id.
      *
-     * @param em the Entity Manager
      * @param type the type of the entity in question
      * @param originalIds one or more ids values for which sandbox versions should be included
      * @return the merged id list
      */
-    List<Long> mergeCloneIds(EntityManager em, Class<?> type, Long... originalIds);
+    List<Long> mergeCloneIds(Class<?> type, Long... originalIds);
 
     /**
      * Retrieve a map keyed by sandbox id, with the value being the matching original
      * item id for that sandbox item. Only members from the ids list passed
      * in that have a sandbox counterpart are included.
      *
-     * @param em the Entity Manager
      * @param type the type of the entity in question
      * @param ids list of ids to check
      * @return the map of sandbox to original ids
      */
-    BiMap<Long, Long> getSandBoxToOriginalMap(EntityManager em, Class<?> type, Long... ids);
+    BiMap<Long, Long> getSandBoxToOriginalMap(Class<?> type, Long... ids);
 
     /**
      * Return the sandbox version id for the requested original id. Will return null
      * if no sandbox version is available.
      *
-     * @param entityManager the Entity Manager
      * @param linkedObjectType the type of the entity in question
      * @param requestedParent the id to check
      * @return the sandbox version, or null
      */
-    Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent);
+    Long getSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent);
 
-    Long getCascadedProductionStateId(EntityManager em, Class<?> linkedObjectType, Long requestedParent);
+    Long getCascadedProductionStateId(Class<?> linkedObjectType, Long requestedParent);
 
     /**
      * Return the sandbox version id for the requested original id. Will return null
      * if no sandbox version is available.
      *
-     * @param entityManager the Entity Manager
      * @param linkedObjectType the type of the entity in question
      * @param requestedParent the id to check
-     * @param includeSandBoxInheritance override whether or not parent sandbox ids should be included in the query. Can be null - True by default.
      * @return the sandbox version, or null
      */
-    Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
+    //Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
 
-    Long getCascadedProductionStateId(EntityManager em, Class<?> linkedObjectType, Long requestedParent,
-                                      Boolean includeSandBoxInheritance);
+    //Long getCascadedProductionStateId(EntityManager em, Class<?> linkedObjectType, Long requestedParent,
+                                      //Boolean includeSandBoxInheritance);
 
-    Long getCombinedSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent);
+    //Long getCombinedSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent);
 
-    Long getCombinedSandBoxVersionId(EntityManager em, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
+    //Long getCombinedSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
 
     /**
      * Return the original id for the requested id. Will return the passed in id if
      * the type is not sandboxable. Will return null if the passed in id
      * is not a sandbox record, or if it's a sandbox add.
      *
-     * @param em the Entity Manager
      * @param type the type of the entity in question
      * @param id the id to check
      * @return the original id for the requested sandbox id
      */
-    OriginalIdResponse getOriginalId(EntityManager em, Class<?> type, Long id);
+    OriginalIdResponse getOriginalId(Class<?> type, Long id);
 
-    Long getOriginalId(EntityManager em, Object test);
+    Long getOriginalId(Object test);
 
-    /**
-     * Setup basic required fields for sandbox support
-     *
-     * @param clone the entity instance to setup
-     * @param em the Entity Manager
-     */
-    void setupSandBoxState(Object clone, EntityManager em);
+//    /**
+//     * Setup basic required fields for sandbox support
+//     *
+//     * @param clone the entity instance to setup
+//     * @param em the Entity Manager
+//     */
+//    void setupSandBoxState(Object clone, EntityManager em);
 
-    /**
-     * Archive an object so that it is no longer recognized
-     * by the sandbox support
-     *
-     * @param start the object to archive
-     * @param em the Entity Manager
-     */
-    void archiveObject(Object start, EntityManager em);
+//    /**
+//     * Archive an object so that it is no longer recognized
+//     * by the sandbox support
+//     *
+//     * @param start the object to archive
+//     * @param em the Entity Manager
+//     */
+//    void archiveObject(Object start, EntityManager em);
 
-    /**
-     * Retrieve the field names related to sandbox support
-     *
-     * @return the sandbox support fields
-     */
-    String[] getSandBoxDiscriminatorFieldList();
+//    /**
+//     * Retrieve the field names related to sandbox support
+//     *
+//     * @return the sandbox support fields
+//     */
+//    String[] getSandBoxDiscriminatorFieldList();
 
     /**
      * Whether or not the class is sandboxable

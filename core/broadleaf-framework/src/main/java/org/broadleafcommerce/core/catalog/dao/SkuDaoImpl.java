@@ -137,7 +137,7 @@ public class SkuDaoImpl implements SkuDao {
 
         // We only want results that match the sku IDs
         criteria.where(sku.get("id").as(Long.class).in(
-                sandBoxHelper.mergeCloneIds(em, SkuImpl.class,
+                sandBoxHelper.mergeCloneIds(SkuImpl.class,
                         skuIds.toArray(new Long[skuIds.size()]))));
         if (!dialectHelper.isOracle() && !dialectHelper.isSqlServer()) {
             criteria.distinct(true);
