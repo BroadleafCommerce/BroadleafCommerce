@@ -172,7 +172,9 @@ public class PageFieldImpl implements PageField {
             cloned.setPage(page.createOrRetrieveCopyInstance(context).getClone());
         }
         cloned.setFieldKey(fieldKey);
-        cloned.setValue(getValue());
+        //we don't want to engage the dynamic behavior housed in the getter/setter methods for these fields
+        ((PageFieldImpl) cloned).stringValue = stringValue;
+        ((PageFieldImpl) cloned).lobValue = lobValue;
 
         return createResponse;
 
