@@ -70,14 +70,14 @@ public class AccountImpl implements Account, AdminMainEntity, Previewable {
     @Embedded
     protected PreviewStatus previewable = new PreviewStatus();
 
-    @Column(name = "NAME")
-    @Index(name = "ACCT_NAME", columnNames = { "NAME" })
+    @Column(name = "ACCT_NAME")
+    @Index(name = "ACCT_NAME_INDEX", columnNames = { "NAME" })
     @AdminPresentation(friendlyName = "AccountImpl_Name", order = 1000, group = "AccountImpl_Account",
             prominent = true, gridOrder = 1000)
     protected String name;
 
     @Column(name = "ACCT_NUM")
-    @Index(name = "ACCT_NUM", columnNames = { "ACCT_NUM" })
+    @Index(name = "ACCT_NUM_INDEX", columnNames = { "ACCT_NUM" })
     @AdminPresentation(friendlyName = "AccountImpl_AccountNumber", order = 2000, group = "AccountImpl_Account",
             prominent = true, gridOrder = 2000)
     protected String accountNumber;
