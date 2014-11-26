@@ -21,6 +21,7 @@ package org.broadleafcommerce.common.extensibility.jpa.convert;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern;
 
 import java.io.ByteArrayInputStream;
@@ -37,11 +38,18 @@ import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
 
 import javax.annotation.Resource;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
 
 /**
- * This class transformer will check to see if there is an @Entity annotation on the given class, and if there is,
- * it will add the fully qualified classname of that class to the transformedClassNames list.
+ * <p>
+ * This class transformer will check to see if there is class that should have been loaded by the {@link MergePersistenceUnitManager}
+ * (meaning, it has an @Entity, @MappedSuperclass or @Embeddable annotation on it and will be inside of a persistence.xml).
+ * If it it should have, it will add the fully qualified classname of that class to the transformedClassNames list.
+ * 
+ * <p>
+ * This is a validation check to ensure that the class transformers are actually working properly
  * 
  * @author Andre Azzolini (apazzolini)
  */
@@ -69,12 +77,11 @@ public class EntityMarkerClassTransformer implements BroadleafClassTransformer {
                 while(itr.hasNext()) {
                     Object object = itr.next();
                     if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
-                        for (Annotation annotation : ((AnnotationsAttribute) object).getAnnotations()) {
-                            if (annotation.getTypeName().equals(Entity.class.getName())) {
-                                LOG.trace("Marking " + convertedClassName + " as transformed");
-                                transformedClassNames.add(convertedClassName);
-                                break check;
-                            }
+                        boolean containsTypeLevelAnnotation = containsTypeLevelPersistenceAnnotation(((AnnotationsAttribute) object).getAnnotations());
+                        if (containsTypeLevelAnnotation) {
+                            LOG.debug("Marking " + convertedClassName + " as transformed");
+                            transformedClassNames.add(convertedClassName);
+                            break check;
                         }
                     }
                 }
@@ -86,6 +93,17 @@ public class EntityMarkerClassTransformer implements BroadleafClassTransformer {
         
         // We don't need to transform anything, so we'll return null
         return null;
+    }
+    
+    protected boolean containsTypeLevelPersistenceAnnotation(Annotation[] annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation.getTypeName().equals(Entity.class.getName())
+                    || annotation.getTypeName().equals(Embeddable.class.getName())
+                    || annotation.getTypeName().equals(MappedSuperclass.class.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
     
     protected boolean isIgnored(String convertedClassName) {

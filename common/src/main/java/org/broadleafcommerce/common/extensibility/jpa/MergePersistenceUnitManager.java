@@ -243,11 +243,16 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 }
                 
                 // If a class happened to be loaded by the ClassLoader before we had a chance to set up our instrumentation,
-                // it may not be in a consistent state. We'll detect that here and force the class to be reloaded
+                // it may not be in a consistent state
                 for (PersistenceUnitInfo pui : mergedPus.values()) {
                     for (String managedClassName : pui.getManagedClassNames()) {
                         if (!entityMarkerClassTransformer.getTransformedClassNames().contains(managedClassName)) {
-                            LOG.error("Should have transformed " + managedClassName + " but didn't");
+                            LOG.warn("The class " + managedClassName + " is a managed clas within the MergePersistenceUnitManager"
+                                    + "but was not detected as being transformed by the EntityMarkerClassTransformer. This "
+                                    + "might simply be because " + managedClassName + " is not annotated with @Entity, @MappedSuperclass or @Embeddable"
+                                    + ", but is still referenced in a persistence.xml and is being transformed by"
+                                    + " PersistenceUnit ClassTransformers. This class should likely be removed from your persistence.xml");
+ 
                         }
                     }
                 }
