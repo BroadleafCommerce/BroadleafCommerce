@@ -266,7 +266,7 @@ public class BroadleafRequestContext {
     public String getRequestURIWithoutContext() {
         String requestURIWithoutContext = null;
 
-        if (request.getRequestURI() != null) {
+        if (request != null && request.getRequestURI() != null) {
             if (request.getContextPath() != null) {
                 requestURIWithoutContext = request.getRequestURI().substring(request.getContextPath().length());
             } else {

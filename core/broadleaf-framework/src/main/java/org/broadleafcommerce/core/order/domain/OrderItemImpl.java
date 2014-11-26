@@ -235,7 +235,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Money getSalePrice() {
-        if (salePrice == null) {
+        // Added retailPrice check since a null salePrice is not a reliable way to determine that prices have
+        // been initialized.
+        if (salePrice == null && retailPrice == null) {
             updateSaleAndRetailPrices();
         }
         if (salePrice != null) {
