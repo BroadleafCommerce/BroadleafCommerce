@@ -642,7 +642,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         throw new ServiceException("Could not determine ID field for " + cmd.getCeilingType());
     }
 
-    protected PersistenceResponse add(PersistencePackageRequest request)
+    @Override
+    public PersistenceResponse add(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
@@ -652,7 +653,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
     }
 
-    protected PersistenceResponse update(PersistencePackageRequest request)
+    @Override
+    public PersistenceResponse update(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
@@ -662,19 +664,22 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
     }
 
-    protected PersistenceResponse inspect(PersistencePackageRequest request)
+    @Override
+    public PersistenceResponse inspect(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.inspect(pkg);
     }
 
-    protected PersistenceResponse remove(PersistencePackageRequest request)
+    @Override
+    public PersistenceResponse remove(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         return service.remove(pkg);
     }
 
-    protected PersistenceResponse fetch(PersistencePackageRequest request)
+    @Override
+    public PersistenceResponse fetch(PersistencePackageRequest request)
             throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
 

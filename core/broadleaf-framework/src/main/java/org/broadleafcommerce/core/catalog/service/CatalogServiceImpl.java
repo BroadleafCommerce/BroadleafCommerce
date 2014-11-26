@@ -167,6 +167,12 @@ public class CatalogServiceImpl implements CatalogService {
     public void removeCategory(Category category){
         categoryDao.delete(category);
     }
+    
+    @Override
+    @Transactional("blTransactionManager")
+    public void removeSku(Sku sku) {
+        skuDao.delete(sku);
+    }
 
     @Override
     @Transactional("blTransactionManager")

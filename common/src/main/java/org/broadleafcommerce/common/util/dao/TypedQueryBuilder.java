@@ -122,8 +122,8 @@ public class TypedQueryBuilder<T> {
         StringBuilder sb = getSelectClause(new StringBuilder(), count)
                 .append(" FROM ").append(rootClass.getName()).append(" ").append(rootAlias);
         if (CollectionUtils.isNotEmpty(joins)) {
-            sb.append(" JOIN");
             for (TQJoin join : joins) {
+                sb.append(" JOIN");
                 sb.append(" ");
                 sb.append(join.toQl());
             }

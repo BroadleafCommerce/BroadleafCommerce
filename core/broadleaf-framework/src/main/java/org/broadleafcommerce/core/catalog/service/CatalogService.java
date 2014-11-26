@@ -60,6 +60,7 @@ public interface CatalogService {
      * @param currentDate
      * @return
      */
+    @Deprecated
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate);
     
     /**
@@ -79,6 +80,7 @@ public interface CatalogService {
      * @param searchCriteria
      * @return
      */
+    @Deprecated
     public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, ProductSearchCriteria searchCriteria);
     
     /**
@@ -93,6 +95,7 @@ public interface CatalogService {
     /**
      * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, ProductSearchCriteria)}
      */
+    @Deprecated
     public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, ProductSearchCriteria searchCriteria);
 
     /**
@@ -108,6 +111,7 @@ public interface CatalogService {
     /**
      * @deprecated Use {@link #findActiveProductsByCategory(Category, limit, offset}
      */
+    @Deprecated
     public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset);
 
     /**
@@ -128,6 +132,8 @@ public interface CatalogService {
     public void removeCategory(Category category);
 
     public void removeProduct(Product product);
+
+    public void removeSku(Sku sku);
 
     public Category findCategoryById(Long categoryId);
 

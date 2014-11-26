@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
@@ -17,12 +17,15 @@
  * limitations under the License.
  * #L%
  */
-if (typeof RedactorPlugins === 'undefined') var RedactorPlugins = {};
+package org.broadleafcommerce.common.cache;
 
-RedactorPlugins.selectasset = {
-    init: function()
-    {
-        this.buttonAddBefore('video', 'selectasset', BLCAdmin.messages.selectUploadAsset, BLCAdmin.asset.selectButtonClickedRedactor);
-        this.buttonAwesome('selectasset', 'icon-picture');
-    }
-};
+/**
+ * @author Elbert Bautista (elbertbautista)
+ */
+public interface StatisticsServiceLogAdapter {
+
+    void activateLogging(Class clazz);
+
+    void disableLogging(Class clazz);
+
+}

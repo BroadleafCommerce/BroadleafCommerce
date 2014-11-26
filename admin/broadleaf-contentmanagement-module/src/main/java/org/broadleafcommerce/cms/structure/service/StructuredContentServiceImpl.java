@@ -37,6 +37,7 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
+import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -235,7 +236,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String cacheKey = buildTypeKey(context.getSandBox(), languageOnlyLocale, contentType.getName());
+        Long site = context.getSite() == null?null:context.getSite().getId();
+        String cacheKey = buildTypeKey(context.getSandBox(), site, languageOnlyLocale, contentType.getName());
         cacheKey = cacheKey+"-"+secure;
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
@@ -259,7 +261,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String cacheKey = buildNameKey(context.getSandBox(), languageOnlyLocale, contentType.getName(), contentName);
+        Long site = context.getSite() == null?null:context.getSite().getId();
+        String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, contentType.getName(), contentName);
         cacheKey = cacheKey+"-"+secure;
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
@@ -283,7 +286,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
         List<StructuredContentDTO> contentDTOList = null;
         Locale languageOnlyLocale = findLanguageOnlyLocale(locale);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        String cacheKey = buildNameKey(context.getSandBox(), languageOnlyLocale, "any", contentName);
+        Long site = context.getSite() == null?null:context.getSite().getId();
+        String cacheKey = buildNameKey(context.getSandBox(), site, languageOnlyLocale, "any", contentName);
         cacheKey = cacheKey+"-"+secure;
         if (context.isProductionSandBox()) {
             contentDTOList = getStructuredContentListFromCache(cacheKey);
@@ -522,7 +526,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     @Override
-    public String buildTypeKey(SandBox currentSandbox, Locale locale, String contentType) {
+    public String buildTypeKey(SandBox currentSandbox, Long site, Locale locale, String contentType) {
         StringBuilder key = new StringBuilder(contentType);
         if (locale != null) {
             key.append("-").append(locale.getLocaleCode());
@@ -532,19 +536,25 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             key.append("-").append(currentSandbox.getId());
         }
 
+        if (site != null) {
+            key.append("-").append(site);
+        }
+
         return key.toString();
     }
 
     protected String buildNameKey(SandBox sandBox, StructuredContent sc) {
-        return buildNameKey(sandBox, findLanguageOnlyLocale(sc.getLocale()), sc.getStructuredContentType().getName(), sc.getContentName());
+        Long site = (sc instanceof SiteDiscriminator)?((SiteDiscriminator) sc).getSiteDiscriminator():null;
+        return buildNameKey(sandBox, site, findLanguageOnlyLocale(sc.getLocale()), sc.getStructuredContentType().getName(), sc.getContentName());
     }
 
     protected String buildTypeKey(SandBox sandBox, StructuredContent sc) {
-        return buildTypeKey(sandBox, findLanguageOnlyLocale(sc.getLocale()), sc.getStructuredContentType().getName());
+        Long site = (sc instanceof SiteDiscriminator)?((SiteDiscriminator) sc).getSiteDiscriminator():null;
+        return buildTypeKey(sandBox, site, findLanguageOnlyLocale(sc.getLocale()), sc.getStructuredContentType().getName());
     }
 
 
-    protected String buildNameKey(SandBox currentSandbox, Locale locale, String contentType, String contentName) {
+    protected String buildNameKey(SandBox currentSandbox, Long site, Locale locale, String contentType, String contentName) {
         StringBuffer key = new StringBuffer(contentType).append("-").append(contentName);
         if (locale != null) {
             key.append("-").append(locale.getLocaleCode());
@@ -552,6 +562,10 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         if (currentSandbox != null) {
             key.append("-").append(currentSandbox.getId());
+        }
+
+        if (site != null) {
+            key.append("-").append(site);
         }
 
         return key.toString();

@@ -134,7 +134,7 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
         String returnValue = assetPath;
         
         if (assetPath != null && getStaticAssetEnvironmentUrlPrefix() != null && ! "".equals(getStaticAssetEnvironmentUrlPrefix())) {
-            final String envPrefix;
+            String envPrefix;
             if (secureRequest) {
                 envPrefix = getStaticAssetEnvironmentSecureUrlPrefix();
             } else {
@@ -154,7 +154,9 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
                     if (returnValue.startsWith("/")) {
                         returnValue = returnValue.substring(1);
                     }
-                }                
+                } else if (envPrefix.endsWith(getStaticAssetUrlPrefix() + "/")) {
+                    envPrefix = envPrefix.substring(0, envPrefix.length() - getStaticAssetUrlPrefix().length() - 1);
+                }
                 returnValue = envPrefix + returnValue;
             }
         } else {

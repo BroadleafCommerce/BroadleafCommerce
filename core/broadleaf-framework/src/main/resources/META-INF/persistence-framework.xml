@@ -111,7 +111,6 @@
         <class>org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl</class>
         <class>org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl</class>
         <class>org.broadleafcommerce.core.search.domain.FieldImpl</class>
-        <class>org.broadleafcommerce.core.search.domain.SearchInterceptImpl</class>
         <class>org.broadleafcommerce.core.search.domain.SearchSynonymImpl</class>
         <class>org.broadleafcommerce.core.search.domain.SearchFacetImpl</class>
         <class>org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl</class>

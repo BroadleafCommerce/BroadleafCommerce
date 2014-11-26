@@ -980,7 +980,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                                                 String ceilingEntityFullyQualifiedClassname, Boolean isComponentPrefix) {
         Boolean includeField = true;
         //don't want to shun a self-referencing property in an @Embeddable
-        boolean shouldTest = !StringUtils.isEmpty(prefix) && (!isComponentPrefix || prefix.split(".").length > 1);
+        boolean shouldTest = !StringUtils.isEmpty(prefix) && (!isComponentPrefix || prefix.split("\\.").length > 1);
         if (shouldTest) {
             Field testField = getFieldManager().getField(targetClass, propertyName);
             if (testField == null) {

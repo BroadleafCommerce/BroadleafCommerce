@@ -19,11 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service;
 
-import java.lang.reflect.Constructor;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
@@ -46,11 +41,15 @@ import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType
 import org.codehaus.jackson.map.util.LRUMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.lang.reflect.Constructor;
+import java.util.Map;
+
+import javax.annotation.Resource;
 /**
  * @author jfischer
  */
 @Service("blDynamicEntityRemoteService")
-@Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
 public class DynamicEntityRemoteService implements DynamicEntityService {
 
     private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
@@ -140,6 +139,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     }
 
     @Override
+    @Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
     public PersistenceResponse add(final PersistencePackage persistencePackage) throws ServiceException {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
@@ -167,6 +167,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     }
 
     @Override
+    @Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
     public PersistenceResponse update(final PersistencePackage persistencePackage) throws ServiceException {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
@@ -194,6 +195,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     }
 
     @Override
+    @Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
     public PersistenceResponse remove(final PersistencePackage persistencePackage) throws ServiceException {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
             @Override

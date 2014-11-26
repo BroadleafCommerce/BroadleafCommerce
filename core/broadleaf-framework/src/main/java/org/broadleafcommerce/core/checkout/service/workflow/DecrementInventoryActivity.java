@@ -81,7 +81,7 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
                 List<DiscreteOrderItem> discreteItems = bundleItem.getDiscreteOrderItems();
                 for (DiscreteOrderItem discreteItem : discreteItems) {
                     if (InventoryType.CHECK_QUANTITY.equals(discreteItem.getSku().getInventoryType())) {
-                        Integer quantity = skuInventoryMap.get(discreteItem.getSku().getId());
+                        Integer quantity = skuInventoryMap.get(discreteItem.getSku());
                         if (quantity == null) {
                             quantity = (discreteItem.getQuantity() * bundleItem.getQuantity());
                         } else {

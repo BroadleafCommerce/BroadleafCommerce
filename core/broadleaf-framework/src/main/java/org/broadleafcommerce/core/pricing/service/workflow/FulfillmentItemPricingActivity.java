@@ -131,6 +131,11 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
      * Because an item may have multiple price details that don't round cleanly, we may have pennies
      * left over that need to be distributed.
      * 
+     * This method may not be needed because the sum of the item amounts is derived from a double price (OrderItem's total)
+     * being multiplied and divided by whole numbers of which guarantees that each item amount is a clean multiple
+     * of the price of a single unit of that item. This behavior being enforced in populateItemTotalAmount. So we will
+     * never get a fraction of a cent that could cause totalItemAmount and totalFGItemAmount to be different values.
+     * 
      * @param order
      * @param partialOrderItemMap
      */
@@ -203,7 +208,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
         }
 
         Money orderAdjustmentTotal = order.getOrderAdjustmentsValue();
-        Money amountDiff = totalOrderAdjustmentDistributed.subtract(orderAdjustmentTotal);
+        Money amountDiff = orderAdjustmentTotal.subtract(totalOrderAdjustmentDistributed);
 
         if (!(amountDiff.getAmount().compareTo(BigDecimal.ZERO) == 0)) {
             long numApplicationsNeeded = countNumberOfUnits(amountDiff);
@@ -262,7 +267,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
 
     public long countNumberOfUnits(Money difference) {
         double numUnits = difference.multiply(Math.pow(10, difference.getCurrency().getDefaultFractionDigits())).doubleValue();
-        return Math.round(numUnits);
+        return Math.round(Math.abs(numUnits));
     }
 
     /**

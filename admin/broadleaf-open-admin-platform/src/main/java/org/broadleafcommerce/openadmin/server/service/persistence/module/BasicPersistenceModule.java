@@ -23,6 +23,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -162,6 +163,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         Locale locale = brc.getJavaLocale();
         DecimalFormat format = (DecimalFormat) NumberFormat.getInstance(locale);
         format.applyPattern("0.########");
+        format.setGroupingUsed(false);
         return format;
     }
 
@@ -975,14 +977,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     // the @ManyToOne side) then it will not be updated. In that instance, we have to explicitly
                     // set the manyTo field to null so that subsequent lookups will not find it
                     if (manyToFieldMetadata instanceof BasicFieldMetadata) {
-                        if (((BasicFieldMetadata) manyToFieldMetadata).getRequired()) {
+                        if (BooleanUtils.isTrue(((BasicFieldMetadata) manyToFieldMetadata).getRequired())) {
                             throw new ServiceException("Could not remove from the collection as the ManyToOne side is a"
                                     + " non-optional relationship. Consider changing 'optional=true' in the @ManyToOne annotation"
                                     + " or nullable=true within the @JoinColumn annotation");
                         }
                         Field manyToField = fieldManager.getField(instance.getClass(), foreignKey.getManyToField());
-                        manyToField.set(instance, null);
-                        instance = persistenceManager.getDynamicEntityDao().merge(instance);
+                        Object manyToObject = manyToField.get(instance);
+                        if (manyToObject != null && !(manyToObject instanceof Collection) && !(manyToObject instanceof Map)) {
+                            manyToField.set(instance, null);
+                            instance = persistenceManager.getDynamicEntityDao().merge(instance);
+                        }
                     }
                     break;
                 case BASIC:

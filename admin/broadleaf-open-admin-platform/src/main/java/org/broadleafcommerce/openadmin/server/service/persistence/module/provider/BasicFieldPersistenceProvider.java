@@ -179,14 +179,18 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         prop.setOriginalDisplayValue(prop.getOriginalValue());
                     }
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
+                        dirty = checkDirtyState(populateValueRequest, instance, val);
 
                         populateValueRequest.getFieldManager().setFieldValue(instance,
-                                populateValueRequest.getProperty().getName(), new BigDecimal(populateValueRequest.getRequestedValue()));
+                                populateValueRequest.getProperty().getName(), val);
+                        format.setParseBigDecimal(false);
                     } else {
-                        dirty = checkDirtyState(populateValueRequest, instance, new Double(populateValueRequest.getRequestedValue()));
-                        
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
+                        Double val = populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue()).doubleValue();
+                        dirty = checkDirtyState(populateValueRequest, instance, val);
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
                     }
                     break;
                 case MONEY:
@@ -195,20 +199,27 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         prop.setOriginalDisplayValue(prop.getOriginalValue());
                     }
                     if (BigDecimal.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
-                        
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new BigDecimal(populateValueRequest.getRequestedValue()));
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
+                        dirty = checkDirtyState(populateValueRequest, instance, val);
+                        populateValueRequest.getFieldManager()
+                            .setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
+                        format.setParseBigDecimal(true);
                     } else if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
-                        dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
-                        
+                        Double val = populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue()).doubleValue();
+                        dirty = checkDirtyState(populateValueRequest, instance, val);
                         LOG.warn("The requested Money field is of type double and could result in a loss of precision." +
                         		" Broadleaf recommends that the type of all Money fields are 'BigDecimal' in order to avoid" +
                         		" this loss of precision that could occur.");
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Double(populateValueRequest.getRequestedValue()));
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
                     } else {
-                        dirty = checkDirtyState(populateValueRequest, instance, new BigDecimal(populateValueRequest.getRequestedValue()));
-
-                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Money(new BigDecimal(populateValueRequest.getRequestedValue())));
+                        DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
+                        format.setParseBigDecimal(true);
+                        BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
+                        dirty = checkDirtyState(populateValueRequest, instance, val);
+                        populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), new Money(val));
+                        format.setParseBigDecimal(false);
                     }
                     break;
                 case INTEGER:
