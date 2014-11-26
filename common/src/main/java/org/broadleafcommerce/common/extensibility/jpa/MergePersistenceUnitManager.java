@@ -208,7 +208,8 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
         try {
             List<String> managedClassNames = new ArrayList<String>();
-
+            
+            boolean weaverRegistered = true;
             for (PersistenceUnitInfo pui : mergedPus.values()) {
                 for (BroadleafClassTransformer transformer : classTransformers) {
                     try {
@@ -222,29 +223,32 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                                     "reported a problem (likely that a LoadTimeWeaver is not registered). As a result, " +
                                     "the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is " +
                                     "not being registered with the persistence unit.");
+                            weaverRegistered = false;
                         } else {
                             throw refined;
                         }
                     }
                 }
             }
-
-            for (PersistenceUnitInfo pui : mergedPus.values()) {
-                for (String managedClassName : pui.getManagedClassNames()) {
-                    if (!managedClassNames.contains(managedClassName)) {
-                        // Force-load this class so that we are able to ensure our instrumentation happens globally.
-                        Class.forName(managedClassName, true, getClass().getClassLoader());
-                        managedClassNames.add(managedClassName);
+            
+            if (weaverRegistered) {
+                for (PersistenceUnitInfo pui : mergedPus.values()) {
+                    for (String managedClassName : pui.getManagedClassNames()) {
+                        if (!managedClassNames.contains(managedClassName)) {
+                            // Force-load this class so that we are able to ensure our instrumentation happens globally.
+                            Class.forName(managedClassName, true, getClass().getClassLoader());
+                            managedClassNames.add(managedClassName);
+                        }
                     }
                 }
-            }
-            
-            // If a class happened to be loaded by the ClassLoader before we had a chance to set up our instrumentation,
-            // it may not be in a consistent state. We'll detect that here and force the class to be reloaded
-            for (PersistenceUnitInfo pui : mergedPus.values()) {
-                for (String managedClassName : pui.getManagedClassNames()) {
-                    if (!entityMarkerClassTransformer.getTransformedClassNames().contains(managedClassName)) {
-                        LOG.error("Should have transformed " + managedClassName + " but didn't");
+                
+                // If a class happened to be loaded by the ClassLoader before we had a chance to set up our instrumentation,
+                // it may not be in a consistent state. We'll detect that here and force the class to be reloaded
+                for (PersistenceUnitInfo pui : mergedPus.values()) {
+                    for (String managedClassName : pui.getManagedClassNames()) {
+                        if (!entityMarkerClassTransformer.getTransformedClassNames().contains(managedClassName)) {
+                            LOG.error("Should have transformed " + managedClassName + " but didn't");
+                        }
                     }
                 }
             }
