@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 
 import javax.persistence.Column;
@@ -73,24 +76,30 @@ public class OrderLockImpl implements OrderLock {
         }
     }
 
+    @Override
     public Long getLastUpdated() {
         return lastUpdated;
     }
 
+    @Override
     public void setLastUpdated(Long lastUpdated) {
         this.lastUpdated = lastUpdated;
     }
 
+    @Override
     public String getKey() {
         return orderLockPK.getKey();
     }
 
+    @Override
     public void setKey(String nodeKey) {
         this.orderLockPK.setKey(nodeKey);
     }
 
     @Embeddable
     public static class OrderLockPk implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         @Column(name = "ORDER_ID")
         protected Long orderId;
@@ -112,6 +121,29 @@ public class OrderLockImpl implements OrderLock {
 
         public void setKey(String key) {
             this.key = key;
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) {
+                return true;
+            }
+            if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
+                OrderLockPk other = (OrderLockPk) obj;
+                return new EqualsBuilder()
+                    .append(orderId, other.orderId)
+                    .append(key, other.key)
+                    .build();
+            }
+            return false;
+        }
+        
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder()
+                .append(orderId)
+                .append(key)
+                .build();
         }
     }
 }
