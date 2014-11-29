@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
@@ -39,6 +40,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -231,11 +233,13 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 }
             }
             
+            // Only validate transformation results if there was a LoadTimeWeaver registered in the first place
             if (weaverRegistered) {
                 for (PersistenceUnitInfo pui : mergedPus.values()) {
                     for (String managedClassName : pui.getManagedClassNames()) {
                         if (!managedClassNames.contains(managedClassName)) {
                             // Force-load this class so that we are able to ensure our instrumentation happens globally.
+                            // If transformation is happening, it should be tracked in EntityMarkerClassTransformer
                             Class.forName(managedClassName, true, getClass().getClassLoader());
                             managedClassNames.add(managedClassName);
                         }
@@ -243,18 +247,43 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 }
                 
                 // If a class happened to be loaded by the ClassLoader before we had a chance to set up our instrumentation,
-                // it may not be in a consistent state
+                // it may not be in a consistent state. This verifies with the EntityMarkerClassTransformer that it
+                // actually saw the classes loaded by the above process
+                List<String> nonTransformedClasses = new ArrayList<String>();
                 for (PersistenceUnitInfo pui : mergedPus.values()) {
                     for (String managedClassName : pui.getManagedClassNames()) {
-                        if (!entityMarkerClassTransformer.getTransformedClassNames().contains(managedClassName)) {
-                            LOG.warn("The class " + managedClassName + " is a managed clas within the MergePersistenceUnitManager"
-                                    + "but was not detected as being transformed by the EntityMarkerClassTransformer. This "
-                                    + "might simply be because " + managedClassName + " is not annotated with @Entity, @MappedSuperclass or @Embeddable"
-                                    + ", but is still referenced in a persistence.xml and is being transformed by"
-                                    + " PersistenceUnit ClassTransformers. This class should likely be removed from your persistence.xml");
- 
+                        // We came across a class that is not a real persistence class (doesn't have the right annotations)
+                        // but is still being transformed/loaded by
+                        // the persistence unit. This might have unexpected results downstream, but it could also be benign
+                        // so just output a warning
+                        if (entityMarkerClassTransformer.getTransformedNonEntityClassNames().contains(managedClassName)) {
+                            LOG.warn("The class " + managedClassName + " is marked as a managed class within the MergePersistenceUnitManager"
+                                    + " but is not annotated with @Entity, @MappedSuperclass or @Embeddable."
+                                    + " This class is still referenced in a persistence.xml and is being transformed by"
+                                    + " PersistenceUnit ClassTransformers which may result in problems downstream"
+                                    + " and represents a potential misconfiguration. This class should be removed from"
+                                    + " your persistence.xml");
+                        } else if (!entityMarkerClassTransformer.getTransformedEntityClassNames().contains(managedClassName)) {
+                            // This means the class not in the 'warning' list, but it is also not in the list that we would
+                            // expect it to be in of valid entity classes that were transformed. This means that we
+                            // never got the chance to transform the class AT ALL even though it is a valid entity class
+                            nonTransformedClasses.add(managedClassName);
                         }
                     }
+                }
+                
+                if (CollectionUtils.isNotEmpty(nonTransformedClasses)) {
+                    String message = "The classes\n" + Arrays.toString(nonTransformedClasses.toArray()) + "\nare managed classes within the MergePersistenceUnitManager"
+                            + "\nbut were not detected as being transformed by the EntityMarkerClassTransformer. These"
+                            + "\nclasses are likely loaded earlier in the application startup lifecyle by the servlet"
+                            + "\ncontainer. Verify that an empty <absolute-ordering /> element is contained in your"
+                            + "\nweb.xml to disable scanning for ServletContainerInitializer classes by your servlet"
+                            + "\ncontainer which can trigger early class loading. If the problem persists, ensure that"
+                            + "\nthere are no bean references to your entity class anywhere else in your Spring applicationContext"
+                            + "\nand consult the documentation for your servlet container to determine if classes are loaded"
+                            + "\nprior to the Spring context initialization.";
+                    LOG.error(message);
+                    throw new IllegalStateException(message);
                 }
             }
         } catch (Exception e) {
