@@ -453,10 +453,20 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 billing.setPostalCode(shipping.getPostalCode());
                 billing.setCountry(shipping.getCountry());
                 billing.setPrimaryPhone(shipping.getPrimaryPhone());
+                billing.setPhonePrimary(copyPhone(shipping.getPhonePrimary()));
                 billing.setEmailAddress(shipping.getEmailAddress());
                 billingInfoForm.setAddress(billing);
             }
         }
+    }
+
+    protected Phone copyPhone(Phone phoneToCopy) {
+        if (phoneToCopy != null) {
+            Phone copy = phoneService.create();
+            copy.setPhoneNumber(phoneToCopy.getPhoneNumber());
+            return copy;
+        }
+        return null;
     }
 
     /**

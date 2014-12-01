@@ -34,6 +34,7 @@ import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerAddressService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.core.service.StateService;
 
 import javax.annotation.Resource;
@@ -70,6 +71,9 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blCountryService")
     protected CountryService countryService;
+
+    @Resource(name = "blPhoneService")
+    protected PhoneService phoneService;
 
     @Resource(name = "blCustomerAddressService")
     protected CustomerAddressService customerAddressService;
