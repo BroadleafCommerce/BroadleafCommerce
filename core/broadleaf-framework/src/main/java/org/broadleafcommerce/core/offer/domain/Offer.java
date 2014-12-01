@@ -62,7 +62,7 @@ public interface Offer extends Status, Serializable,MultiTenantCloneable<Offer> 
 
     public int getPriority();
 
-    public void setPriority(int priority);
+    public void setPriority(Integer priority);
 
     public Date getStartDate();
 
