@@ -47,6 +47,7 @@ public class PageDTO implements Serializable {
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
     protected Map<String, String> pageAttributes = new HashMap<String, String>();
+    protected Map<String, Object> foreignPageFields = new HashMap<String, Object>();
 
     /**
      * Attempts to obtain the given property value from the dynamic property map first, and then an actual bean property
@@ -149,6 +150,14 @@ public class PageDTO implements Serializable {
         this.pageAttributes = pageAttributes;
     }   
     
+    public Map<String, Object> getForeignPageFields() {
+        return foreignPageFields;
+    }
+    
+    public void setForeignPageFields(Map<String, Object> foreignPageFields) {
+        this.foreignPageFields = foreignPageFields;
+    }
+
     public void copy(PageDTO original) {
         description = original.description;
         id = original.id;

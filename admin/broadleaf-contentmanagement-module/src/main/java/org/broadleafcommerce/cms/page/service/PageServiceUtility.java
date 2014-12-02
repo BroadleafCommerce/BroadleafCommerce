@@ -31,7 +31,6 @@ import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
 import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplateFieldGroupXref;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
-import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
@@ -123,16 +122,6 @@ public class PageServiceUtility {
         FieldDefinition fd = getFieldDefinition(page, fieldKey);
         
         if (fd != null && fd.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
-            Class<?> fkClass;
-            try {
-                fkClass = Class.forName(fd.getAdditionalForeignKeyClass());
-            } catch (ClassNotFoundException e) {
-                throw ExceptionHelper.refineException(e);
-            }
-            Long altId = sandBoxHelper.getSandBoxVersionId(fkClass, Long.parseLong(originalValue));
-            if (altId != null) {
-                originalValue = String.valueOf(altId);
-            }
             pageDTO.getPageFields().put(fieldKey, FOREIGN_LOOKUP + '|' + fd.getAdditionalForeignKeyClass() + '|' + originalValue);
         } else if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
             //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
@@ -199,13 +188,19 @@ public class PageServiceUtility {
     public void hydrateForeignLookups(PageDTO page) {
         for (Entry<String, Object> entry : page.getPageFields().entrySet()) {
             if (entry.getValue() instanceof String && ((String) entry.getValue()).startsWith(FOREIGN_LOOKUP)) {
-                String clazz = ((String) entry.getValue()).split("\\|")[1];
-                String id = ((String) entry.getValue()).split("\\|")[2];
-                Object newValue = null;
-                if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(id) && !"null".equals(id)) {
-                    newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
-                }
-                entry.setValue(newValue);
+                page.getForeignPageFields().put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        for (Entry<String, Object> entry : page.getForeignPageFields().entrySet()) {
+            String clazz = ((String) entry.getValue()).split("\\|")[1];
+            String id = ((String) entry.getValue()).split("\\|")[2];
+            Object newValue = null;
+            if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(id) && !"null".equals(id)) {
+                newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
+            }
+            if (newValue != null) {
+                page.getPageFields().put(entry.getKey(), newValue);
             }
         }
     }

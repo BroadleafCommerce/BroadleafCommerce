@@ -174,6 +174,10 @@ public class PageServiceImpl implements PageService {
             }
         }
         
+        if (dto != null) {
+            pageServiceUtility.hydrateForeignLookups(dto);
+        }
+        
         return dto;
     }
 
@@ -231,7 +235,6 @@ public class PageServiceImpl implements PageService {
             if (locale != null && locale.getLocaleCode() != null) {
                 if (locale.getLocaleCode().equals(page.getLocaleCode())) {
                     if (passesPageRules(page, ruleDTOs)) {
-                        pageServiceUtility.hydrateForeignLookups(page);
                         return page;
                     }
                 }
@@ -241,7 +244,6 @@ public class PageServiceImpl implements PageService {
         // Otherwise, we look for a match using just the language.
         for (PageDTO page : pageDTOList) {
             if (passesPageRules(page, ruleDTOs)) {
-                pageServiceUtility.hydrateForeignLookups(page);
                 return page;
             }
         }
