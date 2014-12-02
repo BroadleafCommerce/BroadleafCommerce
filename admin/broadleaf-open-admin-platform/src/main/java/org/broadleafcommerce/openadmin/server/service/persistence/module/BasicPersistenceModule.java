@@ -70,7 +70,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.EqPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.LikePredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.extension.BasicPersistenceModuleExtensionManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.extension
+        .BasicPersistenceModuleExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
@@ -80,6 +81,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.validation.Ent
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PopulateValueRequestValidator;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidationResult;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.hibernate.FlushMode;
+import org.hibernate.Session;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -276,7 +279,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 return 0;
             }
         });
+        Session session = getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
+        FlushMode originalFlushMode = session.getFlushMode();
         try {
+            session.setFlushMode(FlushMode.MANUAL);
             ParentEntityPersistenceException entityPersistenceException = null;
             for (Property property : sortedProperties) {
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
@@ -405,6 +411,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             throw new PersistenceException(e);
         } catch (InstantiationException e) {
             throw new PersistenceException(e);
+        } finally {
+            session.setFlushMode(originalFlushMode);
         }
         return instance;
     }
