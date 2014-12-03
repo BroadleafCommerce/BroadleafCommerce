@@ -31,6 +31,7 @@ import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
@@ -38,6 +39,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * {@link org.springframework.web.context.WebApplicationContext} implementation
@@ -106,30 +109,55 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
         filteredSources = sources.toArray(filteredSources);
         String patchLocation = getPatchLocation();
         String[] patchLocations = StringUtils.tokenizeToStringArray(patchLocation, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-        ResourceInputStream[] patches = new ResourceInputStream[patchLocations.length];
+        List<ResourceInputStream> patchList = new ArrayList<ResourceInputStream>();
         for (int i = 0; i < patchLocations.length; i++) {
+            ResourceInputStream patch;
             if (patchLocations[i].startsWith("classpath")) {
                 InputStream is = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[i].substring("classpath*:".length(), patchLocations[i].length()));
-                patches[i] = new ResourceInputStream(is, patchLocations[i]);
+                patch = new ResourceInputStream(is, patchLocations[i]);
             } else {
                 Resource resource = getResourceByPath(patchLocations[i]);
-                patches[i] = new ResourceInputStream(resource.getInputStream(), patchLocations[i]);
+                patch = new ResourceInputStream(resource.getInputStream(), patchLocations[i]);
             }
-            if (patches[i] == null || patches[i].available() <= 0) {
-                throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocations[i]);
+            if (patch == null || patch.available() <= 0) {
+                patchList.addAll(getResourcesFromPatternResolver(patchLocations[i]));
+            } else {
+                patchList.add(patch);
             }
         }
 
         ImportProcessor importProcessor = new ImportProcessor(this);
+        ResourceInputStream[] patchArray;
         try {
             filteredSources = importProcessor.extract(filteredSources);
-            patches = importProcessor.extract(patches);
+            patchArray = importProcessor.extract(patchList.toArray(new ResourceInputStream[patchList.size()]));
         } catch (MergeException e) {
             throw new FatalBeanException("Unable to merge source and patch locations", e);
         }
 
-        Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(filteredSources, patches);
+        Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(filteredSources, patchArray);
         reader.loadBeanDefinitions(resources);
+    }
+
+    private List<ResourceInputStream> getResourcesFromPatternResolver(String patchLocation) throws IOException {
+        ResourceInputStream resolverPatch;
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] resources = resolver.getResources(patchLocation);
+        List<ResourceInputStream> resolverList = new ArrayList<ResourceInputStream>();
+
+        if(resources == null || resources.length == 0) {
+            throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocation);
+        }
+
+        for(Resource resource : Arrays.asList(resources)) {
+            resolverPatch = new ResourceInputStream(resource.getInputStream(), patchLocation);
+            if (resolverPatch == null || resolverPatch.available() <= 0) {
+                throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocation);
+            }
+            resolverList.add(resolverPatch);
+        }
+
+        return resolverList;
     }
 
     /* (non-Javadoc)
