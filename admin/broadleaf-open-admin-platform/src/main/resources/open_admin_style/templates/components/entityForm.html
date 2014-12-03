@@ -51,11 +51,10 @@
     </div>
     
     <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
-        <li th:each="tab : ${entityForm.tabs}" 
+        <li th:each="tab : ${entityForm.tabs}"
             th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}" 
-            th:classappend="${(tabStat.first and tab.isVisible) or ((not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
-            th:inline="text"
-            th:if="${tab.isVisible}">
+            th:classappend="${(tabStat.first and tab.isVisible) or ((tabStat.index > 1 and not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
+            th:inline="text">
             
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="${group.title}" />
