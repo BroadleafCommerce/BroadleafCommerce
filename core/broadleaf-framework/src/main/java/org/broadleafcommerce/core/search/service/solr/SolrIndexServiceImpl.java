@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -116,6 +117,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blSolrIndexDao")
     protected SolrIndexDao solrIndexDao;
+
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     public static String PRODUCT_ATTR_MAP = "productAttributes";
 
@@ -591,17 +595,20 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
             document.addField(shs.getProductIdFieldName(), shs.getProductId(product.getId()));
             extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
+            
+            Long originalId = sandBoxHelper.getOriginalId(product);
+            originalId = (originalId == null) ? product.getId() : originalId;
 
             // The explicit categories are the ones defined by the product itself
-            if (cache.getParentCategoriesByProduct().containsKey(product.getId())) {
-                for (Long categoryId : cache.getParentCategoriesByProduct().get(product.getId())) {
+            if (cache.getParentCategoriesByProduct().containsKey(originalId)) {
+                for (Long categoryId : cache.getParentCategoriesByProduct().get(originalId)) {
                     document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
+                    String displayOrderKey = categoryId + "-" + shs.getProductId(originalId);
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
                     if (displayOrder == null) {
-                        displayOrderKey = categoryId + "-" + product.getId();
+                        displayOrderKey = categoryId + "-" + originalId;
                         displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
                     }
 
