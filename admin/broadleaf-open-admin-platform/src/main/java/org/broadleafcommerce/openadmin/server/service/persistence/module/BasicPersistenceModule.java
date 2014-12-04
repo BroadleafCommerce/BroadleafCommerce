@@ -413,6 +413,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             throw new PersistenceException(e);
         } finally {
             session.setFlushMode(originalFlushMode);
+            session.flush();
         }
         return instance;
     }
