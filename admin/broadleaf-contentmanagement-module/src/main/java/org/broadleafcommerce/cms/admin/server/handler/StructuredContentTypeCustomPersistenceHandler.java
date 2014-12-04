@@ -59,6 +59,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * Created by jfischer
@@ -73,6 +75,9 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     
     @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
     protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
+
+    @PersistenceContext(unitName="blPU")
+    protected EntityManager em;
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -142,6 +147,8 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     @Override
     public Entity fetchEntityBasedOnId(String structuredContentId, List<String> dirtyFields) throws Exception {
         StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
+        //Make sure the fieldmap is refreshed from the database based on any changes introduced in addOrUpdate()
+        em.refresh(structuredContent);
         return fetchDynamicEntity(structuredContent, dirtyFields, true);
     }
 

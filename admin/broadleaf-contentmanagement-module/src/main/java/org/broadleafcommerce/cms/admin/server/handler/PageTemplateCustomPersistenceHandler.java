@@ -62,6 +62,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * Created by jfischer
@@ -79,6 +81,9 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     
     @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
     protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
+
+    @PersistenceContext(unitName="blPU")
+    protected EntityManager em;
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -210,6 +215,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     @Override
     public Entity fetchEntityBasedOnId(String pageId, List<String> dirtyFields) throws Exception {
         Page page = pageService.findPageById(Long.valueOf(pageId));
+        //Make sure the fieldmap is refreshed from the database based on any changes introduced in addOrUpdate()
+        em.refresh(page);
         return fetchDynamicEntity(page, dirtyFields, true);
     }
 
