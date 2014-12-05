@@ -55,10 +55,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
 
-    @Resource(name = "blSkuDao")
-    protected SkuDao skuDao;
-
-
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
 
     @Override
@@ -158,13 +154,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            Sku defaultSku = adminInstance.getDefaultSku();
-            //  set the default sku to null
-            adminInstance.setDefaultSku(null);
             // delete product ( set product status to archive)
             productDao.delete(adminInstance);
-            // delete the old sku from databse
-            skuDao.delete(defaultSku);
         } catch (Exception e) {
             throw new ServiceException("Unable to delete  entity for " + entity.getType()[0], e);
         }
