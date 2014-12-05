@@ -76,6 +76,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.validation.Ent
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PopulateValueRequestValidator;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidationResult;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.hibernate.FlushMode;
+import org.hibernate.Session;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -247,7 +249,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         if (!handled) {
             defaultFieldPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity), unfilteredProperties);
         }
+        Session session = getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
+        FlushMode originalFlushMode = session.getFlushMode();
         try {
+            session.setFlushMode(FlushMode.MANUAL);
             for (Property property : entity.getProperties()) {
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
                 Class<?> returnType;
@@ -365,6 +370,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             throw new PersistenceException(e);
         } catch (InstantiationException e) {
             throw new PersistenceException(e);
+        } finally {
+            session.setFlushMode(originalFlushMode);
         }
         return instance;
     }
