@@ -63,7 +63,7 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                 
                 //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
                 DataWrapper dw = ruleFieldExtractionUtility.convertJsonToDataWrapper(populateValueRequest.getProperty().getUnHtmlEncodedValue());
-                if (StringUtils.isNotEmpty(dw.getError())) {
+                if (dw != null && StringUtils.isNotEmpty(dw.getError())) {
                     return new PropertyValidationResult(false, "Could not serialize JSON from rule builder: " + dw.getError());
                 }
                 if (dw == null || StringUtils.isEmpty(dw.getError())) {
@@ -92,7 +92,7 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                 String fieldService = populateValueRequest.getMetadata().getRuleIdentifier();
                 if (!StringUtils.isEmpty(jsonPropertyValue)) {
                     DataWrapper dw = ruleFieldExtractionUtility.convertJsonToDataWrapper(jsonPropertyValue);
-                    if (StringUtils.isNotEmpty(dw.getError())) {
+                    if (dw != null && StringUtils.isNotEmpty(dw.getError())) {
                         return new PropertyValidationResult(false, "Could not serialize JSON from rule builder: " + dw.getError());
                     }
                     if (dw != null && StringUtils.isEmpty(dw.getError())) {

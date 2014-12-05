@@ -65,7 +65,7 @@ import javax.persistence.EntityListeners;
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
  */
-public class DirectCopyClassTransformer implements BroadleafClassTransformer {
+public class DirectCopyClassTransformer extends AbstractClassTransformer implements BroadleafClassTransformer {
 
     protected static List<String> transformedMethods = new ArrayList<String>();
     protected static List<String> annotationTransformedClasses = new ArrayList<String>();

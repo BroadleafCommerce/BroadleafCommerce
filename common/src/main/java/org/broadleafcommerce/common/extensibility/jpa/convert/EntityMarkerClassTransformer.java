@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.extensibility.jpa.convert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager;
+import org.broadleafcommerce.common.extensibility.jpa.copy.AbstractClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern;
 
 import java.io.ByteArrayInputStream;
@@ -54,7 +55,7 @@ import javax.persistence.MappedSuperclass;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class EntityMarkerClassTransformer implements BroadleafClassTransformer {
+public class EntityMarkerClassTransformer extends AbstractClassTransformer implements BroadleafClassTransformer {
     protected static final Log LOG = LogFactory.getLog(EntityMarkerClassTransformer.class);
     
     protected HashSet<String> transformedEntityClassNames = new HashSet<String>();

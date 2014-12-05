@@ -27,9 +27,11 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.IntegerMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
+import org.broadleafcommerce.common.extensibility.jpa.copy.AbstractClassTransformer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 
@@ -37,6 +39,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -53,7 +56,7 @@ import java.util.Properties;
  * @author jfischer
  *
  */
-public class SingleTableInheritanceClassTransformer implements BroadleafClassTransformer {
+public class SingleTableInheritanceClassTransformer extends AbstractClassTransformer implements BroadleafClassTransformer {
     
     public static final String SINGLE_TABLE_ENTITIES = "broadleaf.ejb.entities.override_single_table";
     

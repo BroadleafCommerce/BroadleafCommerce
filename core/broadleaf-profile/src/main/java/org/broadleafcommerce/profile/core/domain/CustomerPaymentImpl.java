@@ -34,7 +34,9 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +52,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
@@ -112,6 +115,9 @@ public class CustomerPaymentImpl implements CustomerPayment {
     protected boolean isDefault = false;
 
     @ElementCollection
+    @MapKeyType(@Type(type = "java.lang.String"))
+    @Lob
+    @Type(type = "org.hibernate.type.StringClobType")
     @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns = @JoinColumn(name = "CUSTOMER_PAYMENT_ID"))
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
     @Column(name = "FIELD_VALUE")
