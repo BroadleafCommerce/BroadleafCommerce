@@ -105,6 +105,7 @@ public class BroadleafRequestContext {
     protected DeployBehavior deployBehavior = DeployBehavior.UNDEFINED;
     protected Boolean internalIgnoreFilters = false;
     protected ValidateProductionChangesState validateProductionChangesState = ValidateProductionChangesState.UNDEFINED;
+    protected EnforceEnterpriseCollectionBehaviorState enforceEnterpriseCollectionBehaviorState = EnforceEnterpriseCollectionBehaviorState.UNDEFINED;
 
     /**
      * Gets the current request on the context
@@ -437,5 +438,32 @@ public class BroadleafRequestContext {
 
     public void setValidateProductionChangesState(ValidateProductionChangesState validateProductionChangesState) {
         this.validateProductionChangesState = validateProductionChangesState;
+    }
+
+    /**
+     * Defines the state in which sandboxable collections in the Enterprise module should adhere to Broadleaf defined behavior.
+     * When FALSE, {@link org.hibernate.collection.spi.PersistentCollection} extensions in the Enterprise module will delegate
+     * to the standard Hibernate behavior. This is useful when the desire is to build and persist entity object structures (that
+     * the Enterprise module would otherwise interpret as sandboxable) without interference from the Enterprise module
+     * on the collection persistence behavior. When the Enterprise module is loaded, the behavior is enforced by default.
+     *
+     * @return the definition of how the enterprise module should handle persistent collection behavior
+     */
+    public EnforceEnterpriseCollectionBehaviorState getEnforceEnterpriseCollectionBehaviorState() {
+        return enforceEnterpriseCollectionBehaviorState;
+    }
+
+    /**
+     * Returns the state in which sandboxable collections in the Enterprise module should adhere to Broadleaf defined behavior.
+     * When FALSE, {@link org.hibernate.collection.spi.PersistentCollection} extensions in the Enterprise module will delegate
+     * to the standard Hibernate behavior. This is useful when the desire is to build and persist entity object structures (that
+     * the Enterprise module would otherwise interpret as sandboxable) without interference from the Enterprise module
+     * on the collection persistence behavior. When the Enterprise module is loaded, the behavior is enforced by default.
+     *
+     * @param enforceEnterpriseCollectionBehaviorState
+     */
+    public void setEnforceEnterpriseCollectionBehaviorState(EnforceEnterpriseCollectionBehaviorState
+                                                                    enforceEnterpriseCollectionBehaviorState) {
+        this.enforceEnterpriseCollectionBehaviorState = enforceEnterpriseCollectionBehaviorState;
     }
 }
