@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.web.extensibility;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.context.MergeApplicationContextXmlConfigResource;
@@ -39,7 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -145,11 +145,12 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
         Resource[] resources = resolver.getResources(patchLocation);
         List<ResourceInputStream> resolverList = new ArrayList<ResourceInputStream>();
 
-        if(resources == null || resources.length == 0) {
-            throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocation);
+        if (ArrayUtils.isEmpty(resources)) {
+            LOG.warn("Unable to use automatic applicationContext loading. To avoid this, upgrade your poms to reference the latest versions of all modules.");
+            return resolverList;
         }
 
-        for(Resource resource : Arrays.asList(resources)) {
+        for (Resource resource : resources) {
             resolverPatch = new ResourceInputStream(resource.getInputStream(), patchLocation);
             if (resolverPatch == null || resolverPatch.available() <= 0) {
                 throw new IOException("Unable to open an input stream on specified application context resource: " + patchLocation);
