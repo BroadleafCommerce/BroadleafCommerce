@@ -23,6 +23,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
@@ -64,8 +66,13 @@ public class ArchiveStatusPersistenceEventHandler extends PersistenceManagerEven
                 }
             }
             if (isArchivable && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
+                String targetPropertyName = "archiveStatus.archived";
+                if (persistencePackage.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST)) {
+                    AdornedTargetList atl = (AdornedTargetList) persistencePackage.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+                    targetPropertyName = atl.getTargetObjectPath() + "." + targetPropertyName;
+                }
                 FilterMapping filterMapping = new FilterMapping()
-                    .withFieldPath(new FieldPath().withTargetProperty("archiveStatus.archived"))
+                    .withFieldPath(new FieldPath().withTargetProperty(targetPropertyName))
                     .withDirectFilterValues(new EmptyFilterValues())
                     .withRestriction(new Restriction()
                             .withPredicateProvider(new PredicateProvider<Character, Character>() {
