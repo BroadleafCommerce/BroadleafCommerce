@@ -38,6 +38,7 @@ import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -83,8 +84,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -553,6 +558,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withHelp(fmd.getHelpText())
                          .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup());
 
+                    String defaultValue = fmd.getDefaultValue();
+                    if (StringUtils.isNotEmpty(defaultValue)) {
+                        defaultValue = extractDefaultValueFromFieldData(fieldType, fmd);
+                        f.withValue(defaultValue);
+                    }
+
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());
                     }
@@ -563,7 +574,58 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
     }
-    
+
+    @Override
+    public String extractDefaultValueFromFieldData(String fieldType, BasicFieldMetadata fmd) {
+        String defaultValue = fmd.getDefaultValue();
+        if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
+                || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
+            return null;
+        } else if (fieldType.equals(SupportedFieldType.INTEGER.toString())) {
+            try {
+                Integer.parseInt(defaultValue);
+            } catch (NumberFormatException  e) {
+                String msg = buildMsgForDefValException(SupportedFieldType.INTEGER.toString(), fmd, defaultValue);
+                LOG.warn(msg);
+                return null;
+            }
+        } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())) {
+            try {
+                BigDecimal val = new BigDecimal(defaultValue);
+            } catch (NumberFormatException  e) {
+                String msg = buildMsgForDefValException(SupportedFieldType.DECIMAL.toString(), fmd, defaultValue);
+                LOG.warn(msg);
+                return null;
+            }
+        } else if (fieldType.equals(SupportedFieldType.BOOLEAN.toString())) {
+            if (!defaultValue.toLowerCase().equals("true") && !defaultValue.toLowerCase().equals("false")) {
+                String msg = buildMsgForDefValException(SupportedFieldType.BOOLEAN.toString(), fmd, defaultValue);
+                LOG.warn(msg);
+                return null;
+            }
+        } else if (fieldType.equals(SupportedFieldType.DATE.toString())) {
+            DateFormat format = FormatUtil.getDateFormat();
+            if (defaultValue.toLowerCase().contains("today")) {
+                defaultValue = format.format(new Date());
+            } else {
+                try {
+                    Date date = format.parse(defaultValue);
+                    defaultValue = format.format(date);
+                } catch (ParseException e) {
+                    String msg = buildMsgForDefValException(SupportedFieldType.DATE.toString(), fmd, defaultValue);
+                    LOG.warn(msg);
+                    return null;
+                }
+            }
+        }
+        return defaultValue;
+    }
+
+    private String buildMsgForDefValException(String type, BasicFieldMetadata fmd, String defaultValue) {
+        return fmd.getTargetClass() + " : " + fmd.getName() + " - Failed to parse " + type +
+                    " from DefaultValue [ " + defaultValue + " ]";
+    }
+
     @Override
     public void removeNonApplicableFields(ClassMetadata cmd, EntityForm entityForm, String entityType) {
         for (Property p : cmd.getProperties()) {
@@ -643,7 +705,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         ef.setEntityType(entity.getType()[0]);
 
         populateEntityFormFieldValues(cmd, entity, ef);
-        
+
         Property p = entity.findProperty(BasicPersistenceModule.MAIN_ENTITY_NAME_PROPERTY);
         if (p != null) {
             ef.setMainEntityName(p.getValue());

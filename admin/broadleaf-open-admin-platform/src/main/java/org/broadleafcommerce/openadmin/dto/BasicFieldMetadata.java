@@ -84,6 +84,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String ruleIdentifier;
     protected LookupType lookupType;
     protected Boolean translatable;
+    protected String defaultValue;
 
     //for MapFields
     protected String mapFieldValueClass;
@@ -523,6 +524,14 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.translatable = translatable;
     }
 
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
     @Override
     public FieldMetadata cloneFieldMetadata() {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
@@ -600,6 +609,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.lookupType = lookupType;
         metadata.translatable = translatable;
         metadata.isDerived = isDerived;
+        metadata.defaultValue = defaultValue;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 

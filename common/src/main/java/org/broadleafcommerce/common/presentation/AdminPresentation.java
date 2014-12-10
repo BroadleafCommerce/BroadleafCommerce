@@ -307,4 +307,17 @@ public @interface AdminPresentation {
      * @return whether or not this field is translatable
      */
     boolean translatable() default false;
+
+    /**
+     * <p>Optional - only required if you want to display a default value to the user when adding a new entity</p>
+     *
+     * <p>The default value to present to a user for this field when adding a new entity.</p>
+     *
+     * <p>Default values on <code>Boolean</code> require {@code "true"} or {@code "false"}.</p>
+     * <p>Default values on <code>Date</code> support the string {@code "today"} and strings with the
+     * format of {@code "2020.12.11 11:11:11"}.</p>
+     *
+     * @return the defaultValue set for the field.
+     */
+    String defaultValue() default "";
 }

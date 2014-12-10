@@ -122,6 +122,7 @@ public class FieldMetadataOverride {
     private String ruleIdentifier;
     private Boolean translatable;
     private LookupType lookupType;
+    private String defaultValue;
 
     //@AdminPresentationMapField derived fields
     private Boolean searchable;
@@ -324,6 +325,14 @@ public class FieldMetadataOverride {
     
     public void setTranslatable(Boolean translatable) {
         this.translatable = translatable;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     public String getTab() {
