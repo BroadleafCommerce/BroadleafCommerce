@@ -46,6 +46,9 @@ import java.util.Date;
  * <li><code>SystemSupportLoggerAdapter.levelInBrackets</code> - Should the level string be output in brackets? Defaults
  * to <code>true</code>.</li>
  *
+ * <li><code>SystemSupportLoggerAdapter.showNonSupportLevels</code> - Show non-support level logs
+ * (i.e. DEBUG, ERROR, FATAL, INFO, WARN) Defaults to <code>false</code>.</li>
+ *
  * </ul>
  *
  * <p>This implementation is heavily inspired by
@@ -60,6 +63,7 @@ public class SystemSupportLoggerAdapter extends AbstractSupportLoggerAdapter imp
     public static final String SHOW_THREAD_NAME_KEY = "SystemSupportLoggerAdapter.showThreadName";
     public static final String SHOW_LOG_NAME_KEY = "SystemSupportLoggerAdapter.showLogName";
     public static final String LEVEL_IN_BRACKETS_KEY = "SystemSupportLoggerAdapter.levelInBrackets";
+    public static final String SHOW_NON_SUPPORT_LEVELS_KEY = "SystemSupportLoggerAdapter.showNonSupportLevels";
 
     private String name;
 
@@ -98,52 +102,72 @@ public class SystemSupportLoggerAdapter extends AbstractSupportLoggerAdapter imp
 
     @Override
     public void debug(String message) {
-        log(LOG_LEVEL_DEBUG, message, null);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_DEBUG, message, null);
+        }
     }
 
     @Override
     public void debug(String message, Throwable t) {
-        log(LOG_LEVEL_DEBUG, message, t);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_DEBUG, message, t);
+        }
     }
 
     @Override
     public void error(String message) {
-        log(LOG_LEVEL_ERROR, message, null);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_ERROR, message, null);
+        }
     }
 
     @Override
     public void error(String message, Throwable t) {
-        log(LOG_LEVEL_ERROR, message, t);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_ERROR, message, t);
+        }
     }
 
     @Override
     public void fatal(String message) {
-        log(LOG_LEVEL_FATAL, message, null);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_FATAL, message, null);
+        }
     }
 
     @Override
     public void fatal(String message, Throwable t) {
-        log(LOG_LEVEL_FATAL, message, t);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_FATAL, message, t);
+        }
     }
 
     @Override
     public void info(String message) {
-        log(LOG_LEVEL_INFO, message, null);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_INFO, message, null);
+        }
     }
 
     @Override
     public void info(String message, Throwable t) {
-        log(LOG_LEVEL_INFO, message, t);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_INFO, message, t);
+        }
     }
 
     @Override
     public void warn(String message) {
-        log(LOG_LEVEL_WARN, message, null);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_WARN, message, null);
+        }
     }
 
     @Override
     public void warn(String message, Throwable t) {
-        log(LOG_LEVEL_WARN, message, t);
+        if (getShowNonSupportLevels()) {
+            log(LOG_LEVEL_WARN, message, t);
+        }
     }
 
     protected void log(int level, String message, Throwable t) {
@@ -247,6 +271,11 @@ public class SystemSupportLoggerAdapter extends AbstractSupportLoggerAdapter imp
 
     protected boolean getLevelInBrackets() {
         String property = System.getProperty(LEVEL_IN_BRACKETS_KEY, "true");
+        return Boolean.valueOf(property);
+    }
+
+    protected boolean getShowNonSupportLevels() {
+        String property = System.getProperty(SHOW_NON_SUPPORT_LEVELS_KEY, "false");
         return Boolean.valueOf(property);
     }
 
