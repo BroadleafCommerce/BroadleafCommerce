@@ -50,6 +50,7 @@ public class PropertyType {
         public static final String RULEIDENTIFIER = "ruleIdentifier";
         public static final String READONLY = "readOnly";
         public static final String VALIDATIONCONFIGURATIONS = "validationConfigurations";
+        public static final String DEFAULTVALUE = "defaultValue";
     }
 
     public static class AdminPresentationToOneLookup {
