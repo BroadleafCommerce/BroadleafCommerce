@@ -276,8 +276,7 @@ public class MergeManager {
 
     private void setHandlers(Properties props) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ArrayList<MergeHandler> handlers = new ArrayList<MergeHandler>();
-        String[] keys = props.keySet().toArray(new String[props.keySet().size()]);
-        for (String key : keys) {
+        for (String key : props.stringPropertyNames()) {
             if (key.startsWith("handler.")) {
                 MergeHandler temp = (MergeHandler) Class.forName(props.getProperty(key)).newInstance();
                 String name = key.substring(8, key.length());
