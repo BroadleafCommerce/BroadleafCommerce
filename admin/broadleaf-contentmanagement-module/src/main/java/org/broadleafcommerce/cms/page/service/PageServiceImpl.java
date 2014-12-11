@@ -91,6 +91,7 @@ public class PageServiceImpl implements PageService {
     protected PageServiceExtensionManager extensionManager;
 
     protected Cache pageCache;
+    protected Cache pageMapCache;
     protected final PageDTO NULL_PAGE = new NullPageDTO();
 
     /**
@@ -155,7 +156,7 @@ public class PageServiceImpl implements PageService {
                 returnList = buildPageDTOList(pageList, secure);
                 if (context.isProductionSandBox()) {
                     Collections.sort(returnList, new BeanComparator("priority"));
-                    addPageListToCache(returnList, key);
+                    addPageListToCache(returnList, key, uri, sandBox, site);
                 }
             }
         }
@@ -192,18 +193,15 @@ public class PageServiceImpl implements PageService {
     }
 
     @Override
-    public void removePageFromCache(SandBox sandBox, Page p) {
-        // Remove secure and non-secure instances of the page.
-        // Typically the page will be in one or the other if at all.
-        removePageFromCache(buildKey(sandBox, p));
-    }
-
-    @Override
-    public void removePageFromCache(String baseKey) {
-        // Remove secure and non-secure instances of the page.
-        // Typically the page will be in one or the other if at all.
-        getPageCache().remove(baseKey+"-"+true);
-        getPageCache().remove(baseKey+"-"+false);
+    @SuppressWarnings("unchecked")
+    public void removePageFromCache(String key) {
+        Element e = getPageMapCache().get(key);
+        if (e != null && e.getObjectValue() != null) {
+            List<String> keys = (List<String>) e.getObjectValue();
+            for (String k : keys) {
+                getPageCache().remove(k);
+            }
+        }
     }
 
     /**
@@ -299,6 +297,14 @@ public class PageServiceImpl implements PageService {
         return pageCache;
     }
 
+    @Override
+    public Cache getPageMapCache() {
+        if (pageMapCache == null) {
+            pageMapCache = CacheManager.getInstance().getCache("cmsPageMapCache");
+        }
+        return pageMapCache;
+    }
+
     protected String buildKey(SandBox sandBox, Page page) {
         Locale locale = page.getPageTemplate() == null ? null : page.getPageTemplate().getLocale();
         Long sandBoxId = sandBox==null?null:sandBox.getId();
@@ -306,8 +312,32 @@ public class PageServiceImpl implements PageService {
         return buildKey(sandBoxId, siteId, findLanguageOnlyLocale(locale), page.getFullUrl());
     }
 
-    protected void addPageListToCache(List<PageDTO> pageList, String key) {
+    protected void addPageListToCache(List<PageDTO> pageList, String key, String uri, Long sandBox, Long site) {
         getPageCache().put(new Element(key, pageList));
+        
+        addPageMapCacheEntry(key, uri, sandBox, site);
+        if (site != null) {
+            addPageMapCacheEntry(key, uri, sandBox, null);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected void addPageMapCacheEntry(String keyToStore, String uri, Long sandBox, Long site) {
+        String key = getPageMapCacheKey(uri, sandBox, site);
+
+        Element e = getPageMapCache().get(key);
+        if (e == null || e.getObjectValue() == null) {
+            List<String> keys = new ArrayList<String>();
+            keys.add(keyToStore);
+            getPageMapCache().put(new Element(key, keys));
+        } else {
+            ((List<String>) e.getObjectValue()).add(keyToStore);
+        }
+    }
+    
+    @Override
+    public String getPageMapCacheKey(String uri, Long sandBox, Long site) {
+        return uri + "-" + sandBox + "-" + (site == null ? "ALL" : site);
     }
 
     protected List<PageDTO> getPageListFromCache(String key) {
