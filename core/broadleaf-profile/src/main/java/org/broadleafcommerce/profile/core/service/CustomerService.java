@@ -67,6 +67,13 @@ public interface CustomerService {
      * Returns a non-persisted <code>Customer</code>.    Typically used with registering a new customer.
      */
     public Customer createNewCustomer();
+    
+    /**
+     * Subclassed implementations can assign unique roles for various customer types 
+     * 
+     * @param customer
+     */
+    public void createRegisteredCustomerRoles(Customer customer);
 
     public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners);
 

@@ -166,12 +166,8 @@ public class CustomerServiceImpl implements CustomerService {
         return retCustomer;
     }
 
-    /**
-     * Subclassed implementations can assign unique roles for various customer types 
-     * 
-     * @param customer
-     */
-    protected void createRegisteredCustomerRoles(Customer customer) {
+    @Override
+    public void createRegisteredCustomerRoles(Customer customer) {
         Role role = roleDao.readRoleByName("ROLE_USER");
         CustomerRole customerRole = new CustomerRoleImpl();
         customerRole.setRole(role);
