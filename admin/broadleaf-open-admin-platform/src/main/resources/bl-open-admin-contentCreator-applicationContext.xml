@@ -259,6 +259,14 @@
         <property name="targetRef" value="blJsLocations" />
     </bean>
 
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.openadmin.web.expression.EntityFormVariableExpression" />
+            </list>
+        </property>
+    </bean>
+
     <bean id="blCriteriaTranslatorEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>

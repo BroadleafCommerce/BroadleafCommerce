@@ -41,7 +41,7 @@
     <div class="tabs-container" th:if="${renderTabs}">
         <dl class="tabs" th:classappend="${additionalTabClasses}">
             <dd th:each="tab : ${entityForm.tabs}"
-                th:class="${(tabStat.first and tab.isVisible) or ((not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
+                th:class="${#ef.isTabActive(entityForm, tab)}? 'active'"
                 th:if="${tab.isVisible}">
                 <a th:href="'#tab' + ${tabStat.count}" 
                    th:classappend="${tab.tabClass}"
