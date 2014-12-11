@@ -32,11 +32,9 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.profile.core.dao.RoleDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerRole;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -74,6 +72,8 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             adminInstance.setId(customerService.findNextCustomerId());
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Customer.class.getName(), persistencePerspective);
             adminInstance = (Customer) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            
+            adminInstance.setUsername(adminInstance.getEmailAddress());
             
             if (customerService.readCustomerByUsername(adminInstance.getUsername()) != null) {
                 Entity error = new Entity();
