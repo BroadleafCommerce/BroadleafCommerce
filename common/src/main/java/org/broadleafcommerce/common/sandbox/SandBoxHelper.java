@@ -98,6 +98,19 @@ public interface SandBoxHelper {
      */
     OriginalIdResponse getOriginalId(Class<?> type, Long id);
 
+    /**
+     * Return the original id for the requested id as if this was a production request. The id passed
+     * in should be a production id. You will receive back the original id for this production id. The
+     * only time this makes sense is when the passed in id is for the production record from a standard
+     * site. This method is useful when you want the template record id for a standard site production id
+     * while in a sandbox context.
+     *
+     * @param type
+     * @param id
+     * @return
+     */
+    OriginalIdResponse getProductionOriginalId(Class<?> type, Long id);
+
     Long getOriginalId(Object test);
 
 //    /**

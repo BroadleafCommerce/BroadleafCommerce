@@ -74,7 +74,12 @@ public class DefaultSandBoxHelper implements SandBoxHelper {
         return null;
     }
 
-//    @Override
+    @Override
+    public OriginalIdResponse getProductionOriginalId(Class<?> type, Long id) {
+        return null;
+    }
+
+    //    @Override
 //    public void setupSandBoxState(Object clone, EntityManager em) {
 //        //do nothing
 //    }
