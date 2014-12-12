@@ -79,13 +79,15 @@ public class URLHandlerImpl implements URLHandler, Locatable, Serializable, Admi
     @AdminPresentation(friendlyName = "URLHandlerImpl_ID", order = 1, group = "URLHandlerImpl_friendyName", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1,
+            helpText = "urlHandlerIncoming_help")
     @Column(name = "INCOMING_URL", nullable = false)
     @Index(name="INCOMING_URL_INDEX", columnNames={"INCOMING_URL"})
     protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)
-    @AdminPresentation(friendlyName = "URLHandlerImpl_newURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "URLHandlerImpl_newURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1,
+            helpText = "urlHandlerNew_help")
     protected String newURL;
 
     @Column(name = "URL_REDIRECT_TYPE")
