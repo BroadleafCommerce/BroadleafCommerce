@@ -23,6 +23,7 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 
@@ -42,7 +43,7 @@ import java.io.Serializable;
  * @see {@link PopulateValueRequest}
  * @see {@link BasicPersistenceModule#createPopulatedInstance(Serializable, Entity, java.util.Map, Boolean)}
  */
-public interface PopulateValueRequestValidator {
+public interface PopulateValueRequestValidator extends Ordered {
     
     /**
      * Validates a population request prior to invoking any {@link FieldPersistenceProvider}s. If no validation could be
