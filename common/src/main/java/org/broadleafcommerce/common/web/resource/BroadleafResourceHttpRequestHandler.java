@@ -26,10 +26,12 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
+import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
 import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafThemeResolver;
+import org.broadleafcommerce.common.web.DeployBehavior;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.security.core.context.SecurityContext;
@@ -78,6 +80,9 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     
     @javax.annotation.Resource(name = "blThemeResolver")
     protected BroadleafThemeResolver themeResolver;
+
+    @javax.annotation.Resource(name = "blDeployBehaviorUtil")
+    protected DeployBehaviorUtil deployBehaviorUtil;
 
     @Value("${global.admin.prefix}")
     protected String globalAdminPrefix;
@@ -189,29 +194,14 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             }
             
             BroadleafRequestContext newBrc = new BroadleafRequestContext();
-            //if (!isGlobalAdmin(req)) {
-                ServletWebRequest swr = new ServletWebRequest(req);
-                newBrc.setSite(siteResolver.resolveSite(swr, true));
-                newBrc.setSandBox(sbResolver.resolveSandBox(swr, newBrc.getSite()));
-                BroadleafRequestContext.setBroadleafRequestContext(newBrc);
-                newBrc.setTheme(themeResolver.resolveTheme(swr));
-            //}
+            ServletWebRequest swr = new ServletWebRequest(req);
+            newBrc.setSite(siteResolver.resolveSite(swr, true));
+            newBrc.setSandBox(sbResolver.resolveSandBox(swr, newBrc.getSite()));
+            BroadleafRequestContext.setBroadleafRequestContext(newBrc);
+            newBrc.setTheme(themeResolver.resolveTheme(swr));
+            newBrc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
         }
     }
-
-//    protected boolean isGlobalAdmin(HttpServletRequest request) {
-//        String uri = request.getRequestURI();
-//        if (!StringUtils.isEmpty(globalAdminPrefix)) {
-//            if (globalAdminPrefix.equals(getContextName(request))) {
-//                return true;
-//            } else {
-//                if (!StringUtils.isEmpty(globalAdminUrl)) {
-//                    return uri.startsWith(globalAdminUrl);
-//                }
-//            }
-//        }
-//        return false;
-//    }
 
     protected String getContextName(HttpServletRequest request) {
         String contextName = request.getServerName();
