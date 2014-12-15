@@ -106,6 +106,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     @Resource(name="blAdornedTargetListPersistenceModule")
     protected PersistenceModule adornedPersistenceModule;
 
+    @Resource(name = "blSkuCustomPersistenceHandlerExtensionManager")
+    protected SkuCustomPersistenceHandlerExtensionManager extensionManager;
+
     /**
      * This represents the field that all of the product option values will be stored in. This would be used in the case
      * where there are a bunch of product options and displaying each option as a grid header would have everything
@@ -582,6 +585,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             associateProductOptionValuesToSku(entity, adminInstance, dynamicEntityDao);
 
             adminInstance = dynamicEntityDao.merge(adminInstance);
+
+            extensionManager.getProxy().skuUpdated(adminInstance);
 
             //Fill out the DTO and add in the product option value properties to it
             Entity result = helper.getRecord(adminProperties, adminInstance, null, null);
