@@ -1,15 +1,14 @@
 <header class="top-bar">
     <div class="attached">
-        <div class="brand show-for-small hide-for-medium-up">
-            <span><a th:href="@{/}"><img th:src="@{/img/admin/blc-logo-leaf.png}" /></a></span>
+        <div class="brand">
+            <span><a th:href="@{/}"><img th:src="@{/img/admin/blc-logo-header.png}" width='155'/></a></span>
         </div>
-        <div class="brand show-for-medium-up hide-for-small">
-            <span><a th:href="@{/}"><img th:src="@{/img/admin/blc-logo-header.png}" /></a></span>
-        </div>
+
+        <ul class="left">
+            <li th:substituteby="layout/partials/additionalHeaderMenu" />
+        </ul>
 
         <ul class="right">
-            <li th:substituteby="layout/partials/additionalHeaderMenu" />
-
             <li class="has-dropdown" th:inline="text">
                 <blc_admin:admin_user resultVar="adminUser" />
                 <a href="#">[[${adminUser.name}]]</a>
