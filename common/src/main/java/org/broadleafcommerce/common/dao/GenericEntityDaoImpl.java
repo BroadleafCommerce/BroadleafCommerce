@@ -29,7 +29,10 @@ import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
@@ -47,7 +50,20 @@ import javax.persistence.criteria.Root;
 
 
 @Repository("blGenericEntityDao")
-public class GenericEntityDaoImpl implements GenericEntityDao {
+public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContextAware {
+
+    private static ApplicationContext applicationContext;
+    private static GenericEntityDaoImpl dao;
+
+    public static GenericEntityDaoImpl getGenericEntityDao() {
+        if (applicationContext == null) {
+            return null;
+        }
+        if (dao == null) {
+            dao = (GenericEntityDaoImpl) applicationContext.getBean("blGenericEntityDao");
+        }
+        return dao;
+    }
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -56,6 +72,11 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
     protected EntityConfiguration entityConfiguration;
     
     protected DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
     
     @Override
     public <T> T readGenericEntity(Class<T> clazz, Object id) {
@@ -185,5 +206,10 @@ public class GenericEntityDaoImpl implements GenericEntityDao {
     @Override
     public boolean idAssigned(Object object) {
         return getIdentifier(object) != null;
+    }
+
+    @Override
+    public EntityManager getEntityManager() {
+        return em;
     }
 }

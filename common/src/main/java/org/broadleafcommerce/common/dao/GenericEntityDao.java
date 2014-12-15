@@ -25,6 +25,8 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 public interface GenericEntityDao {
 
     /**
@@ -132,4 +134,6 @@ public interface GenericEntityDao {
      * @return
      */
     boolean idAssigned(Object object);
+
+    EntityManager getEntityManager();
 }
