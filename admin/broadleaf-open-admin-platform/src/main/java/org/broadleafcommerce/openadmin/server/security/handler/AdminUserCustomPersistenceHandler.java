@@ -137,10 +137,7 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
                 }
             }
             
-            // The current user can update their data, but they cannot update other user's data.
-            if (! adminRemoteSecurityService.getPersistentAdminUser().getId().equals(adminInstance.getId())) {
-                adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.UPDATE);
-            }
+            validateUserUpdateSecurity(persistencePackage, adminInstance);
             
             adminInstance = adminSecurityService.saveAdminUser(adminInstance);
             Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
@@ -149,6 +146,13 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 
         } catch (Exception e) {
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+        }
+    }
+
+    protected void validateUserUpdateSecurity(PersistencePackage persistencePackage, AdminUser changingUser) throws ServiceException {
+        // The current user can update their data, but they cannot update other user's data.
+        if (! adminRemoteSecurityService.getPersistentAdminUser().getId().equals(changingUser.getId())) {
+            adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.UPDATE);
         }
     }
     
