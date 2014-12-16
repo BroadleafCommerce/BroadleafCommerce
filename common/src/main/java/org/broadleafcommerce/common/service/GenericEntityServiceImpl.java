@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 
 
 @Service("blGenericEntityService")
@@ -108,5 +109,10 @@ public class GenericEntityServiceImpl implements GenericEntityService {
     @Override
     public boolean idAssigned(Object object) {
         return genericEntityDao.idAssigned(object);
+    }
+
+    @Override
+    public EntityManager getEntityManager() {
+        return genericEntityDao.getEntityManager();
     }
 }

@@ -23,6 +23,8 @@ package org.broadleafcommerce.common.service;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 /**
  * CRUD methods for generic entities
  * 
@@ -120,4 +122,11 @@ public interface GenericEntityService {
      * @return
      */
     Class<?> getCeilingImplClass(String className);
+
+    /**
+     * Return the entity manager
+     *
+     * @return
+     */
+    EntityManager getEntityManager();
 }
