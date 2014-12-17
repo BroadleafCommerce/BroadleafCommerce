@@ -129,4 +129,11 @@ public interface GenericEntityService {
      * @return
      */
     EntityManager getEntityManager();
+
+    /**
+     * Attempt to delete the entity
+     *
+     * @param object
+     */
+    void remove(Object object);
 }

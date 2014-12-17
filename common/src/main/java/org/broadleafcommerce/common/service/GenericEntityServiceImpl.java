@@ -115,4 +115,9 @@ public class GenericEntityServiceImpl implements GenericEntityService {
     public EntityManager getEntityManager() {
         return genericEntityDao.getEntityManager();
     }
+
+    @Override
+    public void remove(Object object) {
+        genericEntityDao.remove(object);
+    }
 }
