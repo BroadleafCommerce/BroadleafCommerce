@@ -30,6 +30,8 @@ import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdap
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.EnforceEnterpriseCollectionBehaviorState;
 import org.springframework.core.Ordered;
 
 import java.lang.reflect.Field;
@@ -102,11 +104,14 @@ public abstract class MultiTenantCopier implements Ordered {
             context.clearOriginalIdentifiers();
             genericEntityService.clearAutoFlushMode();
             Object copy = copyOperation.execute(original);
+            BroadleafRequestContext.getBroadleafRequestContext().setEnforceEnterpriseCollectionBehaviorState(EnforceEnterpriseCollectionBehaviorState.FALSE);
             persistCopyObjectTreeInternal(copy, new HashSet<Integer>(), context);
+            genericEntityService.flush();
         } catch (Exception e) {
             LOG.error("Unable to persist the copy object tree", e);
             throw ExceptionHelper.refineException(e);
         } finally {
+            BroadleafRequestContext.getBroadleafRequestContext().setEnforceEnterpriseCollectionBehaviorState(EnforceEnterpriseCollectionBehaviorState.TRUE);
             context.clearOriginalIdentifiers();
             genericEntityService.enableAutoFlushMode();
         }
@@ -225,7 +230,6 @@ public abstract class MultiTenantCopier implements Ordered {
                                 return (T) original.createOrRetrieveCopyInstance(context).getClone();
                             }
                         }, clazz, result, context);
-                        genericEntityService.flush();
                     }
                 } finally {
                     genericEntityService.clear();
