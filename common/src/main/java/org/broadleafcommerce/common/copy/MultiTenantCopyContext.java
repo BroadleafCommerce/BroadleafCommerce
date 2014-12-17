@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -167,6 +168,10 @@ public class MultiTenantCopyContext {
      * @throws java.lang.CloneNotSupportedException
      */
     public <G> CreateResponse<G> createOrRetrieveCopyInstance(Object instance) throws CloneNotSupportedException {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        context.setCurrentCatalog(getToCatalog());
+        context.setCurrentProfile(getToSite());
+        context.setSite(getToSite());
         if (instance instanceof Status && 'Y' == ((Status) instance).getArchived()) {
             throw new CloneNotSupportedException("Attempting to clone an archived instance");
         }
@@ -219,6 +224,9 @@ public class MultiTenantCopyContext {
                 throw ExceptionHelper.refineException(e);
             }
         }
+        context.setCurrentCatalog(getFromCatalog());
+        context.setCurrentProfile(getFromSite());
+        context.setSite(getFromSite());
         return new CreateResponse<G>(response, alreadyPopulate);
     }
 
