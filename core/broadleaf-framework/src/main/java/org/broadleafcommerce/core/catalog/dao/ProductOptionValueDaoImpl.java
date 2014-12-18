@@ -10,18 +10,14 @@ import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -39,28 +35,6 @@ public class ProductOptionValueDaoImpl implements ProductOptionValueDao {
     protected EntityConfiguration entityConfiguration;
 
     @Override
-    public Map<ProductOption, Set<ProductOptionValue>> readApplicableProductOptionsAndValuesForProduct(
-            Long productId) {
-        TypedQuery<ProductOptionValue> query =
-                em.createNamedQuery("BC_READ_ALL_PRODUCT_OPTION_VALUES_FOR_PRODUCT", ProductOptionValue.class);
-        query.setParameter("productId", productId);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-        List<ProductOptionValue> values = query.getResultList();
-        HashMap<ProductOption, Set<ProductOptionValue>> out = new HashMap<ProductOption, Set<ProductOptionValue>>();
-        if (values != null && !values.isEmpty()) {
-            for (ProductOptionValue value : values) {
-                if (!out.containsKey(value.getProductOption())) {
-                    out.put(value.getProductOption(), new LinkedHashSet<ProductOptionValue>());
-                }
-                out.get(value.getProductOption()).add(value);
-            }
-        }
-
-        return out;
-    }
-
-    @Override
     public Sku readSkuForProductOptionsAndValues(Long productId, Map<String, String> attributeNameValuePair) {
 
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
@@ -71,21 +45,8 @@ public class ProductOptionValueDaoImpl implements ProductOptionValueDao {
         criteriaQuery.distinct(true);
         criteriaQuery.from(SkuImpl.class);
 
-        Join<Sku, Product> skuProduct = skuRoot.join("product");
-
-        List<Predicate> predicates = new ArrayList<Predicate>();
-        predicates.add(criteriaBuilder.equal(skuProduct.get("id"), productId));
-
-        for (String attributeName : attributeNameValuePair.keySet()) {
-
-            Join<Sku, ProductOptionValue> skuProductOptionValue = skuRoot.join("productOptionValues");
-            Join<ProductOptionValue, ProductOption> productOptionValueProductOption = skuProductOptionValue.join("productOption");
-
-            predicates.add(criteriaBuilder.equal(skuProductOptionValue.get("attributeValue"), attributeNameValuePair.get(attributeName)));
-            predicates.add(criteriaBuilder.equal(productOptionValueProductOption.get("attributeName"), attributeName));
-        }
-
-        criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
+        List<Predicate> predicates = getPredicates(productId, attributeNameValuePair, criteriaBuilder, skuRoot);
+        criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[]{})));
 
         Query query = em.createQuery(criteriaQuery);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -109,6 +70,16 @@ public class ProductOptionValueDaoImpl implements ProductOptionValueDao {
         criteriaQuery.distinct(true);
         criteriaQuery.from(SkuImpl.class);
 
+        List<Predicate> predicates = getPredicates(productId, attributeNameValuePair, criteriaBuilder, skuRoot);
+        criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
+
+        Query query = em.createQuery(criteriaQuery);
+
+        return query.getResultList();
+    }
+
+    private List<Predicate> getPredicates(Long productId, Map<String, String> attributeNameValuePair,
+                                          CriteriaBuilder criteriaBuilder, Root<SkuImpl> skuRoot) {
         List<Predicate> predicates = new ArrayList<Predicate>();
         Join<Sku, Product> skuProduct = skuRoot.join("product");
         predicates.add(criteriaBuilder.equal(skuProduct.get("id"), productId));
@@ -122,14 +93,7 @@ public class ProductOptionValueDaoImpl implements ProductOptionValueDao {
             predicates.add(criteriaBuilder.equal(productOptionValueProductOption.get("attributeName"), attributeName));
 
         }
-
-        criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
-
-        Query query = em.createQuery(criteriaQuery);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-
-        return query.getResultList();
+        return predicates;
     }
 
 }
