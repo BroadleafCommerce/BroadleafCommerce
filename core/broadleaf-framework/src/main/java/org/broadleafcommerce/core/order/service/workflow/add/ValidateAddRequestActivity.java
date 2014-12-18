@@ -22,7 +22,7 @@ package org.broadleafcommerce.core.order.service.workflow.add;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
-import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.OrderItemService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
+import org.broadleafcommerce.core.order.service.ProductOptionValueService;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
@@ -60,6 +61,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
+
+    @Resource(name = "blProductOptionValueService")
+    protected ProductOptionValueService productOptionValueService;
 
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
@@ -161,8 +165,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         Map<String, String> attributeValuesForSku = new HashMap<String,String>();
         // Verify that required product-option values were set.
 
-        if (product != null && product.getProductOptions() != null && product.getProductOptions().size() > 0) {
-            for (ProductOption productOption : product.getProductOptions()) {
+        if (product != null && product.getProductOptionXrefs() != null && product.getProductOptionXrefs().size() > 0) {
+            for (ProductOptionXref productOptionXref : product.getProductOptionXrefs()) {
+                ProductOption productOption = productOptionXref.getProductOption();
                 if (productOption.getRequired() && (productOption.getProductOptionValidationStrategyType() == null ||
                         productOption.getProductOptionValidationStrategyType().getRank() <= ProductOptionValidationStrategyType.ADD_ITEM.getRank())) {
                     if (StringUtils.isEmpty(attributeValues.get(productOption.getAttributeName()))) {
@@ -189,45 +194,11 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                     
                 }
             }
-            
 
-            if (product !=null && product.getSkus() != null) {
-                for (Sku sku : product.getSkus()) {
-                   if (checkSkuForMatch(sku, attributeValuesForSku)) {
-                       return sku;
-                   }
-                }
-            }
+            Sku sku = productOptionValueService.findSkuForProductOptionsAndValues(product.getId(), attributeValuesForSku);
+
+            return sku;
         }
-
         return null;
-    }
-
-    protected boolean checkSkuForMatch(Sku sku, Map<String,String> attributeValues) {
-        if (attributeValues == null || attributeValues.size() == 0) {
-            return false;
-        }
-
-        for (String attributeName : attributeValues.keySet()) {
-            boolean optionValueMatchFound = false;
-            for (ProductOptionValue productOptionValue : sku.getProductOptionValues()) {
-                if (productOptionValue.getProductOption().getAttributeName().equals(attributeName)) {
-                    if (productOptionValue.getAttributeValue().equals(attributeValues.get(attributeName))) {
-                        optionValueMatchFound = true;
-                        break;
-                    } else {
-                        return false;
-                    }
-                }
-            }
-
-            if (optionValueMatchFound) {
-                continue;
-            } else {
-                return false;
-            }
-        }
-
-        return true;
     }
 }
