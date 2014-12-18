@@ -115,29 +115,33 @@ public class RatingServiceImpl implements RatingService {
     @SuppressWarnings("unchecked")
     public List<ReviewDetail> readReviews(String itemId, RatingType type, int start, int finish, RatingSortType sortBy) {
         RatingSummary summary = this.readRatingSummary(itemId, type);
-        List<ReviewDetail> reviews = summary.getReviews();
-        List<ReviewDetail> reviewsToReturn = new ArrayList<ReviewDetail>();
-        int i = 0;
-        for (ReviewDetail review : reviews) {
-            if (i > finish) {
-                break;
+        if(summary != null) {
+            List<ReviewDetail> reviews = summary.getReviews();
+            List<ReviewDetail> reviewsToReturn = new ArrayList<ReviewDetail>();
+            int i = 0;
+            for (ReviewDetail review : reviews) {
+                if (i > finish) {
+                    break;
+                }
+    
+                if (i >= start) {
+                    reviewsToReturn.add(review);
+                }
+    
+                i++;
             }
-
-            if (i >= start) {
-                reviewsToReturn.add(review);
+    
+            String sortByBeanProperty = "reviewSubmittedDate";
+            if (sortBy == RatingSortType.MOST_HELPFUL) {
+                sortByBeanProperty = "helpfulCount";
             }
-
-            i++;
+    
+            Collections.sort(reviewsToReturn, new BeanComparator(sortByBeanProperty));
+    
+            return reviewsToReturn;
+        } else {
+            return new ArrayList<ReviewDetail>();
         }
-
-        String sortByBeanProperty = "reviewSubmittedDate";
-        if (sortBy == RatingSortType.MOST_HELPFUL) {
-            sortByBeanProperty = "helpfulCount";
-        }
-
-        Collections.sort(reviewsToReturn, new BeanComparator(sortByBeanProperty));
-
-        return reviewsToReturn;
     }
 
     @Override
