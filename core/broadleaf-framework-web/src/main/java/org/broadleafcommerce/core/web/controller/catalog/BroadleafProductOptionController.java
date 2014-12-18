@@ -62,10 +62,13 @@ public class BroadleafProductOptionController extends BroadleafAbstractControlle
     }
 
     public String getSelectableProductOptions(HttpServletRequest request, HttpServletResponse response, Model model,
-                                      Long productId, String attributeName, String attributeValue) throws IOException {
+                                              Map<String, String> productOptionData) throws IOException {
+
+        Long productId = Long.parseLong(productOptionData.get("productId"));
+        productOptionData.remove("productId");
 
         Map<Long, List<Long>> selectableProductOptions = new HashMap<Long, List<Long>>();
-        List<ProductOptionValue> povList = productOptionValueService.findMatchingProductOptionsForValues(productId, attributeName, attributeValue);
+        List<ProductOptionValue> povList = productOptionValueService.findMatchingProductOptionsForValues(productId, productOptionData);
 
         for(ProductOptionValue pov : povList) {
             ArrayList<Long> poList;

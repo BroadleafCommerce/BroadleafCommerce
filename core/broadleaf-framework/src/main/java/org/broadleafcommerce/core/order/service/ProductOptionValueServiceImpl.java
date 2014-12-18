@@ -29,9 +29,8 @@ public class ProductOptionValueServiceImpl implements ProductOptionValueService 
     }
 
     @Override
-    public List<ProductOptionValue> findMatchingProductOptionsForValues(Long productId, String attributeName,
-                                                                        String attributeValue) {
-        return productOptionValueDao.readMatchingProductOptionsForValues(productId, attributeName, attributeValue);
+    public List<ProductOptionValue> findMatchingProductOptionsForValues(Long productId, Map<String, String> attributeNameValuePair) {
+        return productOptionValueDao.readMatchingProductOptionsForValues(productId, attributeNameValuePair);
     }
 
 }

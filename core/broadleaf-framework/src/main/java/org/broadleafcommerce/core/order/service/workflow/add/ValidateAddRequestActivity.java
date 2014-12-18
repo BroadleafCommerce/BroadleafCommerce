@@ -195,9 +195,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                 }
             }
 
-            Sku sku = productOptionValueService.findSkuForProductOptionsAndValues(product.getId(), attributeValuesForSku);
-
-            return sku;
+            if (product != null && product.getSkus() != null) {
+                return productOptionValueService.findSkuForProductOptionsAndValues(product.getId(), attributeValuesForSku);
+            }
         }
         return null;
     }

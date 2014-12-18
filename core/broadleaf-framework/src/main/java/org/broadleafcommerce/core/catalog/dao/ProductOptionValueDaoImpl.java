@@ -99,8 +99,7 @@ public class ProductOptionValueDaoImpl implements ProductOptionValueDao {
     }
 
     @Override
-    public List<ProductOptionValue> readMatchingProductOptionsForValues(Long productId, String attributeName,
-                                                                        String attributeValue) {
+    public List<ProductOptionValue> readMatchingProductOptionsForValues(Long productId, Map<String, String> attributeNameValuePair) {
 
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<ProductOptionValue> criteriaQuery = criteriaBuilder.createQuery(ProductOptionValue.class);
@@ -114,11 +113,15 @@ public class ProductOptionValueDaoImpl implements ProductOptionValueDao {
         Join<Sku, Product> skuProduct = skuRoot.join("product");
         predicates.add(criteriaBuilder.equal(skuProduct.get("id"), productId));
 
-        Join<Sku, ProductOptionValue> skuProductOptionValue = skuRoot.join("productOptionValues");
-        Join<ProductOptionValue, ProductOption> productOptionValueProductOption = skuProductOptionValue.join("productOption");
+        for (String attributeName : attributeNameValuePair.keySet()) {
 
-        predicates.add(criteriaBuilder.equal(skuProductOptionValue.get("attributeValue"), attributeValue));
-        predicates.add(criteriaBuilder.equal(productOptionValueProductOption.get("attributeName"), attributeName));
+            Join<Sku, ProductOptionValue> skuProductOptionValue = skuRoot.join("productOptionValues");
+            Join<ProductOptionValue, ProductOption> productOptionValueProductOption = skuProductOptionValue.join("productOption");
+
+            predicates.add(criteriaBuilder.equal(skuProductOptionValue.get("attributeValue"), attributeNameValuePair.get(attributeName)));
+            predicates.add(criteriaBuilder.equal(productOptionValueProductOption.get("attributeName"), attributeName));
+
+        }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[] {})));
 

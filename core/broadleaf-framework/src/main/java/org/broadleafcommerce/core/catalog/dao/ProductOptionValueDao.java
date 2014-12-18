@@ -14,6 +14,6 @@ public interface ProductOptionValueDao {
 
     public Sku readSkuForProductOptionsAndValues(Long productId, Map<String, String> attributeValuesForSku);
 
-    public List<ProductOptionValue> readMatchingProductOptionsForValues(Long productId, String attributeName,
-                                                                 String attributeValue);
+    public List<ProductOptionValue> readMatchingProductOptionsForValues(Long productId, Map<String, String> attributeNameValuePair);
+
 }

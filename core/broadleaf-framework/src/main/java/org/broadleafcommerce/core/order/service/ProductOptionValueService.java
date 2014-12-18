@@ -13,6 +13,5 @@ public interface ProductOptionValueService {
 
     Sku findSkuForProductOptionsAndValues(Long productId, Map<String, String> attributeValuesForSku);
 
-    List<ProductOptionValue> findMatchingProductOptionsForValues(Long productId, String attributeName,
-                                                                 String attributeValue);
+    List<ProductOptionValue> findMatchingProductOptionsForValues(Long productId, Map<String, String> attributeNameValuePair);
 }
