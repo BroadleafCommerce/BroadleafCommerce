@@ -39,6 +39,7 @@
         <query>SELECT xref.category FROM org.broadleafcommerce.core.catalog.domain.CategoryXref xref
                 WHERE xref.category.id = :parentCategoryId
                 ORDER BY xref.displayOrder
+        </query>
     </named-query>
     
     <named-query name="BC_READ_CATEGORY_BY_URL_KEY">
