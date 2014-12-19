@@ -201,6 +201,8 @@ public class PageServiceUtility {
             }
             if (newValue != null) {
                 page.getPageFields().put(entry.getKey(), newValue);
+            } else {
+                page.getPageFields().remove(entry.getKey());
             }
         }
     }
