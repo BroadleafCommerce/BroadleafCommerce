@@ -38,7 +38,7 @@ public class EmailInfo implements Serializable {
     private String subject;
     private String fromAddress;
     private String messageBody;
-    private String encoding;
+    private String encoding = "UTF8";
     private List<Attachment> attachments = new ArrayList<Attachment>();
 
     private String sendEmailReliableAsync;
