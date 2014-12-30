@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -212,10 +213,9 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = Presentation.FieldOrder.DEFAULT_CATEGORY,
-        group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
-        prominent = true, gridOrder = 2, 
-        requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = 4000,
+        tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+        group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General)
     @AdminPresentationToOneLookup()
     protected Category defaultCategory;
 
@@ -438,7 +438,21 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public Category getDefaultCategory() {
-        return defaultCategory;
+        Category response = null;
+        if (defaultCategory != null) {
+            response = defaultCategory;
+        } else {
+            List<CategoryProductXref> xrefs = getAllParentCategoryXrefs();
+            if (!CollectionUtils.isEmpty(xrefs)) {
+                for (CategoryProductXref xref : xrefs) {
+                    if (xref.getCategory().isActive()) {
+                        response = xref.getCategory();
+                        break;
+                    }
+                }
+            }
+        }
+        return response;
     }
 
     @Override
@@ -918,7 +932,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
             public static final int SHORT_DESCRIPTION = 2000;
             public static final int PRIMARY_MEDIA = 3000;
             public static final int LONG_DESCRIPTION = 4000;
-            public static final int DEFAULT_CATEGORY = 5000;
             public static final int MANUFACTURER = 6000;
             public static final int URL = 7000;
         }

@@ -47,7 +47,12 @@
                 if (generatedPrefix == null || generatedPrefix == "") {
                     generatedPrefix = $targetField.data('prefix');
                 }
-                generatedPrefix += '/';
+
+                if (generatedPrefix) {
+                    generatedPrefix += '/';
+                } else {
+                    generatedPrefix = '/';
+                }
             } else if ($targetField.data('prefix') == "NONE") {
                 generatedPrefix = "";
             } else if ($targetField.data('prefix')) {

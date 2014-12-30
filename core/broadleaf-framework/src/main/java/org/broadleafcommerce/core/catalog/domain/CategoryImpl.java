@@ -246,7 +246,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
     @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 4000,
-            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General)
+            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing)
     @AdminPresentationToOneLookup()
     protected Category defaultParentCategory;
 
@@ -598,7 +598,21 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public Category getDefaultParentCategory() {
-        return defaultParentCategory;
+        Category response = null;
+        if (defaultParentCategory != null) {
+            response = defaultParentCategory;
+        } else {
+            List<CategoryXref> xrefs = getAllParentCategoryXrefs();
+            if (!CollectionUtils.isEmpty(xrefs)) {
+                for (CategoryXref xref : xrefs) {
+                    if (xref.getCategory().isActive()) {
+                        response = xref.getCategory();
+                        break;
+                    }
+                }
+            }
+        }
+        return response;
     }
 
     @Override
