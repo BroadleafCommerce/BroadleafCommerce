@@ -60,7 +60,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
-    @ManyToOne(targetEntity = SkuImpl.class, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
@@ -68,7 +68,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
-    @ManyToOne(targetEntity = ProductImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     @NotFound(action = NotFoundAction.IGNORE)

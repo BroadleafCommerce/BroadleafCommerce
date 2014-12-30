@@ -44,6 +44,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -82,7 +83,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @AdminPresentation(friendlyName = "BundleOrderItemImpl_Base_Sale_Price", order=2, group = "BundleOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
 
-    @ManyToOne(targetEntity = SkuImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinColumn(name = "SKU_ID")
     @NotFound(action = NotFoundAction.IGNORE)
     @AdminPresentation(friendlyName = "BundleOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
@@ -91,7 +92,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
-    @ManyToOne(targetEntity = ProductBundleImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductBundleImpl.class)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID")
     @AdminPresentation(friendlyName = "BundleOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
             group = OrderItemImpl.Presentation.Group.Name.Catalog,

@@ -96,7 +96,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     @NotFound(action = NotFoundAction.IGNORE)
@@ -147,7 +147,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Index(name="ORDERITEM_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;
 
-    @ManyToOne(targetEntity = GiftWrapOrderItemImpl.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = GiftWrapOrderItemImpl.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     @Index(name="ORDERITEM_GIFT_INDEX", columnNames={"GIFT_WRAP_ITEM_ID"})
