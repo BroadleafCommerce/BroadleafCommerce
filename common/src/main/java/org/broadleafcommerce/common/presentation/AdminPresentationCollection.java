@@ -91,9 +91,11 @@ public @interface AdminPresentationCollection {
     /**
      * <p>Optional - only required if you want to lookup an item
      * for this association, rather than creating a new instance of the
-     * target item. Note - if the type is changed to LOOKUP, this has
-     * the side effect of causing the only the association to be deleted
-     * during a remove, leaving the target lookup entity intact.</p>
+     * target item. Note - if the type is changed to LOOKUP, and you
+     * do not wish for the lookup entity to be deleted during an admin
+     * collection item removal operation, you should specify a removeType
+     * of OperationType.NONDESTRUCTIVEREMOVE in {@link #operationTypes()}
+     * param for this annotation.</p>
      * 
      * <p>If the type is set to LOOKUP_FOR_UPDATE, the system will trigger
      * an update call on the target entity instead of an add. This is typically
