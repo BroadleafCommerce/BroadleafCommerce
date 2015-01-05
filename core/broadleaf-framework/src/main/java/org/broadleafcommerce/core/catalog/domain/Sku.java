@@ -649,6 +649,18 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
     public void setTaxCode(String taxCode);
 
     /**
+     * Gets the Universal Product Code (UPC)
+     * @return
+     */
+    public String getUpc();
+
+    /**
+     * Sets the Universal Product Code (UPC)
+     * @param upc
+     */
+    public void setUpc(String upc);
+
+    /**
      * Intended to hold any unique identifier not tied to the Broadleaf Database Sequence Identifier.
      * For example, many implementations may integrate or import/export
      * data from other systems that manage their own unique identifiers.

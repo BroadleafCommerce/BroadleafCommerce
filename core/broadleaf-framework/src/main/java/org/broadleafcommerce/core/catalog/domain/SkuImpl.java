@@ -36,7 +36,15 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.presentation.*;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
+import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
+import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.OptionFilterParam;
+import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -50,20 +58,52 @@ import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.springframework.util.ClassUtils;
 
-import javax.persistence.CascadeType;
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.MapKeyClass;
+import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -144,6 +184,13 @@ public class SkuImpl implements Sku {
         group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced,
         excluded = true)
     protected String displayTemplate;
+
+    @Column(name = "UPC")
+    @Index(name = "SKU_UPC_INDEX", columnNames = { "UPC" })
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_UPC", order = 6000,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+    protected String upc;
 
     @Column(name = "SALE_PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Sale_Price", order = 2000, 
@@ -1088,6 +1135,16 @@ public class SkuImpl implements Sku {
     }
 
     @Override
+    public String getUpc() {
+        return upc;
+    }
+
+    @Override
+    public void setUpc(String upc) {
+        this.upc = upc;
+    }
+
+    @Override
     public <G extends Sku> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
@@ -1113,6 +1170,7 @@ public class SkuImpl implements Sku {
         cloned.setFulfillmentType(getFulfillmentType());
         cloned.setIsMachineSortable(isMachineSortable);
         cloned.setLongDescription(longDescription);
+        cloned.setUpc(upc);
         if (product != null) {
             cloned.setDefaultProduct(product.createOrRetrieveCopyInstance(context).getClone());
         }

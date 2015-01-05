@@ -40,6 +40,13 @@ public interface SkuDao {
     public Sku readSkuById(Long skuId);
 
     /**
+     * Queries for a {@code Sku} instance by its Universal Product Code (UPC).
+     * @param upc
+     * @return
+     */
+    public Sku readSkuByUpc(String upc);
+
+    /**
      * Retrieve a {@link Sku} instance by its external id
      *
      * @param externalId the external id of the sku

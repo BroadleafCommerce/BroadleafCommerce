@@ -107,6 +107,18 @@ public class SkuDaoImpl implements SkuDao {
     }
 
     @Override
+    public Sku readSkuByUpc(String upc) {
+        TypedQuery<Sku> query = new TypedQueryBuilder<Sku>(Sku.class, "sku")
+                .addRestriction("sku.upc", "=", upc)
+                .toQuery(em);
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Override
     public Sku readFirstSku() {
         TypedQuery<Sku> query = em.createNamedQuery("BC_READ_FIRST_SKU", Sku.class);
         return query.getSingleResult();
