@@ -115,7 +115,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         Long orderId = Long.parseLong(responseDTO.getOrderId());
         Order order = orderService.findOrderById(orderId);
         
-        if (!OrderStatus.IN_PROCESS.equals(order.getStatus()) && !OrderStatus.CSR_OWNED.equals(order.getStatus())) {
+        if (!OrderStatus.IN_PROCESS.equals(order.getStatus()) || !OrderStatus.CSR_OWNED.equals(order.getStatus())) {
             throw new IllegalArgumentException("Cannot apply another payment to an Order that is not IN_PROCESS or CSR_OWNED");
         }
         
