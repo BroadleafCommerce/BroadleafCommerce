@@ -30,6 +30,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.BiMap;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -103,8 +104,13 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                         List<ProductsByCategoryWithOrder> categoryChildren = readProductIdsByCategory(categoryId);
 
                         // Cache the display order bigdecimals
+                        BigDecimal displayOrder = new BigDecimal("1.00000");
                         for (ProductsByCategoryWithOrder child : categoryChildren) {
-                            catalogStructure.getDisplayOrdersByCategoryProduct().put(categoryId + "-" + child.getProductId(), child.getDisplayOrder());
+                            catalogStructure.getDisplayOrdersByCategoryProduct().put(categoryId + "-" + child.getProductId(), child.getDisplayOrder()==null?displayOrder:child.getDisplayOrder());
+                            if (child.getDisplayOrder() != null) {
+                                displayOrder = child.displayOrder;
+                            }
+                            displayOrder = displayOrder.add(new BigDecimal("1.00000"));
                         }
 
                         //filter the list for sandbox values
