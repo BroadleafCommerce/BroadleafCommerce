@@ -196,6 +196,14 @@ public interface CatalogService {
     public Sku findSkuByExternalId(String externalId);
 
     /**
+     * Method to look up a Sku by the Universal Product Code (UPC).
+     * 
+     * @param upc
+     * @return
+     */
+    public Sku findSkuByUpc(String upc);
+
+    /**
      * Get a hierarchical map of all child categories keyed on the url
      *
      * @param categoryId the parent category to which the children belong

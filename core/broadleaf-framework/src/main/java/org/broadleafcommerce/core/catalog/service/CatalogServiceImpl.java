@@ -251,6 +251,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public Sku findSkuByUpc(String upc) {
+        return skuDao.readSkuByUpc(upc);
+    }
+
+    @Override
     @Transactional("blTransactionManager")
     public Sku saveSku(Sku sku) {
         return skuDao.save(sku);
