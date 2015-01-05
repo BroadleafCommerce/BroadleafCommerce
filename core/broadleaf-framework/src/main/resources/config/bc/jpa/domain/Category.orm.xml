@@ -38,7 +38,7 @@
     <named-query name="BC_READ_ALL_SUBCATEGORIES">
         <query>SELECT xref.subCategory FROM org.broadleafcommerce.core.catalog.domain.CategoryXref xref
                 WHERE xref.category.id = :parentCategoryId
-                ORDER BY xref.displayOrder
+                ORDER BY COALESCE (xref.displayOrder,999999)
         </query>
     </named-query>
     
@@ -57,7 +57,7 @@
                 AND (xref.subCategory.archiveStatus.archived IS NULL OR xref.subCategory.archiveStatus.archived = 'N')
                 AND (xref.subCategory.activeStartDate &lt; :currentDate)
                 AND (xref.subCategory.activeEndDate IS NULL OR xref.subCategory.activeEndDate &gt; :currentDate)
-                ORDER BY xref.displayOrder
+                ORDER BY COALESCE (xref.displayOrder,999999)
         </query>
     </named-query>
     
