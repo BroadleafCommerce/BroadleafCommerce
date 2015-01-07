@@ -30,12 +30,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.GenericFilterBean;
 
-import javax.annotation.Resource;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,17 +37,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * This class provides a filter to be used with External Security Providers (e.g. LDAP).  When authentication is performed against
  * another system it is important to provision an admin user in Broadleaf and set up the appropriate roles.
  * This class checks to see if a user exists and if not, creates one.  It also replaces all roles associated with a user with roles that
  * match their Authentication credentials.  DO NOT USE THIS FILTER UNLESS YOU ARE AUTHENTICATING AGAINST AN EXTERNAL
  * SOURCE SUCH AS LDAP.
+ * 
+ * @deprecated NO LONGER REQUIRED AND SHOULD NOT BE USED. SEE BroadleafAdminLdapUserDetailsMapper.
  *
  * <p/>
  * User: Kelly Tisdell
  * Date: 6/19/12
  */
+@Deprecated
 public class AdminExternalLoginStateFilter extends GenericFilterBean {
     
     protected static final String BLC_ADMIN_PROVISION_USER_CHECK = "BLC_ADMIN_PROVISION_USER_CHECK";

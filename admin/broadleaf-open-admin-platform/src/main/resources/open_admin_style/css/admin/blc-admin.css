@@ -1597,7 +1597,7 @@ form.uploadFileForm {
 }
 
 form.uploadFileForm.entityListWithUpload {
-	display: none;
+	float: right;
 }
 
 div.imagePreviewContainer {

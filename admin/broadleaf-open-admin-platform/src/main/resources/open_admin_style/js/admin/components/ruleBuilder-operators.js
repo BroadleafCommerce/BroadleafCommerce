@@ -73,6 +73,7 @@ var blcOperators_Text_List = [
     {label: "is present", name: "NOT_NULL", fieldType: "NONE"},
     {label: "is blank", name: "IS_NULL", fieldType: "NONE"},
     {label: "contains", name: "CONTAINS", fieldType: "TEXT"},
+    {label: "not contains", name: "NOT_CONTAINS", fieldType: "TEXT"},
     {label: "is count greater than", name: "COUNT_GREATER_THAN", fieldType: "TEXT"},
     {label: "is count greater than or equal to", name: "COUNT_GREATER_OR_EQUAL", fieldType: "TEXT"},
     {label: "is count less than", name: "COUNT_LESS_THAN", fieldType: "TEXT"},
