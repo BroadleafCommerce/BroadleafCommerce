@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
 
 /**
@@ -315,7 +315,7 @@ public @interface AdminPresentation {
      *
      * <p>Default values on <code>Boolean</code> require {@code "true"} or {@code "false"}.</p>
      * <p>Default values on <code>Date</code> support the string {@code "today"} and strings with the
-     * format of {@code "2020.12.11 11:11:11"}.</p>
+     * format of <b>{@code yyyy.MM.dd HH:mm:ss}</b> (e.g. {@code "2020.02.05 22:11:05"}).</p>
      *
      * @return the defaultValue set for the field.
      */

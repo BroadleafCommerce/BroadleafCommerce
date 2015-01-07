@@ -38,7 +38,6 @@ import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -61,6 +60,7 @@ import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityS
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
@@ -125,6 +125,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     
     @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService rowLevelSecurityService;
+    
+    @Resource
+    protected DataFormatProvider dataFormatProvider;
 
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN 
@@ -604,7 +607,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 return null;
             }
         } else if (fieldType.equals(SupportedFieldType.DATE.toString())) {
-            DateFormat format = FormatUtil.getDateFormat();
+            DateFormat format = dataFormatProvider.getSimpleDateFormatter();
             if (defaultValue.toLowerCase().contains("today")) {
                 defaultValue = format.format(new Date());
             } else {
