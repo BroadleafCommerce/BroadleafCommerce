@@ -513,6 +513,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setCurrencyCodeField(annot.currencyCodeField());
             override.setRuleIdentifier(annot.ruleIdentifier());
             override.setTranslatable(annot.translatable());
+            override.setDefaultValue(annot.defaultValue());
 
             if (annot.validationConfigurations().length != 0) {
                 processValidationAnnotations(annot.validationConfigurations(), override);
@@ -752,6 +753,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getIsDerived() != null) {
             metadata.setDerived(basicFieldMetadata.getIsDerived());
+        }
+        if (basicFieldMetadata.getDefaultValue() != null) {
+            metadata.setDefaultValue(basicFieldMetadata.getDefaultValue());
         }
 
         attributes.put(field.getName(), metadata);
