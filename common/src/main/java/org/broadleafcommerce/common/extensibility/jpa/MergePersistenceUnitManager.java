@@ -272,7 +272,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                             + "\ncontainer which can trigger early class loading. If the problem persists, ensure that"
                             + "\nthere are no bean references to your entity class anywhere else in your Spring applicationContext"
                             + "\nand consult the documentation for your servlet container to determine if classes are loaded"
-                            + "\nprior to the Spring context initialization.";
+                            + "\nprior to the Spring context initialization. Finally, ensure that Session Persistence is"
+                            + "\nalso disabled by your Servlet Container. To do this in Tomcat, add <Manager pathname=\"\" />"
+                            + "\ninside of the <Context> element in context.xml in your app's META-INF folder or your server's conf folder";
                     LOG.error(message);
                     throw new IllegalStateException(message);
                 }

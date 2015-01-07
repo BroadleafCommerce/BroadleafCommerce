@@ -179,5 +179,11 @@ $(document).ready(function() {
     $('body').on('change', '#assetUploadFile', function() {
     	// TODO: Show a div with "loading" message
     	$('#assetUploadForm').submit();
-    });       
+    });
+    
+    // Workaround for upload button on Internet Explorer < 11
+    if(window.navigator.userAgent.indexOf('MSIE ') > 0) {
+    	$('button.upload-asset').addClass('hidden');
+    	$('#assetUploadForm').removeClass('hidden');
+    }
 });
