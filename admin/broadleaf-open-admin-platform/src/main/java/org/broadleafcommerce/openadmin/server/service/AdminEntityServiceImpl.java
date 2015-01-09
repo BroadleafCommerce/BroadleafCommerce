@@ -762,14 +762,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
     public PersistenceResponse remove(PersistencePackageRequest request, boolean transactional) throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
-        try {
-            if (transactional) {
-                return service.remove(pkg);
-            } else {
-                return service.nonTransactionalRemove(pkg);
-            }
-        } catch (ValidationException e) {
-            return new PersistenceResponse().withEntity(e.getEntity());
+        if (transactional) {
+            return service.remove(pkg);
+        } else {
+            return service.nonTransactionalRemove(pkg);
         }
     }
 
