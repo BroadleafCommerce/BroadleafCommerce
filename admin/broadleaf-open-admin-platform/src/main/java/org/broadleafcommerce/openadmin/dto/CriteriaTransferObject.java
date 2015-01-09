@@ -42,6 +42,7 @@ public class CriteriaTransferObject {
     private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
 
     private List<FilterMapping> additionalFilterMappings = new ArrayList<FilterMapping>();
+    private boolean applyAdditionalFilterMappingsToCount = false;
     
     /**
      * The index of records in the database for which a fetch will start.
@@ -134,6 +135,12 @@ public class CriteriaTransferObject {
     public void setAdditionalFilterMappings(List<FilterMapping> additionalFilterMappings) {
         this.additionalFilterMappings = additionalFilterMappings;
     }
-    
-    
+
+    public boolean isApplyAdditionalFilterMappingsToCount() {
+        return applyAdditionalFilterMappingsToCount;
+    }
+
+    public void setApplyAdditionalFilterMappingsToCount(boolean applyAdditionalFilterMappingsToCount) {
+        this.applyAdditionalFilterMappingsToCount = applyAdditionalFilterMappingsToCount;
+    }
 }

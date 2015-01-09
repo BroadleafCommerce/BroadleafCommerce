@@ -270,7 +270,9 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
                     Predicate predicate = filterMapping.getRestriction().buildRestriction(criteriaBuilder, original,
                             ceilingEntity, filterMapping.getFullPropertyName(), explicitPath, directValues, shouldConvert,
                             criteria, restrictions);
-                    restrictions.add(predicate);
+                    if (predicate != null) {
+                        restrictions.add(predicate);
+                    }
                 }
             }
 

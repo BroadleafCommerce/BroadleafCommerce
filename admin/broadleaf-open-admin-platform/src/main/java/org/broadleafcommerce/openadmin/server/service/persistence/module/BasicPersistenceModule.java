@@ -1112,15 +1112,20 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
             List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
                     .getFetchTypeFullyQualifiedClassname(), mergedProperties);
-            
+            List<FilterMapping> standardFilterMappings = new ArrayList<FilterMapping>(filterMappings);
             if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
-                filterMappings.addAll(cto.getAdditionalFilterMappings());
+                standardFilterMappings.addAll(cto.getAdditionalFilterMappings());
             }
 
-            List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
-            totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
-            payload = getRecords(mergedProperties, records, null, null);
+            List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), standardFilterMappings, cto.getFirstResult(), cto.getMaxResults());
 
+            List<FilterMapping> countFilterMappings = new ArrayList<FilterMapping>(filterMappings);
+            if (cto.isApplyAdditionalFilterMappingsToCount() && CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
+                countFilterMappings.addAll(cto.getAdditionalFilterMappings());
+            }
+            totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), countFilterMappings);
+
+            payload = getRecords(mergedProperties, records, null, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
