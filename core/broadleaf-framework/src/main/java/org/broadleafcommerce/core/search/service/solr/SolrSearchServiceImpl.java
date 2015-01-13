@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -136,8 +137,18 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             if (!tempDir.exists()) {
                 tempDir.mkdirs();
             }
-
+            
             solrServer = tempDir.getAbsolutePath();
+            
+            // create the 'lib' directory with a placeholder file that has to exist in Solr's home directory to avoid a
+            // warning log message
+            String libDir = FilenameUtils.concat(solrServer, "lib");
+            LOG.debug("Creating Solr home lib directory: " + libDir);
+            new File(libDir).mkdir();
+            
+            String placeholder = FilenameUtils.concat(libDir, "solrlib_placeholder.deleteme");
+            LOG.debug("Creating Solr lib placeholder file: " + placeholder);
+            new File(placeholder).createNewFile();
         }
         
         File solrXml = new File(new File(solrServer), "solr.xml");
