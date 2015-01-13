@@ -81,6 +81,20 @@ public class BroadleafRequestContext {
         return false;
     }
 
+    public static BroadleafCurrency getCurrency() {
+        BroadleafCurrency returnCurrency = null;
+        if (getBroadleafRequestContext() != null) {
+            returnCurrency = getBroadleafRequestContext().getBroadleafCurrency();
+        }
+
+        if (returnCurrency == null) {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("BroadleafRequestContext.getCurrency() called but returned null");
+            }
+        }
+        return returnCurrency;
+    }
+
     protected HttpServletRequest request;
     protected HttpServletResponse response;
     protected WebRequest webRequest;

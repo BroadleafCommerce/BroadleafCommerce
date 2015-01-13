@@ -49,6 +49,7 @@ import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl.Presentation;
 import org.broadleafcommerce.core.catalog.service.dynamic.DefaultDynamicSkuPricingInvocationHandler;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
@@ -413,12 +414,16 @@ public class SkuImpl implements Sku {
      * Note that this field is not the target of the currencyCodeField attribute on either retailPrice or salePrice.
      * This is because SKUs are special in that we want to return the currency on this SKU if there is one, falling back
      * to the defaultSku's currency if possible.
+     * 
+     * Normally null and hidden.  Use Meta-Data overrides to display in the admin.
+     * @see Sku#getCurrency() for further cautions about using this field.
      */
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "SkuImpl_Currency", order = 3000,
+            visibility = VisibilityEnum.HIDDEN_ALL,
             tab = ProductImpl.Presentation.Tab.Name.Advanced, tabOrder = ProductImpl.Presentation.Tab.Order.Advanced,
-        group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
+            group = ProductImpl.Presentation.Group.Name.Advanced, groupOrder = ProductImpl.Presentation.Group.Order.Advanced)
     @AdminPresentationToOneLookup(lookupType = LookupType.DROPDOWN, lookupDisplayProperty = "friendlyName")
     protected BroadleafCurrency currency;
 
@@ -579,6 +584,33 @@ public class SkuImpl implements Sku {
         }
         
         return returnPrice;
+    }
+
+    public DynamicSkuPrices getPriceData() {
+        if (SkuPricingConsiderationContext.hasDynamicPricing()) {
+            if (dynamicPrices == null) {
+                DefaultDynamicSkuPricingInvocationHandler handler = new DefaultDynamicSkuPricingInvocationHandler(this);
+                Sku proxy = (Sku) Proxy.newProxyInstance(getClass().getClassLoader(), ClassUtils.getAllInterfacesForClass(getClass()), handler);
+
+                dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(proxy, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+            }
+            return dynamicPrices;
+        } else {
+            DynamicSkuPrices dsp = new DynamicSkuPrices();
+            BroadleafCurrency tmpCurrency;
+            if (currency != null) {
+                tmpCurrency = currency;
+            } else {
+                tmpCurrency = BroadleafRequestContext.getCurrency();
+            }
+            if (retailPrice != null) {
+                dsp.setRetailPrice(new Money(retailPrice, tmpCurrency));
+            }
+            if (salePrice != null) {
+                dsp.setSalePrice(new Money(salePrice, tmpCurrency));
+            }
+            return dsp;
+        }
     }
 
     @Override
