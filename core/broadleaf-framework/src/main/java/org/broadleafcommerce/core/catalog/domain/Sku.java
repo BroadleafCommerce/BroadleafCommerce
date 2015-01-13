@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -623,11 +625,14 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
     public void setCurrency(BroadleafCurrency currency);
 
     /**
-     * Returns the currency for this sku if there is one set. If there is not, it will return the currency for the
-     * default sku if this is not the default sku. Note that it is possible for this method to return null.
-     * 
      * <b>Note: When using dynamic pricing, this method is unreliable and should not be called outside of the 
-     * Broadleaf admin</b>
+     * Broadleaf admin</b>  Instead, you should rely on the {@link BroadleafRequestContext#getBroadleafCurrency()} 
+     * instead of storing at the SKU level.
+     * 
+     * As such, for supported, enterprise installations, this method should always return null.
+     * 
+     * This method was not deprecated as it may have some use in non-standard Broadleaf installations but
+     * using its use is not suggested for most implementations. 
      * 
      * @return the currency for this sku
      */
@@ -674,5 +679,14 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
      * @param externalId
      */
     public void setExternalId(String externalId);
+
+    /**
+     * If a DynamicPricingService is being used, this method will return the dynamic Sku prices.
+     * Otherwise, it will return an instance of DynamicSkuPrices with the retail and sale price
+     * from the underlying record.
+     * 
+     * @return
+     */
+    public DynamicSkuPrices getPriceData();
 
 }
