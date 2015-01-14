@@ -50,7 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminCsrfFilter extends CsrfFilter {
     
     @Resource(name = "blAdminAuthenticationFailureHandler")
-    private AuthenticationFailureHandler failureHandler;
+    protected AuthenticationFailureHandler failureHandler;
     
     public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
         try {
