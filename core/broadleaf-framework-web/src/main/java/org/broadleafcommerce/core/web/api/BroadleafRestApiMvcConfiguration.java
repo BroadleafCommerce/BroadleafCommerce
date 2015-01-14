@@ -47,12 +47,25 @@ public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
     
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.add(new MappingJackson2HttpMessageConverter(getObjectMapper(false)));
-        converters.add(new MappingJackson2XmlHttpMessageConverter(getObjectMapper(true)));
+        converters.add(getJsonConverter());
+        converters.add(getXmlConverter());
+    }
+    
+    protected HttpMessageConverter<?> getJsonConverter() { 
+        return new MappingJackson2HttpMessageConverter(getObjectMapper(false));
+    }
+    
+    /**
+     * Subclasses might override this method to use JAXB natively for XML serialization by
+     * {@code return new Jaxb2RootElementHttpMessageConverter()}
+     * @see {@link #getObjectMapper(boolean)}
+     */
+    protected HttpMessageConverter<?> getXmlConverter() {
+        return new MappingJackson2XmlHttpMessageConverter(getObjectMapper(true));
     }
     
     protected ObjectMapper getObjectMapper(boolean useXml) {
-        Jackson2ObjectMapperBuilder builder = getBuilder();
+        Jackson2ObjectMapperBuilder builder = getObjectMapperBuilder();
         TypeFactory factory = TypeFactory.defaultInstance().withModifier(typeModifier);
         if (useXml) {
             return builder.createXmlMapper(true).build().setTypeFactory(factory);
@@ -61,7 +74,7 @@ public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
         }
     }
     
-    protected Jackson2ObjectMapperBuilder getBuilder() {
+    protected Jackson2ObjectMapperBuilder getObjectMapperBuilder() {
         return new Jackson2ObjectMapperBuilder()
             // Ensure JAXB annotations get picked up
             .findModulesViaServiceLoader(true)

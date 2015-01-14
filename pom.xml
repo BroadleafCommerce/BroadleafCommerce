@@ -676,13 +676,13 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <version>2.3.3</version>
+                <version>2.5.0</version>
             </dependency>
-            <!-- Add in Jackson's XML converter along with a better  -->
+            <!-- Add in Jackson's XML converter along with a faster serializer (Woodstox) -->
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
-                <version>2.3.3</version>
+                <version>2.5.0</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
@@ -838,6 +838,14 @@
                 <version>4.7.2</version>
                 <type>jar</type>
                 <scope>compile</scope>
+                <exclusions>
+                    <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
+                        Jackson dependencies -->
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>wstx-asl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>solr-core</artifactId>
@@ -853,6 +861,31 @@
                     <exclusion>
                         <groupId>javax.servlet.jsp</groupId>
                         <artifactId>jsp-api</artifactId>
+                    </exclusion>
+                    <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
+                        Jackson dependencies -->
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>wstx-asl</artifactId>
+                    </exclusion>
+                    <!-- The jdk.tools transitive dependency uses system scope -->
+                        <!-- which has to be resolved in a platform agnostic way -->
+                        <!-- in order to have a clean compile in Eclipse. That -->
+                        <!-- turned out to be surprisingly difficult to achieve. -->
+        
+                        <!-- From the dependency tree below we can see that -->
+                        <!-- jdk.tools is pulled in by hadoop-annotations -->
+                        <!-- and since this is a normal JDK system jar we can avoid the -->
+                        <!-- problem by excluding the jdk.tools dependency. -->
+        
+                        <!-- Relevant output from mvn dependency:tree follows -->
+                        <!-- +- org.broadleafcommerce:broadleaf-framework:jar:{version}:compile -->
+                        <!--    +- org.apache.solr:solr-core:jar:4.4.0:compile -->
+                        <!--        +- org.apache.hadoop:hadoop-annotations:jar:2.0.5-alpha:compile -->
+                        <!--            \- jdk.tools:jdk.tools:jar:1.6:system -->
+                    <exclusion>
+                        <groupId>jdk.tools</groupId>
+                        <artifactId>jdk.tools</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
