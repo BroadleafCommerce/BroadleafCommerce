@@ -34,6 +34,8 @@ import java.io.Reader;
  */
 public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCommandExtractor {
 
+    private static final long serialVersionUID = 1L;
+
     private static final SupportLogger LOGGER = SupportLogManager.getLogger("UserOverride", DemoSqlServerSingleLineSqlCommandExtractor.class);
 
     private static final String BOOLEANTRUEMATCH = "(?i)(true)";
@@ -49,7 +51,7 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
     public String[] extractCommands(Reader reader) {
         if (!alreadyRun) {
             alreadyRun = true;
-            LOGGER.support("Converting hibernate.hbm2ddl.import_files sql statements for compatibility with Oracle");
+            LOGGER.support("Converting hibernate.hbm2ddl.import_files sql statements for compatibility with SQL Server");
         }
 
         String[] statements = super.extractCommands(reader);
