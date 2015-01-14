@@ -26,25 +26,15 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorMessageWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorWrapper;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceAware;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import javax.annotation.Resource;
 
 /**
  * This is a generic JAX-RS ExceptionMapper.  This can be registered as a Spring Bean to catch exceptions, log them, 
@@ -56,25 +46,19 @@ import javax.ws.rs.ext.Provider;
  *
  */
 //This class MUST be a singleton Spring Bean
-@Provider
 @Component("blRestExceptionMapper")
-@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class RestExceptionMapper implements ExceptionMapper<Throwable>, MessageSourceAware, ApplicationContextAware {
+public class RestExceptionMapper implements ApplicationContextAware {
 
     private static final Log LOG = LogFactory.getLog(RestExceptionMapper.class);
 
     protected String messageKeyPrefix = BroadleafWebServicesException.class.getName() + '.';
 
-    @Context
-    protected HttpHeaders headers;
-
+    @Resource
     protected MessageSource messageSource;
 
     protected ApplicationContext context;
 
-    @Override
-    public Response toResponse(Throwable t) {
-        MediaType mediaType = resolveResponseMediaType(t);
+    public Object toResponse(Throwable t) {
         ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
         Locale locale = null;
         BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
@@ -112,14 +96,6 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>, MessageS
                 errorWrapper.getMessages().add(errorMessageWrapper);
             }
 
-        } else if (t instanceof WebApplicationException) {
-            //We will trust that if someone through a WebApplicationException, then they already created the 
-            //response properly.
-            if (t.getCause() != null) {
-                LOG.error("An error occured invoking a REST service.", t.getCause());
-            }
-            WebApplicationException webAppException = (WebApplicationException) t;
-            return webAppException.getResponse();
         } else {
             LOG.error("An error occured invoking a REST service", t);
             if (locale == null) {
@@ -133,12 +109,7 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>, MessageS
             errorWrapper.getMessages().add(errorMessageWrapper);
         }
 
-        return Response.status(resolveResponseStatusCode(t, errorWrapper)).type(mediaType).entity(errorWrapper).build();
-    }
-
-    @Override
-    public void setMessageSource(MessageSource messageSource) {
-        this.messageSource = messageSource;
+        return null;
     }
 
     @Override
@@ -168,23 +139,6 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>, MessageS
             return 500;
         }
         return error.getHttpStatusCode();
-    }
-
-    protected MediaType resolveResponseMediaType(Throwable t) {
-        if (headers.getAcceptableMediaTypes() != null && !headers.getAcceptableMediaTypes().isEmpty()) {
-            List<MediaType> types = headers.getAcceptableMediaTypes();
-            for (MediaType type : types) {
-                if (MediaType.APPLICATION_XML_TYPE.equals(type) || MediaType.APPLICATION_JSON_TYPE.equals(type)) {
-                    return type;
-                }
-            }
-        }
-
-        if (MediaType.APPLICATION_XML_TYPE.equals(headers.getMediaType())) {
-            return MediaType.APPLICATION_XML_TYPE;
-        }
-
-        return MediaType.APPLICATION_JSON_TYPE;
     }
 
     protected String resolveClientMessageKey(String key) {

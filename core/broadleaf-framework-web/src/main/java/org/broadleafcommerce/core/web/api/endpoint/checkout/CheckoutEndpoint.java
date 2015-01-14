@@ -33,12 +33,13 @@ import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.OrderPaymentWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.springframework.http.HttpStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This endpoint depends on JAX-RS to provide checkout services.  It should be extended by components that actually wish 
@@ -75,7 +76,7 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
             return paymentWrappers;
         }
 
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
     }
 
@@ -94,7 +95,7 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
             }
         }
 
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
@@ -121,7 +122,7 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
             }
         }
 
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
     }
 
@@ -135,12 +136,12 @@ public abstract class CheckoutEndpoint extends BaseEndpoint {
                 wrapper.wrapDetails(order, request);
                 return wrapper;
             } catch (CheckoutException e) {
-                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+                throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .addMessage(BroadleafWebServicesException.CHECKOUT_PROCESSING_ERROR);
             }
         }
 
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
