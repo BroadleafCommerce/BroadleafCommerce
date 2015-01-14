@@ -120,6 +120,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         BroadleafRequestContext.setBroadleafRequestContext(brc);
 
         Locale locale = localeResolver.resolveLocale(request);
+        brc.setLocale(locale);
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
         // Assumes BroadleafProcess
@@ -160,7 +161,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             previewSandBoxContext.setPreviewMode(true);
             SandBoxContext.setSandBoxContext(previewSandBoxContext);
         }
-        brc.setLocale(locale);
         brc.setBroadleafCurrency(currency);
         brc.setSandBox(currentSandbox);
         brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
