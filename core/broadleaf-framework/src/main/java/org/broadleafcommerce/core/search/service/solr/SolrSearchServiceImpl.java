@@ -360,10 +360,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Build the basic query
+        // Solr queries with a 'start' parameter cannot be a negative number
+        int start = (searchCriteria.getPage() <= 0) ? 0 : (searchCriteria.getPage() - 1);
         SolrQuery solrQuery = new SolrQuery()
                 .setQuery(qualifiedSolrQuery)
                 .setRows(searchCriteria.getPageSize())
-                .setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
+                .setStart((start) * searchCriteria.getPageSize());
         if (useSku) {
             solrQuery.setFields(shs.getSkuIdFieldName());
         } else {
