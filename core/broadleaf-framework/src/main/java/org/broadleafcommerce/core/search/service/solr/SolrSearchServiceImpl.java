@@ -326,6 +326,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     /**
      * @deprecated in favor of the other findProducts() method
      */
+    @Deprecated
     protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
             ProductSearchCriteria searchCriteria, String defaultSort) throws ServiceException {
         return findProducts(qualifiedSolrQuery, facets, searchCriteria, defaultSort, null);
@@ -346,11 +347,13 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Build the basic query
+        // Solr queries with a 'start' parameter cannot be a negative number
+        int start = (searchCriteria.getPage() <= 0) ? 0 : (searchCriteria.getPage() - 1);
         SolrQuery solrQuery = new SolrQuery()
                 .setQuery(qualifiedSolrQuery)
                 .setFields(shs.getProductIdFieldName())
                 .setRows(searchCriteria.getPageSize())
-                .setStart((searchCriteria.getPage() - 1) * searchCriteria.getPageSize());
+                .setStart((start) * searchCriteria.getPageSize());
         if (filterQueries != null) {
             solrQuery.setFilterQueries(filterQueries);
         }
@@ -622,6 +625,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     protected void sortFacetResults(Map<String, SearchFacetDTO> namedFacetMap) {
         for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
             Collections.sort(entry.getValue().getFacetValues(), new Comparator<SearchFacetResultDTO>() {
+                @Override
                 public int compare(SearchFacetResultDTO o1, SearchFacetResultDTO o2) {
                     if (o1.getValue() != null && o2.getValue() != null) {
                         return o1.getValue().compareTo(o2.getValue());
@@ -667,6 +671,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // We have to sort the products list by the order of the productIds list to maintain sortability in the UI
         if (products != null) {
             Collections.sort(products, new Comparator<Product>() {
+                @Override
                 public int compare(Product o1, Product o2) {
                     Long o1id = shs.getProductId(o1.getId());
                     Long o2id = shs.getProductId(o2.getId());
@@ -802,6 +807,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             final ProductSearchCriteria searchCriteria) {
         return BLCMapUtils.keyedMap(facets, new TypedClosure<String, SearchFacetDTO>() {
 
+            @Override
             public String getKey(SearchFacetDTO facet) {
                 return getSolrFieldKey(facet.getFacet().getField(), searchCriteria);
             }
