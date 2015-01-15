@@ -123,6 +123,9 @@ public class Entity implements Serializable {
     }
     
     public Property findProperty(String name) {
+        if (properties == null) {
+            return null;
+        }
         Arrays.sort(properties, new Comparator<Property>() {
             @Override
             public int compare(Property o1, Property o2) {
