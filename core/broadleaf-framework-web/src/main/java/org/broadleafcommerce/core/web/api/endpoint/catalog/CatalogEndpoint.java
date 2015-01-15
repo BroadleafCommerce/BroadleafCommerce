@@ -164,6 +164,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
 
         List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
         SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        searchCriteria.setPageSize(pageSize);
+        searchCriteria.setPage(page);
         try {
             SearchResult result = null;
             result = getSearchService().findSearchResultsByCategoryAndQuery(category, q, searchCriteria);
@@ -205,6 +207,8 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
 
         List<SearchFacetDTO> availableFacets = getSearchService().getSearchFacets();
         SearchCriteria searchCriteria = facetService.buildSearchCriteria(request, availableFacets);
+        searchCriteria.setPageSize(pageSize);
+        searchCriteria.setPage(page);
         try {
             SearchResult result = null;
             result = getSearchService().findSearchResultsByQuery(q, searchCriteria);
