@@ -19,20 +19,22 @@
  */
 package org.broadleafcommerce.core.web.api;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-
-import java.util.List;
-
-import javax.annotation.Resource;
 
 /**
  * Default Broadleaf-recommended configuration for REST APIs. Recommended use is to extend this class and annotate
@@ -51,6 +53,14 @@ public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
         converters.add(getXmlConverter());
     }
     
+    /**
+     * Setup a simple strategy: use all the defaults and return JSON by default when not sure. 
+     */
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.defaultContentType(MediaType.APPLICATION_JSON);
+    }
+        
     protected HttpMessageConverter<?> getJsonConverter() { 
         return new MappingJackson2HttpMessageConverter(getObjectMapper(false));
     }
