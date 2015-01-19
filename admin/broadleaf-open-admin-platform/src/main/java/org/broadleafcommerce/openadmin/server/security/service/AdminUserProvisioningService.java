@@ -34,6 +34,8 @@ public interface AdminUserProvisioningService {
      * along with appropriate roles and permissions.  The result of the call to this should be an instance of 
      * AdminUserDetails.
      * 
+     * NOTE: IT IS GENERALLY EXPECTED THAT THIS METHOD WILL BE CALLED AFTER A USER HAS BEEN AUTHENTICATED.
+     * 
      * @param details
      * @return
      */
