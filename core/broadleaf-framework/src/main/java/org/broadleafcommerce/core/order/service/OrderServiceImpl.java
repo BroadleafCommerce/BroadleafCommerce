@@ -314,6 +314,10 @@ public class OrderServiceImpl implements OrderService {
                                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
             try {
                 order = persist(order);
+
+                if (extensionManager != null) {
+                    extensionManager.getProxy().attachAdditionalDataToOrder(order, priceOrder);
+                }
                 TransactionUtils.finalizeTransaction(status, transactionManager, false);
             } catch (RuntimeException ex) {
                 TransactionUtils.finalizeTransaction(status, transactionManager, true);

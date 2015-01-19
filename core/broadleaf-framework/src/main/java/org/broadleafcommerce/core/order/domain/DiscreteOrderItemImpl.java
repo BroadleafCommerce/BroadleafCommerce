@@ -27,19 +27,39 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.core.catalog.domain.*;
-import org.hibernate.annotations.*;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
+import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
-import javax.persistence.CascadeType;
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -202,7 +222,14 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             return false;
         }
 
-        Money skuSalePrice = (getSku().getSalePrice() == null ? null : getSku().getSalePrice());
+        Money skuSalePrice = null;
+
+        DynamicSkuPrices priceData = getSku().getPriceData();
+        if (priceData != null) {
+            skuSalePrice = priceData.getPriceForQuantity(quantity);
+        } else {
+            skuSalePrice = getSku().getSalePrice();
+        }
 
         // Override retail/sale prices from skuBundle.
         if (skuBundleItem != null) {

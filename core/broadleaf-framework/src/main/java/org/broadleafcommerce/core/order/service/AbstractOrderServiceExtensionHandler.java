@@ -46,4 +46,8 @@ public abstract class AbstractOrderServiceExtensionHandler extends AbstractExten
         return ExtensionResultStatusType.NOT_HANDLED;
     }
     
+    public ExtensionResultStatusType attachAdditionalDataToOrder(Order order, boolean priceOrder) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
 }
