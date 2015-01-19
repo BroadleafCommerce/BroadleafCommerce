@@ -342,16 +342,18 @@ var BLCAdmin = (function($) {
     	    }
     	    
     	    // Set up rich-text HTML editors
-            $container.find('.redactor').redactor({
-                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize', 'video', 'table'],
-                replaceDivs : false,
-                buttonSource: true,
-                paragraphize: false,
-                minHeight: 140,
-                tabKey: true,
-                tabsAsSpaces: 4,
-                deniedTags: []
-            });
+    	    if($.fn.redactor) {
+	            $container.find('.redactor').redactor({
+	                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize', 'video', 'table'],
+	                replaceDivs : false,
+	                buttonSource: true,
+	                paragraphize: false,
+	                minHeight: 140,
+	                tabKey: true,
+	                tabsAsSpaces: 4,
+	                deniedTags: []
+	            });
+    	    }
             
             $container.find('textarea.autosize').autosize();
             

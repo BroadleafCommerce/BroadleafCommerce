@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -68,7 +69,7 @@ public class CustomerAttributeImpl implements CustomerAttribute {
 
     /** The value. */
     @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Value", translatable = true, order=2, group = "ProductAttributeImpl_Description", prominent=true)
     protected String value;
   
     /** The customer. */
@@ -88,7 +89,7 @@ public class CustomerAttributeImpl implements CustomerAttribute {
 
     @Override
     public String getValue() {
-        return value;
+        return DynamicTranslationProvider.getValue(this, "value", value);
     }
 
     @Override
@@ -98,7 +99,7 @@ public class CustomerAttributeImpl implements CustomerAttribute {
 
     @Override
     public String getName() {
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override
