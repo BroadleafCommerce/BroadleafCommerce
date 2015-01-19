@@ -16,6 +16,7 @@
 
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -82,7 +83,7 @@ public class SkuAttributeImpl implements SkuAttribute {
 
     /** The value. */
     @Column(name = "VALUE", nullable=false)
-    @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Value", order=2, group = "SkuAttributeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Value", translatable = true, order=2, group = "SkuAttributeImpl_Description", prominent=true)
     protected String value;
 
     /** The searchable. */
@@ -117,7 +118,7 @@ public class SkuAttributeImpl implements SkuAttribute {
      */
     @Override
     public String getValue() {
-        return value;
+        return DynamicTranslationProvider.getValue(this, "value", value);
     }
 
     /* (non-Javadoc)
@@ -153,7 +154,7 @@ public class SkuAttributeImpl implements SkuAttribute {
      */
     @Override
     public String getName() {
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     /* (non-Javadoc)
