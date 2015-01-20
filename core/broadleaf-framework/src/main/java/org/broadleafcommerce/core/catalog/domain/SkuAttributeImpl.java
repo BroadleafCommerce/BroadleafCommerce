@@ -83,7 +83,7 @@ public class SkuAttributeImpl implements SkuAttribute {
 
     /** The value. */
     @Column(name = "VALUE", nullable=false)
-    @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Value", translatable = true, order=2, group = "SkuAttributeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "SkuAttributeImpl_Attribute_Value", order=2, group = "SkuAttributeImpl_Description", prominent=true)
     protected String value;
 
     /** The searchable. */
