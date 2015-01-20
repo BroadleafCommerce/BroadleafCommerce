@@ -27,102 +27,102 @@ import org.broadleafcommerce.core.web.api.wrapper.ErrorMessageWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
-/**
- * This is a generic JAX-RS ExceptionMapper.  This can be registered as a Spring Bean to catch exceptions, log them, 
- * and return reasonable responses to the client.  Alternatively, you can extend this or implement your own, more granular, mapper(s). 
- * This class does not return internationalized messages. But for convenience, this class provides a protected 
- * Spring MessageSource to allow for internationalization if one chose to go that route.
- * 
- * @author Kelly Tisdell
- *
- */
-//This class MUST be a singleton Spring Bean
-@Component("blRestExceptionMapper")
-public class RestExceptionMapper implements ApplicationContextAware {
+@ControllerAdvice
+public class RestExceptionMapper {
 
     private static final Log LOG = LogFactory.getLog(RestExceptionMapper.class);
 
     protected String messageKeyPrefix = BroadleafWebServicesException.class.getName() + '.';
 
-    @Resource
+    @Resource(name = "messageSource")
     protected MessageSource messageSource;
 
-    protected ApplicationContext context;
-
-    public Object toResponse(Throwable t) {
-        ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
+    @ExceptionHandler(BroadleafWebServicesException.class)
+    public @ResponseBody ErrorWrapper handleBroadleafWebServicesException(HttpServletRequest request, HttpServletResponse response, Exception ex){
+        ErrorWrapper errorWrapper = new ErrorWrapper();
+        BroadleafWebServicesException blcException = (BroadleafWebServicesException) ex;
         Locale locale = null;
         BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
         if (requestContext != null) {
             locale = requestContext.getJavaLocale();
         }
 
-        if (t instanceof BroadleafWebServicesException) {
-            //If this is a BroadleafWebServicesException, then we will build the components of the response from that.
-            BroadleafWebServicesException blcException = (BroadleafWebServicesException) t;
-            if (t.getCause() != null) {
-                LOG.error("An error occured invoking a REST service.", t.getCause());
-            }
-            errorWrapper.setHttpStatusCode(blcException.getHttpStatusCode());
-            if (blcException.getLocale() != null) {
-                locale = blcException.getLocale();
-            }
-            if (locale == null) {
-                locale = Locale.getDefault();
-            }
+        if (ex.getCause() != null) {
+            LOG.error("An error occured invoking a REST service.", ex.getCause());
+        }
+        errorWrapper.setHttpStatusCode(blcException.getHttpStatusCode());
+        response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
+        if (blcException.getLocale() != null) {
+            locale = blcException.getLocale();
+        }
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
 
-            if (blcException.getMessages() != null && !blcException.getMessages().isEmpty()) {
-                Set<String> keys = blcException.getMessages().keySet();
-                for (String key : keys) {
-                    ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
-                    errorMessageWrapper.setMessageKey(resolveClientMessageKey(key));
-                    errorMessageWrapper.setMessage(messageSource.getMessage(key, blcException.getMessages().get(key), key, locale));
-                    errorWrapper.getMessages().add(errorMessageWrapper);
-                }
-            } else {
-                ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
-                errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.UNKNOWN_ERROR));
-                errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.UNKNOWN_ERROR, null,
-                        BroadleafWebServicesException.UNKNOWN_ERROR, locale));
+        if (blcException.getMessages() != null && !blcException.getMessages().isEmpty()) {
+            Set<String> keys = blcException.getMessages().keySet();
+            for (String key : keys) {
+                ErrorMessageWrapper errorMessageWrapper = new ErrorMessageWrapper();
+                errorMessageWrapper.setMessageKey(resolveClientMessageKey(key));
+                errorMessageWrapper.setMessage(messageSource.getMessage(key, blcException.getMessages().get(key), key, locale));
                 errorWrapper.getMessages().add(errorMessageWrapper);
             }
-
         } else {
-            LOG.error("An error occured invoking a REST service", t);
-            if (locale == null) {
-                locale = Locale.getDefault();
-            }
-            errorWrapper.setHttpStatusCode(500);
-            ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
+            ErrorMessageWrapper errorMessageWrapper = new ErrorMessageWrapper();
             errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.UNKNOWN_ERROR));
             errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.UNKNOWN_ERROR, null,
                     BroadleafWebServicesException.UNKNOWN_ERROR, locale));
             errorWrapper.getMessages().add(errorMessageWrapper);
         }
 
-        return null;
+        return errorWrapper;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
+    @ExceptionHandler(Exception.class)
+    public @ResponseBody ErrorWrapper handleException(HttpServletRequest request, HttpServletResponse response, Exception ex){
+        ErrorWrapper errorWrapper = new ErrorWrapper();
+        Locale locale = null;
+        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
+        if (requestContext != null) {
+            locale = requestContext.getJavaLocale();
+        }
+
+        LOG.error("An error occured invoking a REST service", ex);
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        errorWrapper.setHttpStatusCode(500);
+        response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
+        ErrorMessageWrapper errorMessageWrapper = new ErrorMessageWrapper();
+        errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.UNKNOWN_ERROR));
+        errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.UNKNOWN_ERROR, null,
+                BroadleafWebServicesException.UNKNOWN_ERROR, locale));
+        errorWrapper.getMessages().add(errorMessageWrapper);
+        return errorWrapper;
+    }
+
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
     }
 
     /**
      * This key is the prefix that will be stripped off of all message keys that are returned to a client.
-     * The default is "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.". So, if a message key contained 
-     * in a BroadleafWebServicesException is org.broadleafcommerce.core.web.api.BroadleafWebServicesException.unknownError, 
-     * just "unknownError" will be returned to the client. This behavior can be changed by overriding the 
-     * <code>resolveClientMessageKey</code> method. 
+     * The default is "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.". So, if a message key contained
+     * in a BroadleafWebServicesException is org.broadleafcommerce.core.web.api.BroadleafWebServicesException.unknownError,
+     * just "unknownError" will be returned to the client. This behavior can be changed by overriding the
+     * <code>resolveClientMessageKey</code> method.
      * @param prefix
      */
     public void setMessageKeyPrefix(String prefix) {
