@@ -22,16 +22,16 @@ package org.broadleafcommerce.core.web.api;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorMessageWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorWrapper;
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -49,9 +49,11 @@ public class RestExceptionMapper {
     @Resource(name = "messageSource")
     protected MessageSource messageSource;
 
+    protected ApplicationContext context = ApplicationContextHolder.getApplicationContext();
+
     @ExceptionHandler(BroadleafWebServicesException.class)
     public @ResponseBody ErrorWrapper handleBroadleafWebServicesException(HttpServletRequest request, HttpServletResponse response, Exception ex){
-        ErrorWrapper errorWrapper = new ErrorWrapper();
+        ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
         BroadleafWebServicesException blcException = (BroadleafWebServicesException) ex;
         Locale locale = null;
         BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
@@ -74,13 +76,13 @@ public class RestExceptionMapper {
         if (blcException.getMessages() != null && !blcException.getMessages().isEmpty()) {
             Set<String> keys = blcException.getMessages().keySet();
             for (String key : keys) {
-                ErrorMessageWrapper errorMessageWrapper = new ErrorMessageWrapper();
+                ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
                 errorMessageWrapper.setMessageKey(resolveClientMessageKey(key));
                 errorMessageWrapper.setMessage(messageSource.getMessage(key, blcException.getMessages().get(key), key, locale));
                 errorWrapper.getMessages().add(errorMessageWrapper);
             }
         } else {
-            ErrorMessageWrapper errorMessageWrapper = new ErrorMessageWrapper();
+            ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
             errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.UNKNOWN_ERROR));
             errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.UNKNOWN_ERROR, null,
                     BroadleafWebServicesException.UNKNOWN_ERROR, locale));
@@ -92,7 +94,7 @@ public class RestExceptionMapper {
 
     @ExceptionHandler(Exception.class)
     public @ResponseBody ErrorWrapper handleException(HttpServletRequest request, HttpServletResponse response, Exception ex){
-        ErrorWrapper errorWrapper = new ErrorWrapper();
+        ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
         Locale locale = null;
         BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
         if (requestContext != null) {
@@ -105,11 +107,33 @@ public class RestExceptionMapper {
         }
         errorWrapper.setHttpStatusCode(500);
         response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
-        ErrorMessageWrapper errorMessageWrapper = new ErrorMessageWrapper();
+        ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
         errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.UNKNOWN_ERROR));
         errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.UNKNOWN_ERROR, null,
                 BroadleafWebServicesException.UNKNOWN_ERROR, locale));
         errorWrapper.getMessages().add(errorMessageWrapper);
+        return errorWrapper;
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public @ResponseBody ErrorWrapper handleNoHandlerFoundException(HttpServletRequest request, HttpServletResponse response, Exception ex){
+        ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
+        Locale locale = null;
+        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
+        if (requestContext != null) {
+            locale = requestContext.getJavaLocale();
+        }
+
+        LOG.error("An error occured invoking a REST service", ex);
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        errorWrapper.setHttpStatusCode(404);
+        response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
+            ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
+            errorMessageWrapper.setMessageKey("404 Not Found");
+            errorMessageWrapper.setMessage("URL does not exist for this API");
+            errorWrapper.getMessages().add(errorMessageWrapper);
         return errorWrapper;
     }
 
