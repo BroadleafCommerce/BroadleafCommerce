@@ -69,7 +69,7 @@ public class CustomerAttributeImpl implements CustomerAttribute {
 
     /** The value. */
     @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Value", translatable = true, order=2, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "CustomerAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true)
     protected String value;
   
     /** The customer. */
