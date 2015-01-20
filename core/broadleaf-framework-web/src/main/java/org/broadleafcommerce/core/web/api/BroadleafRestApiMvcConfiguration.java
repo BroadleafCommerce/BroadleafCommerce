@@ -19,10 +19,11 @@
  */
 package org.broadleafcommerce.core.web.api;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -31,10 +32,8 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Default Broadleaf-recommended configuration for REST APIs. Recommended use is to extend this class and annotate
@@ -91,6 +90,11 @@ public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
             // Enable/disable some features
             .featuresToEnable(new Object[]{DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY})
             .featuresToDisable(new Object[]{SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED});
+    }
+
+    @Bean
+    public RestExceptionMapper restExceptionMapper() {
+        return new RestExceptionMapper();
     }
 
 }
