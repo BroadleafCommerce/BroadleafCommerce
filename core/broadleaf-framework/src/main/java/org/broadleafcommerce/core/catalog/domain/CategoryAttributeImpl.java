@@ -78,7 +78,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
     protected String name;
 
     @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", translatable = true, order=2, group = "ProductAttributeImpl_Description", prominent=true)
+    @AdminPresentation(friendlyName = "ProductAttributeImpl_Attribute_Value", order=2, group = "ProductAttributeImpl_Description", prominent=true)
     protected String value;
 
     @Column(name = "SEARCHABLE")
