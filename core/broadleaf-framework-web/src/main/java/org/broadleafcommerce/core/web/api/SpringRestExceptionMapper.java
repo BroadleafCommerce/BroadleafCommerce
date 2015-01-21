@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.api;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -114,12 +115,14 @@ public class SpringRestExceptionMapper {
         if (locale == null) {
             locale = Locale.getDefault();
         }
-        errorWrapper.setHttpStatusCode(404);
+        errorWrapper.setHttpStatusCode(HttpStatus.SC_NOT_FOUND);
         response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
-            ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
-            errorMessageWrapper.setMessageKey("404 Not Found");
-            errorMessageWrapper.setMessage("URL does not exist for this API");
-            errorWrapper.getMessages().add(errorMessageWrapper);
+        ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
+        errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.UNKNOWN_ERROR));
+        errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.UNKNOWN_ERROR, null,
+                BroadleafWebServicesException.UNKNOWN_ERROR, locale));
+        errorWrapper.getMessages().add(errorMessageWrapper);
+
         return errorWrapper;
     }
 
@@ -136,12 +139,13 @@ public class SpringRestExceptionMapper {
         if (locale == null) {
             locale = Locale.getDefault();
         }
-        errorWrapper.setHttpStatusCode(415);
+        errorWrapper.setHttpStatusCode(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
         response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
-            ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
-            errorMessageWrapper.setMessageKey("Content-Type Not Supported");
-            errorMessageWrapper.setMessage("The Content-Type header '" + request.getContentType() + "' is not supported. Please switch the Content-Type of your request to one of the following: 'application/json' or 'application/xml'");
-            errorWrapper.getMessages().add(errorMessageWrapper);
+        ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
+        errorMessageWrapper.setMessageKey("Content-Type Not Supported");
+        errorMessageWrapper.setMessage("The Content-Type header '" + request.getContentType() + "' is not supported. Please switch the Content-Type of your request to one of the following: 'application/json' or 'application/xml'");
+        errorWrapper.getMessages().add(errorMessageWrapper);
+
         return errorWrapper;
     }
 
@@ -158,7 +162,7 @@ public class SpringRestExceptionMapper {
         if (locale == null) {
             locale = Locale.getDefault();
         }
-        errorWrapper.setHttpStatusCode(500);
+        errorWrapper.setHttpStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
         ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
         errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.UNKNOWN_ERROR));
