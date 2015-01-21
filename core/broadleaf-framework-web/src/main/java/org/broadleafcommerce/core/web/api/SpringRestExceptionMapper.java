@@ -33,16 +33,25 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Locale;
 import java.util.Set;
 
-@ControllerAdvice
-public class RestExceptionMapper {
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-    private static final Log LOG = LogFactory.getLog(RestExceptionMapper.class);
+/**
+ * <p>
+ * Handles exceptions that can occur in the Broadleaf REST APIs. Specifically, this will serialize exceptions into
+ * consumable JSON or XML so that clients that utilize the API don't have to treat exception responses as special cases.
+ *
+ * @author Chris Kittrell (ckittrell)
+ * @author Phillip Verheyden (phillipuniverse)
+ */
+@ControllerAdvice
+public class SpringRestExceptionMapper {
+
+    private static final Log LOG = LogFactory.getLog(SpringRestExceptionMapper.class);
 
     protected String messageKeyPrefix = BroadleafWebServicesException.class.getName() + '.';
 
