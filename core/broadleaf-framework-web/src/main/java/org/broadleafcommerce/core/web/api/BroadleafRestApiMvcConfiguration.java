@@ -93,8 +93,8 @@ public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public SpringRestExceptionMapper restExceptionMapper() {
-        return new SpringRestExceptionMapper();
+    public BroadleafSpringRestExceptionMapper restExceptionMapper() {
+        return new BroadleafSpringRestExceptionMapper();
     }
 
 }

@@ -30,7 +30,6 @@ import org.broadleafcommerce.core.web.api.wrapper.ErrorWrapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -49,10 +48,9 @@ import java.util.Set;
  * @author Chris Kittrell (ckittrell)
  * @author Phillip Verheyden (phillipuniverse)
  */
-@ControllerAdvice
-public class SpringRestExceptionMapper {
+public class BroadleafSpringRestExceptionMapper {
 
-    private static final Log LOG = LogFactory.getLog(SpringRestExceptionMapper.class);
+    private static final Log LOG = LogFactory.getLog(BroadleafSpringRestExceptionMapper.class);
 
     protected String messageKeyPrefix = BroadleafWebServicesException.class.getName() + '.';
 
