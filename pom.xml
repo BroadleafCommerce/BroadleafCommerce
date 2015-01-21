@@ -166,6 +166,47 @@
                                         <ignore />
                                     </action>
                                 </pluginExecution>
+                                <pluginExecution>
+                                	<pluginExecutionFilter>
+                                		<groupId>org.jacoco</groupId>
+                                		<artifactId>
+                                			jacoco-maven-plugin
+                                		</artifactId>
+                                		<versionRange>
+                                			[0.7.2.201409121644,)
+                                		</versionRange>
+                                		<goals>
+                                			<goal>prepare-agent</goal>
+                                		</goals>
+                                	</pluginExecutionFilter>
+                                	<action>
+                                		<ignore></ignore>
+                                	</action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                	<pluginExecutionFilter>
+                                		<groupId>
+                                			org.codehaus.mojo
+                                		</groupId>
+                                		<artifactId>
+                                			license-maven-plugin
+                                		</artifactId>
+                                		<versionRange>
+                                			[1.5,)
+                                		</versionRange>
+                                		<goals>
+                                			<goal>
+                                				update-file-header
+                                			</goal>
+                                			<goal>
+                                				update-project-license
+                                			</goal>
+                                		</goals>
+                                	</pluginExecutionFilter>
+                                	<action>
+                                		<ignore></ignore>
+                                	</action>
+                                </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
