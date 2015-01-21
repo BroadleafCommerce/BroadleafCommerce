@@ -116,9 +116,9 @@ public class BroadleafSpringRestExceptionMapper {
         errorWrapper.setHttpStatusCode(HttpStatus.SC_NOT_FOUND);
         response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
         ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
-        errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.UNKNOWN_ERROR));
-        errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.UNKNOWN_ERROR, null,
-                BroadleafWebServicesException.UNKNOWN_ERROR, locale));
+        errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.NOT_FOUND));
+        errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.NOT_FOUND, null,
+                BroadleafWebServicesException.NOT_FOUND, locale));
         errorWrapper.getMessages().add(errorMessageWrapper);
 
         return errorWrapper;
@@ -140,8 +140,9 @@ public class BroadleafSpringRestExceptionMapper {
         errorWrapper.setHttpStatusCode(HttpStatus.SC_UNSUPPORTED_MEDIA_TYPE);
         response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
         ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
-        errorMessageWrapper.setMessageKey("Content-Type Not Supported");
-        errorMessageWrapper.setMessage("The Content-Type header '" + request.getContentType() + "' is not supported. Please switch the Content-Type of your request to one of the following: 'application/json' or 'application/xml'");
+        errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.CONTENT_TYPE_NOT_SUPPORTED));
+        errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.CONTENT_TYPE_NOT_SUPPORTED,
+                new String[] {request.getContentType()}, BroadleafWebServicesException.CONTENT_TYPE_NOT_SUPPORTED, locale));
         errorWrapper.getMessages().add(errorMessageWrapper);
 
         return errorWrapper;
