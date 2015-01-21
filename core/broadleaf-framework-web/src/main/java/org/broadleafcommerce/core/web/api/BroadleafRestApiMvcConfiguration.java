@@ -92,9 +92,4 @@ public class BroadleafRestApiMvcConfiguration extends WebMvcConfigurerAdapter {
             .featuresToDisable(new Object[]{SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED});
     }
 
-    @Bean
-    public BroadleafSpringRestExceptionMapper restExceptionMapper() {
-        return new BroadleafSpringRestExceptionMapper();
-    }
-
 }
