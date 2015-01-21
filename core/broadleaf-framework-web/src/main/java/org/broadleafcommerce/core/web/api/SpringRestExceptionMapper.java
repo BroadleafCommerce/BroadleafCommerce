@@ -28,17 +28,17 @@ import org.broadleafcommerce.core.web.api.wrapper.ErrorMessageWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorWrapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
-import java.util.Locale;
-import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * <p>
@@ -101,6 +101,50 @@ public class SpringRestExceptionMapper {
         return errorWrapper;
     }
 
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public @ResponseBody ErrorWrapper handleNoHandlerFoundException(HttpServletRequest request, HttpServletResponse response, Exception ex){
+        ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
+        Locale locale = null;
+        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
+        if (requestContext != null) {
+            locale = requestContext.getJavaLocale();
+        }
+
+        LOG.error("An error occured invoking a REST service", ex);
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        errorWrapper.setHttpStatusCode(404);
+        response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
+            ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
+            errorMessageWrapper.setMessageKey("404 Not Found");
+            errorMessageWrapper.setMessage("URL does not exist for this API");
+            errorWrapper.getMessages().add(errorMessageWrapper);
+        return errorWrapper;
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public @ResponseBody ErrorWrapper handleHttpMediaTypeNotSupportedException(HttpServletRequest request, HttpServletResponse response, Exception ex){
+        ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
+        Locale locale = null;
+        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
+        if (requestContext != null) {
+            locale = requestContext.getJavaLocale();
+        }
+
+        LOG.error("An error occured invoking a REST service", ex);
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        errorWrapper.setHttpStatusCode(415);
+        response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
+            ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
+            errorMessageWrapper.setMessageKey("Content-Type Not Supported");
+            errorMessageWrapper.setMessage("The Content-Type header '" + request.getContentType() + "' is not supported. Please switch the Content-Type of your request to one of the following: 'application/json' or 'application/xml'");
+            errorWrapper.getMessages().add(errorMessageWrapper);
+        return errorWrapper;
+    }
+
     @ExceptionHandler(Exception.class)
     public @ResponseBody ErrorWrapper handleException(HttpServletRequest request, HttpServletResponse response, Exception ex){
         ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
@@ -121,28 +165,6 @@ public class SpringRestExceptionMapper {
         errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.UNKNOWN_ERROR, null,
                 BroadleafWebServicesException.UNKNOWN_ERROR, locale));
         errorWrapper.getMessages().add(errorMessageWrapper);
-        return errorWrapper;
-    }
-
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public @ResponseBody ErrorWrapper handleNoHandlerFoundException(HttpServletRequest request, HttpServletResponse response, Exception ex){
-        ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
-        Locale locale = null;
-        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
-        if (requestContext != null) {
-            locale = requestContext.getJavaLocale();
-        }
-
-        LOG.error("An error occured invoking a REST service", ex);
-        if (locale == null) {
-            locale = Locale.getDefault();
-        }
-        errorWrapper.setHttpStatusCode(404);
-        response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
-            ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
-            errorMessageWrapper.setMessageKey("404 Not Found");
-            errorMessageWrapper.setMessage("URL does not exist for this API");
-            errorWrapper.getMessages().add(errorMessageWrapper);
         return errorWrapper;
     }
 
