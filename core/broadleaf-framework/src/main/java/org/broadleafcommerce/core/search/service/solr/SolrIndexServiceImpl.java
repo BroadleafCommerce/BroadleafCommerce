@@ -170,7 +170,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             StopWatch s = new StopWatch();
 
             LOG.info("Deleting the reindex core prior to rebuilding the index");
-            deleteAllReindexCoreDocuments();
+            deleteAllDocuments();
 
             Object[] pack = saveState();
             try {
