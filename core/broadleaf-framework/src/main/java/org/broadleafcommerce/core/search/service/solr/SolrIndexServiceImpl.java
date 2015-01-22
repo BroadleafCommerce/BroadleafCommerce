@@ -169,10 +169,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             LOG.info("Rebuilding the solr index...");
             StopWatch s = new StopWatch();
 
-            // If we are in single core mode, we have to delete the documents before reindexing
-            if (SolrContext.isSingleCoreMode()) {
-                SolrIndexServiceImpl.this.deleteAllDocuments();
-            }
+            LOG.info("Deleting the reindex core prior to rebuilding the index");
+            deleteAllReindexCoreDocuments();
 
             Object[] pack = saveState();
             try {
@@ -199,11 +197,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             // Swap the active and the reindex cores
             shs.swapActiveCores();
 
-            // If we are not in single core mode, we delete the documents for the unused core after swapping
-            if (!SolrContext.isSingleCoreMode()) {
-                deleteAllDocuments();
-            }
-
             LOG.info(String.format("Finished building index in %s", s.toLapString()));
         } finally {
             synchronized (LOCK_OBJECT) {
@@ -212,7 +205,25 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
     }
 
+    /**
+     * <p>
+     * This method deletes all of the documents from {@link SolrContext#getReindexServer()}
+     * 
+     * @throws ServiceException if there was a problem removing the documents
+     * @deprecated use {@link #deleteAllReindexCoreDocuments()} instead
+     */
+    @Deprecated
     protected void deleteAllDocuments() throws ServiceException {
+        deleteAllReindexCoreDocuments();
+    }
+    
+    /**
+     * <p>
+     * This method deletes all of the documents from {@link SolrContext#getReindexServer()}
+     * 
+     * @throws ServiceException if there was a problem removing the documents
+     */
+    protected void deleteAllReindexCoreDocuments() throws ServiceException {
         try {
             String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
