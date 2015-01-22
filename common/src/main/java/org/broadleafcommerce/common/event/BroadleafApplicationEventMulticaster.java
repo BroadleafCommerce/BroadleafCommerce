@@ -22,11 +22,13 @@ package org.broadleafcommerce.common.event;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.context.event.AbstractApplicationEventMulticaster;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -51,10 +53,18 @@ import javax.persistence.EntityManagerFactory;
  *
  */
 public class BroadleafApplicationEventMulticaster extends
-		SimpleApplicationEventMulticaster implements ApplicationContextAware {
+        AbstractApplicationEventMulticaster implements ApplicationContextAware {
 	
 	private static Log LOG = LogFactory.getLog(BroadleafApplicationEventMulticaster.class);
 	
+    @Autowired(required = false)
+    @Qualifier("blApplicationEventMulticastTaskExecutor")
+    private Executor taskExecutor;
+
+    @Autowired(required = false)
+    @Qualifier("blApplicationEventDefaultErrorHandler")
+    private ErrorHandler errorHandler;
+
 	protected ApplicationContext ctx;
 
     /**
@@ -117,7 +127,6 @@ public class BroadleafApplicationEventMulticaster extends
 		}
 	}
 	
-	@Override
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	protected void invokeListener(ApplicationListener listener, ApplicationEvent event) {
 		ErrorHandler errorHandler = null;
@@ -146,16 +155,32 @@ public class BroadleafApplicationEventMulticaster extends
 		this.ctx = applicationContext;
 	}
 	
-	/**
-	 * Subclasses can override this method to determine, based on the event itself, whether a PersistenceManager 
-	 * should be opened and bound to the background thread for processing. This can help reduce or eliminate 
-	 * the risk of LazyInitializationExceptions when accessing lazy loaded entities in background threads.
-	 * 
-	 * Default implementation returns true
-	 * 
-	 * @param event
-	 * @return
-	 */
+    public Executor getTaskExecutor() {
+        return taskExecutor;
+    }
+
+    public void setTaskExecutor(Executor taskExecutor) {
+        this.taskExecutor = taskExecutor;
+    }
+
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
+    /**
+     * Subclasses can override this method to determine, based on the event itself, whether a PersistenceManager 
+     * should be opened and bound to the background thread for processing. This can help reduce or eliminate 
+     * the risk of LazyInitializationExceptions when accessing lazy loaded entities in background threads.
+     * 
+     * Default implementation returns true
+     * 
+     * @param event
+     * @return
+     */
 	protected boolean isOpenEntityManagerForExecutor(BroadleafApplicationEvent event) {
 		return true;
 	}

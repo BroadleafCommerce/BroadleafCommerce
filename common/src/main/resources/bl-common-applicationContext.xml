@@ -29,6 +29,7 @@
 
     <context:component-scan base-package="org.broadleafcommerce.common"/>
     
+    <!-- Override Spring's default ApplicationEventMultiCaster with one that is a little smarter about asynchronous -->
     <bean id="applicationEventMulticaster" class="org.broadleafcommerce.common.event.BroadleafApplicationEventMulticaster"/>
 
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
