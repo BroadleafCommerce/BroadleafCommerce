@@ -570,10 +570,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                     }
                     String valueString = StringUtils.join(selectedValues, " OR ");
 
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("(").append(valueString).append(")");
-
-                    query.addFilterQuery(sb.toString());
+                    query.addFilterQuery(valueString);
                 }
             }
         }
@@ -843,38 +840,39 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         StringBuilder sb = new StringBuilder();
         if (StringUtils.isNotBlank(tag)) {
             sb.append("{!").append(tag).append("=").append(tagField);
-        	
+
             if (range != null) {
                 sb.append("[").append(range.getMinValue().toPlainString()).append(":");
-                if (range.getMaxValue() != null)
+                if (range.getMaxValue() != null) {
                     sb.append(range.getMaxValue().toPlainString());
-                else
+                } else {
                     sb.append("*");
+                }
                 sb.append("]");
-    			
-                sb.append(" "+getSolrRangeFunctionString(range.getMinValue(), range.getMaxValue()));
+
+                sb.append(" " + getSolrRangeFunctionString(range.getMinValue(), range.getMaxValue()));
             }
-        	
+
             sb.append("}");
         }
         return sb.toString();
     }
-	
+
     /**
      * @param minValue
      * @param maxValue
      * @return a string representing a call to the frange solr function. it is not inclusive of lower limit, inclusive of upper limit
      */
-	protected String getSolrRangeFunctionString(BigDecimal minValue, BigDecimal maxValue) {
-		StringBuilder sb = new StringBuilder();
+    protected String getSolrRangeFunctionString(BigDecimal minValue, BigDecimal maxValue) {
+        StringBuilder sb = new StringBuilder();
 
         sb.append("frange incl=false l=").append(minValue.toPlainString());
         if (maxValue != null) {
-        	sb.append(" u=").append(maxValue.toPlainString());
+            sb.append(" u=").append(maxValue.toPlainString());
         }
-		
-		return sb.toString();
-	}
+
+        return sb.toString();
+    }
 
     /**
      * @param facets
