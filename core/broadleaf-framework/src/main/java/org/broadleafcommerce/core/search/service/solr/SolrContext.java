@@ -22,7 +22,11 @@ package org.broadleafcommerce.core.search.service.solr;
 import org.apache.solr.client.solrj.SolrServer;
 
 /**
- * Provides a class that will statically hold the Solr server
+ * <p>
+ * Provides a class that will statically hold the Solr server.
+ * 
+ * <p>
+ * This is initialized in {@link SolrSearchServiceImpl} and used in {@link SolrIndexServiceImpl}
  * 
  * @author Andre Azzolini (apazzolini)
  */
@@ -71,14 +75,23 @@ public class SolrContext {
         return getServer();
     }
 
+    /**
+     * @return the primary Solr server
+     */
     public static SolrServer getServer() {
         return primaryServer;
     }
 
+    /**
+     * @return the primary server if {@link #isSingleCoreMode()}, else the reindex server
+     */
     public static SolrServer getReindexServer() {
         return isSingleCoreMode() ? primaryServer : reindexServer;
     }
 
+    /**
+     * @return if this Solr context has a reindex server set not
+     */
     public static boolean isSingleCoreMode() {
         return reindexServer == null;
     }

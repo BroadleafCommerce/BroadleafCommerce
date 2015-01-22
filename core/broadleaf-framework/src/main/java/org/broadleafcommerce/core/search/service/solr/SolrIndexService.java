@@ -49,6 +49,16 @@ public interface SolrIndexService {
     public void rebuildIndex() throws ServiceException, IOException;
     
     /**
+     * Allows a query to determine if a full reindex is currently being performed. 
+     * 
+     * NOTE: There is no guarantee that reindexing is not happening in another process or another server.  This 
+     * method simply indicates whether this instance, within a single JVM is currently performing a reindex.
+     * 
+     * @return
+     */
+    public boolean isReindexInProcess();
+
+    /**
      * The internal method for building indexes. This is exposed via this interface in case someone would like to 
      * more granularly control the indexing strategy.
      * 
