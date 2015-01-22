@@ -36,6 +36,7 @@
     <bean id="org.broadleafcommerce.profile.core.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.Country" class="org.broadleafcommerce.profile.core.domain.CountryImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.Customer" class="org.broadleafcommerce.profile.core.domain.CustomerImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.core.domain.CustomerAttribute" class="org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken" class="org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityTokenImpl" scope="prototype"/>  
     <bean id="org.broadleafcommerce.profile.core.domain.CustomerAddress" class="org.broadleafcommerce.profile.core.domain.CustomerAddressImpl" scope="prototype">
         <property name="address" ref="org.broadleafcommerce.profile.core.domain.Address"/>

@@ -87,6 +87,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     private static final Log LOG = LogFactory.getLog(SolrIndexServiceImpl.class);
 
+    protected final Object LOCK_OBJECT = new Object();
+
+    protected boolean IS_LOCKED = false;
+
+    @Value("${solr.index.errorOnConcurrentReIndex}")
+    protected boolean errorOnConcurrentReIndex = false;
+
     @Value("${solr.index.product.pageSize}")
     protected int pageSize;
 
@@ -153,56 +160,92 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     @Override
-    public void rebuildIndex() throws ServiceException, IOException {
-        LOG.info("Rebuilding the solr index...");
-        StopWatch s = new StopWatch();
-
-        // If we are in single core mode, we have to delete the documents before reindexing
-        if (SolrContext.isSingleCoreMode()) {
-            SolrIndexServiceImpl.this.deleteAllDocuments();
+    public boolean isReindexInProcess() {
+        synchronized (LOCK_OBJECT) {
+            return IS_LOCKED;
         }
-
-        Object[] pack = saveState();
-        try {
-            final Long numItemsToIndex;
-            if (useSku) {
-                numItemsToIndex = skuDao.readCountAllActiveSkus();
-            } else {
-                numItemsToIndex = productDao.readCountAllActiveProducts();
-            }
-            
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("There are at most " + numItemsToIndex + " items to index");
-            }
-            
-            performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
-                @Override
-                public void execute() throws ServiceException {
-                    int page = 0;
-                    while ((page * pageSize) < numItemsToIndex) {
-                        buildIncrementalIndex(page, pageSize);
-                        page++;
-                    }
-                }
-            });
-            
-            optimizeIndex(SolrContext.getReindexServer());
-        } finally {
-            restoreState(pack);
-        }
-
-        // Swap the active and the reindex cores
-        shs.swapActiveCores();
-
-        // If we are not in single core mode, we delete the documents for the unused core after swapping
-        if (!SolrContext.isSingleCoreMode()) {
-            deleteAllDocuments();
-        }
-
-        LOG.info(String.format("Finished building index in %s", s.toLapString()));
     }
 
+    @Override
+    public void rebuildIndex() throws ServiceException, IOException {
+        synchronized (LOCK_OBJECT) {
+            if (IS_LOCKED) {
+                if (errorOnConcurrentReIndex) {
+                    throw new IllegalStateException("More than one thread attempting to concurrently reindex Solr.");
+                } else {
+                    LOG.warn("There is more than one thread attempting to concurrently "
+                            + "reindex Solr. Failing additional threads gracefully. Check your configuration.");
+                    return;
+                }
+            } else {
+                IS_LOCKED = true;
+            }
+        }
+
+        try {
+            LOG.info("Rebuilding the solr index...");
+            StopWatch s = new StopWatch();
+
+            LOG.info("Deleting the reindex core prior to rebuilding the index");
+            deleteAllDocuments();
+
+            Object[] pack = saveState();
+            try {
+                final Long numItemsToIndex;
+                if (useSku) {
+                    numItemsToIndex = skuDao.readCountAllActiveSkus();
+                } else {
+                    numItemsToIndex = productDao.readCountAllActiveProducts();
+                }
+            
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("There are at most " + numItemsToIndex + " items to index");
+                }
+                performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
+                    @Override
+                    public void execute() throws ServiceException {
+                        int page = 0;
+                        while ((page * pageSize) < numItemsToIndex) {
+                            buildIncrementalIndex(page, pageSize);
+                            page++;
+                        }
+                    }
+                });
+                optimizeIndex(SolrContext.getReindexServer());
+            } finally {
+                restoreState(pack);
+            }
+
+            // Swap the active and the reindex cores
+            shs.swapActiveCores();
+
+            LOG.info(String.format("Finished building index in %s", s.toLapString()));
+        } finally {
+            synchronized (LOCK_OBJECT) {
+                IS_LOCKED = false;
+            }
+        }
+    }
+
+    /**
+     * <p>
+     * This method deletes all of the documents from {@link SolrContext#getReindexServer()}
+     * 
+     * @throws ServiceException if there was a problem removing the documents
+     * @deprecated use {@link #deleteAllReindexCoreDocuments()} instead
+     */
+    @Deprecated
     protected void deleteAllDocuments() throws ServiceException {
+        deleteAllReindexCoreDocuments();
+    }
+    
+    /**
+     * <p>
+     * This method deletes all of the documents from {@link SolrContext#getReindexServer()}
+     * 
+     * @throws ServiceException if there was a problem removing the documents
+     */
+    protected void deleteAllReindexCoreDocuments() throws ServiceException {
         try {
             String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
@@ -433,7 +476,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     }
                 }
             } catch (Exception e) {
-                LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for sku id[" + sku.getId() + "]", e);
+                LOG.error("Could not get value for property[" + field.getQualifiedFieldName() + "] for sku id[" + sku.getId() + "]", e);
             }
         }
 
@@ -493,7 +536,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     }
                 }
             } catch (Exception e) {
-                LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id[" + product.getId() + "]", e);
+                LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
+                        + product.getId() + "]", e);
             }
         }
 
