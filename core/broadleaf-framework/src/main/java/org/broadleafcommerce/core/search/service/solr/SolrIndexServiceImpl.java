@@ -393,7 +393,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     }
                 }
             } catch (Exception e) {
-                LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
+                LOG.error("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
                         + product.getId() + "]", e);
             }
         }
