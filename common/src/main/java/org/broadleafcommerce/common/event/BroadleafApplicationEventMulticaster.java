@@ -58,20 +58,30 @@ public class BroadleafApplicationEventMulticaster extends
 	protected ApplicationContext ctx;
 
     /**
-     * Take care when specifying that event should be asynchronous.  If there is no TaskExecutor configured, this 
-     * will execute synchronously.  If there is a TaskExecutor configured, then if the event is a BroadleafApplicationEvent 
-     * and is set to execute asynchronously, then be aware that the events are not durable.  These kinds of event 
-     * situations should be used with caution, where a loss of event due to error or shutdown of the VM is not a major 
+     * Take care when specifying that event or application listener should be executed asynchronously.  
+     * If there is no TaskExecutor configured, this 
+     * will execute synchronously, regardless.  If there is a TaskExecutor configured, then if the event is a BroadleafApplicationEvent 
+     * and is set to execute asynchronously, or if the listener is a BroadleafApplicationListener and its 
+     * <code>isAsynchronous()</code> returns true then the event will fire asynchronously. 
+     * Be aware that the events are not durable in this case.  Events that are executed asynchronously  
+     * should be used with caution, where a loss of event due to error or shutdown of the VM is not a major 
      * concern.
      */
 	@Override
 	public void multicastEvent(final ApplicationEvent event) {
-		for (final ApplicationListener<?> listener : getApplicationListeners(event)) {
+        for (final ApplicationListener<?> listener : getApplicationListeners(event)) {
 			Executor executor = getTaskExecutor();
-			if (executor != null 
-					&& (BroadleafApplicationEvent.class.isAssignableFrom(event.getClass())) 
-					&& ((BroadleafApplicationEvent)event).isAsynchronous()) {
-				
+			boolean isAsynchronous = false;
+			if (executor != null) {
+			    if (((BroadleafApplicationEvent.class.isAssignableFrom(event.getClass())) 
+                    && ((BroadleafApplicationEvent)event).isAsynchronous()) 
+                        || (BroadleafApplicationListener.class.isAssignableFrom(listener.getClass())
+                            && ((BroadleafApplicationListener<? extends ApplicationEvent>)listener).isAsynchronous())) {
+                    isAsynchronous = true;
+			    }
+			}
+			
+            if (isAsynchronous) {
 				final boolean openEm = isOpenEntityManagerForExecutor((BroadleafApplicationEvent)event);
 				executor.execute(new Runnable() {
 					public void run() {
