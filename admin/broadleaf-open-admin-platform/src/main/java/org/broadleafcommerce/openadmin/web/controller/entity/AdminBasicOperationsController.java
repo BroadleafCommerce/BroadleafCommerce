@@ -19,6 +19,15 @@
  */
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -40,15 +49,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * The operations in this controller are actions that do not necessarily depend on a section key being present.
@@ -184,7 +184,17 @@ public class AdminBasicOperationsController extends AdminAbstractController {
 
         return responses;
     }
-
+    
+    /*
+     * @return - Integer representing the number of minutes for session timeout
+     */
+    @RequestMapping(value = "/sessionTimerInactiveInterval", method = RequestMethod.GET)
+    public @ResponseBody Integer sessionTimerInactiveInterval(HttpServletRequest request, 
+            HttpServletResponse response) throws Exception {
+    	long maxInterval = request.getSession().getMaxInactiveInterval()*1000;
+    	return (int) (maxInterval);
+    }
+    
     /**
      * Hook method to allow a user to modify the persistence package request for a fetch on a select lookup.
      * 
