@@ -234,12 +234,21 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             salePrice = skuSalePrice.getAmount();
             updated = true;
         }
+        
+        // If there is no more sale price (because it got removed) then detect that case as well
+        if (skuSalePrice == null && salePrice != null) {
+            baseSalePrice = null;
+            salePrice = null;
+            updated = true;
+        }
 
         // Adjust prices by adding in fees if they are attached.
         if (getDiscreteOrderItemFeePrices() != null) {
             for (DiscreteOrderItemFeePrice fee : getDiscreteOrderItemFeePrices()) {
                 Money returnPrice = convertToMoney(salePrice);
-                salePrice = returnPrice.add(fee.getAmount()).getAmount();
+                if (returnPrice != null) {
+                    salePrice = returnPrice.add(fee.getAmount()).getAmount();
+                }
             }
         }
         return updated;
@@ -330,6 +339,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
     }
 
+    @Override
     protected Money convertToMoney(BigDecimal amount) {
         return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getOrder().getCurrency());
     }
