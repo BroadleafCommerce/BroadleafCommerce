@@ -164,8 +164,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             } else {
                 try {
                     if (repriceCart != null && repriceCart.booleanValue()) {
-                        cart.updatePrices();
-                        orderService.save(cart, true);
+                        orderService.save(cart, true, true);
                     } else if (saveCart != null && saveCart.booleanValue()) {
                         orderService.save(cart, false);
                     }

@@ -285,7 +285,6 @@ public class OfferServiceImpl implements OfferService {
          */
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
-            order.updatePrices();
             PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order, false);
             List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, order.getCustomer());
             if ((filteredOffers == null) || (filteredOffers.isEmpty())) {

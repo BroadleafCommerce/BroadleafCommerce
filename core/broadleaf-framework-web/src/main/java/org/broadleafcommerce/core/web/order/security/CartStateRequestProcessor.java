@@ -159,6 +159,10 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         return cart;
     }
     
+    /**
+     * Returns true if the given <b>customer</b> is different than the previous anonymous customer, implying that this is
+     * the logged in customer and we need to merge the carts
+     */
     public boolean mergeCartNeeded(Customer customer, WebRequest request) {
         // When the user is a CSR, we want to disable cart merging
         if (crossAppAuthService != null && crossAppAuthService.isAuthedFromAdmin()) {
@@ -169,6 +173,10 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         return (anonymousCustomer != null && customer.getId() != null && !customer.getId().equals(anonymousCustomer.getId()));
     }
 
+    /**
+     * Looks up the anonymous customer and merges that cart with the cart from the given logged in <b>customer</b>. This
+     * will also remove the customer from session after it has finished since it is no longer needed
+     */
     public Order mergeCart(Customer customer, WebRequest request) {
         Customer anonymousCustomer = customerStateRequestProcessor.getAnonymousCustomer(request);
         MergeCartResponse mergeCartResponse;
