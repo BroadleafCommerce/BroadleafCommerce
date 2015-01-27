@@ -40,11 +40,16 @@ $(document).ready(function() {
 		$form.attr('action', currentAction + '/delete');
 		$form.submit();
 	});
-	
+
 	$('body').on('click', 'button.submit-button', function(event) {
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
 	    var $form = BLCAdmin.getForm($(this));
-	    $form.submit();
+
+		if ($(".blc-admin-ajax-update").length) {
+			submitFormViaAjax($form);
+		} else {
+			$form.submit();
+		}
 
 	    var $actions = $(this).closest('.entity-form-actions');
 	    $actions.find('button').hide();
@@ -52,6 +57,58 @@ $(document).ready(function() {
 
 		event.preventDefault();
 	});
+
+	function submitFormViaAjax($form) {
+		var submit = BLCAdmin.runSubmitHandlers($form);
+
+		if (submit) {
+			BLC.ajax({
+				url: $form.action,
+				dataType: "json",
+				type: "POST",
+				data: $form.serializeArray()
+			}, function (data) {
+				$("#headerFlashAlertBoxContainer").removeClass("hidden");
+				$(".errors, .error").remove();
+
+				if (!data.errors) {
+					$(".alert-box").removeClass("alert").addClass("success");
+					$(".alert-box-message").text("Successfully saved");
+				} else {
+					var errorBlock = "<div class='errors'></div>";
+					$(errorBlock).insertAfter("#headerFlashAlertBoxContainer");
+					$.each( data.errors , function( idx, error ){
+						if (error.errorType == "fieldError") {
+							var fieldLabel = $("input[id*='" + error.field + "']").prev(".field-label");
+
+							if ($(".tabError:contains(" + error.tab + ")").length) {
+								var labeledError = "<span class='fieldError error'>" + fieldLabel[0].innerHTML + ": " + error.message + "</span> <br>";
+								$(".tabError:contains(" + error.tab + ")").append(labeledError);
+							} else {
+								var labeledError = "<div class='tabError'><b>" + error.tab + "</b><span class='fieldError error'>"
+										+ fieldLabel[0].innerHTML + ": " + error.message + "</span></div>";
+								$(".errors").append(labeledError);
+							}
+
+							var fieldError = "<span class='error'>" + error.message + "</span>";
+							$(fieldError).insertAfter(fieldLabel);
+						} else {
+							var globalError = "<div class='tabError'><b>Global Errors</b><span class='error'>"
+									+ error.code + ": " + error.message + "</span></div>";
+							$(".errors").append(globalError);
+						}
+					});
+					$(".alert-box").removeClass("success").addClass("alert");
+					$(".alert-box-message").text("There was a problem saving. See errors below");
+				}
+
+				var $actions = $('.entity-form-actions');
+				$actions.find('button').show();
+				$actions.find('img.ajax-loader').hide();
+
+			});
+		}
+	}
 	
 	$('body').on('submit', 'form.entity-form', function(event) {
         var submit = BLCAdmin.runSubmitHandlers($(this));
