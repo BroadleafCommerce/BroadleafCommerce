@@ -242,6 +242,14 @@ public class OrderServiceImpl implements OrderService {
 
         return order.getPayments().get(paymentIndex);
     }
+    
+    @Override
+    public Order save(Order order, boolean priceOrder, boolean repriceItems) throws PricingException {
+        if (repriceItems) {
+            order.updatePrices();
+        }
+        return save(order, priceOrder);
+    }
 
     @Override
     public Order save(Order order, Boolean priceOrder) throws PricingException {
