@@ -25,7 +25,7 @@
     <named-query name="BC_READ_PRODUCT_IDS_BY_CATEGORY" >
         <query>SELECT categoryProduct.product.id FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
             WHERE categoryProduct.category.id IN :categoryIds
-            ORDER BY categoryProduct.displayOrder
+            ORDER BY COALESCE (categoryProduct.displayOrder,999999)
         </query>
     </named-query>
 
@@ -33,7 +33,7 @@
         <query>SELECT NEW org.broadleafcommerce.core.search.dao.ProductsByCategoryWithOrder(categoryProduct.product.id, categoryProduct.displayOrder) 
             FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
             WHERE categoryProduct.category.id IN :categoryIds
-            ORDER BY categoryProduct.displayOrder
+            ORDER BY COALESCE (categoryProduct.displayOrder,999999)
         </query>
     </named-query>
 

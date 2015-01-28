@@ -37,11 +37,12 @@ import java.util.Map;
  * user.  It also allows us to override the role names (GrantedAuthorities) that come from LDAP with
  * names that may be more suitable for Broadleaf.
  *
- *
+ * @deprecated NO LONGER REQUIRED AND SHOULD NOT BE USED. SEE BroadleafAdminLdapUserDetailsMapper.
  *
  * @author Kelly Tisdell
  *
  */
+@Deprecated
 public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMapper {
 
     protected boolean useEmailAddressAsUsername = true;

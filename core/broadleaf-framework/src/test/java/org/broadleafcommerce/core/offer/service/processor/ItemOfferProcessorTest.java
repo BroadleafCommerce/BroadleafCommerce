@@ -42,6 +42,7 @@ import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.dao.OrderItemDao;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -401,6 +402,7 @@ public class ItemOfferProcessorTest extends TestCase {
         offers.add(offer1);
 
         List<PromotableCandidateItemOffer> qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offers, order);
 
         assertTrue(order.getTotalAdjustmentsValue().getAmount().doubleValue() > 0);
@@ -409,8 +411,9 @@ public class ItemOfferProcessorTest extends TestCase {
 
         qualifiedOffers = new ArrayList<PromotableCandidateItemOffer>();
         offer1.setApplyDiscountToSalePrice(false);
-        order.getOrderItems().get(0).setSalePrice(new Money(1D));
-        order.getOrderItems().get(1).setSalePrice(new Money(1D));
+        ((DiscreteOrderItem) order.getOrderItems().get(0)).getSku().setSalePrice(new Money(1D));
+        ((DiscreteOrderItem) order.getOrderItems().get(1)).getSku().setSalePrice(new Money(1D));
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offers, order);
 
         assertTrue(order.getTotalAdjustmentsValue().getAmount().doubleValue() == 0);
@@ -446,13 +449,15 @@ public class ItemOfferProcessorTest extends TestCase {
         List<Offer> offerListWithTwoOffers = new ArrayList<Offer>();
         offerListWithTwoOffers.add(offer1);
         offerListWithTwoOffers.add(offer2);
-
+        
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 1);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 1);
 
         // Add the second offer.   The first was nonCombinable so it should still be 1
         order = dataProvider.createBasicOrder();
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 2);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 2);
@@ -462,6 +467,7 @@ public class ItemOfferProcessorTest extends TestCase {
         // Reset offer1 to combinable.   Now both should be applied.
         offer1.setCombinableWithOtherOffers(true);
         order = dataProvider.createBasicOrder();
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 2);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 2);
@@ -472,22 +478,26 @@ public class ItemOfferProcessorTest extends TestCase {
         offer1.setCombinableWithOtherOffers(false);
         offer1.setApplyDiscountToSalePrice(false);
         order = dataProvider.createBasicOrder();
-        order.getOrderItems().get(1).setSalePrice(new Money(10D));
+        ((DiscreteOrderItem) order.getOrderItems().get(1)).getSku().setSalePrice(new Money(10D));
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 0);
 
         // Try again with two offers.   The second should be applied.   
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 2);
 
         // Trying with 2nd offer as nonCombinable.
         offer1.setCombinableWithOtherOffers(true);
-        order.getOrderItems().get(1).setSalePrice(null);
+        ((DiscreteOrderItem) order.getOrderItems().get(1)).getSku().setSalePrice(null);
         offer2.setCombinableWithOtherOffers(false);
 
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 1);
 
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 2);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 0);
@@ -497,6 +507,7 @@ public class ItemOfferProcessorTest extends TestCase {
         order = dataProvider.createBasicOrder();
         offer1.getQualifyingItemCriteria().iterator().next().setQuantity(1);
         offer1.getTargetItemCriteria().iterator().next().setQuantity(2);
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 2);
 
@@ -509,6 +520,7 @@ public class ItemOfferProcessorTest extends TestCase {
         offer2.setOfferItemQualifierRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
         offer2.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.QUALIFIER_TARGET);
         order = dataProvider.createBasicOrder();
+        order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithTwoOffers, order);
         assertTrue(checkOrderItemOfferAppliedCount(order) == 4);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer2) == 2);

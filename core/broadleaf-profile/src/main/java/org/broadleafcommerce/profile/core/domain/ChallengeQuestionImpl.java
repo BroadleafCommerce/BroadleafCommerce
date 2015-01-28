@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
@@ -57,7 +58,7 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
     protected Long id;
 
     @Column(name = "QUESTION", nullable=false)
-    @AdminPresentation(friendlyName = "ChallengeQuestionImpl_Challenge_Question", group = "ChallengeQuestionImpl_Customer")
+    @AdminPresentation(friendlyName = "ChallengeQuestionImpl_Challenge_Question", translatable = true, group = "ChallengeQuestionImpl_Customer")
     protected String question;
 
     @Override
@@ -72,7 +73,7 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
 
     @Override
     public String getQuestion() {
-        return question;
+        return DynamicTranslationProvider.getValue(this, "question", question);
     }
 
     @Override

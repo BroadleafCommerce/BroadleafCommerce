@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -86,7 +87,7 @@ public class CustomerAttributeImpl implements CustomerAttribute {
 
     @Override
     public String getValue() {
-        return value;
+        return DynamicTranslationProvider.getValue(this, "value", value);
     }
 
     @Override
@@ -96,7 +97,7 @@ public class CustomerAttributeImpl implements CustomerAttribute {
 
     @Override
     public String getName() {
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     @Override

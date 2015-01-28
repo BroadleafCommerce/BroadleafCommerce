@@ -23,8 +23,9 @@ import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
+
+import javax.annotation.Resource;
 
 /**
  * This class is used as a request-scope container for the current
@@ -41,8 +42,7 @@ public class OrderState {
     private final HashMap<Long, Long> orders = new HashMap<Long, Long>();
 
     @Resource(name = "blOrderDao")
-    private OrderDao orderDao;
-    private boolean updatePrices = true;
+    protected OrderDao orderDao;
 
     public Order getOrder(Customer customer) {
         if (orders.get(customer.getId()) == null) {
@@ -55,19 +55,8 @@ public class OrderState {
     public Order setOrder(Customer customer, Order order) {
         if (customer != null && order != null) {
             orders.put(customer.getId(), order.getId());
-            if (updatePrices) {
-                order = orderDao.updatePrices(order);
-            }
         }
         return order;
-    }
-
-    public boolean isUpdatePrices() {
-        return updatePrices;
-    }
-
-    public void setUpdatePrices(boolean updatePrices) {
-        this.updatePrices = updatePrices;
     }
 
 }

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -114,7 +115,7 @@ public class ProductAttributeImpl implements ProductAttribute {
      */
     @Override
     public String getValue() {
-        return value;
+        return DynamicTranslationProvider.getValue(this, "value", value);
     }
 
     /* (non-Javadoc)
@@ -150,7 +151,7 @@ public class ProductAttributeImpl implements ProductAttribute {
      */
     @Override
     public String getName() {
-        return name;
+        return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
     /* (non-Javadoc)
