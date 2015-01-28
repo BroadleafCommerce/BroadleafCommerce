@@ -45,7 +45,7 @@ $(document).ready(function() {
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
         var $form = BLCAdmin.getForm($(this));
 
-        if ($(".blc-admin-ajax-update").length) {
+        if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
             submitFormViaAjax($form);
         } else {
             $form.submit();
@@ -79,7 +79,7 @@ $(document).ready(function() {
                     $(errorBlock).insertAfter("#headerFlashAlertBoxContainer");
                     $.each( data.errors , function( idx, error ){
                         if (error.errorType == "fieldError") {
-                            var fieldLabel = $("input[id*='" + error.field + "']").prev(".field-label");
+                            var fieldLabel = $("input[id*='" + error.field + "']").siblings(".field-label");
 
                             if ($(".tabError:contains(" + error.tab + ")").length) {
                                 var labeledError = "<span class='fieldError error'>" + fieldLabel[0].innerHTML +
@@ -96,7 +96,7 @@ $(document).ready(function() {
                             $(fieldError).insertAfter(fieldLabel);
                         } else {
                             var globalError = "<div class='tabError'><b>Global Errors</b><span class='error'>"
-                                    + error.code + ": " + error.message + "</span></div>";
+                                + error.code + ": " + error.message + "</span></div>";
                             $(".errors").append(globalError);
                         }
                     });
