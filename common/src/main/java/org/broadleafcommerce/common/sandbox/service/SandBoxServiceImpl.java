@@ -62,6 +62,11 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
     
     @Override
+    public SandBox retrieveSandBoxManagementById(Long sandBoxId) {
+        return sandBoxDao.retrieveSandBoxManagementById(sandBoxId);
+    }
+
+    @Override
     public List<SandBox> retrievePreviewSandBoxes(Long authorId) {
         List<SandBox> returnList = new ArrayList<SandBox>();
         List<SandBox> authorBoxes = sandBoxDao.retrieveSandBoxesForAuthor(authorId);

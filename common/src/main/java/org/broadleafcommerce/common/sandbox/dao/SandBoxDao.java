@@ -38,6 +38,8 @@ public interface SandBoxDao {
 
     public SandBox retrieveUserSandBoxForParent(Long authorId, Long parentSandBoxId);
 
+    public SandBox retrieveSandBoxManagementById(Long sandBoxId);
+
     public SandBox retrieveNamedSandBox(SandBoxType sandboxType, String sandboxName);
 
     public Map<Long, String> retrieveAuthorNamesForSandBoxes(Set<Long> sandBoxIds);

@@ -279,11 +279,13 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 Long sandBoxId = Long.parseLong(request.getParameter(SANDBOX_REQ_PARAM));
                 sandBox = sandBoxService.retrieveUserSandBoxForParent(adminUser.getId(), sandBoxId);
                 if (sandBox == null) {
-                    SandBox approvalOrUserSandBox = sandBoxService.retrieveSandBoxById(sandBoxId);
-                    if (approvalOrUserSandBox.getSandBoxType().equals(SandBoxType.USER)) {
-                        sandBox = approvalOrUserSandBox;
-                    } else {
-                        sandBox = sandBoxService.createUserSandBox(adminUser.getId(), approvalOrUserSandBox);
+                    SandBox approvalOrUserSandBox = sandBoxService.retrieveSandBoxManagementById(sandBoxId);
+                    if (approvalOrUserSandBox != null) {
+                        if (approvalOrUserSandBox.getSandBoxType().equals(SandBoxType.USER)) {
+                            sandBox = approvalOrUserSandBox;
+                        } else {
+                            sandBox = sandBoxService.createUserSandBox(adminUser.getId(), approvalOrUserSandBox);
+                        }
                     }
                 }
             }
@@ -295,7 +297,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                         WebRequest.SCOPE_GLOBAL_SESSION);
                 }
                 if (previouslySetSandBoxId != null) {
-                    sandBox = sandBoxService.retrieveSandBoxById(previouslySetSandBoxId);
+                    sandBox = sandBoxService.retrieveSandBoxManagementById(previouslySetSandBoxId);
                 }
             }
 

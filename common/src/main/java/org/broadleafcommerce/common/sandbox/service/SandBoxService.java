@@ -43,6 +43,13 @@ public interface SandBoxService {
     public SandBox retrieveUserSandBox(Long authorId, Long overrideSandBoxId, String sandBoxName);
     
     public SandBox retrieveUserSandBoxForParent(Long authorId, Long parentSandBoxId);
+    
+    /**
+     * Returns the SandBox by id but only if the SandBox is associated with the current site.
+     * @param sandBoxId
+     * @return
+     */
+    public SandBox retrieveSandBoxManagementById(Long sandBoxId);
 
     public List<SandBox> retrievePreviewSandBoxes(Long authorId);
     

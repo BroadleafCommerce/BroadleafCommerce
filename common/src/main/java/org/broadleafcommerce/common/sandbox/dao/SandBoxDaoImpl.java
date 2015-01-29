@@ -39,7 +39,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -109,11 +108,30 @@ public class SandBoxDaoImpl implements SandBoxDao {
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        try {
-            return query.getSingleResult();
-        } catch (NoResultException e) {
+        
+        List<SandBox> results = query.getResultList();
+        
+        if (results == null || results.size() == 0) {
             return null;
         }
+        return results.get(0);
+    }
+    
+    public SandBox retrieveSandBoxManagementById(Long sandBoxId) {
+        CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
+        CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
+        Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
+        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.where(builder.equal(sandbox.get("sandBox").get("id"), sandBoxId));
+        TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
+
+        List<SandBox> results = query.getResultList();
+
+        if (results == null || results.size() == 0) {
+            return null;
+        }
+        return results.get(0);
+
     }
 
     @Override
