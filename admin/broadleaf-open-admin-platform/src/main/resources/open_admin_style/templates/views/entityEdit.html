@@ -1,5 +1,14 @@
 <div class="entity-edit">
-    <div th:remove="tag" th:if="${entityFormTemplatePath == null}">
+    <div th:remove="tag" th:if="${entityFormTemplatePath == null and useAjaxUpdate == true}">
+        <blc:form th:include="components/entityForm"
+            th:remove="tag"
+            th:with="additionalClasses='blc-admin-ajax-update',
+                     additionalTabClasses='entity-form',
+                     showSingleTab='true',
+                     hideActions='true'" />
+    </div>
+
+    <div th:remove="tag" th:if="${entityFormTemplatePath == null and useAjaxUpdate != true}">
         <blc:form th:include="components/entityForm"
             th:remove="tag"
             th:with="additionalTabClasses='entity-form',

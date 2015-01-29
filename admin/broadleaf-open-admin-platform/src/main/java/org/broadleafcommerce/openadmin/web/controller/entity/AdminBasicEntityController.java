@@ -67,6 +67,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -371,9 +373,55 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("modalHeaderType", "viewEntity");
             return "modules/modalContainer";
         } else {
+            model.addAttribute("useAjaxUpdate", true);
             model.addAttribute("viewType", "entityEdit");
             return "modules/defaultContainer";
         }
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST, produces = "application/json")
+    public @ResponseBody
+    Map<String, Object> saveEntityJson(HttpServletRequest request, HttpServletResponse response, Model model,
+                                       @PathVariable Map<String, String> pathVars,
+                                       @PathVariable(value = "id") String id,
+                                       @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result,
+                                       RedirectAttributes ra) throws Exception {
+        String returnPath = saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
+
+        Map<String, Object> jsonResponse = new HashMap<String, Object>();
+        if (result.hasErrors()) {
+            List<Map<String, Object>> errorArray = new ArrayList<Map<String, Object>>();
+            for (FieldError e : result.getFieldErrors()){
+                Map<String, Object> errorMap = new HashMap<String, Object>();
+                errorMap.put("errorType", "fieldError");
+                String fieldName = e.getField().substring(e.getField().indexOf("[")+1, e.getField().indexOf("]"));
+                errorMap.put("field", fieldName);
+                errorMap.put("message", e.getDefaultMessage());
+
+                String tabFieldName = fieldName.replaceAll("_+", ".");
+                for (Tab t : entityForm.getTabs()){
+                    for (Field f : t.getFields()){
+                        if (f.getName().equals(tabFieldName)) {
+                            errorMap.put("tab", t.getTitle());
+                            break;
+                        }
+                    }
+                    if (errorMap.get("tab") != null) { break; }
+                }
+
+                errorArray.add(errorMap);
+            }
+            for (ObjectError e : result.getGlobalErrors()) {
+                Map<String, Object> errorMap = new HashMap<String, Object>();
+                errorMap.put("errorType", "globalError");
+                errorMap.put("code", e.getCode());
+                errorMap.put("message", e.getDefaultMessage());
+                errorArray.add(errorMap);
+            }
+            jsonResponse.put("errors", errorArray);
+        }
+
+        return jsonResponse;
     }
 
     /**
@@ -429,6 +477,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 model.addAttribute("modalHeaderType", "viewEntity");
                 return "modules/modalContainer";
             } else {
+                model.addAttribute("useAjaxUpdate", true);
                 model.addAttribute("viewType", "entityEdit");
                 return "modules/defaultContainer";
             }
