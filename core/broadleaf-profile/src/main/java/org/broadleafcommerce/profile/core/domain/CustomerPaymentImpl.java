@@ -93,7 +93,7 @@ public class CustomerPaymentImpl implements CustomerPayment {
     @AdminPresentation(excluded = true)
     protected Customer customer;
 
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = AddressImpl.class, optional = false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = AddressImpl.class, optional = true)
     @JoinColumn(name = "ADDRESS_ID")
     protected Address billingAddress;
 
