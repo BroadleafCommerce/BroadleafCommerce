@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
@@ -27,8 +28,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public class BroadleafManageCustomerAddressesController extends AbstractCustomerAddressController {
 
@@ -60,6 +62,20 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         if (result.hasErrors()) {
             return getCustomerAddressesView();
         }
+
+        if ((form.getAddress().getPhonePrimary() != null) &&
+                (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            form.getAddress().getPhonePrimary().setPhoneNumber("");
+        }
+        if ((form.getAddress().getPhoneSecondary() != null) &&
+                (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            form.getAddress().getPhoneSecondary().setPhoneNumber("");
+        }
+        if ((form.getAddress().getPhoneFax() != null) &&
+                (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
+            form.getAddress().getPhoneFax().setPhoneNumber("");
+        }
+        
         Address address = addressService.saveAddress(form.getAddress());
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddress(address);
@@ -82,6 +98,20 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         if (result.hasErrors()) {
             return getCustomerAddressesView();
         }
+
+        if ((form.getAddress().getPhonePrimary() != null) &&
+                (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            form.getAddress().getPhonePrimary().setPhoneNumber("");
+        }
+        if ((form.getAddress().getPhoneSecondary() != null) &&
+                (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            form.getAddress().getPhoneSecondary().setPhoneNumber("");
+        }
+        if ((form.getAddress().getPhoneFax() != null) &&
+                (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
+            form.getAddress().getPhoneFax().setPhoneNumber("");
+        }
+
         CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
         if (customerAddress == null) {
             throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");

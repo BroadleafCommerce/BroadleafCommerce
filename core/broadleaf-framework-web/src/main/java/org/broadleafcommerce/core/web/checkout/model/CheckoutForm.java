@@ -50,6 +50,10 @@ public class CheckoutForm implements Serializable {
         billingAddress = new AddressImpl();
         shippingAddress.setPhonePrimary(new PhoneImpl());
         billingAddress.setPhonePrimary(new PhoneImpl());
+        shippingAddress.setPhoneSecondary(new PhoneImpl());
+        billingAddress.setPhoneSecondary(new PhoneImpl());
+        shippingAddress.setPhoneFax(new PhoneImpl());
+        billingAddress.setPhoneFax(new PhoneImpl());
         shippingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
         billingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
         isSameAddress = true;

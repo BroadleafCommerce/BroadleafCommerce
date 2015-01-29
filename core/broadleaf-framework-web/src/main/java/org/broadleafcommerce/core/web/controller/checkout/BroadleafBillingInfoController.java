@@ -70,7 +70,15 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
 
         if ((billingForm.getAddress().getPhonePrimary() != null) &&
                 (StringUtils.isEmpty(billingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            billingForm.getAddress().setPhonePrimary(null);
+            billingForm.getAddress().getPhonePrimary().setPhoneNumber("");
+        }
+        if ((billingForm.getAddress().getPhoneSecondary() != null) &&
+                (StringUtils.isEmpty(billingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            billingForm.getAddress().getPhoneSecondary().setPhoneNumber("");
+        }
+        if ((billingForm.getAddress().getPhoneFax() != null) &&
+                (StringUtils.isEmpty(billingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
+            billingForm.getAddress().getPhoneFax().setPhoneNumber("");
         }
 
         boolean found = false;
@@ -127,7 +135,11 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
                 billing.setCountry(shipping.getCountry());
                 billing.setIsoCountryAlpha2(shipping.getIsoCountryAlpha2());
                 billing.setPrimaryPhone(shipping.getPrimaryPhone());
+                billing.setSecondaryPhone(shipping.getSecondaryPhone());
+                billing.setFax(shipping.getFax());
                 billing.setPhonePrimary(copyPhone(shipping.getPhonePrimary()));
+                billing.setPhoneSecondary(copyPhone(shipping.getPhoneSecondary()));
+                billing.setPhoneFax(copyPhone(shipping.getPhoneFax()));
                 billing.setEmailAddress(shipping.getEmailAddress());
                 billingInfoForm.setAddress(billing);
             }

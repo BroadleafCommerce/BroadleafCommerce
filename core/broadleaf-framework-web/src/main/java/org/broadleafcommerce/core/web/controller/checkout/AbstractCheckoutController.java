@@ -25,38 +25,20 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
-import org.broadleafcommerce.common.vendor.service.exception.FulfillmentPriceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.core.order.domain.FulfillmentOption;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
-import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.order.service.FulfillmentOptionService;
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService;
 import org.broadleafcommerce.core.order.service.OrderService;
 import org.broadleafcommerce.core.payment.service.OrderPaymentService;
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService;
-import org.broadleafcommerce.core.pricing.service.FulfillmentPricingService;
-import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
-import org.broadleafcommerce.core.web.checkout.validator.BillingInfoFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.GiftCardInfoFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.MultishipAddAddressFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.OrderInfoFormValidator;
-import org.broadleafcommerce.core.web.checkout.validator.ShippingInfoFormValidator;
-import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.core.web.checkout.validator.*;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.service.AddressService;
-import org.broadleafcommerce.profile.core.service.CountryService;
-import org.broadleafcommerce.profile.core.service.CountrySubdivisionService;
-import org.broadleafcommerce.profile.core.service.CustomerAddressService;
-import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.broadleafcommerce.profile.core.service.PhoneService;
-import org.broadleafcommerce.profile.core.service.StateService;
+import org.broadleafcommerce.profile.core.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ui.Model;
@@ -65,9 +47,6 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.beans.PropertyEditorSupport;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its
@@ -242,13 +221,31 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
             @Override
             public void setAsText(String text) {
-                if (!StringUtils.isBlank(text)) {
-                    Phone phone = new PhoneImpl();
-                    phone.setPhoneNumber(text);
-                    setValue(phone);
-                } else {
-                    setValue(null);
-                }
+                Phone phone = new PhoneImpl();
+                phone.setPhoneNumber(text);
+                setValue(phone);
+            }
+
+        });
+
+        binder.registerCustomEditor(Phone.class, "address.phoneSecondary", new PropertyEditorSupport() {
+
+            @Override
+            public void setAsText(String text) {
+                Phone phone = new PhoneImpl();
+                phone.setPhoneNumber(text);
+                setValue(phone);
+            }
+
+        });
+
+        binder.registerCustomEditor(Phone.class, "address.phoneFax", new PropertyEditorSupport() {
+
+            @Override
+            public void setAsText(String text) {
+                Phone phone = new PhoneImpl();
+                phone.setPhoneNumber(text);
+                setValue(phone);
             }
 
         });
