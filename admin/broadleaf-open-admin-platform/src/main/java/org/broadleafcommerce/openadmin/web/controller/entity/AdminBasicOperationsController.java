@@ -196,6 +196,14 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         long maxInterval = request.getSession().getMaxInactiveInterval() * 1000;
         return (new JsonResponse(response)).with("maxInterval", maxInterval).with("resetTime", System.currentTimeMillis()).done();
     }
+    
+    @RequestMapping(value = "/invalidateSession", method = RequestMethod.GET)
+    public @ResponseBody void invalidateSession(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        request.getSession().invalidate();
+        return;
+    }
+    
 
     /**
      * Hook method to allow a user to modify the persistence package request for a fetch on a select lookup.

@@ -1,3 +1,22 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
 /**
  * @author Nick Crum
  */
@@ -7,19 +26,23 @@
     var sessionTimeLeft = 0;
     var pingInterval = 30000;
     var defaultSessionTime = 0;
+    var activityCount = 0;
 
     BLCAdmin.sessionTimer = {
 
         initTimer : function() {
             this.resetTimer();
-
+            
+            $(document).keypress(function(e) {
+                activityCount++;
+            });
         },
 
         resetTimer : function() {
             BLC.get({
                 url : "/admin/sessionTimerInactiveInterval"
             }, function(data) {
-                sessionTimeLeft = data.maxInterval;
+                sessionTimeLeft = data.maxInterval*2/3;
                 defaultSessionTime = sessionTimeLeft;
                 $.cookie("sessionResetTime", data.resetTime);
             });
@@ -56,68 +79,47 @@
                 return true;
             }
             return false;
+        },
+        
+        updateTimer : function() {
+            this.decrement(this.getPingInterval());
+
+            if (this.activityCount > 0) {
+                this.resetTimer();
+                this.activityCount = 0;
+                return true;
+            }
+
+//            if (BLCAdmin.sessionTimer.verifyAndUpdateTimeLeft()) {
+//                return true;
+//            }
+            
+            if (this.getTimeLeft() <= 60000) {
+                // session time less than one minute
+                $.doTimeOut(1000, this.updateCountdown);
+                return false;
+            }
+
+            return true;
+        },
+        
+        updateCountdown : function () {
+            this.decrement(1000);
+            
+            if(this.getTimeLeft() <= 0){
+                console.log("session expired");
+            }
+            console.log(this.getTimeLeft());
+            return true;
         }
 
+        
     };
 })(jQuery, BLCAdmin);
 
 $(document).ready(
         function() {
 
-            var activityCount = 0;
-
-            $(document).keypress(function(e) {
-                activityCount++;
-
-            });
-
-            $(document).click(function(e) {
-                activityCount++;
-            });
-
-            $.doTimeout(BLCAdmin.sessionTimer.getPingInterval(), function() {
-
-                BLCAdmin.sessionTimer.decrement(BLCAdmin.sessionTimer
-                        .getPingInterval());
-                
-
-                if (activityCount > 0) {
-                    BLCAdmin.sessionTimer.resetTimer();
-                    activityCount = 0;
-                    $("#session-minute").fadeOut("slow");
-                    return true;
-                }
-
-                if (BLCAdmin.sessionTimer.verifyAndUpdateTimeLeft()) {
-                    return true;
-                }
-                
-                var timeLeft = BLCAdmin.sessionTimer.getTimeLeft();
-                if (timeLeft <= 0) {
-
-                    // session has expired
-                    $("#session-minute").fadeOut("fast");
-                    $("#session-expire").fadeIn("slow");
-                    $("#session-expire a.close-notify").click(function() {
-                        $("#session-expire").fadeOut("slow");
-                        window.location.replace("/admin/login"); // Possible
-                        // BLC
-                        // redirect
-                        return false;
-                    });
-                    return false;
-
-                } else if (timeLeft <= 60000) {
-                    // session time less than one minute
-                    $("#session-minute").fadeIn("slow");
-                    $("#session-minute a.close-notify").click(function() {
-                        $("#session-minute").fadeOut("slow");
-                        BLCAdmin.sessionTimer.resetTimer();
-                        return false;
-                    });
-                }
-
-                return true;
-            });
+            $.doTimeout(BLCAdmin.sessionTimer.getPingInterval(), BLCAdmin.sessionTimer.updateTimer);
 
         });
