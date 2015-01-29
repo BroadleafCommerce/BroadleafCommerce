@@ -4,6 +4,7 @@ import org.broadleafcommerce.common.sandbox.service.SandBoxService;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidationResult;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.ValidationConfigurationBasedPropertyValidator;
 import org.springframework.stereotype.Component;
@@ -45,8 +46,11 @@ public class SandBoxNameValidator extends ValidationConfigurationBasedPropertyVa
             return new PropertyValidationResult(succeedForNullValues);
         }
 
-        if (!sandboxService.checkForExistingApprovalSandboxWithName(value)) {
-            return new PropertyValidationResult(false, ERROR_DUPLICATE_SANDBOX_NAME);
+        Property theProp = entity.getPMap().get(propertyName);
+        if (theProp != null && theProp.getIsDirty()) {
+            if (!sandboxService.checkForExistingApprovalSandboxWithName(value)) {
+                return new PropertyValidationResult(false, ERROR_DUPLICATE_SANDBOX_NAME);
+            }
         }
 
         return new PropertyValidationResult(true);
