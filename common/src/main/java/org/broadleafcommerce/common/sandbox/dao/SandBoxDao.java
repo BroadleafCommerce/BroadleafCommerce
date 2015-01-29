@@ -51,12 +51,14 @@ public interface SandBoxDao {
     public SandBox createDefaultSandBox();
 
     /**
+     * @deprecated Not used in BLC.   In a Multi-site context, may return results outside of a given tenant.
      * Reads all SandBoxes that are of type {@link SandBoxType.USER} and belong to the given
      * user.
      * 
      * @param authorId
      * @return a list of SandBox belonging to the user
      */
-    public List<SandBox> retrieveAllUserSandBoxes(Long authorId);
+    @Deprecated
+    List<SandBox> retrieveAllUserSandBoxes(Long authorId);
 
 }

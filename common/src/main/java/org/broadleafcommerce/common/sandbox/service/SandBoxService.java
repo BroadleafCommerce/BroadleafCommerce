@@ -59,6 +59,14 @@ public interface SandBoxService {
     public SandBox createDefaultSandBox();
 
     /**
+     * Returns true if an existing sandboxName exists with the passed in name.  
+     * @param sandboxName
+     * @return
+     */
+    boolean checkForExistingApprovalSandboxWithName(String sandboxName);
+
+    /**
+     * @deprecated Not used in BLC.   May return incorrect results in MT installations.
      * Reads all SandBoxes that are of type {@link SandBoxType.USER} and belong to the given
      * user.
      * 

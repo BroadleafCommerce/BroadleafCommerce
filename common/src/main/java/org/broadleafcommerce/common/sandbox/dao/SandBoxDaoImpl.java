@@ -87,6 +87,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
     }
 
     @Override
+    @Deprecated
     public List<SandBox> retrieveAllUserSandBoxes(Long authorId) {
         TypedQuery<SandBox> query = new TypedQueryBuilder<SandBox>(SandBox.class, "sb")
             .addRestriction("sb.author", "=", authorId)
@@ -122,14 +123,14 @@ public class SandBoxDaoImpl implements SandBoxDao {
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
         List<Predicate> restrictions = new ArrayList<Predicate>();
-        restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), SandBoxType.USER.getType()));
+        restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandboxType.getType()));
         restrictions.add(builder.equal(sandbox.get("sandBox").get("name"), sandboxName));
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
-        try {
+        if (query.getResultList() != null && query.getResultList().size() == 1) {
             return query.getSingleResult();
-        } catch (NoResultException e) {
+        } else {
             return null;
         }
     }

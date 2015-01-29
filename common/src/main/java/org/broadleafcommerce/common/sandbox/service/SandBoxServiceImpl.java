@@ -131,8 +131,15 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Deprecated
     public List<SandBox> retrieveAllUserSandBoxes(Long authorId) {
         return sandBoxDao.retrieveAllUserSandBoxes(authorId);
     }
     
+    @Override
+    public boolean checkForExistingApprovalSandboxWithName(String sandboxName) {
+        SandBox sb = sandBoxDao.retrieveNamedSandBox(SandBoxType.APPROVAL, sandboxName);
+        return sb == null;
+    }
+
 }
