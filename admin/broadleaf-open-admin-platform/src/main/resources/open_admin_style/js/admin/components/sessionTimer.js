@@ -26,16 +26,14 @@
     var sessionTimeLeft = 0;
     var pingInterval = 30000;
     var defaultSessionTime = 0;
-    var activityCount = 0;
+    
 
     BLCAdmin.sessionTimer = {
 
         initTimer : function() {
             this.resetTimer();
             
-            $(document).keypress(function(e) {
-                activityCount++;
-            });
+            
         },
 
         resetTimer : function() {
@@ -75,51 +73,49 @@
 
             if (exactTimeLeft > sessionTimeLeft) {
                 sessionTimeLeft = exactTimeLeft;
-                $("#session-minute").fadeOut("slow");
                 return true;
             }
             return false;
-        },
-        
-        updateTimer : function() {
-            this.decrement(this.getPingInterval());
-
-            if (this.activityCount > 0) {
-                this.resetTimer();
-                this.activityCount = 0;
-                return true;
-            }
-
-//            if (BLCAdmin.sessionTimer.verifyAndUpdateTimeLeft()) {
-//                return true;
-//            }
-            
-            if (this.getTimeLeft() <= 60000) {
-                // session time less than one minute
-                $.doTimeOut(1000, this.updateCountdown);
-                return false;
-            }
-
-            return true;
-        },
-        
-        updateCountdown : function () {
-            this.decrement(1000);
-            
-            if(this.getTimeLeft() <= 0){
-                console.log("session expired");
-            }
-            console.log(this.getTimeLeft());
-            return true;
         }
-
         
     };
 })(jQuery, BLCAdmin);
 
 $(document).ready(
         function() {
+            var activityCount = 0;
+            $(document).keypress(function(e) {
+                activityCount++;
+            });
+            
+            var updateTimer = function() {
+                BLCAdmin.sessionTimer.decrement(1000);
+                
+                if (BLCAdmin.sessionTimer.getTimeLeft() <= 60000) {
+                    // session time less than one minute
+                    console.log(BLCAdmin.sessionTimer.getTimeLeft());
+                    if (BLCAdmin.sessionTimer.getTimeLeft() <= 0){
+                        BLC.get({
+                            url : "/admin/invalidateSession"
+                        }, function(data) {
+                            window.location.replace("/admin/login?sessionTimeout=true");
+                        });
+                    }
+                    return true;
+                } else if (BLCAdmin.sessionTimer.getTimeLeft() % BLCAdmin.sessionTimer.getPingInterval() == 0) {
+                    if (activityCount > 0) {
+                        BLCAdmin.sessionTimer.resetTimer();
+                        activityCount = 0;
+                        return true;
+                    }
+                
+                }
+                return true;
+            };
+            
+            
 
-            $.doTimeout(BLCAdmin.sessionTimer.getPingInterval(), BLCAdmin.sessionTimer.updateTimer);
+            $.doTimeout(1000, updateTimer);
 
+            
         });
