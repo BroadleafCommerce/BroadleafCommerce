@@ -87,20 +87,24 @@ public class EntityValidatorServiceImpl implements EntityValidatorService, Appli
             entity = submittedEntity;
             isUpdateRequest = false;
         } else {
-            //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
-            entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
-            //acquire any missing properties not harvested from the instance and add to the entity. A use case for this
-            //would be the confirmation field for a password validation
-            for (Map.Entry<String, FieldMetadata> entry : propertiesMetadata.entrySet()) {
-                if (entity.findProperty(entry.getKey()) == null) {
-                    Property myProperty = submittedEntity.findProperty(entry.getKey());
-                    if (myProperty != null) {
-                        entity.addProperty(myProperty);
+            if (validateUnsubmittedProperties) {
+                //This is for an update, as the submittedEntity instance will likely only contain the dirty properties
+                entity = recordHelper.getRecord(propertiesMetadata, instance, null, null);
+                //acquire any missing properties not harvested from the instance and add to the entity. A use case for this
+                //would be the confirmation field for a password validation
+                for (Map.Entry<String, FieldMetadata> entry : propertiesMetadata.entrySet()) {
+                    if (entity.findProperty(entry.getKey()) == null) {
+                        Property myProperty = submittedEntity.findProperty(entry.getKey());
+                        if (myProperty != null) {
+                            entity.addProperty(myProperty);
+                        }
+                    } else if (submittedEntity.findProperty(entry.getKey()) != null) {
+                        // Set the dirty state of the property
+                        entity.findProperty(entry.getKey()).setIsDirty(submittedEntity.findProperty(entry.getKey()).getIsDirty());
                     }
-                } else if (submittedEntity.findProperty(entry.getKey()) != null ){
-                    // Set the dirty state of the property
-                    entity.findProperty(entry.getKey()).setIsDirty(submittedEntity.findProperty(entry.getKey()).getIsDirty());
                 }
+            } else {
+                entity = submittedEntity;
             }
             isUpdateRequest = true;
         }
