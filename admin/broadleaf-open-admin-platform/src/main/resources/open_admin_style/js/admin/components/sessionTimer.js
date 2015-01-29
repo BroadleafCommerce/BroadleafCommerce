@@ -76,6 +76,17 @@
                 return true;
             }
             return false;
+        },
+        
+        invalidateSession : function() {
+//            BLC.get({
+//                url : "/admin/adminLogout.htm"
+//            }, function(data) {
+//                window.location.replace("/admin/login?sessionTimeout=true");
+//            });
+              
+            window.location.replace("/admin/adminLogout.htm");
+            window.location.replace("/admin/login?sessionTimeout=true");
         }
         
     };
@@ -93,14 +104,13 @@ $(document).ready(
                 
                 if (BLCAdmin.sessionTimer.getTimeLeft() <= 60000) {
                     // session time less than one minute
-                    console.log(BLCAdmin.sessionTimer.getTimeLeft());
                     if (BLCAdmin.sessionTimer.getTimeLeft() <= 0){
-                        BLC.get({
-                            url : "/admin/invalidateSession"
-                        }, function(data) {
-                            window.location.replace("/admin/login?sessionTimeout=true");
-                        });
+                        $("#lightbox").fadeOut("slow");
+                        BLCAdmin.sessionTimer.invalidateSession();
+                        return false;
                     }
+                    $("#expire-text").html("Your session expires in <span>" + BLCAdmin.sessionTimer.getTimeLeft()/1000 + "</span> seconds");
+                    $("#lightbox").fadeIn("slow");
                     return true;
                 } else if (BLCAdmin.sessionTimer.getTimeLeft() % BLCAdmin.sessionTimer.getPingInterval() == 0) {
                     if (activityCount > 0) {
@@ -110,6 +120,7 @@ $(document).ready(
                     }
                 
                 }
+                $("#lightbox").fadeOut("slow");
                 return true;
             };
             
