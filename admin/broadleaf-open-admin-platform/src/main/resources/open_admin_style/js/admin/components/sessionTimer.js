@@ -38,7 +38,7 @@
 
         resetTimer : function() {
             BLC.get({
-                url : "/admin/sessionTimerInactiveInterval"
+                url : BLC.servletContext+"/sessionTimerInactiveInterval"
             }, function(data) {
                 sessionTimeLeft = data.maxInterval * 2 / 3;
                 defaultSessionTime = sessionTimeLeft;
@@ -96,9 +96,9 @@
 
         invalidateSession : function() {
             BLC.get({
-                url : "/admin/adminLogout.htm"
+                url : BLC.servletContext+ "/adminLogout.htm"
             }, function(data) {
-                window.location.replace("/admin?sessionTimeout=true");
+                window.location.replace(BLC.servletContext + "/login?sessionTimeout=true");
             });
         }
 
