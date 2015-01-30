@@ -24,23 +24,23 @@
 (function($, BLCAdmin) {
 
     var sessionTimeLeft = 0;
-    var pingInterval = 30000;
+    var activityPingInterval = 30000;
+    var pingInterval = 1000;
     var defaultSessionTime = 0;
-    
+    var EXPIRE_MESSAGE_TIME = 60000;
 
     BLCAdmin.sessionTimer = {
 
         initTimer : function() {
             this.resetTimer();
-            
-            
+
         },
 
         resetTimer : function() {
             BLC.get({
                 url : "/admin/sessionTimerInactiveInterval"
             }, function(data) {
-                sessionTimeLeft = data.maxInterval*2/3;
+                sessionTimeLeft = data.maxInterval * 2 / 3;
                 defaultSessionTime = sessionTimeLeft;
                 $.cookie("sessionResetTime", data.resetTime);
             });
@@ -48,6 +48,14 @@
 
         getTimeLeft : function() {
             return sessionTimeLeft;
+        },
+
+        getTimeLeftSeconds : function() {
+            return sessionTimeLeft / 1000;
+        },
+
+        isExpired : function() {
+            return sessionTimeLeft <= 0;
         },
 
         getDefaultSessionTime : function() {
@@ -58,8 +66,16 @@
             sessionTimeLeft -= val;
         },
 
+        getActivityPingInterval : function() {
+            return activityPingInterval;
+        },
+
         getPingInterval : function() {
             return pingInterval;
+        },
+        
+        getExpireMessageTime : function() {
+            return EXPIRE_MESSAGE_TIME;
         },
 
         timeSinceLastReset : function() {
@@ -69,7 +85,7 @@
         verifyAndUpdateTimeLeft : function() {
             var exactTimeLeft = (this.getDefaultSessionTime() - this
                     .timeSinceLastReset());
-            exactTimeLeft = Math.round(exactTimeLeft / 30000) * 30000;
+            exactTimeLeft = exactTimeLeft - (exactTimeLeft % pingInterval);
 
             if (exactTimeLeft > sessionTimeLeft) {
                 sessionTimeLeft = exactTimeLeft;
@@ -77,7 +93,7 @@
             }
             return false;
         },
-        
+
         invalidateSession : function() {
             BLC.get({
                 url : "/admin/adminLogout.htm"
@@ -85,54 +101,69 @@
                 window.location.replace("/admin?sessionTimeout=true");
             });
         }
-        
+
     };
 })(jQuery, BLCAdmin);
 
-$(document).ready(
-        function() {
-            var activityCount = 0;
-            $(document).keypress(function(e) {
-                activityCount++;
-            });
-            
-            var updateTimer = function() {
-                BLCAdmin.sessionTimer.decrement(1000);
-                console.log("" + BLCAdmin.sessionTimer.getTimeLeft());
-                if (BLCAdmin.sessionTimer.getTimeLeft() <= 60000) {
-                    // session time less than one minute
-                    if (BLCAdmin.sessionTimer.getTimeLeft() <= 0){
-                        $("#lightbox").fadeOut("slow");
-                        BLCAdmin.sessionTimer.invalidateSession();
-                        return false;
-                    }
-                    $("#expire-text").html("Your session expires in <span>" + BLCAdmin.sessionTimer.getTimeLeft()/1000 + "</span> seconds");
-                    $("#lightbox").fadeIn("slow");
-                    activityCount = 0;
-                    return true;
-                } else if (BLCAdmin.sessionTimer.getTimeLeft() % BLCAdmin.sessionTimer.getPingInterval() == 0) {
-                    if (activityCount > 0) {
-                        BLCAdmin.sessionTimer.resetTimer();
-                        activityCount = 0;
+$(document)
+        .ready(
+                function() {
+                    var activityCount = 0;
+                    $(document).keypress(function(e) {
+                        activityCount++;
+                    });
+
+                    var updateTimer = function() {
+
+                        BLCAdmin.sessionTimer.decrement(BLCAdmin.sessionTimer.getPingInterval());
+                        console.log(BLCAdmin.sessionTimer.getTimeLeft());
+                        if (BLCAdmin.sessionTimer.verifyAndUpdateTimeLeft()) {
+                            $("#lightbox").fadeOut("slow");
+                            return true;
+                        }
+
+                        if (BLCAdmin.sessionTimer.getTimeLeft() < BLCAdmin.sessionTimer.getExpireMessageTime()) {
+
+                            if (BLCAdmin.sessionTimer.isExpired()) {
+                                $("#lightbox").fadeOut("slow");
+                                BLCAdmin.sessionTimer.invalidateSession();
+                                return false;
+                            }
+
+                            $("#expire-text").html(
+                                    "Your session expires in <span>"
+                                            + BLCAdmin.sessionTimer
+                                                    .getTimeLeftSeconds()
+                                            + "</span> seconds");
+
+                            $("#lightbox").fadeIn("slow");
+                            activityCount = 0;
+
+                            return true;
+
+                        } else if (BLCAdmin.sessionTimer.getTimeLeft()
+                                % BLCAdmin.sessionTimer
+                                        .getActivityPingInterval() == 0) {
+                            if (activityCount > 0) {
+                                BLCAdmin.sessionTimer.resetTimer();
+                                activityCount = 0;
+                                return true;
+                            }
+
+                        }
+
                         return true;
+                    };
+
+                    stayLoggedIn = function() {
+                        $.doTimeout('update');
+                        $("#lightbox").fadeOut("slow");
+                        activityCount = 0;
+                        BLCAdmin.sessionTimer.resetTimer();
+                        $.doTimeout('update', BLCAdmin.sessionTimer.getPingInterval(), updateTimer);
                     }
-                
-                }
-                
-                return true;
-            };
-            
-            stayLoggedIn = function () {
-                $.doTimeout('update');
-                $("#lightbox").fadeOut("slow");
-                activityCount=0;
-                BLCAdmin.sessionTimer.resetTimer();
-                $.doTimeout('update',1000,updateTimer);
-            }
-            
-            
 
-            $.doTimeout('update',1000, updateTimer);
+                    BLCAdmin.sessionTimer.resetTimer();
+                    $.doTimeout('update', BLCAdmin.sessionTimer.getPingInterval(), updateTimer);
 
-            
-        });
+                });
