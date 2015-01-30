@@ -79,14 +79,11 @@
         },
         
         invalidateSession : function() {
-//            BLC.get({
-//                url : "/admin/adminLogout.htm"
-//            }, function(data) {
-//                window.location.replace("/admin/login?sessionTimeout=true");
-//            });
-              
-            window.location.replace("/admin/adminLogout.htm");
-            window.location.replace("/admin/login?sessionTimeout=true");
+            BLC.get({
+                url : "/admin/adminLogout.htm"
+            }, function(data) {
+                window.location.replace("/admin?sessionTimeout=true");
+            });
         }
         
     };
@@ -101,7 +98,7 @@ $(document).ready(
             
             var updateTimer = function() {
                 BLCAdmin.sessionTimer.decrement(1000);
-                
+                console.log("" + BLCAdmin.sessionTimer.getTimeLeft());
                 if (BLCAdmin.sessionTimer.getTimeLeft() <= 60000) {
                     // session time less than one minute
                     if (BLCAdmin.sessionTimer.getTimeLeft() <= 0){
@@ -111,6 +108,7 @@ $(document).ready(
                     }
                     $("#expire-text").html("Your session expires in <span>" + BLCAdmin.sessionTimer.getTimeLeft()/1000 + "</span> seconds");
                     $("#lightbox").fadeIn("slow");
+                    activityCount = 0;
                     return true;
                 } else if (BLCAdmin.sessionTimer.getTimeLeft() % BLCAdmin.sessionTimer.getPingInterval() == 0) {
                     if (activityCount > 0) {
@@ -120,13 +118,21 @@ $(document).ready(
                     }
                 
                 }
-                $("#lightbox").fadeOut("slow");
+                
                 return true;
             };
             
+            stayLoggedIn = function () {
+                $.doTimeout('update');
+                $("#lightbox").fadeOut("slow");
+                activityCount=0;
+                BLCAdmin.sessionTimer.resetTimer();
+                $.doTimeout('update',1000,updateTimer);
+            }
+            
             
 
-            $.doTimeout(1000, updateTimer);
+            $.doTimeout('update',1000, updateTimer);
 
             
         });

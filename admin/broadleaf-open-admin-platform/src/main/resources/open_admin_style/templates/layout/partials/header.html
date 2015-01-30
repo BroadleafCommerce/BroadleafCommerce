@@ -10,8 +10,8 @@
                     <span><img th:src="@{/img/admin/blc-logo-header.png}" width='100'/></span>
                 </div>
                 <div id="expire-content">
-                    <a id="expire-button" class="button medium dark radius" href="#" onclick="BLCAdmin.sessionTimer.resetTimer()">Stay Logged In</a>
-                    <a id="expire-button" class="button medium dark radius" href="/admin/adminLogout.htm">Logout</a>
+                    <a id="expire-button" class="button medium dark radius" href="#" onclick="stayLoggedIn(); return false;">Stay Logged In</a>
+                    <a id="expire-button" class="button medium dark radius" th:href="@{/adminLogout.htm}">Logout</a>
                     <div id="expire-text">
                 
                     </div>
