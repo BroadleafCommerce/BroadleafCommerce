@@ -19,6 +19,13 @@
  */
 package org.broadleafcommerce.core.web.api;
 
+import java.util.Locale;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -30,15 +37,10 @@ import org.broadleafcommerce.core.web.api.wrapper.ErrorWrapper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * <p>
@@ -143,6 +145,43 @@ public class BroadleafSpringRestExceptionMapper {
         errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.CONTENT_TYPE_NOT_SUPPORTED));
         errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.CONTENT_TYPE_NOT_SUPPORTED,
                 new String[] {request.getContentType()}, BroadleafWebServicesException.CONTENT_TYPE_NOT_SUPPORTED, locale));
+        errorWrapper.getMessages().add(errorMessageWrapper);
+
+        return errorWrapper;
+    }
+    
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public @ResponseBody ErrorWrapper handleMissingServletRequestParameterException(HttpServletRequest request, HttpServletResponse response, Exception ex) {
+        ErrorWrapper errorWrapper = (ErrorWrapper) context.getBean(ErrorWrapper.class.getName());
+        Locale locale = null;
+        String parameterType = null;
+        String parameterName = null;
+        BroadleafRequestContext requestContext = BroadleafRequestContext.getBroadleafRequestContext();
+        if (requestContext != null) {
+            locale = requestContext.getJavaLocale();
+        }
+        if (ex instanceof MissingServletRequestParameterException) {
+            MissingServletRequestParameterException castedException = (MissingServletRequestParameterException)ex;
+            parameterType = castedException.getParameterType();
+            parameterName = castedException.getParameterName();
+        }
+
+        LOG.error("An error occured invoking a REST service", ex);
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        if (parameterType == null) {
+            parameterType = "String";
+        }
+        if(parameterName == null) {
+            parameterName = "[unknown name]";
+        }
+        errorWrapper.setHttpStatusCode(HttpStatus.SC_BAD_REQUEST);
+        response.setStatus(resolveResponseStatusCode(ex, errorWrapper));
+        ErrorMessageWrapper errorMessageWrapper = (ErrorMessageWrapper) context.getBean(ErrorMessageWrapper.class.getName());
+        errorMessageWrapper.setMessageKey(resolveClientMessageKey(BroadleafWebServicesException.QUERY_PARAMETER_NOT_PRESENT));
+        errorMessageWrapper.setMessage(messageSource.getMessage(BroadleafWebServicesException.QUERY_PARAMETER_NOT_PRESENT,
+                new String[] {parameterType, parameterName}, BroadleafWebServicesException.QUERY_PARAMETER_NOT_PRESENT, locale));
         errorWrapper.getMessages().add(errorMessageWrapper);
 
         return errorWrapper;
