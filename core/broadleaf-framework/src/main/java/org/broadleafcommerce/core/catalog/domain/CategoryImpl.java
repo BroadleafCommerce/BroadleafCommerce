@@ -1234,10 +1234,13 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public Character getArchived() {
-        if (archiveStatus == null) {
-            archiveStatus = new ArchiveStatus();
-        }
-        return archiveStatus.getArchived();
+       ArchiveStatus temp;
+       if (archiveStatus == null) {
+           temp = new ArchiveStatus();
+       } else {
+           temp = archiveStatus;
+       }
+       return temp.getArchived();
     }
 
     @Override
