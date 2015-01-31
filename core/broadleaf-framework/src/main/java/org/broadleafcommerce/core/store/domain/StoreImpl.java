@@ -19,15 +19,6 @@
  */
 package org.broadleafcommerce.core.store.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -39,6 +30,15 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "BLC_STORE")
@@ -353,10 +353,13 @@ public class StoreImpl implements Store {
 
     @Override
     public Character getArchived() {
-        if (archiveStatus == null) {
-            archiveStatus = new ArchiveStatus();
-        }
-        return archiveStatus.getArchived();
+       ArchiveStatus temp;
+       if (archiveStatus == null) {
+           temp = new ArchiveStatus();
+       } else {
+           temp = archiveStatus;
+       }
+       return temp.getArchived();
     }
 
     @Override
