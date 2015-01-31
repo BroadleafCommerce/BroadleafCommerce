@@ -19,18 +19,6 @@
  */
 package org.broadleafcommerce.common.config.domain;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
@@ -50,18 +38,29 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+
 /**
- * Modules that need to be configured via the database should extend this.  Classes that 
- * extend this MUST call setModuleConfigurationType(ModuleConfigurationType type) in their 
+ * Modules that need to be configured via the database should extend this.  Classes that
+ * extend this MUST call setModuleConfigurationType(ModuleConfigurationType type) in their
  * constructor.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 
 @Entity
 @Table(name = "BLC_MODULE_CONFIGURATION")
-@EntityListeners(value = { AuditableListener.class })
+@EntityListeners(value = {AuditableListener.class})
 @Inheritance(strategy = InheritanceType.JOINED)
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(excludeFromPolymorphism = true, friendlyName = "AbstractModuleConfiguration")
@@ -75,51 +74,60 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     @Id
     @GeneratedValue(generator = "ModuleConfigurationId")
     @GenericGenerator(
-        name = "ModuleConfigurationId",
-        strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-                @Parameter(name = "segment_value", value = "ModuleConfigurationImpl"),
-                @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration")
-        }
+            name = "ModuleConfigurationId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "ModuleConfigurationImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.config.domain" +
+                            ".AbstractModuleConfiguration")
+            }
     )
     @Column(name = "MODULE_CONFIG_ID")
     protected Long id;
 
     @Column(name = "MODULE_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", order = 2000, gridOrder = 2, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Module_Name", order = 2000, gridOrder = 2,
+            prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String moduleName;
 
     @Column(name = "ACTIVE_START_DATE", nullable = true)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_Start_Date", order = 3000, gridOrder = 3, prominent = true, fieldType = SupportedFieldType.DATE)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_Start_Date", order = 3000, gridOrder = 3,
+            prominent = true, fieldType = SupportedFieldType.DATE)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE", nullable = true)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_End_Date", order = 4000, gridOrder = 4, prominent = true, fieldType = SupportedFieldType.DATE)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Active_End_Date", order = 4000, gridOrder = 4,
+            prominent = true, fieldType = SupportedFieldType.DATE)
     protected Date activeEndDate;
 
     @Column(name = "IS_DEFAULT", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default", order = 5000, gridOrder = 5, prominent = true, requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Is_Default", order = 5000, gridOrder = 5,
+            prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected Boolean isDefault = false;
 
     /*
-     * This should be set via the constructor of the child class with a call to setModuleConfigurationType(ModuleConfigurationType).
-     * It will not be set via the admin. The reason is that the type is know by the subclass.  The reason for this field is to allow us to search for various types.
+     * This should be set via the constructor of the child class with a call to setModuleConfigurationType
+     * (ModuleConfigurationType).
+     * It will not be set via the admin. The reason is that the type is know by the subclass.  The reason for this
+     * field is to allow us to search for various types.
      * But this field must be set via the constructor on the subclass.
      */
     @Column(name = "CONFIG_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type", order = 1000, gridOrder = 1, prominent = true, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+    @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Config_Type", order = 1000, gridOrder = 1,
+            prominent = true, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.ModuleConfigurationType",
             requiredOverride = RequiredOverride.NOT_REQUIRED, readOnly = true, visibility = VisibilityEnum.FORM_HIDDEN)
     protected String configType;
 
     @Column(name = "MODULE_PRIORITY", nullable = false)
     @AdminPresentation(friendlyName = "AbstractModuleConfiguration_Priority",
-            order = 6000, gridOrder = 6, prominent = true, requiredOverride = RequiredOverride.REQUIRED, tooltip = "AbstractModuleConfiguration_Priority_Tooltip")
+            order = 6000, gridOrder = 6, prominent = true, requiredOverride = RequiredOverride.REQUIRED,
+            tooltip = "AbstractModuleConfiguration_Priority_Tooltip")
     protected Integer priority = 100;
 
     @Embedded
     protected Auditable auditable = new Auditable();
-    
+
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
@@ -185,7 +193,13 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
 
     @Override
     public Character getArchived() {
-        return archiveStatus.getArchived();
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
     }
 
     @Override
