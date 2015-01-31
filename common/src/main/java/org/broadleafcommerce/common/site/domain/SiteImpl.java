@@ -185,10 +185,13 @@ public class SiteImpl implements Site, Status, AdminMainEntity {
     
     @Override
     public Character getArchived() {
+       ArchiveStatus temp;
        if (archiveStatus == null) {
-           archiveStatus = new ArchiveStatus();
+           temp = new ArchiveStatus();
+       } else {
+           temp = archiveStatus;
        }
-       return archiveStatus.getArchived();
+       return temp.getArchived();
     }
 
     @Override
