@@ -183,7 +183,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     protected String url;
 
     @Column(name = "OVERRIDE_GENERATED_URL")
-    @AdminPresentation(group = Presentation.Group.Name.General, order = 2010)
+    @AdminPresentation(friendlyName = "CategoryImpl_Override_Generated_Url", group = Presentation.Group.Name.General,
+            order = 2010)
     protected Boolean overrideGeneratedUrl = false;
 
     @Column(name = "EXTERNAL_ID")

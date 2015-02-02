@@ -126,7 +126,8 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     protected String url;
 
     @Column(name = "OVERRIDE_GENERATED_URL")
-    @AdminPresentation(group = Presentation.Group.Name.General, order = Presentation.FieldOrder.URL + 10)
+    @AdminPresentation(friendlyName = "ProductImpl_Override_Generated_Url", group = Presentation.Group.Name.General,
+            order = Presentation.FieldOrder.URL + 10)
     protected Boolean overrideGeneratedUrl = false;
 
     @Column(name = "URL_KEY")
