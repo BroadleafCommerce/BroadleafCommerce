@@ -186,7 +186,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     @OneToMany(mappedBy = "page", targetEntity = PageAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @MapKey(name = "name")
     @BatchSize(size = 50)
-    @AdminPresentationMap(friendlyName = "pageAttributesTitle",
+    @AdminPresentationMap(friendlyName = "PageImpl_Page_Attributes_Title",
         deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "PageAttributeImpl_Name"
     )
     protected Map<String, PageAttribute> additionalAttributes = new HashMap<String, PageAttribute>();
