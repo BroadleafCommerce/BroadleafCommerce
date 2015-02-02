@@ -14,7 +14,6 @@
     <properties>
         <project.uri>${project.baseUri}/../</project.uri>
         <spock.version>1.0-groovy-2.0-SNAPSHOT</spock.version>
-        <groovy.version>2.1.8</groovy.version>
     </properties>
     <licenses>
         <license>

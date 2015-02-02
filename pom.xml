@@ -58,7 +58,7 @@
         <geb.version>0.9.3</geb.version>
         <spock.version>0.7-groovy-2.0</spock.version>
         <selenium.version>2.43.1</selenium.version>
-        <groovy.version>2.1.8</groovy.version>
+        <groovy.version>2.3.7</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
     </properties>
     <scm>

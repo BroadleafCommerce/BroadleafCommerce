@@ -193,5 +193,11 @@
             <artifactId>spock-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
