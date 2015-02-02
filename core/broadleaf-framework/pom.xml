@@ -135,27 +135,6 @@
         <dependency>
             <artifactId>solr-core</artifactId>
             <groupId>org.apache.solr</groupId>
-            <exclusions>
-                <!-- The jdk.tools transitive dependency uses system scope -->
-                <!-- which has to be resolved in a platform agnostic way -->
-                <!-- in order to have a clean compile in Eclipse. That -->
-                <!-- turned out to be surprisingly difficult to achieve. -->
-
-                <!-- From the dependency tree below we can see that -->
-                <!-- jdk.tools is pulled in by hadoop-annotations -->
-                <!-- and since this is a normal JDK system jar we can avoid the -->
-                <!-- problem by excluding the jdk.tools dependency. -->
-
-                <!-- Relevant output from mvn dependency:tree follows -->
-                <!-- +- org.broadleafcommerce:broadleaf-framework:jar:{version}:compile -->
-                <!--    +- org.apache.solr:solr-core:jar:4.4.0:compile -->
-                <!--        +- org.apache.hadoop:hadoop-annotations:jar:2.0.5-alpha:compile -->
-                <!--            \- jdk.tools:jdk.tools:jar:1.6:system -->
-                <exclusion>
-                    <groupId>jdk.tools</groupId>
-                    <artifactId>jdk.tools</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mvel</groupId>
@@ -194,14 +173,6 @@
         <dependency>
             <groupId>org.easymock</groupId>
             <artifactId>easymockclassextension</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.module</groupId>
-            <artifactId>jackson-module-jaxb-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

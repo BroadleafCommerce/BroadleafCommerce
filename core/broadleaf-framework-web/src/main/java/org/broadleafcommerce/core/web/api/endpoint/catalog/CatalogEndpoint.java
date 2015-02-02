@@ -53,6 +53,7 @@ import org.broadleafcommerce.core.web.api.wrapper.SearchResultsWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -61,7 +62,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 
 /**
  * This class exposes catalog services as RESTful APIs.  It is dependent on
@@ -119,7 +119,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(product, request);
             return wrapper;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
@@ -142,23 +142,23 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 q = StringUtils.trim(q);
                 q = exploitProtectionService.cleanString(q);
             } else {
-                throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                         .addMessage(BroadleafWebServicesException.SEARCH_QUERY_EMPTY);
             }
         } catch (ServiceException e) {
-            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+            throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                     .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
         }
 
         if (categoryId == null) {
-            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+            throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                     .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
         }
 
         Category category = null;
         category = catalogService.findCategoryById(categoryId);
         if (category == null) {
-            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+            throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                     .addMessage(BroadleafWebServicesException.INVALID_CATEGORY_ID, categoryId);
         }
 
@@ -175,7 +175,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(result, request);
             return wrapper;
         } catch (ServiceException e) {
-            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+            throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
@@ -197,11 +197,11 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 q = StringUtils.trim(q);
                 q = exploitProtectionService.cleanString(q);
             } else {
-                throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+                throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                         .addMessage(BroadleafWebServicesException.SEARCH_QUERY_EMPTY);
             }
         } catch (ServiceException e) {
-            throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+            throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                     .addMessage(BroadleafWebServicesException.SEARCH_QUERY_MALFORMED, q);
         }
 
@@ -218,7 +218,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(result, request);
             return wrapper;
         } catch (ServiceException e) {
-            throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
+            throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .addMessage(BroadleafWebServicesException.SEARCH_ERROR);
 
         }
@@ -244,7 +244,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
                 return out;
             }
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
     
@@ -255,7 +255,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(product.getDefaultSku(), request);
             return wrapper;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
@@ -291,7 +291,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(categories, request);
             return wrapper;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
 
     }
@@ -322,7 +322,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(cat, request);
             return wrapper;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
     }
 
@@ -367,7 +367,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(cat, request);
             return wrapper;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, searchParameter);
     }
 
@@ -385,7 +385,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
     }
 
@@ -408,7 +408,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
@@ -431,7 +431,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
     
@@ -449,7 +449,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
@@ -467,7 +467,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
     }
 
@@ -488,7 +488,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return medias;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
     }
 
@@ -500,7 +500,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(sku, request);
             return wrapper;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, id);
     }
     
@@ -516,7 +516,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.SKU_NOT_FOUND, skus.toArray());
     }
 
@@ -538,7 +538,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 
@@ -555,7 +555,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             }
             return out;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CATEGORY_NOT_FOUND, id);
     }
 
@@ -571,7 +571,7 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
             wrapper.wrapDetails(categories, request);
             return wrapper;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
     }
 

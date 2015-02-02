@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,21 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api;
+package org.broadleafcommerce.core.web.api.jaxrs;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.web.api.BroadleafWebServicesException;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorMessageWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.ErrorWrapper;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -47,21 +47,18 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
- * This is a generic JAX-RS ExceptionMapper.  This can be registered as a Spring Bean to catch exceptions, log them, 
- * and return reasonable responses to the client.  Alternatively, you can extend this or implement your own, more granular, mapper(s). 
- * This class does not return internationalized messages. But for convenience, this class provides a protected 
- * Spring MessageSource to allow for internationalization if one chose to go that route.
- * 
- * @author Kelly Tisdell
+ * JAXRS-compatible exception mapper
  *
+ * @author Phillip Verheyden (phillipuniverse)
+ * @deprecated along with the other JAXRS components, this is deprecated in favor of using Spring MVC for REST services
  */
-//This class MUST be a singleton Spring Bean
 @Provider
-@Component("blRestExceptionMapper")
-@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class RestExceptionMapper implements ExceptionMapper<Throwable>, MessageSourceAware, ApplicationContextAware {
+@Component("blJaxrsRestExceptionMapper")
+@Conditional(IsJaxrsAvailableCondition.class)
+@Deprecated
+public class JaxrsRestExceptionMapper implements ExceptionMapper<Throwable>, MessageSourceAware, ApplicationContextAware {
 
-    private static final Log LOG = LogFactory.getLog(RestExceptionMapper.class);
+    private static final Log LOG = LogFactory.getLog(JaxrsRestExceptionMapper.class);
 
     protected String messageKeyPrefix = BroadleafWebServicesException.class.getName() + '.';
 
@@ -193,4 +190,5 @@ public class RestExceptionMapper implements ExceptionMapper<Throwable>, MessageS
         }
         return key;
     }
+
 }

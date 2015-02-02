@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2014 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api;
+package org.broadleafcommerce.core.web.api.jaxrs;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.web.api.WrapperOverrideTypeModifier;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -40,25 +40,27 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
+
 /**
  * <p>
- * Customized provider for a Jackson ObjectMapper that ensures single-element objects are serialized in JSON array syntax
+ * Customized provider for a Jackson ObjectMapper that ensures singleelement objects are serialized in JSON array syntax
  * both on Serialization and Deserialization.
  * 
  * <p>
  * This also ensures that the {@link JaxbAnnotationModule} is registered with the {@link ObjectMapper}.
  * 
  * @author Phillip Verheyden (phillipuniverse)
+ * @deprecated along with the other JAXRS components, this is deprecated in favor of using Spring MVC for REST services
  */
-//This class MUST be a singleton Spring Bean
 @Provider
 @Produces(value = { MediaType.APPLICATION_JSON })
 @Consumes(value = { MediaType.APPLICATION_JSON })
-@Component("blObjectMapperProvider")
-@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class ObjectMapperProvider implements ContextResolver<ObjectMapper>, InitializingBean {
+@Component("blJaxrsObjectMapperProvider")
+@Conditional(IsJaxrsAvailableCondition.class)
+@Deprecated
+public class JaxrsObjectMapperProvider implements ContextResolver<ObjectMapper>, InitializingBean {
 
-    private static final Log LOG = LogFactory.getLog(ObjectMapperProvider.class);
+    private static final Log LOG = LogFactory.getLog(JaxrsObjectMapperProvider.class);
     
     @Resource(name = "blWrapperOverrideTypeModifier")
     protected WrapperOverrideTypeModifier typeModifier;
@@ -69,7 +71,7 @@ public class ObjectMapperProvider implements ContextResolver<ObjectMapper>, Init
     public void afterPropertiesSet() throws Exception {
         mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        // serializing to single-element arrays is enabled by default but just in case they change this in the future...
+        // serializing to singleelement arrays is enabled by default but just in case they change this in the future...
         mapper.configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, false);
         
         // Register the JAXB annotation module 
