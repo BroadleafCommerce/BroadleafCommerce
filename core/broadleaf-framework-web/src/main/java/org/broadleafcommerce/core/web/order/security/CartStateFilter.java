@@ -32,7 +32,7 @@ import org.springframework.security.web.util.AntPathRequestMatcher;
 import org.springframework.security.web.util.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
@@ -41,7 +41,6 @@ import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -62,7 +61,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blCartStateFilter")
-public class CartStateFilter extends GenericFilterBean implements  Ordered {
+public class CartStateFilter extends OncePerRequestFilter implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(CartStateFilter.class);
 
@@ -78,9 +77,9 @@ public class CartStateFilter extends GenericFilterBean implements  Ordered {
     protected List<String> excludedOrderLockRequestPatterns;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+    public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {        
-        cartStateProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
+        cartStateProcessor.process(new ServletWebRequest(request, response));
         
         if (!requestRequiresLock(request)) {
             chain.doFilter(request, response);
