@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
@@ -56,6 +57,7 @@ public class RoleImpl implements Role {
 
     @Column(name = "ROLE_NAME", nullable = false)
     @Index(name="ROLE_NAME_INDEX", columnNames={"ROLE_NAME"})
+    @AdminPresentation(friendlyName = "rolesTitle",prominent = true)
     protected String roleName;
 
     @Override
