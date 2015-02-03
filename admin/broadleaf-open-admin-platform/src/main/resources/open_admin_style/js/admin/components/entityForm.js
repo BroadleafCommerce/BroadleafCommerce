@@ -79,7 +79,7 @@ $(document).ready(function() {
                     $(errorBlock).insertAfter("#headerFlashAlertBoxContainer");
                     $.each( data.errors , function( idx, error ){
                         if (error.errorType == "fieldError") {
-                            var fieldLabel = $("input[id*='" + error.field + "']").siblings(".field-label");
+                            var fieldLabel = $("#field-" + error.field).children(".field-label");
 
                             if ($(".tabError:contains(" + error.tab + ")").length) {
                                 var labeledError = "<span class='fieldError error'>" + fieldLabel[0].innerHTML +

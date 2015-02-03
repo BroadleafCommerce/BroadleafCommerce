@@ -394,7 +394,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             for (FieldError e : result.getFieldErrors()){
                 Map<String, Object> errorMap = new HashMap<String, Object>();
                 errorMap.put("errorType", "fieldError");
-                String fieldName = e.getField().substring(e.getField().indexOf("[")+1, e.getField().indexOf("]"));
+                String fieldName = e.getField().substring(e.getField().indexOf("[")+1, e.getField().indexOf("]")).replace("_", "-");
                 errorMap.put("field", fieldName);
                 errorMap.put("message", e.getDefaultMessage());
 
