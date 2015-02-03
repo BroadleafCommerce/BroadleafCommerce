@@ -29,8 +29,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafManageCustomerAddressesController extends AbstractCustomerAddressController {
 
@@ -65,15 +66,15 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
 
         if ((form.getAddress().getPhonePrimary() != null) &&
                 (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            form.getAddress().getPhonePrimary().setPhoneNumber("");
+            form.getAddress().setPhonePrimary(null);
         }
         if ((form.getAddress().getPhoneSecondary() != null) &&
                 (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            form.getAddress().getPhoneSecondary().setPhoneNumber("");
+            form.getAddress().setPhoneSecondary(null);
         }
         if ((form.getAddress().getPhoneFax() != null) &&
                 (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
-            form.getAddress().getPhoneFax().setPhoneNumber("");
+            form.getAddress().setPhoneFax(null);
         }
         
         Address address = addressService.saveAddress(form.getAddress());
@@ -101,15 +102,15 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
 
         if ((form.getAddress().getPhonePrimary() != null) &&
                 (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            form.getAddress().getPhonePrimary().setPhoneNumber("");
+            form.getAddress().setPhonePrimary(null);
         }
         if ((form.getAddress().getPhoneSecondary() != null) &&
                 (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            form.getAddress().getPhoneSecondary().setPhoneNumber("");
+            form.getAddress().setPhoneSecondary(null);
         }
         if ((form.getAddress().getPhoneFax() != null) &&
                 (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
-            form.getAddress().getPhoneFax().setPhoneNumber("");
+            form.getAddress().setPhoneFax(null);
         }
 
         CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);

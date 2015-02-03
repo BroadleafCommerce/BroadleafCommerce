@@ -70,15 +70,15 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
 
         if ((billingForm.getAddress().getPhonePrimary() != null) &&
                 (StringUtils.isEmpty(billingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            billingForm.getAddress().getPhonePrimary().setPhoneNumber("");
+            billingForm.getAddress().setPhonePrimary(null);
         }
         if ((billingForm.getAddress().getPhoneSecondary() != null) &&
                 (StringUtils.isEmpty(billingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            billingForm.getAddress().getPhoneSecondary().setPhoneNumber("");
+            billingForm.getAddress().setPhoneSecondary(null);
         }
         if ((billingForm.getAddress().getPhoneFax() != null) &&
                 (StringUtils.isEmpty(billingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
-            billingForm.getAddress().getPhoneFax().setPhoneNumber("");
+            billingForm.getAddress().setPhoneFax(null);
         }
 
         boolean found = false;

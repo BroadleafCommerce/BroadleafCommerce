@@ -122,15 +122,15 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
 
         if ((shippingForm.getAddress().getPhonePrimary() != null) &&
                 (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            shippingForm.getAddress().getPhonePrimary().setPhoneNumber("");
+            shippingForm.getAddress().setPhonePrimary(null);
         }
         if ((shippingForm.getAddress().getPhoneSecondary() != null) &&
                 (StringUtils.isEmpty(shippingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            shippingForm.getAddress().getPhoneSecondary().setPhoneNumber("");
+            shippingForm.getAddress().setPhoneSecondary(null);
         }
         if ((shippingForm.getAddress().getPhoneFax() != null) &&
                 (StringUtils.isEmpty(shippingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
-            shippingForm.getAddress().getPhoneFax().setPhoneNumber("");
+            shippingForm.getAddress().setPhoneFax(null);
         }
 
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
