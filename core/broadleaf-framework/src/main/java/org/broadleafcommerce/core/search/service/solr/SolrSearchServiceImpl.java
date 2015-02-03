@@ -32,6 +32,8 @@ import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.Group;
@@ -39,6 +41,7 @@ import org.apache.solr.client.solrj.response.GroupCommand;
 import org.apache.solr.client.solrj.response.GroupResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -65,6 +68,7 @@ import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
 
@@ -82,9 +86,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
@@ -97,11 +103,19 @@ import javax.xml.parsers.ParserConfigurationException;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class SolrSearchServiceImpl implements SearchService, DisposableBean {
+public class SolrSearchServiceImpl implements SearchService, InitializingBean, DisposableBean {
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
 
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
+
+    //This is the name of the config that Zookeeper has associated with Solr configs
+    @Value("${solr.cloud.configName}")
+    protected String solrCloudConfigName = "blc";
+
+    //This is the default number of shards that should be created if a SolrCloud collection is created via API
+    @Value("${solr.cloud.defaultNumShards}")
+    protected int solrCloudNumShards = 2;
 
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
@@ -277,9 +291,122 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     @Override
+    public void afterPropertiesSet() throws Exception {
+        if (SolrContext.isSolrCloudMode()) {
+            //We want to use the Solr APIs to make sure the correct collections are set up.
+
+            CloudSolrServer primary = (CloudSolrServer) SolrContext.getServer();
+            CloudSolrServer reindex = (CloudSolrServer) SolrContext.getReindexServer();
+            if (primary == null || reindex == null) {
+                throw new IllegalStateException("The primary and reindex CloudSolrServers must not be null. Check "
+                        + "your configuration and ensure that you are passing a different instance for each to the "
+                        + "constructor of "
+                        + this.getClass().getName()
+                        + " and ensure that each has a null (empty)"
+                        + " defaultCollection property, or ensure that defaultCollection is unique between"
+                        + " the two instances. All other things, like Zookeeper addresses should be the same.");
+            }
+
+            if (primary == reindex) {
+                //These are the same object instances.  They should be separate instances, with the same configuration, 
+                //except for the defaultCollection name.
+                throw new IllegalStateException("The primary and reindex CloudSolrServers must be different instances "
+                        + "and their defaultCollection property must be unique or null.  All other things like the "
+                        + "Zookeeper addresses should be the same.");
+            }
+            
+            //Set the default collection if it's null
+            if (StringUtils.isEmpty(primary.getDefaultCollection())) {
+                primary.setDefaultCollection(SolrContext.PRIMARY);
+            }
+
+            //Set the default collection if it's null
+            if (StringUtils.isEmpty(reindex.getDefaultCollection())) {
+                reindex.setDefaultCollection(SolrContext.REINDEX);
+            }
+
+            if (primary.getDefaultCollection().equals(reindex.getDefaultCollection())) {
+                throw new IllegalStateException("The primary and reindex CloudSolrServers must have a null (empty) or "
+                        + "unique defaultCollection property.  All other things like the "
+                        + "Zookeeper addresses should be the same.");
+            }
+
+            primary.connect(); //This is required to ensure no NPE!
+
+            //Get a list of existing collections so we don't overwrite one
+            Set<String> collectionNames = primary.getZkStateReader().getAllCollections();
+            if (collectionNames == null) {
+                collectionNames = new HashSet<String>();
+            }
+
+            Aliases aliases = primary.getZkStateReader().getAliases();
+            Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
+            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primary.getDefaultCollection())) {
+                //Create a completely new collection
+                String collectionName = null;
+                for (int i = 0; i < 1000; i++) {
+                    collectionName = "blcCollection" + i;
+                    if (collectionNames.contains(collectionName)) {
+                        collectionName = null;
+                    } else {
+                        break;
+                    }
+                }
+
+                CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                CollectionAdminRequest.createAlias(primary.getDefaultCollection(), collectionName, primary);
+
+                //Reload these maps for the next collection.
+                aliases = primary.getZkStateReader().getAliases();
+                aliasCollectionMap = aliases.getCollectionAliasMap();
+            }
+
+            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
+                //Create a completely new collection
+                String collectionName = null;
+                for (int i = 0; i < 1000; i++) {
+                    collectionName = "blcCollection" + i;
+                    if (collectionNames.contains(collectionName)) {
+                        collectionName = null;
+                    } else {
+                        break;
+                    }
+                }
+
+                CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), collectionName, primary);
+            }
+        }
+    }
+
+    @Override
     public void destroy() throws Exception {
-        if (SolrContext.getServer() instanceof EmbeddedSolrServer) {
-            ((EmbeddedSolrServer) SolrContext.getServer()).shutdown();
+        //Make sure we shut down each of the SolrServer references (these is really the Solr clients despite the name)
+        try {
+            if (SolrContext.getServer() != null) {
+                SolrContext.getServer().shutdown();
+            }
+        } catch (Exception e) {
+            LOG.error("Error shutting down primary SolrServer (client).", e);
+        }
+
+        try {
+            if (SolrContext.getReindexServer() != null
+                    && SolrContext.getReindexServer() != SolrContext.getServer()) {
+                SolrContext.getReindexServer().shutdown();
+            }
+        } catch (Exception e) {
+            LOG.error("Error shutting down reindex SolrServer (client).", e);
+        }
+
+        try {
+            if (SolrContext.getAdminServer() != null
+                    && SolrContext.getAdminServer() != SolrContext.getServer()
+                    && SolrContext.getAdminServer() != SolrContext.getReindexServer()) {
+                SolrContext.getAdminServer().shutdown();
+            }
+        } catch (Exception e) {
+            LOG.error("Error shutting down admin SolrServer (client).", e);
         }
     }
 
@@ -377,6 +504,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 .setQuery(qualifiedSolrQuery)
                 .setRows(searchCriteria.getPageSize())
                 .setStart((start) * searchCriteria.getPageSize());
+
+        //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
+        solrQuery.setParam("collection", SolrContext.PRIMARY); //This should be ignored if not using SolrCloud
+
         if (useSku) {
             solrQuery.setFields(shs.getSkuIdFieldName());
         } else {
