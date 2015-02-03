@@ -138,7 +138,6 @@ public class AdminAssetUploadController extends AdminAbstractController {
         return new ResponseEntity<Map<String, Object>>(responseMap, responseHeaders, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/uploadAsset", method = RequestMethod.POST)
     /**
      * Used by the Asset list view to upload an asset and then immediately show the
      * edit form for that record.
@@ -149,6 +148,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
      * @return
      * @throws IOException
      */
+    @RequestMapping(value = "/uploadAsset", method = RequestMethod.POST)
     public String upload(HttpServletRequest request,
             @RequestParam("file") MultipartFile file,
             @PathVariable(value="sectionKey") String sectionKey) throws IOException {

@@ -137,12 +137,16 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         String entityId = assetProperties.get("entityId");
         String fileName = assetProperties.get("fileName");
         
-        if (entityType != null) {
+        if (entityType != null && !"null".equals(entityType)) {
             path = path.append(entityType).append("/");
+        } else {
+            LOG.warn("The given entityType to build the asset URL was null for file " + originalFilename + " and entityId " + entityId + ", investigate probably cause");
         }
 
         if (entityId != null && !"null".equals(entityId)) {
             path = path.append(entityId).append("/");
+        } else {
+            LOG.warn("The given entityId to build the asset URL was null for file " + originalFilename + " and entityType " + entityType + ", investigate probably cause");
         }
 
         if (fileName != null) {
