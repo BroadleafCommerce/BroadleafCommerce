@@ -64,7 +64,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     @Override
     public String resolveSystemProperty(String name, String defaultValue) {
         String result = resolveSystemProperty(name);
-        if (result == null) {
+        if (StringUtils.isBlank(result)) {
             return defaultValue;
         }
         return result;
