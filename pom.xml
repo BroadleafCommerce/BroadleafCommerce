@@ -896,7 +896,7 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.7.2</version>
+                <version>4.10.3</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -911,7 +911,7 @@
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.4.0</version>
+                <version>4.10.3</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -922,6 +922,14 @@
                     <exclusion>
                         <groupId>javax.servlet.jsp</groupId>
                         <artifactId>jsp-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty.orbit</groupId>
+                        <artifactId>javax.servlet</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
                         Jackson dependencies -->

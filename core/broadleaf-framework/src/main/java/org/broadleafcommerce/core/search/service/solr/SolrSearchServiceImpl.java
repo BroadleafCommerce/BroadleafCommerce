@@ -308,8 +308,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             }
 
             if (primary == reindex) {
-                //These are the same object instances.  They should be separate instances, with the same configuration, 
-                //except for the defaultCollection name.
+                //These are the same object instances.  They should be separate instances, with generally 
+                //the same configuration, except for the defaultCollection name.
                 throw new IllegalStateException("The primary and reindex CloudSolrServers must be different instances "
                         + "and their defaultCollection property must be unique or null.  All other things like the "
                         + "Zookeeper addresses should be the same.");
@@ -334,13 +334,14 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             primary.connect(); //This is required to ensure no NPE!
 
             //Get a list of existing collections so we don't overwrite one
-            Set<String> collectionNames = primary.getZkStateReader().getAllCollections();
+            Set<String> collectionNames = primary.getZkStateReader().getClusterState().getCollections();
             if (collectionNames == null) {
                 collectionNames = new HashSet<String>();
             }
 
             Aliases aliases = primary.getZkStateReader().getAliases();
             Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
+
             if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primary.getDefaultCollection())) {
                 //Create a completely new collection
                 String collectionName = null;
@@ -355,11 +356,24 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
                 CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
                 CollectionAdminRequest.createAlias(primary.getDefaultCollection(), collectionName, primary);
-
-                //Reload these maps for the next collection.
-                aliases = primary.getZkStateReader().getAliases();
-                aliasCollectionMap = aliases.getCollectionAliasMap();
+            } else {
+                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
+                String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
+                collectionName = collectionName.split(",")[0];
+                if (!collectionNames.contains(collectionName)) {
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                }
             }
+
+            //Reload the collection names
+            collectionNames = primary.getZkStateReader().getClusterState().getCollections();
+            if (collectionNames == null) {
+                collectionNames = new HashSet<String>();
+            }
+
+            //Reload these maps for the next collection.
+            aliases = primary.getZkStateReader().getAliases();
+            aliasCollectionMap = aliases.getCollectionAliasMap();
 
             if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
                 //Create a completely new collection
@@ -375,6 +389,13 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
                 CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
                 CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), collectionName, primary);
+            } else {
+                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
+                String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
+                collectionName = collectionName.split(",")[0];
+                if (!collectionNames.contains(collectionName)) {
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                }
             }
         }
     }
