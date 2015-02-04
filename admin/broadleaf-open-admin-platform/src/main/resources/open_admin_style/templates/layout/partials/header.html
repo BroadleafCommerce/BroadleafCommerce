@@ -7,7 +7,7 @@
         <div id="lightbox">
             <div id="expire-message">
                 <div id="expire-header" class="brand">
-                    <span><img th:src="@{/img/admin/blc-logo-header.png}" width='100'/></span>
+                <div id="expire-header-message" th:text="#{header.session.expire}"></div>
                 </div>
                 <div id="expire-content">
                     <a id="stay-logged-in" class="expire-button button medium dark radius" href="#" th:text="#{header.stay.logged.in}"></a>

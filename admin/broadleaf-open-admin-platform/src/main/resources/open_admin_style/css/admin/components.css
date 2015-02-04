@@ -48,6 +48,13 @@
     text-align: left;
     background: linear-gradient(to bottom, #525252 0%,#424242 100%);
     border: 1px solid #464646;
+    
+}
+
+#lightbox #expire-header #expire-header-message {
+    color: #F0F0F0;
+    margin-left: 10px;
+    font-weight: bold;
 }
 
 #lightbox #expire-header span {
