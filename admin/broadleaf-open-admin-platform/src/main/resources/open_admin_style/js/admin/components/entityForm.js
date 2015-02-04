@@ -76,19 +76,18 @@ $(document).ready(function() {
                     $(".alert-box-message").text("Successfully saved");
                 } else {
                     var errorBlock = "<div class='errors'></div>";
-                    $(errorBlock).insertAfter("#headerFlashAlertBoxContainer");
+                    $(errorBlock).insertBefore("form.entity-form div.tabs-container");
                     $.each( data.errors , function( idx, error ){
                         if (error.errorType == "fieldError") {
                             var fieldLabel = $("#field-" + error.field).children(".field-label");
 
+                            var fieldHtml = "<span class='fieldError error'>SUBSTITUTE</span> <br />";
                             if ($(".tabError:contains(" + error.tab + ")").length) {
-                                var labeledError = "<span class='fieldError error'>" + fieldLabel[0].innerHTML +
-                                    ": " + error.message + "</span> <br>";
+                                var labeledError = fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message);
                                 $(".tabError:contains(" + error.tab + ")").append(labeledError);
                             } else {
                                 var labeledError = "<div class='tabError'><b>" + error.tab +
-                                    "</b><span class='fieldError error'>" + fieldLabel[0].innerHTML + ": " + error.message +
-                                    "</span></div>";
+                                    "</b>" + fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message) + "</div>";
                                 $(".errors").append(labeledError);
                             }
 

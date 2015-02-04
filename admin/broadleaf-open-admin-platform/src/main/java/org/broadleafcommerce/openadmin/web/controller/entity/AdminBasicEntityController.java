@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCArrayUtils;
 import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
@@ -107,7 +108,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
     protected static final Log LOG = LogFactory.getLog(AdminBasicEntityController.class);
 
     @Resource(name="blSandBoxHelper")
-    SandBoxHelper sandBoxHelper;
+    protected SandBoxHelper sandBoxHelper;
 
     @Value("${admin.form.validation.errors.hideTopLevelErrors}")
     protected boolean hideTopLevelErrors = false;
@@ -380,13 +381,12 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.POST, produces = "application/json")
-    public @ResponseBody
-    Map<String, Object> saveEntityJson(HttpServletRequest request, HttpServletResponse response, Model model,
+    public @ResponseBody Map<String, Object> saveEntityJson(HttpServletRequest request, HttpServletResponse response, Model model,
                                        @PathVariable Map<String, String> pathVars,
                                        @PathVariable(value = "id") String id,
                                        @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result,
                                        RedirectAttributes ra) throws Exception {
-        String returnPath = saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
+        saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
 
         Map<String, Object> jsonResponse = new HashMap<String, Object>();
         if (result.hasErrors()) {
@@ -394,9 +394,16 @@ public class AdminBasicEntityController extends AdminAbstractController {
             for (FieldError e : result.getFieldErrors()){
                 Map<String, Object> errorMap = new HashMap<String, Object>();
                 errorMap.put("errorType", "fieldError");
-                String fieldName = e.getField().substring(e.getField().indexOf("[")+1, e.getField().indexOf("]")).replace("_", "-");
+                String fieldName = e.getField().substring(e.getField().indexOf("[") + 1, e.getField().indexOf("]")).replace("_", "-");
                 errorMap.put("field", fieldName);
-                errorMap.put("message", e.getDefaultMessage());
+                
+                BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+                if (context != null && context.getMessageSource() != null) {
+                    errorMap.put("message", context.getMessageSource().getMessage(e.getCode(), null, e.getCode(), context.getJavaLocale()));
+                } else {
+                    LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
+                    errorMap.put("message", e.getCode());
+                }
 
                 String tabFieldName = fieldName.replaceAll("_+", ".");
                 for (Tab t : entityForm.getTabs()){
@@ -406,7 +413,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
                             break;
                         }
                     }
-                    if (errorMap.get("tab") != null) { break; }
+                    if (errorMap.get("tab") != null) {
+                        break;
+                    }
                 }
 
                 errorArray.add(errorMap);
