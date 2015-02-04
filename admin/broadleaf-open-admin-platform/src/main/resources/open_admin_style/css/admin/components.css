@@ -58,7 +58,7 @@
     background: 
 }
 
-#lightbox #expire-message #expire-button {
+#lightbox #expire-message .expire-button {
     background: linear-gradient(to bottom, #525252 0%,#424242 100%);
     border: 1px solid #464646;
     color: #F0F0F0;

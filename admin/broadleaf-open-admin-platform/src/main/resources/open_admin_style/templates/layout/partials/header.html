@@ -10,8 +10,8 @@
                     <span><img th:src="@{/img/admin/blc-logo-header.png}" width='100'/></span>
                 </div>
                 <div id="expire-content">
-                    <a id="expire-button" class="button medium dark radius" href="#" onclick="stayLoggedIn(); return false;">Stay Logged In</a>
-                    <a id="expire-button" class="button medium dark radius" th:href="@{/adminLogout.htm}">Logout</a>
+                    <a id="stay-logged-in" class="expire-button button medium dark radius" href="#" th:text="#{header.stay.logged.in}"></a>
+                    <a class="expire-button button medium dark radius" th:href="@{/adminLogout.htm}" th:text="#{header.logout}"></a>
                     <div id="expire-text">
                 
                     </div>
