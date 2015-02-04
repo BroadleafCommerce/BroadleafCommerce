@@ -161,48 +161,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrXml);
         }
 
-        File cores = new File(new File(solrServer), "cores");
-        if (!cores.exists() || !cores.isDirectory()) {
-            cores.mkdirs();
-        }
-
-        File primaryCoreDir = new File(cores, "primary");
-        if (!primaryCoreDir.exists() || !primaryCoreDir.isDirectory()) {
-            primaryCoreDir.mkdirs();
-        }
-
-        File primaryCoreFile = new File(primaryCoreDir, "core.properties");
-        if (!primaryCoreFile.exists()) {
-            FileOutputStream os = new FileOutputStream(primaryCoreFile);
-            Properties prop = new Properties();
-            prop.put("name", SolrContext.PRIMARY);
-            prop.store(os, "Generated Solr core properties file");
-            IOUtils.closeQuietly(os);
-        }
-
-        File primaryConfDir = new File(primaryCoreDir, "conf");
-        if (!primaryConfDir.exists() || !primaryConfDir.isDirectory()) {
-            primaryConfDir.mkdirs();
-        }
-
-        File reindexCoreDir = new File(cores, "reindex");
-        if (!reindexCoreDir.exists() || !reindexCoreDir.isDirectory()) {
-            reindexCoreDir.mkdirs();
-        }
-
-        File reindexCoreFile = new File(reindexCoreDir, "core.properties");
-        if (!reindexCoreFile.exists()) {
-            FileOutputStream os = new FileOutputStream(reindexCoreFile);
-            Properties prop = new Properties();
-            prop.put("name", SolrContext.REINDEX);
-            prop.store(os, "Generated Solr core properties file");
-            IOUtils.closeQuietly(os);
-        }
-
-        File reindexConfDir = new File(reindexCoreDir, "conf");
-        if (!reindexConfDir.exists() || !reindexConfDir.isDirectory()) {
-            reindexConfDir.mkdirs();
-        }
+        buildSolrCoreDirectories(solrServer);
 
         LOG.debug(String.format("Using [%s] as solrhome", solrServer));
         LOG.debug(String.format("Using [%s] as solr.xml", solrXml.getAbsoluteFile()));
@@ -269,6 +228,63 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                     //do nothing
                 }
             }
+        }
+    }
+
+    /**
+     * This creates the proper directories and writes the correct properties files for Solr to run in embedded mode.
+     * @param solrServer
+     * @throws IOException
+     */
+    protected void buildSolrCoreDirectories(String solrServer) throws IOException {
+        //Create a "cores" directory if it does not exist
+        File cores = new File(new File(solrServer), "cores");
+        if (!cores.exists() || !cores.isDirectory()) {
+            cores.mkdirs();
+        }
+
+        //Create a "cores/primary" if it does not exist
+        File primaryCoreDir = new File(cores, "primary");
+        if (!primaryCoreDir.exists() || !primaryCoreDir.isDirectory()) {
+            primaryCoreDir.mkdirs();
+        }
+
+        //Create a cores/primary/core.properties file, populated with "name=primary"
+        File primaryCoreFile = new File(primaryCoreDir, "core.properties");
+        if (!primaryCoreFile.exists()) {
+            FileOutputStream os = new FileOutputStream(primaryCoreFile);
+            Properties prop = new Properties();
+            prop.put("name", SolrContext.PRIMARY);
+            prop.store(os, "Generated Solr core properties file");
+            IOUtils.closeQuietly(os);
+        }
+
+        //Create a "cores/primary/conf" directory if it does not exist
+        File primaryConfDir = new File(primaryCoreDir, "conf");
+        if (!primaryConfDir.exists() || !primaryConfDir.isDirectory()) {
+            primaryConfDir.mkdirs();
+        }
+
+        //Create a "cores/reindex" if it does not exist
+        File reindexCoreDir = new File(cores, "reindex");
+        if (!reindexCoreDir.exists() || !reindexCoreDir.isDirectory()) {
+            reindexCoreDir.mkdirs();
+        }
+
+        //Create a cores/reindex/core.properties file, populated with "name=reindex"
+        File reindexCoreFile = new File(reindexCoreDir, "core.properties");
+        if (!reindexCoreFile.exists()) {
+            FileOutputStream os = new FileOutputStream(reindexCoreFile);
+            Properties prop = new Properties();
+            prop.put("name", SolrContext.REINDEX);
+            prop.store(os, "Generated Solr core properties file");
+            IOUtils.closeQuietly(os);
+        }
+
+        //Create a "cores/reindex/conf" directory if it does not exist
+        File reindexConfDir = new File(reindexCoreDir, "conf");
+        if (!reindexConfDir.exists() || !reindexConfDir.isDirectory()) {
+            reindexConfDir.mkdirs();
         }
     }
 
