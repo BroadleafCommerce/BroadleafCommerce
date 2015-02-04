@@ -186,7 +186,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         }
 
         File reindexCoreDir = new File(cores, "reindex");
-        if (!reindexCoreDir.exists()) {
+        if (!reindexCoreDir.exists() || !reindexCoreDir.isDirectory()) {
             reindexCoreDir.mkdirs();
         }
 
