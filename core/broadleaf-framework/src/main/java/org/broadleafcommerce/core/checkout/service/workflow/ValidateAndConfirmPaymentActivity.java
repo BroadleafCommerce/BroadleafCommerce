@@ -192,6 +192,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         additionalTransactions.put(payment, transaction);
 
                         if (responseDTO.isSuccessful()) {
+                            saveTokenToCustomerPayment(payment, responseDTO);
                             additionalConfirmedTransactions.put(payment, transaction.getType());
                         } else {
                             failedTransactions.add(responseDTO);
@@ -261,6 +262,14 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // There should also likely be something that says whether the payment was successful or not and this should check
         // that as well. Currently there isn't really a concept for that
         return context;
+    }
+
+    /**
+     * Default implementation does nothing since implementation is dependent on payment gateway.
+     *
+     * @param payment, responseDTO
+     */
+    protected void saveTokenToCustomerPayment(OrderPayment payment, PaymentResponseDTO responseDTO) {
     }
 
     /**
