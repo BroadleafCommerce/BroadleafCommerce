@@ -40,7 +40,11 @@
         error : 'Error',
         forbidden403 : '403 Forbidden',
         errorOccurred : 'An error occurred',
-        loading : 'Loading'
+        loading : 'Loading',
+            
+        // Session timer messages
+        sessionCountdown: 'Your session expires in <span>',
+        sessionCountdownEnd: '</span> seconds'
             
     };
             
