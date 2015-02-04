@@ -21,7 +21,7 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -90,6 +90,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -153,21 +154,54 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             }
             
             solrServer = tempDir.getAbsolutePath();
-            
-            // create the 'lib' directory with a placeholder file that has to exist in Solr's home directory to avoid a
-            // warning log message
-            String libDir = FilenameUtils.concat(solrServer, "lib");
-            LOG.debug("Creating Solr home lib directory: " + libDir);
-            new File(libDir).mkdir();
-            
-            String placeholder = FilenameUtils.concat(libDir, "solrlib_placeholder.deleteme");
-            LOG.debug("Creating Solr lib placeholder file: " + placeholder);
-            new File(placeholder).createNewFile();
         }
         
         File solrXml = new File(new File(solrServer), "solr.xml");
         if (!solrXml.exists()) {
             copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrXml);
+        }
+
+        File cores = new File(new File(solrServer), "cores");
+        if (!cores.exists() || !cores.isDirectory()) {
+            cores.mkdirs();
+        }
+
+        File primaryCoreDir = new File(cores, "primary");
+        if (!primaryCoreDir.exists() || !primaryCoreDir.isDirectory()) {
+            primaryCoreDir.mkdirs();
+        }
+
+        File primaryCoreFile = new File(primaryCoreDir, "core.properties");
+        if (!primaryCoreFile.exists()) {
+            FileOutputStream os = new FileOutputStream(primaryCoreFile);
+            Properties prop = new Properties();
+            prop.put("name", SolrContext.PRIMARY);
+            prop.store(os, "Generated Solr core properties file");
+            IOUtils.closeQuietly(os);
+        }
+
+        File primaryConfDir = new File(primaryCoreDir, "conf");
+        if (!primaryConfDir.exists() || !primaryConfDir.isDirectory()) {
+            primaryConfDir.mkdirs();
+        }
+
+        File reindexCoreDir = new File(cores, "reindex");
+        if (!reindexCoreDir.exists()) {
+            reindexCoreDir.mkdirs();
+        }
+
+        File reindexCoreFile = new File(reindexCoreDir, "core.properties");
+        if (!reindexCoreFile.exists()) {
+            FileOutputStream os = new FileOutputStream(reindexCoreFile);
+            Properties prop = new Properties();
+            prop.put("name", SolrContext.REINDEX);
+            prop.store(os, "Generated Solr core properties file");
+            IOUtils.closeQuietly(os);
+        }
+
+        File reindexConfDir = new File(reindexCoreDir, "conf");
+        if (!reindexConfDir.exists() || !reindexConfDir.isDirectory()) {
+            reindexConfDir.mkdirs();
         }
 
         LOG.debug(String.format("Using [%s] as solrhome", solrServer));
