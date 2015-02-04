@@ -22,15 +22,6 @@
     /** Default lightbox to hidden */
     display: none;
     z-index: 1030;
-    /** Position and style */
-    /* position: fixed;
-    z-index: 999;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    top: 0;
-    left: 0;
-    background: rgba(0,0,0,0.8); */
 }
 
 #lightbox #expire-message {
@@ -40,11 +31,6 @@
     width: 500px;
     margin-left: -250px;
     margin-top: -150px;
-    /* position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1050; */ */
 }
 
 #lightbox #expire-message #expire-header {
