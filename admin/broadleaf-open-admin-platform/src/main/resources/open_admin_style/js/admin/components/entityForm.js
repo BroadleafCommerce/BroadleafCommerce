@@ -36,9 +36,34 @@ $(document).ready(function() {
     $('body').on('click', 'button.delete-button', function(event) {
         var $form = BLCAdmin.getForm($(this));
         var currentAction = $form.attr('action');
+        var deleteUrl = currentAction + '/delete'
         
-        $form.attr('action', currentAction + '/delete');
-        $form.submit();
+        // On success this should redirect, on failure we'll get some JSON back
+        BLC.ajax({
+            url: deleteUrl,
+            type: "POST",
+            data: $form.serializeArray()
+        }, function (data) {
+            $("#headerFlashAlertBoxContainer").removeClass("hidden");
+            $(".errors, .error").remove();
+
+            if (!data.errors) {
+                $(".alert-box").removeClass("alert").addClass("success");
+                $(".alert-box-message").text("Successfully deleted");
+            } else {
+                showErrors(data, BLCAdmin.messages.problemDeleting);
+            }
+            
+            var $actions = $('.entity-form-actions');
+            $actions.find('button').show();
+            $actions.find('img.ajax-loader').hide();
+        });
+        
+        var $actions = $(this).closest('.entity-form-actions');
+        $actions.find('button').hide();
+        $actions.find('img.ajax-loader').show();
+
+        event.preventDefault();
     });
 
     $('body').on('click', 'button.submit-button', function(event) {
@@ -75,40 +100,43 @@ $(document).ready(function() {
                     $(".alert-box").removeClass("alert").addClass("success");
                     $(".alert-box-message").text("Successfully saved");
                 } else {
-                    var errorBlock = "<div class='errors'></div>";
-                    $(errorBlock).insertBefore("form.entity-form div.tabs-container");
-                    $.each( data.errors , function( idx, error ){
-                        if (error.errorType == "fieldError") {
-                            var fieldLabel = $("#field-" + error.field).children(".field-label");
-
-                            var fieldHtml = "<span class='fieldError error'>SUBSTITUTE</span> <br />";
-                            if ($(".tabError:contains(" + error.tab + ")").length) {
-                                var labeledError = fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message);
-                                $(".tabError:contains(" + error.tab + ")").append(labeledError);
-                            } else {
-                                var labeledError = "<div class='tabError'><b>" + error.tab +
-                                    "</b>" + fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message) + "</div>";
-                                $(".errors").append(labeledError);
-                            }
-
-                            var fieldError = "<span class='error'>" + error.message + "</span>";
-                            $(fieldError).insertAfter(fieldLabel);
-                        } else {
-                            var globalError = "<div class='tabError'><b>Global Errors</b><span class='error'>"
-                                + error.code + ": " + error.message + "</span></div>";
-                            $(".errors").append(globalError);
-                        }
-                    });
-                    $(".alert-box").removeClass("success").addClass("alert");
-                    $(".alert-box-message").text("There was a problem saving. See errors below");
+                    showErrors(data, BLCAdmin.messages.problemSaving);
                 }
 
                 var $actions = $('.entity-form-actions');
                 $actions.find('button').show();
                 $actions.find('img.ajax-loader').hide();
-
             });
         }
+    }
+    
+    function showErrors(data, alertMessage) {
+        var errorBlock = "<div class='errors'></div>";
+        $(errorBlock).insertBefore("form.entity-form div.tabs-container");
+        $.each( data.errors , function( idx, error ){
+            if (error.errorType == "field") {
+                var fieldLabel = $("#field-" + error.field).children(".field-label");
+
+                var fieldHtml = "<span class='fieldError error'>SUBSTITUTE</span>";
+                if ($(".tabError:contains(" + error.tab + ")").length) {
+                    var labeledError = fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message);
+                    $(".tabError:contains(" + error.tab + ")").append(labeledError);
+                } else {
+                    var labeledError = "<div class='tabError'><b>" + error.tab +
+                        "</b>" + fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message) + "</div>";
+                    $(".errors").append(labeledError);
+                }
+
+                var fieldError = "<span class='error'>" + error.message + "</span>";
+                $(fieldError).insertAfter(fieldLabel);
+            } else if (error.errorType == 'global'){
+                var globalError = "<div class='tabError'><b>" + BLCAdmin.messages.globalErrors + "</b><span class='error'>"
+                    + error.message + "</span></div>";
+                $(".errors").append(globalError);
+            }
+        });
+        $(".alert-box").removeClass("success").addClass("alert");
+        $(".alert-box-message").text(alertMessage);
     }
     
     $('body').on('submit', 'form.entity-form', function(event) {

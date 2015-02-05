@@ -153,6 +153,10 @@ div.errors {
     margin-bottom: 10px;
 }
 
+div.errors .tabError {
+    margin-bottom: 10px;
+}
+
 div.errors span {
     color: #c60f13;
     display: block;

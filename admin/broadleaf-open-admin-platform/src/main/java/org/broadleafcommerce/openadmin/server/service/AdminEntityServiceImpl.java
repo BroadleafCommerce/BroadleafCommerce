@@ -20,6 +20,8 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -51,6 +53,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPe
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -72,6 +75,8 @@ import javax.persistence.PersistenceContext;
  */
 @Service("blAdminEntityService")
 public class AdminEntityServiceImpl implements AdminEntityService {
+
+    protected static final Log LOG = LogFactory.getLog(AdminEntityServiceImpl.class);
 
     @Resource(name = "blDynamicEntityRemoteService")
     protected DynamicEntityService service;
@@ -702,6 +707,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return add(request, true);
     }
     
+    @Override
     public PersistenceResponse add(PersistencePackageRequest request, boolean transactional) throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
@@ -734,6 +740,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return update(request, true);
     }
     
+    @Override
     public PersistenceResponse update(PersistencePackageRequest request, boolean transactional) throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
@@ -760,12 +767,20 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return remove(request, true);
     }
 
+    @Override
     public PersistenceResponse remove(PersistencePackageRequest request, boolean transactional) throws ServiceException {
         PersistencePackage pkg = persistencePackageFactory.create(request);
-        if (transactional) {
-            return service.remove(pkg);
-        } else {
-            return service.nonTransactionalRemove(pkg);
+        try {
+            if (transactional) {
+                return service.remove(pkg);
+            } else {
+                return service.nonTransactionalRemove(pkg);
+            }
+        } catch (ValidationException e) {
+            if (e.containsCause(ConstraintViolationException.class)) {
+                e.getEntity().addGlobalValidationError("Could not remove because other objects relate");
+            }
+            return new PersistenceResponse().withEntity(e.getEntity());
         }
     }
 

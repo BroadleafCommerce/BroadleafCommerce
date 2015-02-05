@@ -48,7 +48,6 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
-import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
@@ -61,7 +60,6 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
@@ -151,6 +149,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
         
         extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
+        
+        // If this came from a delete save, we'll have a request parameter
+        model.addAttribute("headerFlash", requestParams.get("headerFlash").get(0));
         
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -380,59 +381,85 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
     }
 
+    /**
+     * Builds JSON that looks like this:
+     * 
+     * {"errors":
+     *      [{"message":"This field is Required",
+     *        "code": "requiredValidationFailure"
+     *        "field":"defaultSku--name",
+     *        "errorType", "field",
+     *        "tab": "General"
+     *        },
+     *        {"message":"This field is Required",
+     *        "code": "requiredValidationFailure"
+     *        "field":"defaultSku--name",
+     *        "errorType", "field",
+     *        "tab": "General"
+     *        }]
+     * }
+     * 
+     */
     @RequestMapping(value = "/{id}", method = RequestMethod.POST, produces = "application/json")
-    public @ResponseBody Map<String, Object> saveEntityJson(HttpServletRequest request, HttpServletResponse response, Model model,
-                                       @PathVariable Map<String, String> pathVars,
-                                       @PathVariable(value = "id") String id,
-                                       @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result,
-                                       RedirectAttributes ra) throws Exception {
+    public String saveEntityJson(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id,
+            @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result,
+            RedirectAttributes ra) throws Exception {
+        
         saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
 
-        Map<String, Object> jsonResponse = new HashMap<String, Object>();
+        JsonResponse json = new JsonResponse(response);
         if (result.hasErrors()) {
-            List<Map<String, Object>> errorArray = new ArrayList<Map<String, Object>>();
-            for (FieldError e : result.getFieldErrors()){
-                Map<String, Object> errorMap = new HashMap<String, Object>();
-                errorMap.put("errorType", "fieldError");
-                String fieldName = e.getField().substring(e.getField().indexOf("[") + 1, e.getField().indexOf("]")).replace("_", "-");
-                errorMap.put("field", fieldName);
-                
-                BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-                if (context != null && context.getMessageSource() != null) {
-                    errorMap.put("message", context.getMessageSource().getMessage(e.getCode(), null, e.getCode(), context.getJavaLocale()));
-                } else {
-                    LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
-                    errorMap.put("message", e.getCode());
-                }
-
-                String tabFieldName = fieldName.replaceAll("_+", ".");
-                for (Tab t : entityForm.getTabs()){
-                    for (Field f : t.getFields()){
-                        if (f.getName().equals(tabFieldName)) {
-                            errorMap.put("tab", t.getTitle());
-                            break;
-                        }
-                    }
-                    if (errorMap.get("tab") != null) {
-                        break;
-                    }
-                }
-
-                errorArray.add(errorMap);
-            }
-            for (ObjectError e : result.getGlobalErrors()) {
-                Map<String, Object> errorMap = new HashMap<String, Object>();
-                errorMap.put("errorType", "globalError");
-                errorMap.put("code", e.getCode());
-                errorMap.put("message", e.getDefaultMessage());
-                errorArray.add(errorMap);
-            }
-            jsonResponse.put("errors", errorArray);
+            populateJsonValidationErrors(entityForm, result, json);
         }
 
-        return jsonResponse;
+        return json.done();
     }
-
+    
+    /**
+     * Populates the given <b>json</b> response object based on the given <b>form</b> and <b>result</b>
+     * @return the same <b>result</b> that was passed in
+     */
+    protected JsonResponse populateJsonValidationErrors(EntityForm form, BindingResult result, JsonResponse json) {
+        List<Map<String, Object>> errors = new ArrayList<Map<String, Object>>();
+        for (FieldError e : result.getFieldErrors()){
+            Map<String, Object> errorMap = new HashMap<String, Object>();
+            errorMap.put("errorType", "field");
+            String fieldName = e.getField().substring(e.getField().indexOf("[") + 1, e.getField().indexOf("]")).replace("_", "-");
+            errorMap.put("field", fieldName);
+            
+            errorMap.put("message", translateErrorMessage(e));
+            errorMap.put("code", e.getCode());
+            String tabFieldName = fieldName.replaceAll("-+", ".");
+            Tab errorTab = form.findTabForField(tabFieldName);
+            if (errorTab != null) {
+                errorMap.put("tab", errorTab.getTitle());
+            }
+            errors.add(errorMap);
+        }
+        for (ObjectError e : result.getGlobalErrors()) {
+            Map<String, Object> errorMap = new HashMap<String, Object>();
+            errorMap.put("errorType", "global");
+            errorMap.put("code", e.getCode());
+            errorMap.put("message", translateErrorMessage(e));
+            errors.add(errorMap);
+        }
+        json.with("errors", errors);
+        
+        return json;
+    }
+    
+    protected String translateErrorMessage(ObjectError error) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            return context.getMessageSource().getMessage(error.getCode(), null, error.getCode(), context.getJavaLocale());
+        } else {
+            LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
+            return error.getCode();
+        }
+    }
+    
     /**
      * Attempts to save the given entity. If validation is unsuccessful, it will re-render the entity form with
      * error fields highlighted. On a successful save, it will refresh the entity page.
@@ -512,43 +539,46 @@ public class AdminBasicEntityController extends AdminAbstractController {
     public String removeEntity(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id,
-            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
+            RedirectAttributes ra) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
 
-        try {
-            service.removeEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs);
-        } catch (ServiceException e) {
-            if (e instanceof ValidationException) {
-                // Create a flash attribute for the unsuccessful delete
-                FlashMap fm = new FlashMap();
-                fm.put("headerFlash", e.getMessage());
-                fm.put("headerFlashAlert", true);
-                request.setAttribute(DispatcherServlet.OUTPUT_FLASH_MAP_ATTRIBUTE, fm);
-
-                // Make sure we have this error show up in our logs
-                LOG.error("Could not delete record", e);
-
-                // Refresh the page
-                return "redirect:/" + sectionKey + "/" + id;
-            }
-            if (e.containsCause(ConstraintViolationException.class)) {
+        Entity entity = service.removeEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
+        // Removal does not normally return an Entity unless there is some validation error
+        if (entity != null) {
+            entityFormValidator.validate(entityForm, entity, result);
+            if (result.hasErrors()) {
                 // Create a flash attribute for the unsuccessful delete
                 FlashMap fm = new FlashMap();
                 fm.put("headerFlash", "delete.unsuccessful");
                 fm.put("headerFlashAlert", true);
                 request.setAttribute(DispatcherServlet.OUTPUT_FLASH_MAP_ATTRIBUTE, fm);
                 
-                // Make sure we have this error show up in our logs
-                LOG.error("Could not delete record", e);
-
-                // Refresh the page
-                return "redirect:/" + sectionKey + "/" + id;
+                // Re-look back up the entity so that we can return something populated
+                String sectionClassName = getClassNameForSection(sectionKey);
+                PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars);
+                ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+                entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
+                Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, sectionCrumbs);
+                entityForm.clearFieldsMap();
+                formService.populateEntityForm(cmd, entity, subRecordsMap, entityForm, sectionCrumbs);
+                modifyEntityForm(entityForm, pathVars);
+    
+                return populateJsonValidationErrors(entityForm, result, new JsonResponse(response))
+                        .done();
             }
-            throw e;
         }
-
-        return "redirect:/" + sectionKey;
+        
+        ra.addFlashAttribute("headerFlash", "delete.successful");
+        ra.addFlashAttribute("headerFlashAlert", true);
+        
+        if (isAjaxRequest(request)) {
+            // redirect attributes won't work here since ajaxredirect actually makes a new request
+            return "ajaxredirect:" + getContextPath(request) + sectionKey + "?headerFlash=delete.successful";
+        } else {
+            return "redirect:/" + sectionKey;
+        }
     }
 
     @RequestMapping(value = "/{collectionField:.*}/details", method = RequestMethod.GET)
