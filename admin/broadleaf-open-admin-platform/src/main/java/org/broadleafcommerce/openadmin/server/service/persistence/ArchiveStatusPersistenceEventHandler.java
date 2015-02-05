@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.server.service.persistence.extension.ArchiveStatusPersistenceEventHandlerExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
@@ -36,7 +37,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
@@ -52,20 +55,27 @@ import javax.persistence.criteria.Predicate;
 public class ArchiveStatusPersistenceEventHandler extends PersistenceManagerEventHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(ArchiveStatusPersistenceEventHandler.class);
+
+    @Resource(name = "blArchiveStatusPersistenceEventHandlerExtensionManager")
+    protected ArchiveStatusPersistenceEventHandlerExtensionManager extensionManager;
     
     @Override
     public PersistenceManagerEventHandlerResponse preFetch(PersistenceManager persistenceManager, PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         try {
             Class<?>[] entityClasses = persistenceManager.getDynamicEntityDao()
                     .getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
-            boolean isArchivable = false;
+            AtomicBoolean isArchivable = new AtomicBoolean(true);
             for (Class<?> entity : entityClasses) {
-                if (Status.class.isAssignableFrom(entity)) {
-                    isArchivable = true;
+                extensionManager.getProxy().isArchivable(entity, isArchivable);
+
+                if (!isArchivable.get()) { break; }
+
+                if (!Status.class.isAssignableFrom(entity)) {
+                    isArchivable.set(false);
                     break;
                 }
             }
-            if (isArchivable && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
+            if (isArchivable.get() && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
                 String targetPropertyName = "archiveStatus.archived";
                 if (persistencePackage.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST)) {
                     AdornedTargetList atl = (AdornedTargetList) persistencePackage.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);

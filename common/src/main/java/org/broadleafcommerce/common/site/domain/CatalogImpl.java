@@ -25,8 +25,8 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -34,6 +34,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -57,10 +59,11 @@ import javax.persistence.Transient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_CATALOG")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@AdminPresentationClass(friendlyName = "CatalogImpl")
+@SQLDelete(sql="UPDATE BLC_CATALOG SET ARCHIVED = 'Y' WHERE CATALOG_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER)
 })
-@AdminPresentationClass(friendlyName = "CatalogImpl")
 public class CatalogImpl implements Catalog, AdminMainEntity {
 
     private static final Log LOG = LogFactory.getLog(CatalogImpl.class);
@@ -90,6 +93,9 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
 
     @Transient
     protected List<Site> sites = new ArrayList<Site>();
+
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
     @Override
     public Long getId() {
@@ -168,4 +174,32 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
         return getName();
     }
 
+    @Override
+    public Character getArchived() {
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public boolean isActive() {
+        if (LOG.isDebugEnabled()) {
+            if ('Y'==getArchived()) {
+                LOG.debug("catalog, " + id + ", inactive due to archived status");
+            }
+        }
+        return 'Y'!=getArchived();
+    }
 }

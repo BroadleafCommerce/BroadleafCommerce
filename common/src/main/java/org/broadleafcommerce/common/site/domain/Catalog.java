@@ -19,13 +19,15 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
+import org.broadleafcommerce.common.persistence.Status;
+
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Jeff Fischer
  */
-public interface Catalog extends Serializable {
+public interface Catalog extends Status, Serializable {
 
     Long getId();
 
