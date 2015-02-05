@@ -150,8 +150,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
         
         extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
         
-        // If this came from a delete save, we'll have a request parameter
-        model.addAttribute("headerFlash", requestParams.get("headerFlash").get(0));
+        // If this came from a delete save, we'll have a headerFlash request parameter to take care of
+        if (requestParams.containsKey("headerFlash")) {
+            model.addAttribute("headerFlash", requestParams.get("headerFlash").get(0));
+        }
         
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
