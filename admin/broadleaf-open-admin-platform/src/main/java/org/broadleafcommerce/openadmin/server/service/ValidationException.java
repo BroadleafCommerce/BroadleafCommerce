@@ -37,6 +37,11 @@ public class ValidationException extends ServiceException {
     
     protected Entity entity;
 
+    public ValidationException(Entity entity) {
+        super();
+        setEntity(entity);
+    }
+    
     public ValidationException(Entity entity, String message) {
         super(message);
         setEntity(entity);
