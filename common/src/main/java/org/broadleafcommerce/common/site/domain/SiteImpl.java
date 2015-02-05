@@ -69,7 +69,7 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER)
 })
-public class SiteImpl implements Site, Status, AdminMainEntity {
+public class SiteImpl implements Site, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(SiteImpl.class);
