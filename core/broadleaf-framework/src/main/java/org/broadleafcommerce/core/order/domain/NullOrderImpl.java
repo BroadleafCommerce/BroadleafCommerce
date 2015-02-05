@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,7 @@ public class NullOrderImpl implements Order {
 
     @Override
     public Money getSubTotal() {
-        return Money.ZERO;
+        return new Money(BigDecimal.ZERO);
     }
 
     @Override
