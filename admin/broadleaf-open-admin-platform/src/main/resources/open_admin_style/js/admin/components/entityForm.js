@@ -70,15 +70,15 @@ $(document).ready(function() {
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
         var $form = BLCAdmin.getForm($(this));
 
+        var $actions = $(this).closest('.entity-form-actions');
+        $actions.find('button').hide();
+        $actions.find('img.ajax-loader').show();
+
         if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
             submitFormViaAjax($form);
         } else {
             $form.submit();
         }
-
-        var $actions = $(this).closest('.entity-form-actions');
-        $actions.find('button').hide();
-        $actions.find('img.ajax-loader').show();
 
         event.preventDefault();
     });
@@ -91,7 +91,12 @@ $(document).ready(function() {
                 url: $form.action,
                 dataType: "json",
                 type: "POST",
-                data: $form.serializeArray()
+                data: $form.serializeArray(),
+                complete: function () {
+                    var $actions = $('.entity-form-actions');
+                    $actions.find('button').show();
+                    $actions.find('img.ajax-loader').hide();
+                }
             }, function (data) {
                 $("#headerFlashAlertBoxContainer").removeClass("hidden");
                 $(".errors, .error").remove();
@@ -102,10 +107,6 @@ $(document).ready(function() {
                 } else {
                     showErrors(data, BLCAdmin.messages.problemSaving);
                 }
-
-                var $actions = $('.entity-form-actions');
-                $actions.find('button').show();
-                $actions.find('img.ajax-loader').hide();
             });
         }
     }
