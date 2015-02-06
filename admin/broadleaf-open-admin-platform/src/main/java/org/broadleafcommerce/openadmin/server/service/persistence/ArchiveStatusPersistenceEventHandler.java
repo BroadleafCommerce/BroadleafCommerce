@@ -64,15 +64,17 @@ public class ArchiveStatusPersistenceEventHandler extends PersistenceManagerEven
         try {
             Class<?>[] entityClasses = persistenceManager.getDynamicEntityDao()
                     .getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
-            AtomicBoolean isArchivable = new AtomicBoolean(true);
+            AtomicBoolean isArchivable = new AtomicBoolean(false);
             for (Class<?> entity : entityClasses) {
-                extensionManager.getProxy().isArchivable(entity, isArchivable);
-
-                if (!isArchivable.get()) { break; }
-
-                if (!Status.class.isAssignableFrom(entity)) {
+                AtomicBoolean test = new AtomicBoolean(true);
+                extensionManager.getProxy().isArchivable(entity, test);
+                if (!test.get()) {
                     isArchivable.set(false);
                     break;
+                }
+
+                if (Status.class.isAssignableFrom(entity)) {
+                    isArchivable.set(true);
                 }
             }
             if (isArchivable.get() && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
