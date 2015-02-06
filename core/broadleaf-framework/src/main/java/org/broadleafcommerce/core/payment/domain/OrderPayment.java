@@ -221,25 +221,4 @@ public interface OrderPayment extends Serializable, Status {
      */
     public BroadleafCurrency getCurrency();
 
-    /**
-     * Returns whether or not this payment is should be saved as a {@link org.broadleafcommerce.profile.core.domain.CustomerPayment}
-     * on successful payment response.
-     *
-     * Implementation of functionality in
-     * {@link org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity#
-     * saveTokenToCustomerPayment(org.broadleafcommerce.core.payment.domain.OrderPayment,
-     * org.broadleafcommerce.common.payment.dto.PaymentResponseDTO)}
-     * is dependent on payment gateway
-     *
-     * @return
-     */
-    public Boolean isSaveTokenToCustomerPayment();
-
-    /**
-     * Sets whether or not this payment is should be saved as a {@link org.broadleafcommerce.profile.core.domain.CustomerPayment}
-     * on successful payment response.
-     *
-     * @return
-     */
-    public void setSaveTokenToCustomerPayment(Boolean saveTokenToCustomerPayment);
 }

@@ -67,7 +67,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -161,9 +160,6 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-
-    @Transient
-    protected Boolean saveTokenToCustomerPayment = false;
     
     @Override
     public Money getAmount() {
@@ -371,16 +367,6 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             .append(type)
             .append(archiveStatus)
             .build();
-    }
-
-    @Override
-    public Boolean isSaveTokenToCustomerPayment() {
-        return saveTokenToCustomerPayment;
-    }
-
-    @Override
-    public void setSaveTokenToCustomerPayment(Boolean saveTokenToCustomerPayment) {
-        this.saveTokenToCustomerPayment = saveTokenToCustomerPayment;
     }
 
     public static class Presentation {
