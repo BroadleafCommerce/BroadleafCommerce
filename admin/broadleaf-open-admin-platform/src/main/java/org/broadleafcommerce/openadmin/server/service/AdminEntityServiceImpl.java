@@ -731,6 +731,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 }
             }
         } catch (ValidationException e) {
+            ensureEntityMarkedAsValidationFailure(e, request);
             return new PersistenceResponse().withEntity(e.getEntity());
         }
     }
@@ -750,6 +751,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 return service.nonTransactionalUpdate(pkg);
             }
         } catch (ValidationException e) {
+            ensureEntityMarkedAsValidationFailure(e, request);
             return new PersistenceResponse().withEntity(e.getEntity());
         }
     }
@@ -777,10 +779,25 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                 return service.nonTransactionalRemove(pkg);
             }
         } catch (ValidationException e) {
-            if (e.containsCause(ConstraintViolationException.class)) {
-                e.getEntity().addGlobalValidationError("Could not remove because other objects relate");
-            }
+            ensureEntityMarkedAsValidationFailure(e, request);
             return new PersistenceResponse().withEntity(e.getEntity());
+        }
+    }
+    
+    /**
+     * <p>
+     * Should be invoked when a {@link ValidationException} is thrown to verify that the {@link Entity} contained within the
+     * given <b>originalRequest</b> has a validationFailure = true
+     * 
+     * <p>
+     * This will also check for a cause of {@link ConstraintViolationException} and add a gloal error to that.
+     */
+    protected void ensureEntityMarkedAsValidationFailure(ValidationException e, PersistencePackageRequest originalRequest) {
+        if (e.containsCause(ConstraintViolationException.class)) {
+            e.getEntity().addGlobalValidationError("constraintViolationError");
+        } else if (!e.getEntity().isValidationFailure()) {
+            e.getEntity().setValidationFailure(true);
+            e.getEntity().addGlobalValidationError(e.getMessage());
         }
     }
 
