@@ -36,6 +36,7 @@ class BaseAddItemActivitySpec extends Specification {
     ProcessContext<CartOperationRequest> context
     def setup() {
         context = new DefaultProcessContextImpl<CartOperationRequest>().with() {
+            //Create valid CartOperationRequest
             seedData = new CartOperationRequest()
             it
         }
