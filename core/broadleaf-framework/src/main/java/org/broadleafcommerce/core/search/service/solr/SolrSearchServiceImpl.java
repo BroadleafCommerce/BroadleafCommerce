@@ -79,6 +79,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
@@ -538,7 +540,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                         }
                         selectedValues[i] = solrKey + ":[" + rangeValues[0] + " TO " + rangeValues[1] + "]";
                     } else {
-                        selectedValues[i] = solrKey + ":\"" + selectedValues[i] + "\"";
+                        selectedValues[i] = solrKey + ":\"" + scrubFacetValue(selectedValues[i]) + "\"";
                     }
                 }
                 String valueString = StringUtils.join(selectedValues, " OR ");
@@ -549,6 +551,17 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 query.addFilterQuery(sb.toString());
             }
         }
+    }
+    
+    protected String scrubFacetValue(String facetValue) {
+        String scrubbedFacetValue = facetValue;
+        
+        String[] specialCharacters = new String[] { "\\\\", "\\+", "-", "&&", "\\|\\|", "\\!", "\\(", "\\)", "\\{", "\\}", "\\[", "\\]", "\\^", "\"", "~", "\\*", "\\?", ":" };
+        for(String character : specialCharacters) {
+            scrubbedFacetValue = scrubbedFacetValue.replaceAll(character, "\\\\" + character);
+        }
+        
+        return scrubbedFacetValue;
     }
 
     /**
