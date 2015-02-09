@@ -553,6 +553,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         }
     }
     
+    /**
+     * Scrubs a facet value string for all Solr special characters, automatically adding escape characters
+     * 
+     * @param facetValue The raw facet value
+     * @return The facet value with all special characters properly escaped, safe to be used in construction of a Solr query
+     */
     protected String scrubFacetValue(String facetValue) {
         String scrubbedFacetValue = facetValue;
         
