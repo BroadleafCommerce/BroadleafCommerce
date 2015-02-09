@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.broadleafcommerce</groupId>
         <artifactId>admin</artifactId>
-        <version>3.2.0-ALPHA-ENT-34</version>
+        <version>3.2.0-ALPHA-ENT-35</version>
     </parent>
     <artifactId>broadleaf-admin-functional-tests</artifactId>
     <name>BroadleafCommerce Admin Functional Tests</name>
