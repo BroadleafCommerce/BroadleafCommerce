@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid.Type;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -102,7 +103,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
         return "modules/modalContainer";
     }
     
-    @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST)
+    @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> upload(HttpServletRequest request,
             @RequestParam("file") MultipartFile file, 
             @PathVariable(value="sectionKey") String sectionKey, @PathVariable(value="id") String id) throws IOException {
