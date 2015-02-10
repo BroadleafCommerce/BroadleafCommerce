@@ -17,11 +17,9 @@
  * limitations under the License.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.lang3.StringUtils;
-import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -59,10 +57,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("blAdminBasicOperationsController")
 public class AdminBasicOperationsController extends AdminAbstractController {
-
+    
     @Resource(name = "blSearchFieldResolver")
     protected SearchFieldResolver searchFieldResolver;
-
+    
     /**
      * Shows the modal dialog that is used to select a "to-one" collection item. For example, this could be used to show
      * a list of categories for the ManyToOne field "defaultCategory" in Product.
@@ -78,9 +76,9 @@ public class AdminBasicOperationsController extends AdminAbstractController {
      */
     @RequestMapping(value = "/{owningClass:.*}/{collectionField:.*}/select", method = RequestMethod.GET)
     public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
+            @PathVariable  Map<String, String> pathVars,
             @PathVariable(value = "owningClass") String owningClass,
-            @PathVariable(value = "collectionField") String collectionField,
+            @PathVariable(value="collectionField") String collectionField,
             @RequestParam(required = false) String requestingEntityId,
             @RequestParam(defaultValue = "false") boolean dynamicField,
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
@@ -92,7 +90,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ppr.addCustomCriteria("owningClass=" + owningClass);
         ppr.addCustomCriteria("requestingField=" + collectionField);
         ClassMetadata mainMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
-
+        
         // Only get collection property metadata when there is a non-structured content field that I am looking for
         Property collectionProperty = null;
         FieldMetadata md = null;
@@ -101,7 +99,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             md = collectionProperty.getMetadata();
             ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
         }
-
+        
         ppr.addFilterAndSortCriteria(getCriteria(requestParams));
         ppr.setStartIndex(getStartIndex(requestParams));
         ppr.setMaxIndex(getMaxIndex(requestParams));
@@ -109,9 +107,9 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
         ppr.addCustomCriteria("owningClass=" + owningClass);
         ppr.addCustomCriteria("requestingField=" + collectionField);
-
+        
         modifyFetchPersistencePackageRequest(ppr, pathVars);
-
+        
         DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
         ListGrid listGrid = null;
         // If we're dealing with a lookup from a dynamic field, we need to build the list grid differently
@@ -127,7 +125,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         } else if (md instanceof BasicFieldMetadata) {
             listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
         }
-
+        
         model.addAttribute("listGrid", listGrid);
         model.addAttribute("viewType", "modal/simpleSelectEntity");
 
@@ -139,11 +137,11 @@ public class AdminBasicOperationsController extends AdminAbstractController {
     }
 
     @RequestMapping(value = "/{owningClass:.*}/{collectionField:.*}/typeahead", method = RequestMethod.GET)
-    public @ResponseBody List<Map<String, String>> getTypeaheadResults(HttpServletRequest request,
+    public @ResponseBody List<Map<String, String>> getTypeaheadResults(HttpServletRequest request, 
             HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable(value = "owningClass") String owningClass,
-            @PathVariable(value = "collectionField") String collectionField,
+            @PathVariable(value="collectionField") String collectionField,
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String requestingEntityId,
             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
@@ -160,7 +158,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         ppr.removeFilterAndSortCriteria("query");
         ppr.removeFilterAndSortCriteria("requestingEntityId");
         ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
-
+        
         // This list of datums will populate the typeahead suggestions.
         List<Map<String, String>> responses = new ArrayList<Map<String, String>>();
         if (md instanceof BasicFieldMetadata) {
@@ -187,18 +185,6 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         return responses;
     }
 
-    /*
-     * @return - Integer representing the number of minutes for session timeout
-     */
-    @RequestMapping(value = "/sessionTimerInactiveInterval", method = RequestMethod.GET)
-    public @ResponseBody String sessionTimerInactiveInterval(HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
-        long maxInterval = request.getSession().getMaxInactiveInterval() * 1000;
-        return (new JsonResponse(response)).with("maxInterval", maxInterval).with("resetTime", System.currentTimeMillis()).done();
-    }
-    
-    
-
     /**
      * Hook method to allow a user to modify the persistence package request for a fetch on a select lookup.
      * 
@@ -206,6 +192,6 @@ public class AdminBasicOperationsController extends AdminAbstractController {
      * @param pathVars
      */
     protected void modifyFetchPersistencePackageRequest(PersistencePackageRequest ppr, Map<String, String> pathVars) {
-
+        
     }
 }

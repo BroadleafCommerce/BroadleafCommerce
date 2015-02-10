@@ -1,11 +1,5 @@
 <header class="top-bar">
-
-    
-	
     <div class="attached">
-    
-        
-        
         <div class="brand">
             <span><a th:href="@{/}"><img th:src="@{/img/admin/blc-logo-header.png}" width='155'/></a></span>
         </div>
@@ -27,22 +21,5 @@
                 <a class="small button radius dark" th:href="@{/adminLogout.htm}" th:text="#{header.logout}" />
             </li>
         </ul>
-        
-        <div id="lightbox">
-        
-            <div id="expire-message" class="modal in">
-                <div id="expire-header" class="brand">
-                <div id="expire-header-message" th:text="#{header.session.expire}"></div>
-                </div>
-                <div id="expire-content">
-                    <a id="stay-logged-in" class="expire-button button medium dark radius" href="#" th:text="#{header.stay.logged.in}"></a>
-                    <a class="expire-button button medium dark radius" th:href="@{/adminLogout.htm}" th:text="#{header.logout}"></a>
-                    <div id="expire-text">
-                
-                    </div>
-                </div>
-            </div>
-            <div  class="modal-backdrop"></div>
-        </div>
     </div>
 </header>
