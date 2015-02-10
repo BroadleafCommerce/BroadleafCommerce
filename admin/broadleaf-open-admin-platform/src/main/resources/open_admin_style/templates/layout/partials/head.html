@@ -1,4 +1,7 @@
 <head>
+    
+    <div th:substituteby="layout/partials/preHeadContent" />
+
     <meta charset="utf-8" />
     <meta http-equiv="Content-Language" content="en-us" />
     <meta http-equiv="Content-Author" content="Broadleaf Commerce" />
@@ -27,4 +30,7 @@
     <script type="text/javascript" th:src="@{/js/admin/lib/modernizr.foundation.js}"></script>
     
     <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    
+    <div th:substituteby="layout/partials/postHeadContent" />
+    
 </head>

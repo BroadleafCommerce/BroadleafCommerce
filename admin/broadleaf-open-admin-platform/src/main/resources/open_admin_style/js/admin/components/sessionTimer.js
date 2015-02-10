@@ -106,75 +106,74 @@
     };
 })(jQuery, BLCAdmin);
 
-$(document)
-        .ready(
-                function() {
-                    var activityCount = 0;
-                    $(document).keypress(function(e) {
-                        activityCount++;
-                    });
+$(document).ready(function() {
+    
+    var activityCount = 0;
+    $(document).keypress(function(e) {
+        activityCount++;
+    });
 
-                    var updateTimer = function() {
+    var updateTimer = function() {
 
-                        BLCAdmin.sessionTimer.decrement(BLCAdmin.sessionTimer
-                                .getPingInterval());
+        BLCAdmin.sessionTimer.decrement(BLCAdmin.sessionTimer
+                .getPingInterval());
 
-                        if (BLCAdmin.sessionTimer.verifyAndUpdateTimeLeft()) {
-                            $("#lightbox").fadeOut("slow");
-                            return true;
-                        }
+        if (BLCAdmin.sessionTimer.verifyAndUpdateTimeLeft()) {
+            $("#lightbox").fadeOut("slow");
+            return true;
+        }
 
-                        if (BLCAdmin.sessionTimer.getTimeLeft() < BLCAdmin.sessionTimer
-                                .getExpireMessageTime()) {
+        if (BLCAdmin.sessionTimer.getTimeLeft() < BLCAdmin.sessionTimer
+                .getExpireMessageTime()) {
 
-                            if (BLCAdmin.sessionTimer.isExpired()) {
-                                $("#lightbox").fadeOut("slow");
-                                BLCAdmin.sessionTimer.invalidateSession();
-                                return false;
-                            }
+            if (BLCAdmin.sessionTimer.isExpired()) {
+                $("#lightbox").fadeOut("slow");
+                BLCAdmin.sessionTimer.invalidateSession();
+                return false;
+            }
 
-                            $("#expire-text")
-                                    .html(
-                                            BLCAdmin.messages.sessionCountdown
-                                                    + BLCAdmin.sessionTimer
-                                                            .getTimeLeftSeconds()
-                                                    + BLCAdmin.messages.sessionCountdownEnd);
+            $("#expire-text")
+                    .html(
+                            BLCAdmin.messages.sessionCountdown
+                                    + BLCAdmin.sessionTimer
+                                            .getTimeLeftSeconds()
+                                    + BLCAdmin.messages.sessionCountdownEnd);
 
-                            $("#lightbox").fadeIn("slow");
-                            activityCount = 0;
+            $("#lightbox").fadeIn("slow");
+            activityCount = 0;
 
-                            return true;
+            return true;
 
-                        } else if (BLCAdmin.sessionTimer.getTimeLeft()
-                                % BLCAdmin.sessionTimer
-                                        .getActivityPingInterval() == 0) {
-                            if (activityCount > 0) {
-                                BLCAdmin.sessionTimer.resetTimer();
-                                activityCount = 0;
-                                return true;
-                            }
+        } else if (BLCAdmin.sessionTimer.getTimeLeft()
+                % BLCAdmin.sessionTimer
+                        .getActivityPingInterval() == 0) {
+            if (activityCount > 0) {
+                BLCAdmin.sessionTimer.resetTimer();
+                activityCount = 0;
+                return true;
+            }
 
-                        }
+        }
 
-                        return true;
-                    };
+        return true;
+    };
 
-                    stayLoggedIn = function() {
-                        $.doTimeout('update');
-                        $("#lightbox").fadeOut("slow");
-                        activityCount = 0;
-                        BLCAdmin.sessionTimer.resetTimer();
-                        $.doTimeout('update', BLCAdmin.sessionTimer
-                                .getPingInterval(), updateTimer);
-                    }
+    stayLoggedIn = function() {
+        $.doTimeout('update');
+        $("#lightbox").fadeOut("slow");
+        activityCount = 0;
+        BLCAdmin.sessionTimer.resetTimer();
+        $.doTimeout('update', BLCAdmin.sessionTimer
+                .getPingInterval(), updateTimer);
+    }
 
-                    $("#stay-logged-in").click(function() {
-                        stayLoggedIn();
-                        return false;
-                    });
+    $("#stay-logged-in").click(function() {
+        stayLoggedIn();
+        return false;
+    });
 
-                    BLCAdmin.sessionTimer.resetTimer();
-                    $.doTimeout('update', BLCAdmin.sessionTimer
-                            .getPingInterval(), updateTimer);
+    BLCAdmin.sessionTimer.resetTimer();
+    $.doTimeout('update', BLCAdmin.sessionTimer
+            .getPingInterval(), updateTimer);
 
-                });
+});

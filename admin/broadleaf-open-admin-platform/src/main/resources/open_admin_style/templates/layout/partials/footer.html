@@ -1,5 +1,7 @@
 <footer>
 
+    <div th:substituteby="layout/partials/preFooterContent" />
+
     <script th:inline="text">
         //<![CDATA[
         window.jQuery || document.write('<script src="[[@{/js/lib/jquery-1.9.1.js}]]"><\/script>');
@@ -81,5 +83,7 @@
                 mapping-prefix="/js/"
                 files="admin/blc-admin-init.js" />
                           
+
+    <div th:substituteby="layout/partials/postFooterContent" />
 
 </footer>
