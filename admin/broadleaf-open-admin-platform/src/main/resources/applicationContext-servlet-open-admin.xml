@@ -45,7 +45,12 @@
         <property name="maxUploadSize" value="${asset.server.max.uploadable.file.size}"/>
     </bean>    
     
-    <mvc:annotation-driven/>
+    <mvc:annotation-driven>
+        <!-- This changes the ordering of the message converters such that JSON appears prior to any XML converters -->
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+        </mvc:message-converters>
+    </mvc:annotation-driven>
     
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
         <property name="useSuffixPatternMatch" value="false" />
@@ -137,4 +142,5 @@
     <mvc:interceptors>
       <bean class="org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor" />
     </mvc:interceptors>
+    
 </beans>
