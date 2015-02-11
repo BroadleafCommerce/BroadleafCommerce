@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -79,7 +78,6 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -125,6 +123,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     
     @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService rowLevelSecurityService;
+
+    @Resource(name = "blMediaBuilderService")
+    protected MediaBuilderService mediaBuilderService;
     
     @Resource
     protected DataFormatProvider dataFormatProvider;
@@ -762,7 +763,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
                             MediaField mf = (MediaField) field;
-                            mf.setMedia(convertJsonToMedia(entityProp.getUnHtmlEncodedValue()));
+                            Class<MediaDto> type = entityConfiguration.lookupEntityClass(MediaDto.class.getName(), MediaDto.class);
+                            mf.setMedia(mediaBuilderService.convertJsonToMedia(entityProp.getUnHtmlEncodedValue(), type));
                         } else if (!SupportedFieldType.PASSWORD_CONFIRM.equals(basicFM.getExplicitFieldType())){
                             field.setValue(entityProp.getValue());
                             field.setDisplayValue(entityProp.getDisplayValue());
@@ -771,19 +773,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 }
             }
         }
-    }
-
-    protected Media convertJsonToMedia(String json) {
-        if (json != null && !"".equals(json)) {
-            try {
-                ObjectMapper om = new ObjectMapper();
-                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                return om.readValue(json, entityConfiguration.lookupEntityClass(MediaDto.class.getName(), MediaDto.class));
-            } catch (Exception e) {
-                LOG.warn("Error parsing json to media " + json, e);
-            }
-        }
-        return entityConfiguration.createEntityInstance(MediaDto.class.getName(), MediaDto.class);
     }
 
     /**
