@@ -205,6 +205,10 @@
             if (BLCAdmin.listGrid.filter) {
                 BLCAdmin.listGrid.filter.initialize($container);
             }
+        },
+        
+        getListGridCount : function($container) {
+            return $container.find('.listgrid-container').length;
         }
     };
     

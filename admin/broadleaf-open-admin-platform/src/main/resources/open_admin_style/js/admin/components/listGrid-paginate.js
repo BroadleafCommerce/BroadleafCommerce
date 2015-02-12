@@ -401,7 +401,17 @@
                     var $newTbody = data.find('tbody');
                     BLCAdmin.listGrid.paginate.injectRecords($tbody, $newTbody);
                     BLCAdmin.listGrid.paginate.releaseLock();
-                    BLCAdmin.listGrid.hideLoadingSpinner($tbody);
+                    
+                    // now that I've loaded records, see if I need to do it again
+                    var topIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($tbody);
+                    var topIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, topIndex);
+                    var botIndex = BLCAdmin.listGrid.paginate.getBottomVisibleIndex($tbody);
+                    var botIndexLoaded = BLCAdmin.listGrid.paginate.isIndexLoaded($tbody, botIndex);
+                    if (!botIndexLoaded || !topIndexLoaded) {
+                        BLCAdmin.listGrid.paginate.loadRecords($tbody, baseUrl);
+                    } else {
+                        BLCAdmin.listGrid.hideLoadingSpinner($tbody);
+                    }
                 });
             } else {
                 BLCAdmin.listGrid.paginate.releaseLock();
@@ -502,9 +512,12 @@
                 $(thElement).css('width', thWidths[index]);
             });
             
-            // If we're a main grid, we should stretch to the bottom of the screen
             var $wrapper = $tbody.closest('.listgrid-body-wrapper');
-            if ($table.data('listgridtype') == 'main') {
+            
+            // If we're the only grid on the page, we should stretch to the bottom of the screen if we are not encapsulated
+            // inside of an entity-form
+            var listGridsCount = BLCAdmin.listGrid.getListGridCount($);
+            if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0) {
                 var $window = $(window);
                 
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
@@ -513,12 +526,13 @@
                 
                 $wrapper.mCustomScrollbar('update');
                 
-                // If we are showing all records, ensure the url and footer are updated
+                // If we are showing all records from the single grid page, ensure the url is updated
                 if ($wrapper.find('.mCS_no_scrollbar').length > 0) {
                     BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
-                    BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
                 }
             } else if ($modalBody.length > 0) {
+                // If this is inside of a modal, the max height should be the size of the modal
+                
                 var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 28;
                 
                 if ($wrapper.parent().find('label').length > 0) {
@@ -539,9 +553,38 @@
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
                 $modalBody.css('overflow-y', 'auto');
             } else {
-                $wrapper.css('max-height', maxSubCollectionListGridHeight);
-                $wrapper.find('.mCustomScrollBox').css('max-height', maxSubCollectionListGridHeight);
+                // not in a modal, not the only grid on the screen, my size should be equal to max size of a grid
+                // There is a possibility, if pagination is limited on the packed, that 
+                
+                // what is the height of the visible rows?
+                var rowHeight = this.getRowHeight($tbody);
+                var loadedRecordRange = this.getLoadedRecordRanges($tbody)[0]
+                var numLoadedRows = loadedRecordRange.hi - loadedRecordRange.lo;
+                var numPaddedRows = this.getTotalRecords($tbody) - 1 - numLoadedRows;
+
+                // How much of the visible viewport is actual loaded rows and how much is padding? 
+                var visibleRowsHeight = rowHeight * numLoadedRows;
+                var paddedRowsHeight = rowHeight * numPaddedRows;
+                
+                var maxHeight = maxSubCollectionListGridHeight;
+                // If we added visible padding and there isn't enough rows to cover the entire viewport that we want
+                // (maxSubCollectionListGridHeight), then we need to shrink the size such that scrolling occurs. Otherwise,
+                // we end up in a scenario in which you have some visible rows, padding is there, but no scrolling will
+                // ever take place and new records will never be loaded. This will only occur if the size of the pages from
+                // the server multiplied by the row height is less than maxSubCollectionListGridHeight
+                if (paddedRowsHeight != 0 && visibleRowsHeight <= maxSubCollectionListGridHeight) {
+                    // shrink the size of the grid by just enough so that scrolling is activated
+                    maxHeight = maxSubCollectionListGridHeight - 3 * rowHeight;
+                }
+                
+                $wrapper.css('max-height', maxHeight);
+                $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
+
+                $wrapper.mCustomScrollbar('update');
             }
+            
+            // after all the heights have been calculated, update the table footer with the correct record shown count
+            BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
         },
         
         updateUrlFromScroll : function($tbody) {
@@ -610,15 +653,13 @@
             $tbody = $clonedTable.find('tbody');
             $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
             
-            BLCAdmin.listGrid.paginate.updateGridSize($tbody);
-            
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
                 scrollInertia: 70,
                 callbacks: {
                     onScroll: function() {
-                        var isMainGrid = $tbody.closest('table').data('listgridtype') == 'main';
+                        var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
                         var isAssetGrid = $tbody.closest('table').data('listgridtype') == 'asset';
             
                         // Update the currently visible range
@@ -626,7 +667,7 @@
                         
                         // Fetch records if necessary
                         $.doTimeout('fetch', fetchDebounce, function() {
-                            if (isMainGrid) {
+                            if (singleGrid) {
                                 var url = null;
                             } else if (isAssetGrid) {
                                 var url = $tbody.closest('table').data('currenturl');
@@ -637,8 +678,8 @@
                             BLCAdmin.listGrid.paginate.loadRecords($tbody, url);
                         });
                         
-                        // Also update the URL if we're on a main list grid
-                        if (isMainGrid) {
+                        // Also update the URL if this is the only grid on the page
+                        if (singleGrid) {
                             $.doTimeout('updateurl', updateUrlDebounce, function(){
                                 BLCAdmin.listGrid.paginate.updateUrlFromScroll($tbody);
                             });
@@ -666,6 +707,8 @@
                 var $pad = this.createPadding($tbody, range.hi + 1, this.getTotalRecords($tbody) - 1);
                 $tbody.find('tr:last').after($pad);
             }
+            
+            BLCAdmin.listGrid.paginate.updateGridSize($tbody);
             
             // Render the table
             $wrapper.mCustomScrollbar('update');
