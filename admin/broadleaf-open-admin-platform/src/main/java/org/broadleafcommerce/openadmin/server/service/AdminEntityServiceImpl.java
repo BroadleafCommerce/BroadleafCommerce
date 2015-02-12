@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
@@ -829,7 +830,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     
     protected CriteriaTransferObject getDefaultCto() {
         CriteriaTransferObject cto = new CriteriaTransferObject();
-        cto.setMaxResults(50);
+        cto.setMaxResults(getDefaultMaxResults());
         return cto;
     }
     
@@ -847,6 +848,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         }
         
         return null;
+    }
+    
+    protected int getDefaultMaxResults() {
+        return BLCSystemProperty.resolveIntSystemProperty("admin.default.max.results", 50);
     }
 
 }
