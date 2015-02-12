@@ -144,7 +144,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
             final String baseTempPath = System.getProperty("java.io.tmpdir");
 
-            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome");
+            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome-4.10.3");
             if (System.getProperty("tmpdir.solrhome") != null) {
                 //allow for an override of tmpdir
                 tempDir = new File(System.getProperty("tmpdir.solrhome"));
