@@ -36,6 +36,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.web.service.MediaBuilderService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -63,6 +64,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
+    @Resource(name = "blMediaBuilderService")
+    protected MediaBuilderService mediaBuilderService;
+    
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.MEDIA;
     }
@@ -100,7 +104,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             }
         
             if (Media.class.isAssignableFrom(valueType)) {
-                Media newMedia = convertJsonToMedia(populateValueRequest.getProperty().getUnHtmlEncodedValue());
+                Media newMedia = mediaBuilderService.convertJsonToMedia(populateValueRequest.getProperty().getUnHtmlEncodedValue(), valueType);
                 Media media;
                 try {
                     media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
@@ -216,19 +220,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     protected String convertMediaToJson(Media media) {
-        String json;
         try {
             ObjectMapper om = new ObjectMapper();
             return om.writeValueAsString(media);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    protected Media convertJsonToMedia(String jsonProp) {
-        try {
-            ObjectMapper om = new ObjectMapper();
-            return om.readValue(jsonProp, entityConfiguration.lookupEntityClass(Media.class.getName(), Media.class));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
