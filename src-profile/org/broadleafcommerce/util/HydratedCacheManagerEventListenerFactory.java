@@ -39,7 +39,7 @@ public class HydratedCacheManagerEventListenerFactory extends CacheManagerEventL
         }
         String[] names = cacheNames.split(";");
         for (String name : names) {
-            HydratedCache cache = new HydratedCache(name);
+            HydratedCache cache = new HydratedCache(name.trim());
             HydratedCacheManager.getInstance().addHydratedCache(cache);
         }
         return HydratedCacheManager.getInstance();

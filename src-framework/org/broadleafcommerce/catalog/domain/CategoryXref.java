@@ -24,6 +24,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+
 /**
  * The Class CategoryXref is for testing purposes only.  It helps autogenerate the cross reference table
  * properly with the DISPLY_ORDER column
@@ -33,6 +37,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "BLC_CATEGORY_XREF")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class CategoryXref implements Serializable {
 
     /** The Constant serialVersionUID. */
