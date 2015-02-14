@@ -80,6 +80,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     
     @Override
     public <T> T readGenericEntity(Class<T> clazz, Object id) {
+        clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
         Map<String, Object> md = daoHelper.getIdMetadata(clazz, (HibernateEntityManager) em);
         AbstractSingleColumnStandardBasicType type = (AbstractSingleColumnStandardBasicType) md.get("type");
         
@@ -94,12 +95,14 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
 
     @Override
     public <T> Long readCountGenericEntity(Class<T> clazz) {
+        clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
         TypedQuery<Long> q = new TypedQueryBuilder<T>(clazz, "root").toCountQuery(em);
         return q.getSingleResult();
     }
 
     @Override
     public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset) {
+        clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
         TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root").toQuery(em);
         q.setMaxResults(limit);
         q.setFirstResult(offset);
@@ -108,12 +111,14 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
 
     @Override
     public <T> List<T> readAllGenericEntity(Class<T> clazz) {
+        clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
         TypedQuery<T> q = new TypedQueryBuilder<T>(clazz, "root").toQuery(em);
         return q.getResultList();
     }
 
     @Override
     public List<Long> readAllGenericEntityId(Class<?> clazz) {
+        clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root root = criteria.from(clazz);
@@ -137,6 +142,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
+            clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
         }
         return clazz;
     }
@@ -150,6 +156,13 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
             throw new RuntimeException(e);
         }
         Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz, em.unwrap(Session.class).getSessionFactory(), true, true);
+        if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
+            clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
+            entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz, em.unwrap(Session.class).getSessionFactory(), true, true);
+        }
+        if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
+            throw new IllegalArgumentException(String.format("Unable to find ceiling implementation for the requested class name (%s)", className));
+        }
         clazz = entitiesFromCeiling[entitiesFromCeiling.length - 1];
         return clazz;
     }
