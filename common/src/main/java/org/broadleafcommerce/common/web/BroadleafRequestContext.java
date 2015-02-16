@@ -480,4 +480,38 @@ public class BroadleafRequestContext {
                                                                     enforceEnterpriseCollectionBehaviorState) {
         this.enforceEnterpriseCollectionBehaviorState = enforceEnterpriseCollectionBehaviorState;
     }
+
+    /**
+     * In some cases, it is useful to utilize a clone of the context that does not include the actual container request
+     * and response information. Such a case would be when executing an asynchronous operation on a new thread from
+     * an existing request thread. That new thread may still require context information, in which case this lightweight
+     * context is useful.
+     *
+     * @return The instance without the container request and response
+     */
+    public BroadleafRequestContext createLightWeightClone() {
+        BroadleafRequestContext context = new BroadleafRequestContext();
+        context.setIgnoreSite(ignoreSite);
+        context.setSandBox(sandBox);
+        context.setNonPersistentSite(site);
+        context.setEnforceEnterpriseCollectionBehaviorState(enforceEnterpriseCollectionBehaviorState);
+        context.setAdmin(isAdmin);
+        context.setAdminUserId(adminUserId);
+        context.setBroadleafCurrency(broadleafCurrency);
+        context.setCurrentCatalog(currentCatalog);
+        context.setCurrentProfile(currentProfile);
+        context.setDeployBehavior(deployBehavior);
+        context.setDeployState(deployState);
+        context.setInternalIgnoreFilters(internalIgnoreFilters);
+        context.setLocale(locale);
+        context.setMessageSource(messageSource);
+        context.setTheme(theme);
+        context.setValidateProductionChangesState(validateProductionChangesState);
+        context.setTimeZone(timeZone);
+        //purposefully excluding additionalProperties - this contains state that can mess with SandBoxFilterEnabler (for one)
+
+        return context;
+    }
+
+
 }
