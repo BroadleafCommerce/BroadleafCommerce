@@ -45,7 +45,7 @@
         $.fn.broadleafListgrid          ? $doc.broadleafListgrid() : null;
     
         BLCAdmin.initializeFields();
-        BLCAdmin.sessionTimer.initTimer();
+        
 
     });
 
