@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -360,7 +361,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         PersistenceResponse response = getClassMetadata(ppr);
         ClassMetadata cmd = response.getDynamicResultSet().getClassMetaData();
         for (Property p : cmd.getProperties()) {
-            if (p.getMetadata() instanceof CollectionMetadata) {
+            if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0]) 
+                    && p.getMetadata() instanceof CollectionMetadata) {
                 PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                 map.put(p.getName(), response2.getDynamicResultSet());
             }
