@@ -23,10 +23,10 @@
 
 (function($, BLCAdmin) {
 
-    var sessionTimeLeft = 0;
+    var sessionTimeLeft = 999999;
     var activityPingInterval = 30000;
     var pingInterval = 1000;
-    var defaultSessionTime = 0;
+    var defaultSessionTime = 999999;
     var EXPIRE_MESSAGE_TIME = 60000;
 
     BLCAdmin.sessionTimer = {
@@ -37,16 +37,17 @@
         },
 
         resetTimer : function() {
+            sessionTimeLeft = 999999;
             BLC.get({
                 url : BLC.servletContext + "/sessionTimerInactiveInterval"
             }, function(data) {
-                sessionTimeLeft = data.maxInterval * 2 / 3;
+                sessionTimeLeft = data.maxInterval - 60000;
                 defaultSessionTime = sessionTimeLeft;
                 $.cookie("sessionResetTime", data.resetTime);
             });
         },
 
-        getTimeLeft : function() {
+        getTimeLeft : function() { 
             return sessionTimeLeft;
         },
 
@@ -108,6 +109,8 @@
 
 $(document).ready(function() {
     
+    
+    
     var activityCount = 0;
     $(document).keypress(function(e) {
         activityCount++;
@@ -117,7 +120,9 @@ $(document).ready(function() {
 
         BLCAdmin.sessionTimer.decrement(BLCAdmin.sessionTimer
                 .getPingInterval());
-
+        
+        
+        
         if (BLCAdmin.sessionTimer.verifyAndUpdateTimeLeft()) {
             $("#lightbox").fadeOut("slow");
             return true;
@@ -171,8 +176,8 @@ $(document).ready(function() {
         stayLoggedIn();
         return false;
     });
-
-    BLCAdmin.sessionTimer.resetTimer();
+    
+    BLCAdmin.sessionTimer.resetTimer()
     $.doTimeout('update', BLCAdmin.sessionTimer
             .getPingInterval(), updateTimer);
 
