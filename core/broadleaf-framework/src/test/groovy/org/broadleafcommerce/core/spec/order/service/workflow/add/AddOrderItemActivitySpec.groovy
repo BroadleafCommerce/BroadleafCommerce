@@ -27,6 +27,8 @@ import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl
 import org.broadleafcommerce.core.catalog.domain.Sku
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.CatalogService
+import org.broadleafcommerce.core.order.domain.OrderItem
+import org.broadleafcommerce.core.order.domain.OrderItemImpl
 import org.broadleafcommerce.core.order.service.OrderItemService
 import org.broadleafcommerce.core.order.service.OrderService
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO
@@ -36,11 +38,16 @@ import org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivit
 class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
 
     /*
-     * execute(context)
-     * CartOperationRequest
-     *      OrderItemRequestDTO
-     *      Order
-     *
+     * 1) catalogService finds sku, product, and category
+     *  a) NonDiscrete -> orderItem has given quantity, retail/sale price, itemname, and order
+     *  b) product == null -> category,product,sku,quantity,itemattributes,order,sale/retail price
+     *  c) product not ProductBundle -> category,product,sku,quantity,itemattributes,order,sale/retail price
+     *      * both are DiscreteOrderItem
+     *  d) not a b or c -> BundleOrderItem
+     * 2) category == null and product != null -> category is Default
+     * 3) parentOrderItemId != null-> item.getParentOrderItem = orderItemService.readOrderItemById()
+     * 
+     * 
      */
 
     OrderService mockOrderService = Mock()
@@ -72,16 +79,51 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
         Sku testSku = new SkuImpl()
         Product testProduct = new ProductBundleImpl()
         CategoryImpl testCat = new CategoryImpl()
-
+        OrderItem testItem = new OrderItemImpl()
 
 
         when: "The activity is executed"
         context = activity.execute(context)
 
-        then: "some message"
+        then: "There is an order item added to the order"
         1 * activity.catalogService.findSkuById(_) >> testSku
         1 * activity.catalogService.findProductById(_) >> testProduct
         1 * activity.catalogService.findCategoryById(_) >> testCat
+        1 * activity.orderItemService.createOrderItem(_) >> testItem
         context.seedData.getOrderItem() != null
     }
+    
+    def "Test that a non discrete item request is added to order without a sku, product or category given"() {
+        setup: "setup message"
+        OrderItem testItem = new OrderItemImpl()
+
+
+        when: "The activity is executed"
+        context = activity.execute(context)
+
+        then: "There is an order item added to the order"
+        1 * activity.orderItemService.createOrderItem(_) >> testItem
+        context.seedData.getOrderItem() != null
+    }
+    
+    def "Test that a non discrete item request without a category is added to order"() {
+        setup: "setup message"
+        Sku testSku = new SkuImpl()
+        Product testProduct = new ProductBundleImpl()
+        OrderItem testItem = new OrderItemImpl()
+
+
+        when: "The activity is executed"
+        context = activity.execute(context)
+
+        then: "There is an order item added to the order"
+        1 * activity.catalogService.findSkuById(_) >> testSku
+        1 * activity.catalogService.findProductById(_) >> testProduct
+        1 * activity.orderItemService.createOrderItem(_) >> testItem
+        context.seedData.getOrderItem() != null
+        
+    }
+    
+    
+    
 }
