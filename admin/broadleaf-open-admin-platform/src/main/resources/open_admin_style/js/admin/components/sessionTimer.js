@@ -119,7 +119,7 @@
         updateTimer : function() {
             
             BLCAdmin.sessionTimer.updateTimeLeft();
-            console.log(BLCAdmin.sessionTimer.getTimeLeft());
+            
             /*
              * If the time left is less than the expire message time, then we know to display the expire message.
              */
