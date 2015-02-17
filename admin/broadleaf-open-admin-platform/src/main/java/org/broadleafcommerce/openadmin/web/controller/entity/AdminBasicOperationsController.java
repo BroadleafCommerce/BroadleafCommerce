@@ -190,15 +190,13 @@ public class AdminBasicOperationsController extends AdminAbstractController {
     /*
      * @return - Integer representing the number of minutes for session timeout
      */
-    @RequestMapping(value = "/sessionTimerInactiveInterval", method = RequestMethod.GET)
+    @RequestMapping(value = "/sessionTimerReset", method = RequestMethod.GET)
     public @ResponseBody String sessionTimerInactiveInterval(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         long maxInterval = request.getSession().getMaxInactiveInterval() * 1000;
         return (new JsonResponse(response)).with("maxInterval", maxInterval).with("resetTime", System.currentTimeMillis()).done();
     }
     
-    
-
     /**
      * Hook method to allow a user to modify the persistence package request for a fetch on a select lookup.
      * 

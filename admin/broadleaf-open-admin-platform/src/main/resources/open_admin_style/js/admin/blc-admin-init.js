@@ -45,7 +45,6 @@
         $.fn.broadleafListgrid          ? $doc.broadleafListgrid() : null;
     
         BLCAdmin.initializeFields();
-        
 
     });
 
