@@ -265,12 +265,11 @@ public class BroadleafCartController extends AbstractCartController {
                     promoAdded = true;
                     cart = orderService.save(cart, true);
                 } catch (OfferException e) {
-                    Throwable t = e.getCause();
-                    if (t instanceof OfferMaxUseExceededException) {
+                    if (e instanceof OfferMaxUseExceededException) {
                         exception = "Use Limit Exceeded";
-                    } else if (t instanceof OfferExpiredException) {
+                    } else if (e instanceof OfferExpiredException) {
                         exception = "Offer Has Expired";
-                    } else if (t instanceof OfferAlreadyAddedException) {
+                    } else if (e instanceof OfferAlreadyAddedException) {
                         exception = "Offer Has Already Been Added";
                     } else {
                         exception = "An Unknown Offer Error Has Occured";
