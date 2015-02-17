@@ -513,8 +513,7 @@ $(document).ready(function() {
         
         var submitData = {};
         submitData[$firstInput.data('name')] =  $firstInput.val();
-        var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
-        BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);        
+        
         BLC.ajax({
             url: $(this).closest('form').attr('action'),
             type: "GET",
@@ -524,11 +523,9 @@ $(document).ready(function() {
             for (key in submitData) {
                 BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
             }
-            BLCAdmin.listGrid.hideLoadingSpinner($tbody);
             BLCAdmin.listGrid.replaceRelatedListGrid($(data), null, { isRefresh : false});
             $firstInput.trigger('input');
         });
-
         return false;
     });
     
