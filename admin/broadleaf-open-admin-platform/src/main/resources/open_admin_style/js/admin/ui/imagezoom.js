@@ -88,6 +88,11 @@ $(document).ready(function() {
 	    }
 	});
 	
+	$('body').on('click', 'img.thumbnail', function() {
+	    BLCAdmin.imagezoom.hideImage();
+	    $.doTimeout('hover');
+	});
+	
 	// When we leave the thumbnail image, remove the zoomed container from view
 	$('body').on('mouseout', 'img.thumbnail', function() {
 	    BLCAdmin.imagezoom.hideImage();

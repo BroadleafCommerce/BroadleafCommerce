@@ -11,9 +11,9 @@
             th:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}" />
     </span>
     
-    <a th:unless="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
+    <span th:unless="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
         <img class="thumbnail placeholder-image" th:src="@{/img/admin/placeholder-60x60.gif}" />
-    </a>
+    </span>
 
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
         type="button" th:inline="text"
