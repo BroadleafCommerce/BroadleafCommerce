@@ -23,36 +23,53 @@
 
 (function($, BLCAdmin) {
 
-    var sessionTimeLeft = 999999;
-    var activityPingInterval = 30000;
     var pingInterval = 1000;
-    var defaultSessionTime = 999999;
+    var defaultSessionTime = 60000*15;
+    var sessionTimeLeft = defaultSessionTime;
     var EXPIRE_MESSAGE_TIME = 60000;
+    
+    var activityPingInterval = 30000;
+    var activityCount = 0;
+    
+    /*
+     * Here we define that key presses to indicate activity by incrementing the activityCount variable.
+     */
+    $(document).keypress(function(e) {
+        activityCount++;
+    });
+
 
     BLCAdmin.sessionTimer = {
 
-        initTimer : function() {
-            this.resetTimer();
-
-        },
-
+        /*
+         * This function is used to reset the session timer on the server and update the page's session time.
+         */
         resetTimer : function() {
-            sessionTimeLeft = 999999;
+            /*
+             * The session time is temporarily set to a high value to prevent a request that takes an inordinate
+             * amount of time from causing the session to expire prematurely.
+             */
+            sessionTimeLeft = 60000*15;
+            
             BLC.get({
-                url : BLC.servletContext + "/sessionTimerInactiveInterval"
+                url : BLC.servletContext + "/sessionTimerReset"
             }, function(data) {
-                sessionTimeLeft = data.maxInterval - 60000;
-                defaultSessionTime = sessionTimeLeft;
-                $.cookie("sessionResetTime", data.resetTime);
+                /*
+                 * We deduct one minute from the actual session timeout interval so we can control when
+                 * the session will timeout.
+                 */
+                defaultSessionTime = data.maxInterval - 60000;
+                $.cookie("sessionResetTime", data.resetTime - (data.resetTime % pingInterval) , { path : BLC.servletContext });
+                BLCAdmin.sessionTimer.updateTimeLeft();
             });
         },
 
         getTimeLeft : function() { 
             return sessionTimeLeft;
         },
-
-        getTimeLeftSeconds : function() {
-            return sessionTimeLeft / 1000;
+        
+        getTimeLeftSeconds : function(){
+            return sessionTimeLeft/1000;
         },
 
         isExpired : function() {
@@ -61,10 +78,6 @@
 
         getDefaultSessionTime : function() {
             return defaultSessionTime;
-        },
-
-        decrement : function(val) {
-            sessionTimeLeft -= val;
         },
 
         getActivityPingInterval : function() {
@@ -83,25 +96,78 @@
             return (new Date()).getTime() - $.cookie("sessionResetTime");
         },
 
-        verifyAndUpdateTimeLeft : function() {
-            var exactTimeLeft = (this.getDefaultSessionTime() - this
-                    .timeSinceLastReset());
+        updateTimeLeft : function() {
+            var exactTimeLeft = (BLCAdmin.sessionTimer.getDefaultSessionTime() - BLCAdmin.sessionTimer.timeSinceLastReset());
             exactTimeLeft = exactTimeLeft - (exactTimeLeft % pingInterval);
 
-            if (exactTimeLeft > sessionTimeLeft) {
-                sessionTimeLeft = exactTimeLeft;
-                return true;
-            }
-            return false;
+            sessionTimeLeft = exactTimeLeft;
         },
 
         invalidateSession : function() {
             BLC.get({
                 url : BLC.servletContext + "/adminLogout.htm"
             }, function(data) {
-                window.location.replace(BLC.servletContext
-                        + "/login?sessionTimeout=true");
+                
+                /*
+                 * After the logout occurs, we redirect to the login page with the sessionTimeout parameter being true.
+                 * This yield a red banner on the login screen that indicates the session expired to the user.
+                 */
+                window.location.replace(BLC.servletContext + "/login?sessionTimeout=true");
             });
+        },
+        
+        updateTimer : function() {
+            
+            BLCAdmin.sessionTimer.updateTimeLeft();
+            console.log(BLCAdmin.sessionTimer.getTimeLeft());
+            /*
+             * If the time left is less than the expire message time, then we know to display the expire message.
+             */
+            if (BLCAdmin.sessionTimer.getTimeLeft() < BLCAdmin.sessionTimer.getExpireMessageTime()) {
+
+                /*
+                 * If the session is expired: invalidate the session, and end the timeout loop by returning false.
+                 */
+                if (BLCAdmin.sessionTimer.isExpired()) {
+                    $("#lightbox").fadeOut("slow");
+                    BLCAdmin.sessionTimer.invalidateSession();
+                    return false;
+                }
+
+                /*
+                 * If the session is not expired: update the session expiring text with the current time left, and
+                 * display the session expiration message lightbox.
+                 */
+                $("#expire-text").html(BLCAdmin.messages.sessionCountdown
+                                        + BLCAdmin.sessionTimer.getTimeLeftSeconds()
+                                        + BLCAdmin.messages.sessionCountdownEnd);
+
+                /*
+                 * Here we make sure that the session expiring lightbox is displayed.
+                 */
+                $("#lightbox").fadeIn("slow");
+                activityCount = 0;
+
+                return true;
+            } else if (BLCAdmin.sessionTimer.getTimeLeft() % BLCAdmin.sessionTimer.getActivityPingInterval() == 0) {
+                
+                /*
+                 * If activityCount is greater than 0, we know that at least one key has been pressed. This means there has
+                 * been activity and we should reset the timer.
+                 */
+                if (activityCount > 0) {
+                    BLCAdmin.sessionTimer.resetTimer();
+                    activityCount = 0;
+                    return true;
+                }
+            }
+            
+            /*
+             * If our code has reached this point then the session time left is greater than the warning interval and
+             * the lightbox should not be showing.
+             */
+            $("#lightbox").fadeOut("slow");
+            return true;
         }
 
     };
@@ -109,67 +175,32 @@
 
 $(document).ready(function() {
     
-    
-    
-    var activityCount = 0;
-    $(document).keypress(function(e) {
-        activityCount++;
-    });
+    /*
+     * We must reset the timer when the page is loaded so we can update the last reset time and session timeout interval.
+     */
+    BLCAdmin.sessionTimer.resetTimer()
 
-    var updateTimer = function() {
-
-        BLCAdmin.sessionTimer.decrement(BLCAdmin.sessionTimer
-                .getPingInterval());
-        
-        
-        
-        if (BLCAdmin.sessionTimer.verifyAndUpdateTimeLeft()) {
-            $("#lightbox").fadeOut("slow");
-            return true;
-        }
-
-        if (BLCAdmin.sessionTimer.getTimeLeft() < BLCAdmin.sessionTimer
-                .getExpireMessageTime()) {
-
-            if (BLCAdmin.sessionTimer.isExpired()) {
-                $("#lightbox").fadeOut("slow");
-                BLCAdmin.sessionTimer.invalidateSession();
-                return false;
-            }
-
-            $("#expire-text")
-                    .html(
-                            BLCAdmin.messages.sessionCountdown
-                                    + BLCAdmin.sessionTimer
-                                            .getTimeLeftSeconds()
-                                    + BLCAdmin.messages.sessionCountdownEnd);
-
-            $("#lightbox").fadeIn("slow");
-            activityCount = 0;
-
-            return true;
-
-        } else if (BLCAdmin.sessionTimer.getTimeLeft()
-                % BLCAdmin.sessionTimer
-                        .getActivityPingInterval() == 0) {
-            if (activityCount > 0) {
-                BLCAdmin.sessionTimer.resetTimer();
-                activityCount = 0;
-                return true;
-            }
-
-        }
-
-        return true;
-    };
-
+    /*
+     * This function provides the proper functionality for the "Stay Logged In" button on the expire message.
+     */
     stayLoggedIn = function() {
-        $.doTimeout('update');
+        /*
+         * This is used to invalidate the old timeout thread
+         */
+        $.doTimeout('update-admin-session');
+        
         $("#lightbox").fadeOut("slow");
         activityCount = 0;
+        
+        /*
+         * We must reset the timer so we can stay logged in.
+         */
         BLCAdmin.sessionTimer.resetTimer();
-        $.doTimeout('update', BLCAdmin.sessionTimer
-                .getPingInterval(), updateTimer);
+        
+        /*
+         * This is used to create a new timeout thread
+         */
+        $.doTimeout('update-admin-session', BLCAdmin.sessionTimer.getPingInterval(), BLCAdmin.sessionTimer.updateTimer);
     }
 
     $("#stay-logged-in").click(function() {
@@ -177,8 +208,9 @@ $(document).ready(function() {
         return false;
     });
     
-    BLCAdmin.sessionTimer.resetTimer()
-    $.doTimeout('update', BLCAdmin.sessionTimer
-            .getPingInterval(), updateTimer);
+    /*
+     * This is used to initiate the timeout thread that tracks the session time and listens for activity.
+     */
+    $.doTimeout('update-admin-session', BLCAdmin.sessionTimer.getPingInterval(), BLCAdmin.sessionTimer.updateTimer);
 
 });
