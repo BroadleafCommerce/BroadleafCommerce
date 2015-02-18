@@ -59,7 +59,8 @@
                  * the session will timeout.
                  */
                 defaultSessionTime = data.maxInterval - 60000;
-                $.cookie("sessionResetTime", data.resetTime - (data.resetTime % pingInterval) , { path : BLC.servletContext });
+                resetTime = (new Date()).getTime();
+                $.cookie("sessionResetTime", resetTime - (resetTime % pingInterval) , { path : BLC.servletContext });
                 BLCAdmin.sessionTimer.updateTimeLeft();
             });
         },

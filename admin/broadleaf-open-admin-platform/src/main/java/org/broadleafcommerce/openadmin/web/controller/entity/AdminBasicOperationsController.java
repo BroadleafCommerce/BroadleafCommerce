@@ -188,13 +188,15 @@ public class AdminBasicOperationsController extends AdminAbstractController {
     }
 
     /*
-     * @return - Integer representing the number of minutes for session timeout
+     * @return - JSON String containing the number of milliseconds before a session times out
      */
     @RequestMapping(value = "/sessionTimerReset", method = RequestMethod.GET)
-    public @ResponseBody String sessionTimerInactiveInterval(HttpServletRequest request,
+    public @ResponseBody String sessionTimerReset(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
         long maxInterval = request.getSession().getMaxInactiveInterval() * 1000;
-        return (new JsonResponse(response)).with("maxInterval", maxInterval).with("resetTime", System.currentTimeMillis()).done();
+        return (new JsonResponse(response))
+                .with("maxInterval", maxInterval)
+                .done();
     }
     
     /**
