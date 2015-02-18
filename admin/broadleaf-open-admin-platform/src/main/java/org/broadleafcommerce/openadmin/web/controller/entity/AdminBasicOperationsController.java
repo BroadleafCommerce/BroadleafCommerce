@@ -193,9 +193,9 @@ public class AdminBasicOperationsController extends AdminAbstractController {
     @RequestMapping(value = "/sessionTimerReset", method = RequestMethod.GET)
     public @ResponseBody String sessionTimerReset(HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        long maxInterval = request.getSession().getMaxInactiveInterval() * 1000;
+        long serverSessionTimeoutInterval = request.getSession().getMaxInactiveInterval() * 1000;
         return (new JsonResponse(response))
-                .with("maxInterval", maxInterval)
+                .with("serverSessionTimeoutInterval", serverSessionTimeoutInterval)
                 .done();
     }
     

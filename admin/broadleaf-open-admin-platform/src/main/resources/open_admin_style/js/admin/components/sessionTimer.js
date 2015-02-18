@@ -24,8 +24,8 @@
 (function($, BLCAdmin) {
 
     var pingInterval = 1000;
-    var defaultSessionTime = 60000*15;
-    var sessionTimeLeft = defaultSessionTime;
+    var sessionTimeoutInterval = 60000*15;
+    var sessionTimeLeft = sessionTimeoutInterval;
     var EXPIRE_MESSAGE_TIME = 60000;
     
     var activityPingInterval = 30000;
@@ -49,7 +49,6 @@
              * The session time is temporarily set to a high value to prevent a request that takes an inordinate
              * amount of time from causing the session to expire prematurely.
              */
-            sessionTimeLeft = 60000*15;
             
             BLC.get({
                 url : BLC.servletContext + "/sessionTimerReset"
@@ -58,7 +57,7 @@
                  * We deduct one minute from the actual session timeout interval so we can control when
                  * the session will timeout.
                  */
-                defaultSessionTime = data.maxInterval - 60000;
+                sessionTimeoutInterval = data.serverSessionTimeoutInterval - 60000;
                 resetTime = (new Date()).getTime();
                 $.cookie("sessionResetTime", resetTime - (resetTime % pingInterval) , { path : BLC.servletContext });
                 BLCAdmin.sessionTimer.updateTimeLeft();
@@ -77,8 +76,8 @@
             return sessionTimeLeft <= 0;
         },
 
-        getDefaultSessionTime : function() {
-            return defaultSessionTime;
+        getSessionTimeoutInterval : function() {
+            return sessionTimeoutInterval;
         },
 
         getActivityPingInterval : function() {
@@ -98,7 +97,7 @@
         },
 
         updateTimeLeft : function() {
-            var exactTimeLeft = (BLCAdmin.sessionTimer.getDefaultSessionTime() - BLCAdmin.sessionTimer.timeSinceLastReset());
+            var exactTimeLeft = (BLCAdmin.sessionTimer.getSessionTimeoutInterval() - BLCAdmin.sessionTimer.timeSinceLastReset());
             exactTimeLeft = exactTimeLeft - (exactTimeLeft % pingInterval);
 
             sessionTimeLeft = exactTimeLeft;
