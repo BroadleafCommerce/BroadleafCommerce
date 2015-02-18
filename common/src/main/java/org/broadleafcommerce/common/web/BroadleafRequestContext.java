@@ -192,21 +192,35 @@ public class BroadleafRequestContext {
     /**
      * Returns a Site instance that is not attached to any Hibernate session
      * @return
+     * @deprecated this has been changed to {@link #getNonPersistentSite()} to explicitly indicate that the site
+     * being returned is not attached to a Hibernate session
      */
     @Deprecated
     public Site getSite() {
         return getNonPersistentSite();
     }
 
+    /**
+     * @deprecated this has been changed to {@link #setNonPersistentSite()} to explicitly indicate that the site being set
+     * is not attached to an active Hibernate session
+     */
     @Deprecated
     public void setSite(Site site) {
         setNonPersistentSite(site);
     }
     
+    /**
+     * @return the site that is currently associated to this request thread. The site that is returned is not attached to a
+     * Hibernate session and thus cannot lazy-load collection properties. For additional collections that are added to
+     * extensions of {@link Site}, they should be manually cloned by overriding the clone() method.
+     */
     public Site getNonPersistentSite() {
         return site;
     }
     
+    /**
+     * 
+     */
     public void setNonPersistentSite(Site site) {
         this.site = site;
     }
