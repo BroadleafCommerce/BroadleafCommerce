@@ -47,6 +47,7 @@
     <bean id="blOrderLockManager" class="org.broadleafcommerce.core.web.order.DatabaseOrderLockManager"/>
 
     <bean id="blAddSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
+    <bean id="blUrlIdAppendProcessor" class="org.broadleafcommerce.core.web.processor.UrlIdAppendProcessor" />
     <bean id="blCategoriesProcessor" class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
     <bean id="blFormProcessor" class="org.broadleafcommerce.core.web.processor.FormProcessor" />
     <bean id="blGoogleAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleAnalyticsProcessor" />
@@ -73,6 +74,7 @@
         <property name="sourceSet">
             <set>
                 <ref bean="blAddSortLinkProcessor" />
+                <ref bean="blUrlIdAppendProcessor" />
                 <ref bean="blCategoriesProcessor" />
                 <ref bean="blFormProcessor" />
                 <ref bean="blGoogleAnalyticsProcessor" />

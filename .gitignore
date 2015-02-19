@@ -9,3 +9,10 @@ test-output
 .metadata
 *.ipr
 bin/
+common/maven-eclipse.xml
+admin/broadleaf-admin-module/.externalToolBuilders/
+admin/broadleaf-admin-module/maven-eclipse.xml
+admin/broadleaf-open-admin-platform/.externalToolBuilders/
+admin/broadleaf-open-admin-platform/maven-eclipse.xml
+common/.externalToolBuilders/
+
