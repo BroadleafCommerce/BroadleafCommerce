@@ -160,7 +160,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
            if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                return new File(holder.getResult());
            }
-           throw new IllegalArgumentException("No extension handler was found that could handle resource processing with site information");
+           return null;
         }
     }
 
