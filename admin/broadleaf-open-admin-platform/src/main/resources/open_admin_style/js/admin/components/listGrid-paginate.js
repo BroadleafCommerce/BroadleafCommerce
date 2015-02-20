@@ -574,7 +574,8 @@
             // what is the height of the visible rows?
             var rowHeight = BLCAdmin.listGrid.paginate.getRowHeight($tbody);
             var loadedRecordRange = BLCAdmin.listGrid.paginate.getLoadedRecordRanges($tbody)[0]
-            var numLoadedRows = loadedRecordRange.hi - loadedRecordRange.lo;
+            // This gives me back a 0-indexed range, I need the row count so add 1
+            var numLoadedRows = loadedRecordRange.hi - loadedRecordRange.lo + 1;
             var numPaddedRows = BLCAdmin.listGrid.paginate.getTotalRecords($tbody) - numLoadedRows;
 
             // How much of the visible viewport is actual loaded rows and how much is padding? 
