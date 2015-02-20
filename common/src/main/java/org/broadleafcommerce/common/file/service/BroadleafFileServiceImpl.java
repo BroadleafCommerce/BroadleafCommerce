@@ -160,7 +160,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
            if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                return new File(holder.getResult());
            }
-           return null;
+           return getLocalResource(resourceName, true);
         }
     }
 
