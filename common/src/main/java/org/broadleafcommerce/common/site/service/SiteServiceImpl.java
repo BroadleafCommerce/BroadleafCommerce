@@ -71,6 +71,7 @@ public class SiteServiceImpl implements SiteService {
     protected Site retrieveSiteById(final Long id, final boolean persistentResult) {
       //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
         //only run the operation under a transaction if there is not already an entity manager in the view
+        if (id == null) { return null; }
         final Site[] response = new Site[1];
         transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
             @Override
