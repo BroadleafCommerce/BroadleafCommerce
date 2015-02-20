@@ -17,20 +17,17 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.processor;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.attr.AbstractAttributeModifierAttrProcessor;
@@ -38,31 +35,26 @@ import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
 /**
- * A Thymeleaf processor that receives a Product object, and returns its url as the value of
- * an href attribute.
- * Such url can optionally have the Product's productId property appended as a parameter, according 
- * to the system property "product.url.use.id"
- * This is used at the productListItem page, in order to facilitate breadcrumbs implementation 
+ * A Thymeleaf processor that receives a Product object as attribute value:
+ * and returns its url as the value of an href attribute.
+ * Such url can optionally have the Product id property appended as a parameter, according 
+ * to the system property "product.url.use.id" 
+ * This is used at the productListItem page in order to facilitate the breadcrumbs implementation 
  * 
  * @author gdiaz
  */
-public class UrlIdAppendProcessor extends AbstractAttributeModifierAttrProcessor {
-	
-	private static final Log LOG = LogFactory.getLog(UrlIdAppendProcessor.class);
-	
-    @Resource(name = "blCatalogService")
-    private CatalogService catalogService;
-    
-    @Value("${request.uri.encoding}")
-    public String charEncoding;    
+public class ProductUrlIdProcessor extends AbstractAttributeModifierAttrProcessor {
+
+    private static final Log LOG = LogFactory.getLog(ProductUrlIdProcessor.class);
+
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
      */
-    public UrlIdAppendProcessor() {
-        super("urlidappend");
+    public ProductUrlIdProcessor() {
+        super("producturlid");
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10000;
@@ -70,28 +62,24 @@ public class UrlIdAppendProcessor extends AbstractAttributeModifierAttrProcessor
 
     @Override
     protected Map<String, String> getModifiedAttributeValues(Arguments arguments, Element element, String attributeName) {
-    	
-    	LOG.info("inside the getModifiedAttributeValues of BreadcrumbsProcessor");
-    	
-    	boolean usesProductId = BLCSystemProperty.resolveBooleanSystemProperty("product.url.use.id");
-    	LOG.info("the value of the productId property is " + usesProductId);
 
-    	
         Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
                 .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
-        Product  product = (Product) expression.execute(arguments.getConfiguration(), arguments);	
-  
-    	Map<String, String> attrs = new HashMap<String, String>();
-    	String url=product.getUrl();
-    	Map<String, String[]> urlParams = new HashMap<String, String[]>();
-    	
-    	if (usesProductId){
-    		urlParams.put("productId", new String[]{Long.toString(product.getId())});
-    		url = ProcessorUtils.getUrl(url, urlParams);
-    	}
-    	attrs.put("href", url);
-    		
 
+        Product product = (Product) expression.execute(arguments.getConfiguration(), arguments);
+        String url = null;
+        Map<String, String> attrs = new HashMap<String, String>();
+
+        boolean usesProductId = BLCSystemProperty.resolveBooleanSystemProperty("product.url.use.id");
+        LOG.info("the value of the useProductId property is " + usesProductId);
+        url = product.getUrl();
+        if (usesProductId) {
+            Map<String, String[]> urlParams = new HashMap<String, String[]>();
+            urlParams.put("productId", new String[] { Long.toString(product.getId()) });
+            url = ProcessorUtils.getUrl(url, urlParams);
+        }
+
+        attrs.put("href", url);
         return attrs;
     }
 
