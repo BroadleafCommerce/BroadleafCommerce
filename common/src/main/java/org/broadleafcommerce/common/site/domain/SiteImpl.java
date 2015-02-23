@@ -107,7 +107,8 @@ public class SiteImpl implements Site, AdminMainEntity {
 
     @Column(name = "DEACTIVATED")
     @AdminPresentation(friendlyName = "SiteImpl_Deactivated", order = 4000,
-            gridOrder = 4, excluded = false)
+            gridOrder = 4, excluded = false,
+            defaultValue = "false")
     protected Boolean deactivated = false;
     
     @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})

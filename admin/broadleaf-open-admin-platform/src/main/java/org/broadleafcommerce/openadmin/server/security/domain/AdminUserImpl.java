@@ -139,7 +139,8 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
 
     @Column(name = "ACTIVE_STATUS_FLAG")
     @AdminPresentation(friendlyName = "AdminUserImpl_Active_Status",
-            order = 4000, group = "AdminUserImpl_User")
+            order = 4000, group = "AdminUserImpl_User",
+            defaultValue = "true")
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
     /** All roles that this user has */

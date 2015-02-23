@@ -153,7 +153,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     
     @Column(name = "OFFLINE_FLAG")
     @AdminPresentation(friendlyName = "PageImpl_Offline", order = 3500,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic, defaultValue = "false")
     protected Boolean offlineFlag = false;     
 
     /*
