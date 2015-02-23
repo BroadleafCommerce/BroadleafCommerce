@@ -144,13 +144,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
         addAddActionIfAllowed(sectionClassName, cmd, mainActions);
+        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
+        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
         
         Field firstField = listGrid.getHeaderFields().iterator().next();
         if (requestParams.containsKey(firstField.getName())) {
             model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
         }
-        
-        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
         
         // If this came from a delete save, we'll have a headerFlash request parameter to take care of
         if (requestParams.containsKey("headerFlash")) {
@@ -181,7 +181,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         mainEntityActionsExtensionManager.getProxy().modifyMainActions(cmd, mainActions);
-        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
     }
     
     protected boolean isAddActionAllowed(String sectionClassName, ClassMetadata cmd) {
