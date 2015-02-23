@@ -41,12 +41,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    protected String loginUri = "/login"; // default login uri but can be overridden in admin security config
     private RequestCache requestCache = new HttpSessionRequestCache();
-    
-    private String loginUri = "/login"; //default login uri but can be overridden in admin security config
-    
     private static final String successUrlParameter = "successUrl=";
-    
+
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
 
@@ -95,35 +93,32 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         // Remove the login URI so we don't continuously redirect to the login page
         targetUrl = removeLoginSegment(targetUrl);
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);
-        }
+        logger.debug("Redirecting to DefaultSavedRequest Url: " + targetUrl);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
-    
+
     /**
      * Given the instance attribute loginUri, removes the loginUri from the passed url when present
      * @param uri
      * @return String
      */
-    private String removeLoginSegment(String url) {
-      if ((url == null) || url.equals("")) {
-    	  return "/";
-      }
-      int lastSlashPos = url.lastIndexOf(loginUri);
-      if (lastSlashPos >= 0) {
-    	  return url.substring(0, lastSlashPos);
-      }
-      else {
-        return url;
-      }
-    } 
+    protected String removeLoginSegment(String url) {
+        if (StringUtils.isEmpty(url)) {
+            return "/";
+        }
+        int lastSlashPos = url.lastIndexOf(loginUri);
+        if (lastSlashPos >= 0) {
+            return url.substring(0, lastSlashPos);
+        } else {
+            return url;
+        }
+    }
 
-	public String getLoginUri() {
-		return loginUri;
-	}
+    public String getLoginUri() {
+        return loginUri;
+    }
 
-	public void setLoginUri(String loginUri) {
-		this.loginUri = loginUri;
-	}
+    public void setLoginUri(String loginUri) {
+        this.loginUri = loginUri;
+    }
 }
