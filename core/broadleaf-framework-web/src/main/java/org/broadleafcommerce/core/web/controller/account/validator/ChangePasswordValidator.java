@@ -59,7 +59,7 @@ public class ChangePasswordValidator implements Validator {
                 errors.rejectValue("newPasswordConfirm", "newPasswordConfirm.invalid");
             }
             //restrict password characteristics
-            if (!password.matches(validPasswordRegex)) {
+            if (!password.matches(getValidPasswordRegex())) {
                 errors.rejectValue("newPassword", "newPassword.invalid");
             }
         }
