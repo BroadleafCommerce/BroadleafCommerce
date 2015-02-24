@@ -24,11 +24,15 @@ import java.net.URLDecoder;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.ServletRequestUtils;
 
 /**
  * This handler mapping works with the Category entity to determine if a category has been configured for
@@ -43,6 +47,8 @@ import org.springframework.beans.factory.annotation.Value;
  * @see CataService
  */
 public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
+    
+    private static final Log LOG = LogFactory.getLog(CategoryHandlerMapping.class);
     
     private String controllerName="blCategoryController";
     
@@ -60,14 +66,25 @@ public class CategoryHandlerMapping extends BLCAbstractHandlerMapping {
     protected Object getHandlerInternal(HttpServletRequest request)
             throws Exception {      
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getRequestURIWithoutContext() != null) {
-            String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
-            Category category = catalogService.findCategoryByURI(requestUri);
-
-            if (category != null) {
-                context.getRequest().setAttribute(CURRENT_CATEGORY_ATTRIBUTE_NAME, category);
-                return controllerName;
+        
+        boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
+        if (context != null){
+            Category category = null;
+            Long categoryId = ServletRequestUtils.getLongParameter(context.getRequest(), "categoryId");
+            if (usesCategoryId && categoryId!=null) {
+                category = catalogService.findCategoryById(categoryId);
+                LOG.info("obtained the category based on ID=" + categoryId);
+            }else{            
+              if (context.getRequestURIWithoutContext() != null) {
+                String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
+                category = catalogService.findCategoryByURI(requestUri);
+              }
             }
+            if (category != null) {
+              context.getRequest().setAttribute(CURRENT_CATEGORY_ATTRIBUTE_NAME, category);
+              return controllerName;
+            }
+            
         }
         return null;
     }

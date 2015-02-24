@@ -71,7 +71,7 @@ public class ProductUrlIdProcessor extends AbstractAttributeModifierAttrProcesso
         Map<String, String> attrs = new HashMap<String, String>();
 
         boolean usesProductId = BLCSystemProperty.resolveBooleanSystemProperty("product.url.use.id");
-        LOG.info("the value of the useProductId property is " + usesProductId);
+
         url = product.getUrl();
         if (usesProductId) {
             Map<String, String[]> urlParams = new HashMap<String, String[]>();
