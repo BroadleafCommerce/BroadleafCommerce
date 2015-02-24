@@ -13,7 +13,6 @@
     <url>http://www.broadleafcommerce.org</url>
     <properties>
         <project.uri>${project.baseUri}/../</project.uri>
-        <spock.version>1.0-groovy-2.0-SNAPSHOT</spock.version>
     </properties>
     <licenses>
         <license>
@@ -319,7 +318,7 @@
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-spring</artifactId>
-            <version>${spock.version}</version>
+            <version>${spock.spring.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.groovy</groupId>
