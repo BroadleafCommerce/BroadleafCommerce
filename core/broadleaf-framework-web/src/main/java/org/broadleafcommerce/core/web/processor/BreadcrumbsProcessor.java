@@ -112,11 +112,10 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             } else {
                 LOG.info("building the product URL with its default category only");                
                 Category category = product.getDefaultCategory();
-                BreadcrumbDTO bcDto = new BreadcrumbDTO();
-                bcDto.setLink(category.getUrl());
-                bcDto.setText(category.getName());
+                BreadcrumbDTO bcDto = new BreadcrumbDTO(category.getUrl(), category.getName());
+                bcDtos.add(bcDto);
             }
-            BreadcrumbDTO last=new BreadcrumbDTO("#", product.getName());
+            BreadcrumbDTO last=new BreadcrumbDTO(null, product.getName());
             bcDtos.add(last);
             addToModel(arguments, resultVar, bcDtos);
         } else if (entityObj instanceof Category) {
@@ -129,9 +128,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                 for (String string : subsets) {
                     Category categorySeg = catalogService.findCategoryByURI(string);
                     if (category != null) {
-                        BreadcrumbDTO bcDto = new BreadcrumbDTO();
-                        bcDto.setLink(string);
-                        bcDto.setText(categorySeg.getName());
+                        BreadcrumbDTO bcDto = new BreadcrumbDTO(string, categorySeg.getName());
                         bcDtos.add(bcDto);
                     } else {
                         LOG.error("No category found for URI=" + string);
@@ -140,11 +137,10 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             } else {
                 LOG.info("building the category URL with its default parent category only");
                 Category parentCategory = category.getDefaultParentCategory();
-                BreadcrumbDTO bcDto = new BreadcrumbDTO();
-                bcDto.setLink(parentCategory.getUrl());
-                bcDto.setText(parentCategory.getName());
+                BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
+                bcDtos.add(bcDto);
             }
-            BreadcrumbDTO last=new BreadcrumbDTO("#", category.getName());
+            BreadcrumbDTO last=new BreadcrumbDTO(null, category.getName());
             bcDtos.add(last);
             addToModel(arguments, resultVar, bcDtos);
         }
