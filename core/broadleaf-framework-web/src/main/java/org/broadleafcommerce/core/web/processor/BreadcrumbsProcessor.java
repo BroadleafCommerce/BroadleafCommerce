@@ -122,15 +122,16 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
         } else if (entityObj instanceof Category) {
             boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
             LOG.info("the object type is Category");
+            Category category = (Category) entityObj;
             List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
             if (usesCategoryId) {
                 List<String> subsets = findSubsets(baseUrl);
                 for (String string : subsets) {
-                    Category category = catalogService.findCategoryByURI(string);
+                    Category categorySeg = catalogService.findCategoryByURI(string);
                     if (category != null) {
                         BreadcrumbDTO bcDto = new BreadcrumbDTO();
                         bcDto.setLink(string);
-                        bcDto.setText(category.getName());
+                        bcDto.setText(categorySeg.getName());
                         bcDtos.add(bcDto);
                     } else {
                         LOG.error("No category found for URI=" + string);
@@ -138,12 +139,13 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                 }
             } else {
                 LOG.info("building the category URL with its default parent category only");
-                Category category = (Category) entityObj;
                 Category parentCategory = category.getDefaultParentCategory();
                 BreadcrumbDTO bcDto = new BreadcrumbDTO();
                 bcDto.setLink(parentCategory.getUrl());
                 bcDto.setText(parentCategory.getName());
             }
+            BreadcrumbDTO last=new BreadcrumbDTO("#", category.getName());
+            bcDtos.add(last);
             addToModel(arguments, resultVar, bcDtos);
         }
     }
