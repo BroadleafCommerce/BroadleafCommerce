@@ -30,6 +30,13 @@ public class BreadcrumbDTO {
     private String text;
     private String link;
     
+    public BreadcrumbDTO(String link, String text){
+        this.link=link;
+        this.text=text;
+    }
+    
+    public BreadcrumbDTO(){}
+    
     public String getText() {
         return text;
     }

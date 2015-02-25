@@ -93,6 +93,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
 
         if (entityObj instanceof Product) {
             boolean usesProductId = BLCSystemProperty.resolveBooleanSystemProperty("product.url.use.id");
+            Product product = (Product) entityObj;
             LOG.info("the object type is Product");
             List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
             if (usesProductId) {
@@ -109,13 +110,14 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                     }
                 }
             } else {
-                LOG.info("building the product URL with its default category only");
-                Product product = (Product) entityObj;
+                LOG.info("building the product URL with its default category only");                
                 Category category = product.getDefaultCategory();
                 BreadcrumbDTO bcDto = new BreadcrumbDTO();
                 bcDto.setLink(category.getUrl());
                 bcDto.setText(category.getName());
             }
+            BreadcrumbDTO last=new BreadcrumbDTO("#", product.getName());
+            bcDtos.add(last);
             addToModel(arguments, resultVar, bcDtos);
         } else if (entityObj instanceof Category) {
             boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
