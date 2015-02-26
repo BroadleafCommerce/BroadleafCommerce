@@ -41,13 +41,10 @@ import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
 /**
- * A Thymeleaf processor that will add a list of MenuItemDTOs to the model.
+ * A Thymeleaf Element processor that will take a Product or a Category object, and 
+ * provide a breadcrumbs path, consisting of a collection of BreadcrumDTO's.
  * 
- * It accepts a menuName or menuId. The precedence is that a menuId
- * will honored first, followed by a menuName.
- * An extension manager may override the resulting menu if configured to do so.
- *
- * @author bpolster
+ * @author gdiaz
  */
 
 public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor {
@@ -111,9 +108,11 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                 }
             } else {
                 LOG.info("building the product URL with its default category only");                
-                Category category = product.getDefaultCategory();
-                BreadcrumbDTO bcDto = new BreadcrumbDTO(category.getUrl(), category.getName());
-                bcDtos.add(bcDto);
+                Category parentCategory = product.getDefaultCategory();
+                if (parentCategory!=null){
+                  BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
+                  bcDtos.add(bcDto);
+                }
             }
             BreadcrumbDTO last=new BreadcrumbDTO(null, product.getName());
             bcDtos.add(last);
@@ -137,8 +136,10 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             } else {
                 LOG.info("building the category URL with its default parent category only");
                 Category parentCategory = category.getDefaultParentCategory();
-                BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
-                bcDtos.add(bcDto);
+                if (parentCategory!=null){
+                  BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
+                  bcDtos.add(bcDto);
+                }
             }
             BreadcrumbDTO last=new BreadcrumbDTO(null, category.getName());
             bcDtos.add(last);
