@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.web.processor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -150,7 +151,8 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
     /**
      * gets all possible consecutive token subsets of a URL string, leaving aside the last
      * @param url (i.e. /cat1/cat2/cat3/product1  or /parentCategory1/pCat2/pCat3/category)
-     * @return (i.e. a list containing: ["/cat1/cat2/cat3", "/cat1/cat2", and "/cat1"] or ["pCat1/pCat2/pCat3", "pCat1/pCat2", "pCat1])
+     * @return (i.e. a list containing: ["/cat1", "/cat1/cat2", and "/cat1/cat2/cat3"] 
+     * or ["pCat1", "pCat1/pCat2", "pCat1/pCat2/pCat3"])
      */
     private List<String> findSubsets(String url) {
         String[] urlSegments = url.split("/");
@@ -176,6 +178,8 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             LOG.info("subset " + sb.toString());
             offset++;
         }
+        //sort the subsets from shortest to longest
+        Collections.sort(subsets);
         return subsets;
     }
 
