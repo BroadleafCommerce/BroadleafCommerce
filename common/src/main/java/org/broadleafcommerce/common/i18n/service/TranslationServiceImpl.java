@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
@@ -56,6 +57,9 @@ public class TranslationServiceImpl implements TranslationService {
 
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
     
     protected Cache cache;
     
@@ -234,7 +238,7 @@ public class TranslationServiceImpl implements TranslationService {
             throw new UnsupportedOperationException("Only ID types of String and Long are currently supported");
         }
         
-        Object idValue = null;
+        Object idValue;
         try {
             idValue = PropertyUtils.getProperty(entity, idProperty);
         } catch (Exception e) {
@@ -244,6 +248,11 @@ public class TranslationServiceImpl implements TranslationService {
         if (idType instanceof StringType) {
             return (String) idValue;
         } else if (idType instanceof LongType) {
+            SandBoxHelper.OriginalIdResponse response = sandBoxHelper.getProductionOriginalId(dao.getEntityImpl(entityType),
+                    (Long) idValue);
+            if (response.isRecordFound()) {
+                idValue = response.getOriginalId();
+            }
             return String.valueOf(idValue);
         }
         

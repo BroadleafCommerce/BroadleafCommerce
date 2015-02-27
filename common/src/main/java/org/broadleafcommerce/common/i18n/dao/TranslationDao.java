@@ -63,6 +63,14 @@ public interface TranslationDao {
      * @return the id property's metadata
      */
     public Map<String, Object> getIdPropertyMetadata(TranslatedEntity entity);
+
+    /**
+     * Returns the entity implementation class based on the TranslatedEntity
+     *
+     * @param entity
+     * @return the entity implementation class
+     */
+    Class<?> getEntityImpl(TranslatedEntity entity);
     
     /**
      * Reads a translation by its own primary key
