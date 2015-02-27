@@ -36,6 +36,7 @@ import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierPro
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.web.processor.extension.BreadcrumbsProcessorExtensionManager;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.Expression;
@@ -54,6 +55,9 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
+    
+    @Resource(name = "blBreadcrumbsProcessorExtensionManager")
+    protected BreadcrumbsProcessorExtensionManager extensionManager;    
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -99,25 +103,26 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                 for (String string : subsets) {
                     Category category = catalogService.findCategoryByURI(string);
                     if (category != null) {
-                        BreadcrumbDTO bcDto = new BreadcrumbDTO();
-                        bcDto.setLink(string);
-                        bcDto.setText(category.getName());
+                        StringBuffer sb = new StringBuffer(string).append("?productId=").append(product.getId());
+                        BreadcrumbDTO bcDto = new BreadcrumbDTO(sb.toString(), category.getName());
                         bcDtos.add(bcDto);
                     } else {
                         LOG.error("No category found for URI=" + string);
                     }
                 }
             } else {
-                LOG.info("building the product URL with its default category only");                
+                LOG.info("building the product URL with its default category only");
                 Category parentCategory = product.getDefaultCategory();
-                if (parentCategory!=null){
-                  BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
-                  bcDtos.add(bcDto);
+                if (parentCategory != null) {
+                    BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
+                    bcDtos.add(bcDto);
                 }
             }
-            BreadcrumbDTO last=new BreadcrumbDTO(null, product.getName());
+            BreadcrumbDTO last = new BreadcrumbDTO(null, product.getName());
             bcDtos.add(last);
+            extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
             addToModel(arguments, resultVar, bcDtos);
+            
         } else if (entityObj instanceof Category) {
             boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
             LOG.info("the object type is Category");
@@ -128,7 +133,8 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                 for (String string : subsets) {
                     Category categorySeg = catalogService.findCategoryByURI(string);
                     if (category != null) {
-                        BreadcrumbDTO bcDto = new BreadcrumbDTO(string, categorySeg.getName());
+                        StringBuffer sb = new StringBuffer(string).append("?categoryId=").append(category.getId());
+                        BreadcrumbDTO bcDto = new BreadcrumbDTO(sb.toString(), categorySeg.getName());
                         bcDtos.add(bcDto);
                     } else {
                         LOG.error("No category found for URI=" + string);
@@ -137,13 +143,14 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             } else {
                 LOG.info("building the category URL with its default parent category only");
                 Category parentCategory = category.getDefaultParentCategory();
-                if (parentCategory!=null){
-                  BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
-                  bcDtos.add(bcDto);
+                if (parentCategory != null) {
+                    BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
+                    bcDtos.add(bcDto);
                 }
             }
-            BreadcrumbDTO last=new BreadcrumbDTO(null, category.getName());
+            BreadcrumbDTO last = new BreadcrumbDTO(null, category.getName());
             bcDtos.add(last);
+            extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
             addToModel(arguments, resultVar, bcDtos);
         }
     }
@@ -170,7 +177,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             StringBuffer sb = new StringBuffer("/");
             for (int e = 0; e < segments.size() - offset; e++) {
                 sb.append(segments.get(e));
-                if (e < (segments.size() - offset-1)) {
+                if (e < (segments.size() - offset - 1)) {
                     sb.append("/");
                 }
             }
