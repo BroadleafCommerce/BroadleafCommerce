@@ -117,8 +117,11 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     private static String buildLink(Category category, boolean ignoreTopLevel) {
         Category myCategory = category;
+        List<Long> preventRecursionCategoryIds = new ArrayList<Long>();
+
         StringBuilder linkBuffer = new StringBuilder(50);
-        while (myCategory != null) {
+        while (myCategory != null && !preventRecursionCategoryIds.contains(myCategory.getId())) {
+            preventRecursionCategoryIds.add(myCategory.getId());
             if (!ignoreTopLevel || myCategory.getDefaultParentCategory() != null) {
                 if (linkBuffer.length() == 0) {
                     linkBuffer.append(myCategory.getUrlKey());
