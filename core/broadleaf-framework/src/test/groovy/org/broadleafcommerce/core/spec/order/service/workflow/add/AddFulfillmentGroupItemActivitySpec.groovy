@@ -19,11 +19,64 @@
  */
 package org.broadleafcommerce.core.spec.order.service.workflow.add
 
+import org.broadleafcommerce.common.money.Money
+import org.broadleafcommerce.core.order.domain.Order
+import org.broadleafcommerce.core.order.domain.OrderImpl
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO
+import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest
+import org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity
+import org.broadleafcommerce.core.order.strategy.FulfillmentGroupItemStrategy
+import org.broadleafcommerce.profile.core.domain.Customer
+import org.broadleafcommerce.profile.core.domain.CustomerImpl
 
-class AddFulfillmentGroupItemActivitySpec {
+
+class AddFulfillmentGroupItemActivitySpec extends BaseAddItemActivitySpec {
     
     /*
-     * 
+     *  execute(context) is called:
+     *  request is set to context.getSeedData()
+     *  request is modified using FulfillmentGroupItemStrategy.onItemAdded(request)
+     *  context seed data updated for new request
+     *  context returned
      */
+    
+    FulfillmentGroupItemStrategy mockFgItemStrategy = Mock();
+    
+    def setup(){
+        activity = new AddFulfillmentGroupItemActivity().with {
+            fgItemStrategy = mockFgItemStrategy
+            it
+        }
+    }
+    
+    def "Test that execute updates the seedData to a changed CartOperationRequest"() {
+        setup: "setting up the mock request"
+        Customer testCustomer = new CustomerImpl()
+        testCustomer.id = 1
+        Order testOrder = new OrderImpl()
+        testOrder.id = 1
+        testOrder.customer = testCustomer
+        OrderItemRequestDTO testItemRequest = new OrderItemRequestDTO().with {
+            skuId = 1
+            productId = 1
+            categoryId = 1
+            quantity = 1
+            overrideSalePrice = new Money("1.00")
+            overrideRetailPrice = new Money("1.50")
+            it
+        }
+        CartOperationRequest testRequest = new CartOperationRequest(testOrder,testItemRequest,true)
+        CartOperationRequest oldRequest = context.getSeedData();
+        
+        when: "The activity is executed"
+        context = activity.execute(context)
+        
+        then: "The seedData is updated to a different CartOperationRequest"
+        1 * activity.fgItemStrategy.onItemAdded(_) >> testRequest
+        context.seedData instanceof CartOperationRequest
+        oldRequest instanceof CartOperationRequest
+        context.seedData != oldRequest
+        
+    }
 
 }

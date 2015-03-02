@@ -47,7 +47,7 @@ class BaseAddItemActivitySpec extends Specification {
             Order order = new OrderImpl()
             order.id = 1
             order.customer = customer
-            OrderItemRequestDTO itemRequest = new OrderItemRequestDTO().with {
+            OrderItemRequestDTO itemRequest = Spy(OrderItemRequestDTO).with {
                 skuId = 1
                 productId = 1
                 categoryId = 1
