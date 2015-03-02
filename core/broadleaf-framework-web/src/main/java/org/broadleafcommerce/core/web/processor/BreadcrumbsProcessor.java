@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
@@ -120,6 +121,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             }
             BreadcrumbDTO last = new BreadcrumbDTO(null, product.getName());
             bcDtos.add(last);
+            addHomeNode(bcDtos, baseUrl);
             extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
             addToModel(arguments, resultVar, bcDtos);
             
@@ -150,9 +152,22 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             }
             BreadcrumbDTO last = new BreadcrumbDTO(null, category.getName());
             bcDtos.add(last);
+            addHomeNode(bcDtos, baseUrl);
             extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
             addToModel(arguments, resultVar, bcDtos);
+            
         }
+    }
+    
+    /**
+     * adds a "Home" type of node to the breadcrumbs segment. This should occur whatever the type of 
+     * the intersected object
+     * @param crumbs
+     * @param baseUrl
+     */
+    private void addHomeNode(List<BreadcrumbDTO> crumbs, String baseUrl){
+        BreadcrumbDTO home = new BreadcrumbDTO( baseUrl, BLCMessageUtils.getMessage("DemoHome"));
+        crumbs.add(0, home);
     }
 
     /**
@@ -166,7 +181,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
         //remove the first element (as the URL will always start with /)
         //and the last (assumed to be the product or last category, which should never provide a link)
         List<String> segments = new ArrayList<String>(Arrays.asList(urlSegments));
-        segments.remove(0);
+        //segments.remove(0);
         segments.remove(segments.size() - 1);
         //urlSegments = Arrays.copyOfRange(urlSegments, 1, urlSegments.length-1);
 
