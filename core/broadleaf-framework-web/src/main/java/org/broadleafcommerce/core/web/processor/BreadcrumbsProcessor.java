@@ -134,7 +134,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                 List<String> subsets = findSubsets(baseUrl);
                 for (String string : subsets) {
                     Category categorySeg = catalogService.findCategoryByURI(string);
-                    if (category != null) {
+                    if (categorySeg != null) {
                         StringBuffer sb = new StringBuffer(string).append("?categoryId=").append(category.getId());
                         BreadcrumbDTO bcDto = new BreadcrumbDTO(sb.toString(), categorySeg.getName());
                         bcDtos.add(bcDto);
@@ -166,7 +166,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
      * @param baseUrl
      */
     private void addHomeNode(List<BreadcrumbDTO> crumbs, String baseUrl){
-        BreadcrumbDTO home = new BreadcrumbDTO( baseUrl, BLCMessageUtils.getMessage("DemoHome"));
+        BreadcrumbDTO home = new BreadcrumbDTO( "/", BLCMessageUtils.getMessage("breadcrumbs.home"));
         crumbs.add(0, home);
     }
 
@@ -181,7 +181,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
         //remove the first element (as the URL will always start with /)
         //and the last (assumed to be the product or last category, which should never provide a link)
         List<String> segments = new ArrayList<String>(Arrays.asList(urlSegments));
-        //segments.remove(0);
+        segments.remove(0);
         segments.remove(segments.size() - 1);
         //urlSegments = Arrays.copyOfRange(urlSegments, 1, urlSegments.length-1);
 
