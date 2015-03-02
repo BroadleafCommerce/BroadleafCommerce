@@ -76,6 +76,11 @@ public class TranslationDaoImpl implements TranslationDao {
         Class<?> implClass = entityConfiguration.lookupEntityClass(entity.getType());
         return dynamicDaoHelper.getIdMetadata(implClass, (HibernateEntityManager) em);
     }
+
+    @Override
+    public Class<?> getEntityImpl(TranslatedEntity entity) {
+        return entityConfiguration.lookupEntityClass(entity.getType());
+    }
     
     @Override
     public Translation readTranslationById(Long translationId) {

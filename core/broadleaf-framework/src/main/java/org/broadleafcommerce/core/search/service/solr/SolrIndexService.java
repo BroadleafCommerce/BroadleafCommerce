@@ -71,6 +71,24 @@ public interface SolrIndexService {
     public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException;
 
     /**
+     * This can be used in lieu of passing in page sizes,  The reason is that one might want to apply filters or only 
+     * index certain skus.
+     * @param skus
+     * @param useReindexServer
+     * @throws ServiceException
+     */
+    public void buildIncrementalSkuIndex(List<Sku> skus, boolean useReindexServer) throws ServiceException;
+
+    /**
+     * This can be used in lieu of passing in page sizes,  The reason is that one might want to apply filters or only 
+     * index certain products.
+     * @param products
+     * @param useReindexServer
+     * @throws ServiceException
+     */
+    public void buildIncrementalProductIndex(List<Product> products, boolean useReindexServer) throws ServiceException;
+
+    /**
      * Saves some global context that might be altered during indexing.
      * 
      * @return

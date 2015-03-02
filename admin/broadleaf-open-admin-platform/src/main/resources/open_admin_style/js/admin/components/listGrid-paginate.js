@@ -521,6 +521,8 @@
                 var $window = $(window);
                 
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
+                wrapperHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, wrapperHeight);
+                
                 $wrapper.css('max-height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
                 
@@ -549,6 +551,7 @@
                     maxHeight = minHeight;
                 }
                 
+                maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
                 $modalBody.css('overflow-y', 'auto');
@@ -556,27 +559,7 @@
                 // not in a modal, not the only grid on the screen, my size should be equal to max size of a grid
                 // There is a possibility, if pagination is limited on the packed, that 
                 
-                // what is the height of the visible rows?
-                var rowHeight = this.getRowHeight($tbody);
-                var loadedRecordRange = this.getLoadedRecordRanges($tbody)[0]
-                var numLoadedRows = loadedRecordRange.hi - loadedRecordRange.lo;
-                var numPaddedRows = this.getTotalRecords($tbody) - 1 - numLoadedRows;
-
-                // How much of the visible viewport is actual loaded rows and how much is padding? 
-                var visibleRowsHeight = rowHeight * numLoadedRows;
-                var paddedRowsHeight = rowHeight * numPaddedRows;
-                
-                var maxHeight = maxSubCollectionListGridHeight;
-                // If we added visible padding and there isn't enough rows to cover the entire viewport that we want
-                // (maxSubCollectionListGridHeight), then we need to shrink the size such that scrolling occurs. Otherwise,
-                // we end up in a scenario in which you have some visible rows, padding is there, but no scrolling will
-                // ever take place and new records will never be loaded. This will only occur if the size of the pages from
-                // the server multiplied by the row height is less than maxSubCollectionListGridHeight
-                if (paddedRowsHeight != 0 && visibleRowsHeight <= maxSubCollectionListGridHeight) {
-                    // shrink the size of the grid by just enough so that scrolling is activated
-                    maxHeight = maxSubCollectionListGridHeight - 3 * rowHeight;
-                }
-                
+                var maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxSubCollectionListGridHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
 
@@ -585,6 +568,33 @@
             
             // after all the heights have been calculated, update the table footer with the correct record shown count
             BLCAdmin.listGrid.paginate.updateTableFooter($wrapper.find('tbody'));
+        },
+        
+        computeActualMaxHeight : function($tbody, desiredMaxHeight) {
+            // what is the height of the visible rows?
+            var rowHeight = BLCAdmin.listGrid.paginate.getRowHeight($tbody);
+            var loadedRecordRange = BLCAdmin.listGrid.paginate.getLoadedRecordRanges($tbody)[0]
+            // This gives me back a 0-indexed range, I need the row count so add 1
+            var numLoadedRows = loadedRecordRange.hi - loadedRecordRange.lo + 1;
+            var numPaddedRows = BLCAdmin.listGrid.paginate.getTotalRecords($tbody) - numLoadedRows;
+
+            // How much of the visible viewport is actual loaded rows and how much is padding? 
+            var visibleRowsHeight = rowHeight * numLoadedRows;
+            var paddedRowsHeight = rowHeight * numPaddedRows;
+            
+            var maxHeight = desiredMaxHeight;
+            
+            // If we added visible padding and there isn't enough rows to cover the entire viewport that we want
+            // (maxSubCollectionListGridHeight), then we need to shrink the size such that scrolling occurs. Otherwise,
+            // we end up in a scenario in which you have some visible rows, padding is there, but no scrolling will
+            // ever take place and new records will never be loaded. This will only occur if the size of the pages from
+            // the server multiplied by the row height is less than desiredMaxHeight
+            if (paddedRowsHeight != 0 && visibleRowsHeight <= desiredMaxHeight) {
+                // shrink the size of the grid by just enough so that scrolling is activated
+                maxHeight = visibleRowsHeight + paddedRowsHeight - 3;
+            }
+            
+            return maxHeight;
         },
         
         updateUrlFromScroll : function($tbody) {
