@@ -250,7 +250,7 @@ public class TranslationServiceImpl implements TranslationService {
         } else if (idType instanceof LongType) {
             SandBoxHelper.OriginalIdResponse response = sandBoxHelper.getProductionOriginalId(dao.getEntityImpl(entityType),
                     (Long) idValue);
-            if (response.isRecordFound()) {
+            if (response != null && response.isRecordFound()) {
                 idValue = response.getOriginalId();
             }
             return String.valueOf(idValue);
