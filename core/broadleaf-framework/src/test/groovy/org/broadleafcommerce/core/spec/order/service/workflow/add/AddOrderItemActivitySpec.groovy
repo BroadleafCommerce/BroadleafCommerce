@@ -71,7 +71,7 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
     }
 
     def "Test that a non discrete item request is added to order"() {
-        setup: "setup message"
+        setup: 
         context.seedData.itemRequest = new NonDiscreteOrderItemRequestDTO().with {
             skuId = 1
             productId = 1
@@ -100,7 +100,7 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
     }
     
     def "Test that a non discrete item request is added to order without a sku, product or category given"() {
-        setup: "setup message"
+        setup: 
         context.seedData.itemRequest = new NonDiscreteOrderItemRequestDTO().with {
             skuId = 1
             productId = 1
@@ -123,7 +123,7 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
     }
     
     def "Test that a non discrete item request without a category is added to order"() {
-        setup: "setup message"
+        setup: 
         context.seedData.itemRequest = new NonDiscreteOrderItemRequestDTO().with {
             skuId = 1
             productId = 1
@@ -165,10 +165,10 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
         
         DiscreteOrderItem testItem = Mock(DiscreteOrderItem)
         
-        when:
+        when: "The activity is executed"
         context = activity.execute(context)
         
-        then:
+        then: "There is an order item added to the order"
         1 * mockOrderItemService.createDiscreteOrderItem(_) >> testItem
         context.seedData.getOrderItem() == testItem
         
@@ -194,10 +194,10 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
         
         BundleOrderItem testItem = Mock(BundleOrderItem)
         
-        when:
+        when: "The activity is executed"
         context = activity.execute(context)
         
-        then:
+        then: "There is an order item added to the order"
         1 * mockCatalogService.findCategoryById(_) >> testCategory
         1 * mockCatalogService.findProductById(_) >> testProduct
         1 * mockOrderItemService.createBundleOrderItem(*_) >> testItem
@@ -227,10 +227,10 @@ class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
         
         testItemRequest.getParentOrderItemId() >> 1
         
-        when:
+        when: "The activity is executed"
         context = activity.execute(context)
         
-        then:
+        then: "There is an order item added to the order"
         1 * mockCatalogService.findCategoryById(_) >> testCategory
         1 * mockCatalogService.findProductById(_) >> testProduct
         1 * mockOrderItemService.createBundleOrderItem(*_) >> testItem

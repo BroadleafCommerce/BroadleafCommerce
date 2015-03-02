@@ -72,7 +72,7 @@ class AddFulfillmentGroupItemActivitySpec extends BaseAddItemActivitySpec {
         context = activity.execute(context)
         
         then: "The seedData is updated to a different CartOperationRequest"
-        1 * activity.fgItemStrategy.onItemAdded(_) >> testRequest
+        1 * mockFgItemStrategy.onItemAdded(_) >> testRequest
         context.seedData instanceof CartOperationRequest
         oldRequest instanceof CartOperationRequest
         context.seedData != oldRequest

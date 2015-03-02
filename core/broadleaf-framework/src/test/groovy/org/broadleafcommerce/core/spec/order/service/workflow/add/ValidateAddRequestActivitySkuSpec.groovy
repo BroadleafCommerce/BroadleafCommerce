@@ -64,16 +64,16 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
     
     def "Test that when a null product is given, null is returned"(){
         
-        when:
+        when: "The activity is told to find a matching sku for a null product"
         Sku sku = activity.findMatchingSku(null,context.seedData.itemRequest.getItemAttributes(),(ActivityMessages)context)
         
-        then:
+        then: "No sku is found and it returns null"
         sku == null
     }
     
     def "If a product has a required productOption and no attribute, an exception is thrown"(){
         
-        setup:
+        setup: "Create a product that has no attribute for a required product option"
         ProductOptionValidationStrategyType testStrategyType = Mock(ProductOptionValidationStrategyType)
         testStrategyType.getRank() >> ProductOptionValidationStrategyType.ADD_ITEM.getRank()
         
@@ -90,16 +90,16 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
         ProductImpl testProduct = Spy(ProductImpl)
         testProduct.getProductOptions() >> testProductOptions
         
-        when:
+        when: "The activity tries to find a sku for the given product and attributes"
         Sku sku = activity.findMatchingSku(testProduct,testAttributes, (ActivityMessages)context)
         
-        then:
+        then: "A RequiredAttributeNotProvided Exception is thrown"
         RequiredAttributeNotProvidedException e = thrown()
         
     }
     
     def "If a productOption is used in sku generation, that value is considered when finding the right sku"(){
-        setup:
+        setup: "Create a product that has a product option used in the sku generation"
         ProductOption testProductOption = Mock(ProductOption)
         testProductOption.getRequired() >> true
         testProductOption.getAttributeName() >> "name"
@@ -133,15 +133,15 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
         testProduct.getProductOptions() >> testProductOptions
         testProduct.getSkus() >> testSkus
        
-        when:
+        when: "The activity tries to find a sku for the given product and attributes"
         Sku resultSku = activity.findMatchingSku(testProduct,testAttributes, (ActivityMessages)context)
         
-        then:
+        then: "A valid sku is returned"
         resultSku == testSku
     }
     
     def "If a productOption has a validation type that is non-null and rank <= ADD_ITEM rank, then validate is called"(){
-        setup:
+        setup: "Create a product option with a non-null validation type and strategy-rank less then or equal to the default ADD_ITEM strategy rank"
         ProductOption testProductOption = Mock(ProductOption)
         testProductOption.getRequired() >> true
         testProductOption.getAttributeName() >> "name"
@@ -162,15 +162,15 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
         ProductImpl testProduct = Spy(ProductImpl)
         testProduct.getProductOptions() >> testProductOptions
         
-        when:
+        when: "The activity tries to find a sku for the given product and attributes"
         Sku resultSku = activity.findMatchingSku(testProduct,testAttributes, (ActivityMessages)context)
         
-        then:
+        then: "Then validate is called on the product option"
         1 * mockProductOptionValidationService.validate(*_)
     }
     
     def "If a productOption has strategy rank > ADD_ITEM rank, then validate is called"() {
-        setup:
+        setup: "Create a product option with a strategy-rank greater than the default ADD_ITEM strategy-rank"
         ProductOption testProductOption = Mock(ProductOption)
         testProductOption.getRequired() >> true
         testProductOption.getAttributeName() >> "name"
@@ -189,10 +189,10 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
         ProductImpl testProduct = Spy(ProductImpl)
         testProduct.getProductOptions() >> testProductOptions
         
-        when:
+        when: "The activity tries to find a sku for the given product and attributes"
         Sku resultSku = activity.findMatchingSku(testProduct,testAttributes, (ActivityMessages)context)
         
-        then:
+        then: "Then validate is called on the product option"
         1 * mockProductOptionValidationService.validate(*_)
     }
 }

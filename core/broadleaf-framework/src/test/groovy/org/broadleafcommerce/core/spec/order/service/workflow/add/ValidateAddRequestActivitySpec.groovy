@@ -211,7 +211,7 @@ class ValidateAddRequestActivitySpec extends BaseAddItemActivitySpec {
         activity.determineSku(*_) >> testSku
         testSku.isActive() >> false
         
-        when:
+        when: "The activity is executed"
         context = activity.execute(context)
         
         then: "IllegalArgumentException is thrown"
@@ -230,7 +230,7 @@ class ValidateAddRequestActivitySpec extends BaseAddItemActivitySpec {
         testSku.isActive() >> true
         testSku.getId() >> 2
         
-        when:
+        when: "The activity is executed"
         context = activity.execute(context)
         
         then: "The itemRequest skuId is set to 2"
@@ -259,7 +259,7 @@ class ValidateAddRequestActivitySpec extends BaseAddItemActivitySpec {
         testSku.getCurrency() >> testCurrency2
         
         
-        when:
+        when: "The activity is executed"
         context = activity.execute(context)
         
         then: "An IllegalArgumentException is thrown"
@@ -283,7 +283,7 @@ class ValidateAddRequestActivitySpec extends BaseAddItemActivitySpec {
         context.seedData.itemRequest.parentOrderItemId = 1
         activity.orderItemService.readOrderItemById(_) >> null
                
-        when:
+        when: "The activity is executed"
         context = activity.execute(context)
         
         then: "An IllegalArgumentException is thrown"
