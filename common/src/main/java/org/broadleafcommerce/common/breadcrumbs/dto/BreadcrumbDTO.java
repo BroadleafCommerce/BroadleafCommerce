@@ -17,8 +17,8 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.breadcrumbs.dto;
 
+package org.broadleafcommerce.common.breadcrumbs.dto;
 
 /**
  * DTO used to build each breadcrumb segment
@@ -26,29 +26,30 @@ package org.broadleafcommerce.common.breadcrumbs.dto;
  *
  */
 public class BreadcrumbDTO {
-    
+
     private String text;
     private String link;
-    
-    public BreadcrumbDTO(String link, String text){
-        this.link=link;
-        this.text=text;
+
+    public BreadcrumbDTO(String link, String text) {
+        this.link = link;
+        this.text = text;
     }
-    
-    public BreadcrumbDTO(){}
-    
+
+    public BreadcrumbDTO() {
+    }
+
     public String getText() {
         return text;
     }
-    
+
     public void setText(String text) {
         this.text = text;
     }
-    
+
     public String getLink() {
         return link;
     }
-    
+
     public void setLink(String link) {
         this.link = link;
     }

@@ -75,25 +75,24 @@ public class CategoryUrlIdProcessor extends AbstractElementProcessor {
         String uText = element.getAttributeValue("th:utext");
         String thCategoryId = element.getAttributeValue("th:categoryId");
         String thUrl = element.getAttributeValue("th:url");
-        LOG.info("processing breadcrumb tag with th:utext=" + uText + " categoryId=" + thCategoryId + " th:url=" + thUrl);
+        LOG.debug("processing breadcrumb tag with th:utext=" + uText + " categoryId=" + thCategoryId + " th:url=" + thUrl);
 
         Expression expression;
-        
+
         //processing the URL
         //TODO: find out why the nav doesn't populate this correctly sometimes, even though the sub-sub-item DTO's does have a URL
         String url = "#";
         try {
-           expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+            expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
                     .parseExpression(arguments.getConfiguration(), arguments, thUrl);
             url = (String) expression.execute(arguments.getConfiguration(), arguments);
         } catch (IllegalArgumentException e) {
-            LOG.error("Url argument invalid: " + thUrl);
+            LOG.warn("Url argument invalid: " + thUrl);
         }
-        
+
         expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
                 .parseExpression(arguments.getConfiguration(), arguments, thCategoryId);
         Long categoryId = (Long) expression.execute(arguments.getConfiguration(), arguments);
-        
 
         boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
 

@@ -66,7 +66,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
      */
     public BreadcrumbsProcessor() {
         super("breadcrumbs");
-        LOG.info("breadcrumbs processor instantiated");
+        LOG.debug("breadcrumbs processor instantiated");
     }
 
     @Override
@@ -98,7 +98,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
      * @param element
      */
     private void processSearch(Arguments arguments, Element element) {
-        LOG.info("the breadcrumbs processor is dealing with a search");
+        LOG.debug("the breadcrumbs processor is dealing with a search");
         String resultVar = element.getAttributeValue("resultVar");
 
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
@@ -128,7 +128,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
      * @param element
      */
     private void processEntities(Arguments arguments, Element element) {
-        LOG.info("the breadcrumbs processor received an \"entity\" object parameter");
+        LOG.debug("the breadcrumbs processor received an \"entity\" object parameter");
         String resultVar = element.getAttributeValue("resultVar");
         String entity = element.getAttributeValue("entity");
 
@@ -143,7 +143,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
         if (entityObj instanceof Product) {
             boolean usesProductId = BLCSystemProperty.resolveBooleanSystemProperty("product.url.use.id");
             Product product = (Product) entityObj;
-            LOG.info("the object type is Product");
+            LOG.debug("the object type is Product");
             List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
             if (usesProductId) {
                 List<String> subsets = findSubsets(baseUrl);
@@ -154,7 +154,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                         BreadcrumbDTO bcDto = new BreadcrumbDTO(sb.toString(), category.getName());
                         bcDtos.add(bcDto);
                     } else {
-                        LOG.error("No category found for URI=" + string);
+                        LOG.warn("No category found for URI=" + string);
                     }
                 }
             } else {
@@ -173,7 +173,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
 
         } else if (entityObj instanceof Category) {
             boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
-            LOG.info("the object type is Category");
+            LOG.debug("the object type is Category");
             Category category = (Category) entityObj;
             List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
             if (usesCategoryId) {
@@ -185,7 +185,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                         BreadcrumbDTO bcDto = new BreadcrumbDTO(sb.toString(), categorySeg.getName());
                         bcDtos.add(bcDto);
                     } else {
-                        LOG.error("No category found for URI=" + string);
+                        LOG.warn("No category found for URI=" + string);
                     }
                 }
             } else {
@@ -231,7 +231,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
         segments.remove(segments.size() - 1);
         //urlSegments = Arrays.copyOfRange(urlSegments, 1, urlSegments.length-1);
 
-        LOG.info("starting url is " + url);
+        LOG.debug("starting url is " + url);
         List<String> subsets = new ArrayList<String>();
         int offset = 0;
         for (int i = 0; i < segments.size(); i++) {
@@ -243,7 +243,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                 }
             }
             subsets.add(sb.toString());
-            LOG.info("subset " + sb.toString());
+            LOG.debug("subset " + sb.toString());
             offset++;
         }
         //sort the subsets from shortest to longest

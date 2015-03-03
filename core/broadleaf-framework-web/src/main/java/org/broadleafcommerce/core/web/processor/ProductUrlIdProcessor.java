@@ -45,8 +45,7 @@ import org.thymeleaf.standard.expression.StandardExpressions;
  */
 public class ProductUrlIdProcessor extends AbstractAttributeModifierAttrProcessor {
 
-    private static final Log LOG = LogFactory.getLog(ProductUrlIdProcessor.class);
-
+    //private static final Log LOG = LogFactory.getLog(ProductUrlIdProcessor.class);
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
