@@ -215,7 +215,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
     
     /**
      * Finishes processing the request and adding resultVar to the model, when the passed "entity" object is
-     * of the type Category. Should include a special case, when the base URL uses search parameters
+     * of the type Category. Considers a special case, when the base URL uses search parameters
      * @param argumentss
      * @param element
      * @param category
@@ -225,11 +225,12 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
     private void processCategory(Arguments arguments, Element element, Category category, String  baseUrl, String resultVar){
         LOG.debug("the breadcrumbs processor is dealing with a category");
         Map<String, String[]> parameters = BroadleafRequestContext.getRequestParameterMap();
-        if (parameters.get("q")!=null){
+        boolean usesCategorySearch = BLCSystemProperty.resolveBooleanSystemProperty("use.category.search.breadcrumbs");
+        if (parameters.get("q")!=null && usesCategorySearch){
             processCategoryWithSearch( arguments,  element,  category);
         }else{        
             boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
-            LOG.debug("the object type is Category, and category.url.use.id=" + usesCategoryId);
+            LOG.debug("category.url.use.id=" + usesCategoryId);
             List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
             if (usesCategoryId) {
                 List<String> subsets = findSubsets(baseUrl);
