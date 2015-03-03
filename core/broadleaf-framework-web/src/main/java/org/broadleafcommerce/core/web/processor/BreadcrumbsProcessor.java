@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -56,9 +57,9 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-    
+
     @Resource(name = "blBreadcrumbsProcessorExtensionManager")
-    protected BreadcrumbsProcessorExtensionManager extensionManager;    
+    protected BreadcrumbsProcessorExtensionManager extensionManager;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -82,7 +83,52 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
      * If the "use.." system property is not set, then only a short URI is given, consisting of only the default category
      */
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        LOG.info("inside BreadcrumbsProcessor.modifyModelAttributes");
+        if (element.hasAttribute("entity")) {
+            processEntities(arguments, element);
+        } else {
+            processSearch(arguments, element);
+        }
+    }
+
+    /**
+     * generates the "crumbs" resultVar when there is no "entity" passed as a 
+     * parameter, and the only thing we have in order to generate the breadcrumb is the 
+     * search parameter itself.
+     * @param arguments
+     * @param element
+     */
+    private void processSearch(Arguments arguments, Element element) {
+        LOG.info("the breadcrumbs processor is dealing with a search");
+        String resultVar = element.getAttributeValue("resultVar");
+
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        Map<String, String[]> parameters = BroadleafRequestContext.getRequestParameterMap();
+
+        String searchString = parameters.get("q")[0];
+        List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
+
+        //"home" node 
+        String baseUrl = context.getRequestURIWithoutContext();
+        addHomeNode(bcDtos, baseUrl);
+
+        //search string node
+        StringBuffer sb=new StringBuffer(BLCMessageUtils.getMessage("breadcrumbs.search"));
+        sb.append(" \"").append(searchString).append("\"");
+        BreadcrumbDTO last = new BreadcrumbDTO(null, sb.toString());
+        bcDtos.add(last);
+
+        extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
+        addToModel(arguments, resultVar, bcDtos);
+    }
+
+    /**
+     * creates the "crumbs" resultVar, when there is an "entity" parameter passed by the 
+     * tag. That parameter can be a Product or a Category object 
+     * @param arguments
+     * @param element
+     */
+    private void processEntities(Arguments arguments, Element element) {
+        LOG.info("the breadcrumbs processor received an \"entity\" object parameter");
         String resultVar = element.getAttributeValue("resultVar");
         String entity = element.getAttributeValue("entity");
 
@@ -124,7 +170,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             addHomeNode(bcDtos, baseUrl);
             extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
             addToModel(arguments, resultVar, bcDtos);
-            
+
         } else if (entityObj instanceof Category) {
             boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
             LOG.info("the object type is Category");
@@ -155,18 +201,18 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             addHomeNode(bcDtos, baseUrl);
             extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
             addToModel(arguments, resultVar, bcDtos);
-            
+
         }
     }
-    
+
     /**
      * adds a "Home" type of node to the breadcrumbs segment. This should occur whatever the type of 
      * the intersected object
      * @param crumbs
      * @param baseUrl
      */
-    private void addHomeNode(List<BreadcrumbDTO> crumbs, String baseUrl){
-        BreadcrumbDTO home = new BreadcrumbDTO( "/", BLCMessageUtils.getMessage("breadcrumbs.home"));
+    private void addHomeNode(List<BreadcrumbDTO> crumbs, String baseUrl) {
+        BreadcrumbDTO home = new BreadcrumbDTO("/", BLCMessageUtils.getMessage("breadcrumbs.home"));
         crumbs.add(0, home);
     }
 
