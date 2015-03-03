@@ -112,7 +112,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
         addHomeNode(bcDtos, baseUrl);
 
         //search string node
-        StringBuffer sb=new StringBuffer(BLCMessageUtils.getMessage("breadcrumbs.search"));
+        StringBuffer sb = new StringBuffer(BLCMessageUtils.getMessage("breadcrumbs.search"));
         sb.append(" \"").append(searchString).append("\"");
         BreadcrumbDTO last = new BreadcrumbDTO(null, sb.toString());
         bcDtos.add(last);
@@ -143,7 +143,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
         if (entityObj instanceof Product) {
             boolean usesProductId = BLCSystemProperty.resolveBooleanSystemProperty("product.url.use.id");
             Product product = (Product) entityObj;
-            LOG.debug("the object type is Product");
+            LOG.debug("the object type is Product, and product.url.use.id=" + usesProductId);
             List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
             if (usesProductId) {
                 List<String> subsets = findSubsets(baseUrl);
@@ -172,37 +172,49 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
             addToModel(arguments, resultVar, bcDtos);
 
         } else if (entityObj instanceof Category) {
-            boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
-            LOG.debug("the object type is Category");
             Category category = (Category) entityObj;
-            List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
-            if (usesCategoryId) {
-                List<String> subsets = findSubsets(baseUrl);
-                for (String string : subsets) {
-                    Category categorySeg = catalogService.findCategoryByURI(string);
-                    if (categorySeg != null) {
-                        StringBuffer sb = new StringBuffer(string).append("?categoryId=").append(category.getId());
-                        BreadcrumbDTO bcDto = new BreadcrumbDTO(sb.toString(), categorySeg.getName());
-                        bcDtos.add(bcDto);
-                    } else {
-                        LOG.warn("No category found for URI=" + string);
-                    }
-                }
-            } else {
-                LOG.info("building the category URL with its default parent category only");
-                Category parentCategory = category.getDefaultParentCategory();
-                if (parentCategory != null) {
-                    BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
+            processCategory(arguments, element, category, baseUrl, resultVar);
+         }
+    }
+    
+    /**
+     * Finishes processing the request and adding resultVar to the model, when the passed "entity" object is
+     * of the type Category. Should include a special case, when the base URL uses search parameters
+     * @param argumentss
+     * @param element
+     * @param category
+     * @param baseUrl
+     * @param resultVar
+     */
+    private void processCategory(Arguments arguments, Element element, Category category, String  baseUrl, String resultVar){
+        boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
+        LOG.debug("the object type is Category, and category.url.use.id=" + usesCategoryId);
+        List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
+        if (usesCategoryId) {
+            List<String> subsets = findSubsets(baseUrl);
+            for (String string : subsets) {
+                Category categorySeg = catalogService.findCategoryByURI(string);
+                if (categorySeg != null) {
+                    StringBuffer sb = new StringBuffer(string).append("?categoryId=").append(category.getId());
+                    BreadcrumbDTO bcDto = new BreadcrumbDTO(sb.toString(), categorySeg.getName());
                     bcDtos.add(bcDto);
+                } else {
+                    LOG.warn("No category found for URI=" + string);
                 }
             }
-            BreadcrumbDTO last = new BreadcrumbDTO(null, category.getName());
-            bcDtos.add(last);
-            addHomeNode(bcDtos, baseUrl);
-            extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
-            addToModel(arguments, resultVar, bcDtos);
-
+        } else {
+            LOG.info("building the category URL with its default parent category only");
+            Category parentCategory = category.getDefaultParentCategory();
+            if (parentCategory != null) {
+                BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
+                bcDtos.add(bcDto);
+            }
         }
+        BreadcrumbDTO last = new BreadcrumbDTO(null, category.getName());
+        bcDtos.add(last);
+        addHomeNode(bcDtos, baseUrl);
+        extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
+        addToModel(arguments, resultVar, bcDtos);
     }
 
     /**
