@@ -120,6 +120,42 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
         extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
         addToModel(arguments, resultVar, bcDtos);
     }
+    
+    /**
+     * a special case of breadcrumb formation with a category: if it has a "q" request parameter, then 
+     * the breadcrumb is just formed this way: [Home] -> [Cateogry Name] -> Search: [search string]
+     * @param arguments
+     * @param element
+     * @param category
+     */
+    private void processCategoryWithSearch(Arguments arguments, Element element, Category category) {
+        LOG.debug("the breadcrumbs processor is dealing with a category having a search parameter");
+        String resultVar = element.getAttributeValue("resultVar");
+
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        Map<String, String[]> parameters = BroadleafRequestContext.getRequestParameterMap();
+
+        String searchString = parameters.get("q")[0];
+        List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
+
+        //"home" node 
+        String baseUrl = context.getRequestURIWithoutContext();
+        addHomeNode(bcDtos, baseUrl);
+        
+        //bracketed [Category Name] node
+        StringBuffer sb = new StringBuffer("[").append(category.getName()).append("]");
+        BreadcrumbDTO bracketedCategory = new BreadcrumbDTO(category.getUrl(), sb.toString());
+        bcDtos.add(bracketedCategory);
+
+        //search string node
+        sb = new StringBuffer(BLCMessageUtils.getMessage("breadcrumbs.search"));
+        sb.append(" \"").append(searchString).append("\"");
+        BreadcrumbDTO last = new BreadcrumbDTO(null, sb.toString());
+        bcDtos.add(last);
+
+        extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
+        addToModel(arguments, resultVar, bcDtos);
+    }   
 
     /**
      * creates the "crumbs" resultVar, when there is an "entity" parameter passed by the 
@@ -187,34 +223,40 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
      * @param resultVar
      */
     private void processCategory(Arguments arguments, Element element, Category category, String  baseUrl, String resultVar){
-        boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
-        LOG.debug("the object type is Category, and category.url.use.id=" + usesCategoryId);
-        List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
-        if (usesCategoryId) {
-            List<String> subsets = findSubsets(baseUrl);
-            for (String string : subsets) {
-                Category categorySeg = catalogService.findCategoryByURI(string);
-                if (categorySeg != null) {
-                    StringBuffer sb = new StringBuffer(string).append("?categoryId=").append(category.getId());
-                    BreadcrumbDTO bcDto = new BreadcrumbDTO(sb.toString(), categorySeg.getName());
+        LOG.debug("the breadcrumbs processor is dealing with a category");
+        Map<String, String[]> parameters = BroadleafRequestContext.getRequestParameterMap();
+        if (parameters.get("q")!=null){
+            processCategoryWithSearch( arguments,  element,  category);
+        }else{        
+            boolean usesCategoryId = BLCSystemProperty.resolveBooleanSystemProperty("category.url.use.id");
+            LOG.debug("the object type is Category, and category.url.use.id=" + usesCategoryId);
+            List<BreadcrumbDTO> bcDtos = new ArrayList<BreadcrumbDTO>();
+            if (usesCategoryId) {
+                List<String> subsets = findSubsets(baseUrl);
+                for (String string : subsets) {
+                    Category categorySeg = catalogService.findCategoryByURI(string);
+                    if (categorySeg != null) {
+                        StringBuffer sb = new StringBuffer(string).append("?categoryId=").append(category.getId());
+                        BreadcrumbDTO bcDto = new BreadcrumbDTO(sb.toString(), categorySeg.getName());
+                        bcDtos.add(bcDto);
+                    } else {
+                        LOG.warn("No category found for URI=" + string);
+                    }
+                }
+            } else {
+                LOG.info("building the category URL with its default parent category only");
+                Category parentCategory = category.getDefaultParentCategory();
+                if (parentCategory != null) {
+                    BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
                     bcDtos.add(bcDto);
-                } else {
-                    LOG.warn("No category found for URI=" + string);
                 }
             }
-        } else {
-            LOG.info("building the category URL with its default parent category only");
-            Category parentCategory = category.getDefaultParentCategory();
-            if (parentCategory != null) {
-                BreadcrumbDTO bcDto = new BreadcrumbDTO(parentCategory.getUrl(), parentCategory.getName());
-                bcDtos.add(bcDto);
-            }
+            BreadcrumbDTO last = new BreadcrumbDTO(null, category.getName());
+            bcDtos.add(last);
+            addHomeNode(bcDtos, baseUrl);
+            extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
+            addToModel(arguments, resultVar, bcDtos);
         }
-        BreadcrumbDTO last = new BreadcrumbDTO(null, category.getName());
-        bcDtos.add(last);
-        addHomeNode(bcDtos, baseUrl);
-        extensionManager.getProxy().addAdditionalFieldsToModel(arguments, element);
-        addToModel(arguments, resultVar, bcDtos);
     }
 
     /**
