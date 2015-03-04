@@ -86,7 +86,8 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        return canHandleAdd(persistencePackage);
+        String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return Category.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
