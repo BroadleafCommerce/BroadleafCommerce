@@ -41,6 +41,8 @@
                 <ref bean="blCustomerPasswordCustomPersistenceHandler" />
                 <ref bean="blCustomerCustomPersistenceHandler" />
                 <ref bean="blProductCustomPersistenceHandler" />
+                <ref bean="blOfferCustomPersistenceHandler" />
+                <ref bean="blOfferCodeCustomPersistenceHandler" />
                 <ref bean="blChildCategoriesCustomPersistenceHandler" />
                 <ref bean="blSkuCustomPersistenceHandler" />
                 <ref bean="blISOCountryPersistenceHandler"/>
