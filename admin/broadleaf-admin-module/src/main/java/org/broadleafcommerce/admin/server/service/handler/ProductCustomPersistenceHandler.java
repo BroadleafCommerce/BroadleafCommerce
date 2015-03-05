@@ -41,12 +41,23 @@ import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 
 /**
  * @author Jeff Fischer
@@ -87,7 +98,21 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        cto.setApplyAdditionalFilterMappingsToCount(true);
+        cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
+                .withDirectFilterValues(new EmptyFilterValues())
+                .withRestriction(new Restriction()
+                                .withPredicateProvider(new PredicateProvider() {
+                                    public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                    FieldPathBuilder fieldPathBuilder, From root,
+                                                                    String ceilingEntity,
+                                                                    String fullPropertyName, Path explicitPath,
+                                                                    List directValues) {
+                                        root.fetch("defaultSku", JoinType.LEFT);
+                                        root.fetch("defaultCategory", JoinType.LEFT);
+                                        return null;
+                                    }
+                                })
+                ));
         return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
     }
 
