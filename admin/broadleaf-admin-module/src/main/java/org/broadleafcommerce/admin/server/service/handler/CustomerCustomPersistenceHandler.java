@@ -75,10 +75,9 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             
             adminInstance.setUsername(adminInstance.getEmailAddress());
             
-            if (customerService.readCustomerByUsername(adminInstance.getUsername()) != null) {
-                Entity error = new Entity();
-                error.addValidationError("username", "nonUniqueUsernameError");
-                return error;
+            Entity errorEntity = validateUniqueUsername(entity, adminInstance);
+            if (errorEntity != null) {
+                return errorEntity;
             }
             
             adminInstance = dynamicEntityDao.merge(adminInstance);
@@ -91,6 +90,21 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
         }
+    }
+    
+    /**
+     * Validates that a Customer does not have their username duplicated
+     * 
+     * @param entity
+     * @param adminInstance
+     * @return the original entity with a validation error on it or null if no validation failure
+     */
+    protected Entity validateUniqueUsername(Entity entity, Customer adminInstance) {
+        if (customerService.readCustomerByUsername(adminInstance.getUsername()) != null) {
+            entity.addValidationError("emailAddress", "nonUniqueUsernameError");
+            return entity;
+        }
+        return null;
     }
     
     @Override
