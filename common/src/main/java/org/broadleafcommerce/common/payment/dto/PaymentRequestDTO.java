@@ -237,23 +237,23 @@ public class PaymentRequestDTO {
         return customerCredits;
     }
 
-    public AddressDTO getShipTo() {
+    public AddressDTO<PaymentRequestDTO> getShipTo() {
         return shipTo;
     }
 
-    public AddressDTO getBillTo() {
+    public AddressDTO<PaymentRequestDTO> getBillTo() {
         return billTo;
     }
 
-    public CreditCardDTO getCreditCard() {
+    public CreditCardDTO<PaymentRequestDTO> getCreditCard() {
         return creditCard;
     }
 
-    public SubscriptionDTO getSubscription() {
+    public SubscriptionDTO<PaymentRequestDTO> getSubscription() {
         return subscription;
     }
 
-    public GatewayCustomerDTO getCustomer() {
+    public GatewayCustomerDTO<PaymentRequestDTO> getCustomer() {
         return customer;
     }
 
