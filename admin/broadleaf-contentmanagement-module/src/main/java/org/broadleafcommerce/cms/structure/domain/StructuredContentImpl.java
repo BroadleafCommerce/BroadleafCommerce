@@ -227,7 +227,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "key")
     @BatchSize(size = 20)
-    @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
     @ClonePolicyMapOverride
     @ClonePolicyArchive
     protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<String, StructuredContentFieldXref>();
