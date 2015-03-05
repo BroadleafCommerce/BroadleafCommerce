@@ -24,7 +24,7 @@
 (function($, BLCAdmin) {
 
     var pingInterval = 1000;
-    var sessionTimeoutInterval = 60000*15;
+    var sessionTimeoutInterval = Number.MAX_VALUE; // the actual value for sessionTimeoutInterval get set by way of an ajax request
     var sessionTimeLeft = sessionTimeoutInterval;
     var EXPIRE_MESSAGE_TIME = 60000;
     
@@ -54,8 +54,8 @@
                 url : BLC.servletContext + "/sessionTimerReset"
             }, function(data) {
                 /*
-                 * We deduct one minute from the actual session timeout interval so we can control when
-                 * the session will timeout.
+                 * We deduct one minute from the actual session timeout interval to ensure that the server-side session
+                 * doesn't expire before the client session
                  */
                 sessionTimeoutInterval = data.serverSessionTimeoutInterval - 60000;
                 resetTime = (new Date()).getTime();
