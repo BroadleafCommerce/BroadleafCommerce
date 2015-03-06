@@ -765,7 +765,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                             if (!rangeValues[1].equals("null")) {
                                 maxValue = new BigDecimal(rangeValues[1]);
                             }
-                            selectedValues[i] = "{!" + getSolrRangeFunctionString(minValue, maxValue) + "}field(" + solrKey + ")";
+                            selectedValues[i] = getSolrRangeString(solrKey, minValue, maxValue);
                         } else {
                             selectedValues[i] = solrKey + ":\"" + scrubFacetValue(selectedValues[i]) + "\"";
                         }
@@ -1074,6 +1074,29 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
             sb.append("}");
         }
+        return sb.toString();
+    }
+
+    protected String getSolrRangeString(String fieldName, BigDecimal minValue, BigDecimal maxValue) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(fieldName).append(":[");
+        if (minValue == null) {
+            sb.append("*");
+        } else {
+            sb.append(minValue.toPlainString());
+        }
+
+        sb.append(" TO ");
+
+        if (maxValue == null) {
+            sb.append("*");
+        } else {
+            sb.append(maxValue.toPlainString());
+        }
+
+        sb.append(']');
+
         return sb.toString();
     }
 
