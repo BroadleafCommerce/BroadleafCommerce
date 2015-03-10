@@ -120,7 +120,7 @@ $(document).ready(function() {
         $(errorBlock).insertBefore("form.entity-form div.tabs-container");
         $.each( data.errors , function( idx, error ){
             if (error.errorType == "field") {
-                var fieldLabel = $("#field-" + error.field).children(".field-label");
+                var fieldLabel = $("#field-" + error.field).find(".field-label");
 
                 var fieldHtml = "<span class='fieldError error'>SUBSTITUTE</span>";
                 if ($(".tabError:contains(" + error.tab + ")").length) {
