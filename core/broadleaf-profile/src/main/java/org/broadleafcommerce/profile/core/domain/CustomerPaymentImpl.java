@@ -17,26 +17,8 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.profile.core.domain;
 
-import org.broadleafcommerce.common.copy.CreateResponse;
-import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
-import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
-import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.MapKeyType;
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
+package org.broadleafcommerce.profile.core.domain;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,6 +40,25 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.MapKeyType;
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -68,11 +69,11 @@ import javax.persistence.UniqueConstraint;
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "billingAddress.", mergeEntries = {
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB, overrideValue = CustomerPaymentImpl.Presentation.Tab.Name.BILLING_ADDRESS),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentImpl.Presentation.Tab.Order.BILLING_ADDRESS)                
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER, intOverrideValue = CustomerPaymentImpl.Presentation.Tab.Order.BILLING_ADDRESS)
         })
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-public class CustomerPaymentImpl implements CustomerPayment {
+public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
 
     private static final long serialVersionUID = 1L;
 
@@ -189,6 +190,7 @@ public class CustomerPaymentImpl implements CustomerPayment {
     public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
     }
+
     @Override
     public <G extends CustomerPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
@@ -201,32 +203,39 @@ public class CustomerPaymentImpl implements CustomerPayment {
         cloned.setBillingAddress(billingAddress.createOrRetrieveCopyInstance(context).getClone());
         cloned.setDefault(isDefault);
         cloned.setPaymentToken(paymentToken);
-        for(Map.Entry<String,String> entry : additionalFields.entrySet()){
-            cloned.getAdditionalFields().put(entry.getKey(),entry.getValue());
+        for (Map.Entry<String, String> entry : additionalFields.entrySet()) {
+            cloned.getAdditionalFields().put(entry.getKey(), entry.getValue());
         }
         return createResponse;
     }
 
     public static class Presentation {
+
         public static class Group {
+
             public static class Name {
+
                 public static final String PAYMENT = "CustomerPaymentImpl_payment";
 
             }
-            
+
             public static class Order {
+
                 public static final int PAYMENT = 1000;
             }
 
         }
-        
+
         public static class Tab {
+
             public static class Name {
+
                 public static final String PAYMENT = "CustomerPaymentImpl_payment";
                 public static final String BILLING_ADDRESS = "CustomerPaymentImpl_billingAddress";
             }
-            
+
             public static class Order {
+
                 public static final int PAYMENT = 1000;
                 public static final int BILLING_ADDRESS = 2000;
             }
