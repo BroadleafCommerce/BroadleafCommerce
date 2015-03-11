@@ -360,13 +360,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             }
 
             List<Field> fields = fieldDao.readAllSkuFields();
-            List<Long> productIds = BLCCollectionUtils.collectList(skus, new TypedTransformer<Long>() {
-
-                @Override
-                public Long transform(Object input) {
-                    return shs.getSkuId(((Sku) input).getId());
-                }
-            });
+            List<Long> productIds = new ArrayList<Long>();
+            for (Sku sku : skus) {
+                productIds.add(sku.getProduct().getId());
+            }
 
             solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
 
