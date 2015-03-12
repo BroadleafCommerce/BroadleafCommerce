@@ -64,18 +64,7 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
             return getCustomerAddressesView();
         }
 
-        if ((form.getAddress().getPhonePrimary() != null) &&
-                (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
-            form.getAddress().setPhonePrimary(null);
-        }
-        if ((form.getAddress().getPhoneSecondary() != null) &&
-                (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
-            form.getAddress().setPhoneSecondary(null);
-        }
-        if ((form.getAddress().getPhoneFax() != null) &&
-                (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
-            form.getAddress().setPhoneFax(null);
-        }
+        removeUnusedPhones(form);
         
         Address address = addressService.saveAddress(form.getAddress());
         CustomerAddress customerAddress = customerAddressService.create();
@@ -137,6 +126,21 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
             redirectAttributes.addFlashAttribute("errorMessage", getAddressRemovedErrorMessage());
         }
         return getCustomerAddressesRedirect();
+    }
+
+    public void removeUnusedPhones(CustomerAddressForm form) {
+        if ((form.getAddress().getPhonePrimary() != null) &&
+                    (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            form.getAddress().setPhonePrimary(null);
+        }
+        if ((form.getAddress().getPhoneSecondary() != null) &&
+                    (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            form.getAddress().setPhoneSecondary(null);
+        }
+        if ((form.getAddress().getPhoneFax() != null) &&
+                    (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
+            form.getAddress().setPhoneFax(null);
+        }
     }
 
     public String getAddressUpdatedMessage() {
