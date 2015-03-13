@@ -40,6 +40,11 @@ import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO
 import org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity
 
 
+/**
+ * 
+ * @author ncrum
+ *
+ */
 class AddOrderItemActivitySpec extends BaseAddItemActivitySpec {
 
     /*

@@ -16,8 +16,10 @@ import org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestA
 import org.broadleafcommerce.core.workflow.ActivityMessages
 
 
-/* findMatchingSku:
- * 1) product != null && product.getProductOptions().size() > 0
+/**
+ *  findMatchingSku:
+ * <ol>
+ * <li> product != null && product.getProductOptions().size() > 0
  *  a) for each productOption
  *      i) productOption.getRequired() && productOptionValidationStrategyType == null || rank <= ADD_ITEM.rank
  *          aa) attributeValues.get(productOption.getAttributeName()) == null
@@ -41,8 +43,9 @@ import org.broadleafcommerce.core.workflow.ActivityMessages
  *              sku found -> return sku
  *              sku not found -> return null
  *
- * 2) product == null -> returns null
- *
+ * <li> product == null -> returns null
+ * </ol>
+ * @author Nick Crum (ncrum)
  */
 class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
 
