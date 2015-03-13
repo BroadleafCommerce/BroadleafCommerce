@@ -17,17 +17,18 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.service.AddressService;
-import org.springframework.context.ApplicationContext;
+package org.broadleafcommerce.core.web.api.wrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.service.AddressService;
+import org.springframework.context.ApplicationContext;
 
 /**
  * This is a JAXB wrapper around Address.
@@ -103,7 +104,6 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
 
     @XmlElement
     protected Boolean isDefault;
-
 
     @Override
     public void wrapDetails(Address model, HttpServletRequest request) {
@@ -213,5 +213,157 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         }
 
         return address;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAddressLine1() {
+        return addressLine1;
+    }
+
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+    }
+
+    public String getAddressLine2() {
+        return addressLine2;
+    }
+
+    public void setAddressLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
+    }
+
+    public String getAddressLine3() {
+        return addressLine3;
+    }
+
+    public void setAddressLine3(String addressLine3) {
+        this.addressLine3 = addressLine3;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public StateWrapper getState() {
+        return state;
+    }
+
+    public void setState(StateWrapper state) {
+        this.state = state;
+    }
+
+    public CountryWrapper getCountry() {
+        return country;
+    }
+
+    public void setCountry(CountryWrapper country) {
+        this.country = country;
+    }
+
+    public String getIsoCountrySubdivision() {
+        return isoCountrySubdivision;
+    }
+
+    public void setIsoCountrySubdivision(String isoCountrySubdivision) {
+        this.isoCountrySubdivision = isoCountrySubdivision;
+    }
+
+    public String getStateProvinceRegion() {
+        return stateProvinceRegion;
+    }
+
+    public void setStateProvinceRegion(String stateProvinceRegion) {
+        this.stateProvinceRegion = stateProvinceRegion;
+    }
+
+    public ISOCountryWrapper getIsoCountryAlpha2() {
+        return isoCountryAlpha2;
+    }
+
+    public void setIsoCountryAlpha2(ISOCountryWrapper isoCountryAlpha2) {
+        this.isoCountryAlpha2 = isoCountryAlpha2;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public PhoneWrapper getPhonePrimary() {
+        return phonePrimary;
+    }
+
+    public void setPhonePrimary(PhoneWrapper phonePrimary) {
+        this.phonePrimary = phonePrimary;
+    }
+
+    public PhoneWrapper getPhoneSecondary() {
+        return phoneSecondary;
+    }
+
+    public void setPhoneSecondary(PhoneWrapper phoneSecondary) {
+        this.phoneSecondary = phoneSecondary;
+    }
+
+    public PhoneWrapper getPhoneFax() {
+        return phoneFax;
+    }
+
+    public void setPhoneFax(PhoneWrapper phoneFax) {
+        this.phoneFax = phoneFax;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public Boolean getIsBusiness() {
+        return isBusiness;
+    }
+
+    public void setIsBusiness(Boolean isBusiness) {
+        this.isBusiness = isBusiness;
+    }
+
+    public Boolean getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Boolean isDefault) {
+        this.isDefault = isDefault;
     }
 }
