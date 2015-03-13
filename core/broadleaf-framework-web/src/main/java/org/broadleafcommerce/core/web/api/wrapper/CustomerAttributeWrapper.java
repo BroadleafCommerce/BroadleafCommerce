@@ -17,17 +17,18 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
-import org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl;
-import org.springframework.context.ApplicationContext;
+package org.broadleafcommerce.core.web.api.wrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
+import org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl;
+import org.springframework.context.ApplicationContext;
 
 /**
  * API wrapper to wrap Customer Attributes.
@@ -38,16 +39,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(value = XmlAccessType.FIELD)
 public class CustomerAttributeWrapper extends BaseWrapper implements
         APIWrapper<CustomerAttribute>, APIUnwrapper<CustomerAttribute> {
-    
+
     @XmlElement
     protected Long id;
-    
+
     @XmlElement
     protected String name;
-    
+
     @XmlElement
     protected String value;
-    
+
     @XmlElement
     protected Long customerId;
 
@@ -72,5 +73,37 @@ public class CustomerAttributeWrapper extends BaseWrapper implements
         attribute.setValue(value);
         return attribute;
     }
-    
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
 }
