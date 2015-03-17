@@ -80,7 +80,6 @@ public class CustomerWrapper extends BaseWrapper implements APIWrapper<Customer>
                 this.customerAttributes.add(customerAttributeWrapper);
             }
         }
-        System.out.println("exiting customerWrapper.wrapDetails");
     }
 
     @Override
