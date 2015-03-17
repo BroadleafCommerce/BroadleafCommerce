@@ -120,7 +120,11 @@ import javax.persistence.Transient;
         @AdminPresentationMergeOverride(name = "defaultSku.displayTemplate", mergeEntries =
             @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "defaultSku.urlKey", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true))
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "defaultSku.retailPrice", mergeEntries = 
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "REQUIRED")),
+        @AdminPresentationMergeOverride(name = "defaultSku.name", mergeEntries = 
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "REQUIRED"))
     }
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct")
