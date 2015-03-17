@@ -20,6 +20,11 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
+import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.springframework.context.ApplicationContext;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +36,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerAttribute;
-import org.broadleafcommerce.profile.core.service.CustomerService;
-import org.springframework.context.ApplicationContext;
 
 /**
  * This is a JAXB wrapper around FulfillmentGroupItem.
@@ -80,6 +80,7 @@ public class CustomerWrapper extends BaseWrapper implements APIWrapper<Customer>
                 this.customerAttributes.add(customerAttributeWrapper);
             }
         }
+        System.out.println("exiting customerWrapper.wrapDetails");
     }
 
     @Override
@@ -91,6 +92,29 @@ public class CustomerWrapper extends BaseWrapper implements APIWrapper<Customer>
     public Customer unwrap(HttpServletRequest request, ApplicationContext context) {
         CustomerService customerService = (CustomerService) context.getBean("blCustomerService");
         Customer customer = customerService.readCustomerById(this.id);
+        customer.setId(this.id);
+        customer.setFirstName(this.firstName);
+        customer.setLastName(this.lastName);
+        customer.setEmailAddress(this.emailAddress);
+        if (customerAttributes != null) {
+            for (CustomerAttributeWrapper customerAttributeWrapper : customerAttributes) {
+                CustomerAttribute attribute = customerAttributeWrapper.unwrap(request, context);
+                attribute.setCustomer(customer);
+                customer.getCustomerAttributes().put(attribute.getName(), attribute);
+            }
+        }
+        return customer;
+    }
+
+    /**
+     * builds a Customer domain object, from a RESTful POST, assuming no previous database presence
+     * @param request
+     * @param context
+     * @return
+     */
+    public Customer restfulUnwrap(HttpServletRequest request, ApplicationContext context) {
+        CustomerService customerService = (CustomerService) context.getBean("blCustomerService");
+        Customer customer = customerService.createNewCustomer();
         customer.setId(this.id);
         customer.setFirstName(this.firstName);
         customer.setLastName(this.lastName);

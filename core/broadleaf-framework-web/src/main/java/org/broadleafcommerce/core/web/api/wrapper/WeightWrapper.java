@@ -17,9 +17,12 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.core.catalog.domain.Weight;
+import org.springframework.context.ApplicationContext;
 
 import java.math.BigDecimal;
 
@@ -37,7 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "weight")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class WeightWrapper implements APIWrapper<Weight>{
+public class WeightWrapper implements APIWrapper<Weight>, APIUnwrapper<Weight> {
 
     @XmlElement
     protected BigDecimal weight;
@@ -56,5 +59,13 @@ public class WeightWrapper implements APIWrapper<Weight>{
     @Override
     public void wrapSummary(Weight model, HttpServletRequest request) {
         wrapDetails(model, request);
+    }
+
+    @Override
+    public Weight unwrap(HttpServletRequest request, ApplicationContext context) {
+        Weight wei = new Weight();
+        wei.setWeight(this.weight);
+        wei.setWeightUnitOfMeasure(WeightUnitOfMeasureType.getInstance(this.unitOfMeasure));
+        return wei;
     }
 }
