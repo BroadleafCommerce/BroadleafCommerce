@@ -63,6 +63,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public static String REPROCESS_PARAM_NAME = "REPROCESS_BLC_REQUEST";
     
     private static final String SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "site.strict.validate.production.changes";
+    public static final String USE_LEGACY_DEFAULT_CATEGORY_MODE = "use.legacy.default.category.mode";
 
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
@@ -91,6 +92,9 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     @Value("${" + SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":false}")
     protected boolean siteStrictValidateProductionChanges = false;
 
+    @Value("${" + USE_LEGACY_DEFAULT_CATEGORY_MODE + ":false}")
+    protected boolean useLegacyDefaultCategoryMode = false;
+
     @Resource(name = "blDeployBehaviorUtil")
     protected DeployBehaviorUtil deployBehaviorUtil;
     
@@ -101,6 +105,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public void process(WebRequest request) {
         BroadleafRequestContext brc = new BroadleafRequestContext();
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
+        brc.getAdditionalProperties().put(USE_LEGACY_DEFAULT_CATEGORY_MODE, useLegacyDefaultCategoryMode);
         
         Site site = siteResolver.resolveSite(request);
         

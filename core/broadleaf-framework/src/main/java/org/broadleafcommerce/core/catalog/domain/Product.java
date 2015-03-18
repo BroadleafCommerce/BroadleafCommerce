@@ -300,18 +300,42 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @return all of the Media for all of the Skus for this Product
      */
     public Map<String, Media> getAllSkuMedia();
+
+    /**
+     * Return the {@link org.broadleafcommerce.core.catalog.domain.Category} that contains this product
+     *
+     * @return
+     */
+    public Category getCategory();
+
+    /**
+     * Set the {@link org.broadleafcommerce.core.catalog.domain.Category} that contains this product
+     *
+     * @param category
+     */
+    public void setCategory(Category category);
      
     /**
-     * Returns the default {@link Category} this product is associated with.
+     * Returns the default {@link Category} this product is associated with. This method will delegate to
+     * {@link #getCategory()} by default, unless the "use.legacy.default.category.mode" property is set to
+     * true in the implementation's property file. If set to true, this method will use legacy behavior,
+     * which is to return the deprecated defaultCategory field.
      *
+     * @deprecated use {@link #getCategory()} instead
      */
+    @Deprecated
     public Category getDefaultCategory();
 
     /**
-     * Sets the default {@link Category} to associate this product with.
+     * Sets the default {@link Category} to associate this product with. This method will delegate to
+     * {@link #setCategory(Category)} by default, unless the "use.legacy.default.category.mode" property is set to
+     * true in the implementation's property file. If set to true, this method will use legacy behavior,
+     * which is to set the deprecated defaultCategory field.
      *
+     * @deprecated use {@link #setCategory(Category)} instead
      * @param defaultCategory - the default {@link Category} to associate this product with
      */
+    @Deprecated
     public void setDefaultCategory(Category defaultCategory);
 
     /**
@@ -720,8 +744,26 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      */
     public void clearDynamicPrices();
 
+    /**
+     * Retrieve all the xref entities linking this product to parent categories
+     *
+     * @deprecated Use {@link #getCategory()} instead. The API is moving to a single parent category model. Implementations
+     * interested in managing multiple parent category references should introduce a new custom collection in a Product
+     * subclass to manage the additional associations.
+     * @return
+     */
+    @Deprecated
     public List<CategoryProductXref> getAllParentCategoryXrefs();
 
+    /**
+     * Set all the xref entities linking this product to parent categories
+     *
+     * @deprecated User {@link #setCategory(Category)} instead. The API is moving to a single parent category model. Implementations
+     * interested in managing multiple parent category references should introduce a new custom collection in a Product
+     * subclass to manage the additional associations.
+     * @param allParentCategories
+     */
+    @Deprecated
     public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories);
 
     /**

@@ -50,6 +50,8 @@ import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestProcessor;
 import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -252,10 +254,12 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = 4000,
-        tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
-        group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General)
+    @AdminPresentation(friendlyName = "ProductImpl_Product_Default_Category", order = Presentation.FieldOrder.DEFAULT_CATEGORY,
+        group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General, 
+        prominent = true, gridOrder = 2, 
+        requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup()
+    @Deprecated
     protected Category defaultCategory;
 
     @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "product", orphanRemoval = true,
@@ -476,22 +480,43 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     }
 
     @Override
+    @Deprecated
     public Category getDefaultCategory() {
-        Category response = null;
-        if (defaultCategory != null) {
-            response = defaultCategory;
-        } else {
-            List<CategoryProductXref> xrefs = getAllParentCategoryXrefs();
-            if (!CollectionUtils.isEmpty(xrefs)) {
-                for (CategoryProductXref xref : xrefs) {
-                    if (xref.getCategory().isActive()) {
-                        response = xref.getCategory();
-                        break;
-                    }
-                }
-            }
+        if (isDefaultCategoryLegacyMode() || defaultCategory != null) {
+            return defaultCategory;
         }
+        Category response = getCategory();
         return response;
+    }
+
+    @Override
+    @Deprecated
+    public void setDefaultCategory(Category defaultCategory) {
+        if (isDefaultCategoryLegacyMode()) {
+            this.defaultCategory = defaultCategory;
+        } else {
+            setCategory(defaultCategory);
+        }
+    }
+
+    @Override
+    public Category getCategory() {
+        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
+            return allParentCategoryXrefs.get(0).getCategory();
+        }
+        return null;
+    }
+
+    @Override
+    public void setCategory(Category category) {
+        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
+            allParentCategoryXrefs.get(0).setCategory(category);
+        } else {
+            CategoryProductXref xref = new CategoryProductXrefImpl();
+            xref.setProduct(this);
+            xref.setCategory(category);
+            allParentCategoryXrefs.add(xref);
+        }
     }
 
     @Override
@@ -517,16 +542,13 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     }
 
     @Override
-    public void setDefaultCategory(Category defaultCategory) {
-        this.defaultCategory = defaultCategory;
-    }
-
-    @Override
+    @Deprecated
     public List<CategoryProductXref> getAllParentCategoryXrefs() {
         return allParentCategoryXrefs;
     }
 
     @Override
+    @Deprecated
     public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories) {
         this.allParentCategoryXrefs.clear();
         allParentCategoryXrefs.addAll(allParentCategories);
@@ -982,6 +1004,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
             public static final int SHORT_DESCRIPTION = 2000;
             public static final int PRIMARY_MEDIA = 3000;
             public static final int LONG_DESCRIPTION = 4000;
+            public static final int DEFAULT_CATEGORY = 5000;
             public static final int MANUFACTURER = 6000;
             public static final int URL = 7000;
         }
@@ -1002,4 +1025,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         return getUrl();
     }
 
+    protected Boolean isDefaultCategoryLegacyMode() {
+        return (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(BroadleafRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE);
+    }
 }
