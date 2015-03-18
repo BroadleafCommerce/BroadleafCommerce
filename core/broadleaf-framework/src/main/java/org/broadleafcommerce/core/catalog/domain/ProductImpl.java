@@ -710,6 +710,14 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public List<ProductOptionXref> getProductOptionXrefs() {
+        
+        Collections.sort(productOptions, new Comparator<ProductOptionXref>(){
+            @Override
+            public int compare(ProductOptionXref o1, ProductOptionXref o2) {
+                return o1.getProductOption().getDisplayOrder() - o2.getProductOption().getDisplayOrder();
+            }
+        });
+        
         return productOptions;
     }
 
@@ -724,13 +732,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         for (ProductOptionXref xref : productOptions) {
             response.add(xref.getProductOption());
         }
-        
-        Collections.sort(response, new Comparator<ProductOption>(){
-            @Override
-            public int compare(ProductOption o1, ProductOption o2) {
-                return o1.getDisplayOrder() - o2.getDisplayOrder();
-            }
-        });
         
         return Collections.unmodifiableList(response);
     }
