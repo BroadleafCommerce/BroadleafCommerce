@@ -63,6 +63,7 @@ import org.hibernate.annotations.SQLDelete;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -723,6 +724,14 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         for (ProductOptionXref xref : productOptions) {
             response.add(xref.getProductOption());
         }
+        
+        Collections.sort(response, new Comparator<ProductOption>(){
+            @Override
+            public int compare(ProductOption o1, ProductOption o2) {
+                return o1.getDisplayOrder() - o2.getDisplayOrder();
+            }
+        });
+        
         return Collections.unmodifiableList(response);
     }
 
