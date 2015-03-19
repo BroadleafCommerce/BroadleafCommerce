@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -732,14 +733,15 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public List<ProductOptionXref> getProductOptionXrefs() {
-        
-        Collections.sort(productOptions, new Comparator<ProductOptionXref>(){
+        List<ProductOptionXref> sorted = new ArrayList<ProductOptionXref>(productOptions);
+        Collections.sort(sorted, new Comparator<ProductOptionXref>() {
+
             @Override
             public int compare(ProductOptionXref o1, ProductOptionXref o2) {
-                return o1.getProductOption().getDisplayOrder() - o2.getProductOption().getDisplayOrder();
+                return ObjectUtils.compare(o1.getProductOption().getDisplayOrder(), o2.getProductOption().getDisplayOrder());
             }
+            
         });
-        
         return productOptions;
     }
 
@@ -751,10 +753,9 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     public List<ProductOption> getProductOptions() {
         List<ProductOption> response = new ArrayList<ProductOption>();
-        for (ProductOptionXref xref : productOptions) {
+        for (ProductOptionXref xref : getProductOptionXrefs()) {
             response.add(xref.getProductOption());
         }
-        
         return Collections.unmodifiableList(response);
     }
 
