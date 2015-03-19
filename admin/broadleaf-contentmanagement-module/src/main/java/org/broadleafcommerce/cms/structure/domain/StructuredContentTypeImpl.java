@@ -49,8 +49,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@ProfileEntity
-public class StructuredContentTypeImpl implements StructuredContentType, AdminMainEntity {
+public class StructuredContentTypeImpl implements StructuredContentType, AdminMainEntity, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 

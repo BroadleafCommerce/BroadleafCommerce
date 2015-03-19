@@ -52,9 +52,8 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
 })
-@ProfileEntity
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-public class StructuredContentRuleImpl implements StructuredContentRule {
+public class StructuredContentRuleImpl implements StructuredContentRule, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
