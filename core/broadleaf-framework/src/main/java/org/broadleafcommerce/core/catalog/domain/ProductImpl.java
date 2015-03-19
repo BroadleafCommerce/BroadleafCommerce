@@ -51,6 +51,8 @@ import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestProcessor;
 import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
