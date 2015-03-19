@@ -101,6 +101,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
 
+    @Value("${solr.index.commit}")
+    protected boolean commit = true;
+
+    @Value("${solr.index.softCommit}")
+    protected boolean softCommit = true;
+
+    @Value("${solr.index.waitSearcher}")
+    protected boolean waitSearcher = true;
+
+    @Value("${solr.index.waitFlush}")
+    protected boolean waitFlush = false;
+
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
 
@@ -215,6 +227,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                         }
                     }
                 });
+
+                //We can call optimize here because we just updated the entire index
                 optimizeIndex(SolrContext.getReindexServer());
             } finally {
                 restoreState(pack);
@@ -254,8 +268,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
             SolrContext.getReindexServer().deleteByQuery(deleteQuery);
-            SolrContext.getReindexServer().commit();
+
+            internalBulkCommit(SolrContext.getReindexServer());
         } catch (Exception e) {
+            if (ServiceException.class.isAssignableFrom(e.getClass())) {
+                throw (ServiceException) e;
+            }
             throw new ServiceException("Could not delete documents", e);
         }
     }
@@ -313,7 +331,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             if (!CollectionUtils.isEmpty(documents)) {
                 SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
                 server.add(documents);
-                server.commit();
+                internalBulkCommit(server);
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (SolrServerException e) {
@@ -382,7 +400,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             if (!CollectionUtils.isEmpty(documents)) {
                 SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
                 server.add(documents);
-                server.commit();
+                internalBulkCommit(server);
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (SolrServerException e) {
@@ -930,8 +948,54 @@ public class SolrIndexServiceImpl implements SolrIndexService {
          } catch (SolrServerException e) {
              throw new ServiceException("Could not optimize index", e);
          }
-     }
+    }
     
+    /**
+     * This is generally called when doing bulk reindexing of the reindex core.
+     * By default it explicitly does a hard commit.
+     * @param server
+     * @throws ServiceException
+     * @throws IOException
+     */
+    protected void internalBulkCommit(SolrServer server) throws ServiceException, IOException {
+        try {
+            if (this.commit) {
+                server.commit();
+            } else if (LOG.isDebugEnabled()) {
+                LOG.debug("The flag / property \"solr.index.commit\" is false. Not committing! Ensure autoCommit is configured.");
+            }
+        } catch (SolrServerException e) {
+            throw new ServiceException("Could not commit", e);
+        }
+    }
+
+    @Override
+    public void commit(SolrServer server) throws ServiceException, IOException {
+        if (this.commit) {
+            commit(server, this.softCommit, this.waitSearcher, this.waitFlush);
+        } else if (LOG.isDebugEnabled()) {
+            LOG.debug("The flag / property \"solr.index.commit\" is false. Not committing! Ensure autoCommit is configured.");
+        }
+    }
+
+    @Override
+    public void commit(SolrServer server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException {
+        try {
+            if (!this.commit) {
+                LOG.warn("The flag / property \"solr.index.commit\" is set to false but a commit is being forced via the API.");
+            }
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Committing changes to Solr index: softCommit: " + softCommit
+                        + ", waitSearcher: " + waitSearcher + ", waitFlush: " + waitFlush);
+            }
+
+            server.commit(waitFlush, waitSearcher, softCommit);
+        } catch (SolrServerException e) {
+            throw new ServiceException("Could not commit changes to Solr index", e);
+        }
+    }
+
     @Override
     public void logDocuments(Collection<SolrInputDocument> documents) {
         if (LOG.isTraceEnabled()) {

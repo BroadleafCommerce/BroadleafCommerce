@@ -104,13 +104,44 @@ public interface SolrIndexService {
     public void restoreState(Object[] pack);
 
     /**
-     * Triggers the Solr optimize index function on the given server
+     * Triggers the Solr optimize index function on the given server.
+     * 
+     * NOTE: This should rarely be called.
      * 
      * @param server
      * @throws ServiceException
      * @throws IOException
      */
     public void optimizeIndex(SolrServer server) throws ServiceException, IOException;
+
+    /**
+     * Allows a commit to be called.  By default, the details of the commit will depend on system properties, including:
+     * 
+     * solr.index.commit - if false, then no commit will be performed. autoCommit should be configured in Solr.
+     * solr.index.softCommit - indicates if a soft commit should be performed
+     * solr.index.waitSearcher - indicates if the process should wait for a searcher to be configured
+     * solr.index.waitFlush - indicates if the process should wait for a flush to disk
+     * 
+     * @param server
+     * @throws ServiceException
+     * @throws IOException
+     */
+
+    public void commit(SolrServer server) throws ServiceException, IOException;
+
+    /**
+     * This allows an external caller to force a commit to the SolrServer.  See Solr Documentation for 
+     * additional details.  If using softCommit, you should ensure that a hardCommit is performed, either 
+     * using autoCommit, or at the end of the commit process to flush the changes to the disk.
+     * 
+     * @param server - the SolrServer to update
+     * @param softCommit - soft commit is an efficient commit that does not write the data to the file system
+     * @param waitSearcher - whether or not to wait for a new searcher to be created
+     * @param waitFlush - whether or not to wait for a flush to disk.
+     * @throws ServiceException
+     * @throws IOException
+     */
+    public void commit(SolrServer server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException;
 
     /**
      * Prints out the docs to the trace logger
