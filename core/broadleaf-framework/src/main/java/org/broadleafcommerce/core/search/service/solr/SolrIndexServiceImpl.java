@@ -102,16 +102,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     protected boolean useSku;
 
     @Value("${solr.index.commit}")
-    protected boolean commit = true;
+    protected boolean commit;
 
     @Value("${solr.index.softCommit}")
-    protected boolean softCommit = true;
+    protected boolean softCommit;
 
     @Value("${solr.index.waitSearcher}")
-    protected boolean waitSearcher = true;
+    protected boolean waitSearcher;
 
     @Value("${solr.index.waitFlush}")
-    protected boolean waitFlush = false;
+    protected boolean waitFlush;
 
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
@@ -269,7 +269,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             LOG.debug("Deleting by query: " + deleteQuery);
             SolrContext.getReindexServer().deleteByQuery(deleteQuery);
 
-            internalBulkCommit(SolrContext.getReindexServer());
+            //Explicitly do a hard commit here since we just deleted the entire index
+            SolrContext.getReindexServer().commit();
         } catch (Exception e) {
             if (ServiceException.class.isAssignableFrom(e.getClass())) {
                 throw (ServiceException) e;
@@ -331,7 +332,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             if (!CollectionUtils.isEmpty(documents)) {
                 SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
                 server.add(documents);
-                internalBulkCommit(server);
+                commit(server);
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (SolrServerException e) {
@@ -400,7 +401,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             if (!CollectionUtils.isEmpty(documents)) {
                 SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
                 server.add(documents);
-                internalBulkCommit(server);
+                commit(server);
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (SolrServerException e) {
@@ -948,25 +949,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
          } catch (SolrServerException e) {
              throw new ServiceException("Could not optimize index", e);
          }
-    }
-    
-    /**
-     * This is generally called when doing bulk reindexing of the reindex core.
-     * By default it explicitly does a hard commit.
-     * @param server
-     * @throws ServiceException
-     * @throws IOException
-     */
-    protected void internalBulkCommit(SolrServer server) throws ServiceException, IOException {
-        try {
-            if (this.commit) {
-                server.commit();
-            } else if (LOG.isDebugEnabled()) {
-                LOG.debug("The flag / property \"solr.index.commit\" is false. Not committing! Ensure autoCommit is configured.");
-            }
-        } catch (SolrServerException e) {
-            throw new ServiceException("Could not commit", e);
-        }
     }
 
     @Override

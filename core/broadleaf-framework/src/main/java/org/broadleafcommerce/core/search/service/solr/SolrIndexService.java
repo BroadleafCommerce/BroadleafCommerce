@@ -117,7 +117,7 @@ public interface SolrIndexService {
     /**
      * Allows a commit to be called.  By default, the details of the commit will depend on system properties, including:
      * 
-     * solr.index.commit - if false, then no commit will be performed. autoCommit should be configured in Solr.
+     * solr.index.commit - if false, then no commit will be performed. autoCommit (and autoSoftCommit) should be configured in Solr.
      * solr.index.softCommit - indicates if a soft commit should be performed
      * solr.index.waitSearcher - indicates if the process should wait for a searcher to be configured
      * solr.index.waitFlush - indicates if the process should wait for a flush to disk
@@ -133,6 +133,8 @@ public interface SolrIndexService {
      * This allows an external caller to force a commit to the SolrServer.  See Solr Documentation for 
      * additional details.  If using softCommit, you should ensure that a hardCommit is performed, either 
      * using autoCommit, or at the end of the commit process to flush the changes to the disk.
+     * 
+     * Note that this method will force a commit even if solr.index.commit=false
      * 
      * @param server - the SolrServer to update
      * @param softCommit - soft commit is an efficient commit that does not write the data to the file system
