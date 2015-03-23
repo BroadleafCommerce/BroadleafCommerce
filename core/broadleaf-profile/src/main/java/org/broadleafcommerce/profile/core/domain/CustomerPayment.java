@@ -20,10 +20,11 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
 
 public interface CustomerPayment extends Serializable, AdditionalFields, MultiTenantCloneable<CustomerPayment> {
 
@@ -47,8 +48,16 @@ public interface CustomerPayment extends Serializable, AdditionalFields, MultiTe
 
     public void setIsDefault(boolean isDefault);
 
+    public String getLastPaymentStatus();
+
+    public void setLastPaymentStatus(String aDefault);
+
     public Map<String, String> getAdditionalFields();
 
     public void setAdditionalFields(Map<String, String> additionalFields);
+
+    public Date getExpirationDate();
+
+    public void setExpirationDate(Date expirationDate);
 
 }
