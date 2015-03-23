@@ -90,4 +90,45 @@ class ProductSpec extends Specification {
         output.get(2) == testPox3
         output.get(2).getProductOption() == testPo3
     }
+    
+    def "Test if Product Options are returned sorted by displayOrder when one has no displayOrder"(){
+        ArrayList<ProductOptionXref> testProductOptions = new ArrayList<ProductOptionXref>();
+        setup:
+        ProductOption testPo = new ProductOptionImpl();
+        ProductOption testPo2 = new ProductOptionImpl();
+        testPo2.setDisplayOrder(2);
+        ProductOption testPo3 = new ProductOptionImpl();
+        testPo3.setDisplayOrder(1);
+        ProductOptionXref testPox = new ProductOptionXrefImpl().with{
+            product = product
+            productOption = testPo
+            id = 1
+            it
+        }
+        ProductOptionXref testPox2 = new ProductOptionXrefImpl().with{
+            product = product
+            productOption = testPo2
+            id = 2
+            it
+        }
+        ProductOptionXref testPox3 = new ProductOptionXrefImpl().with{
+            product = product
+            productOption = testPo3
+            id = 3
+            it
+        }
+        testProductOptions = Arrays.asList(testPox,testPox2,testPox3);
+        product.setProductOptionXrefs(testProductOptions);
+        
+        when:
+        List<ProductOptionXref> output = product.getProductOptionXrefs();
+        
+        then:
+        output.get(0) == testPox
+        output.get(0).getProductOption() == testPo
+        output.get(1) == testPox3
+        output.get(1).getProductOption() == testPo3
+        output.get(2) == testPox2
+        output.get(2).getProductOption() == testPo2
+    }
 }
