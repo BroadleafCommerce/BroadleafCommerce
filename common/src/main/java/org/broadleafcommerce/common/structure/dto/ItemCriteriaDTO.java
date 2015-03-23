@@ -52,4 +52,11 @@ public class ItemCriteriaDTO implements Serializable {
     public void setMatchRule(String matchRule) {
         this.matchRule = matchRule;
     }
+
+    public ItemCriteriaDTO getClone() {
+        ItemCriteriaDTO clonedDto = new ItemCriteriaDTO();
+        clonedDto.setQty(qty);
+        clonedDto.setMatchRule(matchRule);
+        return clonedDto;
+    }
 }
