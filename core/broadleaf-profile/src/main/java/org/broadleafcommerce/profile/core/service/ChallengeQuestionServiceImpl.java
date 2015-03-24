@@ -45,5 +45,5 @@ public class ChallengeQuestionServiceImpl implements ChallengeQuestionService {
     public ChallengeQuestion readChallengeQuestionById(long challengeQuestionId) {
         return challengeQuestionDao.readChallengeQuestionById(challengeQuestionId);
     }
-
+    
 }

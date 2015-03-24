@@ -27,5 +27,6 @@ public interface ChallengeQuestionDao {
 
     public List<ChallengeQuestion> readChallengeQuestions();
     public ChallengeQuestion readChallengeQuestionById(long challengeQuestionId);
-  
+    public ChallengeQuestion saveChallengeQuestion(ChallengeQuestion q);
+
 }
