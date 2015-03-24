@@ -742,7 +742,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
             }
             
         });
-        return productOptions;
+        return sorted;
     }
 
     @Override
