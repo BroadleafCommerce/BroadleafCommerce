@@ -143,11 +143,11 @@ class ProductSpec extends Specification {
         List<ProductOptionXref> output = product.getProductOptionXrefs();
         
         then:
-        output.get(0) == testPox
-        output.get(0).getProductOption() == testPo
-        output.get(1) == testPox3
-        output.get(1).getProductOption() == testPo3
-        output.get(2) == testPox2
-        output.get(2).getProductOption() == testPo2
+        output.get(0) == testPox3
+        output.get(0).getProductOption() == testPo3
+        output.get(1) == testPox2
+        output.get(1).getProductOption() == testPo2
+        output.get(2) == testPox
+        output.get(2).getProductOption() == testPo
     }
 }

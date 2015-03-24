@@ -739,7 +739,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
             @Override
             public int compare(ProductOptionXref o1, ProductOptionXref o2) {
-                return ObjectUtils.compare(o1.getProductOption().getDisplayOrder(), o2.getProductOption().getDisplayOrder());
+                return ObjectUtils.compare(o1.getProductOption().getDisplayOrder(), o2.getProductOption().getDisplayOrder(), true);
             }
             
         });
