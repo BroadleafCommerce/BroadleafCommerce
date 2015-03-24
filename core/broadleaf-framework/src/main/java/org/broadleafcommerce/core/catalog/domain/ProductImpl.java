@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1027,6 +1028,10 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     }
 
     protected Boolean isDefaultCategoryLegacyMode() {
-        return (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(BroadleafRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE);
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc != null) {
+            return BooleanUtils.isTrue((Boolean) brc.getAdditionalProperties().get(BroadleafRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE));
+        }
+        return false;
     }
 }
