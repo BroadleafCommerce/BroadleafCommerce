@@ -22,10 +22,16 @@
  */
 package org.broadleafcommerce.core.spec.order.service.workflow.add
 
+import org.broadleafcommerce.common.money.Money
+import org.broadleafcommerce.core.order.domain.Order
+import org.broadleafcommerce.core.order.domain.OrderImpl
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO
 import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest
 import org.broadleafcommerce.core.workflow.BaseActivity
 import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl
 import org.broadleafcommerce.core.workflow.ProcessContext
+import org.broadleafcommerce.profile.core.domain.Customer
+import org.broadleafcommerce.profile.core.domain.CustomerImpl
 
 import spock.lang.Specification
 
@@ -36,7 +42,21 @@ class BaseAddItemActivitySpec extends Specification {
     ProcessContext<CartOperationRequest> context
     def setup() {
         context = new DefaultProcessContextImpl<CartOperationRequest>().with() {
-            seedData = new CartOperationRequest()
+            Customer customer = new CustomerImpl()
+            customer.id = 1
+            Order order = new OrderImpl()
+            order.id = 1
+            order.customer = customer
+            OrderItemRequestDTO itemRequest = Spy(OrderItemRequestDTO).with {
+                skuId = 1
+                productId = 1
+                categoryId = 1
+                quantity = 1
+                overrideSalePrice = new Money("1.00")
+                overrideRetailPrice = new Money("1.50")
+                it
+            }
+            seedData = new CartOperationRequest(order,itemRequest,true)
             it
         }
     }
