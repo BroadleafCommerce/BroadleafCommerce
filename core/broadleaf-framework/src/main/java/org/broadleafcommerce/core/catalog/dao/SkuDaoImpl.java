@@ -17,7 +17,6 @@
  * limitations under the License.
  * #L%
  */
-
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -61,7 +60,7 @@ public class SkuDaoImpl implements SkuDao {
 
     private static final SupportLogger logger = SupportLogManager.getLogger("Enterprise", SkuDaoImpl.class);
 
-    @PersistenceContext(unitName = "blPU")
+    @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
     @Resource(name = "blEntityConfiguration")
@@ -72,7 +71,7 @@ public class SkuDaoImpl implements SkuDao {
 
     @Resource(name = "blDialectHelper")
     protected DialectHelper dialectHelper;
-
+    
     @Resource(name = "blSkuDaoExtensionManager")
     protected SkuDaoExtensionManager extensionManager;
 
@@ -83,7 +82,7 @@ public class SkuDaoImpl implements SkuDao {
     public Sku save(Sku sku) {
         return em.merge(sku);
     }
-
+    
     @Override
     public SkuFee saveSkuFee(SkuFee fee) {
         return em.merge(fee);
@@ -164,11 +163,11 @@ public class SkuDaoImpl implements SkuDao {
     }
 
     @Override
-    public void delete(Sku sku) {
+    public void delete(Sku sku){
         if (!em.contains(sku)) {
             sku = readSkuById(sku.getId());
         }
-        em.remove(sku);
+        em.remove(sku);     
     }
 
     @Override
@@ -258,7 +257,7 @@ public class SkuDaoImpl implements SkuDao {
     public void setCurrentDateResolution(Long currentDateResolution) {
         this.currentDateResolution = currentDateResolution;
     }
-
+    
     @Override
     public List<Sku> findSkuByURI(String uri) {
         if (extensionManager != null) {
@@ -271,7 +270,7 @@ public class SkuDaoImpl implements SkuDao {
         String skuUrlKey = uri.substring(uri.lastIndexOf('/'));
         String productUrl = uri.substring(0, uri.lastIndexOf('/'));
         Query query;
-
+    
         query = em.createNamedQuery("BC_READ_SKU_BY_OUTGOING_URL");
         query.setParameter("url", uri);
         query.setParameter("productUrl", productUrl);
@@ -279,7 +278,7 @@ public class SkuDaoImpl implements SkuDao {
         query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, currentDateResolution));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-
+    
         @SuppressWarnings("unchecked")
         List<Sku> results = query.getResultList();
         return results;

@@ -87,10 +87,10 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     public CustomerPayment setAsDefaultPayment(CustomerPayment payment) {
         CustomerPayment oldDefault = findDefaultPaymentForCustomer(payment.getCustomer());
         if (oldDefault != null) {
-            oldDefault.setIsDefault(false);
+            oldDefault.setDefault(false);
             saveCustomerPayment(oldDefault);
         }
-        payment.setIsDefault(true);
+        payment.setDefault(true);
         return saveCustomerPayment(payment);
     }
 

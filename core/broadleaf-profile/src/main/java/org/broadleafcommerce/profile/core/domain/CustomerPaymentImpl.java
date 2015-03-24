@@ -20,6 +20,26 @@
 
 package org.broadleafcommerce.profile.core.domain;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -38,27 +58,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -116,7 +115,7 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             groupOrder = Presentation.Group.Order.PAYMENT)
     protected boolean isDefault = false;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @MapKeyType(@Type(type = "java.lang.String"))
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
@@ -178,7 +177,7 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     }
 
     @Override
-    public void setIsDefault(boolean aDefault) {
+    public void setDefault(boolean aDefault) {
         this.isDefault = aDefault;
     }
 
@@ -202,7 +201,7 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
         // dont clone
         cloned.setCustomer(customer);
         cloned.setBillingAddress(billingAddress.createOrRetrieveCopyInstance(context).getClone());
-        cloned.setIsDefault(isDefault);
+        cloned.setDefault(isDefault);
         cloned.setPaymentToken(paymentToken);
         for (Map.Entry<String, String> entry : additionalFields.entrySet()) {
             cloned.getAdditionalFields().put(entry.getKey(), entry.getValue());

@@ -45,7 +45,7 @@ public interface CustomerPayment extends Serializable, AdditionalFields, MultiTe
 
     public boolean isDefault();
 
-    public void setIsDefault(boolean isDefault);
+    public void setDefault(boolean isDefault);
 
     public Map<String, String> getAdditionalFields();
 
