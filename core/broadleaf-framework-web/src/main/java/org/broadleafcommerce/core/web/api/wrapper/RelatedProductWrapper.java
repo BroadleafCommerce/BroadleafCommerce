@@ -64,4 +64,68 @@ public class RelatedProductWrapper extends BaseWrapper implements APIWrapper<Rel
     public void wrapSummary(RelatedProduct model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the sequence
+     */
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    
+    /**
+     * @param sequence the sequence to set
+     */
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
+
+    
+    /**
+     * @return the promotionalMessage
+     */
+    public String getPromotionalMessage() {
+        return promotionalMessage;
+    }
+
+    
+    /**
+     * @param promotionalMessage the promotionalMessage to set
+     */
+    public void setPromotionalMessage(String promotionalMessage) {
+        this.promotionalMessage = promotionalMessage;
+    }
+
+    
+    /**
+     * @return the product
+     */
+    public ProductWrapper getProduct() {
+        return product;
+    }
+
+    
+    /**
+     * @param product the product to set
+     */
+    public void setProduct(ProductWrapper product) {
+        this.product = product;
+    }
 }

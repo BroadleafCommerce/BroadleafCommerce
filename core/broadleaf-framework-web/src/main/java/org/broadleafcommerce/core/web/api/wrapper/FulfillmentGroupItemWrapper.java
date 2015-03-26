@@ -114,4 +114,116 @@ public class FulfillmentGroupItemWrapper extends BaseWrapper implements APIWrapp
 
         return null;
     }
+
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the fulfillmentGroupId
+     */
+    public Long getFulfillmentGroupId() {
+        return fulfillmentGroupId;
+    }
+
+    
+    /**
+     * @param fulfillmentGroupId the fulfillmentGroupId to set
+     */
+    public void setFulfillmentGroupId(Long fulfillmentGroupId) {
+        this.fulfillmentGroupId = fulfillmentGroupId;
+    }
+
+    
+    /**
+     * @return the orderItemId
+     */
+    public Long getOrderItemId() {
+        return orderItemId;
+    }
+
+    
+    /**
+     * @param orderItemId the orderItemId to set
+     */
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
+    
+    /**
+     * @return the totalTax
+     */
+    public Money getTotalTax() {
+        return totalTax;
+    }
+
+    
+    /**
+     * @param totalTax the totalTax to set
+     */
+    public void setTotalTax(Money totalTax) {
+        this.totalTax = totalTax;
+    }
+
+    
+    /**
+     * @return the quantity
+     */
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    
+    /**
+     * @param quantity the quantity to set
+     */
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    
+    /**
+     * @return the totalItemAmount
+     */
+    public Money getTotalItemAmount() {
+        return totalItemAmount;
+    }
+
+    
+    /**
+     * @param totalItemAmount the totalItemAmount to set
+     */
+    public void setTotalItemAmount(Money totalItemAmount) {
+        this.totalItemAmount = totalItemAmount;
+    }
+
+    
+    /**
+     * @return the taxDetails
+     */
+    public List<TaxDetailWrapper> getTaxDetails() {
+        return taxDetails;
+    }
+
+    
+    /**
+     * @param taxDetails the taxDetails to set
+     */
+    public void setTaxDetails(List<TaxDetailWrapper> taxDetails) {
+        this.taxDetails = taxDetails;
+    }
 }

@@ -120,4 +120,116 @@ public class SearchResultsWrapper extends BaseWrapper implements APIWrapper<Sear
     public void wrapSummary(SearchResult model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    
+    /**
+     * @return the page
+     */
+    public Integer getPage() {
+        return page;
+    }
+
+    
+    /**
+     * @param page the page to set
+     */
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    
+    /**
+     * @return the pageSize
+     */
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    
+    /**
+     * @param pageSize the pageSize to set
+     */
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    
+    /**
+     * @return the totalResults
+     */
+    public Integer getTotalResults() {
+        return totalResults;
+    }
+
+    
+    /**
+     * @param totalResults the totalResults to set
+     */
+    public void setTotalResults(Integer totalResults) {
+        this.totalResults = totalResults;
+    }
+
+    
+    /**
+     * @return the totalPages
+     */
+    public Integer getTotalPages() {
+        return totalPages;
+    }
+
+    
+    /**
+     * @param totalPages the totalPages to set
+     */
+    public void setTotalPages(Integer totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    
+    /**
+     * @return the products
+     */
+    public List<ProductWrapper> getProducts() {
+        return products;
+    }
+
+    
+    /**
+     * @param products the products to set
+     */
+    public void setProducts(List<ProductWrapper> products) {
+        this.products = products;
+    }
+
+    
+    /**
+     * @return the skus
+     */
+    public List<SkuWrapper> getSkus() {
+        return skus;
+    }
+
+    
+    /**
+     * @param skus the skus to set
+     */
+    public void setSkus(List<SkuWrapper> skus) {
+        this.skus = skus;
+    }
+
+    
+    /**
+     * @return the searchFacets
+     */
+    public List<SearchFacetWrapper> getSearchFacets() {
+        return searchFacets;
+    }
+
+    
+    /**
+     * @param searchFacets the searchFacets to set
+     */
+    public void setSearchFacets(List<SearchFacetWrapper> searchFacets) {
+        this.searchFacets = searchFacets;
+    }
 }

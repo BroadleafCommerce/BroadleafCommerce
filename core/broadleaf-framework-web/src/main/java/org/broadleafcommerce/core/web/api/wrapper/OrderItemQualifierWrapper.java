@@ -48,4 +48,36 @@ public class OrderItemQualifierWrapper extends BaseWrapper implements APIWrapper
         wrapDetails(model, request);
     }
 
+    
+    /**
+     * @return the offerId
+     */
+    public Long getOfferId() {
+        return offerId;
+    }
+
+    
+    /**
+     * @param offerId the offerId to set
+     */
+    public void setOfferId(Long offerId) {
+        this.offerId = offerId;
+    }
+
+    
+    /**
+     * @return the quantity
+     */
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    
+    /**
+     * @param quantity the quantity to set
+     */
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
+
 }

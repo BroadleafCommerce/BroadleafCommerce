@@ -79,4 +79,116 @@ public class DimensionWrapper extends BaseWrapper implements APIWrapper<Dimensio
     public void wrapSummary(Dimension model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    
+    /**
+     * @return the width
+     */
+    public BigDecimal getWidth() {
+        return width;
+    }
+
+    
+    /**
+     * @param width the width to set
+     */
+    public void setWidth(BigDecimal width) {
+        this.width = width;
+    }
+
+    
+    /**
+     * @return the height
+     */
+    public BigDecimal getHeight() {
+        return height;
+    }
+
+    
+    /**
+     * @param height the height to set
+     */
+    public void setHeight(BigDecimal height) {
+        this.height = height;
+    }
+
+    
+    /**
+     * @return the depth
+     */
+    public BigDecimal getDepth() {
+        return depth;
+    }
+
+    
+    /**
+     * @param depth the depth to set
+     */
+    public void setDepth(BigDecimal depth) {
+        this.depth = depth;
+    }
+
+    
+    /**
+     * @return the girth
+     */
+    public BigDecimal getGirth() {
+        return girth;
+    }
+
+    
+    /**
+     * @param girth the girth to set
+     */
+    public void setGirth(BigDecimal girth) {
+        this.girth = girth;
+    }
+
+    
+    /**
+     * @return the container
+     */
+    public String getContainer() {
+        return container;
+    }
+
+    
+    /**
+     * @param container the container to set
+     */
+    public void setContainer(String container) {
+        this.container = container;
+    }
+
+    
+    /**
+     * @return the size
+     */
+    public String getSize() {
+        return size;
+    }
+
+    
+    /**
+     * @param size the size to set
+     */
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    
+    /**
+     * @return the dimensionUnitOfMeasure
+     */
+    public String getDimensionUnitOfMeasure() {
+        return dimensionUnitOfMeasure;
+    }
+
+    
+    /**
+     * @param dimensionUnitOfMeasure the dimensionUnitOfMeasure to set
+     */
+    public void setDimensionUnitOfMeasure(String dimensionUnitOfMeasure) {
+        this.dimensionUnitOfMeasure = dimensionUnitOfMeasure;
+    }
 }
