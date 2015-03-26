@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -39,6 +40,7 @@ import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -116,6 +118,16 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             groupOrder = Presentation.Group.Order.PAYMENT)
     protected boolean isDefault = false;
 
+    @Column(name = "LAST_PAYMENT_STATUS")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Status", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.profile.core.domain.LastPaymentStatus",
+            prominent = false)
+    protected String lastPaymentStatus;
+
+    @Column(name = "EXPIRATION_DATE")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Expiration_Date", order = 1000)
+    protected Date expirationDate;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyType(@Type(type = "java.lang.String"))
     @Lob
@@ -183,6 +195,16 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     }
 
     @Override
+    public String getLastPaymentStatus() {
+        return lastPaymentStatus;
+    }
+
+    @Override
+    public void setLastPaymentStatus(String aDefault) {
+        this.lastPaymentStatus = aDefault;
+    }
+
+    @Override
     public Map<String, String> getAdditionalFields() {
         return additionalFields;
     }
@@ -242,6 +264,16 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             }
         }
 
+    }
+
+    @Override
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    @Override
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
 }
