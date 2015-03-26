@@ -76,6 +76,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     public static final String CATALOG_REQ_PARAM = "blCatalogId";
 
     private static final String ADMIN_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "admin.strict.validate.production.changes";
+    public static final String USE_LEGACY_DEFAULT_CATEGORY_MODE = "use.legacy.default.category.mode";
 
     protected final Log LOG = LogFactory.getLog(getClass());
 
@@ -111,6 +112,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     
     @Value("${" + ADMIN_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":true}")
     protected boolean adminStrictValidateProductionChanges = true;
+
+    @Value("${" + USE_LEGACY_DEFAULT_CATEGORY_MODE + ":false}")
+    protected boolean useLegacyDefaultCategoryMode = false;
     
     @Resource(name="blEntityExtensionManagers")
     protected Map<String, ExtensionManager<?>> entityExtensionManagers;
@@ -127,6 +131,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         }
 
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
+        brc.getAdditionalProperties().put(USE_LEGACY_DEFAULT_CATEGORY_MODE, useLegacyDefaultCategoryMode);
 
         if (brc.getSite() == null) {
             Site site = siteResolver.resolveSite(request);

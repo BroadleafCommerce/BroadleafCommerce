@@ -56,8 +56,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@ProfileEntity
-public class FieldGroupImpl implements FieldGroup {
+public class FieldGroupImpl implements FieldGroup, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 

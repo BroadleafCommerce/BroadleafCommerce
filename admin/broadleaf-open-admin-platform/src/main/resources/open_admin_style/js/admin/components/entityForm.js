@@ -38,11 +38,14 @@ $(document).ready(function() {
         var currentAction = $form.attr('action');
         var deleteUrl = currentAction + '/delete'
         
+        showActionSpinner($(this).closest('.entity-form-actions'));
+        
         // On success this should redirect, on failure we'll get some JSON back
         BLC.ajax({
             url: deleteUrl,
             type: "POST",
-            data: $form.serializeArray()
+            data: $form.serializeArray(),
+            complete: hideActionSpinner
         }, function (data) {
             $("#headerFlashAlertBoxContainer").removeClass("hidden");
             $(".errors, .error").remove();
@@ -54,15 +57,8 @@ $(document).ready(function() {
                 showErrors(data, BLCAdmin.messages.problemDeleting);
             }
             
-            var $actions = $('.entity-form-actions');
-            $actions.find('button').show();
-            $actions.find('img.ajax-loader').hide();
         });
         
-        var $actions = $(this).closest('.entity-form-actions');
-        $actions.find('button').hide();
-        $actions.find('img.ajax-loader').show();
-
         event.preventDefault();
     });
 
@@ -70,9 +66,7 @@ $(document).ready(function() {
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
         var $form = BLCAdmin.getForm($(this));
 
-        var $actions = $(this).closest('.entity-form-actions');
-        $actions.find('button').hide();
-        $actions.find('img.ajax-loader').show();
+        showActionSpinner($(this).closest('.entity-form-actions'));
 
         if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
             submitFormViaAjax($form);
@@ -92,11 +86,7 @@ $(document).ready(function() {
                 dataType: "json",
                 type: "POST",
                 data: $form.serializeArray(),
-                complete: function () {
-                    var $actions = $('.entity-form-actions');
-                    $actions.find('button').show();
-                    $actions.find('img.ajax-loader').hide();
-                }
+                complete: hideActionSpinner
             }, function (data) {
                 $("#headerFlashAlertBoxContainer").removeClass("hidden");
                 $(".errors, .error").remove();
@@ -111,12 +101,26 @@ $(document).ready(function() {
         }
     }
     
+    function showActionSpinner($actions) {
+        $actions.find('button').hide();
+        $actions.find('img.ajax-loader').show();
+    }
+    
+    /**
+     * Should happen after the AJAX request completes
+     */
+    function hideActionSpinner () {
+        var $actions = $('.entity-form-actions');
+        $actions.find('button').show();
+        $actions.find('img.ajax-loader').hide();
+    }
+    
     function showErrors(data, alertMessage) {
         var errorBlock = "<div class='errors'></div>";
         $(errorBlock).insertBefore("form.entity-form div.tabs-container");
         $.each( data.errors , function( idx, error ){
             if (error.errorType == "field") {
-                var fieldLabel = $("#field-" + error.field).children(".field-label");
+                var fieldLabel = $("#field-" + error.field).find(".field-label");
 
                 var fieldHtml = "<span class='fieldError error'>SUBSTITUTE</span>";
                 if ($(".tabError:contains(" + error.tab + ")").length) {

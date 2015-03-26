@@ -1116,11 +1116,14 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
                 standardFilterMappings.addAll(cto.getAdditionalFilterMappings());
             }
+            if (CollectionUtils.isNotEmpty(cto.getNonCountAdditionalFilterMappings())) {
+                standardFilterMappings.addAll(cto.getNonCountAdditionalFilterMappings());
+            }
 
             List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), standardFilterMappings, cto.getFirstResult(), cto.getMaxResults());
 
             List<FilterMapping> countFilterMappings = new ArrayList<FilterMapping>(filterMappings);
-            if (cto.isApplyAdditionalFilterMappingsToCount() && CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
+            if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
                 countFilterMappings.addAll(cto.getAdditionalFilterMappings());
             }
             totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), countFilterMappings);

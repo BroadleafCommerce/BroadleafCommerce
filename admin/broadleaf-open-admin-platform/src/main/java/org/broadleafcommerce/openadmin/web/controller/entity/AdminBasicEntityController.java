@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -142,13 +144,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
         addAddActionIfAllowed(sectionClassName, cmd, mainActions);
+        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
+        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
         
         Field firstField = listGrid.getHeaderFields().iterator().next();
         if (requestParams.containsKey(firstField.getName())) {
             model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
         }
-        
-        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
         
         // If this came from a delete save, we'll have a headerFlash request parameter to take care of
         if (requestParams.containsKey("headerFlash")) {
@@ -179,7 +181,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
 
         mainEntityActionsExtensionManager.getProxy().modifyMainActions(cmd, mainActions);
-        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
     }
     
     protected boolean isAddActionAllowed(String sectionClassName, ClassMetadata cmd) {
@@ -1474,8 +1475,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
         // First, we must remove the collection entity
         PersistenceResponse persistenceResponse = service.removeSubCollectionEntity(mainMetadata, collectionProperty, entity, collectionItemId, alternateId, priorKey, sectionCrumbs);
         if (persistenceResponse.getEntity() != null && persistenceResponse.getEntity().isValidationFailure()) {
-            // If we failed, we'll return some JSON with the first error
-            String error = persistenceResponse.getEntity().getPropertyValidationErrors().values().iterator().next().get(0);
+            String error = "There was an error removing the whatever";
+            if (MapUtils.isNotEmpty(persistenceResponse.getEntity().getPropertyValidationErrors())) {
+                // If we failed, we'll return some JSON with the first error
+                error = persistenceResponse.getEntity().getPropertyValidationErrors().values().iterator().next().get(0);
+            } else if (CollectionUtils.isNotEmpty(persistenceResponse.getEntity().getGlobalValidationErrors())) {
+                error = persistenceResponse.getEntity().getGlobalValidationErrors().get(0);
+            }
             return new JsonResponse(response)
                 .with("status", "error")
                 .with("message", BLCMessageUtils.getMessage(error))

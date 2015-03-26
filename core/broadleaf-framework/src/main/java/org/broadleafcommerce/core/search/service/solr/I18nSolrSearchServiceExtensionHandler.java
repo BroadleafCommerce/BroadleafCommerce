@@ -120,48 +120,55 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
         if (field.getTranslatable()) {
             result = ExtensionResultStatusType.HANDLED;
 
-            for (Locale locale : locales) {
-                String localeCode = locale.getLocaleCode();
-                if (!Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
-                    int pos = localeCode.indexOf("_");
-                    if (pos > 0) {
-                        localeCode = localeCode.substring(0, pos);
-                        if (processedLocaleCodes.contains(localeCode)) {
-                            continue;
-                        } else {
-                            locale = localeService.findLocaleByCode(localeCode);
+            TranslationConsiderationContext.setTranslationConsiderationContext(getTranslationEnabled());
+            TranslationConsiderationContext.setTranslationService(translationService);
+            BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
+            if (tempContext == null) {
+                tempContext = new BroadleafRequestContext();
+                BroadleafRequestContext.setBroadleafRequestContext(tempContext);
+            }
+
+            Locale originalLocale = tempContext.getLocale();
+
+            try {
+                for (Locale locale : locales) {
+                    String localeCode = locale.getLocaleCode();
+                    if (!Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
+                        int pos = localeCode.indexOf("_");
+                        if (pos > 0) {
+                            localeCode = localeCode.substring(0, pos);
+                            if (processedLocaleCodes.contains(localeCode)) {
+                                continue;
+                            } else {
+                                locale = localeService.findLocaleByCode(localeCode);
+                            }
                         }
                     }
-                }
 
-                processedLocaleCodes.add(localeCode);
+                    processedLocaleCodes.add(localeCode);
+                    tempContext.setLocale(locale);
 
-                TranslationConsiderationContext.setTranslationConsiderationContext(getTranslationEnabled());
-                TranslationConsiderationContext.setTranslationService(translationService);
-                BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
-                if (tempContext == null) {
-                    tempContext = new BroadleafRequestContext();
-                }
-                tempContext.setLocale(locale);
-                BroadleafRequestContext.setBroadleafRequestContext(tempContext);
+                    final Object propertyValue;
 
-                final Object propertyValue;
-
-                if (useSku) {
-                    if (propertyName.contains(SKU_ATTR_MAP)) {
-                        propertyValue = PropertyUtils.getMappedProperty(sku, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
+                    if (useSku) {
+                        if (propertyName.contains(SKU_ATTR_MAP)) {
+                            propertyValue = PropertyUtils.getMappedProperty(sku, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
+                        } else {
+                            propertyValue = shs.getPropertyValue(sku, propertyName); //PropertyUtils.getProperty(sku, propertyName);
+                        }
                     } else {
-                        propertyValue = shs.getPropertyValue(sku, propertyName); //PropertyUtils.getProperty(sku, propertyName);
+                        if (propertyName.contains(PRODUCT_ATTR_MAP)) {
+                            propertyValue = PropertyUtils.getMappedProperty(product, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
+                        } else {
+                            propertyValue = shs.getPropertyValue(product, propertyName); //PropertyUtils.getProperty(product, propertyName);
+                        }
                     }
-                } else {
-                    if (propertyName.contains(PRODUCT_ATTR_MAP)) {
-                        propertyValue = PropertyUtils.getMappedProperty(product, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
-                    } else {
-                        propertyValue = shs.getPropertyValue(product, propertyName); //PropertyUtils.getProperty(product, propertyName);
-                    }
-                }
 
-                values.put(localeCode, propertyValue);
+                    values.put(localeCode, propertyValue);
+                }
+            } finally {
+                //Reset the original locale.
+                tempContext.setLocale(originalLocale);
             }
         }
         return result;

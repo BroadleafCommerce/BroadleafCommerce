@@ -52,8 +52,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@ProfileEntity
-public class PageAttributeImpl implements PageAttribute {
+public class PageAttributeImpl implements PageAttribute, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
     

@@ -56,9 +56,8 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@ProfileEntity
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-public class StructuredContentFieldImpl implements StructuredContentField {
+public class StructuredContentFieldImpl implements StructuredContentField, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 

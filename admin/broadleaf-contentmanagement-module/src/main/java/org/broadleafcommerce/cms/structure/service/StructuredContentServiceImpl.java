@@ -37,7 +37,6 @@ import org.broadleafcommerce.cms.structure.domain.StructuredContentRule;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
-import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.file.service.StaticAssetPathService;
@@ -63,7 +62,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
@@ -101,9 +99,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
-
-    @Resource(name = "blGenericEntityDao")
-    protected GenericEntityDao genericDao;
 
     protected Cache structuredContentCache;
 
@@ -237,22 +232,6 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     }
 
     @Override
-    public List<StructuredContentDTO> hydrateForeignLookups(List<StructuredContentDTO> dtos) {
-        for (StructuredContentDTO dto : dtos) {
-            for (Entry<String, Object> entry : dto.getValues().entrySet()) {
-                if (entry.getValue() instanceof String && ((String) entry.getValue()).startsWith(FOREIGN_LOOKUP)) {
-                    String clazz = ((String) entry.getValue()).split("\\|")[1];
-                    String id = ((String) entry.getValue()).split("\\|")[2];
-                    Object newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
-                    entry.setValue(newValue);
-                }
-            }
-        }
-
-        return dtos;
-    }
-
-    @Override
     public List<StructuredContentDTO> lookupStructuredContentItemsByType(StructuredContentType contentType, Locale locale,
                                                              Integer count, Map<String, Object> ruleDTOs, boolean secure) {
         List<StructuredContentDTO> contentDTOList = null;
@@ -273,7 +252,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             }
         }
 
-        return hydrateForeignLookups(evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs));
+        return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
     }
 
     @Override
@@ -298,7 +277,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             }
         }
 
-        return hydrateForeignLookups(evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs));
+        return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
     }
     
     @Override
@@ -323,8 +302,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             
             contentDTOList.add(dto);
         }
-
-        return hydrateForeignLookups(contentDTOList);
+        return contentDTOList;
     }
 
     @Override
@@ -348,7 +326,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
             }
         }
 
-        return hydrateForeignLookups(evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs));
+        return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
     }
 
     public List<RuleProcessor<StructuredContentDTO>> getContentRuleProcessors() {
@@ -545,7 +523,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      * @param secure
      * @return
      */
-    protected StructuredContentDTO buildStructuredContentDTO(StructuredContent sc, boolean secure) {
+    @Override
+    public StructuredContentDTO buildStructuredContentDTO(StructuredContent sc, boolean secure) {
         StructuredContentDTO scDTO = entityConfiguration.createEntityInstance(StructuredContentDTO.class.getName(), StructuredContentDTO.class);
         scDTO.setContentName(sc.getContentName());
         scDTO.setContentType(sc.getStructuredContentType().getName());

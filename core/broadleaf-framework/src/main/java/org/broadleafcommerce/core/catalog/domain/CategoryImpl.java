@@ -52,6 +52,8 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestProcessor;
 import org.broadleafcommerce.common.web.Locatable;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -117,8 +119,11 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     private static String buildLink(Category category, boolean ignoreTopLevel) {
         Category myCategory = category;
+        List<Long> preventRecursionCategoryIds = new ArrayList<Long>();
+
         StringBuilder linkBuffer = new StringBuilder(50);
-        while (myCategory != null) {
+        while (myCategory != null && !preventRecursionCategoryIds.contains(myCategory.getId())) {
+            preventRecursionCategoryIds.add(myCategory.getId());
             if (!ignoreTopLevel || myCategory.getDefaultParentCategory() != null) {
                 if (linkBuffer.length() == 0) {
                     linkBuffer.append(myCategory.getUrlKey());
@@ -247,8 +252,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
     @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 4000,
-            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing)
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General)
     @AdminPresentationToOneLookup()
+    @Deprecated
     protected Category defaultParentCategory;
 
     @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "category", orphanRemoval = true,
@@ -598,27 +604,43 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
+    @Deprecated
     public Category getDefaultParentCategory() {
-        Category response = null;
-        if (defaultParentCategory != null) {
-            response = defaultParentCategory;
-        } else {
-            List<CategoryXref> xrefs = getAllParentCategoryXrefs();
-            if (!CollectionUtils.isEmpty(xrefs)) {
-                for (CategoryXref xref : xrefs) {
-                    if (xref.getCategory().isActive()) {
-                        response = xref.getCategory();
-                        break;
-                    }
-                }
-            }
+        if (isDefaultCategoryLegacyMode() || defaultParentCategory != null) {
+            return defaultParentCategory;
         }
+        Category response = getParentCategory();
         return response;
     }
 
     @Override
+    @Deprecated
     public void setDefaultParentCategory(Category defaultParentCategory) {
-        this.defaultParentCategory = defaultParentCategory;
+        if (isDefaultCategoryLegacyMode()) {
+            this.defaultParentCategory = defaultParentCategory;
+        } else {
+            setParentCategory(defaultParentCategory);
+        }
+    }
+
+    @Override
+    public Category getParentCategory() {
+        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
+            return allParentCategoryXrefs.get(0).getCategory();
+        }
+        return null;
+    }
+
+    @Override
+    public void setParentCategory(Category category) {
+        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
+            allParentCategoryXrefs.get(0).setCategory(category);
+        } else {
+            CategoryXref xref = new CategoryXrefImpl();
+            xref.setSubCategory(this);
+            xref.setCategory(category);
+            allParentCategoryXrefs.add(xref);
+        }
     }
 
     @Override
@@ -789,11 +811,13 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
+    @Deprecated
     public List<CategoryXref> getAllParentCategoryXrefs() {
         return allParentCategoryXrefs;
     }
 
     @Override
+    @Deprecated
     public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories) {
         this.allParentCategoryXrefs.clear();
         allParentCategoryXrefs.addAll(allParentCategories);
@@ -1292,4 +1316,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         this.externalId = externalId;
     }
 
+    protected Boolean isDefaultCategoryLegacyMode() {
+        return (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get
+                (BroadleafRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE);
+    }
 }

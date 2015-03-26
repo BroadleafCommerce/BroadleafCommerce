@@ -25,6 +25,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
@@ -86,6 +88,9 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     @Value("${asset.server.file.classpath.directory}")
     protected String fileServiceClasspathDirectory;
 
+    @Resource(name = "blBroadleafFileServiceExtensionManager")
+    protected BroadleafFileServiceExtensionManager extensionManager;
+
     /**
      * Create a file work area that can be used for further operations. 
      * @return
@@ -142,13 +147,21 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     }
 
     protected File getLocalResource(String resourceName, boolean skipSite) {
-        String baseDirectory = getBaseDirectory(skipSite);
-        
-        // convert the separators to the system this is currently run on
-        String systemResourcePath = FilenameUtils.separatorsToSystem(resourceName);
-        
-        String filePath = FilenameUtils.normalize(baseDirectory + File.separator + systemResourcePath);
-        return new File(filePath);
+        if (skipSite) {
+            String baseDirectory = getBaseDirectory(skipSite);
+            // convert the separators to the system this is currently run on
+            String systemResourcePath = FilenameUtils.separatorsToSystem(resourceName);
+            String filePath = FilenameUtils.normalize(baseDirectory + File.separator + systemResourcePath);
+            return new File(filePath);
+        } else {
+           String baseDirectory = getBaseDirectory(true);
+           ExtensionResultHolder<String> holder = new ExtensionResultHolder<String>();
+           ExtensionResultStatusType result = extensionManager.getProxy().processPathForSite(baseDirectory, resourceName, holder);
+           if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+               return new File(holder.getResult());
+           }
+           return getLocalResource(resourceName, true);
+        }
     }
 
     @Override

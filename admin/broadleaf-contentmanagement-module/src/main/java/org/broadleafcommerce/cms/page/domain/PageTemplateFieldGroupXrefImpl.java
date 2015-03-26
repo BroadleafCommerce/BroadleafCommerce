@@ -58,8 +58,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@ProfileEntity
-public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXref {
+public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXref, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 

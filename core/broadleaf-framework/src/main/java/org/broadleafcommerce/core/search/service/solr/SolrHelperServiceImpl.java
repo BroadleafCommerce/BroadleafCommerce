@@ -282,7 +282,32 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public String getExplicitCategoryFieldName() {
         return "explicitCategory";
     }
+    
+    @Override
+    public String getCatalogFieldName() {
+        return "catalog_s";
+    }
 
+    @Override
+    public String getCatalogOverridesFieldName() {
+        return "catalog_overrides";
+    }
+
+    @Override
+    public String getSandBoxFieldName() {
+        return "sandboxId";
+    }
+
+    @Override
+    public String getSandBoxPriorityFieldName() {
+        return "sandboxPriority";
+    }
+
+    @Override
+    public String getSandBoxChangeTypeFieldName() {
+        return "sandboxChangeType_s";
+    }
+    
     @Override
     public String getCategorySortFieldName(Category category) {
         Long categoryId = getCategoryId(category.getId());

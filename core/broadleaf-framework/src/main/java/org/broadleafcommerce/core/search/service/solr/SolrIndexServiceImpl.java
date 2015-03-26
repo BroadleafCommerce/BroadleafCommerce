@@ -101,6 +101,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
 
+    @Value("${solr.index.commit}")
+    protected boolean commit;
+
+    @Value("${solr.index.softCommit}")
+    protected boolean softCommit;
+
+    @Value("${solr.index.waitSearcher}")
+    protected boolean waitSearcher;
+
+    @Value("${solr.index.waitFlush}")
+    protected boolean waitFlush;
+
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
 
@@ -215,6 +227,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                         }
                     }
                 });
+
+                //We can call optimize here because we just updated the entire index
                 optimizeIndex(SolrContext.getReindexServer());
             } finally {
                 restoreState(pack);
@@ -254,8 +268,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
             SolrContext.getReindexServer().deleteByQuery(deleteQuery);
+
+            //Explicitly do a hard commit here since we just deleted the entire index
             SolrContext.getReindexServer().commit();
         } catch (Exception e) {
+            if (ServiceException.class.isAssignableFrom(e.getClass())) {
+                throw (ServiceException) e;
+            }
             throw new ServiceException("Could not delete documents", e);
         }
     }
@@ -263,10 +282,11 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     protected void buildIncrementalIndex(int page, int pageSize) throws ServiceException {
         buildIncrementalIndex(page, pageSize, true);
     }
-
+    
     @Override
-    public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException {
-        TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex", TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
+    public void buildIncrementalProductIndex(List<Product> products, boolean useReindexServer) throws ServiceException {
+        TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalProductIndex",
+                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
@@ -277,7 +297,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         try {
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             List<Locale> locales = getAllLocales();
-            
+
             CatalogStructure cache = SolrIndexCachedOperation.getCache();
             if (cache != null) {
                 cacheOperationManaged = true;
@@ -285,57 +305,34 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 cache = new CatalogStructure();
                 SolrIndexCachedOperation.setCache(cache);
             }
-            
-            if (useSku) {
-                List<Field> fields = fieldDao.readAllSkuFields();
-                List<Sku> skus = readAllActiveSkus(page, pageSize);
-                List<Long> productIds = BLCCollectionUtils.collectList(skus, new TypedTransformer<Long>() {
-                    @Override
-                    public Long transform(Object input) {
-                        return ((Sku) input).getProduct().getId();
-                    }
-                });
-                
-                solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
-                
-                for (Sku sku : skus) {
-                    SolrInputDocument doc = buildDocument(sku, fields, locales);
-                    //If someone overrides the buildDocument method and determines that they don't want a product 
-                    //indexed, then they can return null. If the document is null it does not get added to 
-                    //to the index.
-                    if (doc != null) {
-                        documents.add(doc);
-                    }
+
+            List<Field> fields = fieldDao.readAllProductFields();
+            List<Long> productIds = BLCCollectionUtils.collectList(products, new TypedTransformer<Long>() {
+
+                @Override
+                public Long transform(Object input) {
+                    return shs.getProductId(((Product) input).getId());
                 }
-            } else {
-                List<Field> fields = fieldDao.readAllProductFields();
-                List<Product> products = readAllActiveProducts(page, pageSize);
-                List<Long> productIds = BLCCollectionUtils.collectList(products, new TypedTransformer<Long>() {
-                    @Override
-                    public Long transform(Object input) {
-                        return ((Product) input).getId();
-                    }
-                });
-                
-                solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
-                
-                for (Product product : products) {
-                    SolrInputDocument doc = buildDocument(product, fields, locales);
-                    //If someone overrides the buildDocument method and determines that they don't want a product 
-                    //indexed, then they can return null. If the document is null it does not get added to 
-                    //to the index.
-                    if (doc != null) {
-                        documents.add(doc);
-                    }
+            });
+
+            solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
+
+            for (Product product : products) {
+                SolrInputDocument doc = buildDocument(product, fields, locales);
+                //If someone overrides the buildDocument method and determines that they don't want a product 
+                //indexed, then they can return null. If the document is null it does not get added to 
+                //to the index.
+                if (doc != null) {
+                    documents.add(doc);
                 }
             }
-            
+
             logDocuments(documents);
 
             if (!CollectionUtils.isEmpty(documents)) {
                 SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
                 server.add(documents);
-                server.commit();
+                commit(server);
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (SolrServerException e) {
@@ -354,7 +351,101 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Built index - page: [%s], pageSize: [%s] in [%s]", page, pageSize, s.toLapString()));
+            LOG.debug(String.format("Built incremental product index - pageSize: [%s] in [%s]", products.size(), s.toLapString()));
+        }
+    }
+
+    @Override
+    public void buildIncrementalSkuIndex(List<Sku> skus, boolean useReindexServer) throws ServiceException {
+        TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalSkuIndex",
+                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
+        if (SolrIndexCachedOperation.getCache() == null) {
+            LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
+                    "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
+        }
+
+        StopWatch s = new StopWatch();
+        boolean cacheOperationManaged = false;
+        try {
+            Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
+            List<Locale> locales = getAllLocales();
+
+            CatalogStructure cache = SolrIndexCachedOperation.getCache();
+            if (cache != null) {
+                cacheOperationManaged = true;
+            } else {
+                cache = new CatalogStructure();
+                SolrIndexCachedOperation.setCache(cache);
+            }
+
+            List<Field> fields = fieldDao.readAllSkuFields();
+            List<Long> productIds = new ArrayList<Long>();
+            for (Sku sku : skus) {
+                productIds.add(sku.getProduct().getId());
+            }
+
+            solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
+
+            for (Sku sku : skus) {
+                SolrInputDocument doc = buildDocument(sku, fields, locales);
+                //If someone overrides the buildDocument method and determines that they don't want a product 
+                //indexed, then they can return null. If the document is null it does not get added to 
+                //to the index.
+                if (doc != null) {
+                    documents.add(doc);
+                }
+            }
+
+            logDocuments(documents);
+
+            if (!CollectionUtils.isEmpty(documents)) {
+                SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
+                server.add(documents);
+                commit(server);
+            }
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+        } catch (SolrServerException e) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw new ServiceException("Could not rebuild index", e);
+        } catch (IOException e) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw new ServiceException("Could not rebuild index", e);
+        } catch (RuntimeException e) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw e;
+        } finally {
+            if (!cacheOperationManaged) {
+                SolrIndexCachedOperation.clearCache();
+            }
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Built incremental sku index - pageSize: [%s] in [%s]", skus.size(), s.toLapString()));
+        }
+    }
+
+    @Override
+    public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException {
+        TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex",
+                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
+        if (SolrIndexCachedOperation.getCache() == null) {
+            LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
+                    "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
+        }
+        
+        try {
+            if (useSku) {
+                List<Sku> skus = readAllActiveSkus(page, pageSize);
+                buildIncrementalSkuIndex(skus, useReindexServer);
+            } else {
+                List<Product> products = readAllActiveProducts(page, pageSize);
+                buildIncrementalProductIndex(products, useReindexServer);
+            }
+            
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+        } catch (RuntimeException e) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw e;
         }
     }
 
@@ -596,15 +687,15 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             extensionManager.getProxy().attachAdditionalBasicFields(sku, document, shs);
 
             // The explicit categories are the ones defined by the product itself
-            if (cache.getParentCategoriesByProduct().containsKey(product.getId())) {
-                for (Long categoryId : cache.getParentCategoriesByProduct().get(product.getId())) {
+            if (cache.getParentCategoriesByProduct().containsKey(shs.getProductId(product.getId()))) {
+                for (Long categoryId : cache.getParentCategoriesByProduct().get(shs.getProductId(product.getId()))) {
                     document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                     String displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
                     if (displayOrder == null) {
-                        displayOrderKey = categoryId + "-" + product.getId();
+                        displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
                         displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
                     }
 
@@ -649,7 +740,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + shs.getProductId(originalId);
+                    String displayOrderKey = categoryId + "-" + originalId;
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
                     if (displayOrder == null) {
                         displayOrderKey = categoryId + "-" + originalId;
@@ -858,8 +949,35 @@ public class SolrIndexServiceImpl implements SolrIndexService {
          } catch (SolrServerException e) {
              throw new ServiceException("Could not optimize index", e);
          }
-     }
-    
+    }
+
+    @Override
+    public void commit(SolrServer server) throws ServiceException, IOException {
+        if (this.commit) {
+            commit(server, this.softCommit, this.waitSearcher, this.waitFlush);
+        } else if (LOG.isDebugEnabled()) {
+            LOG.debug("The flag / property \"solr.index.commit\" is false. Not committing! Ensure autoCommit is configured.");
+        }
+    }
+
+    @Override
+    public void commit(SolrServer server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException {
+        try {
+            if (!this.commit) {
+                LOG.warn("The flag / property \"solr.index.commit\" is set to false but a commit is being forced via the API.");
+            }
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Committing changes to Solr index: softCommit: " + softCommit
+                        + ", waitSearcher: " + waitSearcher + ", waitFlush: " + waitFlush);
+            }
+
+            server.commit(waitFlush, waitSearcher, softCommit);
+        } catch (SolrServerException e) {
+            throw new ServiceException("Could not commit changes to Solr index", e);
+        }
+    }
+
     @Override
     public void logDocuments(Collection<SolrInputDocument> documents) {
         if (LOG.isTraceEnabled()) {

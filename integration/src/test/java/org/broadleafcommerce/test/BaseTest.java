@@ -21,6 +21,8 @@ package org.broadleafcommerce.test;
 
 import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.BroadleafRequestProcessor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
@@ -77,6 +79,9 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
                 //allow for request-scoped beans that can occur in web application contexts
                 RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(new MockHttpServletRequest()));
                 mergeContext.getBeanFactory().registerScope("request", new RequestScope());
+
+                BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+                context.getAdditionalProperties().put(BroadleafRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE, true);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

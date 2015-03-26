@@ -30,6 +30,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -127,6 +128,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Resource(name = "blMediaBuilderService")
     protected MediaBuilderService mediaBuilderService;
     
+    @Resource(name = "blListGridErrorMessageExtensionManager")
+    protected ListGridErrorMessageExtensionManager listGridErrorExtensionManager;
+
     @Resource
     protected DataFormatProvider dataFormatProvider;
 
@@ -426,7 +430,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (e.findProperty("hasError") != null) {
                 Boolean hasError = Boolean.parseBoolean(e.findProperty("hasError").getValue());
                 record.setIsError(hasError);
-                record.setErrorKey("listgrid.record.error");
+                ExtensionResultStatusType messageResultStatus = listGridErrorExtensionManager
+                        .getProxy().determineErrorMessageForEntity(e, record);
+                
+                if (ExtensionResultStatusType.NOT_HANDLED.equals(messageResultStatus)) {
+                    record.setErrorKey("listgrid.record.error");
+                }
             }
 
             if (e.findProperty(idProperty) != null) {

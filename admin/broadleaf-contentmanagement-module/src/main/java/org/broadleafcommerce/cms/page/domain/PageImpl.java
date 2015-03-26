@@ -97,8 +97,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@ProfileEntity
-public class PageImpl implements Page, AdminMainEntity, Locatable {
+public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
     
@@ -153,7 +152,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     
     @Column(name = "OFFLINE_FLAG")
     @AdminPresentation(friendlyName = "PageImpl_Offline", order = 3500,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic, defaultValue = "false")
     protected Boolean offlineFlag = false;     
 
     /*

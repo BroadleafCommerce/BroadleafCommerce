@@ -17,16 +17,14 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.money.util.CurrencyAdapter;
-import org.broadleafcommerce.common.payment.PaymentTransactionType;
-import org.broadleafcommerce.common.util.xml.BigDecimalRoundingAdapter;
-import org.broadleafcommerce.core.payment.domain.OrderPayment;
-import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.core.payment.service.OrderPaymentService;
-import org.springframework.context.ApplicationContext;
+import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -35,12 +33,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.money.util.CurrencyAdapter;
+import org.broadleafcommerce.common.payment.PaymentTransactionType;
+import org.broadleafcommerce.common.util.xml.BigDecimalRoundingAdapter;
+import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.core.payment.service.OrderPaymentService;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -107,16 +107,8 @@ public class PaymentTransactionWrapper extends BaseWrapper implements APIWrapper
             this.currency = model.getAmount().getCurrency();
         }
 
-        if (model.getAdditionalFields() != null && !model.getAdditionalFields().isEmpty()) {
-            List<MapElementWrapper> mapElementWrappers = new ArrayList<MapElementWrapper>();
-            for (String key : model.getAdditionalFields().keySet()) {
-                MapElementWrapper mapElementWrapper = new MapElementWrapper();
-                mapElementWrapper.setKey(key);
-                mapElementWrapper.setValue(model.getAdditionalFields().get(key));
-                mapElementWrappers.add(mapElementWrapper);
-            }
-            this.additionalFields = mapElementWrappers;
-        }
+        this.additionalFields = super.createElementWrappers(model);
+
     }
 
     @Override

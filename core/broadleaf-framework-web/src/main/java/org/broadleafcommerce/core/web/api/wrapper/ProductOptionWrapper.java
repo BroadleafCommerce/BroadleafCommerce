@@ -74,7 +74,7 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
         if (model.getProductOptionValidationStrategyType() != null) {
             this.productOptionValidationStrategyType = model.getProductOptionValidationStrategyType().getType();
         }
-        if (model.getProductOptionValidationStrategyType() != null) {
+        if (model.getProductOptionValidationType() != null) {
             this.productOptionValidationType = model.getProductOptionValidationType().getType();
         }
         this.validationString = model.getValidationString();
