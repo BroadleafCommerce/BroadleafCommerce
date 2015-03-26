@@ -124,11 +124,11 @@ $(document).ready(function() {
 
                 var fieldHtml = "<span class='fieldError error'>SUBSTITUTE</span>";
                 if ($(".tabError:contains(" + error.tab + ")").length) {
-                    var labeledError = fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message);
+                    var labeledError = fieldHtml.replace('SUBSTITUTE', (fieldLabel.length > 0 ? fieldLabel[0].innerHTML + ': ' : '') + error.message);
                     $(".tabError:contains(" + error.tab + ")").append(labeledError);
                 } else {
                     var labeledError = "<div class='tabError'><b>" + error.tab +
-                        "</b>" + fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message) + "</div>";
+                        "</b>" + fieldHtml.replace('SUBSTITUTE', (fieldLabel.length > 0 ? fieldLabel[0].innerHTML + ': ' : '') + error.message) + "</div>";
                     $(".errors").append(labeledError);
                 }
 
