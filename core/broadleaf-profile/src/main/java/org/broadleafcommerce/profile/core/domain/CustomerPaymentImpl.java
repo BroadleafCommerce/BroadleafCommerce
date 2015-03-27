@@ -128,6 +128,17 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Expiration_Date", order = 1000)
     protected Date expirationDate;
 
+    @Column(name = "LAST_EXPIRATION_NOTIFICATION")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Last_Expiration_Notification", order = 1001)
+    protected Date lastExpirationNotification;
+
+    /**
+     * indicates whether the lastExpirationNotification date refers to an actual expiration, or
+     * to a warning about a future expiration
+     */
+    @Column(name = "ACTUAL_EXPIRATION")
+    protected boolean actualExpiration;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyType(@Type(type = "java.lang.String"))
     @Lob
@@ -274,6 +285,26 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     @Override
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    @Override
+    public Date getLastExpirationNotification() {
+        return lastExpirationNotification;
+    }
+
+    @Override
+    public void setLastExpirationNotification(Date lastExpirationNotification) {
+        this.lastExpirationNotification = lastExpirationNotification;
+    }
+
+    @Override
+    public boolean isActualExpiration() {
+        return actualExpiration;
+    }
+
+    @Override
+    public void setActualExpiration(boolean actualExpiration) {
+        this.actualExpiration = actualExpiration;
     }
 
 }

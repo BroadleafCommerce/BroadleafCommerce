@@ -60,4 +60,11 @@ public interface CustomerPayment extends Serializable, AdditionalFields, MultiTe
 
     public void setExpirationDate(Date expirationDate);
 
+    public Date getLastExpirationNotification();
+
+    public void setLastExpirationNotification(Date lastExpirationNotification);
+
+    public boolean isActualExpiration();
+
+    public void setActualExpiration(boolean actualExpiration);
 }
