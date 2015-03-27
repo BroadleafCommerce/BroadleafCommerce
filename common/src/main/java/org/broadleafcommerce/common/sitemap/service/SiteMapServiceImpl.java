@@ -113,6 +113,13 @@ public class SiteMapServiceImpl implements SiteMapService {
         siteMapBuilder.persistSiteMap();
         if (getGzipSiteMapFiles()) {
             gzipAndDeleteFiles(fileWorkArea, siteMapBuilder.getIndexedFileNames());
+            List<String> indexFileNames = new ArrayList<String>();
+            for (String fileName: siteMapBuilder.getIndexedFileNames()) {
+                indexFileNames.add(fileName + ".gz");
+            }
+            smgr.setSiteMapFilePaths(indexFileNames);
+        } else {
+            smgr.setSiteMapFilePaths(siteMapBuilder.getIndexedFileNames());
         }
 
 
