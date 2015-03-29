@@ -20,6 +20,9 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
 /**
+ * Factory that provide {@link org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction} instances
+ * based on the type provided ({@link org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType}).
+ *
  * @author Jeff Fischer
  */
 public interface RestrictionFactory {

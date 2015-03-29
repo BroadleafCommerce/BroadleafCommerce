@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.dto;
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedPredicate;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ public class FilterAndSortCriteria {
 
     protected String propertyId;
     protected List<String> filterValues = new ArrayList<String>();
+    protected RestrictionType restrictionType;
 
     protected SortDirection sortDirection;
 
@@ -124,7 +126,21 @@ public class FilterAndSortCriteria {
         // We want values that ARE special
         return CollectionUtils.exists(filterValues, getPredicateForSpecialValues(true));
     }
-    
+
+    public RestrictionType getRestrictionType() {
+        return restrictionType;
+    }
+
+    /**
+     * Useful when you want to explicitly define the type of pre-built {@link org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction}
+     * instance to be used. The available, pre-built restrictions are defined in the Spring configured map "blRestrictionFactoryMap".
+     *
+     * @param restrictionType
+     */
+    public void setRestrictionType(RestrictionType restrictionType) {
+        this.restrictionType = restrictionType;
+    }
+
     protected TypedPredicate<String> getPredicateForSpecialValues(final boolean inclusive) {
         return new TypedPredicate<String>() {
             @Override
