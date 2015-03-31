@@ -14,6 +14,7 @@
     <div class="content">
         <div th:substituteby="layout/partials/siteBar" />
         <div class="section-content">
+            <div th:substituteby="layout/partials/secondLeftNav" />
             <div th:substituteby="${templateName}" />
         </div>
     </div>
@@ -21,5 +22,6 @@
     <footer th:substituteby="layout/partials/footer" />
 
 </div>
+    
 </body>
 </html>
