@@ -46,12 +46,15 @@ public class SimpleCacheKeyResolver implements TemplateCacheKeyResolverService {
      * @param cacheKey - Value of the parameter passed in from the template
      * @return
      */
+    @Override
     public String resolveCacheKey(Arguments arguments, Element element) {
         StringBuilder sb = new StringBuilder();
         sb.append(getStringValue(arguments, element, "cacheKey", true));
         sb.append(resolveTemplateName(arguments, element));
+        sb.append(resolveLineNumber(arguments, element));
         return sb.toString();
     }
+    
 
     protected String resolveTemplateName(Arguments arguments, Element element) {
         String templateName = getStringValue(arguments, element, "templateName", true);
@@ -63,8 +66,13 @@ public class SimpleCacheKeyResolver implements TemplateCacheKeyResolverService {
         if (StringUtils.isEmpty(templateName)) {
             templateName = element.getDocumentName();
         }
-
+        
         return templateName;
+    }
+    
+    protected Integer resolveLineNumber(Arguments arguments, Element element) {
+        Integer line = element.getLineNumber();
+        return line == null ? 0 : line;
     }
 
     protected String getStringValue(Arguments arguments, Element element, String attrName, boolean removeAttribute) {
