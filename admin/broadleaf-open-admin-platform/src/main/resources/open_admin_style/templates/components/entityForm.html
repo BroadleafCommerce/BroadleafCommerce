@@ -8,15 +8,46 @@
 <!--    hideActions - boolean value determining whether or not to hide the entity form actions -->
 </comment>
 
+<div th:object="${entityForm}" th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
+
+    <div class="content-area-title-bar">
+        <h3>Add New Offer</h3>
+
+        <button class="button primary large">Save Offer</button>
+        <div class="message">This offer is <span class="status not-active">not active</span> for a very specific reason listed here</div>
+    </div>
+
+    <div class="section-tabs" th:if="${renderTabs}">
+        <ul class="nav nav-tabs">
+            <li th:each="tab : ${entityForm.tabs}"
+                th:class="${#ef.isTabActive(entityForm, tab)}? 'active'"
+                th:if="${tab.isVisible}"
+                role="presentation">
+                <a th:href="'#tab' + ${tabStat.count}"
+                   th:classappend="${tab.tabClass}"
+                   th:text="#{${tab.title}}" />
+            </li>
+        </ul>
+    </div>
+
+    <div class="content-yield">
+        <div class="row">
+            <div class="col8">
+                <div class="row">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <blc:form th:object="${entityForm}"
       method="POST"
-      class="twelve columns custom entity-form"
-      th:classappend="${(additionalClasses == null ? '' : additionalClasses + ' ') 
+      th:classappend="${(additionalClasses == null ? '' : additionalClasses + ' ')
         + (additionalControllerClasses == null ? '' : additionalControllerClasses)}"
       th:action="@{${currentUrl}}"
       th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
       
-    <span style="display: none;" id="previewurl" 
+    <span style="display: none;" id="previewurl"
         th:attr="data-href=@{/sandbox/preview(ceilingEntity=*{ceilingEntityClassname}, id=*{id}, directPreview=true)}" />
 
     <input type="hidden" th:field="*{ceilingEntityClassname}" />
@@ -38,24 +69,14 @@
         </div>
     </div>
 
-    <div class="tabs-container" th:if="${renderTabs}">
-        <dl class="tabs" th:classappend="${additionalTabClasses}">
-            <dd th:each="tab : ${entityForm.tabs}"
-                th:class="${#ef.isTabActive(entityForm, tab)}? 'active'"
-                th:if="${tab.isVisible}">
-                <a th:href="'#tab' + ${tabStat.count}" 
-                   th:classappend="${tab.tabClass}"
-                   th:text="#{${tab.title}}" /> 
-            </dd>
-        </dl> 
-    </div>
-    
+
+
     <ul class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
         <li th:each="tab : ${entityForm.tabs}"
-            th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}" 
+            th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}"
             th:classappend="${(tabStat.first and tab.isVisible) or ((tabStat.index > 1 and not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
             th:inline="text">
-            
+
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="${group.title}" />
 
@@ -64,9 +85,9 @@
                 <!-- When changing this block of code, make sure standaloneField.html is also updated -->
                 <!-- *** IMPORTANT *** -->
                 </comment>
-                <div th:each="field : ${group.fields}" 
-                     th:if="${field.name}" 
-                     th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 
+                <div th:each="field : ${group.fields}"
+                     th:if="${field.name}"
+                     th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
                      blc_admin:component_id="${field}"
                      th:classappend="${!field.isVisible}? 'hidden'">
 
@@ -81,7 +102,7 @@
 
                 </div>
             </fieldset>
-            
+
             <div th:remove="tag" th:if="${dynamicFormTemplateOverride == null}">
                 <div th:if="${tabStat.first}" th:each="dynamicForm : *{dynamicForms}">
                     <div th:include="components/dynamicForm" th:with="dynamicPropertyName=${dynamicForm.key}" />
@@ -102,8 +123,8 @@
     </ul>
     
     <div class="entity-form-actions">
-        <button th:each="action : ${entityForm.actions}" 
-            class="button radius dark" 
+        <button th:each="action : ${entityForm.actions}"
+            class="button radius dark"
             th:type="${action.buttonType}"
             th:attr="data-action=${action.urlPostfix}"
             th:classappend="${action.buttonClass}" th:unless="${hideActions}">

@@ -1,0 +1,16 @@
+<div class="content-area-title-bar">
+    <h3 th:text="#{${entityFriendlyName}} + 's'">Products</h3>
+    <h4 class="main-count">
+        <span th:remove="tag" th:text="${#lists.size(listGrid.records)}" />
+        <span th:remove="tag" th:text="#{${entityFriendlyName}} + 's'" />
+    </h4>
+
+    <button th:each="action : ${mainActions}"
+            th:type="${action.buttonType}"
+            th:attr="data-url=@{${#strings.isEmpty(action.urlOverride) ? ('/' + sectionKey + action.urlPostfix) : action.urlOverride}}"
+            th:inline="text"
+            class="button primary large">
+        [[#{${action.displayText}}]]
+        <span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag" />
+    </button>
+</div>
