@@ -1,4 +1,4 @@
-<comment th:remove="all">
+<comment th:remove="all" xmlns:th="http://www.w3.org/1999/html">
 <!-- This component represents a list grid toolbar -->
 </comment>
 
@@ -53,6 +53,11 @@
                                      <!--index=${headerFieldStat.index}">-->
                         <!--</ul>-->
                     </div>
+                </th>
+                <th>
+                    <th:comment th:remove="all">
+                        Th entry acting as placeholder for Edit links
+                    </th:comment>
                 </th>
                 
                 <th width="75" th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}">
@@ -112,8 +117,7 @@
                     <span th:case="'main'" th:remove="tag">
                         <span th:substituteby="components/partials/listGridIcon" />
                     
-                        <a th:if="${headerField.mainEntityLink}" 
-                            th:href="@{${record.path}}"
+                        <span th:if="${headerField.mainEntityLink}"
                             th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}" />
                             
                         <span th:if="${headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">
@@ -171,6 +175,13 @@
                                 or field.fieldType == 'IMAGE'
                                 or field.fieldType == 'COLOR'}"
                               th:remove="tag" th:text="${field.displayValue}" />
+
+                    </span>
+                </td>
+
+                <td>
+                    <span>
+                        <a th:href="@{${record.path}}" th:text="#{Edit}">Edit</a>
                     </span>
                 </td>
                 
