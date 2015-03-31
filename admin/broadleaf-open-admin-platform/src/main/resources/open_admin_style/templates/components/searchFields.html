@@ -1,11 +1,12 @@
 <div class="table-actions">
-    <form th:action="${currentUrl}" method="GET">
+    <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
 
     <div class="search-form">
         <input type="text" name="table-search" class="auto-width"
                th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
-        <input type="submit" name="table-search-submit" class="button primary" value="Search" />
-        <button class="button secondary">Clear</button>
+        <button class="button primary search-button" th:inline="text" th:utext="#{Search}" />
+        <a th:href="@{${'/' + sectionKey}}" class="button secondary" th:inline="text" th:utext="#{Clear_Search}" />
+        <!--<button class="button secondary">Clear</button>-->
     </div>
 
     <div class="filter-products">

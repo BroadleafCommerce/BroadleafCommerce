@@ -18,3 +18,8 @@
  * #L%
  */
 .app-content .content .site-bar .button{ line-height:14px; }
+
+.button{
+    font-size: 11px;
+    line-height: 15px;
+}
