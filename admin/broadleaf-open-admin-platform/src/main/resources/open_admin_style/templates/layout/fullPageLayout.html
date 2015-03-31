@@ -12,9 +12,11 @@
     <div class="side-nav" th:substituteby="layout/partials/leftNav" />
 
     <div class="content">
-        <div class="site-bar" th:substituteby="layout/partials/siteBar" />
-        <div class="sandbox-bar" th:substituteby="layout/partials/sandBoxBar" />
-        <div class="section-content" th:substituteby="${templateName}" />
+        <div th:substituteby="layout/partials/siteBar" />
+        <div th:substituteby="layout/partials/sandBoxBar" />
+        <div class="section-content">
+            <div th:substituteby="${templateName}" />
+        </div>
     </div>
 
 </div>
