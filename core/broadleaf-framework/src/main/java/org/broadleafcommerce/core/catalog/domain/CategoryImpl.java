@@ -49,13 +49,9 @@ import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
-import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.BroadleafRequestProcessor;
 import org.broadleafcommerce.common.web.Locatable;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -158,18 +154,6 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             fillInURLMapForCategory(categoryUrlMap, currentCategory.getSubCategory(), currentPath, newCategoryList);
         }
     }
-
-    public CategoryImpl(Boolean legacyCategoryMode) {
-        //Support legacy mode for unit test that do not go through Spring
-        this.legacyCategoryMode = legacyCategoryMode;
-    }
-
-    public CategoryImpl() {
-        //JPA contract
-    }
-
-    @Transient
-    protected Boolean legacyCategoryMode;
 
     @Id
     @GeneratedValue(generator= "CategoryId")
@@ -641,11 +625,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     @Deprecated
     public void setDefaultParentCategory(Category defaultParentCategory) {
-        if (isDefaultCategoryLegacyMode()) {
-            this.defaultParentCategory = defaultParentCategory;
-        } else {
-            setParentCategory(defaultParentCategory);
-        }
+        this.defaultParentCategory = defaultParentCategory;
     }
 
     @Override
@@ -1343,26 +1323,4 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         this.externalId = externalId;
     }
 
-    protected Boolean isDefaultCategoryLegacyMode() {
-        ParentCategoryLegacyModeService legacyModeService = ParentCategoryLegacyModeServiceImpl.getLegacyModeService();
-        if (legacyModeService != null) {
-            return legacyModeService.isLegacyMode();
-        }
-        if (legacyCategoryMode != null) {
-            return legacyCategoryMode;
-        } else {
-            LOG.warn("Detected a call to utilize deprecated get/setDefaultParentCategory() without a Spring context. If utilizing these methods" +
-                    "in a unit test, make sure to utilize the constructor for CategoryImpl that accepts the legacy mode boolean, or use the" +
-                    "mutators for legacyCategoryMode.");
-        }
-        return false;
-    }
-
-    public Boolean getLegacyCategoryMode() {
-        return legacyCategoryMode;
-    }
-
-    public void setLegacyCategoryMode(Boolean legacyCategoryMode) {
-        this.legacyCategoryMode = legacyCategoryMode;
-    }
 }

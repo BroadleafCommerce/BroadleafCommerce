@@ -47,8 +47,6 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
-import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
-import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
@@ -142,18 +140,6 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-
-    public ProductImpl(Boolean legacyCategoryMode) {
-        //Support legacy mode for unit test that do not go through Spring
-        this.legacyCategoryMode = legacyCategoryMode;
-    }
-
-    public ProductImpl() {
-        //JPA contract
-    }
-
-    @Transient
-    protected Boolean legacyCategoryMode;
 
     /** The id. */
     @Id
@@ -516,11 +502,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     @Deprecated
     public void setDefaultCategory(Category defaultCategory) {
-        if (isDefaultCategoryLegacyMode()) {
-            this.defaultCategory = defaultCategory;
-        } else {
-            setCategory(defaultCategory);
-        }
+        this.defaultCategory = defaultCategory;
     }
 
     @Override
@@ -1051,26 +1033,4 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         return getUrl();
     }
 
-    protected Boolean isDefaultCategoryLegacyMode() {
-        ParentCategoryLegacyModeService legacyModeService = ParentCategoryLegacyModeServiceImpl.getLegacyModeService();
-        if (legacyModeService != null) {
-            return legacyModeService.isLegacyMode();
-        }
-        if (legacyCategoryMode != null) {
-            return legacyCategoryMode;
-        } else {
-            LOG.warn("Detected a call to utilize deprecated get/setDefaultCategory() without a Spring context. If utilizing these methods" +
-                    "in a unit test, make sure to utilize the constructor for ProductImpl that accepts the legacy mode boolean, or use" +
-                    "the mutators for legacyCategoryMode.");
-        }
-        return false;
-    }
-
-    public Boolean getLegacyCategoryMode() {
-        return legacyCategoryMode;
-    }
-
-    public void setLegacyCategoryMode(Boolean legacyCategoryMode) {
-        this.legacyCategoryMode = legacyCategoryMode;
-    }
 }
