@@ -3,15 +3,13 @@
 <!--<div th:substituteby="components/fieldTranslation" />-->
 <!--<span class="error" th:errors="*{fields['__${field.name}__'].value}" />-->
 
-<div class="field-group">
-    <label th:text="#{${field.friendlyName}}" th:for="*{fields['__${field.name}__'].value}"><i class="fa fa-question-circle help-tip" data-tip="Tip text here"></i></label>
-    <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text" class="twelve"
-           th:required="${field.required}"
-           th:placeholder="${field.hint}"
-           th:field="*{fields['__${field.name}__'].value}" />
+<label th:text="#{${field.friendlyName}}" th:for="*{fields['__${field.name}__'].value}"><i class="fa fa-question-circle help-tip" data-tip="Tip text here"></i></label>
+<input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
+       th:required="${field.required}"
+       th:placeholder="${field.hint}"
+       th:field="*{fields['__${field.name}__'].value}" />
 
-    <textarea th:if="*{fields['__${field.name}__'].isLargeEntry}"
-              th:field="*{fields['__${field.name}__'].value}"
-              th:placeholder="${field.hint}"
-              cols="30" rows="10"/>
-</div>
+<textarea th:if="*{fields['__${field.name}__'].isLargeEntry}"
+          th:field="*{fields['__${field.name}__'].value}"
+          th:placeholder="${field.hint}"
+          cols="30" rows="10"/>

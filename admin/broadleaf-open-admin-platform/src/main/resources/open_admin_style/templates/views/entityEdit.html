@@ -1,4 +1,4 @@
-<div class="entity-edit">
+<div th:remove="tag">
     <div th:remove="tag" th:if="${entityFormTemplatePath == null and useAjaxUpdate == true}">
         <blc:form th:include="components/entityForm"
             th:remove="tag"

@@ -1,4 +1,8 @@
-<div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
 <div th:substituteby="components/fieldTooltip" />
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
-<input type="text" class="two" th:field="*{fields['__${field.name}__'].value}" />
+
+<label th:text="#{${field.friendlyName}}" th:for="*{fields['__${field.name}__'].value}"><i class="fa fa-question-circle help-tip" data-tip="Tip text here"></i></label>
+<input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
+       th:required="${field.required}"
+       th:placeholder="${field.hint}"
+       th:field="*{fields['__${field.name}__'].value}" />
