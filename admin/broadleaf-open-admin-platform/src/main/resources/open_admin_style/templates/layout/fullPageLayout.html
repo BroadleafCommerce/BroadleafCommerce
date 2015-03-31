@@ -6,23 +6,18 @@
 
 <head th:substituteby="layout/partials/head" />
 
-<body class="off-canvas">
+<body>
+<div class="app-content">
 
-    <div class="container">
+    <div class="side-nav" th:substituteby="layout/partials/leftNav" />
 
-        <header th:substituteby="layout/partials/header" />
-
-        <div class="content row">
-
-            <section role="main" th:substituteby="${templateName}"></section>
-
-            <section role="complementary" th:substituteby="layout/partials/leftNav"></section>
-
-        </div>
-
+    <div class="content">
+        <div class="site-bar" th:substituteby="layout/partials/siteBar" />
+        <div class="sandbox-bar" th:substituteby="layout/partials/sandBoxBar" />
+        <div class="section-content" th:substituteby="${templateName}" />
     </div>
 
-    <footer th:substituteby="layout/partials/footer" />
+</div>
     
 </body>
 </html>
