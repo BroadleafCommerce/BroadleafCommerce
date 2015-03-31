@@ -341,6 +341,15 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         }
 
         if (! response.getHasErrors()) {
+            if (! user.getId().equals(fpst.getAdminUserId())) {
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Password reset attempt tried with mismatched user and token " + user.getId() + ", " + token);
+                }
+                response.addErrorCode("invalidToken");
+            }
+        }
+
+        if (! response.getHasErrors()) {
             user.setUnencodedPassword(password);
             saveAdminUser(user);
             fpst.setTokenUsedFlag(true);
