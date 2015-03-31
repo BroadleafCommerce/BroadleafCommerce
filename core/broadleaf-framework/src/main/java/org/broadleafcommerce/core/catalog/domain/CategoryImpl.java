@@ -159,6 +159,18 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         }
     }
 
+    public CategoryImpl(Boolean legacyCategoryMode) {
+        //Support legacy mode for unit test that do not go through Spring
+        this.legacyCategoryMode = legacyCategoryMode;
+    }
+
+    public CategoryImpl() {
+        //JPA contract
+    }
+
+    @Transient
+    protected Boolean legacyCategoryMode;
+
     @Id
     @GeneratedValue(generator= "CategoryId")
     @GenericGenerator(
@@ -1336,6 +1348,21 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         if (legacyModeService != null) {
             return legacyModeService.isLegacyMode();
         }
+        if (legacyCategoryMode != null) {
+            return legacyCategoryMode;
+        } else {
+            LOG.warn("Detected a call to utilize deprecated get/setDefaultParentCategory() without a Spring context. If utilizing these methods" +
+                    "in a unit test, make sure to utilize the constructor for CategoryImpl that accepts the legacy mode boolean, or use the" +
+                    "mutators for legacyCategoryMode.");
+        }
         return false;
+    }
+
+    public Boolean getLegacyCategoryMode() {
+        return legacyCategoryMode;
+    }
+
+    public void setLegacyCategoryMode(Boolean legacyCategoryMode) {
+        this.legacyCategoryMode = legacyCategoryMode;
     }
 }

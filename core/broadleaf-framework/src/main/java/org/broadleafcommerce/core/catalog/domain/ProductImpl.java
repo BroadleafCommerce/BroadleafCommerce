@@ -20,7 +20,6 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,8 +53,6 @@ import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.BroadleafRequestProcessor;
 import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -145,6 +142,18 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+
+    public ProductImpl(Boolean legacyCategoryMode) {
+        //Support legacy mode for unit test that do not go through Spring
+        this.legacyCategoryMode = legacyCategoryMode;
+    }
+
+    public ProductImpl() {
+        //JPA contract
+    }
+
+    @Transient
+    protected Boolean legacyCategoryMode;
 
     /** The id. */
     @Id
@@ -1047,6 +1056,21 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         if (legacyModeService != null) {
             return legacyModeService.isLegacyMode();
         }
+        if (legacyCategoryMode != null) {
+            return legacyCategoryMode;
+        } else {
+            LOG.warn("Detected a call to utilize deprecated get/setDefaultCategory() without a Spring context. If utilizing these methods" +
+                    "in a unit test, make sure to utilize the constructor for ProductImpl that accepts the legacy mode boolean, or use" +
+                    "the mutators for legacyCategoryMode.");
+        }
         return false;
+    }
+
+    public Boolean getLegacyCategoryMode() {
+        return legacyCategoryMode;
+    }
+
+    public void setLegacyCategoryMode(Boolean legacyCategoryMode) {
+        this.legacyCategoryMode = legacyCategoryMode;
     }
 }
