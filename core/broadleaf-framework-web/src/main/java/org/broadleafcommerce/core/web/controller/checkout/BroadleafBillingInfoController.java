@@ -65,7 +65,7 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             copyShippingAddressToBillingAddress(cart, billingForm);
         }
         
-        if (billingForm.getUseCustomerPayment()) {
+        if (billingForm.getUseCustomerPayment() && billingForm.getCustomerPaymentId() != null) {
             customerPayment = customerPaymentService.readCustomerPaymentById(billingForm.getCustomerPaymentId());
 
             if (customerPayment != null) {

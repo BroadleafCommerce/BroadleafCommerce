@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.payment.dto.GatewayCustomerDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
@@ -48,16 +49,21 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
+import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -80,6 +86,9 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     
     @Resource(name = "blOrderPaymentService")
     protected OrderPaymentService orderPaymentService;
+
+    @Resource(name = "blCustomerPaymentService")
+    private CustomerPaymentService customerPaymentService;
     
     @Resource(name = "blCheckoutService")
     protected CheckoutService checkoutService;
@@ -158,6 +167,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // as invalid before adding the new one
         List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
         Address tempBillingAddress = null;
+        Boolean savePayment = false;
         if (!config.handlesMultiplePayments()) {
             PaymentGatewayType gateway = config.getGatewayType();
             for (OrderPayment p : order.getPayments()) {
@@ -174,6 +184,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
                     if (PaymentType.CREDIT_CARD.equals(p.getType()) &&
                             PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ) {
                         tempBillingAddress = p.getBillingAddress();
+                        savePayment = p.isSavePayment();
                     }
                 }
             }
@@ -220,6 +231,17 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         payment.setOrder(order);
         transaction.setOrderPayment(payment);
         payment.addTransaction(transaction);
+
+
+        try {
+            if (savePayment) {
+                payment.setCustomerPayment(saveOrderPaymentAsCustomerPayment(order.getCustomer(), payment));
+            }
+        } catch (PaymentException e) {
+            e.printStackTrace();
+        }
+
+
         payment = orderPaymentService.save(payment);
 
         if (transaction.getSuccess()) {
@@ -233,6 +255,42 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         return payment.getId();
     }
 
+    public CustomerPayment saveOrderPaymentAsCustomerPayment(Customer customer, OrderPayment orderPayment) throws PaymentException {
+        CustomerPayment customerPayment = customerPaymentService.create();
+        customerPayment.setCustomer(customer);
+        customerPayment.setBillingAddress(orderPayment.getBillingAddress());
+        
+        PaymentTransaction transaction = orderPayment.getInitialTransaction();
+
+        customerPayment.setCardType(transaction.getAdditionalFields().get(PaymentAdditionalFieldType.CARD_TYPE.getType()));
+        
+        
+        String expDate = transaction.getAdditionalFields().get(PaymentAdditionalFieldType.EXP_DATE.getType());
+        
+        String[] expDateArray = expDate.split("/");
+        
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Integer.parseInt(expDateArray[1]), Integer.parseInt(expDateArray[0]), 0);
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        Date date = calendar.getTime();
+        
+        customerPayment.setExpirationDate(date);
+        customerPayment.setLastFour(transaction.getAdditionalFields().get(PaymentAdditionalFieldType.LAST_FOUR.getType()));
+
+//        if (customerPaymentService.findDefaultPaymentForCustomer(customer) == null) {
+//            customerPaymentService.setAsDefaultPayment(customerPayment);
+//        } else {
+//            customerPaymentService.saveCustomerPayment(customerPayment);
+//        }
+        return customerPayment;
+    }
+
     protected void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress) {
         Address billingAddress = tempBillingAddress;
         if (responseDTO.getBillTo() != null && isUseBillingAddressFromGateway()) {
@@ -240,9 +298,11 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
             billingAddress.setFirstName(billToDTO.getAddressFirstName());
             billingAddress.setLastName(billToDTO.getAddressLastName());
+            billingAddress.setFullName(billToDTO.getAddressFullName());
             billingAddress.setAddressLine1(billToDTO.getAddressLine1());
             billingAddress.setAddressLine2(billToDTO.getAddressLine2());
             billingAddress.setCity(billToDTO.getAddressCityLocality());
+//            billingAddress.setPhonePrimary();
 
             State state = null;
             if(billToDTO.getAddressStateRegion() != null) {
@@ -293,6 +353,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
             AddressDTO<PaymentResponseDTO> shipToDTO = responseDTO.getShipTo();
             shippingAddress.setFirstName(shipToDTO.getAddressFirstName());
             shippingAddress.setLastName(shipToDTO.getAddressLastName());
+            shippingAddress.setFullName(shipToDTO.getAddressFullName());
             shippingAddress.setAddressLine1(shipToDTO.getAddressLine1());
             shippingAddress.setAddressLine2(shipToDTO.getAddressLine2());
             shippingAddress.setCity(shipToDTO.getAddressCityLocality());

@@ -217,6 +217,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                     requestDTO.billTo()
                             .addressFirstName(billAddress.getFirstName())
                             .addressLastName(billAddress.getLastName())
+                            .addressFullName(billAddress.getFullName())
                             .addressCompanyName(billAddress.getCompanyName())
                             .addressLine1(billAddress.getAddressLine1())
                             .addressLine2(billAddress.getAddressLine2())
