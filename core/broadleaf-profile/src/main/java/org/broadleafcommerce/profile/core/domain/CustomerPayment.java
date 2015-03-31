@@ -21,12 +21,18 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.persistence.Status;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-public interface CustomerPayment extends Serializable, AdditionalFields, MultiTenantCloneable<CustomerPayment> {
+/**
+ * <p>This entity is designed to deal with payments associated to an {@link Customer} and is used to refer to a saved 
+ * payment that is stored at the Payment Gateway level. This entity can be used to represent any type of payment, 
+ * such as credit cards, PayPal accounts, etc.</p>
+ */
+public interface CustomerPayment extends Status, Serializable, AdditionalFields, MultiTenantCloneable<CustomerPayment> {
 
     public void setId(Long id);
 
@@ -56,9 +62,67 @@ public interface CustomerPayment extends Serializable, AdditionalFields, MultiTe
 
     public void setAdditionalFields(Map<String, String> additionalFields);
 
+    /**
+     * Returns the name of this payment.
+     *
+     * @return String
+     */
+    public String getName();
+
+    /**
+     * Sets the name of this payment.
+     *
+     * @param name
+     */
+    public void setName(String name);
+
+    /**
+     * Returns the {@link Date} on which this payment is set to expire.
+     * For credit cards, this would be 00:00:00 of the first day after expiration month. 
+     * 
+     * @return {@link Date}
+     */
     public Date getExpirationDate();
 
+    /**
+     * Sets the {@link Date} on which this payment is set to expire.
+     * For credit cards, this would be 00:00:00 of the first day after expiration month.
+     *
+     * @param expirationDate
+     */
     public void setExpirationDate(Date expirationDate);
+
+    /**
+     * Returns the last four digits of the credit card that this payment represents.
+     * This field would be used on {@link CustomerPayment}s that represent credit card payments.  
+     *
+     * @return String
+     */
+    public String getLastFour();
+
+    /**
+     * Sets the last four digits of the credit card that this payment represents.
+     * This field would be set on {@link CustomerPayment}s that represent credit card payments.
+     *
+     * @param lastFour
+     */
+    public void setLastFour(String lastFour);
+
+    /**
+     * Returns the {@link org.broadleafcommerce.common.payment.CreditCardType} of the card that this payment represents.
+     * This field would be used on {@link CustomerPayment}s that represent credit card payments.  
+     *
+     * @return String
+     */
+    public String getCardType();
+
+    /**
+     * Sets the {@link org.broadleafcommerce.common.payment.CreditCardType} of the card that this payment represents.
+     * This field would be set on {@link CustomerPayment}s that represent credit card payments.
+     *
+     * @param cardType
+     */
+    public void setCardType(String cardType);
 
     public Date getLastExpirationNotification();
 

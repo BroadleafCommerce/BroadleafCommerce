@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
 import java.io.Serializable;
 import java.util.List;
@@ -220,5 +221,22 @@ public interface OrderPayment extends Serializable, Status {
      * The currency that this payment should be taken in. This is a delegate to {@link #getOrder()#getCurrency()}.
      */
     public BroadleafCurrency getCurrency();
+
+    /**
+     * Returns the {@link CustomerPayment} associated with this payment, if there is one
+     * @return
+     */
+    public CustomerPayment getCustomerPayment();
+
+    /**
+     * Sets the {@link CustomerPayment} of this payment
+     *
+     * @see {@link CustomerPayment}
+     */
+    public void setCustomerPayment(CustomerPayment customerPayment);
+
+    public Boolean isSavePayment();
+
+    public void setSavePayment(Boolean savePayment);
 
 }

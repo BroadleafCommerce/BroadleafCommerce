@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,9 +59,21 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
     public String saveBillingAddress(HttpServletRequest request, HttpServletResponse response, Model model,
                                  BillingInfoForm billingForm, BindingResult result) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
+        CustomerPayment customerPayment = null;
 
         if (billingForm.isUseShippingAddress()){
             copyShippingAddressToBillingAddress(cart, billingForm);
+        }
+        
+        if (billingForm.getUseCustomerPayment()) {
+            customerPayment = customerPaymentService.readCustomerPaymentById(billingForm.getCustomerPaymentId());
+
+            if (customerPayment != null) {
+                Address address = customerPayment.getBillingAddress();
+                if (address != null) {
+                    copyAddressToBillingAddress(billingForm, address);
+                }
+            }
         }
 
         billingInfoFormValidator.validate(billingForm, result);
@@ -86,6 +99,8 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             if (PaymentType.CREDIT_CARD.equals(p.getType()) &&
                     p.isActive()) {
                 p.setBillingAddress(billingForm.getAddress());
+                p.setCustomerPayment(customerPayment);
+                p.setSavePayment(billingForm.isSaveNewPayment());
                 found = true;
             }
         }
@@ -99,6 +114,8 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             tempOrderPayment.setPaymentGatewayType(PaymentGatewayType.TEMPORARY);
             tempOrderPayment.setBillingAddress(billingForm.getAddress());
             tempOrderPayment.setOrder(cart);
+            tempOrderPayment.setCustomerPayment(customerPayment);
+            tempOrderPayment.setSavePayment(billingForm.isSaveNewPayment());
             cart.getPayments().add(tempOrderPayment);
         }
 
@@ -121,29 +138,33 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
         if (order.getFulfillmentGroups().get(0) != null) {
             Address shipping = order.getFulfillmentGroups().get(0).getAddress();
             if (shipping != null) {
-                Address billing = addressService.create();
-                billing.setFullName(shipping.getFullName());
-                billing.setFirstName(shipping.getFirstName());
-                billing.setLastName(shipping.getLastName());
-                billing.setAddressLine1(shipping.getAddressLine1());
-                billing.setAddressLine2(shipping.getAddressLine2());
-                billing.setCity(shipping.getCity());
-                billing.setState(shipping.getState());
-                billing.setIsoCountrySubdivision(shipping.getIsoCountrySubdivision());
-                billing.setStateProvinceRegion(shipping.getStateProvinceRegion());
-                billing.setPostalCode(shipping.getPostalCode());
-                billing.setCountry(shipping.getCountry());
-                billing.setIsoCountryAlpha2(shipping.getIsoCountryAlpha2());
-                billing.setPrimaryPhone(shipping.getPrimaryPhone());
-                billing.setSecondaryPhone(shipping.getSecondaryPhone());
-                billing.setFax(shipping.getFax());
-                billing.setPhonePrimary(copyPhone(shipping.getPhonePrimary()));
-                billing.setPhoneSecondary(copyPhone(shipping.getPhoneSecondary()));
-                billing.setPhoneFax(copyPhone(shipping.getPhoneFax()));
-                billing.setEmailAddress(shipping.getEmailAddress());
-                billingInfoForm.setAddress(billing);
+                copyAddressToBillingAddress(billingInfoForm, shipping);
             }
         }
+    }
+
+    protected void copyAddressToBillingAddress(BillingInfoForm billingInfoForm, Address address) {
+        Address billing = addressService.create();
+        billing.setFullName(address.getFullName());
+        billing.setFirstName(address.getFirstName());
+        billing.setLastName(address.getLastName());
+        billing.setAddressLine1(address.getAddressLine1());
+        billing.setAddressLine2(address.getAddressLine2());
+        billing.setCity(address.getCity());
+        billing.setState(address.getState());
+        billing.setIsoCountrySubdivision(address.getIsoCountrySubdivision());
+        billing.setStateProvinceRegion(address.getStateProvinceRegion());
+        billing.setPostalCode(address.getPostalCode());
+        billing.setCountry(address.getCountry());
+        billing.setIsoCountryAlpha2(address.getIsoCountryAlpha2());
+        billing.setPrimaryPhone(address.getPrimaryPhone());
+        billing.setSecondaryPhone(address.getSecondaryPhone());
+        billing.setFax(address.getFax());
+        billing.setPhonePrimary(copyPhone(address.getPhonePrimary()));
+        billing.setPhoneSecondary(copyPhone(address.getPhoneSecondary()));
+        billing.setPhoneFax(copyPhone(address.getPhoneFax()));
+        billing.setEmailAddress(address.getEmailAddress());
+        billingInfoForm.setAddress(billing);
     }
 
     protected Phone copyPhone(Phone phoneToCopy) {

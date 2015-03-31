@@ -46,6 +46,8 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
@@ -157,6 +159,14 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @AdminPresentationCollection(friendlyName="OrderPaymentImpl_Details",
             tab = Presentation.Tab.Name.Log, tabOrder = Presentation.Tab.Order.Log)
     protected List<PaymentTransaction> transactions = new ArrayList<PaymentTransaction>();
+
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CustomerPaymentImpl.class)
+    @JoinColumn(name = "CUSTOMER_PAYMENT_ID")
+    protected CustomerPayment customerPayment;
+
+    @Column(name = "SAVE_PAYMENT")
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Save_Payment")
+    protected Boolean savePayment = false;
     
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -367,6 +377,26 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
             .append(type)
             .append(archiveStatus)
             .build();
+    }
+
+    @Override
+    public CustomerPayment getCustomerPayment() {
+        return customerPayment;
+    }
+
+    @Override
+    public void setCustomerPayment(CustomerPayment customerPayment) {
+        this.customerPayment = customerPayment;
+    }
+
+    @Override
+    public Boolean isSavePayment() {
+        return savePayment == null ? false : savePayment;
+    }
+
+    @Override
+    public void setSavePayment(Boolean savePayment) {
+        this.savePayment = savePayment == null ? false : savePayment;
     }
 
     public static class Presentation {

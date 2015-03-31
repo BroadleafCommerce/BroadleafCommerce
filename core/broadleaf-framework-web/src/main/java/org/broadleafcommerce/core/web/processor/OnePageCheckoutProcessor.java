@@ -231,6 +231,13 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
                 if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
                     if (payment.getBillingAddress() != null) {
                         billingForm.setAddress(payment.getBillingAddress());
+                        Boolean useCustomerPayment = payment.getCustomerPayment() != null;
+                        if (useCustomerPayment) {
+                            billingForm.setUseCustomerPayment(useCustomerPayment);
+                            billingForm.setCustomerPayment(payment.getCustomerPayment());
+                            billingForm.setCustomerPaymentId(payment.getCustomerPayment().getId());
+                        }
+                        billingForm.setSaveNewPayment(payment.isSavePayment());
                     }
                 }
             }
@@ -286,6 +293,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         boolean showBillingInfoSection = true;
         boolean showShippingInfoSection = true;
         boolean showAllPaymentMethods = true;
+        boolean showPaymentMethodSection = true;
 
         int numShippableFulfillmentGroups = calculateNumShippableFulfillmentGroups();
         if (numShippableFulfillmentGroups == 0) {
@@ -307,6 +315,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
                     orderContainsUnconfirmedCreditCard = true;
                     unconfirmedCC = payment;
                 }
+                showPaymentMethodSection = payment.getCustomerPayment() == null;
             }
         }
 
@@ -317,7 +326,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
             showBillingInfoSection = false;
             showAllPaymentMethods = false;
         } else if (orderTotalAfterAppliedPayments != null
-                && orderTotalAfterAppliedPayments.isZero()){
+                && orderTotalAfterAppliedPayments.isZero()) {
             //If all the applied payments (e.g. gift cards) cover the entire amount
             //we don't need to show all payment method options.
             showAllPaymentMethods = false;
@@ -325,6 +334,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
         localVars.put("showBillingInfoSection", showBillingInfoSection);
         localVars.put("showAllPaymentMethods", showAllPaymentMethods);
+        localVars.put("showPaymentMethodSection", showPaymentMethodSection);
         localVars.put("orderContainsThirdPartyPayment", orderContainsThirdPartyPayment);
         localVars.put("orderContainsUnconfirmedCreditCard", orderContainsUnconfirmedCreditCard);
         localVars.put("unconfirmedCC", unconfirmedCC);
@@ -338,7 +348,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
         String orderInfoHelpMessage = (String) localVars.get("orderInfoHelpMessage");
         String billingInfoHelpMessage = (String) localVars.get("billingInfoHelpMessage");
-        String shippingInfoHelpMessage  = (String) localVars.get("shippingInfoHelpMessage");
+        String shippingInfoHelpMessage = (String) localVars.get("shippingInfoHelpMessage");
 
         //Add the Order Info Section
         drawnSections.add(orderInfoSection);

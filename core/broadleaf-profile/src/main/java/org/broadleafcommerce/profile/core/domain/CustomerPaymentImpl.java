@@ -22,6 +22,7 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -48,6 +49,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -128,6 +130,20 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Expiration_Date", order = 1000)
     protected Date expirationDate;
 
+    @Column(name = "NAME")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Name", order = 1000)
+    protected String name;
+
+    @Column(name = "LAST_FOUR")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Last_Four", order = 1000)
+    protected String lastFour;
+
+    @Column(name = "CARD_TYPE")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Card_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.payment.CreditCardType",
+            prominent = false)
+    protected String cardType;
+
     @Column(name = "LAST_EXPIRATION_NOTIFICATION")
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Last_Expiration_Notification", order = 1001)
     protected Date lastExpirationNotification;
@@ -154,6 +170,9 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             keyPropertyFriendlyName = "CustomerPaymentImpl_additional_field_key",
             forceFreeFormKeys = true)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
+
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     @Override
     public void setId(Long id) {
@@ -216,6 +235,46 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     }
 
     @Override
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    @Override
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getLastFour() {
+        return lastFour;
+    }
+
+    @Override
+    public void setLastFour(String lastFour) {
+        this.lastFour = lastFour;
+    }
+
+    @Override
+    public String getCardType() {
+        return cardType;
+    }
+
+    @Override
+    public void setCardType(String cardType) {
+        this.cardType = cardType;
+    }
+
+    @Override
     public Map<String, String> getAdditionalFields() {
         return additionalFields;
     }
@@ -225,6 +284,30 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
         this.additionalFields = additionalFields;
     }
 
+    @Override
+    public Character getArchived() {
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
+    }
+
+    @Override
+    public boolean isActive() {
+        return 'Y'!=getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+    
     @Override
     public <G extends CustomerPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
@@ -275,16 +358,6 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             }
         }
 
-    }
-
-    @Override
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    @Override
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
     }
 
     @Override
