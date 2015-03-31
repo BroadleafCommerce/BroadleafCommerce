@@ -48,6 +48,8 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
@@ -484,10 +486,21 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     @Deprecated
     public Category getDefaultCategory() {
-        if (isDefaultCategoryLegacyMode() || defaultCategory != null) {
-            return defaultCategory;
+        Category response = null;
+        if (defaultCategory != null) {
+            response = defaultCategory;
+            //TODO add code to look for a category via getCategory(), otherwise fall into the next block
+        } else {
+            List<CategoryProductXref> xrefs = getAllParentCategoryXrefs();
+            if (!CollectionUtils.isEmpty(xrefs)) {
+                for (CategoryProductXref xref : xrefs) {
+                    if (xref.getCategory().isActive()) {
+                        response = xref.getCategory();
+                        break;
+                    }
+                }
+            }
         }
-        Category response = getCategory();
         return response;
     }
 
@@ -504,6 +517,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     public Category getCategory() {
         if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
+            //TODO Use a isDefault field on the xref instead to check
             return allParentCategoryXrefs.get(0).getCategory();
         }
         return null;
@@ -511,6 +525,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public void setCategory(Category category) {
+        //TODO Use a isDefault field on the xref
         if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
             allParentCategoryXrefs.get(0).setCategory(category);
         } else {
@@ -1028,9 +1043,9 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     }
 
     protected Boolean isDefaultCategoryLegacyMode() {
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc != null) {
-            return BooleanUtils.isTrue((Boolean) brc.getAdditionalProperties().get(BroadleafRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE));
+        ParentCategoryLegacyModeService legacyModeService = ParentCategoryLegacyModeServiceImpl.getLegacyModeService();
+        if (legacyModeService != null) {
+            return legacyModeService.isLegacyMode();
         }
         return false;
     }
