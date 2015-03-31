@@ -4,7 +4,7 @@
 
     <script th:inline="text">
         //<![CDATA[
-        window.jQuery || document.write('<script src="[[@{/js/lib/jquery-1.9.1.js}]]"><\/script>');
+        window.jQuery || document.write('<script src="[[@{/js/admin/lib/jquery-2.1.1.min.js}]]"><\/script>');
         //]]>
     </script>
 
@@ -16,30 +16,6 @@
     <blc:bundle name="adminlib.js" 
                 mapping-prefix="/js/"
                 files="admin/lib/plugins/jquery.cookie.js,
-                       admin/lib/plugins/jquery.event.move.js,
-                       admin/lib/plugins/jquery.event.swipe.js,
-                       admin/lib/plugins/jquery.foundation.accordion.js,
-                       admin/lib/plugins/jquery.foundation.alerts.js,
-                       admin/lib/plugins/jquery.foundation.buttons.js,
-                       admin/lib/plugins/jquery.foundation.clearing.js,
-                       admin/lib/plugins/jquery.foundation.joyride.js,
-                       admin/lib/plugins/jquery.foundation.magellan.js,
-                       admin/lib/plugins/jquery.foundation.mediaQueryToggle.js,
-                       admin/lib/plugins/jquery.foundation.navigation.js,
-                       admin/lib/plugins/jquery.foundation.orbit.js,
-                       admin/lib/plugins/jquery.foundation.tabs.js,
-                       admin/lib/plugins/jquery.foundation.tooltips.js,
-                       admin/lib/plugins/jquery.foundation.topbar.js,
-                       admin/lib/plugins/jquery.placeholder.js,
-                       admin/lib/plugins/jquery.mousewheel.js,
-                       admin/lib/plugins/jquery.mCustomScrollbar.js,
-                       admin/lib/plugins/jquery.ba-dotimeout.js,
-                       lib/plugins/jquery-ui-1.10.2.custom.js,
-                       lib/plugins/jquery-ui-timepicker-addon.js,
-                       admin/lib/plugins/jquery.iframe-transport.js,
-                       admin/lib/plugins/jquery.ui.widget.js,
-                       admin/lib/plugins/jquery.autosize.js,
-                       admin/lib/plugins/spectrum.js,
                        admin/lib/plugins/redactor/fontfamily.js,
                        admin/lib/plugins/redactor/fontcolor.js,
                        admin/lib/plugins/redactor/fontsize.js,
@@ -49,7 +25,10 @@
                        admin/lib/redactor.js,
                        admin/lib/plugins/bootstrap.js,
                        admin/lib/blc-conditions-builder.js,
-                       admin/lib/plugins/typeahead.bundle.js" />
+                       admin/lib/plugins/jqfloat.min.js,
+                       admin/lib/plugins/jquery.datetimepicker.js,
+                       admin/lib/plugins/jquery.remodal.js,
+                       admin/lib/plugins/tipr.min.js" />
                       
     <blc:bundle name="admin.js" 
                 mapping-prefix="/js/"
@@ -76,7 +55,6 @@
                        admin/components/ruleBuilder.js,
                        admin/components/listGrid.js,
                        admin/components/listGrid-filter.js,
-                       admin/components/listGrid-paginate.js,
                        admin/components/typeahead.js,
                        admin/components/sessionTimer.js" />
                       
