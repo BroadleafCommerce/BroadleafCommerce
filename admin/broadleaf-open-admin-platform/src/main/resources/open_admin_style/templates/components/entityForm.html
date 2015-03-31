@@ -10,13 +10,6 @@
 
 <div th:object="${entityForm}" th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
 
-    <div class="content-area-title-bar">
-        <h3>Add New Offer</h3>
-
-        <button class="button primary large">Save Offer</button>
-        <div class="message">This offer is <span class="status not-active">not active</span> for a very specific reason listed here</div>
-    </div>
-
     <div class="section-tabs" th:if="${renderTabs}">
         <ul class="nav nav-tabs">
             <li th:each="tab : ${entityForm.tabs}"
