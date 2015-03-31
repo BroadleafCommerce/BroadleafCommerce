@@ -2,8 +2,8 @@
 <!-- This component represents a list grid toolbar -->
 </comment>
 
-<div class="listgrid-header-wrapper">
-    <table class="list-grid-table twelve table-hover"
+<!--<div class="listgrid-header-wrapper">-->
+    <table class="table table-striped"
            th:classappend="${listGrid.className}"
            th:attr="data-listgridtype=${listGrid.listGridType},
                     data-currenturl=${currentUrl},
@@ -43,15 +43,15 @@
                             </div>
                         </div>
     
-                        <div class="resizer" th:unless="${headerField.resizeDisabled}">||</div>
-                        <ul th:include="${'components/partials/listGridHeaderFilter'}"
-                            class="no-hover"
-                            th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
-                            th:with="fieldType=${headerField.fieldType},
-                                     fieldName=${headerField.name},
-                                     fieldFriendlyName=${headerField.friendlyName},
-                                     index=${headerFieldStat.index}">
-                        </ul>
+                        <!--<div class="resizer" th:unless="${headerField.resizeDisabled}">||</div>-->
+                        <!--<ul th:include="${'components/partials/listGridHeaderFilter'}"-->
+                            <!--class="no-hover"-->
+                            <!--th:classappend="${headerField.mainEntityLink ? 'first' : ''}"-->
+                            <!--th:with="fieldType=${headerField.fieldType},-->
+                                     <!--fieldName=${headerField.name},-->
+                                     <!--fieldFriendlyName=${headerField.friendlyName},-->
+                                     <!--index=${headerFieldStat.index}">-->
+                        <!--</ul>-->
                     </div>
                 </th>
                 
@@ -179,19 +179,7 @@
             
         </tbody>
     </table>
-</div>
-
-<span class="listgrid-table-footer" th:inline="text">
-    <span class="listgrid-table-footer-message" th:inline="text">
-        <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}" />
-        <span class="low-index" th:unless="${records}">0</span>
-        -
-        <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
-        <span th:text="${'of'}" />
-        <span class="total-records" th:text="${#lists.size(listGrid.records)}" />
-        <span th:text="${'records'}" />
-    </span>
-</span>
+<!--</div>-->
 
 <span class="listgrid-table-spinner-container" th:inline="text">
     <i class="listgrid-table-spinner icon-spin icon-spinner" />

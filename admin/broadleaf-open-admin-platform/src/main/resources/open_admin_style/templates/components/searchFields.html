@@ -1,37 +1,44 @@
-<div class="row">
-    <div class="seven columns">
-        <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
-            <div class="row">
-                <div class="six columns">
-                    <input style="height: 28px; width: 100%" type="search" 
-                        th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
-                </div>
-                <div class="six columns">
-                    <a href="#" class="button small dark radius search-button" th:inline="text">
-                        <i class="icon-search"></i>&nbsp;[[#{Search}]]
-                    </a>
-                    <a th:href="@{${'/' + sectionKey}}" class="button small dark radius" th:inline="text">
-                        <i class="icon-remove"></i>&nbsp;[[#{Clear_Search}]]
-                    </a>
-                </div>
-                <div class="two columns">&nbsp;</div>
-            </div>
-        </form>
+<!--<div class="row">-->
+
+    <!--<div class="five columns">-->
+        <!--<div style="float: right;">-->
+            <!--<button th:each="action : ${mainActions}"-->
+                <!--class="button small radius dark right"-->
+                <!--th:type="${action.buttonType}"-->
+                <!--th:attr="data-url=@{${#strings.isEmpty(action.urlOverride) ? ('/' + sectionKey + action.urlPostfix) : action.urlOverride}}"-->
+                <!--th:classappend="${action.buttonClass}"-->
+                <!--th:inline="text">-->
+                <!--<div th:unless="${#strings.isEmpty(action.iconClass)}" th:remove="tag">-->
+                    <!--<i th:class="${action.iconClass}"></i>&nbsp;-->
+                <!--</div>-->
+                <!--[[#{${action.displayText}}]]-->
+                <!--<span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag" />-->
+            <!--</button>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
+
+<div class="table-actions">
+    <form th:action="${currentUrl}" method="GET">
+
+    <div class="search-form">
+        <input type="text" name="table-search" class="auto-width"
+               th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
+        <input type="submit" name="table-search-submit" class="button primary" value="Search" />
+        <button class="button secondary">Clear</button>
     </div>
-    <div class="five columns">
-        <div style="float: right;">
-            <button th:each="action : ${mainActions}" 
-                class="button small radius dark right" 
-                th:type="${action.buttonType}"
-                th:attr="data-url=@{${#strings.isEmpty(action.urlOverride) ? ('/' + sectionKey + action.urlPostfix) : action.urlOverride}}"
-                th:classappend="${action.buttonClass}"
-                th:inline="text">
-                <div th:unless="${#strings.isEmpty(action.iconClass)}" th:remove="tag">
-                    <i th:class="${action.iconClass}"></i>&nbsp;
-                </div>
-                [[#{${action.displayText}}]]
-                <span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag" />
-            </button>
+
+    <div class="filter-products">
+        <div class="filter-count">
+            <span th:remove="tag" th:if="${records}" th:text="${listGrid.startIndex + 1}" />
+            <span th:remove="tag" th:unless="${records}">0</span>
+            -
+            <span th:remove="tag" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
+            <span th:remove="tag" th:text="${'of'}" />
+            <span th:remove="tag" th:text="${#lists.size(listGrid.records)}" />
+            <span th:remove="tag" th:text="#{${entityFriendlyName}} + 's'" />
         </div>
+        <button class="button primary" th:text="#{Filter_Button_Text(#{${entityFriendlyName}})}">Filter Products</button>
     </div>
+    </form>
 </div>
