@@ -1,14 +1,15 @@
 <div class="site-bar">
-    <h1>Broadleaf Demo Site (Master)</h1>
+
+    <h1 class="name" th:text="${#brc.site.name}"></h1>
     <button class="button small">Change Site</button>
 
     <div class="account-info">
         <blc_admin:admin_user resultVar="adminUser" />
         <ul>
-            <li th:text="Welcome + ' ' + ${adminUser.name}" >Welcome Stephen!</li>
+            <li th:text="'Welcome ' + ${adminUser.name} + '!'" ></li>
         </ul>
 
-        <button class="button small logout">Logout</button>
+        <a class="button small logout" th:href="@{/adminLogout.htm}" th:utext="#{header.logout}" />
 
     </div> <!-- /account-info -->
 </div>
