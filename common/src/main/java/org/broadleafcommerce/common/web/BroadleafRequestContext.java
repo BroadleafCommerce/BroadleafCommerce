@@ -102,6 +102,7 @@ public class BroadleafRequestContext {
     protected Locale locale;
     protected TimeZone timeZone;
     protected BroadleafCurrency broadleafCurrency;
+    protected BroadleafCurrency requestedCurrency;
     protected Site site;
     protected Theme theme;
     protected java.util.Locale javaLocale;
@@ -351,6 +352,14 @@ public class BroadleafRequestContext {
 
     public void setBroadleafCurrency(BroadleafCurrency broadleafCurrency) {
         this.broadleafCurrency = broadleafCurrency;
+    }
+
+    public BroadleafCurrency getRequestedBroadleafCurrency() {
+        return requestedCurrency;
+    }
+
+    public void setRequestedBroadleafCurrency(BroadleafCurrency requestedCurrency) {
+        this.requestedCurrency = requestedCurrency;
     }
 
     public Catalog getCurrentCatalog() {

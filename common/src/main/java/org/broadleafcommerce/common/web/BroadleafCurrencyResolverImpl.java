@@ -22,9 +22,8 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.broadleafcommerce.common.currency.service.BroadleafCurrencyService;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.extension.currency.CurrencyResolverExtensionManager;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.springframework.stereotype.Component;
@@ -60,19 +59,16 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
     @Resource(name = "blCurrencyService")
     private BroadleafCurrencyService broadleafCurrencyService;
 
-    @Resource(name = "blCurrencyResolverExtensionManager")
-    protected CurrencyResolverExtensionManager extensionManager;
-
     /**
      * Responsible for returning the currency to use for the current request.
      */
     @Override
-    public BroadleafCurrency resolveCurrency(HttpServletRequest request) {
+    public BroadleafRequestedCurrencyDto resolveCurrency(HttpServletRequest request) {
         return resolveCurrency(new ServletWebRequest(request));
     }
 
     @Override
-    public BroadleafCurrency resolveCurrency(WebRequest request) {
+    public BroadleafRequestedCurrencyDto resolveCurrency(WebRequest request) {
         BroadleafCurrency desiredCurrency = null;
 
         // 1) Check request for currency
@@ -110,20 +106,12 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
         // desired currency, we may not have any prices that support it. 
         BroadleafCurrency currencyToUse = defaultCurrency;
 
-        // Allow extension managers (like enterprise pricing) to indicate whether additional currency support is
-        // available.
-        if (extensionManager != null) {
-            ExtensionResultHolder<BroadleafCurrency> resultHolder = new ExtensionResultHolder<BroadleafCurrency>();
-            extensionManager.getProxy().overrideCurrency(desiredCurrency, defaultCurrency, resultHolder);
-            if (resultHolder != null && resultHolder.getResult() != null) {
-                currencyToUse = resultHolder.getResult();
-            }
-        }
-
         if (BLCRequestUtils.isOKtoUseSession(request)) {
             request.setAttribute(CURRENCY_VAR, currencyToUse, WebRequest.SCOPE_GLOBAL_SESSION);
         }
-        return currencyToUse;
+
+        BroadleafRequestedCurrencyDto dto = new BroadleafRequestedCurrencyDto(currencyToUse, desiredCurrency);
+        return dto;
     }
 
 
