@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.common.event;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,22 +26,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.AbstractApplicationEventMulticaster;
-import org.springframework.orm.jpa.EntityManagerFactoryUtils;
-import org.springframework.orm.jpa.EntityManagerHolder;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.util.ErrorHandler;
+import org.springframework.context.event.SimpleApplicationEventMulticaster;
 
 import java.util.concurrent.Executor;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
 /**
  * This class is a simple extension to Spring's SimpleApplicationEventMulticaster.  The difference is 
- * that this allows the event to indicate whether it should be asynchronous or not, assuming that a 
- * TaskExecutor has been configured.  This can optionally indicate whether the background threads 
- * should open an EntityManager and bind it to the execution of the thread.
+ * that this allows the EventListener to indicate whether it should be asynchronous or not, assuming that a 
+ * TaskExecutor has been configured.
  * 
  * Asynchronous execution should be used with care.  Events are not durable with this implementation. 
  * In addition, this implementation does not broadcast or multicast events to systems outside of the 
@@ -53,99 +43,45 @@ import javax.persistence.EntityManagerFactory;
  *
  */
 public class BroadleafApplicationEventMulticaster extends
-        AbstractApplicationEventMulticaster implements ApplicationContextAware {
-	
-	private static Log LOG = LogFactory.getLog(BroadleafApplicationEventMulticaster.class);
+        SimpleApplicationEventMulticaster implements ApplicationContextAware {
 	
     @Autowired(required = false)
     @Qualifier("blApplicationEventMulticastTaskExecutor")
     private Executor taskExecutor;
-
-    @Autowired(required = false)
-    @Qualifier("blApplicationEventDefaultErrorHandler")
-    private ErrorHandler errorHandler;
 
 	protected ApplicationContext ctx;
 
     /**
      * Take care when specifying that event or application listener should be executed asynchronously.  
      * If there is no TaskExecutor configured, this 
-     * will execute synchronously, regardless.  If there is a TaskExecutor configured, then if the event is a BroadleafApplicationEvent 
-     * and is set to execute asynchronously, or if the listener is a BroadleafApplicationListener and its 
-     * <code>isAsynchronous()</code> returns true then the event will fire asynchronously. 
+     * will execute synchronously, regardless.  If there is a TaskExecutor configured, then if the 
+     * listener is a BroadleafApplicationListener and its 
+     * <code>isAsynchronous()</code> method returns true then the event will fire asynchronously. 
      * Be aware that the events are not durable in this case.  Events that are executed asynchronously  
      * should be used with caution, where a loss of event due to error or shutdown of the VM is not a major 
      * concern.
      */
 	@Override
 	public void multicastEvent(final ApplicationEvent event) {
+        Executor executor = getTaskExecutor();
         for (final ApplicationListener<?> listener : getApplicationListeners(event)) {
-			Executor executor = getTaskExecutor();
 			boolean isAsynchronous = false;
 			if (executor != null) {
-			    if (((BroadleafApplicationEvent.class.isAssignableFrom(event.getClass())) 
-                    && ((BroadleafApplicationEvent)event).isAsynchronous()) 
-                        || (BroadleafApplicationListener.class.isAssignableFrom(listener.getClass())
+                if ((BroadleafApplicationListener.class.isAssignableFrom(listener.getClass())
                             && ((BroadleafApplicationListener<? extends ApplicationEvent>)listener).isAsynchronous())) {
                     isAsynchronous = true;
 			    }
 			}
 			
             if (isAsynchronous) {
-				final boolean openEm = isOpenEntityManagerForExecutor((BroadleafApplicationEvent)event);
 				executor.execute(new Runnable() {
 					public void run() {
-						EntityManagerHolder emHolder = null;
-						EntityManagerFactory emf = null;
-						if (openEm) {
-							//Since we're running in a background thread, we will open the entity manager and bind it to the thread
-							emf = EntityManagerFactoryUtils.findEntityManagerFactory(ctx, "entityManagerFactory");
-							if (!TransactionSynchronizationManager.hasResource(emf)) {
-								EntityManager em = emf.createEntityManager();
-								emHolder = new EntityManagerHolder(em);
-								TransactionSynchronizationManager.bindResource(emf, emHolder);
-							}
-						}
-						try {
-							invokeListener(listener, event);
-						} finally {
-							if (openEm) {
-								try {
-									emHolder = (EntityManagerHolder)
-											TransactionSynchronizationManager.unbindResource(emf);
-									EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
-								} catch (Exception e) {
-									LOG.error("An error occured trying to unbind the EntityManager for an Executor", e);
-								}
-							}
-						}
+                        invokeListener(listener, event);
 					}
 				});
 			} else {
 				invokeListener(listener, event);
 			}
-		}
-	}
-	
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	protected void invokeListener(ApplicationListener listener, ApplicationEvent event) {
-		ErrorHandler errorHandler = null;
-		if (BroadleafApplicationEvent.class.isAssignableFrom(event.getClass())) {
-			errorHandler = ((BroadleafApplicationEvent)event).getErrorHandler();
-		}
-		
-		if (errorHandler == null) {
-			errorHandler = getErrorHandler();
-		}
-		
-		if (errorHandler != null) {
-			try {
-				listener.onApplicationEvent(event);
-			} catch (Throwable err) {
-				errorHandler.handleError(err);
-			}
-		} else {
-			listener.onApplicationEvent(event);
 		}
 	}
 
@@ -163,25 +99,4 @@ public class BroadleafApplicationEventMulticaster extends
         this.taskExecutor = taskExecutor;
     }
 
-    public ErrorHandler getErrorHandler() {
-        return errorHandler;
-    }
-
-    public void setErrorHandler(ErrorHandler errorHandler) {
-        this.errorHandler = errorHandler;
-    }
-
-    /**
-     * Subclasses can override this method to determine, based on the event itself, whether a PersistenceManager 
-     * should be opened and bound to the background thread for processing. This can help reduce or eliminate 
-     * the risk of LazyInitializationExceptions when accessing lazy loaded entities in background threads.
-     * 
-     * Default implementation returns true
-     * 
-     * @param event
-     * @return
-     */
-	protected boolean isOpenEntityManagerForExecutor(BroadleafApplicationEvent event) {
-		return true;
-	}
 }
