@@ -45,7 +45,6 @@
         <class>org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl</class>
         <class>org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl</class>
         <class>org.broadleafcommerce.common.config.domain.SystemPropertyImpl</class>
-        <class>org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl</class>
         <class>org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl</class>
