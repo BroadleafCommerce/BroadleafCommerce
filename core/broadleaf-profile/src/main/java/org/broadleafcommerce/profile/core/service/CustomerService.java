@@ -57,21 +57,21 @@ public interface CustomerService {
     void deleteCustomer(Customer customer);
 
     /**
-     * Returns a <code>Customer</code> by first looking in the database, otherwise creating a new non-persisted <code>Customer</code>
+     * Returns a {@link Customer} by first looking in the database, otherwise creating a new non-persisted {@link Customer}
+     *
      * @param customerId the id of the customer to lookup
-     * @return either a <code>Customer</code> from the database if it exists, or a new non-persisted <code>Customer</code>
      */
     public Customer createCustomerFromId(Long customerId);
     
     /**
-     * Returns a non-persisted <code>Customer</code>.    Typically used with registering a new customer.
+     * Returns a non-persisted {@link Customer}. Typically used with registering a new customer.
      */
     public Customer createNewCustomer();
     
     /**
-     * Subclassed implementations can assign unique roles for various customer types 
+     * Subclassed implementations can assign unique roles for various customer types
      * 
-     * @param customer
+     * @param customer {@link Customer} to create roles for
      */
     public void createRegisteredCustomerRoles(Customer customer);
 
@@ -90,10 +90,10 @@ public interface CustomerService {
     public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers);
     
     /**
-     * Looks up the corresponding Customer and emails the address on file with
+     * Looks up the corresponding {@link Customer} and emails the address on file with
      * the associated username.
      *
-     * @param emailAddress
+     * @param emailAddress user's email address
      * @return Response can contain errors including (notFound)
      */
     GenericResponse sendForgotUsernameNotification(String emailAddress);
@@ -121,24 +121,47 @@ public interface CustomerService {
     GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword);
     
     /**
-     * Verifies that the passed in token is valid.   
+     * Verifies that the passed in token is valid.
+     * <p>
+     * This method can only be used when using the deprecated {@link org.springframework.security.authentication.encoding.PasswordEncoder PasswordEncoder} bean, otherwise an exception will be thrown.
+     * The new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} bean requires passing in a Customer to find the appropriate token.
+     *
+     * @deprecated  {@link #checkPasswordResetToken(String, Customer)}, this will be removed in 4.2
      * 
-     * Returns responseCodes of "invalidToken", "tokenUsed", and "tokenExpired".
-     * @param token
-     * @return
+     * @param token password reset token
+     * @return Response can contain errors including (invalidToken, tokenUsed, and tokenExpired)
      */
+    @Deprecated
     public GenericResponse checkPasswordResetToken(String token);
-    
+
+    /**
+     * Verifies that a customer has a valid token.
+     *
+     * @param token password reset token
+     * @param customer {@link Customer} who owns the token
+     * @return Response can contain errors including (invalidToken, tokenUsed, and tokenExpired)
+     */
+    public GenericResponse checkPasswordResetToken(String token, Customer customer);
+
+    /**
+     * Allow customers to call from subclassed service.
+     *
+     * @return the next customerId to be used
+     */
     public Long findNextCustomerId();
     
     /**
-     * @deprecated use {@link #getSaltSource()} instead
+     * @deprecated use {@link #getSaltSource()} instead, this will be removed in 4.2
+     *
+     * @return currently used salt string
      */
     @Deprecated
     public String getSalt();
     
     /**
-     * @deprecated use {@link #setSaltSource(SaltSource)} instead
+     * @deprecated use {@link #setSaltSource(SaltSource)} instead, this will be removed in 4.2
+     *
+     * @param salt new salt string to use
      */
     @Deprecated
     public void setSalt(String salt);
@@ -146,19 +169,27 @@ public interface CustomerService {
     /**
      * Returns the {@link SaltSource} used with the blPasswordEncoder to encrypt the user password. Usually configured in
      * applicationContext-security.xml. This is not a required property and will return null if not configured
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
+     *
+     * @return the currently used {@link SaltSource}
      */
+    @Deprecated
     public SaltSource getSaltSource();
     
     /**
-     * Sets the {@link SaltSource} used with blPasswordencoder to encrypt the user password. Usually configured within
+     * Sets the {@link SaltSource} used with blPasswordEncoder to encrypt the user password. Usually configured within
      * applicationContext-security.xml
-     * 
-     * @param saltSource
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
+     *
+     * @param saltSource the new {@link SaltSource} to use
      */
+    @Deprecated
     public void setSaltSource(SaltSource saltSource);
     
     /**
-     * @deprecated use {@link #getSalt(Customer, String)} instead
+     * @deprecated use {@link #getSalt(Customer, String)} instead, this will be removed in 4.2
      */
     @Deprecated
     public Object getSalt(Customer customer);
@@ -166,30 +197,79 @@ public interface CustomerService {
     /**
      * Gets the salt object for the current customer. By default this delegates to {@link #getSaltSource()}. If there is
      * not a {@link SaltSource} configured ({@link #getSaltSource()} returns null) then this also returns null.
-     * 
-     * @param customer
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
+     *
+     * @param customer the {@link Customer} to get {@link org.springframework.security.core.userdetails.UserDetails UserDetails} from
+     * @param unencodedPassword the unencoded password
      * @return the salt for the current customer
      */
+    @Deprecated
     public Object getSalt(Customer customer, String unencodedPassword);
     
     /**
      * Encodes the clear text parameter, using the customer as a potential Salt. Does not change the customer properties. 
      * This method only encodes the password and returns the encoded result.
-     * @param clearText
-     * @param customer
-     * @return
+     * <p>
+     * The externally salted {@link org.springframework.security.authentication.encoding.PasswordEncoder PasswordEncoder} support is
+     * being deprecated, following in Spring Security's footsteps, in order to move towards self salting hashing algorithms such as bcrypt.
+     * Bcrypt is a superior hashing algorithm that randomly generates a salt per password in order to protect against rainbow table attacks
+     * and is an intentionally expensive algorithm to further guard against brute force attempts to crack hashed passwords.
+     * Additionally, having the encoding algorithm handle the salt internally reduces code complexity and dependencies such as {@link SaltSource}.
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
+     *
+     * @param clearText the unencoded password
+     * @param customer the {@link Customer} to use for the salt
+     * @return the encoded password
      */
+    @Deprecated
     public String encodePassword(String clearText, Customer customer);
 
     /**
-     * Use this to determine if passwords match. Don't encode the password separately since sometimes salts 
-     * are generated randomly and stored with the password.
-     * 
-     * @param rawPassword
-     * @param encodedPassword
-     * @param customer
-     * @return
+     * Encodes the clear text parameter, using the salt provided by PasswordEncoder. Does not change the customer properties.
+     * This method only encodes the password and returns the encoded result.
+     * <p>
+     * This method can only be called once per password. The salt is randomly generated internally in the {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder}
+     * and appended to the hash to provide the resulting encoded password. Once this has been called on a password,
+     * going forward all checks for authenticity must be done by {@link #isPasswordValid(String, String)} as encoding the
+     * same password twice will result in different encoded passwords.
+     *
+     * @param clearText the unencoded password
+     * @return the encoded password
      */
+    public String encodePassword(String clearText);
+
+    /**
+     * Use this to determine if passwords match using a {@link Customer} for salting. Don't encode the password separately since sometimes salts
+     * are generated randomly and stored with the password.
+     * <p>
+     * The externally salted {@link org.springframework.security.authentication.encoding.PasswordEncoder PasswordEncoder} support is
+     * being deprecated, following in Spring Security's footsteps, in order to move towards self salting hashing algorithms such as bcrypt.
+     * Bcrypt is a superior hashing algorithm that randomly generates a salt per password in order to protect against rainbow table attacks
+     * and is an intentionally expensive algorithm to further guard against brute force attempts to crack hashed passwords.
+     * Additionally, having the encoding algorithm handle the salt internally reduces code complexity and dependencies such as {@link SaltSource}.
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
+     * 
+     * @param rawPassword the unencoded password
+     * @param encodedPassword the encoded password to compare against
+     * @param customer the {@link Customer} to use for the salt
+     * @return true if the unencoded password matches the encoded password, false otherwise
+     */
+    @Deprecated
     public boolean isPasswordValid(String rawPassword, String encodedPassword, Customer customer);
+
+    /**
+     * Determines if a password is valid by comparing it to the encoded string, salting is handled internally to the {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder}.
+     * <p>
+     * This method must always be called to verify if a password is valid after the original encoded password is generated
+     * due to {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} randomly generating salts internally and appending them to the resulting hash.
+     *
+     * @param rawPassword the unencoded password
+     * @param encodedPassword the encoded password to compare against
+     * @return true if the unencoded password matches the encoded password, false otherwise
+     */
+    public boolean isPasswordValid(String rawPassword, String encodedPassword);
 
 }

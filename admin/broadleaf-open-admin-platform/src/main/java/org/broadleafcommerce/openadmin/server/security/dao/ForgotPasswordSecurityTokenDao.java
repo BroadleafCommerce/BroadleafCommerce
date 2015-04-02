@@ -21,6 +21,8 @@ package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
 
+import java.util.List;
+
 /**
  * 
  * @author bpolster
@@ -28,5 +30,6 @@ import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecu
  */
 public interface ForgotPasswordSecurityTokenDao {
     public ForgotPasswordSecurityToken readToken(String token);
+    public List<ForgotPasswordSecurityToken> readUnusedTokensByAdminUserId(Long adminId);
     public ForgotPasswordSecurityToken saveToken(ForgotPasswordSecurityToken token);
 }

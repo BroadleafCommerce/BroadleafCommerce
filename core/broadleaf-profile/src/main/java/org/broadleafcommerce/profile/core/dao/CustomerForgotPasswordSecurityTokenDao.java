@@ -21,6 +21,7 @@ package org.broadleafcommerce.profile.core.dao;
 
 import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken;
 
+import java.util.List;
 
 
 /**
@@ -30,5 +31,6 @@ import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityT
  */
 public interface CustomerForgotPasswordSecurityTokenDao {
     public CustomerForgotPasswordSecurityToken readToken(String token);
+    public List<CustomerForgotPasswordSecurityToken> readUnusedTokensByCustomerId(Long customerId);
     public CustomerForgotPasswordSecurityToken saveToken(CustomerForgotPasswordSecurityToken token);
 }
