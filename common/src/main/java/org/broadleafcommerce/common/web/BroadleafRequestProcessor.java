@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -122,7 +122,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         Locale locale = localeResolver.resolveLocale(request);
         brc.setLocale(locale);
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
-        BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
+        BroadleafRequestedCurrencyDto currencyDto = currencyResolver.resolveCurrency(request);
         // Assumes BroadleafProcess
         RequestDTO requestDTO = (RequestDTO) request.getAttribute(REQUEST_DTO_PARAM_NAME, WebRequest.SCOPE_REQUEST);
         if (requestDTO == null) {
@@ -161,7 +161,11 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             previewSandBoxContext.setPreviewMode(true);
             SandBoxContext.setSandBoxContext(previewSandBoxContext);
         }
-        brc.setBroadleafCurrency(currency);
+        if (currencyDto != null) {
+            brc.setBroadleafCurrency(currencyDto.getCurrencyToUse());
+            brc.setRequestedBroadleafCurrency(currencyDto.getRequestedCurrency());
+        }
+
         brc.setSandBox(currentSandbox);
         brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
 

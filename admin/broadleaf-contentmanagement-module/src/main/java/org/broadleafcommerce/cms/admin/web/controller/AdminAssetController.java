@@ -20,8 +20,13 @@
 package org.broadleafcommerce.cms.admin.web.controller;
 
 import org.broadleafcommerce.cms.admin.web.service.AssetFormBuilderService;
+import org.broadleafcommerce.cms.file.StaticAssetMultiTenantExtensionManager;
+import org.broadleafcommerce.cms.file.dao.StaticAssetDaoQueryExtensionManager;
+import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -62,6 +67,9 @@ public class AdminAssetController extends AdminBasicEntityController {
     
     @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
+
+    @Resource(name = "blStaticAssetMultiTenantExtensionManager")
+    protected StaticAssetMultiTenantExtensionManager staticAssetExtensionManager;
     
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
@@ -109,8 +117,14 @@ public class AdminAssetController extends AdminBasicEntityController {
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable  Map<String, String> pathVars,
             @PathVariable(value="id") String id) throws Exception {
+        Site currentSite = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
+
         model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
-        return super.viewEntityForm(request, response, model, pathVars, id);
+        String returnPath = super.viewEntityForm(request, response, model, pathVars, id);
+
+        staticAssetExtensionManager.getProxy().removeShareOptionsForMTStandardSite(model, currentSite);
+
+        return returnPath;
     }
     
     @Override
