@@ -95,13 +95,13 @@ public class SiteImpl implements Site, AdminMainEntity {
     @Column (name = "SITE_IDENTIFIER_TYPE")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order = 2000,
             gridOrder = 2, prominent = true,
-            broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType", requiredOverride=RequiredOverride.REQUIRED,
+            broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType",
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION)
     protected String siteIdentifierType;
 
     @Column (name = "SITE_IDENTIFIER_VALUE")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order = 3000,
-            gridOrder = 3, prominent = true, requiredOverride=RequiredOverride.REQUIRED)
+            gridOrder = 3, prominent = true)
     @Index(name = "BLC_SITE_ID_VAL_INDEX", columnNames = { "SITE_IDENTIFIER_VALUE" })
     protected String siteIdentifierValue;
 
