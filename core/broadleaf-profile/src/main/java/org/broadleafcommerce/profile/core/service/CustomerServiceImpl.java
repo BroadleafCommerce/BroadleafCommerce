@@ -359,29 +359,58 @@ public class CustomerServiceImpl implements CustomerService {
         return salt;
     }
 
+    /**
+     * Delegates to either the new {@link PasswordEncoder} or the deprecated {@link org.springframework.security.authentication.encoding.PasswordEncoder PasswordEncoder}.
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
+     *
+     * @param rawPassword the unencoded password
+     * @param salt the optional salt
+     * @return
+     */
     @Deprecated
-    @Override
-    public String encodePassword(String clearText, Customer customer) {
-        if (passwordEncoder != null) {
-            return passwordEncoder.encodePassword(clearText, getSalt(customer, clearText));
+    protected String encodePass(String rawPassword, Object salt) {
+        if (usingDeprecatedPasswordEncoder()) {
+            return passwordEncoder.encodePassword(rawPassword, salt);
         } else {
-            return encodePassword(clearText);
+            return encodePassword(rawPassword);
         }
     }
 
+    @Deprecated
     @Override
-    public String encodePassword(String clearText) {
-        return passwordEncoderNew.encode(clearText);
+    public String encodePassword(String rawPassword, Customer customer) {
+        return encodePass(rawPassword, getSalt(customer, rawPassword));
+    }
+
+    @Override
+    public String encodePassword(String rawPassword) {
+        return passwordEncoderNew.encode(rawPassword);
+    }
+
+    /**
+     * Delegates to either the new {@link PasswordEncoder} or the deprecated {@link org.springframework.security.authentication.encoding.PasswordEncoder PasswordEncoder}.
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
+     *
+     * @param rawPassword the unencoded password
+     * @param encodedPassword the encoded password to compare rawPassword against
+     * @param salt the optional salt
+     * @return
+     */
+    @Deprecated
+    protected boolean isPassValid(String rawPassword, String encodedPassword, Object salt) {
+        if (usingDeprecatedPasswordEncoder()) {
+            return passwordEncoder.isPasswordValid(encodedPassword, rawPassword, salt);
+        } else {
+            return isPasswordValid(rawPassword, encodedPassword);
+        }
     }
 
     @Deprecated
     @Override
     public boolean isPasswordValid(String rawPassword, String encodedPassword, Customer customer) {
-        if (passwordEncoder != null) {
-            return passwordEncoder.isPasswordValid(encodedPassword, rawPassword, getSalt(customer, rawPassword));
-        } else {
-            return isPasswordValid(rawPassword, encodedPassword);
-        }
+        return isPassValid(rawPassword, encodedPassword, getSalt(customer, rawPassword));
     }
 
     @Override
@@ -469,7 +498,6 @@ public class CustomerServiceImpl implements CustomerService {
     public GenericResponse sendForgotPasswordNotification(String username, String resetPasswordUrl) {
         GenericResponse response = new GenericResponse();
         Customer customer = null;
-        boolean usingOldPasswordEncoder = passwordEncoder != null;
 
         if (username != null) {
             customer = customerDao.readCustomerByUsername(username);
@@ -490,15 +518,11 @@ public class CustomerServiceImpl implements CustomerService {
 
             CustomerForgotPasswordSecurityToken fpst = new CustomerForgotPasswordSecurityTokenImpl();
             fpst.setCustomerId(customer.getId());
-            if (usingOldPasswordEncoder) {
-                fpst.setToken(passwordEncoder.encodePassword(token, saltString));
-            } else {
-                fpst.setToken(passwordEncoderNew.encode(token));
-            }
+            fpst.setToken(encodePass(token, saltString));
             fpst.setCreateDate(SystemTime.asDate());
             customerForgotPasswordSecurityTokenDao.saveToken(fpst);
 
-            if (usingOldPasswordEncoder && saltString != null) {
+            if (usingDeprecatedPasswordEncoder() && saltString != null) {
                 token = token + '-' + saltString;
             }
 
@@ -539,12 +563,10 @@ public class CustomerServiceImpl implements CustomerService {
             response.addErrorCode("invalidToken");
         }
 
-        boolean usingOldPasswordEncoder = passwordEncoder != null;
-
-        String rawToken = null;
+        String rawToken = token.toLowerCase();
         String salt = null;
 
-        if (usingOldPasswordEncoder) {
+        if (usingDeprecatedPasswordEncoder()) {
             String[] tokens = token.split("-");
             if (tokens.length > 2) {
                 response.addErrorCode("invalidToken");
@@ -558,15 +580,11 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerForgotPasswordSecurityToken fpst = null;
         if (!response.getHasErrors()) {
-            if (usingOldPasswordEncoder) {
-                fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(rawToken, salt));
-            } else {
-                List<CustomerForgotPasswordSecurityToken> fpstoks = customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(customer.getId());
-                for (CustomerForgotPasswordSecurityToken fpstok : fpstoks) {
-                    if (passwordEncoderNew.matches(token, fpstok.getToken())) {
-                        fpst = fpstok;
-                        break;
-                    }
+            List<CustomerForgotPasswordSecurityToken> fpstoks = customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(customer.getId());
+            for (CustomerForgotPasswordSecurityToken fpstok : fpstoks) {
+                if (isPassValid(rawToken, fpstok.getToken(), salt)) {
+                    fpst = fpstok;
+                    break;
                 }
             }
             if (fpst == null) {
@@ -690,5 +708,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     public void setChangePasswordEmailInfo(EmailInfo changePasswordEmailInfo) {
         this.changePasswordEmailInfo = changePasswordEmailInfo;
+    }
+
+    @Deprecated
+    protected boolean usingDeprecatedPasswordEncoder() {
+        return passwordEncoder != null;
     }
 }

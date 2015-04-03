@@ -378,14 +378,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         ForgotPasswordSecurityToken fpst = null;
         if (! response.getHasErrors()) {
             token = token.toLowerCase();
-            if (passwordEncoder != null) {
-                fpst = forgotPasswordSecurityTokenDao.readToken(encodePassword(token, null));
-            } else {
-                List<ForgotPasswordSecurityToken> fpstoks = forgotPasswordSecurityTokenDao.readUnusedTokensByAdminUserId(user.getId());
-                for (ForgotPasswordSecurityToken fpstok : fpstoks) {
-                    if (passwordEncoderNew.matches(token, fpstok.getToken())) {
-                        fpst = fpstok;
-                    }
+            List<ForgotPasswordSecurityToken> fpstoks = forgotPasswordSecurityTokenDao.readUnusedTokensByAdminUserId(user.getId());
+            for (ForgotPasswordSecurityToken fpstok : fpstoks) {
+                if (isPasswordValid(fpstok.getToken(), token, null)) {
+                    fpst = fpstok;
+                    break;
                 }
             }
             if (fpst == null) {
@@ -557,7 +554,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
      */
     @Deprecated
     protected boolean isPasswordValid(String encodedPassword, String rawPassword, Object salt) {
-        if (passwordEncoder != null) {
+        if (usingDeprecatedPasswordEncoder()) {
             return passwordEncoder.isPasswordValid(encodedPassword, rawPassword, salt);
         } else {
             return isPasswordValid(encodedPassword, rawPassword);
@@ -595,7 +592,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
      */
     @Deprecated
     protected String encodePassword(String rawPassword, Object salt) {
-        if (passwordEncoder != null) {
+        if (usingDeprecatedPasswordEncoder()) {
             return passwordEncoder.encodePassword(rawPassword, salt);
         } else {
             return encodePassword(rawPassword);
@@ -617,4 +614,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return passwordEncoderNew.encode(rawPassword);
     }
 
+    @Deprecated
+    protected boolean usingDeprecatedPasswordEncoder() {
+        return passwordEncoder != null;
+    }
 }

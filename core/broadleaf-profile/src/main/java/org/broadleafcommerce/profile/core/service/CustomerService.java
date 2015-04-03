@@ -219,12 +219,12 @@ public interface CustomerService {
      *
      * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
      *
-     * @param clearText the unencoded password
+     * @param rawPassword the unencoded password
      * @param customer the {@link Customer} to use for the salt
      * @return the encoded password
      */
     @Deprecated
-    public String encodePassword(String clearText, Customer customer);
+    public String encodePassword(String rawPassword, Customer customer);
 
     /**
      * Encodes the clear text parameter, using the salt provided by PasswordEncoder. Does not change the customer properties.
@@ -235,10 +235,10 @@ public interface CustomerService {
      * going forward all checks for authenticity must be done by {@link #isPasswordValid(String, String)} as encoding the
      * same password twice will result in different encoded passwords.
      *
-     * @param clearText the unencoded password
+     * @param rawPassword the unencoded password
      * @return the encoded password
      */
-    public String encodePassword(String clearText);
+    public String encodePassword(String rawPassword);
 
     /**
      * Use this to determine if passwords match using a {@link Customer} for salting. Don't encode the password separately since sometimes salts
