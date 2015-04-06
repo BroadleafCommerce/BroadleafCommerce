@@ -174,6 +174,12 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
+    @Column(name = "GATEWAY_TYPE")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Gateway_Type", order = 1000, gridOrder = 1000, prominent = true,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.payment.PaymentGatewayType")
+    protected String gatewayType;
+
     @Override
     public void setId(Long id) {
         this.id = id;
@@ -297,7 +303,7 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
 
     @Override
     public boolean isActive() {
-        return 'Y'!=getArchived();
+        return 'Y' != getArchived();
     }
 
     @Override
@@ -307,7 +313,7 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
         }
         archiveStatus.setArchived(archived);
     }
-    
+
     @Override
     public <G extends CustomerPayment> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
@@ -378,6 +384,14 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     @Override
     public void setActualExpiration(boolean actualExpiration) {
         this.actualExpiration = actualExpiration;
+    }
+
+    public String getGatewayType() {
+        return gatewayType;
+    }
+
+    public void setGatewayType(String gatewayType) {
+        this.gatewayType = gatewayType;
     }
 
 }
