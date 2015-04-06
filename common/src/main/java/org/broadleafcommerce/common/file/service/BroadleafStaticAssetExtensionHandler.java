@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce CMS Module
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2014 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,18 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
+package org.broadleafcommerce.common.file.service;
+
+import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.site.domain.Site;
+import org.springframework.ui.Model;
 
 /**
- * Factory that provide {@link org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction} instances
- * based on the type provided ({@link org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType}).
- *
- * @author Jeff Fischer
+ * @author Chris Kittrell (ckittrell)
  */
-public interface RestrictionFactory {
+public interface BroadleafStaticAssetExtensionHandler extends ExtensionHandler {
 
-    Restriction getRestriction(String type, String propertyId);
+    public ExtensionResultStatusType removeShareOptionsForMTStandardSite(Model model, Site currentSite);
 
 }

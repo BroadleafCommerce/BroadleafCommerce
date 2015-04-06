@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -63,7 +63,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public static String REPROCESS_PARAM_NAME = "REPROCESS_BLC_REQUEST";
     
     private static final String SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "site.strict.validate.production.changes";
-    public static final String USE_LEGACY_DEFAULT_CATEGORY_MODE = "use.legacy.default.category.mode";
 
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
@@ -92,9 +91,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     @Value("${" + SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":false}")
     protected boolean siteStrictValidateProductionChanges = false;
 
-    @Value("${" + USE_LEGACY_DEFAULT_CATEGORY_MODE + ":false}")
-    protected boolean useLegacyDefaultCategoryMode = false;
-
     @Resource(name = "blDeployBehaviorUtil")
     protected DeployBehaviorUtil deployBehaviorUtil;
     
@@ -105,7 +101,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public void process(WebRequest request) {
         BroadleafRequestContext brc = new BroadleafRequestContext();
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
-        brc.getAdditionalProperties().put(USE_LEGACY_DEFAULT_CATEGORY_MODE, useLegacyDefaultCategoryMode);
         
         Site site = siteResolver.resolveSite(request);
         
@@ -127,7 +122,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         Locale locale = localeResolver.resolveLocale(request);
         brc.setLocale(locale);
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
-        BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
+        BroadleafRequestedCurrencyDto currencyDto = currencyResolver.resolveCurrency(request);
         // Assumes BroadleafProcess
         RequestDTO requestDTO = (RequestDTO) request.getAttribute(REQUEST_DTO_PARAM_NAME, WebRequest.SCOPE_REQUEST);
         if (requestDTO == null) {
@@ -166,7 +161,11 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             previewSandBoxContext.setPreviewMode(true);
             SandBoxContext.setSandBoxContext(previewSandBoxContext);
         }
-        brc.setBroadleafCurrency(currency);
+        if (currencyDto != null) {
+            brc.setBroadleafCurrency(currencyDto.getCurrencyToUse());
+            brc.setRequestedBroadleafCurrency(currencyDto.getRequestedCurrency());
+        }
+
         brc.setSandBox(currentSandbox);
         brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
 

@@ -86,4 +86,100 @@ public class SearchFacetValueWrapper extends BaseWrapper implements APIWrapper<S
     public void wrapSummary(SearchFacetResultDTO model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    
+    /**
+     * @return the active
+     */
+    public Boolean getActive() {
+        return active;
+    }
+
+    
+    /**
+     * @param active the active to set
+     */
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    
+    /**
+     * @return the value
+     */
+    public String getValue() {
+        return value;
+    }
+
+    
+    /**
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    
+    /**
+     * @return the valueKey
+     */
+    public String getValueKey() {
+        return valueKey;
+    }
+
+    
+    /**
+     * @param valueKey the valueKey to set
+     */
+    public void setValueKey(String valueKey) {
+        this.valueKey = valueKey;
+    }
+
+    
+    /**
+     * @return the quantity
+     */
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    
+    /**
+     * @param quantity the quantity to set
+     */
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    
+    /**
+     * @return the minValue
+     */
+    public BigDecimal getMinValue() {
+        return minValue;
+    }
+
+    
+    /**
+     * @param minValue the minValue to set
+     */
+    public void setMinValue(BigDecimal minValue) {
+        this.minValue = minValue;
+    }
+
+    
+    /**
+     * @return the maxValue
+     */
+    public BigDecimal getMaxValue() {
+        return maxValue;
+    }
+
+    
+    /**
+     * @param maxValue the maxValue to set
+     */
+    public void setMaxValue(BigDecimal maxValue) {
+        this.maxValue = maxValue;
+    }
 }

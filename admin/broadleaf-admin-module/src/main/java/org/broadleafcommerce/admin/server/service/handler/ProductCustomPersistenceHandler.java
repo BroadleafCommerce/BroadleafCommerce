@@ -27,6 +27,8 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
@@ -243,8 +245,11 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     }
 
     protected Boolean isDefaultCategoryLegacyMode() {
-        return (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get
-                (BroadleafAdminRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE);
+        ParentCategoryLegacyModeService legacyModeService = ParentCategoryLegacyModeServiceImpl.getLegacyModeService();
+        if (legacyModeService != null) {
+            return legacyModeService.isLegacyMode();
+        }
+        return false;
     }
 
     protected Category getExistingDefaultCategory(Product product) {

@@ -87,4 +87,116 @@ public class AdjustmentWrapper extends BaseWrapper implements APIWrapper<Adjustm
     public void wrapSummary(Adjustment model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the offerid
+     */
+    public Long getOfferid() {
+        return offerid;
+    }
+
+    
+    /**
+     * @param offerid the offerid to set
+     */
+    public void setOfferid(Long offerid) {
+        this.offerid = offerid;
+    }
+
+    
+    /**
+     * @return the reason
+     */
+    public String getReason() {
+        return reason;
+    }
+
+    
+    /**
+     * @param reason the reason to set
+     */
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    
+    /**
+     * @return the marketingMessage
+     */
+    public String getMarketingMessage() {
+        return marketingMessage;
+    }
+
+    
+    /**
+     * @param marketingMessage the marketingMessage to set
+     */
+    public void setMarketingMessage(String marketingMessage) {
+        this.marketingMessage = marketingMessage;
+    }
+
+    
+    /**
+     * @return the adjustmentValue
+     */
+    public Money getAdjustmentValue() {
+        return adjustmentValue;
+    }
+
+    
+    /**
+     * @param adjustmentValue the adjustmentValue to set
+     */
+    public void setAdjustmentValue(Money adjustmentValue) {
+        this.adjustmentValue = adjustmentValue;
+    }
+
+    
+    /**
+     * @return the discountType
+     */
+    public String getDiscountType() {
+        return discountType;
+    }
+
+    
+    /**
+     * @param discountType the discountType to set
+     */
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
+    }
+
+    
+    /**
+     * @return the discountAmount
+     */
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+
+    
+    /**
+     * @param discountAmount the discountAmount to set
+     */
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
 }

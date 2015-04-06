@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,11 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
+package org.broadleafcommerce.common.service;
 
 /**
- * Factory that provide {@link org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction} instances
- * based on the type provided ({@link org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType}).
- *
  * @author Jeff Fischer
  */
-public interface RestrictionFactory {
-
-    Restriction getRestriction(String type, String propertyId);
-
+public interface ParentCategoryLegacyModeService {
+    boolean isLegacyMode();
 }

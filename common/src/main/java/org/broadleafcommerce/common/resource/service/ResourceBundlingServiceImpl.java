@@ -105,7 +105,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     
     protected Resource readBundle(String versionedBundleName) {
         File bundleFile = fileService.getResource(getResourcePath(versionedBundleName));
-        return new FileSystemResource(bundleFile);
+        return bundleFile == null ? null : new FileSystemResource(bundleFile);
     }
     
     /**

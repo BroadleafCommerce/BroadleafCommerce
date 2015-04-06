@@ -20,7 +20,6 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,8 +51,6 @@ import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.BroadleafRequestProcessor;
 import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -484,26 +481,34 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @Override
     @Deprecated
     public Category getDefaultCategory() {
-        if (isDefaultCategoryLegacyMode() || defaultCategory != null) {
-            return defaultCategory;
+        Category response = null;
+        if (defaultCategory != null) {
+            response = defaultCategory;
+            //TODO add code to look for a category via getCategory(), otherwise fall into the next block
+        } else {
+            List<CategoryProductXref> xrefs = getAllParentCategoryXrefs();
+            if (!CollectionUtils.isEmpty(xrefs)) {
+                for (CategoryProductXref xref : xrefs) {
+                    if (xref.getCategory().isActive()) {
+                        response = xref.getCategory();
+                        break;
+                    }
+                }
+            }
         }
-        Category response = getCategory();
         return response;
     }
 
     @Override
     @Deprecated
     public void setDefaultCategory(Category defaultCategory) {
-        if (isDefaultCategoryLegacyMode()) {
-            this.defaultCategory = defaultCategory;
-        } else {
-            setCategory(defaultCategory);
-        }
+        this.defaultCategory = defaultCategory;
     }
 
     @Override
     public Category getCategory() {
         if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
+            //TODO Use a isDefault field on the xref instead to check
             return allParentCategoryXrefs.get(0).getCategory();
         }
         return null;
@@ -511,6 +516,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
 
     @Override
     public void setCategory(Category category) {
+        //TODO Use a isDefault field on the xref
         if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
             allParentCategoryXrefs.get(0).setCategory(category);
         } else {
@@ -1027,11 +1033,4 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         return getUrl();
     }
 
-    protected Boolean isDefaultCategoryLegacyMode() {
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc != null) {
-            return BooleanUtils.isTrue((Boolean) brc.getAdditionalProperties().get(BroadleafRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE));
-        }
-        return false;
-    }
 }

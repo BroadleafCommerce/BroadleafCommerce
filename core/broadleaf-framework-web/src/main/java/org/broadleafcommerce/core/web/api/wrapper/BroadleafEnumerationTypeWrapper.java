@@ -53,4 +53,36 @@ public class BroadleafEnumerationTypeWrapper extends BaseWrapper implements APIW
     public void wrapSummary(BroadleafEnumerationType model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    
+    /**
+     * @return the friendlyName
+     */
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    
+    /**
+     * @param friendlyName the friendlyName to set
+     */
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+
+    
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
 }

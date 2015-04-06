@@ -26,7 +26,8 @@ import org.broadleafcommerce.admin.server.service.extension.CategoryCustomPersis
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
@@ -41,7 +42,6 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.web.filter.BroadleafAdminRequestProcessor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -176,7 +176,10 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     }
 
     protected Boolean isDefaultCategoryLegacyMode() {
-        return (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get
-                (BroadleafAdminRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE);
+        ParentCategoryLegacyModeService legacyModeService = ParentCategoryLegacyModeServiceImpl.getLegacyModeService();
+        if (legacyModeService != null) {
+            return legacyModeService.isLegacyMode();
+        }
+        return false;
     }
 }

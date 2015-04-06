@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.common.web;
 
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,8 +39,8 @@ public interface BroadleafCurrencyResolver {
      * @deprecated use {@link #resolveCurrency(WebRequest)} instead
      */
     @Deprecated
-    public BroadleafCurrency resolveCurrency(HttpServletRequest request);
+    public BroadleafRequestedCurrencyDto resolveCurrency(HttpServletRequest request);
     
-    public BroadleafCurrency resolveCurrency(WebRequest request);
+    public BroadleafRequestedCurrencyDto resolveCurrency(WebRequest request);
 
 }

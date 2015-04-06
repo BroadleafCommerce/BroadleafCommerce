@@ -17,7 +17,6 @@
  * limitations under the License.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.api.wrapper;
 
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
@@ -59,6 +58,38 @@ public class WeightWrapper implements APIWrapper<Weight>, APIUnwrapper<Weight> {
     @Override
     public void wrapSummary(Weight model, HttpServletRequest request) {
         wrapDetails(model, request);
+    }
+
+    
+    /**
+     * @return the weight
+     */
+    public BigDecimal getWeight() {
+        return weight;
+    }
+
+    
+    /**
+     * @param weight the weight to set
+     */
+    public void setWeight(BigDecimal weight) {
+        this.weight = weight;
+    }
+
+    
+    /**
+     * @return the unitOfMeasure
+     */
+    public String getUnitOfMeasure() {
+        return unitOfMeasure;
+    }
+
+    
+    /**
+     * @param unitOfMeasure the unitOfMeasure to set
+     */
+    public void setUnitOfMeasure(String unitOfMeasure) {
+        this.unitOfMeasure = unitOfMeasure;
     }
 
     @Override

@@ -106,7 +106,7 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             if (tmpPrefix.startsWith("/")) {
                 tmpPrefix = tmpPrefix.substring(1);
             }
-            return val.replaceAll("(?<=src=\").*?(?=" + tmpPrefix + ")", "/");
+            return val.replaceAll("(?<=src=\").*?(?=" + tmpPrefix + ")", "");
         }
         return val;
     }

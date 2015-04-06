@@ -63,4 +63,36 @@ public class ISOCountryWrapper extends BaseWrapper implements APIWrapper<ISOCoun
 
         return null;
     }
+
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    
+    /**
+     * @return the alpha2
+     */
+    public String getAlpha2() {
+        return alpha2;
+    }
+
+    
+    /**
+     * @param alpha2 the alpha2 to set
+     */
+    public void setAlpha2(String alpha2) {
+        this.alpha2 = alpha2;
+    }
 }
