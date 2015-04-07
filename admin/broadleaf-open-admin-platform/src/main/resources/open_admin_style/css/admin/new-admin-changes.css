@@ -26,3 +26,7 @@
     font-size: 11px;
     line-height: 15px;
 }
+
+.table-actions > button.button {
+    float: left;
+}

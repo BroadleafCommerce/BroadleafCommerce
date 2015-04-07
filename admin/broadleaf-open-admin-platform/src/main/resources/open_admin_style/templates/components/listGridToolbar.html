@@ -4,41 +4,38 @@
 <!--    hideActionButtons - if set to true, will not render the add/update/delete buttons -->
 </comment>
 
-<div class="listgrid-toolbar">
+<div class="table-actions">
 
     <div th:remove="tag"
-        th:if="${(hideActionButtons == null or hideActionButtons == 'false') and
-                 (listGrid.subCollectionFieldName != null)}">
+         th:if="${(hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
 
-        <ul class="inline-list small-spacing">
-            <li th:each="action : ${listGrid.activeToolbarActions}">
-                <button class="tiny radius dark button"
-                    type="button"
+        <!--<ul class="inline-list small-spacing">-->
+            <div th:each="action : ${listGrid.activeToolbarActions}" th:remove="tag">
+                <button class="button primary"
                     th:classappend="${action.buttonClass}"
                     th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-urlpostfix=${action.urlPostfix},
                              data-queryparams=${listGrid.sectionCrumbRepresentation}">
                     <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
                 </button>
-            </li>
+            </div>
 
-            <li style="color: #8495A5"
-                th:if="${#lists.size(listGrid.activeToolbarActions) > 0 and #lists.size(listGrid.activeRowActions) > 0}"
-                th:text="'|'" />
+            <!--<div style="color: #8495A5"-->
+                <!--th:if="${#lists.size(listGrid.activeToolbarActions) > 0 and #lists.size(listGrid.activeRowActions) > 0}"-->
+                <!--th:text="'|'" />-->
 
-            <li th:each="action : ${listGrid.activeRowActions}">
+            <div th:each="action : ${listGrid.activeRowActions}" th:remove="tag">
                 <button disabled="disabled"
-                    class="tiny radius dark row-action button"
-                    type="button"
+                    class="button disabled"
                     th:classappend="${action.buttonClass}"
                     th:attr="data-urlpostfix=${action.urlPostfix},
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-queryparams=${listGrid.sectionCrumbRepresentation}">
                     <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
                 </button>
-            </li>
+            </div>
 
-        </ul>
+        <!--</ul>-->
 
     </div>
 </div>

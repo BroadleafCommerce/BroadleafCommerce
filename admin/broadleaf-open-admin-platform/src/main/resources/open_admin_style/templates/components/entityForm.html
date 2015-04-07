@@ -10,8 +10,8 @@
 
 <div th:object="${entityForm}" th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
 
-    <div class="section-tabs tabs-container" th:if="${renderTabs}">
-        <ul class="nav nav-tabs tabs">
+    <div class="section-tabs" th:if="${renderTabs}">
+        <ul class="nav nav-tabs">
             <li th:each="tab : ${entityForm.tabs}"
                 th:class="${#ef.isTabActive(entityForm, tab)}? 'active'"
                 th:if="${tab.isVisible}"
