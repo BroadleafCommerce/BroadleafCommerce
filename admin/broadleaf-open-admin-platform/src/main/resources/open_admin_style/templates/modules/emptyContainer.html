@@ -1,15 +1,9 @@
-<div class="section-container" role="main">
-    <div th:substituteby="layout/partials/stickyHeader" />
+<div class="main-content" role="main">
+    <!--<div th:substituteby="layout/partials/stickyHeader" />-->
 
-    <section class="main">
-        <!--<div th:substituteby="layout/partials/headerFlash" />-->
-        <div th:substituteby="layout/partials/headerDetailedMsg" />
-        
-        <div class="row">
-            <div class="twelve columns">
-                <div id="sectionKey" th:text="${sectionKey}" style="display: none;" />
-                <div th:substituteby="${customView}" />
-            </div>
-        </div>
-    </section>
+    <!--<div th:substituteby="layout/partials/headerFlash" />-->
+    <div th:substituteby="layout/partials/headerDetailedMsg" />
+
+    <div id="sectionKey" th:text="${sectionKey}" style="display: none;" />
+    <div th:substituteby="${customView}" />
 </div>
