@@ -32,8 +32,18 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * The Class CategoryProductXrefImpl is the default implmentation of {@link Category}.
@@ -91,37 +101,59 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     @Column(name = "DISPLAY_ORDER", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected BigDecimal displayOrder;
+    
+    @Column(name = "DEFAULT_REFERENCE")
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    protected Boolean defaultReference;
 
+    @Override
     public BigDecimal getDisplayOrder() {
         return displayOrder;
     }
 
+    @Override
     public void setDisplayOrder(BigDecimal displayOrder) {
         this.displayOrder = displayOrder;
     }
 
+    @Override
     public Category getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(Category category) {
         this.category = category;
     }
 
+    @Override
     public Product getProduct() {
         return product;
     }
 
+    @Override
     public void setProduct(Product product) {
         this.product = product;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Override
+    public Boolean getDefaultReference() {
+        return defaultReference;
+    }
+    
+    @Override
+    public void setDefaultReference(Boolean defaultReference) {
+        this.defaultReference = defaultReference;
     }
 
     @Override

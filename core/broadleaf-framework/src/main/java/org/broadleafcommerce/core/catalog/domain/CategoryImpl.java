@@ -818,13 +818,11 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
-    @Deprecated
     public List<CategoryXref> getAllParentCategoryXrefs() {
         return allParentCategoryXrefs;
     }
 
     @Override
-    @Deprecated
     public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories) {
         this.allParentCategoryXrefs.clear();
         allParentCategoryXrefs.addAll(allParentCategories);
