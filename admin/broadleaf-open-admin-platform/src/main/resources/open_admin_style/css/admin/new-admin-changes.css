@@ -17,7 +17,10 @@
  * limitations under the License.
  * #L%
  */
-.app-content .content .site-bar .button{ line-height:14px; }
+
+.app-content .content .section-content.no-ribbon { padding-top: 45px; }
+.app-content .content .site-bar .button { line-height:14px; }
+.app-content .side-nav ul li a.active.logo { background-position-y: -90px }
 
 .button{
     font-size: 11px;

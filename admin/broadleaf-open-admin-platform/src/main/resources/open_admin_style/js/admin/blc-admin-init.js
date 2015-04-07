@@ -42,6 +42,7 @@
         $.fn.foundationClearing         ? $doc.foundationClearing() : null;
         $.fn.placeholder                ? $('input, textarea').placeholder() : null;
         $.fn.broadleafAccordion         ? $doc.broadleafAccordion() : null;
+        $.fn.broadleafNavigation        ? $doc.broadleafNavigation() : null;
         $.fn.broadleafListgrid          ? $doc.broadleafListgrid() : null;
     
         BLCAdmin.initializeFields();

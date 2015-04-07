@@ -1,24 +1,18 @@
 <div class="secondary-nav" style="display:  none">
     <blc_admin:admin_module resultVar="adminMenu" />
 
-    <ul>
-        <li class="blc-module" th:each="module : ${adminMenu.adminModules}" th:inline="text"
+        <div class="blc-module" th:each="module : ${adminMenu.adminModules}" th:inline="text"
             th:classappend="${currentAdminModule != null and currentAdminModule.id == module.id}? 'active'">
 
-            <h2 th:id="${module.moduleKey}" th:text="#{__${module.moduleKey}__}" style="display:  none"></h2>
+            <h2 th:id="${module.moduleKey}" th:text="#{__${module.moduleKey}__}"></h2>
 
-            <div class="content"
-                 th:style="${(currentAdminModule != null and currentAdminModule.id == module.id) ? '' : 'display: none;'}">
-                <ul>
-                    <li th:each="section : ${module.sections}"
-                        th:classappend="${(currentAdminSection != null) and (currentAdminSection.id == section.id) ? 'active' : ''}">
-                        <a blc_admin:admin_section_href="${section}">
-                            [[#{${section.sectionKey}}]]
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li>
-    </ul>
+            <ul class="nav-links">
+                <li th:each="section : ${module.sections}"
+                    th:classappend="${(currentAdminSection != null) and (currentAdminSection.id == section.id) ? 'active' : ''}">
+                    <a blc_admin:admin_section_href="${section}">
+                        [[#{${section.sectionKey}}]]
+                    </a>
+                </li>
+            </ul>
+        </div>
 </div>
-
