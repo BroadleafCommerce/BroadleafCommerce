@@ -115,6 +115,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -153,6 +154,22 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name = "blBasicPersistenceModuleExtensionManager")
     protected BasicPersistenceModuleExtensionManager extensionManager;
+
+    @PostConstruct
+    public void init() {
+        Collections.sort(fieldPersistenceProviders, new Comparator<FieldPersistenceProvider>() {
+            @Override
+            public int compare(FieldPersistenceProvider o1, FieldPersistenceProvider o2) {
+                return Integer.compare(o1.getOrder(), o2.getOrder());
+            }
+        });
+        Collections.sort(populateValidators, new Comparator<PopulateValueRequestValidator>() {
+            @Override
+            public int compare(PopulateValueRequestValidator o1, PopulateValueRequestValidator o2) {
+                return Integer.compare(o1.getOrder(), o2.getOrder());
+            }
+        });
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -336,13 +353,16 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             
                             if (attemptToPopulate) {
                                 try {
+                                    boolean isBreakDetected = false;
                                     for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                                        FieldProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
-                                        if (FieldProviderResponse.NOT_HANDLED != response) {
-                                            handled = true;
-                                        }
-                                        if (FieldProviderResponse.HANDLED_BREAK == response) {
-                                            break;
+                                        if (!isBreakDetected || fieldPersistenceProvider.alwaysRun()) {
+                                            FieldProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
+                                            if (FieldProviderResponse.NOT_HANDLED != response) {
+                                                handled = true;
+                                            }
+                                            if (FieldProviderResponse.HANDLED_BREAK == response) {
+                                                isBreakDetected = true;
+                                            }
                                         }
                                     }
                                     if (!handled) {
