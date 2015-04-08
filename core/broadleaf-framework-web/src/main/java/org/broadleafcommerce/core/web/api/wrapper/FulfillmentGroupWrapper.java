@@ -186,4 +186,164 @@ public class FulfillmentGroupWrapper extends BaseWrapper implements APIWrapper<F
 
         return fulfillmentGroupRequest;
     }
+
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the orderId
+     */
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    
+    /**
+     * @param orderId the orderId to set
+     */
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    
+    /**
+     * @return the fulfillmentType
+     */
+    public BroadleafEnumerationTypeWrapper getFulfillmentType() {
+        return fulfillmentType;
+    }
+
+    
+    /**
+     * @param fulfillmentType the fulfillmentType to set
+     */
+    public void setFulfillmentType(BroadleafEnumerationTypeWrapper fulfillmentType) {
+        this.fulfillmentType = fulfillmentType;
+    }
+
+    
+    /**
+     * @return the fulfillmentOption
+     */
+    public FulfillmentOptionWrapper getFulfillmentOption() {
+        return fulfillmentOption;
+    }
+
+    
+    /**
+     * @param fulfillmentOption the fulfillmentOption to set
+     */
+    public void setFulfillmentOption(FulfillmentOptionWrapper fulfillmentOption) {
+        this.fulfillmentOption = fulfillmentOption;
+    }
+
+    
+    /**
+     * @return the total
+     */
+    public Money getTotal() {
+        return total;
+    }
+
+    
+    /**
+     * @param total the total to set
+     */
+    public void setTotal(Money total) {
+        this.total = total;
+    }
+
+    
+    /**
+     * @return the address
+     */
+    public AddressWrapper getAddress() {
+        return address;
+    }
+
+    
+    /**
+     * @param address the address to set
+     */
+    public void setAddress(AddressWrapper address) {
+        this.address = address;
+    }
+
+    
+    /**
+     * @return the phone
+     */
+    public PhoneWrapper getPhone() {
+        return phone;
+    }
+
+    
+    /**
+     * @param phone the phone to set
+     */
+    public void setPhone(PhoneWrapper phone) {
+        this.phone = phone;
+    }
+
+    
+    /**
+     * @return the fulfillmentGroupAdjustments
+     */
+    public List<AdjustmentWrapper> getFulfillmentGroupAdjustments() {
+        return fulfillmentGroupAdjustments;
+    }
+
+    
+    /**
+     * @param fulfillmentGroupAdjustments the fulfillmentGroupAdjustments to set
+     */
+    public void setFulfillmentGroupAdjustments(List<AdjustmentWrapper> fulfillmentGroupAdjustments) {
+        this.fulfillmentGroupAdjustments = fulfillmentGroupAdjustments;
+    }
+
+    
+    /**
+     * @return the fulfillmentGroupItems
+     */
+    public List<FulfillmentGroupItemWrapper> getFulfillmentGroupItems() {
+        return fulfillmentGroupItems;
+    }
+
+    
+    /**
+     * @param fulfillmentGroupItems the fulfillmentGroupItems to set
+     */
+    public void setFulfillmentGroupItems(List<FulfillmentGroupItemWrapper> fulfillmentGroupItems) {
+        this.fulfillmentGroupItems = fulfillmentGroupItems;
+    }
+
+    
+    /**
+     * @return the taxDetails
+     */
+    public List<TaxDetailWrapper> getTaxDetails() {
+        return taxDetails;
+    }
+
+    
+    /**
+     * @param taxDetails the taxDetails to set
+     */
+    public void setTaxDetails(List<TaxDetailWrapper> taxDetails) {
+        this.taxDetails = taxDetails;
+    }
 }

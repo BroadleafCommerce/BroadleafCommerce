@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -150,8 +150,14 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         brc.setTimeZone(timeZone);
 
-        BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
-        brc.setBroadleafCurrency(currency);
+        // Note: The currencyResolver will set the currency on the BroadleafRequestContext but 
+        // later modules (specifically PriceListRequestProcessor in BLC enterprise) may override based
+        // on the desired currency.
+        BroadleafRequestedCurrencyDto dto = currencyResolver.resolveCurrency(request);
+        if (dto != null) {
+            brc.setBroadleafCurrency(dto.getCurrencyToUse());
+            brc.setRequestedBroadleafCurrency(dto.getRequestedCurrency());
+        }
 
         prepareSandBox(request, brc);
         prepareProfile(request, brc);

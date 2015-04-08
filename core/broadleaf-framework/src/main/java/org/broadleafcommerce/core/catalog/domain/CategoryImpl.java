@@ -250,8 +250,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
     @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 4000,
-            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing)
+            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General)
     @AdminPresentationToOneLookup()
+    @Deprecated
     protected Category defaultParentCategory;
 
     @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "category", orphanRemoval = true,
@@ -601,10 +602,12 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
+    @Deprecated
     public Category getDefaultParentCategory() {
         Category response = null;
         if (defaultParentCategory != null) {
             response = defaultParentCategory;
+            //TODO add code to look for a category via getParentCategory(), otherwise fall into the next block
         } else {
             List<CategoryXref> xrefs = getAllParentCategoryXrefs();
             if (!CollectionUtils.isEmpty(xrefs)) {
@@ -620,8 +623,31 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
+    @Deprecated
     public void setDefaultParentCategory(Category defaultParentCategory) {
         this.defaultParentCategory = defaultParentCategory;
+    }
+
+    @Override
+    public Category getParentCategory() {
+        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
+            //TODO Use a isDefault field on the xref instead to check
+            return allParentCategoryXrefs.get(0).getCategory();
+        }
+        return null;
+    }
+
+    @Override
+    public void setParentCategory(Category category) {
+        //TODO Use a isDefault field on the xref
+        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
+            allParentCategoryXrefs.get(0).setCategory(category);
+        } else {
+            CategoryXref xref = new CategoryXrefImpl();
+            xref.setSubCategory(this);
+            xref.setCategory(category);
+            allParentCategoryXrefs.add(xref);
+        }
     }
 
     @Override
@@ -792,11 +818,13 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
+    @Deprecated
     public List<CategoryXref> getAllParentCategoryXrefs() {
         return allParentCategoryXrefs;
     }
 
     @Override
+    @Deprecated
     public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories) {
         this.allParentCategoryXrefs.clear();
         allParentCategoryXrefs.addAll(allParentCategories);

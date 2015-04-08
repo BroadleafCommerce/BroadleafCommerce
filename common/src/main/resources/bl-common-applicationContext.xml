@@ -28,6 +28,9 @@
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common"/>
+    
+    <!-- Override Spring's default ApplicationEventMultiCaster with one that is a little smarter about asynchronous -->
+    <bean id="applicationEventMulticaster" class="org.broadleafcommerce.common.event.BroadleafApplicationEventMulticaster"/>
 
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
         <property name="xsrfProtectionEnabled" value="${exploitProtection.xsrfEnabled}" />

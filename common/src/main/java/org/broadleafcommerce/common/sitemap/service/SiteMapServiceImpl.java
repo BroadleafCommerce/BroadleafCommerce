@@ -58,6 +58,8 @@ import javax.annotation.Resource;
 public class SiteMapServiceImpl implements SiteMapService {
 
     protected static final Log LOG = LogFactory.getLog(SiteMapServiceImpl.class);
+    
+    protected static final String ENCODING_EXTENSION = ".gz";
 
     protected Boolean gzipSiteMapFiles;
 
@@ -113,6 +115,13 @@ public class SiteMapServiceImpl implements SiteMapService {
         siteMapBuilder.persistSiteMap();
         if (getGzipSiteMapFiles()) {
             gzipAndDeleteFiles(fileWorkArea, siteMapBuilder.getIndexedFileNames());
+            List<String> indexFileNames = new ArrayList<String>();
+            for (String fileName: siteMapBuilder.getIndexedFileNames()) {
+                indexFileNames.add(fileName + ENCODING_EXTENSION);
+            }
+            smgr.setSiteMapFilePaths(indexFileNames);
+        } else {
+            smgr.setSiteMapFilePaths(siteMapBuilder.getIndexedFileNames());
         }
 
 
@@ -204,7 +213,7 @@ public class SiteMapServiceImpl implements SiteMapService {
                 String fileNameWithPath = FilenameUtils.normalize(fileWorkArea.getFilePathLocation() + File.separator + fileName);
 
                 FileInputStream fis = new FileInputStream(fileNameWithPath);
-                FileOutputStream fos = new FileOutputStream(fileNameWithPath + ".gz");
+                FileOutputStream fos = new FileOutputStream(fileNameWithPath + ENCODING_EXTENSION);
                 GZIPOutputStream gzipOS = new GZIPOutputStream(fos);
                 byte[] buffer = new byte[1024];
                 int len;

@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.structure.dto;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,5 +129,24 @@ public class StructuredContentDTO implements Serializable {
 
     public void setItemCriteriaDTOList(List<ItemCriteriaDTO> itemCriteriaDTOList) {
         this.itemCriteriaDTOList = itemCriteriaDTOList;
+    }
+
+    public StructuredContentDTO getClone() {
+        StructuredContentDTO clonedDto = new StructuredContentDTO();
+        clonedDto.setId(id);
+        clonedDto.setContentName(contentName);
+        clonedDto.setContentType(contentType);
+        clonedDto.setLocaleCode(localeCode);
+        clonedDto.setPriority(priority);
+        clonedDto.setValues(new HashMap<String, Object>(values));
+        clonedDto.setRuleExpression(ruleExpression);
+        if (itemCriteriaDTOList != null) {
+            List<ItemCriteriaDTO> itemCriteriaDTOs = new ArrayList<ItemCriteriaDTO>();
+            for (ItemCriteriaDTO itemCriteriaDto : itemCriteriaDTOList) {
+                itemCriteriaDTOs.add(itemCriteriaDto.getClone());
+            }
+            clonedDto.setItemCriteriaDTOList(itemCriteriaDTOs);
+        }
+        return clonedDto;
     }
 }

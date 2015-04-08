@@ -21,6 +21,7 @@ package org.broadleafcommerce.test;
 
 import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;

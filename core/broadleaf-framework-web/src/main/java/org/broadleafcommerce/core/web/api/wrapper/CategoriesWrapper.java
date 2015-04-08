@@ -53,4 +53,20 @@ public class CategoriesWrapper extends BaseWrapper implements APIWrapper<List<Ca
     public void wrapSummary(List<Category> cats, HttpServletRequest request) {
         wrapDetails(cats, request);
     }
+
+    
+    /**
+     * @return the categories
+     */
+    public List<CategoryWrapper> getCategories() {
+        return categories;
+    }
+
+    
+    /**
+     * @param categories the categories to set
+     */
+    public void setCategories(List<CategoryWrapper> categories) {
+        this.categories = categories;
+    }
 }

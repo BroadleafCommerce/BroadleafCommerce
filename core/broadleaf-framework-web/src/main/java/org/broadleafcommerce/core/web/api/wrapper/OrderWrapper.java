@@ -178,5 +178,213 @@ public class OrderWrapper extends BaseWrapper implements APIWrapper<Order> {
         wrapDetails(model, request);
     }
 
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    
+    /**
+     * @return the totalTax
+     */
+    public Money getTotalTax() {
+        return totalTax;
+    }
+
+    
+    /**
+     * @param totalTax the totalTax to set
+     */
+    public void setTotalTax(Money totalTax) {
+        this.totalTax = totalTax;
+    }
+
+    
+    /**
+     * @return the totalShipping
+     */
+    public Money getTotalShipping() {
+        return totalShipping;
+    }
+
+    
+    /**
+     * @param totalShipping the totalShipping to set
+     */
+    public void setTotalShipping(Money totalShipping) {
+        this.totalShipping = totalShipping;
+    }
+
+    
+    /**
+     * @return the subTotal
+     */
+    public Money getSubTotal() {
+        return subTotal;
+    }
+
+    
+    /**
+     * @param subTotal the subTotal to set
+     */
+    public void setSubTotal(Money subTotal) {
+        this.subTotal = subTotal;
+    }
+
+    
+    /**
+     * @return the total
+     */
+    public Money getTotal() {
+        return total;
+    }
+
+    
+    /**
+     * @param total the total to set
+     */
+    public void setTotal(Money total) {
+        this.total = total;
+    }
+
+    
+    /**
+     * @return the customer
+     */
+    public CustomerWrapper getCustomer() {
+        return customer;
+    }
+
+    
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(CustomerWrapper customer) {
+        this.customer = customer;
+    }
+
+    
+    /**
+     * @return the orderItems
+     */
+    public List<OrderItemWrapper> getOrderItems() {
+        return orderItems;
+    }
+
+    
+    /**
+     * @param orderItems the orderItems to set
+     */
+    public void setOrderItems(List<OrderItemWrapper> orderItems) {
+        this.orderItems = orderItems;
+    }
+
+    
+    /**
+     * @return the fulfillmentGroups
+     */
+    public List<FulfillmentGroupWrapper> getFulfillmentGroups() {
+        return fulfillmentGroups;
+    }
+
+    
+    /**
+     * @param fulfillmentGroups the fulfillmentGroups to set
+     */
+    public void setFulfillmentGroups(List<FulfillmentGroupWrapper> fulfillmentGroups) {
+        this.fulfillmentGroups = fulfillmentGroups;
+    }
+
+    
+    /**
+     * @return the payments
+     */
+    public List<OrderPaymentWrapper> getPayments() {
+        return payments;
+    }
+
+    
+    /**
+     * @param payments the payments to set
+     */
+    public void setPayments(List<OrderPaymentWrapper> payments) {
+        this.payments = payments;
+    }
+
+    
+    /**
+     * @return the orderAdjustments
+     */
+    public List<AdjustmentWrapper> getOrderAdjustments() {
+        return orderAdjustments;
+    }
+
+    
+    /**
+     * @param orderAdjustments the orderAdjustments to set
+     */
+    public void setOrderAdjustments(List<AdjustmentWrapper> orderAdjustments) {
+        this.orderAdjustments = orderAdjustments;
+    }
+
+    
+    /**
+     * @return the orderAttributes
+     */
+    public List<OrderAttributeWrapper> getOrderAttributes() {
+        return orderAttributes;
+    }
+
+    
+    /**
+     * @param orderAttributes the orderAttributes to set
+     */
+    public void setOrderAttributes(List<OrderAttributeWrapper> orderAttributes) {
+        this.orderAttributes = orderAttributes;
+    }
+
+    
+    /**
+     * @return the cartMessages
+     */
+    public List<CartMessageWrapper> getCartMessages() {
+        return cartMessages;
+    }
+
+    
+    /**
+     * @param cartMessages the cartMessages to set
+     */
+    public void setCartMessages(List<CartMessageWrapper> cartMessages) {
+        this.cartMessages = cartMessages;
+    }
+
 
 }

@@ -25,11 +25,12 @@ import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  * @author Jeff Fischer
@@ -81,5 +82,10 @@ public abstract class AbstractFieldPersistenceProvider implements FieldPersisten
             info.setOneToManyTargetEntity(oneToMany.targetEntity().getName());
         }
         return info;
+    }
+
+    @Override
+    public boolean alwaysRun() {
+        return false;
     }
 }

@@ -19,26 +19,12 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.convert.inheritance;
 
-import javassist.ClassPool;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.EnumMemberValue;
-import javassist.bytecode.annotation.IntegerMemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.AbstractClassTransformer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
-
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,6 +36,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+
+import javassist.ClassPool;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.EnumMemberValue;
+import javassist.bytecode.annotation.IntegerMemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
+
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 /**
  * 
@@ -63,6 +63,7 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
     private static final Log LOG = LogFactory.getLog(SingleTableInheritanceClassTransformer.class);
     protected List<SingleTableInheritanceInfo> infos = new ArrayList<SingleTableInheritanceInfo>();
 
+    @Override
     public void compileJPAProperties(Properties props, Object key) throws Exception {
         if (((String) key).equals(SINGLE_TABLE_ENTITIES)) {
             String[] classes = StringUtils.tokenizeToStringArray(props.getProperty((String) key), ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
@@ -94,7 +95,13 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
         }
     }
 
+    @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
+        if (className == null) {
+            return null;
+        }
+        
         if (infos.isEmpty()) {
             return null;
         }

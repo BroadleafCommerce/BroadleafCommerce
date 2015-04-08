@@ -82,4 +82,7 @@ public interface SandBoxService {
      */
     public List<SandBox> retrieveAllUserSandBoxes(Long authorId);
 
+    public void archiveChildSandboxes(Long parentSandBoxId);
+
+    public List<SandBox> retrieveChildSandBoxesByParentId(Long parentSandBoxId);
 }

@@ -120,15 +120,15 @@ $(document).ready(function() {
         $(errorBlock).insertBefore("form.entity-form div.tabs-container");
         $.each( data.errors , function( idx, error ){
             if (error.errorType == "field") {
-                var fieldLabel = $("#field-" + error.field).children(".field-label");
+                var fieldLabel = $("#field-" + error.field).find(".field-label");
 
                 var fieldHtml = "<span class='fieldError error'>SUBSTITUTE</span>";
                 if ($(".tabError:contains(" + error.tab + ")").length) {
-                    var labeledError = fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message);
+                    var labeledError = fieldHtml.replace('SUBSTITUTE', (fieldLabel.length > 0 ? fieldLabel[0].innerHTML + ': ' : '') + error.message);
                     $(".tabError:contains(" + error.tab + ")").append(labeledError);
                 } else {
                     var labeledError = "<div class='tabError'><b>" + error.tab +
-                        "</b>" + fieldHtml.replace('SUBSTITUTE', fieldLabel[0].innerHTML + ": " + error.message) + "</div>";
+                        "</b>" + fieldHtml.replace('SUBSTITUTE', (fieldLabel.length > 0 ? fieldLabel[0].innerHTML + ': ' : '') + error.message) + "</div>";
                     $(".errors").append(labeledError);
                 }
 

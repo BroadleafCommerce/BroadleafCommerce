@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -79,19 +80,41 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
     public void setName(@Nonnull String name);
 
     /**
-     * Gets the default parent category.
-     * 
+     * Gets the default parent category. This method will delegate to
+     * {@link #getParentCategory()} by default, unless the "use.legacy.default.category.mode" property is set to
+     * true in the implementation's property file. If set to true, this method will use legacy behavior,
+     * which is to return the deprecated defaultParentCategory field.
+     *
+     * @deprecated use {@link #getParentCategory()} instead
      * @return the default parent category
      */
     @Nullable
     public Category getDefaultParentCategory();
 
     /**
-     * Sets the default parent category.
-     * 
+     * Sets the default parent category. This method will delegate to
+     * {@link #setParentCategory(Category)} by default, unless the "use.legacy.default.category.mode" property is set to
+     * true in the implementation's property file. If set to true, this method will use legacy behavior,
+     * which is to set the deprecated defaultParentCategory field.
+     *
+     * @deprecated use {@link #setParentCategory(Category)} instead
      * @param defaultParentCategory the new default parent category
      */
     public void setDefaultParentCategory(@Nullable Category defaultParentCategory);
+
+    /**
+     * Return the category that is the parent of this category - if applicable
+     *
+     * @return
+     */
+    Category getParentCategory();
+
+    /**
+     * Set the parent category of this category
+     *
+     * @param category
+     */
+    void setParentCategory(Category category);
 
     /**
      * Gets the url. The url represents the presentation layer destination for
@@ -606,9 +629,26 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
 
     public void setAllChildCategoryXrefs(List<CategoryXref> childCategories);
 
-
+    /**
+     * Retrieve all the xref entities linking this category to parent categories
+     *
+     * @deprecated Use {@link #getParentCategory()} instead. The API is moving to a single parent category model. Implementations
+     * interested in managing multiple parent category references should introduce a new custom collection in a Category
+     * subclass to manage the additional associations.
+     * @return
+     */
+    @Deprecated
     public List<CategoryXref> getAllParentCategoryXrefs();
 
+    /**
+     * Set all the xref entities linking this product to parent categories
+     *
+     * @deprecated User {@link #setParentCategory(Category)} instead. The API is moving to a single parent category model. Implementations
+     * interested in managing multiple parent category references should introduce a new custom collection in a Category
+     * subclass to manage the additional associations.
+     * @param allParentCategories
+     */
+    @Deprecated
     public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories);
 
     /**

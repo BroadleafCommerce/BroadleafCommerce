@@ -19,19 +19,13 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
- * Marker annotation for entity classes whose SITE_DISCRIMINATOR value should be harvested from the
+ * Marker interface for entity classes whose SITE_DISCRIMINATOR value should be harvested from the
  * {@link org.broadleafcommerce.common.web.BroadleafRequestContext#currentProfile} value
  *
- * @author Jeff Fischer
+ * @author Brandon Smith
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface ProfileEntity {
+public interface ProfileEntity {
 
 }

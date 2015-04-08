@@ -64,7 +64,26 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
 
     @Override
     public StaticAsset readStaticAssetById(Long id) {
-        return em.find(StaticAssetImpl.class, id);
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<StaticAsset> criteria = builder.createQuery(StaticAsset.class);
+        Root<StaticAssetImpl> handler = criteria.from(StaticAssetImpl.class);
+        criteria.select(handler);
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(handler.get("id"), id));
+
+        if (queryExtensionManager != null) {
+            queryExtensionManager.getProxy().setup(StaticAssetImpl.class, null);
+            queryExtensionManager.getProxy().refineRetrieve(StaticAssetImpl.class, null, builder, criteria, handler, restrictions);
+        }
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+
+        TypedQuery<StaticAsset> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        List<StaticAsset> response = query.getResultList();
+        if (response.size() > 0) {
+            return response.get(0);
+        }
+        return null;
     }
     
     public List<StaticAsset> readAllStaticAssets() {
@@ -72,7 +91,15 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
         CriteriaQuery<StaticAsset> criteria = builder.createQuery(StaticAsset.class);
         Root<StaticAssetImpl> handler = criteria.from(StaticAssetImpl.class);
         criteria.select(handler);
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Order> sorts = new ArrayList<Order>();
         try {
+            if (queryExtensionManager != null) {
+                queryExtensionManager.getProxy().setup(StaticAssetImpl.class, null);
+                queryExtensionManager.getProxy().refineRetrieve(StaticAssetImpl.class, null, builder, criteria, handler, restrictions);
+                queryExtensionManager.getProxy().refineOrder(StaticAssetImpl.class, null, builder, criteria, handler, sorts);
+            }
+            criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
             return em.createQuery(criteria).getResultList();
         } catch (NoResultException e) {
             return new ArrayList<StaticAsset>();

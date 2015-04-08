@@ -72,8 +72,7 @@ import javax.persistence.Transient;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@ProfileEntity
-public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
+public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileEntity {
 
     private static final Log LOG = LogFactory.getLog(PageTemplateImpl.class);
     private static final long serialVersionUID = 1L;

@@ -54,7 +54,7 @@
         maxElementsInMemory="5000"
         eternal="false"
         overflowToDisk="true"
-        timeToLiveSeconds="3600"/>
+        timeToLiveSeconds="3600"/>             
     
     <!--  URLHandlerCache -->
     <cache name="cmsUrlHandlerCache"

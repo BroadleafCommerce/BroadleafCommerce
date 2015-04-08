@@ -202,7 +202,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
         //Set the Credit Card Info on the Additional Fields Map
         if (PaymentType.CREDIT_CARD.equals(responseDTO.getPaymentType()) &&
-                responseDTO.getCreditCard().creditCardPopulated()) {
+                responseDTO.getCreditCard() != null && responseDTO.getCreditCard().creditCardPopulated()) {
 
             transaction.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(),
                     responseDTO.getCreditCard().getCreditCardHolderName());

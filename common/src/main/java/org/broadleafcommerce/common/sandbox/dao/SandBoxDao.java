@@ -63,4 +63,7 @@ public interface SandBoxDao {
     @Deprecated
     List<SandBox> retrieveAllUserSandBoxes(Long authorId);
 
+    SandBox merge(SandBox userSandBox);
+
+    List<SandBox> retrieveChildSandBoxesByParentId(Long parentSandBoxId);
 }

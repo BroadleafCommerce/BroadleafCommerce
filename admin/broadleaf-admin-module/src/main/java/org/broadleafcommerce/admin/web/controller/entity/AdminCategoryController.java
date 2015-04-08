@@ -118,5 +118,9 @@ public class AdminCategoryController extends AdminBasicEntityController {
         model.addAttribute("viewType", "categoryTree");
         return "modules/defaultContainer";
     }
-    
+
+    @Override
+    public String[] getSectionCustomCriteria() {
+            return new String[]{"categoryDirectEdit"};
+        }
 }

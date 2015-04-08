@@ -57,8 +57,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@ProfileEntity
-public class PageItemCriteriaImpl implements PageItemCriteria {
+public class PageItemCriteriaImpl implements PageItemCriteria, ProfileEntity {
     
     public static final long serialVersionUID = 1L;
 

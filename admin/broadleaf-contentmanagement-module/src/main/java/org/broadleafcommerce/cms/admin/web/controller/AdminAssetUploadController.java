@@ -75,6 +75,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
     @Resource(name = "blAdminAssetController")
     protected AdminAssetController assetController;
 
+
     @RequestMapping(value = "/{id}/chooseAsset", method = RequestMethod.GET)
     public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model, 
             @PathVariable(value = "sectionKey") String sectionKey, 
@@ -163,6 +164,24 @@ public class AdminAssetUploadController extends AdminAbstractController {
         }
         
         return "redirect:/assets/" + staticAsset.getId();
-    }    
+    }
 
+    @RequestMapping(value = "/{addlSectionKey}/{id}/chooseAsset", method = RequestMethod.GET)
+    public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable(value = "sectionKey") String sectionKey,
+            @PathVariable(value = "addlSectionKey") String addlSectionKey,
+            @PathVariable(value = "id") String id,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+        return chooseMediaForMapKey(request, response, model, sectionKey, id, requestParams);
+    }
+
+    @RequestMapping(value = "/{addlSectionKey}/{id}/uploadAsset",
+            method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> upload(HttpServletRequest request,
+            @RequestParam("file") MultipartFile file,            
+            @PathVariable(value = "sectionKey") String sectionKey,
+            @PathVariable(value = "addlSectionKey") String addlSectionKey,
+            @PathVariable(value = "id") String id) throws IOException {
+        return upload(request, file, sectionKey, id);
+    }
 }

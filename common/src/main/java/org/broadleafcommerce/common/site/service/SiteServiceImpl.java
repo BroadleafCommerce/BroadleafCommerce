@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.site.service;
 import org.broadleafcommerce.common.site.dao.SiteDao;
 import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.TransactionUtils;
@@ -112,16 +113,20 @@ public class SiteServiceImpl implements SiteService {
             @Override
             public void execute() throws Throwable {
                 String domainPrefix = null;
+                String domain = domainName;
                 if (domainName != null) {
                     int pos = domainName.indexOf('.');
                     if (pos >= 0) {
                         domainPrefix = domainName.substring(0, pos);
+                        if (stripSubdomain(domainPrefix)) {
+                            domain = domainName.substring(domainPrefix.length() + 1);
+                        }
                     } else {
                         domainPrefix = domainName;
                     }
                 }
                 
-                Site site = siteDao.retrieveSiteByDomainOrDomainPrefix(domainName, domainPrefix);
+                Site site = siteDao.retrieveSiteByDomainOrDomainPrefix(domain, domainPrefix);
                 if (persistentResult) {
                     response[0] = site;
                 } else {
@@ -133,7 +138,28 @@ public class SiteServiceImpl implements SiteService {
 
         return response[0];
     }
-    
+
+    /**
+     * Checks whether the provided subdomain is one to be stripped/removed from the full domain name
+     *
+     * @param subDomain
+     * @return boolean if subdomain is a candiate to be removed - true indicates it is eligible to be removed
+     */
+    protected boolean stripSubdomain(String subDomain) {
+        if (subDomain != null) {
+            String propStripPrefixes = BLCSystemProperty.resolveSystemProperty("site.domain.resolver.strip.subdomains");
+            if (propStripPrefixes != null) {
+                String[] prefixes = propStripPrefixes.split(",");
+                for(String prefix : prefixes) {
+                    if (subDomain.equals(prefix)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     @Deprecated
     @Transactional("blTransactionManager")

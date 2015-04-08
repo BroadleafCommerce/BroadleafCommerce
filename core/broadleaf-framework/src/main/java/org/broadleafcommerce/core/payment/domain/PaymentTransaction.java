@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.payment.domain;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.profile.core.domain.AdditionalFields;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 /**
@@ -54,7 +56,7 @@ import org.broadleafcommerce.profile.core.domain.Customer;
  * or {@link PaymentTransactionType#AUTHORIZE_AND_CAPTURE}.</p> * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public interface PaymentTransaction extends Serializable, Status {
+public interface PaymentTransaction extends Serializable, Status, AdditionalFields {
 
     public Long getId();
 
@@ -71,7 +73,7 @@ public interface PaymentTransaction extends Serializable, Status {
      * Sets the overall payment that this transaction applies to
      */
     public void setOrderPayment(OrderPayment payment);
-    
+
     /**
      * Transactions can have a parent-child relationship for modifying transactions that can occur. Examples of this:
      * <ul>
@@ -118,7 +120,7 @@ public interface PaymentTransaction extends Serializable, Status {
      * Sets the date that this transaction was made on
      */
     public void setDate(Date date);
-    
+
     /**
      * Gets the {@link Customer} IP address that instigated this transaction. This is an optional field
      */
@@ -128,7 +130,7 @@ public interface PaymentTransaction extends Serializable, Status {
      * Sets the {@link Customer} IP address that instigated the transaction. This is an optional field.
      */
     public void setCustomerIpAddress(String customerIpAddress);
-    
+
     /**
      * Gets the string-representation of the serialized response from the gateway. This is usually the complete request
      * parameter map serialized in string form.
@@ -139,7 +141,7 @@ public interface PaymentTransaction extends Serializable, Status {
      * Sets the raw response that was returned from the gateway.
      */
     public void setRawResponse(String rawResponse);
-    
+
     /**
      * Gets whether or not this transaction was successful. There are multiple reasons that a transaction could be
      * unsuccessful such as failed credit card processing or any other errors from the gateway.
@@ -147,7 +149,7 @@ public interface PaymentTransaction extends Serializable, Status {
     public Boolean getSuccess();
 
     public void setSuccess(Boolean success);
-    
+
     /**
      * @see {@link PaymentAdditionalFieldType}
      */

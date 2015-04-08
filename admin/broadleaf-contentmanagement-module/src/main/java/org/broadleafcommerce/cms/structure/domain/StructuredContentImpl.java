@@ -107,8 +107,7 @@ import javax.persistence.Transient;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-@ProfileEntity
-public class StructuredContentImpl implements StructuredContent, AdminMainEntity {
+public class StructuredContentImpl implements StructuredContent, AdminMainEntity, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -227,7 +226,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "key")
     @BatchSize(size = 20)
-    @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
     @ClonePolicyMapOverride
     @ClonePolicyArchive
     protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<String, StructuredContentFieldXref>();

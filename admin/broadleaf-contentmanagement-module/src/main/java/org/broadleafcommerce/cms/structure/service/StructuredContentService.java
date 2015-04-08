@@ -24,6 +24,7 @@ import net.sf.ehcache.Cache;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.structure.dto.StructuredContentDTO;
 import org.hibernate.Criteria;
@@ -194,6 +195,19 @@ public interface StructuredContentService {
 
     Cache getStructuredContentCache();
 
+    /**
+     * Converts a StructuredContent into a StructuredContentDTO.   If the item contains fields with
+     * broadleaf cms urls, the urls are converted to utilize the domain.
+     * 
+     * The StructuredContentDTO is built via the {@link EntityConfiguration}. To override the actual type that is returned,
+     * include an override in an applicationContext like any other entity override.
+     * 
+     * @param sc
+     * @param secure
+     * @return
+     */
+    StructuredContentDTO buildStructuredContentDTO(StructuredContent sc, boolean secure);
+
 
     public void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList);
 
@@ -204,18 +218,6 @@ public interface StructuredContentService {
     public List<StructuredContentDTO> getStructuredContentListFromCache(String key);
 
     public void removeItemFromCache(String nameKey, String typeKey);
-
-    /**
-     * {@link StructuredContentDTO} objects are sometimes cached in the StructuredContentService. Furthermore, this cached
-     * version contains information about the kind of value the DTO might hold. In the cases where the value is a foreign
-     * key lookup, we want to get the object that it represents and set that as the internal value. However, since these
-     * DTOs are not Hibernate entities and are possibly stored in a cache, we need to load the target object on each request
-     * to avoid lazy initialization exceptions. This method performs that hydration.
-     * 
-     * @param dtos
-     * @return the same list that was passed in
-     */
-    public List<StructuredContentDTO> hydrateForeignLookups(List<StructuredContentDTO> dtos);
 
     /**
      * Converts a list of StructuredContent objects into their corresponding {@link StructuredContentDTO}s. This method 
