@@ -135,4 +135,8 @@ public interface CustomerPayment extends Status, Serializable, AdditionalFields,
     public String getGatewayType();
 
     public void setGatewayType(String gatewayType);
+
+    public String getPaymentGatewayType();
+
+    public void setPaymentGatewayType(String paymentGatewayType);
 }

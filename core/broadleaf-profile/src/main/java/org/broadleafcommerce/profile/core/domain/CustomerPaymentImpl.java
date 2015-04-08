@@ -144,6 +144,12 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             prominent = false)
     protected String cardType;
 
+    @Column(name = "PAYMENT_GATEWAY_TYPE")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Gateway_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.payment.PaymentGatewayType",
+            prominent = false)
+    protected String paymentGatewayType;
+
     @Column(name = "LAST_EXPIRATION_NOTIFICATION")
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Last_Expiration_Notification", order = 1001)
     protected Date lastExpirationNotification;
@@ -392,6 +398,14 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
 
     public void setGatewayType(String gatewayType) {
         this.gatewayType = gatewayType;
+    }
+
+    public String getPaymentGatewayType() {
+        return paymentGatewayType;
+    }
+
+    public void setPaymentGatewayType(String paymentGatewayType) {
+        this.paymentGatewayType = paymentGatewayType;
     }
 
 }
