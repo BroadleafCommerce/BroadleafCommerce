@@ -107,6 +107,25 @@ public class FieldDaoImpl implements FieldDao {
         return query.getResultList();
     }
 
+    @Override
+    public List<Field> readFieldsByEntityType(FieldEntity entityType) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
+
+        Root<FieldImpl> root = criteria.from(FieldImpl.class);
+
+        criteria.select(root);
+        criteria.where(
+                builder.equal(root.get("entityType").as(String.class), entityType.getType())
+                );
+
+        TypedQuery<Field> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
     public Field save(Field field) {
         return em.merge(field);
     }
