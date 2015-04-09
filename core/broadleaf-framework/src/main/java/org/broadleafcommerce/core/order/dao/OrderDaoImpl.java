@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.dao;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -39,6 +40,7 @@ import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
@@ -107,6 +109,31 @@ public class OrderDaoImpl implements OrderDao {
         criteria.where(order.get("id").as(Long.class).in(orderIds));
 
         TypedQuery<Order> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Order> readBatchOrders(int start, int pageSize, List<OrderStatus> statuses) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+
+        if (CollectionUtils.isNotEmpty(statuses)) {
+            // We only want results that match the orders with the correct status
+            ArrayList<String> statusStrings = new ArrayList<String>();
+            for (OrderStatus status : statuses) {
+                statusStrings.add(status.getType());
+            }
+            criteria.where(order.get("status").as(String.class).in(statusStrings));
+        }
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setFirstResult(start);
+        query.setMaxResults(pageSize);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
 
