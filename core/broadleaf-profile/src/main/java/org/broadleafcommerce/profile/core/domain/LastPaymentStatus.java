@@ -40,7 +40,6 @@ public class LastPaymentStatus implements Serializable, BroadleafEnumerationType
 
     public static final LastPaymentStatus OK = new LastPaymentStatus("1", "OK");
     public static final LastPaymentStatus ERROR = new LastPaymentStatus("2", "Error");
-    public static final LastPaymentStatus UNKNOWN = new LastPaymentStatus("3", "Unknown");    
 
     public static LastPaymentStatus getInstance(final String type) {
         return TYPES.get(type);
