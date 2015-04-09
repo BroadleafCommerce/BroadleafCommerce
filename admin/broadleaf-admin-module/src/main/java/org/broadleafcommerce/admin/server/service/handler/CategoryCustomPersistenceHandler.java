@@ -45,6 +45,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -138,11 +139,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             }
             if (!handled) {
                 Category existingDefaultParentCategory = getExistingDefaultParentCategory(adminInstance);
-                if (isDefaultCategoryLegacyMode() || adminInstance.getAllParentCategoryXrefs().isEmpty()) {
-                    setupXref(adminInstance, existingDefaultParentCategory);
-                } else {
-                    adminInstance.getAllParentCategoryXrefs().get(0).setCategory(existingDefaultParentCategory);
-                }
+                setupXref(adminInstance, existingDefaultParentCategory);
             }
 
             return helper.getRecord(adminProperties, adminInstance, null, null);
@@ -151,12 +148,23 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         }
     }
 
-    protected void setupXref(Category adminInstance, Category existingDefaultParentCategory) {
-        CategoryXref categoryXref = new CategoryXrefImpl();
-        categoryXref.setCategory(existingDefaultParentCategory);
-        categoryXref.setSubCategory(adminInstance);
-        if (existingDefaultParentCategory != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
-            adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+    protected void setupXref(Category adminInstance, Category existingDefaultCategory) {
+        Iterator<CategoryXref> itr = adminInstance.getAllParentCategoryXrefs().iterator();
+        while (itr.hasNext()) {
+            CategoryXref xref = itr.next();
+            if (!isDefaultCategoryLegacyMode() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                itr.remove();
+            }
+            xref.setDefaultReference(false);
+        }
+        if (existingDefaultCategory != null) {
+            CategoryXref categoryXref = new CategoryXrefImpl();
+            categoryXref.setCategory(existingDefaultCategory);
+            categoryXref.setSubCategory(adminInstance);
+            if (!adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
+                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+            }
+            adminInstance.getAllParentCategoryXrefs().get(adminInstance.getAllParentCategoryXrefs().indexOf(categoryXref)).setDefaultReference(!isDefaultCategoryLegacyMode());
         }
     }
 

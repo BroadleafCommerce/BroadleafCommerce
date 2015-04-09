@@ -604,20 +604,11 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     @Deprecated
     public Category getDefaultParentCategory() {
-        Category response = null;
+        Category response;
         if (defaultParentCategory != null) {
             response = defaultParentCategory;
-            //TODO add code to look for a category via getParentCategory(), otherwise fall into the next block
         } else {
-            List<CategoryXref> xrefs = getAllParentCategoryXrefs();
-            if (!CollectionUtils.isEmpty(xrefs)) {
-                for (CategoryXref xref : xrefs) {
-                    if (xref.getCategory().isActive()) {
-                        response = xref.getCategory();
-                        break;
-                    }
-                }
-            }
+            response = getParentCategory();
         }
         return response;
     }
@@ -630,22 +621,45 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public Category getParentCategory() {
-        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
-            //TODO Use a isDefault field on the xref instead to check
-            return allParentCategoryXrefs.get(0).getCategory();
+        Category response = null;
+        List<CategoryXref> xrefs = getAllParentCategoryXrefs();
+        if (!CollectionUtils.isEmpty(xrefs)) {
+            for (CategoryXref xref : xrefs) {
+                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                    response = xref.getCategory();
+                }
+            }
         }
-        return null;
+        if (response == null) {
+            if (!CollectionUtils.isEmpty(xrefs)) {
+                for (CategoryXref xref : xrefs) {
+                   if (xref.getCategory().isActive()) {
+                        response = xref.getCategory();
+                        break;
+                    }
+                }
+            }
+        }
+        return response;
     }
 
     @Override
     public void setParentCategory(Category category) {
-        //TODO Use a isDefault field on the xref
-        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
-            allParentCategoryXrefs.get(0).setCategory(category);
-        } else {
+        List<CategoryXref> xrefs = getAllParentCategoryXrefs();
+        boolean found = false;
+        for (CategoryXref xref : xrefs) {
+            if (xref.getCategory().equals(category)) {
+                xref.setDefaultReference(true);
+                found = true;
+            } else if (xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                xref.setDefaultReference(null);
+            }
+        }
+        if (!found) {
             CategoryXref xref = new CategoryXrefImpl();
             xref.setSubCategory(this);
             xref.setCategory(category);
+            xref.setDefaultReference(true);
             allParentCategoryXrefs.add(xref);
         }
     }
