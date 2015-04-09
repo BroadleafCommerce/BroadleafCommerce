@@ -4,7 +4,7 @@
 
     <script th:inline="text">
         //<![CDATA[
-        window.jQuery || document.write('<script src="[[@{/js/admin/lib/jquery-2.1.1.min.js}]]"><\/script>');
+        window.jQuery || document.write('<script src="[[@{/js/admin/vendor/jquery-2.1.1.min.js}]]"><\/script>');
         //]]>
     </script>
 
@@ -15,32 +15,20 @@
 
     <blc:bundle name="adminlib.js"
                 mapping-prefix="/js/"
-                files="admin/lib/plugins/jquery.cookie.js,
-                       admin/lib/plugins/jquery.event.move.js,
-                       admin/lib/plugins/jquery.event.swipe.js,
-                       admin/lib/plugins/jquery.placeholder.js,
-                       admin/lib/plugins/jquery.mousewheel.js,
-                       admin/lib/plugins/jquery.mCustomScrollbar.js,
-                       admin/lib/plugins/jquery.ba-dotimeout.js,
-                       lib/plugins/jquery-ui-1.10.2.custom.js,
-                       lib/plugins/jquery-ui-timepicker-addon.js,
-                       admin/lib/plugins/jquery.iframe-transport.js,
-                       admin/lib/plugins/jquery.ui.widget.js,
-                       admin/lib/plugins/jquery.autosize.js,
-                       admin/lib/plugins/spectrum.js,
-                       admin/lib/plugins/redactor/fontfamily.js,
-                       admin/lib/plugins/redactor/fontcolor.js,
-                       admin/lib/plugins/redactor/fontsize.js,
-                       admin/lib/plugins/redactor/selectasset.js,
-                       admin/lib/plugins/redactor/video.js,
-                       admin/lib/plugins/redactor/table.js,
-                       admin/lib/redactor.js,
-                       admin/lib/plugins/bootstrap.js,
-                       admin/lib/blc-conditions-builder.js,
-                       admin/lib/plugins/jqfloat.min.js,
-                       admin/lib/plugins/jquery.datetimepicker.js,
-                       admin/lib/plugins/jquery.remodal.js,
-                       admin/lib/plugins/tipr.min.js" />
+                files="admin/vendor/jquery.dataTables.min.js,
+                       admin/vendor/jquery.datetimepicker.js,
+                       admin/vendor/jquery.fluidbox.min.js,
+                       admin/vendor/jquery.remodal.min.js,
+                       admin/vendor/modernizr-2.8.2.min.js,
+                       admin/vendor/picker.js,
+                       admin/vendor/picker.date.js,
+                       admin/vendor/picker.time.js,
+                       admin/vendor/redactor.min.js,
+                       admin/vendor/tipr.min.js,
+                       admin/vendor/jqfloat.min.js,
+
+                       admin/lib/plugins/jquery.cookie.js,
+                       admin/lib/plugins/jquery.ba-dotimeout.js" />
 
     <blc:bundle name="admin.js"
                 mapping-prefix="/js/"
