@@ -89,7 +89,7 @@ import javax.annotation.Resource;
 @ManagedResource(objectName="org.broadleafcommerce:name=OrderService", description="Order Service", currencyTimeLimit=15)
 public class OrderServiceImpl implements OrderService {
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
-    
+
     /* DAOs */
     @Resource(name = "blOrderPaymentDao")
     protected OrderPaymentDao paymentDao;
@@ -180,7 +180,7 @@ public class OrderServiceImpl implements OrderService {
             namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         }
         
-        return orderDao.save(namedOrder); // No need to price here
+        return persist(namedOrder); // No need to price here
     }
 
     @Override
@@ -918,5 +918,4 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException(erh.getThrowable());
         }
     }
-
 }

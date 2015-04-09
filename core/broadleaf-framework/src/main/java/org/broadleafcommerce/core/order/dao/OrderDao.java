@@ -24,13 +24,14 @@ import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-import java.util.Date;
 import java.util.List;
 
 public interface OrderDao {
 
     Order readOrderById(Long orderId);
     
+    List<Order> readOrdersByIds(List<Long> orderIds);
+
     Order readOrderById(Long orderId, boolean refresh);
 
     List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
