@@ -746,24 +746,12 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
 
     /**
      * Retrieve all the xref entities linking this product to parent categories
-     *
-     * @deprecated Use {@link #getCategory()} instead. The API is moving to a single parent category model. Implementations
-     * interested in managing multiple parent category references should introduce a new custom collection in a Product
-     * subclass to manage the additional associations.
-     * @return
      */
-    @Deprecated
     public List<CategoryProductXref> getAllParentCategoryXrefs();
 
     /**
      * Set all the xref entities linking this product to parent categories
-     *
-     * @deprecated User {@link #setCategory(Category)} instead. The API is moving to a single parent category model. Implementations
-     * interested in managing multiple parent category references should introduce a new custom collection in a Product
-     * subclass to manage the additional associations.
-     * @param allParentCategories
      */
-    @Deprecated
     public void setAllParentCategoryXrefs(List<CategoryProductXref> allParentCategories);
 
     /**

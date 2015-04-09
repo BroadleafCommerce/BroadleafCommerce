@@ -29,7 +29,6 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
@@ -55,10 +54,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
-import org.broadleafcommerce.openadmin.web.filter.BroadleafAdminRequestProcessor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -211,11 +210,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
             if (!handled) {
                 Category existingDefaultCategory = getExistingDefaultCategory(adminInstance);
-                if (isDefaultCategoryLegacyMode() || adminInstance.getAllParentCategoryXrefs().isEmpty()) {
-                    setupXref(adminInstance, existingDefaultCategory);
-                } else {
-                    adminInstance.getAllParentCategoryXrefs().get(0).setCategory(existingDefaultCategory);
-                }
+                setupXref(adminInstance, existingDefaultCategory);
             }
             
             return helper.getRecord(adminProperties, adminInstance, null, null);
@@ -268,11 +263,22 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     }
 
     protected void setupXref(Product adminInstance, Category existingDefaultCategory) {
-        CategoryProductXref categoryXref = new CategoryProductXrefImpl();
-        categoryXref.setCategory(existingDefaultCategory);
-        categoryXref.setProduct(adminInstance);
-        if (existingDefaultCategory != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
-            adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+        Iterator<CategoryProductXref> itr = adminInstance.getAllParentCategoryXrefs().iterator();
+        while (itr.hasNext()) {
+            CategoryProductXref xref = itr.next();
+            if (!isDefaultCategoryLegacyMode() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                itr.remove();
+            }
+            xref.setDefaultReference(false);
+        }
+        if (existingDefaultCategory != null) {
+            CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+            categoryXref.setCategory(existingDefaultCategory);
+            categoryXref.setProduct(adminInstance);
+            if (!adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
+                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+            }
+            adminInstance.getAllParentCategoryXrefs().get(adminInstance.getAllParentCategoryXrefs().indexOf(categoryXref)).setDefaultReference(!isDefaultCategoryLegacyMode());
         }
     }
 }
