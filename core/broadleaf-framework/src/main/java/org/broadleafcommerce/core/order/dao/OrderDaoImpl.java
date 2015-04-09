@@ -36,7 +36,6 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.ejb.QueryHints;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,12 +43,15 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
@@ -84,6 +86,31 @@ public class OrderDaoImpl implements OrderDao {
             em.refresh(order);
         }
         return order;
+    }
+
+    @Override
+    public List<Order> readOrdersByIds(List<Long> orderIds) {
+        if (orderIds == null || orderIds.size() == 0) {
+            return null;
+        }
+        if (orderIds.size() > 100) {
+            LOG.warn("Not recommended to use the readOrdersByIds method for long lists of orderIds, since " +
+                    "Hibernate is required to transform the distinct results. The list of requested" +
+                    "order ids was (" + orderIds.size() + ") in length.");
+        }
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+
+        // We only want results that match the order IDs
+        criteria.where(order.get("id").as(Long.class).in(orderIds));
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
     }
 
     @Override
