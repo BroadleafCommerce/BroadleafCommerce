@@ -234,7 +234,7 @@ public class BreadcrumbsProcessor extends AbstractModelVariableModifierProcessor
                 for (String string : subsets) {
                     Category categorySeg = catalogService.findCategoryByURI(string);
                     if (categorySeg != null) {
-                        BreadcrumbDTO bcDto = createCategoryBreadcrumbDTO(string, category);
+                        BreadcrumbDTO bcDto = createCategoryBreadcrumbDTO(string, categorySeg);
                         bcDtos.add(bcDto);
                     } else {
                         LOG.warn("No category found for URI=" + string);
