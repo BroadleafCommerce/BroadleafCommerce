@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,11 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.security.dao;
-
-import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken;
-
-import java.util.List;
+package org.broadleafcommerce.common.service;
 
 /**
- * 
- * @author bpolster
- *
+ * @author Jeff Fischer
  */
-public interface ForgotPasswordSecurityTokenDao {
-    public ForgotPasswordSecurityToken readToken(String token);
-    public List<ForgotPasswordSecurityToken> readUnusedTokensByAdminUserId(Long adminId);
-    public ForgotPasswordSecurityToken saveToken(ForgotPasswordSecurityToken token);
+public interface ParentCategoryLegacyModeService {
+    boolean isLegacyMode();
 }

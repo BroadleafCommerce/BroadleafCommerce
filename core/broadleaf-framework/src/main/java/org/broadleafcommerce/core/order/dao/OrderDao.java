@@ -24,13 +24,24 @@ import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-import java.util.Date;
 import java.util.List;
 
 public interface OrderDao {
 
     Order readOrderById(Long orderId);
     
+    List<Order> readOrdersByIds(List<Long> orderIds);
+
+    /**
+     * Reads a batch list of orders from the DB.  The status is optional and can be null.  If no status 
+     * is provided, then all order will be read.  Otherwise, only orders with that status will be read.
+     * @param start
+     * @param pageSize
+     * @param statuses
+     * @return
+     */
+    List<Order> readBatchOrders(int start, int pageSize, List<OrderStatus> statuses);
+
     Order readOrderById(Long orderId, boolean refresh);
 
     List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);

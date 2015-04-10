@@ -26,7 +26,8 @@ import org.broadleafcommerce.admin.server.service.extension.CategoryCustomPersis
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
@@ -41,10 +42,10 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.web.filter.BroadleafAdminRequestProcessor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -138,11 +139,7 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             }
             if (!handled) {
                 Category existingDefaultParentCategory = getExistingDefaultParentCategory(adminInstance);
-                if (isDefaultCategoryLegacyMode() || adminInstance.getAllParentCategoryXrefs().isEmpty()) {
-                    setupXref(adminInstance, existingDefaultParentCategory);
-                } else {
-                    adminInstance.getAllParentCategoryXrefs().get(0).setCategory(existingDefaultParentCategory);
-                }
+                setupXref(adminInstance, existingDefaultParentCategory);
             }
 
             return helper.getRecord(adminProperties, adminInstance, null, null);
@@ -151,12 +148,23 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         }
     }
 
-    protected void setupXref(Category adminInstance, Category existingDefaultParentCategory) {
-        CategoryXref categoryXref = new CategoryXrefImpl();
-        categoryXref.setCategory(existingDefaultParentCategory);
-        categoryXref.setSubCategory(adminInstance);
-        if (existingDefaultParentCategory != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
-            adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+    protected void setupXref(Category adminInstance, Category existingDefaultCategory) {
+        Iterator<CategoryXref> itr = adminInstance.getAllParentCategoryXrefs().iterator();
+        while (itr.hasNext()) {
+            CategoryXref xref = itr.next();
+            if (!isDefaultCategoryLegacyMode() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                itr.remove();
+            }
+            xref.setDefaultReference(false);
+        }
+        if (existingDefaultCategory != null) {
+            CategoryXref categoryXref = new CategoryXrefImpl();
+            categoryXref.setCategory(existingDefaultCategory);
+            categoryXref.setSubCategory(adminInstance);
+            if (!adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
+                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+            }
+            adminInstance.getAllParentCategoryXrefs().get(adminInstance.getAllParentCategoryXrefs().indexOf(categoryXref)).setDefaultReference(!isDefaultCategoryLegacyMode());
         }
     }
 
@@ -176,7 +184,10 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     }
 
     protected Boolean isDefaultCategoryLegacyMode() {
-        return (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get
-                (BroadleafAdminRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE);
+        ParentCategoryLegacyModeService legacyModeService = ParentCategoryLegacyModeServiceImpl.getLegacyModeService();
+        if (legacyModeService != null) {
+            return legacyModeService.isLegacyMode();
+        }
+        return false;
     }
 }

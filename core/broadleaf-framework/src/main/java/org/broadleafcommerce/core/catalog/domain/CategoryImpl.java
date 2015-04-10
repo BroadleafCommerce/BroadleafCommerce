@@ -52,8 +52,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.template.TemplatePathContainer;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.util.UrlUtil;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.BroadleafRequestProcessor;
 import org.broadleafcommerce.common.web.Locatable;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
@@ -606,39 +604,62 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Override
     @Deprecated
     public Category getDefaultParentCategory() {
-        if (isDefaultCategoryLegacyMode() || defaultParentCategory != null) {
-            return defaultParentCategory;
+        Category response;
+        if (defaultParentCategory != null) {
+            response = defaultParentCategory;
+        } else {
+            response = getParentCategory();
         }
-        Category response = getParentCategory();
         return response;
     }
 
     @Override
     @Deprecated
     public void setDefaultParentCategory(Category defaultParentCategory) {
-        if (isDefaultCategoryLegacyMode()) {
-            this.defaultParentCategory = defaultParentCategory;
-        } else {
-            setParentCategory(defaultParentCategory);
-        }
+        this.defaultParentCategory = defaultParentCategory;
     }
 
     @Override
     public Category getParentCategory() {
-        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
-            return allParentCategoryXrefs.get(0).getCategory();
+        Category response = null;
+        List<CategoryXref> xrefs = getAllParentCategoryXrefs();
+        if (!CollectionUtils.isEmpty(xrefs)) {
+            for (CategoryXref xref : xrefs) {
+                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                    response = xref.getCategory();
+                }
+            }
         }
-        return null;
+        if (response == null) {
+            if (!CollectionUtils.isEmpty(xrefs)) {
+                for (CategoryXref xref : xrefs) {
+                   if (xref.getCategory().isActive()) {
+                        response = xref.getCategory();
+                        break;
+                    }
+                }
+            }
+        }
+        return response;
     }
 
     @Override
     public void setParentCategory(Category category) {
-        if (!CollectionUtils.isEmpty(allParentCategoryXrefs)){
-            allParentCategoryXrefs.get(0).setCategory(category);
-        } else {
+        List<CategoryXref> xrefs = getAllParentCategoryXrefs();
+        boolean found = false;
+        for (CategoryXref xref : xrefs) {
+            if (xref.getCategory().equals(category)) {
+                xref.setDefaultReference(true);
+                found = true;
+            } else if (xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                xref.setDefaultReference(null);
+            }
+        }
+        if (!found) {
             CategoryXref xref = new CategoryXrefImpl();
             xref.setSubCategory(this);
             xref.setCategory(category);
+            xref.setDefaultReference(true);
             allParentCategoryXrefs.add(xref);
         }
     }
@@ -811,13 +832,11 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     }
 
     @Override
-    @Deprecated
     public List<CategoryXref> getAllParentCategoryXrefs() {
         return allParentCategoryXrefs;
     }
 
     @Override
-    @Deprecated
     public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories) {
         this.allParentCategoryXrefs.clear();
         allParentCategoryXrefs.addAll(allParentCategories);
@@ -1316,8 +1335,4 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         this.externalId = externalId;
     }
 
-    protected Boolean isDefaultCategoryLegacyMode() {
-        return (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get
-                (BroadleafRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE);
-    }
 }

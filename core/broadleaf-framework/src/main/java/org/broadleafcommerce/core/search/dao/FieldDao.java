@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 
 import java.util.List;
 
@@ -57,6 +58,13 @@ public interface FieldDao {
      * @return the product Fields
      */
     public List<Field> readAllSkuFields();
+
+    /**
+     * Finds all fields based on the entity type.
+     * @param entityType
+     * @return
+     */
+    public List<Field> readFieldsByEntityType(FieldEntity entityType);
 
     /**
      * Persist an instance to the data layer.

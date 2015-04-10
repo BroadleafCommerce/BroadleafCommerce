@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -88,6 +87,7 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @deprecated use {@link #getParentCategory()} instead
      * @return the default parent category
      */
+    @Deprecated
     @Nullable
     public Category getDefaultParentCategory();
 
@@ -100,6 +100,7 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
      * @deprecated use {@link #setParentCategory(Category)} instead
      * @param defaultParentCategory the new default parent category
      */
+    @Deprecated
     public void setDefaultParentCategory(@Nullable Category defaultParentCategory);
 
     /**
@@ -631,24 +632,12 @@ public interface Category extends Serializable, MultiTenantCloneable<Category> {
 
     /**
      * Retrieve all the xref entities linking this category to parent categories
-     *
-     * @deprecated Use {@link #getParentCategory()} instead. The API is moving to a single parent category model. Implementations
-     * interested in managing multiple parent category references should introduce a new custom collection in a Category
-     * subclass to manage the additional associations.
-     * @return
      */
-    @Deprecated
     public List<CategoryXref> getAllParentCategoryXrefs();
 
     /**
      * Set all the xref entities linking this product to parent categories
-     *
-     * @deprecated User {@link #setParentCategory(Category)} instead. The API is moving to a single parent category model. Implementations
-     * interested in managing multiple parent category references should introduce a new custom collection in a Category
-     * subclass to manage the additional associations.
-     * @param allParentCategories
      */
-    @Deprecated
     public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories);
 
     /**

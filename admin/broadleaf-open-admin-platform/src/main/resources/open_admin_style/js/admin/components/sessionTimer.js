@@ -61,6 +61,8 @@
                 resetTime = (new Date()).getTime();
                 $.cookie("sessionResetTime", resetTime - (resetTime % pingInterval) , { path : BLC.servletContext });
                 BLCAdmin.sessionTimer.updateTimeLeft();
+            }).fail(function(err){
+                BLCAdmin.sessionTimer.invalidateSession();
             });
         },
 
@@ -112,6 +114,8 @@
                  * After the logout occurs, we redirect to the login page with the sessionTimeout parameter being true.
                  * This yield a red banner on the login screen that indicates the session expired to the user.
                  */
+                window.location.replace(BLC.servletContext + "/login?sessionTimeout=true");
+            }).fail(function(err){
                 window.location.replace(BLC.servletContext + "/login?sessionTimeout=true");
             });
         },

@@ -162,15 +162,8 @@ public class BroadleafLoginController extends BroadleafAbstractController {
     public String resetPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
         ResetPasswordForm resetPasswordForm = initResetPasswordForm(request);
         model.addAttribute("resetPasswordForm", resetPasswordForm);
-        GenericResponse errorResponse = customerService.checkPasswordResetToken(resetPasswordForm.getToken());
-        if (errorResponse.getHasErrors()) {
-            String errorCode = errorResponse.getErrorCodesList().get(0);
-            request.setAttribute("errorCode", errorCode);
-            return getResetPasswordErrorView();
-        } else {
-            return getResetPasswordView();
-        }
-    }   
+        return getResetPasswordView();
+    }
     
     /**
      * Processes the reset password token and allows the user to change their password.  

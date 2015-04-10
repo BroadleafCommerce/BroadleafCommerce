@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.spec.checkout.service.workflow
 
 import org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity
 import org.broadleafcommerce.core.order.service.type.OrderStatus
+import org.springframework.context.ApplicationContext
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -28,7 +29,10 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus
 class CompleteOrderActivitySpec extends BaseCheckoutActivitySpec {
 
     def setup() {
-        activity = new CompleteOrderActivity()
+        activity = new CompleteOrderActivity().with {
+            applicationContext = Mock(ApplicationContext)
+            it
+        }
     }
 
     def "Test that the properties on the Order are properly set"() {

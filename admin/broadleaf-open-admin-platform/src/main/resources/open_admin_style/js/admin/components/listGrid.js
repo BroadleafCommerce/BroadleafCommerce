@@ -133,6 +133,20 @@
             return fields;
         },
         
+        getSelectedRowIds : function($button) {
+            var link = BLC.servletContext + $button.data('urlpostfix');
+            
+            var $container = $button.closest('.listgrid-container');
+            var $selectedRows = $container.find('table tr.selected');
+            
+            var selectedRowIds = [];
+            $selectedRows.each(function(index, element) {
+                selectedRowIds.push($(element).data('rowid'));
+            });
+            
+            return selectedRowIds;
+        },
+        
         updateToolbarRowActionButtons : function($listGridContainer) {
             var numSelected = $listGridContainer.find('tr.selected').length;
             if (numSelected) {

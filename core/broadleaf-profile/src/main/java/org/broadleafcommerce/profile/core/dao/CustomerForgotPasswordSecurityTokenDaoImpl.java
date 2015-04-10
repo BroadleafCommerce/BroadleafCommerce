@@ -21,12 +21,15 @@ package org.broadleafcommerce.profile.core.dao;
 
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 /**
  * 
@@ -45,6 +48,15 @@ public class CustomerForgotPasswordSecurityTokenDaoImpl implements CustomerForgo
     @Override
     public CustomerForgotPasswordSecurityToken readToken(String token) {
         return (CustomerForgotPasswordSecurityToken) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken"), token);        
+    }
+
+    @Override
+    public List<CustomerForgotPasswordSecurityToken> readUnusedTokensByCustomerId(Long customerId) {
+        TypedQuery<CustomerForgotPasswordSecurityToken> query = new TypedQueryBuilder<CustomerForgotPasswordSecurityToken>(CustomerForgotPasswordSecurityToken.class, "token")
+                .addRestriction("token.customerId", "=", customerId)
+                .addRestriction("token.tokenUsedFlag", "=", false)
+                .toQuery(em);
+        return query.getResultList();
     }
 
     @Override
