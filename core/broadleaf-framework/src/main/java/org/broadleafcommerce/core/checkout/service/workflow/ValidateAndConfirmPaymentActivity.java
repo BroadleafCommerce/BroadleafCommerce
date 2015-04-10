@@ -43,8 +43,6 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.Customer;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -148,6 +146,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                             populateCreditCardOnRequest(s2sRequest, payment);
                             populateBillingAddressOnRequest(s2sRequest, payment);
                             populateCustomerOnRequest(s2sRequest, payment);
+                            populateShippingAddressOnRequest(s2sRequest, payment);
 
                             if (cfg.getConfiguration().isPerformAuthorizeAndCapture()) {
                                 responseDTO = cfg.getTransactionService().authorizeAndCapture(s2sRequest);
@@ -314,57 +313,22 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     protected void populateBillingAddressOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) {
 
         if (payment != null && payment.getBillingAddress() != null) {
-            Address address = payment.getBillingAddress();
-            String addressLine2 = address.getAddressLine2();
-            if (StringUtils.isNotBlank(address.getAddressLine3())) {
-                addressLine2 = addressLine2 + " " + address.getAddressLine3();
-            }
-
-            String state = null;
-            if (StringUtils.isNotBlank(address.getStateProvinceRegion())) {
-                state = address.getStateProvinceRegion();
-            } else if (address.getState() != null) {
-                state = address.getState().getAbbreviation();
-            }
-
-            String country = null;
-            if (address.getIsoCountryAlpha2() != null) {
-                country = address.getIsoCountryAlpha2().getAlpha2();
-            } else if (address.getCountry() != null) {
-                country = address.getCountry().getAbbreviation();
-            }
-
-            String phone = address.getPhonePrimary() != null ? address.getPhonePrimary().getPhoneNumber() : null;
-
-            requestDTO.billTo()
-                    .addressFirstName(address.getFirstName())
-                    .addressLastName(address.getLastName())
-                    .addressLine1(address.getAddressLine1())
-                    .addressLine2(addressLine2)
-                    .addressCityLocality(address.getCity())
-                    .addressStateRegion(state)
-                    .addressPostalCode(address.getPostalCode())
-                    .addressCountryCode(country)
-                    .addressEmail(address.getEmailAddress())
-                    .addressPhone(phone)
-                    .addressCompanyName(address.getCompanyName())
-                    .done();
+            orderToPaymentRequestService.populateBillTo(payment.getOrder(), requestDTO);
         }
 
     }
 
     protected void populateCustomerOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) {
         if (payment != null && payment.getOrder() != null && payment.getOrder().getCustomer() != null) {
-            Customer customer = payment.getOrder().getCustomer();
-
-            requestDTO.customer()
-                    .firstName(customer.getFirstName())
-                    .lastName(customer.getLastName())
-                    .email(customer.getEmailAddress())
-                    .customerId(customer.getId() + "")
-                    .done();
+            orderToPaymentRequestService.populateCustomerInfo(payment.getOrder(), requestDTO);
         }
 
+    }
+    
+    protected void populateShippingAddressOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) {
+        if(payment != null && payment.getOrder() != null) {
+            orderToPaymentRequestService.populateShipTo(payment.getOrder(), requestDTO);
+        }
     }
 
     /**
