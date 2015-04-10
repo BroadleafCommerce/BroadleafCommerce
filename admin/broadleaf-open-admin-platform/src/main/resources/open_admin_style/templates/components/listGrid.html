@@ -2,8 +2,8 @@
 <!-- This component represents a list grid toolbar -->
 </comment>
 
-<!--<div class="listgrid-header-wrapper">-->
-    <table class="table table-striped"
+<div class="listgrid-header-wrapper">
+    <table class="table table-striped list-grid-table"
            th:classappend="${listGrid.className}"
            th:attr="data-listgridtype=${listGrid.listGridType},
                     data-currenturl=${currentUrl},
@@ -23,14 +23,14 @@
                               (headerFieldStat.first ? 'padding-right: 20px;' : '')}"
                     scope="col">
 
-                    <span th:if="${headerFieldStat.first}" class="listgrid-icon" />
+                    <!--<span th:if="${headerFieldStat.first}" class="listgrid-icon" />-->
                     
                     <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                         <div class="listgrid-title">
                             <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
                             <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
                         </div>
-                        <div class="resizer" th:unless="${headerField.resizeDisabled}">||</div>
+                        <!--<div class="resizer" th:unless="${headerField.resizeDisabled}">||</div>-->
                     </div>
     
                     <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
@@ -42,8 +42,8 @@
                                 <i class="filter-icon icon-filter"></i>
                             </div>
                         </div>
-    
-                        <!--<div class="resizer" th:unless="${headerField.resizeDisabled}">||</div>-->
+
+                        <!--<div class="resizer" th:unless="${headerField?.resizeDisabled}">||</div>-->
                         <!--<ul th:include="${'components/partials/listGridHeaderFilter'}"-->
                             <!--class="no-hover"-->
                             <!--th:classappend="${headerField.mainEntityLink ? 'first' : ''}"-->
@@ -56,7 +56,7 @@
                 </th>
                 <th>
                     <th:comment th:remove="all">
-                        Th entry acting as placeholder for Edit links
+                        This entry acting as placeholder for Edit links
                     </th:comment>
                 </th>
                 
@@ -76,14 +76,14 @@
                             </div>
                         </div>
                         
-                        <div class="resizer" th:unless="${headerField?.resizeDisabled}">||</div>
-                        <ul th:include="${'components/partials/listGridHeaderFilter'}"
-                            class="no-hover end"
-                            th:with="fieldType=${'id'},
-                                     fieldName=${listGrid.idProperty},
-                                     fieldFriendlyName=${listGrid.idProperty},
-                                     index=${#lists.size(listGrid.headerFields) - 1}">
-                        </ul>
+                        <!--<div class="resizer" th:unless="${headerField?.resizeDisabled}">||</div>-->
+                        <!--<ul th:include="${'components/partials/listGridHeaderFilter'}"-->
+                            <!--class="no-hover end"-->
+                            <!--th:with="fieldType=${'id'},-->
+                                     <!--fieldName=${listGrid.idProperty},-->
+                                     <!--fieldFriendlyName=${listGrid.idProperty},-->
+                                     <!--index=${#lists.size(listGrid.headerFields) - 1}">-->
+                        <!--</ul>-->
                    </div>
                 </th>
             </tr>
@@ -190,7 +190,7 @@
             
         </tbody>
     </table>
-<!--</div>-->
+</div>
 
 <span class="listgrid-table-spinner-container" th:inline="text">
     <i class="listgrid-table-spinner icon-spin icon-spinner" />

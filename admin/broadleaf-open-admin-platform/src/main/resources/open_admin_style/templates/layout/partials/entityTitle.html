@@ -10,10 +10,12 @@
                 th:type="${action.buttonType}"
                 th:attr="data-url=@{${#strings.isEmpty(action.urlOverride) ? ('/' + sectionKey + action.urlPostfix) : action.urlOverride}}"
                 th:inline="text"
+                th:classappend="${action.buttonClass}"
                 class="button primary large">
             [[#{${action.displayText}}]]
             <span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag" />
         </button>
+
     </div>
 
     <div th:if="${entityForm}" th:remove="tag">

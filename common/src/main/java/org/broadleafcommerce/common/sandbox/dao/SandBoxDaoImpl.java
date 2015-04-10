@@ -301,7 +301,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
             SandBox defaultSB = new SandBoxImpl();
             defaultSB.setName("Default");
             defaultSB.setSandBoxType(SandBoxType.DEFAULT);
-            defaultSB.setColor("#0B9098");
+            defaultSB.setColor("#20C0F0");
             defaultSB = persist(defaultSB);
 
             SandBoxManagement mgmt = new SandBoxManagementImpl();
