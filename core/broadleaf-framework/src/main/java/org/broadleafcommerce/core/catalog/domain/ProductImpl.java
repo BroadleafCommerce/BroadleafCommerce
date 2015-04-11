@@ -504,6 +504,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
             for (CategoryProductXref xref : xrefs) {
                 if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
                     response = xref.getCategory();
+                    break;
                 }
             }
         }
@@ -532,7 +533,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
                 xref.setDefaultReference(null);
             }
         }
-        if (!found) {
+        if (!found && category != null) {
             CategoryProductXref xref = new CategoryProductXrefImpl();
             xref.setProduct(this);
             xref.setCategory(category);
