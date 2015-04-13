@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.web.order.security;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.OrderLockManager;
@@ -74,6 +75,8 @@ public class CartStateFilter extends OncePerRequestFilter implements Ordered {
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
+    protected ThreadLocal<Object> tlOrderLock = ThreadLocalManager.createThreadLocal(Object.class, false);
+
     protected List<String> excludedOrderLockRequestPatterns;
 
     @Override
@@ -92,18 +95,25 @@ public class CartStateFilter extends OncePerRequestFilter implements Ordered {
             LOG.trace("Thread[" + Thread.currentThread().getId() + "] attempting to lock order[" + order.getId() + "]");
         }
 
-        Object lockObject = null;
+        Object lockObject = tlOrderLock.get();
         try {
-            if (getErrorInsteadOfQueue()) {
-                lockObject = orderLockManager.acquireLockIfAvailable(order);
-                if (lockObject == null) {
-                    // We weren't able to acquire the lock immediately because some other thread has it. Because the
-                    // order.lock.errorInsteadOfQueue property was set to true, we're going to throw an exception now.
-                    throw new OrderLockAcquisitionFailureException("Thread[" + Thread.currentThread().getId() + 
-                            "] could not acquire lock for order[" + order.getId() + "]");
+            if (lockObject == null) {
+                if (getErrorInsteadOfQueue()) {
+                    lockObject = orderLockManager.acquireLockIfAvailable(order);
+                    if (lockObject == null) {
+                        // We weren't able to acquire the lock immediately because some other thread has it. Because the
+                        // order.lock.errorInsteadOfQueue property was set to true, we're going to throw an exception now.
+                        throw new OrderLockAcquisitionFailureException("Thread[" + Thread.currentThread().getId() +
+                                "] could not acquire lock for order[" + order.getId() + "]");
+                    } else {
+                        tlOrderLock.set(lockObject);
+                    }
+                } else {
+                    lockObject = orderLockManager.acquireLock(order);
+                    if (lockObject != null) {
+                        tlOrderLock.set(lockObject);
+                    }
                 }
-            } else {
-                lockObject = orderLockManager.acquireLock(order);
             }
     
             if (LOG.isTraceEnabled()) {
@@ -119,6 +129,7 @@ public class CartStateFilter extends OncePerRequestFilter implements Ordered {
             chain.doFilter(request, response);
         } finally {
             if (lockObject != null) {
+                tlOrderLock.remove();
                 orderLockManager.releaseLock(lockObject);
             }
 
@@ -191,6 +202,11 @@ public class CartStateFilter extends OncePerRequestFilter implements Ordered {
 
     protected boolean getErrorInsteadOfQueue() {
         return BLCSystemProperty.resolveBooleanSystemProperty("order.lock.errorInsteadOfQueue");
+    }
+
+    @Override
+    protected boolean shouldNotFilterErrorDispatch() {
+        return false;
     }
 
 }
