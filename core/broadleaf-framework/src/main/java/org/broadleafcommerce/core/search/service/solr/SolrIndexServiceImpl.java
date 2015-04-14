@@ -941,14 +941,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      
     @Override
     public void optimizeIndex(SolrServer server) throws ServiceException, IOException {
-         try {
-             if (LOG.isDebugEnabled()) {
-                 LOG.debug("Optimizing the index...");
-             }
-             server.optimize();
-         } catch (SolrServerException e) {
-             throw new ServiceException("Could not optimize index", e);
-         }
+        shs.optimizeIndex(server);
     }
 
     @Override

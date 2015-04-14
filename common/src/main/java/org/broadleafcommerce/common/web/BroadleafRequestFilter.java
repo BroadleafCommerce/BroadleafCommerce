@@ -159,4 +159,9 @@ public class BroadleafRequestFilter extends OncePerRequestFilter {
         }
         return ignoreSuffixes;
     }
+
+    @Override
+    protected boolean shouldNotFilterErrorDispatch() {
+        return false;
+    }
 }

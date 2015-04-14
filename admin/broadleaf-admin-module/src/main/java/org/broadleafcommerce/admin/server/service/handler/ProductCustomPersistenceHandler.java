@@ -19,7 +19,9 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.server.service.extension.ProductCustomPersistenceHandlerExtensionManager;
@@ -29,7 +31,6 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
@@ -47,6 +48,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -55,10 +57,12 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
-import org.broadleafcommerce.openadmin.web.filter.BroadleafAdminRequestProcessor;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -158,17 +162,14 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
             
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-           
             adminInstance = dynamicEntityDao.merge(adminInstance);
-
             boolean handled = false;
             if (extensionManager != null) {
                 ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForAdd(persistencePackage, adminInstance);
                 handled = ExtensionResultStatusType.NOT_HANDLED != result;
             }
             if (!handled) {
-                Category existingDefaultCategory = getExistingDefaultCategory(adminInstance);
-                setupXref(adminInstance, existingDefaultCategory);
+                setupXref(adminInstance);
             }
             
             //Since none of the Sku fields are required, it's possible that the user did not fill out
@@ -195,29 +196,37 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+            BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) adminProperties.get("defaultCategory"));
+            defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
+            if (entity.findProperty("defaultCategory") != null && !StringUtils.isEmpty(entity.findProperty("defaultCategory").getValue())) {
+                //Change the inherited type so that this property is disconnected from the entity and validation is temporarily skipped.
+                //This is useful when the defaultCategory was previously completely empty for whatever reason. Without this, such
+                //a case would fail the validation, even though the property was specified in the submission.
+                defaultCategory.setInheritedFromType(String.class.getName());
+            }
+
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             if (adminInstance instanceof ProductBundle) {
                 removeBundleFieldRestrictions((ProductBundle)adminInstance, adminProperties, entity);
             }
+
+            CategoryProductXref oldDefault = getCurrentDefaultXref(adminInstance);
             adminInstance = (Product) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
-
             boolean handled = false;
             if (extensionManager != null) {
-                ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForUpdate(persistencePackage, adminInstance);
+                ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForUpdate
+                        (persistencePackage, adminInstance);
                 handled = ExtensionResultStatusType.NOT_HANDLED != result;
             }
             if (!handled) {
-                Category existingDefaultCategory = getExistingDefaultCategory(adminInstance);
-                if (isDefaultCategoryLegacyMode() || adminInstance.getAllParentCategoryXrefs().isEmpty()) {
-                    setupXref(adminInstance, existingDefaultCategory);
-                } else {
-                    adminInstance.getAllParentCategoryXrefs().get(0).setCategory(existingDefaultCategory);
-                }
+                setupXref(adminInstance);
+                removeOldDefault(adminInstance, oldDefault, entity);
             }
-            
+
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
@@ -267,12 +276,40 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
         return parentCategory;
     }
 
-    protected void setupXref(Product adminInstance, Category existingDefaultCategory) {
-        CategoryProductXref categoryXref = new CategoryProductXrefImpl();
-        categoryXref.setCategory(existingDefaultCategory);
-        categoryXref.setProduct(adminInstance);
-        if (existingDefaultCategory != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
-            adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+    protected void removeOldDefault(Product adminInstance, CategoryProductXref oldDefault, Entity entity) {
+        if (!isDefaultCategoryLegacyMode()) {
+            if (entity.findProperty("defaultCategory") != null && StringUtils.isEmpty(entity.findProperty("defaultCategory").getValue())) {
+                adminInstance.setCategory(null);
+            }
+            CategoryProductXref newDefault = getCurrentDefaultXref(adminInstance);
+            if (oldDefault != null && !oldDefault.equals(newDefault)) {
+                adminInstance.getAllParentCategoryXrefs().remove(oldDefault);
+            }
         }
+    }
+
+    protected void setupXref(Product adminInstance) {
+        if (isDefaultCategoryLegacyMode()) {
+            CategoryProductXref categoryXref = new CategoryProductXrefImpl();
+            categoryXref.setCategory(getExistingDefaultCategory(adminInstance));
+            categoryXref.setProduct(adminInstance);
+            if (!adminInstance.getAllParentCategoryXrefs().contains(categoryXref) && categoryXref.getCategory() != null) {
+                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+            }
+        }
+    }
+
+    protected CategoryProductXref getCurrentDefaultXref(Product product) {
+        CategoryProductXref currentDefault = null;
+        List<CategoryProductXref> xrefs = product.getAllParentCategoryXrefs();
+        if (!CollectionUtils.isEmpty(xrefs)) {
+            for (CategoryProductXref xref : xrefs) {
+                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                    currentDefault = xref;
+                    break;
+                }
+            }
+        }
+        return currentDefault;
     }
 }

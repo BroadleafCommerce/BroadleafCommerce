@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.service;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
@@ -34,9 +35,8 @@ public class ParentCategoryLegacyModeServiceImpl implements ApplicationContextAw
     private static ApplicationContext applicationContext;
     private static ParentCategoryLegacyModeService service;
 
-    //TODO re-enable when feature is complete
-    //@Value("${" + USE_LEGACY_DEFAULT_CATEGORY_MODE + ":true}")
-    protected boolean useLegacyDefaultCategoryMode = true;
+    @Value("${" + USE_LEGACY_DEFAULT_CATEGORY_MODE + ":false}")
+    protected boolean useLegacyDefaultCategoryMode = false;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

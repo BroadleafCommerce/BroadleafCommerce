@@ -217,6 +217,8 @@
                 <ref bean="blSkuPricingPersistenceProvider"/>
                 <ref bean="blSkuFieldsPersistenceProvider"/>
                 <ref bean="blForeignSkuFieldPersistenceProvider"/>
+                <ref bean="blProductParentCategoryFieldPersistenceProvider"/>
+                <ref bean="blCategoryParentCategoryFieldPersistenceProvider"/>
             </list>
         </property>
     </bean>
