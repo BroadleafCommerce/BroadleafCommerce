@@ -37,6 +37,9 @@
         $(document).on('click', '.nav-tabs>li>a', function(e) {
             e.preventDefault();
 
+            // Remove 'selected' outline from tab
+            $(this).blur();
+
             // Remove 'active' class from all tabs
             $.each($('.nav-tabs>li'), function (key, value) {
                 $(value).removeClass('active');
