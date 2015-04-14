@@ -31,6 +31,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
@@ -452,4 +453,39 @@ public interface SolrHelperService {
      * @return
      */
     public List<SolrDocument> getResponseDocuments(QueryResponse response);
+
+    /**
+     * Sets up the sorting criteria. This will support sorting by multiple fields at a time
+     * 
+     * @param query
+     * @param searchCriteria
+     * @param defaultSort
+     * @param fields
+     */
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<Field> fields);
+
+    /**
+     * Builds a map of the fields with the abbreviation 
+     * @param searchCriteria
+     * @param fields
+     * @return
+     */
+    public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<Field> fields);
+    
+    /**
+     * Returns a map of fully qualified solr index field key to the searchFacetDTO object
+     * @param facets
+     * @param searchCriteria
+     * @return
+     */
+    public Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets, SearchCriteria searchCriteria);
+
+    /**
+     * Restricts the query by adding active facet filters.
+     * 
+     * @param query
+     * @param namedFacetMap
+     * @param searchCriteria
+     */
+    public void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria);
 }

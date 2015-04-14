@@ -26,6 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrServer;
@@ -45,12 +47,15 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.util.BLCMapUtils;
+import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
@@ -65,6 +70,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -631,6 +637,90 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
 
         return docs;
+    }
+
+    @Override
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<Field> fields) {
+        Map<String, String> solrFieldKeyMap = getSolrFieldKeyMap(searchCriteria, fields);
+
+        String sortQuery = searchCriteria.getSortQuery();
+        if (StringUtils.isBlank(sortQuery)) {
+            sortQuery = defaultSort;
+        }
+
+        if (StringUtils.isNotBlank(sortQuery)) {
+            String[] sortFields = sortQuery.split(",");
+            for (String sortField : sortFields) {
+                String field = sortField.split(" ")[0];
+                if (solrFieldKeyMap.containsKey(field)) {
+                    field = solrFieldKeyMap.get(field);
+                }
+                ORDER order = "desc".equals(sortField.split(" ")[1]) ? ORDER.desc : ORDER.asc;
+
+                if (field != null) {
+                    query.addSort(new SortClause(field, order));
+                }
+            }
+        }
+    }
+
+    @Override
+    public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<Field> fields) {
+        Map<String, String> solrFieldKeyMap = new HashMap<String, String>();
+        for (Field field : fields) {
+            solrFieldKeyMap.put(field.getAbbreviation(), getPropertyNameForFieldFacet(field));
+        }
+        return solrFieldKeyMap;
+    }
+
+    @Override
+    public Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets,
+            final SearchCriteria searchCriteria) {
+        return BLCMapUtils.keyedMap(facets, new TypedClosure<String, SearchFacetDTO>() {
+
+            @Override
+            public String getKey(SearchFacetDTO facet) {
+                return getPropertyNameForFieldFacet(facet.getFacet().getField());
+            }
+        });
+    }
+
+    @Override
+    public void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap,
+            SearchCriteria searchCriteria) {
+        if (searchCriteria.getFilterCriteria() != null) {
+            for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
+                String solrKey = null;
+                for (Entry<String, SearchFacetDTO> dtoEntry : namedFacetMap.entrySet()) {
+                    if (dtoEntry.getValue().getFacet().getField().getAbbreviation().equals(entry.getKey())) {
+                        solrKey = dtoEntry.getKey();
+                        dtoEntry.getValue().setActive(true);
+                    }
+                }
+
+                if (solrKey != null) {
+                    String[] selectedValues = entry.getValue().clone();
+                    for (int i = 0; i < selectedValues.length; i++) {
+                        if (selectedValues[i].contains("range[")) {
+                            String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
+                                    selectedValues[i].indexOf(']'));
+                            String[] rangeValues = StringUtils.split(rangeValue, ':');
+                            BigDecimal minValue = new BigDecimal(rangeValues[0]);
+                            BigDecimal maxValue = null;
+                            if (!rangeValues[1].equals("null")) {
+                                maxValue = new BigDecimal(rangeValues[1]);
+                            }
+                            selectedValues[i] = getSolrRangeString(solrKey, minValue, maxValue);
+                        } else {
+                            selectedValues[i] = solrKey + ":\"" + scrubFacetValue(selectedValues[i]) + "\"";
+                        }
+                    }
+                    String valueString = StringUtils.join(selectedValues, " OR ");
+
+                    query.addFilterQuery(valueString);
+                }
+            }
+        }
     }
 
     /*

@@ -24,8 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -38,8 +36,6 @@ import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.util.BLCMapUtils;
-import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
@@ -76,11 +72,9 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -686,27 +680,13 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param searchCriteria
      */
     protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
-        Map<String, String> solrFieldKeyMap = getSolrFieldKeyMap(searchCriteria);
-
-        String sortQuery = searchCriteria.getSortQuery();
-        if (StringUtils.isBlank(sortQuery)) {
-            sortQuery = defaultSort;
+        List<Field> fields = null;
+        if (useSku) {
+            fields = fieldDao.readAllSkuFields();
+        } else {
+            fields = fieldDao.readAllProductFields();
         }
-
-        if (StringUtils.isNotBlank(sortQuery)) {
-            String[] sortFields = sortQuery.split(",");
-            for (String sortField : sortFields) {
-                String field = sortField.split(" ")[0];
-                if (solrFieldKeyMap.containsKey(field)) {
-                    field = solrFieldKeyMap.get(field);
-                }
-                ORDER order = "desc".equals(sortField.split(" ")[1]) ? ORDER.desc : ORDER.asc;
-
-                if (field != null) {
-                    query.addSort(new SortClause(field, order));
-                }
-            }
-        }
+        shs.attachSortClause(query, searchCriteria, defaultSort, fields);
     }
 
     /**
@@ -718,39 +698,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      */
     protected void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap,
             SearchCriteria searchCriteria) {
-        if (searchCriteria.getFilterCriteria() != null) {
-            for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
-                String solrKey = null;
-                for (Entry<String, SearchFacetDTO> dtoEntry : namedFacetMap.entrySet()) {
-                    if (dtoEntry.getValue().getFacet().getField().getAbbreviation().equals(entry.getKey())) {
-                        solrKey = dtoEntry.getKey();
-                        dtoEntry.getValue().setActive(true);
-                    }
-                }
-
-                if (solrKey != null) {
-                    String[] selectedValues = entry.getValue().clone();
-                    for (int i = 0; i < selectedValues.length; i++) {
-                        if (selectedValues[i].contains("range[")) {
-                            String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
-                                    selectedValues[i].indexOf(']'));
-                            String[] rangeValues = StringUtils.split(rangeValue, ':');
-                            BigDecimal minValue = new BigDecimal(rangeValues[0]);
-                            BigDecimal maxValue = null;
-                            if (!rangeValues[1].equals("null")) {
-                                maxValue = new BigDecimal(rangeValues[1]);
-                            }
-                            selectedValues[i] = getSolrRangeString(solrKey, minValue, maxValue);
-                        } else {
-                            selectedValues[i] = solrKey + ":\"" + scrubFacetValue(selectedValues[i]) + "\"";
-                        }
-                    }
-                    String valueString = StringUtils.join(selectedValues, " OR ");
-
-                    query.addFilterQuery(valueString);
-                }
-            }
-        }
+        shs.attachActiveFacetFilters(query, namedFacetMap, searchCriteria);
     }
     
     /**
@@ -938,29 +886,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      */
     protected Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets,
             final SearchCriteria searchCriteria) {
-        return BLCMapUtils.keyedMap(facets, new TypedClosure<String, SearchFacetDTO>() {
-
-            @Override
-            public String getKey(SearchFacetDTO facet) {
-                return getSolrFieldKey(facet.getFacet().getField(), searchCriteria);
-            }
-        });
-    }
-
-    /**
-     * This method will be used to map a field abbreviation to the appropriate solr index field to use. Typically,
-     * this default implementation that maps to the facet field type will be sufficient. However, there may be 
-     * cases where you would want to use a different solr index depending on other currently active facets. In that
-     * case, you would associate that mapping here. For example, for the "price" abbreviation, we would generally
-     * want to use "defaultSku.retailPrice_td". However, if a secondary facet on item condition is selected (such
-     * as "refurbished", we may want to index "price" to "refurbishedSku.retailPrice_td". That mapping occurs here.
-     * 
-     * @param fields
-     * @param searchCriteria the searchCriteria in case it is needed to determine the field key
-     * @return the solr field index key to use
-     */
-    protected String getSolrFieldKey(Field field, SearchCriteria searchCriteria) {
-        return shs.getPropertyNameForFieldFacet(field);
+        return shs.getNamedFacetMap(facets, searchCriteria);
     }
 
     /**
@@ -974,11 +900,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         } else {
             fields = fieldDao.readAllProductFields();
         }
-        Map<String, String> solrFieldKeyMap = new HashMap<String, String>();
-        for (Field field : fields) {
-            solrFieldKeyMap.put(field.getAbbreviation(), getSolrFieldKey(field, searchCriteria));
-        }
-        return solrFieldKeyMap;
+        return shs.getSolrFieldKeyMap(searchCriteria, fields);
     }
 
     /**
