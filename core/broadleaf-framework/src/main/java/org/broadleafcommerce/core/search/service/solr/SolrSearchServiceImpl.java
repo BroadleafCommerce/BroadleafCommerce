@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -34,11 +32,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.CloudSolrServer;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
-import org.apache.solr.client.solrj.response.FacetField;
-import org.apache.solr.client.solrj.response.FacetField.Count;
-import org.apache.solr.client.solrj.response.Group;
-import org.apache.solr.client.solrj.response.GroupCommand;
-import org.apache.solr.client.solrj.response.GroupResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.cloud.Aliases;
@@ -58,12 +51,10 @@ import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
-import org.broadleafcommerce.core.search.domain.RequiredFacet;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
-import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
@@ -665,23 +656,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     }
     
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {
-        List<SolrDocument> docs;
-        
-        if (response.getGroupResponse() == null) {
-            docs = response.getResults();
-        } else {
-            docs = new ArrayList<SolrDocument>();
-            GroupResponse gr = response.getGroupResponse();
-            for (GroupCommand gc : gr.getValues()) {
-                for (Group g : gc.getValues()) {
-                    for (SolrDocument d : g.getResult()) {
-                        docs.add(d);
-                    }
-                }
-            }
-        }
-        
-        return docs;
+        return shs.getResponseDocuments(response);
     }
 
     @Override
@@ -785,14 +760,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return The facet value with all special characters properly escaped, safe to be used in construction of a Solr query
      */
     protected String scrubFacetValue(String facetValue) {
-        String scrubbedFacetValue = facetValue;
-        
-        String[] specialCharacters = new String[] { "\\\\", "\\+", "-", "&&", "\\|\\|", "\\!", "\\(", "\\)", "\\{", "\\}", "\\[", "\\]", "\\^", "\"", "~", "\\*", "\\?", ":" };
-        for(String character : specialCharacters) {
-            scrubbedFacetValue = scrubbedFacetValue.replaceAll(character, "\\\\" + character);
-        }
-        
-        return scrubbedFacetValue;
+        return shs.scrubFacetValue(facetValue);
     }
 
     /**
@@ -802,25 +770,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param namedFacetMap
      */
     protected void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap) {
-        query.setFacet(true);
-        for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
-            SearchFacetDTO dto = entry.getValue();
-
-            // Clone the list - we don't want to remove these facets from the DB
-            List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
-
-            if (extensionManager != null) {
-                extensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
-            }
-
-            if (facetRanges != null && facetRanges.size() > 0) {
-                for (SearchFacetRange range : facetRanges) {
-                    query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
-                }
-            } else {
-                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "key", null));
-            }
-        }
+        shs.attachFacets(query, namedFacetMap);
     }
 
     /**
@@ -831,42 +781,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param response
      */
     protected void setFacetResults(Map<String, SearchFacetDTO> namedFacetMap, QueryResponse response) {
-        if (response.getFacetFields() != null) {
-            for (FacetField facet : response.getFacetFields()) {
-                String facetFieldName = facet.getName();
-                SearchFacetDTO facetDTO = namedFacetMap.get(facetFieldName);
-
-                for (Count value : facet.getValues()) {
-                    SearchFacetResultDTO resultDTO = new SearchFacetResultDTO();
-                    resultDTO.setFacet(facetDTO.getFacet());
-                    resultDTO.setQuantity(new Long(value.getCount()).intValue());
-                    resultDTO.setValue(value.getName());
-                    facetDTO.getFacetValues().add(resultDTO);
-                }
-            }
-        }
-
-        if (response.getFacetQuery() != null) {
-            for (Entry<String, Integer> entry : response.getFacetQuery().entrySet()) {
-                String key = entry.getKey();
-                String facetFieldName = key.substring(0, key.indexOf("["));
-                SearchFacetDTO facetDTO = namedFacetMap.get(facetFieldName);
-
-                String minValue = key.substring(key.indexOf("[") + 1, key.indexOf(":"));
-                String maxValue = key.substring(key.indexOf(":") + 1, key.indexOf("]"));
-                if (maxValue.equals("*")) {
-                    maxValue = null;
-                }
-
-                SearchFacetResultDTO resultDTO = new SearchFacetResultDTO();
-                resultDTO.setFacet(facetDTO.getFacet());
-                resultDTO.setQuantity(entry.getValue());
-                resultDTO.setMinValue(new BigDecimal(minValue));
-                resultDTO.setMaxValue(maxValue == null ? null : new BigDecimal(maxValue));
-
-                facetDTO.getFacetValues().add(resultDTO);
-            }
-        }
+        shs.setFacetResults(namedFacetMap, response);
     }
 
     /**
@@ -877,19 +792,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param namedFacetMap
      */
     protected void sortFacetResults(Map<String, SearchFacetDTO> namedFacetMap) {
-        for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
-            Collections.sort(entry.getValue().getFacetValues(), new Comparator<SearchFacetResultDTO>() {
-                @Override
-                public int compare(SearchFacetResultDTO o1, SearchFacetResultDTO o2) {
-                    if (o1.getValue() != null && o2.getValue() != null) {
-                        return o1.getValue().compareTo(o2.getValue());
-                    } else if (o1.getMinValue() != null && o2.getMinValue() != null) {
-                        return o1.getMinValue().compareTo(o2.getMinValue());
-                    }
-                    return 0; // Don't know how to compare
-                }
-            });
-        }
+        shs.sortFacetResults(namedFacetMap);
     }
 
     /**
@@ -973,19 +876,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return the wrapper DTO
      */
     protected List<SearchFacetDTO> buildSearchFacetDTOs(List<SearchFacet> searchFacets) {
-        List<SearchFacetDTO> facets = new ArrayList<SearchFacetDTO>();
-        Map<String, String[]> requestParameters = BroadleafRequestContext.getRequestParameterMap();
-
-        for (SearchFacet facet : searchFacets) {
-            if (facetIsAvailable(facet, requestParameters)) {
-                SearchFacetDTO dto = new SearchFacetDTO();
-                dto.setFacet(facet);
-                dto.setShowQuantity(true);
-                facets.add(dto);
-            }
-        }
-
-        return facets;
+        return shs.buildSearchFacetDTOs(searchFacets);
     }
 
     /**
@@ -996,36 +887,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return whether or not the facet parameter is available 
      */
     protected boolean facetIsAvailable(SearchFacet facet, Map<String, String[]> params) {
-        // Facets are available by default if they have no requiredFacets
-        if (CollectionUtils.isEmpty(facet.getRequiredFacets())) {
-            return true;
-        }
-
-        // If we have at least one required facet but no active facets, it's impossible for this facet to be available
-        if (MapUtils.isEmpty(params)) {
-            return false;
-        }
-
-        // We must either match all or just one of the required facets depending on the requiresAllDependentFacets flag
-        int requiredMatches = facet.getRequiresAllDependentFacets() ? facet.getRequiredFacets().size() : 1;
-        int matchesSoFar = 0;
-
-        for (RequiredFacet requiredFacet : facet.getRequiredFacets()) {
-            if (requiredMatches == matchesSoFar) {
-                return true;
-            }
-
-            // Check to see if the required facet has a value in the current request parameters
-            for (Entry<String, String[]> entry : params.entrySet()) {
-                String key = entry.getKey();
-                if (key.equals(requiredFacet.getRequiredFacet().getField().getAbbreviation())) {
-                    matchesSoFar++;
-                    break;
-                }
-            }
-        }
-
-        return requiredMatches == matchesSoFar;
+        return shs.isFacetAvailable(facet, params);
     }
 
     /**
@@ -1037,10 +899,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return the sanitized query
      */
     protected String sanitizeQuery(String query) {
-        return query.replace("(", "").replace("%28", "")
-                .replace(")", "").replace("%29", "")
-                .replace(":", "").replace("%3A", "").replace("%3a", "")
-                .replace("&quot;", "\""); // Allow quotes in the query for more finely tuned matches
+        return shs.sanitizeQuery(query);
     }
 
     /**
@@ -1048,7 +907,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * would produce the following String: {!tag=a frange incl=false l=minVal u=maxVal}a
      */
     protected String getSolrTaggedFieldString(String indexField, String tag, SearchFacetRange range) {
-        return getSolrFieldTag(indexField, tag, range) + (range == null ? indexField : ("field(" + indexField + ")"));
+        return shs.getSolrTaggedFieldString(indexField, tag, range);
     }
 
     /**
@@ -1056,48 +915,11 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * {!tag=a}. if range is not null it will produce {!tag=a frange incl=false l=minVal u=maxVal} 
      */
     protected String getSolrFieldTag(String tagField, String tag, SearchFacetRange range) {
-        StringBuilder sb = new StringBuilder();
-        if (StringUtils.isNotBlank(tag)) {
-            sb.append("{!").append(tag).append("=").append(tagField);
-
-            if (range != null) {
-                sb.append("[").append(range.getMinValue().toPlainString()).append(":");
-                if (range.getMaxValue() != null) {
-                    sb.append(range.getMaxValue().toPlainString());
-                } else {
-                    sb.append("*");
-                }
-                sb.append("]");
-
-                sb.append(" " + getSolrRangeFunctionString(range.getMinValue(), range.getMaxValue()));
-            }
-
-            sb.append("}");
-        }
-        return sb.toString();
+        return shs.getSolrFieldTag(tagField, tag, range);
     }
 
     protected String getSolrRangeString(String fieldName, BigDecimal minValue, BigDecimal maxValue) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(fieldName).append(":[");
-        if (minValue == null) {
-            sb.append("*");
-        } else {
-            sb.append(minValue.toPlainString());
-        }
-
-        sb.append(" TO ");
-
-        if (maxValue == null) {
-            sb.append("*");
-        } else {
-            sb.append(maxValue.toPlainString());
-        }
-
-        sb.append(']');
-
-        return sb.toString();
+        return shs.getSolrRangeString(fieldName, minValue, maxValue);
     }
 
     /**
@@ -1106,14 +928,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return a string representing a call to the frange solr function. it is not inclusive of lower limit, inclusive of upper limit
      */
     protected String getSolrRangeFunctionString(BigDecimal minValue, BigDecimal maxValue) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("frange incl=false l=").append(minValue.toPlainString());
-        if (maxValue != null) {
-            sb.append(" u=").append(maxValue.toPlainString());
-        }
-
-        return sb.toString();
+        return shs.getSolrRangeFunctionString(minValue, maxValue);
     }
 
     /**
