@@ -128,10 +128,6 @@ public interface CustomerPayment extends Status, Serializable, AdditionalFields,
 
     public void setLastExpirationNotification(Date lastExpirationNotification);
 
-    public boolean isActualExpiration();
-
-    public void setActualExpiration(boolean actualExpiration);
-
     public String getGatewayType();
 
     public void setGatewayType(String gatewayType);
