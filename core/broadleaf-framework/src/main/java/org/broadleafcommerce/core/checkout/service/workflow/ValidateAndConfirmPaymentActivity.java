@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
@@ -87,6 +88,9 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
 
     @Resource(name = "blSecureOrderPaymentService")
     protected SecureOrderPaymentService secureOrderPaymentService;
+    
+    @Resource(name = "blPaymentGatewayCheckoutService")
+    protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
 
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
@@ -279,6 +283,11 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     protected void handleUnsuccessfulTransactions(List<ResponseTransactionPair> responseDTOs, ProcessContext<CheckoutSeed> context) throws Exception {
         //The Response DTO was not successful confirming/authorizing a transaction.
         String msg = "Attempting to confirm/authorize an UNCONFIRMED transaction on the order was unsuccessful.";
+        Order order = context.getSeedData().getOrder();
+        for (ResponseTransactionPair responseTransactionPair: responseDTOs) {
+            order.getPayments().remove(orderPaymentService.readTransactionById(responseTransactionPair.getTransactionId()));
+            paymentGatewayCheckoutService.markPaymentAsInvalid(responseTransactionPair.getTransactionId());
+        }
         if (LOG.isErrorEnabled()) {
             LOG.error(msg);
         }
