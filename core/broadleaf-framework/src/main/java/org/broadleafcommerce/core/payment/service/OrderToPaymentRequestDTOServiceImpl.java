@@ -93,7 +93,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         return requestDTO;
     }
 
-    protected void populateTotals(Order order, PaymentRequestDTO requestDTO) {
+    public void populateTotals(Order order, PaymentRequestDTO requestDTO) {
         String total = ZERO_TOTAL;
         String shippingTotal = ZERO_TOTAL;
         String taxTotal = ZERO_TOTAL;
@@ -116,7 +116,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                 .orderCurrencyCode(order.getCurrency().getCurrencyCode());
     }
 
-    protected void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {
+    public void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {
         Customer customer = order.getCustomer();
         String phoneNumber = null;
         if (customer.getCustomerPhones() != null && !customer.getCustomerPhones().isEmpty()) {
@@ -144,7 +144,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
      * @param requestDTO the {@link PaymentRequestDTO} that should be populated
      * @see {@link FulfillmentGroupService#getFirstShippableFulfillmentGroup(Order)}
      */
-    protected void populateShipTo(Order order, PaymentRequestDTO requestDTO) {
+    public void populateShipTo(Order order, PaymentRequestDTO requestDTO) {
         List<FulfillmentGroup> fgs = order.getFulfillmentGroups();
         if (fgs != null && fgs.size() > 0) {
             FulfillmentGroup defaultFg = fgService.getFirstShippableFulfillmentGroup(order);
@@ -203,7 +203,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         }
     }
 
-    protected void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
+    public void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
                 Address billAddress = payment.getBillingAddress();
@@ -285,7 +285,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
      * @param order
      * @param requestDTO
      */
-    protected void populateDefaultLineItemsAndSubtotal(Order order, PaymentRequestDTO requestDTO) {
+    public void populateDefaultLineItemsAndSubtotal(Order order, PaymentRequestDTO requestDTO) {
         String subtotal = ZERO_TOTAL;
         if (order.getSubTotal() != null) {
             subtotal = order.getSubTotal().toString();

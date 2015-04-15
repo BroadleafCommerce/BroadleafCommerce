@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 
 /**
@@ -56,5 +57,20 @@ public interface OrderToPaymentRequestDTOService {
      * the amount from <b>transactionAmount<b>
      */
     public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction);
+    
+    public void populateTotals(Order order, PaymentRequestDTO requestDTO);
+    
+    public void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO);
+    
+    /**
+     * Uses the first shippable fulfillment group to populate the {@link PaymentRequestDTO#shipTo()} object
+     * @param order the {@link Order} to get data from
+     * @param requestDTO the {@link PaymentRequestDTO} that should be populated
+     * @see {@link FulfillmentGroupService#getFirstShippableFulfillmentGroup(Order)}
+     */
+    public void populateShipTo(Order order, PaymentRequestDTO requestDTO);
+    
+    public void populateBillTo(Order order, PaymentRequestDTO requestDTO);
 
+    public void populateDefaultLineItemsAndSubtotal(Order order, PaymentRequestDTO requestDTO);
 }
