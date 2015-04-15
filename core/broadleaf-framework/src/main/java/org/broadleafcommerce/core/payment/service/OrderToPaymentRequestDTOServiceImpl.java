@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
@@ -170,10 +171,25 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                 if (fgAddress.getPhonePrimary() != null) {
                     phone = fgAddress.getPhonePrimary().getPhoneNumber();
                 }
-
+                String firstName;
+                String lastName;
+                if (BLCSystemProperty.resolveBooleanSystemProperty("validator.address.fullNameOnly")) {
+                    String fullName = fgAddress.getFullName();
+                    
+                    if ((fullName.indexOf(' ') != -1) && (fullName.length() > fullName.indexOf(' ') + 1)) {
+                        firstName = fullName.substring(0, fullName.indexOf('_'));
+                        lastName = fullName.substring(fullName.lastIndexOf(' ') + 1, fullName.length());
+                    } else {
+                        firstName = fullName;
+                        lastName = "";
+                    }
+                } else {
+                    firstName = fgAddress.getFirstName();
+                    lastName = fgAddress.getLastName();
+                }
                 requestDTO.shipTo()
-                        .addressFirstName(fgAddress.getFirstName())
-                        .addressLastName(fgAddress.getLastName())
+                        .addressFirstName(firstName)
+                        .addressLastName(lastName)
                         .addressCompanyName(fgAddress.getCompanyName())
                         .addressLine1(fgAddress.getAddressLine1())
                         .addressLine2(fgAddress.getAddressLine2())
@@ -213,10 +229,25 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                     if (billAddress.getPhonePrimary() != null) {
                         phone = billAddress.getPhonePrimary().getPhoneNumber();
                     }
-
+                    String firstName;
+                    String lastName;
+                    if (BLCSystemProperty.resolveBooleanSystemProperty("validator.address.fullNameOnly")) {
+                        String fullName = billAddress.getFullName();
+                        
+                        if ((fullName.indexOf(' ') != -1) && (fullName.length() > fullName.indexOf(' ') + 1)) {
+                            firstName = fullName.substring(0, fullName.indexOf('_'));
+                            lastName = fullName.substring(fullName.lastIndexOf(' ') + 1, fullName.length());
+                        } else {
+                            firstName = fullName;
+                            lastName = "";
+                        }
+                    } else {
+                        firstName = billAddress.getFirstName();
+                        lastName = billAddress.getLastName();
+                    }
                     requestDTO.billTo()
-                            .addressFirstName(billAddress.getFirstName())
-                            .addressLastName(billAddress.getLastName())
+                            .addressFirstName(firstName)
+                            .addressLastName(lastName)
                             .addressCompanyName(billAddress.getCompanyName())
                             .addressLine1(billAddress.getAddressLine1())
                             .addressLine2(billAddress.getAddressLine2())
