@@ -174,7 +174,8 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
         mockRequestService.translatePaymentTransaction(*_) >> new PaymentRequestDTO()
         OrderPaymentService mockOrderPaymentService = Mock()
         mockOrderPaymentService.createTransaction() >> new PaymentTransactionImpl()
-        mockOrderPaymentService.save(_) >> {OrderPayment payment -> payment}
+        mockOrderPaymentService.save(_ as OrderPayment) >> {OrderPayment payment -> payment}
+        mockOrderPaymentService.save(_ as PaymentTransaction) >> {PaymentTransaction transaction -> transaction}
 
         activity = new ValidateAndConfirmPaymentActivity().with {
             paymentConfigurationServiceProvider = mockProvider
@@ -218,7 +219,8 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
         mockRequestService.translatePaymentTransaction(*_) >> new PaymentRequestDTO()
         OrderPaymentService mockOrderPaymentService = Mock()
         mockOrderPaymentService.createTransaction() >> new PaymentTransactionImpl()
-        mockOrderPaymentService.save(_) >> {OrderPayment payment -> payment}
+        mockOrderPaymentService.save(_ as OrderPayment) >> {OrderPayment payment -> payment}
+        mockOrderPaymentService.save(_ as PaymentTransaction) >> {PaymentTransaction transaction -> transaction}
 
         activity = new ValidateAndConfirmPaymentActivity().with {
             paymentConfigurationServiceProvider = mockProvider
@@ -268,7 +270,8 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
         mockRequestService.translatePaymentTransaction(*_) >> new PaymentRequestDTO()
         OrderPaymentService mockOrderPaymentService = Mock()
         mockOrderPaymentService.createTransaction() >> new PaymentTransactionImpl()
-        mockOrderPaymentService.save(_) >> {OrderPayment payment -> payment}
+        mockOrderPaymentService.save(_ as OrderPayment) >> {OrderPayment payment -> payment}
+        mockOrderPaymentService.save(_ as PaymentTransaction) >> {PaymentTransaction transaction -> transaction}
 
         activity = new ValidateAndConfirmPaymentActivity().with {
             paymentConfigurationServiceProvider = mockProvider

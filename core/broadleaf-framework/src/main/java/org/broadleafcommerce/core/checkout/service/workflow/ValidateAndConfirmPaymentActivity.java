@@ -109,7 +109,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
          * that transaction
          */
         Map<OrderPayment, PaymentTransaction> additionalTransactions = new HashMap<OrderPayment, PaymentTransaction>();
-        List<PaymentResponseDTO> failedTransactions = new ArrayList<PaymentResponseDTO>();
+        List<ResponseTransactionPair> failedTransactions = new ArrayList<ResponseTransactionPair>();
         // Used for the rollback handler; we want to make sure that we roll back transactions that have already been confirmed
         // as well as transctions that we are about to confirm here
         List<PaymentTransaction> confirmedTransactions = new ArrayList<PaymentTransaction>();
@@ -188,12 +188,13 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         transaction.setParentTransaction(tx);
                         transaction.setOrderPayment(payment);
                         transaction.setAdditionalFields(responseDTO.getResponseMap());
+                        transaction = orderPaymentService.save(transaction);
                         additionalTransactions.put(payment, transaction);
 
                         if (responseDTO.isSuccessful()) {
                             additionalConfirmedTransactions.put(payment, transaction.getType());
                         } else {
-                            failedTransactions.add(responseDTO);
+                            failedTransactions.add(new ResponseTransactionPair(responseDTO, transaction.getId()));
                         }
 
                     } else if (PaymentTransactionType.AUTHORIZE.equals(tx.getType()) ||
@@ -275,7 +276,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
      *
      * @param responseDTOs
      */
-    protected void handleUnsuccessfulTransactions(List<PaymentResponseDTO> responseDTOs, ProcessContext<CheckoutSeed> context) throws Exception {
+    protected void handleUnsuccessfulTransactions(List<ResponseTransactionPair> responseDTOs, ProcessContext<CheckoutSeed> context) throws Exception {
         //The Response DTO was not successful confirming/authorizing a transaction.
         String msg = "Attempting to confirm/authorize an UNCONFIRMED transaction on the order was unsuccessful.";
         if (LOG.isErrorEnabled()) {
@@ -283,8 +284,8 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         }
 
         if (LOG.isTraceEnabled()) {
-            for (PaymentResponseDTO responseDTO : responseDTOs) {
-                LOG.trace(responseDTO.getRawResponse());
+            for (ResponseTransactionPair responseTransactionPair : responseDTOs) {
+                LOG.trace(responseTransactionPair.getResponseDTO().getRawResponse());
             }
         }
 
@@ -358,6 +359,27 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
             format = "MM/YY";
         }
         return format;
+    }
+    
+    protected class ResponseTransactionPair {
+        PaymentResponseDTO responseDTO;
+        Long transactionId;
+        
+        ResponseTransactionPair() {
+            this(null, null);
+        }
+        ResponseTransactionPair(PaymentResponseDTO responseDTO, Long transactionId) {
+            this.responseDTO = responseDTO;
+            this.transactionId = transactionId;
+        }
+        
+        public PaymentResponseDTO getResponseDTO() {
+            return responseDTO;
+        }
+        
+        public Long getTransactionId() {
+            return transactionId;
+        }
     }
 
 }
