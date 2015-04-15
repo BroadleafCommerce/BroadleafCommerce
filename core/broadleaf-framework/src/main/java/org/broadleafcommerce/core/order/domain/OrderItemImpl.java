@@ -39,6 +39,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
@@ -293,7 +294,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Category getCategory() {
-        return category;
+        return HibernateUtils.deproxy(category);
     }
 
     @Override
@@ -394,7 +395,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public GiftWrapOrderItem getGiftWrapOrderItem() {
-        return giftWrapOrderItem;
+        return HibernateUtils.deproxy(giftWrapOrderItem);
     }
 
     @Override
