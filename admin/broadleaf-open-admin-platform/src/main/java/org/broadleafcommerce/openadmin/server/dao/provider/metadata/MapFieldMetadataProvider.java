@@ -399,6 +399,7 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
             override.setCurrencyCodeField(map.currencyCodeField());
             override.setForceFreeFormKeys(map.forceFreeFormKeys());
             override.setManyToField(map.manyToField());
+            override.setLazyFetch(map.lazyFetch());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationMap annotation not found on field");
@@ -668,6 +669,10 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
                 }
             }
             metadata.setExcluded(map.getExcluded());
+        }
+
+        if (map.getLazyFetch() != null) {
+            metadata.setLazyFetch(map.getLazyFetch());
         }
         if (map.getFriendlyName() != null) {
             metadata.setFriendlyName(map.getFriendlyName());

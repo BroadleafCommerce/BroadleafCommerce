@@ -20,6 +20,7 @@
 $(document).ready(function() {
     
     var $tabs = $('dl.tabs.entity-form');
+    var tabs_action=null;
     if ($tabs.length > 0) {
         var $lastTab = $tabs.find('dd:last');
         if ($lastTab.length && $lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
@@ -31,6 +32,73 @@ $(document).ready(function() {
         }
     }
     
+    $('body div.tabs-container dl.tabs.entity-form').find('a').click(function(event) {
+    	var text = $(this).text();
+        var $form = BLCAdmin.getForm($(this));
+        var href = $(this).attr('href').replace('#','');
+        var currentAction = $form.attr('action');
+        var tabUrl = currentAction+'/1/'+text;
+     
+        if(tabs_action && tabs_action.indexOf(tabUrl+'++') ==-1 && tabs_action.indexOf(tabUrl)>=0 ){
+            tabs_action=tabs_action.replace(tabUrl,tabUrl+'++');
+        }else if(tabs_action && tabs_action.indexOf(tabUrl)==-1){
+            tabs_action+=' / '+ tabUrl; 
+        }else if(tabs_action==null){
+             tabs_action= tabUrl;
+        }
+        showActionSpinner($(this).closest('.tabs.entity-form'));
+        
+        if (tabs_action.indexOf(tabUrl+'++') == -1 && text!='General'){
+        BLC.ajax({
+            url: tabUrl,
+            type: "POST",
+            data: $form.serializeArray(),
+            complete: hideActionSpinner
+        }, function(data) {
+        	 $('li.'+href+'Tab div.listgrid-container div.listgrid-header-wrapper table').each(function() {
+        	 var tableId = $(this).attr('id').replace('-header','');
+        	 var $table = data.find('table#'+tableId);
+             var $oldTable = null;
+             // Go through the modals from top to bottom looking for the replacement list grid
+             var modals = BLCAdmin.getModals();
+             if (modals.length > 0) {
+                 for (var i = modals.length - 1; i >= 0; i--) {
+                     $oldTable = $(modals[i]).find('#' + tableId);
+                     if ($oldTable != null && $oldTable.length > 0) {
+                         break;
+                     }
+                 }
+             }       
+             // If we didn't find it in a modal, use the element from the body
+             if ($oldTable == null || $oldTable.length == 0) {
+                $oldTable = $('#' + tableId);
+             }
+             var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
+             var $oldBodyWrapper = $oldTable.closest('.listgrid-body-wrapper');
+             var $oldHeaderWrapper = $oldBodyWrapper.prev();
+             $(this).find('thead').after($table.find('tbody'));
+             $oldBodyWrapper.remove();
+             
+             var $listGridContainer = $oldHeaderWrapper.closest('.listgrid-container');
+
+             // We'll update the current params with what we were returned in this request
+             $listGridContainer.find('.listgrid-header-wrapper table').data('currentparams', $table.data('currentparams'));
+
+             BLCAdmin.listGrid.initialize($listGridContainer);
+             
+             BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
+             $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
+             
+             BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
+        	 });
+        });
+ 
+        event.preventDefault();
+        
+    }
+    });
+
+
     // When the delete button is clicked, we can change the desired action for the
     // form and submit it normally (not via AJAX).
     $('body').on('click', 'button.delete-button', function(event) {

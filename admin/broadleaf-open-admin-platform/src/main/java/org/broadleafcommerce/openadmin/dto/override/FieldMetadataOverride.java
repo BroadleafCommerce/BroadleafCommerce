@@ -40,6 +40,7 @@ public class FieldMetadataOverride {
     private String friendlyName;
     private String securityLevel;
     private Integer order;
+    private Boolean lazyFetch;
 
     public Boolean getExcluded() {
         return excluded;
@@ -853,6 +854,14 @@ public class FieldMetadataOverride {
 
     public void setMapKeyValueProperty(String mapKeyValueProperty) {
         this.mapKeyValueProperty = mapKeyValueProperty;
+    }
+
+    public Boolean getLazyFetch() {
+        return lazyFetch;
+    }
+
+    public void setLazyFetch(Boolean lazyFetch) {
+        this.lazyFetch = lazyFetch;
     }
     
 }

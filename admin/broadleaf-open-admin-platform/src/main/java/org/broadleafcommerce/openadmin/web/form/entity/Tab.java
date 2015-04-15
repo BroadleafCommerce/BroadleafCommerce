@@ -35,6 +35,7 @@ public class Tab {
     protected String title;
     protected Integer order;
     protected String tabClass;
+    private boolean isTabsPresent=false;
 
     Set<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
         @Override
@@ -57,7 +58,7 @@ public class Tab {
     });
     
     public Boolean getIsVisible() {
-        if (listGrids.size() > 0) {
+        if (listGrids.size() > 0 || isTabsPresent) {
             return true;
         }
 
@@ -130,6 +131,18 @@ public class Tab {
     public void setTabClass(String tabClass) {
         this.tabClass = tabClass;
     }
+
+    
+    public boolean isTabsPresent() {
+        return isTabsPresent;
+    }
+
+    
+    public void setTabsPresent(boolean isTabsPresent) {
+        this.isTabsPresent = isTabsPresent;
+    }
+    
+    
     
 }
 

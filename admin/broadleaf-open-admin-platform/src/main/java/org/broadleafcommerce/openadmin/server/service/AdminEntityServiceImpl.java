@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -55,6 +56,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPe
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -371,6 +373,50 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return map;
     }
 
+    @Override
+    public Map<String, DynamicResultSet> getRecordsForSelectedTab(ClassMetadata cmd, Entity containingEntity, List<SectionCrumb> sectionCrumb,
+            String currentTabName) throws ServiceException {
+        Map<String, DynamicResultSet> map = new HashMap<String, DynamicResultSet>();
+        for (Property p : cmd.getProperties()) {
+            if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0])
+                    && p.getMetadata() instanceof CollectionMetadata) {
+                if (p.getMetadata().getLazyFetch()!=null && p.getMetadata().getLazyFetch()&& getTabName(p.getMetadata().getTab()).equalsIgnoreCase(currentTabName)) {
+                    PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
+                    map.put(p.getName(), response2.getDynamicResultSet());
+                }else if(p.getMetadata().getLazyFetch()!=null && !p.getMetadata().getLazyFetch()){
+                    PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
+                    map.put(p.getName(), response2.getDynamicResultSet());
+                }else {
+                    DynamicResultSet drs = new DynamicResultSet();
+                    Map<String, Tab> tabMap = new HashMap<String, Tab>();
+                    Tab tab = new Tab();
+                    tab.setTitle(p.getMetadata().getTab());
+                    tab.setOrder(p.getMetadata().getTabOrder());
+                    tabMap.put(tab.getTitle(), tab);
+                    drs.setUnselectedTabMetadata(tabMap);
+                    drs.setTotalRecords(1);
+                    drs.setStartIndex(0);
+                    drs.setBatchId(1);
+                    drs.setClassMetaData(null);
+                    drs.setPageSize(1);
+                    drs.setRecords(new Entity[0]);
+                    map.put(p.getName(), drs);
+                }
+            }
+        }
+
+        return map;
+    }
+   
+    protected String getTabName(String tabName) throws ServiceException {
+        // Tabs should be looked up and referenced by their display name
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
+        }
+        return tabName;
+    }
+    
     @Override
     public PersistenceResponse addSubCollectionEntity(EntityForm entityForm, ClassMetadata mainMetadata, Property field,
             Entity parentEntity, List<SectionCrumb> sectionCrumbs)

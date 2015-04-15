@@ -45,7 +45,8 @@ public abstract class FieldMetadata implements Serializable {
 
     private String tab;
     private Integer tabOrder;
-
+    private Boolean lazyFetch;
+    
     //temporary fields
     private Boolean childrenExcluded;
     private String targetClass;
@@ -109,6 +110,7 @@ public abstract class FieldMetadata implements Serializable {
         metadata.fieldName = fieldName;
         metadata.showIfProperty = showIfProperty;
         metadata.currencyCodeField = currencyCodeField;
+        metadata.lazyFetch = lazyFetch;
         for (Map.Entry<String, Object> entry : additionalMetadata.entrySet()) {
             metadata.additionalMetadata.put(entry.getKey(), entry.getValue());
         }
@@ -217,6 +219,14 @@ public abstract class FieldMetadata implements Serializable {
 
     public void setTabOrder(Integer tabOrder) {
         this.tabOrder = tabOrder;
+    }
+
+    public Boolean getLazyFetch() {
+        return lazyFetch;
+    }
+
+    public void setLazyFetch(Boolean lazyFetch) {
+        this.lazyFetch = lazyFetch;
     }
 
     public abstract FieldMetadata cloneFieldMetadata();

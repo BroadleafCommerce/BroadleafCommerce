@@ -214,4 +214,15 @@ public @interface AdminPresentationCollection {
      * @return the sort direction
      */
     boolean sortAscending() default true;
+    
+    
+    /**
+     * <p>Optional - fields are eagerly fetched by default</p>
+     *
+     * <p>Specify true if this field should be lazily fetched</p>
+     *
+     * @return whether or not the field should be fetched
+     */
+   
+    boolean lazyFetch() default true;
 }

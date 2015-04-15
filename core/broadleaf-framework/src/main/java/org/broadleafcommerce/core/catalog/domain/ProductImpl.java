@@ -282,7 +282,8 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "productAttributesTitle",
         tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
+        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name",
+        lazyFetch=true
     )
     protected Map<String, ProductAttribute> productAttributes = new HashMap<String, ProductAttribute>();
 
@@ -295,7 +296,7 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
         joinEntityClass = "org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl",
         targetObjectProperty = "productOption",
         parentObjectProperty = "product",
-        gridVisibleFields = {"label", "required"})
+        gridVisibleFields = {"label", "required"}, lazyFetch=true)
     protected List<ProductOptionXref> productOptions = new ArrayList<ProductOptionXref>();
 
     @Transient
