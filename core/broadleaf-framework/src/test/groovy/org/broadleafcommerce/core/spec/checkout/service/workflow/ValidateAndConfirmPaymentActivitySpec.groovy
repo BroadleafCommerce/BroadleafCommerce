@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction
 import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl
+import org.broadleafcommerce.core.payment.service.DefaultPaymentGatewayCheckoutService
 import org.broadleafcommerce.core.payment.service.OrderPaymentService
 import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOService
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl
@@ -56,10 +57,10 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
     PaymentTransaction unconfirmedCCTransaction = new PaymentTransactionImpl()
 
     def setup() {
-        def rollbackStateLocal = new RollbackStateLocal();
-        rollbackStateLocal.setThreadId("SPOCK_THREAD");
-        rollbackStateLocal.setWorkflowId("TEST");
-        RollbackStateLocal.setRollbackStateLocal(rollbackStateLocal);
+        def rollbackStateLocal = new RollbackStateLocal()
+        rollbackStateLocal.setThreadId("SPOCK_THREAD")
+        rollbackStateLocal.setWorkflowId("TEST")
+        RollbackStateLocal.setRollbackStateLocal(rollbackStateLocal)
 
         new ActivityStateManagerImpl().init()
 
@@ -218,14 +219,28 @@ class ValidateAndConfirmPaymentActivitySpec extends BaseCheckoutActivitySpec {
         OrderToPaymentRequestDTOService mockRequestService = Mock()
         mockRequestService.translatePaymentTransaction(*_) >> new PaymentRequestDTO()
         OrderPaymentService mockOrderPaymentService = Mock()
-        mockOrderPaymentService.createTransaction() >> new PaymentTransactionImpl()
+        
+        PaymentTransaction tx = new PaymentTransactionImpl().with {
+            orderPayment = unconfirmedTP
+            it
+        }
+        
+        mockOrderPaymentService.createTransaction() >> {
+            tx
+        }
         mockOrderPaymentService.save(_ as OrderPayment) >> {OrderPayment payment -> payment}
         mockOrderPaymentService.save(_ as PaymentTransaction) >> {PaymentTransaction transaction -> transaction}
+        mockOrderPaymentService.readPaymentById(_) >> {Long id -> unconfirmedTP }
+        mockOrderPaymentService.readTransactionById(_) >> { Long id -> tx }
+        
+        DefaultPaymentGatewayCheckoutService mockCheckoutService = Stub()
+        mockCheckoutService.orderPaymentService = mockOrderPaymentService
 
         activity = new ValidateAndConfirmPaymentActivity().with {
             paymentConfigurationServiceProvider = mockProvider
             orderToPaymentRequestService = mockRequestService
             orderPaymentService = mockOrderPaymentService
+            paymentGatewayCheckoutService = mockCheckoutService
             it
         }
 

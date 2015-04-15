@@ -280,20 +280,26 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
      *
      * @param responseDTOs
      */
-    protected void handleUnsuccessfulTransactions(List<ResponseTransactionPair> responseDTOs, ProcessContext<CheckoutSeed> context) throws Exception {
+    protected void handleUnsuccessfulTransactions(List<ResponseTransactionPair> failedTransactions, ProcessContext<CheckoutSeed> context) throws Exception {
         //The Response DTO was not successful confirming/authorizing a transaction.
         String msg = "Attempting to confirm/authorize an UNCONFIRMED transaction on the order was unsuccessful.";
         Order order = context.getSeedData().getOrder();
-        for (ResponseTransactionPair responseTransactionPair: responseDTOs) {
-            order.getPayments().remove(orderPaymentService.readTransactionById(responseTransactionPair.getTransactionId()));
-            paymentGatewayCheckoutService.markPaymentAsInvalid(responseTransactionPair.getTransactionId());
+        
+        List<OrderPayment> invalidatedPayments = new ArrayList<OrderPayment>();
+        for (ResponseTransactionPair responseTransactionPair : failedTransactions) {
+            PaymentTransaction tx = orderPaymentService.readTransactionById(responseTransactionPair.getTransactionId());
+            if (!invalidatedPayments.contains(tx.getOrderPayment())) {
+                paymentGatewayCheckoutService.markPaymentAsInvalid(tx.getOrderPayment().getId());
+                
+                invalidatedPayments.add(tx.getOrderPayment());
+            }
         }
         if (LOG.isErrorEnabled()) {
             LOG.error(msg);
         }
 
         if (LOG.isTraceEnabled()) {
-            for (ResponseTransactionPair responseTransactionPair : responseDTOs) {
+            for (ResponseTransactionPair responseTransactionPair : failedTransactions) {
                 LOG.trace(responseTransactionPair.getResponseDTO().getRawResponse());
             }
         }
