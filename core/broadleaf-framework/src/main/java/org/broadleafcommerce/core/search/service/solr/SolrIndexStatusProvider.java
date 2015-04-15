@@ -20,10 +20,14 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 /**
+ * Responsible for reading and writing the index status to some persistent store (e.g. the file system).
+ *
  * @author Jeff Fischer
  */
 public interface SolrIndexStatusProvider {
+
     void handleUpdateIndexStatus(IndexStatusInfo status);
 
     IndexStatusInfo readIndexStatus(IndexStatusInfo status);
+
 }

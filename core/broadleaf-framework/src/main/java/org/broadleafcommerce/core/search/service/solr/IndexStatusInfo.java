@@ -23,14 +23,28 @@ import java.util.Date;
 import java.util.Map;
 
 /**
+ * General information about the current status of a (embedded) Solr instance's index
+ *
  * @author Jeff Fischer
  */
 public interface IndexStatusInfo {
+
+    /**
+     * The most recent index date
+     *
+     * @return
+     */
     Date getLastIndexDate();
 
     void setLastIndexDate(Date lastIndexDate);
 
+    /**
+     * Arbitrary information about the index.
+     *
+     * @return
+     */
     Map<String, String> getAdditionalInfo();
 
     void setAdditionalInfo(Map<String, String> additionalInfo);
+
 }

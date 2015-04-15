@@ -20,6 +20,10 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 /**
+ * Responsible for reading and writing the status using one or more {@link org.broadleafcommerce.core.search.service.solr.SolrIndexStatusProvider}
+ * instances. {@link #getSeedStatusInstance()} can be used to provide a custom {@link org.broadleafcommerce.core.search.service.solr.IndexStatusInfo}
+ * implementation.
+ *
  * @author Jeff Fischer
  */
 public interface SolrIndexStatusService {
@@ -28,5 +32,11 @@ public interface SolrIndexStatusService {
 
     IndexStatusInfo getIndexStatus();
 
+    /**
+     * Provide a custom IndexStatusInfo instance to be used by the system.
+     *
+     * @return
+     */
     IndexStatusInfo getSeedStatusInstance();
+
 }
