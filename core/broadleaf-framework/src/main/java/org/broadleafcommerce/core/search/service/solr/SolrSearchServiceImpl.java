@@ -124,6 +124,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
 
+    protected String solrHomePath;
+
     public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
         if ("solrhome".equals(solrServer)) {
 
@@ -137,10 +139,11 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             if (!tempDir.exists()) {
                 tempDir.mkdirs();
             }
-            
+
             solrServer = tempDir.getAbsolutePath();
         }
-        
+        solrHomePath = solrServer;
+
         File solrXml = new File(new File(solrServer), "solr.xml");
         if (!solrXml.exists()) {
             copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrXml);
@@ -180,6 +183,10 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         SolrContext.setReindexServer(reindexServer);
         //NOTE: There is no reason to set the admin server here as the SolrContext will return the primary server
         //if the admin server is not set...
+    }
+
+    public String getSolrHomePath() {
+        return solrHomePath;
     }
 
     public void copyConfigToSolrHome(InputStream configIs, File destFile) throws IOException {
