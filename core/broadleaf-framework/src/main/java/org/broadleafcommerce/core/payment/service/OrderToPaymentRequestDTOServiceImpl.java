@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.FulfillmentGroupService;
@@ -92,7 +93,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         return requestDTO;
     }
 
-    protected void populateTotals(Order order, PaymentRequestDTO requestDTO) {
+    @Override
+    public void populateTotals(Order order, PaymentRequestDTO requestDTO) {
         String total = ZERO_TOTAL;
         String shippingTotal = ZERO_TOTAL;
         String taxTotal = ZERO_TOTAL;
@@ -115,7 +117,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                 .orderCurrencyCode(order.getCurrency().getCurrencyCode());
     }
 
-    protected void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {
+    @Override
+    public void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO) {
         Customer customer = order.getCustomer();
         String phoneNumber = null;
         if (customer.getCustomerPhones() != null && !customer.getCustomerPhones().isEmpty()) {
@@ -143,7 +146,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
      * @param requestDTO the {@link PaymentRequestDTO} that should be populated
      * @see {@link FulfillmentGroupService#getFirstShippableFulfillmentGroup(Order)}
      */
-    protected void populateShipTo(Order order, PaymentRequestDTO requestDTO) {
+    @Override
+    public void populateShipTo(Order order, PaymentRequestDTO requestDTO) {
         List<FulfillmentGroup> fgs = order.getFulfillmentGroups();
         if (fgs != null && fgs.size() > 0) {
             FulfillmentGroup defaultFg = fgService.getFirstShippableFulfillmentGroup(order);
@@ -170,10 +174,12 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                 if (fgAddress.getPhonePrimary() != null) {
                     phone = fgAddress.getPhonePrimary().getPhoneNumber();
                 }
-
+                
+                NameResponse name = getName(fgAddress);
+                
                 requestDTO.shipTo()
-                        .addressFirstName(fgAddress.getFirstName())
-                        .addressLastName(fgAddress.getLastName())
+                        .addressFirstName(name.firstName)
+                        .addressLastName(name.lastName)
                         .addressCompanyName(fgAddress.getCompanyName())
                         .addressLine1(fgAddress.getAddressLine1())
                         .addressLine2(fgAddress.getAddressLine2())
@@ -187,7 +193,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         }
     }
 
-    protected void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
+    @Override
+    public void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
                 Address billAddress = payment.getBillingAddress();
@@ -213,11 +220,12 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
                     if (billAddress.getPhonePrimary() != null) {
                         phone = billAddress.getPhonePrimary().getPhoneNumber();
                     }
-
+                    
+                    NameResponse name = getName(billAddress);
+                    
                     requestDTO.billTo()
-                            .addressFirstName(billAddress.getFirstName())
-                            .addressLastName(billAddress.getLastName())
-                            .addressFullName(billAddress.getFullName())
+                            .addressFirstName(name.firstName)
+                            .addressLastName(name.lastName)
                             .addressCompanyName(billAddress.getCompanyName())
                             .addressLine1(billAddress.getAddressLine1())
                             .addressLine2(billAddress.getAddressLine2())
@@ -232,6 +240,30 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         }
     }
 
+    
+    protected NameResponse getName(Address address) {
+        NameResponse response = new NameResponse();
+        
+        if (BLCSystemProperty.resolveBooleanSystemProperty("validator.address.fullNameOnly")) {
+            String fullName = address.getFullName();
+            
+            char nameSeparatorChar = ' ';
+            int spaceCharacterIndex = fullName.indexOf(nameSeparatorChar);
+            if (spaceCharacterIndex != -1 && (fullName.length() > spaceCharacterIndex + 1)) {
+                response.firstName = fullName.substring(0, spaceCharacterIndex);
+                // use lastIndexOf instead of indexOf to deal with the case where a user put <first> <middle> <last>
+                response.lastName = fullName.substring(fullName.lastIndexOf(nameSeparatorChar) + 1, fullName.length());
+            } else {
+                response.firstName = fullName;
+                response.lastName = "";
+            }
+        } else {
+            response.firstName = address.getFirstName();
+            response.lastName = address.getLastName();
+        }
+        
+        return response;
+    }
 
 
     /**
@@ -255,13 +287,19 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
      * @param order
      * @param requestDTO
      */
-    protected void populateDefaultLineItemsAndSubtotal(Order order, PaymentRequestDTO requestDTO) {
+    @Override
+    public void populateDefaultLineItemsAndSubtotal(Order order, PaymentRequestDTO requestDTO) {
         String subtotal = ZERO_TOTAL;
         if (order.getSubTotal() != null) {
             subtotal = order.getSubTotal().toString();
         }
 
         requestDTO.orderSubtotal(subtotal);
+    }
+    
+    public class NameResponse {
+        protected String firstName;
+        protected String lastName;
     }
 
 }

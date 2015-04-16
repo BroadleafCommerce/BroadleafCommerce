@@ -191,7 +191,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         }
 
         for (OrderPayment invalid : paymentsToInvalidate) {
-            order.getPayments().remove(invalid);
+            // 2
             markPaymentAsInvalid(invalid.getId());
         }
 

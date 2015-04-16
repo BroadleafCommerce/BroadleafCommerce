@@ -43,12 +43,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Rolls back all payments that have been processed or were confirmed in {@link ValidateAndConfirmPaymentActivity}.
@@ -156,9 +157,6 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
                     "attempted to roll back a transaction on one of the payments. Please see LOG for details.");
         } else {
             for (OrderPayment payment : paymentsToInvalidate) {
-            	//Test these during integration testing to see if commenting out one of these at at time breaks the test
-            	//Check in the DB for the entries of the paymentTransaction id's
-                order.getPayments().remove(payment);
                 paymentGatewayCheckoutService.markPaymentAsInvalid(payment.getId());
             }
 

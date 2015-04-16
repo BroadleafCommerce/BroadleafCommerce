@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.service.workflow.add;
 
+import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -49,6 +50,9 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
     
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
+
+    @Resource(name = "blGenericEntityDao")
+    protected GenericEntityDao genericEntityDao;
 
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
@@ -111,16 +115,21 @@ public class AddOrderItemActivity extends BaseActivity<ProcessContext<CartOperat
             bundleItemRequest.setRetailPriceOverride(orderItemRequestDTO.getOverrideRetailPrice());
             item = orderItemService.createBundleOrderItem(bundleItemRequest, false);
         }
-        
-        OrderItem parent = null;
+
         if (orderItemRequestDTO.getParentOrderItemId() != null) {
-            parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
+            OrderItem parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
             item.setParentOrderItem(parent);
         }
         
         order.getOrderItems().add(item);
-
         request.setOrderItem(item);
+
+        if (!request.isPriceOrder()) {
+            //persist the newly created order if we're not going through the pricing flow. This helps with proper
+            //fulfillment group association
+            genericEntityDao.persist(item);
+        }
+
         return context;
     }
 
