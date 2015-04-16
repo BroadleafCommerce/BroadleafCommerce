@@ -339,8 +339,7 @@ public @interface AdminPresentationMap {
      * @return the currency property field
      */
     String currencyCodeField() default "";
-    
-    
+
     /**
      * <p>Optional - fields are eagerly fetched by default</p>
      *
@@ -348,7 +347,6 @@ public @interface AdminPresentationMap {
      *
      * @return whether or not the field should be fetched eagerly
      */
-   
     boolean lazyFetch() default true;
 
 }

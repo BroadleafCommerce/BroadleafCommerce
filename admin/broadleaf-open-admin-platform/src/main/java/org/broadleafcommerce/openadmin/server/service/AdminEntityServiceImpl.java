@@ -380,13 +380,13 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         for (Property p : cmd.getProperties()) {
             if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0])
                     && p.getMetadata() instanceof CollectionMetadata) {
-                if (p.getMetadata().getLazyFetch()!=null && p.getMetadata().getLazyFetch()&& getTabName(p.getMetadata().getTab()).equalsIgnoreCase(currentTabName)) {
+                if (p.getMetadata().getLazyFetch() != null && p.getMetadata().getLazyFetch() && getTabName(p.getMetadata().getTab()).equalsIgnoreCase(currentTabName)) {
                     PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                     map.put(p.getName(), response2.getDynamicResultSet());
-                }else if(p.getMetadata().getLazyFetch()!=null && !p.getMetadata().getLazyFetch()){
+                } else if (p.getMetadata().getLazyFetch() != null && !p.getMetadata().getLazyFetch()) {
                     PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                     map.put(p.getName(), response2.getDynamicResultSet());
-                }else {
+                } else {
                     DynamicResultSet drs = new DynamicResultSet();
                     Map<String, Tab> tabMap = new HashMap<String, Tab>();
                     Tab tab = new Tab();
@@ -407,7 +407,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         return map;
     }
-   
+
     protected String getTabName(String tabName) throws ServiceException {
         // Tabs should be looked up and referenced by their display name
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
