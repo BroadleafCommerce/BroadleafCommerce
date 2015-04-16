@@ -13,7 +13,9 @@
 
     <div class="content">
         <div th:substituteby="layout/partials/siteBar" />
-        <div class="section-content" th:classappend="${sandboxable == null} ? 'no-ribbon'">
+        <div th:substituteby="layout/partials/sandboxRibbon" />
+
+        <div class="section-content" th:classappend="${sandboxable != null} ? 'sandboxed'">
             <div th:substituteby="layout/partials/secondLeftNav" />
             <div th:substituteby="${templateName}" />
         </div>
