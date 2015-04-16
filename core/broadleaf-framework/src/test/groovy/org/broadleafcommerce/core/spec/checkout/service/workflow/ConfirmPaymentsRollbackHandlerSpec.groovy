@@ -347,6 +347,6 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         1 * mockPaymentGatewayCheckoutService.markPaymentAsInvalid(_)
         1 * mockOrderService.save(_,_)
         1 * mockOrderPaymentService.save(_) >> { args -> return args[0] }
-        order.getPayments().size() == 0
+        order.getPayments().size() == 1
     }
 }

@@ -19,6 +19,10 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -27,10 +31,17 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -329,4 +340,152 @@ public interface SolrHelperService {
      */
     public Object getPropertyValue(Object object, String propertyName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
+    /**
+     * Tells Solr to optimize the index.  This is an expensive operation and should be use rarely or never.
+     * 
+     * @param server
+     * @throws ServiceException
+     * @throws IOException
+     */
+    public void optimizeIndex(SolrServer server) throws ServiceException, IOException;
+
+    /**
+     * 
+     * @param facetValue
+     * @return
+     */
+    public String scrubFacetValue(String facetValue);
+
+    /**
+     * Strips out or replaces certain characters / substrings.
+     * 
+     * @param query
+     * @return
+     */
+    public String sanitizeQuery(String query);
+
+    /**
+     * Builds a list of SearchFacetDTOs from a list of SearchFacets.
+     * @param searchFacets
+     * @return
+     */
+    public List<SearchFacetDTO> buildSearchFacetDTOs(List<SearchFacet> searchFacets);
+
+    /**
+     * Checks to see if the requiredFacets condition for a given facet is met.
+     * @param facet
+     * @param params
+     * @return
+     */
+    public boolean isFacetAvailable(SearchFacet facet, Map<String, String[]> params);
+
+    /**
+     * Creates a range filter (e.g. field:[minValue TO maxValue])
+     * 
+     * If minValue == null or maxValue == null, they are replaced by an '*' for wildcard functionality.
+     * 
+     * @param fieldName
+     * @param minValue
+     * @param maxValue
+     * @return
+     */
+    public String getSolrRangeString(String fieldName, BigDecimal minValue, BigDecimal maxValue);
+
+    /**
+     * Returns a string representing a call to the frange solr function. it is not inclusive of lower limit, inclusive of upper limit.
+     * @param minValue
+     * @param maxValue
+     * @return
+     */
+    public String getSolrRangeFunctionString(BigDecimal minValue, BigDecimal maxValue);
+
+    /**
+     * Returns a solr field tag. Given indexField = a, tag = tag, would produce the following String:
+     * {!tag=a}. if range is not null it will produce {!tag=a frange incl=false l=minVal u=maxVal} 
+     * 
+     * @param tagField
+     * @param tag
+     * @param range
+     * @return
+     */
+    public String getSolrFieldTag(String tagField, String tag, SearchFacetRange range);
+
+    /**
+     * Builds out the DTOs for facet results from the search. This will then be used by the view layer to
+     * display which values are available given the current constraints as well as the count of the values.
+     * 
+     * @param namedFacetMap
+     * @param response
+     */
+    public void setFacetResults(Map<String, SearchFacetDTO> namedFacetMap, QueryResponse response);
+
+    /**
+     * Invoked to sort the facet results. This method will use the natural sorting of the value attribute of the
+     * facet (or, if value is null, the minValue of the facet result). Override this method to customize facet
+     * sorting for your given needs.
+     * 
+     * @param namedFacetMap
+     */
+    public void sortFacetResults(Map<String, SearchFacetDTO> namedFacetMap);
+
+    /**
+     * Notifies solr about which facets you want it to determine results and counts for.
+     * 
+     * @param query
+     * @param namedFacetMap
+     */
+    public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap);
+
+    /**
+     * Returns a fully composed solr field string. Given indexField = a, tag = ex, and a non-null range,
+     * would produce the following String: {!tag=a frange incl=false l=minVal u=maxVal}a
+     * 
+     * @param indexField
+     * @param tag
+     * @param range
+     * @return
+     */
+    public String getSolrTaggedFieldString(String indexField, String tag, SearchFacetRange range);
+
+    /**
+     * Determines the list of SolrDocuments from the QueryResponse
+     * @param response
+     * @return
+     */
+    public List<SolrDocument> getResponseDocuments(QueryResponse response);
+
+    /**
+     * Sets up the sorting criteria. This will support sorting by multiple fields at a time
+     * 
+     * @param query
+     * @param searchCriteria
+     * @param defaultSort
+     * @param fields
+     */
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<Field> fields);
+
+    /**
+     * Builds a map of the fields with the abbreviation 
+     * @param searchCriteria
+     * @param fields
+     * @return
+     */
+    public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<Field> fields);
+    
+    /**
+     * Returns a map of fully qualified solr index field key to the searchFacetDTO object
+     * @param facets
+     * @param searchCriteria
+     * @return
+     */
+    public Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets, SearchCriteria searchCriteria);
+
+    /**
+     * Restricts the query by adding active facet filters.
+     * 
+     * @param query
+     * @param namedFacetMap
+     * @param searchCriteria
+     */
+    public void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria);
 }

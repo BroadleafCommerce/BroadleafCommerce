@@ -627,6 +627,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             for (CategoryXref xref : xrefs) {
                 if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
                     response = xref.getCategory();
+                    break;
                 }
             }
         }
@@ -655,7 +656,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
                 xref.setDefaultReference(null);
             }
         }
-        if (!found) {
+        if (!found && category != null) {
             CategoryXref xref = new CategoryXrefImpl();
             xref.setSubCategory(this);
             xref.setCategory(category);
