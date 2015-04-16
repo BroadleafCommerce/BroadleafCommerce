@@ -25,6 +25,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
@@ -37,6 +39,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * Default implementation of FileServiceProvider that uses the local file system to store files created by Broadleaf
@@ -57,6 +61,9 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
     @Value("${asset.server.max.generated.file.system.directories}")
     protected int maxGeneratedDirectoryDepth;
 
+    @Resource(name = "blBroadleafFileServiceExtensionManager")
+    protected BroadleafFileServiceExtensionManager extensionManager;
+
     private static final String DEFAULT_STORAGE_DIRECTORY = System.getProperty("java.io.tmpdir");
 
     private static final Log LOG = LogFactory.getLog(FileSystemFileServiceProvider.class);
@@ -72,7 +79,13 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
     @Override
     public File getResource(String url, FileApplicationType applicationType) {
         String fileName = buildResourceName(url);
-        String filePath = FilenameUtils.normalize(getBaseDirectory() + File.separator + fileName);
+        String baseDirectory = getBaseDirectory(true);
+        ExtensionResultHolder<String> holder = new ExtensionResultHolder<String>();
+        ExtensionResultStatusType result = extensionManager.getProxy().processPathForSite(baseDirectory, fileName, holder);
+        if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+            return new File(holder.getResult());
+        }
+        String filePath = FilenameUtils.normalize(getBaseDirectory(false) + File.separator + fileName);
         return new File(filePath);
     }
     
@@ -96,7 +109,7 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
             // before building the resource name, convert the file path to a url-like path
             String url = FilenameUtils.separatorsToUnix(fileName);
             String resourceName = buildResourceName(url);
-            String destinationFilePath = FilenameUtils.normalize(getBaseDirectory() + File.separator + resourceName);
+            String destinationFilePath = FilenameUtils.normalize(getBaseDirectory(false) + File.separator + resourceName);
             File destFile = new File(destinationFilePath);
             if (!destFile.getParentFile().exists()) {
                 destFile.getParentFile().mkdirs();
@@ -123,7 +136,7 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
     @Override
     public boolean removeResource(String name) {
         String resourceName = buildResourceName(name);
-        String filePathToRemove = FilenameUtils.normalize(getBaseDirectory() + File.separator + resourceName);
+        String filePathToRemove = FilenameUtils.normalize(getBaseDirectory(false) + File.separator + resourceName);
         File fileToRemove = new File(filePathToRemove);
         return fileToRemove.delete();
     }
@@ -182,7 +195,7 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
      * Returns a base directory (unique for each tenant in a multi-tenant installation.
      * Creates the directory if it does not already exist.
      */
-    protected String getBaseDirectory() {
+    protected String getBaseDirectory(boolean skipSite) {
         if (baseDirectory == null) {
             if (StringUtils.isNotBlank(fileSystemBaseDirectory)) {
                 baseDirectory = fileSystemBaseDirectory;
@@ -190,8 +203,11 @@ public class FileSystemFileServiceProvider implements FileServiceProvider {
                 baseDirectory = DEFAULT_STORAGE_DIRECTORY;
             }
         }
-
-        return getSiteDirectory(baseDirectory);
+        if (!skipSite) {
+            return getSiteDirectory(baseDirectory);
+        } else {
+            return baseDirectory;
+        }
     }
 
     /**
