@@ -67,5 +67,11 @@ public class DefaultListGridActions {
         .withDisplayText("View")
         .withUrlPostfix("/view")
         .withForListGridReadOnly(true);
+
+
+    public static final ListGridAction PREVIEW = new ListGridAction("PREVIEW")
+            .withButtonClass("workflow-preview")
+            .withIconClass("icon-eye-open")
+            .withDisplayText("Workflow_button_preview");
     
 }
