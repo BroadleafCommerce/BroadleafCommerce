@@ -67,4 +67,10 @@ public class BroadleafCurrencyServiceImpl implements BroadleafCurrencyService {
     public BroadleafCurrency save(BroadleafCurrency currency) {
         return currencyDao.save(currency);
     }
+    
+    @Override
+    public BroadleafCurrency create() {
+        return currencyDao.create();
+    }    
+    
 }

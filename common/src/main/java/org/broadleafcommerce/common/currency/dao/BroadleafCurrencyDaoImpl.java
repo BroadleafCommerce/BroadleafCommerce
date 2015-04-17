@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.currency.dao;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -27,6 +28,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import java.util.List;
 
 /**
@@ -80,4 +82,9 @@ public class BroadleafCurrencyDaoImpl implements BroadleafCurrencyDao {
     public BroadleafCurrency save(BroadleafCurrency currency) {
         return em.merge(currency);
     }
+    
+    @Override
+    public BroadleafCurrency create() {
+        return new BroadleafCurrencyImpl();
+    }    
 }
