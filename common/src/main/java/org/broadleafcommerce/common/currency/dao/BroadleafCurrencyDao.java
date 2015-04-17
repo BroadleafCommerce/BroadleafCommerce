@@ -48,5 +48,7 @@ public interface BroadleafCurrencyDao {
     public List<BroadleafCurrency> getAllCurrencies();
 
     public BroadleafCurrency save(BroadleafCurrency currency);
+    
+    public BroadleafCurrency create();    
 
 }

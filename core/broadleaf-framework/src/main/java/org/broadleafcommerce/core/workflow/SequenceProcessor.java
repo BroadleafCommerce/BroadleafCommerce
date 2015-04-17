@@ -76,6 +76,7 @@ public class SequenceProcessor extends BaseProcessor {
                     try {
                         context = activity.execute(context);
                     } catch (Throwable th) {
+                    	th.printStackTrace();
                         if (getAutoRollbackOnError()) {
                             LOG.info("Automatically rolling back state for any previously registered RollbackHandlers. RollbackHandlers may be registered for workflow activities in appContext.");
                             ActivityStateManagerImpl.getStateManager().rollbackAllState();

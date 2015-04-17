@@ -37,10 +37,14 @@ import org.broadleafcommerce.common.web.payment.processor.CreditCardTypesExtensi
 import org.broadleafcommerce.common.web.payment.processor.TRCreditCardExtensionHandler;
 import org.springframework.stereotype.Service;
 
+
+
 import javax.annotation.Resource;
 
 /**
- * @author Elbert Bautista (elbertbautista)
+ * Copied from mycompany.sample.payment.service
+ * We need it to be picked up by the  siteintegration setup superlasses of groovy, which already scans "org" packages.
+ * @author gdiaz
  */
 @Service("blNullPaymentGatewayConfigurationService")
 public class NullPaymentGatewayConfigurationServiceImpl implements PaymentGatewayConfigurationService {
@@ -50,7 +54,10 @@ public class NullPaymentGatewayConfigurationServiceImpl implements PaymentGatewa
 
     @Resource(name = "blNullPaymentGatewayRollbackService")
     protected PaymentGatewayRollbackService rollbackService;
-
+    
+    @Resource(name = "blNullPaymentGatewayHostedTransactionConfirmationService")
+    protected NullPaymentGatewayHostedTransactionConfirmationServiceImpl transactionConfirmationServiceImpl;   
+    
     public PaymentGatewayConfiguration getConfiguration() {
         return configuration;
     }
@@ -60,7 +67,7 @@ public class NullPaymentGatewayConfigurationServiceImpl implements PaymentGatewa
     }
 
     public PaymentGatewayTransactionConfirmationService getTransactionConfirmationService() {
-        return null;
+        return transactionConfirmationServiceImpl;
     }
 
     public PaymentGatewayReportingService getReportingService() {

@@ -21,9 +21,12 @@ package org.broadleafcommerce.common.currency.service;
 
 import org.broadleafcommerce.common.currency.dao.BroadleafCurrencyDao;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
 /**
@@ -64,7 +67,13 @@ public class BroadleafCurrencyServiceImpl implements BroadleafCurrencyService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public BroadleafCurrency save(BroadleafCurrency currency) {
         return currencyDao.save(currency);
     }
+    
+    @Override
+    public BroadleafCurrency create() {
+        return currencyDao.create();
+    }    
 }
