@@ -73,16 +73,10 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         return null;
     }
     
-    Logger LOG = Logger.getLogger(this.getClass().getName()); 
+    //Logger LOG = Logger.getLogger(this.getClass().getName()); 
 
     @Override
     public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction) {
-    	
-    	LOG.info("*** transactionAmount = " + transactionAmount + " paymentTransaction=" + paymentTransaction);
-    	LOG.info("*** ta.amount=" + transactionAmount.getAmount());
-    	LOG.info("*** pt.orderPayment=" + paymentTransaction.getOrderPayment());
-    	LOG.info("*** pt.orderPayment.currency=" + paymentTransaction.getOrderPayment().getCurrency());
-    	LOG.info("*** pt.orderPayment.order=" + paymentTransaction.getOrderPayment().getOrder());
     	
         //Will set the full amount to be charged on the transaction total/subtotal and not worry about shipping/tax breakdown
         PaymentRequestDTO requestDTO = new PaymentRequestDTO()
