@@ -47,9 +47,8 @@ public class NullPaymentGatewayHostedTransactionConfirmationServiceImpl implemen
 
     @Override
     public PaymentResponseDTO confirmTransaction(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Null Payment Hosted Gateway - Confirming Transaction with amount: " + paymentRequestDTO.getTransactionTotal());
-        }
+
+    	LOG.info("*** Null Payment Hosted Gateway - Confirming Transaction with amount: " + paymentRequestDTO.getTransactionTotal());
 
         PaymentTransactionType type = PaymentTransactionType.AUTHORIZE_AND_CAPTURE;
         if (!configuration.isPerformAuthorizeAndCapture()) {
