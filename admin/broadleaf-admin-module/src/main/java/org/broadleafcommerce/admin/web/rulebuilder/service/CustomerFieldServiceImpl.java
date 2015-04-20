@@ -52,13 +52,6 @@ public class CustomerFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("rule_customerDeactivated")
-                .name("deactivated")
-                .operators("blcOperators_Boolean")
-                .options("[]")
-                .type(SupportedFieldType.BOOLEAN)
-                .build());
-        fields.add(new FieldData.Builder()
                 .label("rule_customerId")
                 .name("id")
                 .operators("blcOperators_Numeric")
