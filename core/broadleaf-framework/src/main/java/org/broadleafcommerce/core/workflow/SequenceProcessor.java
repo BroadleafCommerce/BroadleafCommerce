@@ -20,7 +20,6 @@
 package org.broadleafcommerce.core.workflow;
 
 import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManager;
@@ -76,18 +75,24 @@ public class SequenceProcessor extends BaseProcessor {
                     try {
                         context = activity.execute(context);
                     } catch (Throwable th) {
-                        if (getAutoRollbackOnError()) {
-                            LOG.info("Automatically rolling back state for any previously registered RollbackHandlers. RollbackHandlers may be registered for workflow activities in appContext.");
-                            ActivityStateManagerImpl.getStateManager().rollbackAllState();
-                        }
-                        ErrorHandler errorHandler = activity.getErrorHandler();
-                        if (errorHandler == null) {
-                            LOG.info("no error handler for this action, run default error" + "handler and abort processing ");
-                            getDefaultErrorHandler().handleError(context, th);
-                            break;
-                        } else {
-                            LOG.info("run error handler and continue");
-                            errorHandler.handleError(context, th);
+                        try {
+                            if (getAutoRollbackOnError()) {
+                                LOG.info("Automatically rolling back state for any previously registered RollbackHandlers. RollbackHandlers may be registered for workflow activities in appContext.");
+                                ActivityStateManagerImpl.getStateManager().rollbackAllState();
+                            }
+                            ErrorHandler errorHandler = activity.getErrorHandler();
+                            if (errorHandler == null) {
+                                LOG.info("no error handler for this action, run default error handler and abort processing ");
+                                getDefaultErrorHandler().handleError(context, th);
+                                break;
+                            } else {
+                                LOG.info("run error handler and continue");
+                                errorHandler.handleError(context, th);
+                            }
+                        } catch (WorkflowException | RuntimeException e) {
+                            LOG.error("An exception was caught while attempting to handle an activity generated exception");
+                            LOG.error(th.getStackTrace());
+                            throw e;
                         }
                     }
     
@@ -100,6 +105,7 @@ public class SequenceProcessor extends BaseProcessor {
                     if (activity.getRollbackHandler() != null && activity.getAutomaticallyRegisterRollbackHandler()) {
                         ActivityStateManagerImpl.getStateManager().registerState(activity, context, activity.getRollbackRegion(), activity.getRollbackHandler(), activity.getStateConfiguration());
                     }
+
                 } else {
                     LOG.debug("Not executing activity: " + activity.getBeanName() + " based on the context: " + context);
                 }
