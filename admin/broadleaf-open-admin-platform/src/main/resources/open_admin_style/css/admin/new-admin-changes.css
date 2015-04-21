@@ -22,6 +22,26 @@
 .app-content .content .site-bar .button { line-height:14px; }
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
 
+table.dataTable thead .sorting {
+    background:url("../../img/admin/sort_both.png") no-repeat center right
+}
+table.dataTable thead .sorting_asc {
+    background:url("../../img/admin/sort_asc.png") no-repeat center right
+}
+table.dataTable thead .sorting_desc {
+    background:url("../../img/admin/sort_desc.png") no-repeat center right
+}
+table.dataTable thead .sorting_asc_disabled {
+    background:url("../../img/admin/sort_asc_disabled.png") no-repeat center right
+}
+table.dataTable thead .sorting_desc_disabled {
+    background:url("../../img/admin/sort_desc_disabled.png") no-repeat center right
+}
+
+.dataTables_filter, .dataTables_length, .dataTables_info {
+    display: none;
+}
+
 .button{
     font-size: 11px;
     line-height: 15px;
@@ -29,4 +49,21 @@
 
 .table-actions > button.button {
     float: left;
+}
+
+.modal form {
+    margin: 0;
+}
+
+.modal .tabs-container {
+    margin: 0 -15px;
+    padding: 0 15px;
+}
+
+.modal dl.tabs {
+    margin-top: 10px;
+}
+
+.modal .modal-header {
+    padding-bottom: 0;
 }
