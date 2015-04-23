@@ -198,7 +198,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     }
     
     @Override
-    public String getVersionedBundleName(String unversionedBundleName) {
+    public String getVersionedBundleName(String unversionedBundleName, List<String> files) {
         Element e = getBundleVersionsCache().get(unversionedBundleName);
         if (e == null) {
             statisticsService.addCacheStat(CacheStatType.RESOURCE_BUNDLING_CACHE_HIT_RATE.toString(), false);
@@ -218,6 +218,9 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             BroadleafResourceHttpRequestHandler handler) throws IOException {
         LinkedHashMap<String, Resource> foundResources = new LinkedHashMap<String, Resource>();
         
+        // With Themes, this property will never work since the "bundleName" coming in is 
+        // a hashed name based on theme files and update time-stamps.   Leaving in place for
+        // community use.
         if (additionalBundleFiles.get(bundleName) != null) {
             files.addAll(additionalBundleFiles.get(bundleName));
         }
@@ -267,16 +270,19 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     		}
         }
         
-        String version = getBundleVersion(foundResources);
-        String versionedName = getBundleName(bundleName, version);
+        // Create a hash of the contents of the resources in this bundle.
+        String resourcesHashedValue = getBundleVersion(foundResources);
+
+        // Use the hash to create a unique bundle name
+        String versionedName = getBundleName(bundleName, resourcesHashedValue);
         
         bundles.put(versionedName, foundResources.values());
-        getBundleVersionsCache().put(new Element(getCacheKey(bundleName), versionedName));
+        getBundleVersionsCache().put(new Element(getCacheKey(bundleName, files), versionedName));
         
         return versionedName;
     }
 
-    protected String getCacheKey(String unversionedBundleName) {
+    protected String getCacheKey(String unversionedBundleName, List<String> files) {
         return unversionedBundleName;
     }
     

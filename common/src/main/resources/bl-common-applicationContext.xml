@@ -243,6 +243,38 @@
         </property>
     </bean>
     
+    <!--  Spring 4.1 Resource Resolvers -->
+    <bean id="blJsResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>             
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blCssResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>         
+            </list>
+        </property>
+    </bean>     
+
+    <!--  Spring 4.1 Resource Transformers -->
+    <bean id="blJsResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blResourceMinificationTranformer" />                
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blCssResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blResourceMinificationTranformer" />                
+            </list>
+        </property>
+    </bean>  
+    
     <bean id="blCssHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
