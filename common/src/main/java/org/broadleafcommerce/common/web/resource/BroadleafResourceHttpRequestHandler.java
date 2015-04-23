@@ -21,9 +21,6 @@ package org.broadleafcommerce.common.web.resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
 import org.broadleafcommerce.common.util.DeployBehaviorUtil;
@@ -33,20 +30,15 @@ import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafThemeResolver;
 import org.broadleafcommerce.common.web.DeployBehavior;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -89,89 +81,96 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
 
     @Value("${global.admin.url}")
     protected String globalAdminUrl;
-    
-    /**
-     * Checks to see if the requested path corresponds to a registered bundle. If so, returns the generated bundle.
-     * Otherwise, checks to see if any of the configured GeneratedResourceHandlers can handle the given request.
-     * If neither of those cases match, delegates to the normal ResourceHttpRequestHandler
-     */
-    @Override
-	protected Resource getResource(HttpServletRequest request) throws IOException {
-        establishThinRequestContext();
-        return getResourceInternal(request);
-    }
 
-	protected Resource getResourceInternal(HttpServletRequest request) throws IOException {
-		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        if (bundlingService.hasBundle(path)) {
-            return bundlingService.getBundle(path);
-        }
-        
-        Resource unminifiedResource = null;
-        
-        if (sortedHandlers == null && handlers != null) {
-            sortHandlers();
-        }
-        
-        if (sortedHandlers != null) {
-            for (AbstractGeneratedResourceHandler handler : sortedHandlers) {
-                if (handler.canHandle(path)) {
-                    unminifiedResource = handler.getResource(path, getLocations());
-                    break;
-                }
-            }
-        }
-        
-        if (unminifiedResource == null) {
-            ExtensionResultHolder erh = new ExtensionResultHolder();
-            extensionManager.getProxy().getOverrideResource(path, erh);
-            if (erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR) != null) {
-                unminifiedResource = (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR);
-            }
-        }
-        
-        if (unminifiedResource == null) {
-            unminifiedResource = super.getResource(request);
-        }
+    protected boolean versioningEnabled = false;
 
-        try {
-            if (!minifyService.getEnabled() || !minifyService.getAllowSingleMinification()) {
-                return unminifiedResource;
-            }
-        } finally {
-            ThreadLocalManager.remove();
-        }
-
-        LOG.warn("Minifying individual file - this should only be used in development to trace down particular " +
-        		 "files that are causing an exception in the minification service. The results of the minification " +
-        		 "performed outside of a bundle are not stored to disk.");
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] bytes = null;
-        InputStream is = null;
-        try {
-            is = unminifiedResource.getInputStream();
-            StreamUtils.copy(is, baos);
-            bytes = baos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                is.close();
-                baos.close();
-            } catch (IOException e2) {
-                throw new RuntimeException("Could not close input stream", e2);
-            }
-        }
-        
-        LOG.debug("Attempting to minifiy " + unminifiedResource.getFilename());
-        byte[] minifiedBytes = minifyService.minify(unminifiedResource.getFilename(), bytes);
-
-        return new GeneratedResource(minifiedBytes, unminifiedResource.getFilename());
-    }
+    //    
+    //    /**
+    //     * Checks to see if the requested path corresponds to a registered bundle. If so, returns the generated bundle.
+    //     * Otherwise, checks to see if any of the configured GeneratedResourceHandlers can handle the given request.
+    //     * If neither of those cases match, delegates to the normal ResourceHttpRequestHandler
+    //     */
+    //    @Override
+    //	protected Resource getResource(HttpServletRequest request) throws IOException {
+    //        establishThinRequestContext();
+    //        return getResourceInternal(request);
+    //    }
+    //
+    //	protected Resource getResourceInternal(HttpServletRequest request) throws IOException {
+    //        setAlwaysMustRevalidate(false);
+    //		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+    //        if (bundlingService.hasBundle(path)) {
+    //            return bundlingService.getBundle(path);
+    //        }
+    //        
+    //        Resource unminifiedResource = null;
+    //        
+    //        if (sortedHandlers == null && handlers != null) {
+    //            sortHandlers();
+    //        }
+    //        
+    //        if (sortedHandlers != null) {
+    //            for (AbstractGeneratedResourceHandler handler : sortedHandlers) {
+    //                if (handler.canHandle(path)) {
+    //                    unminifiedResource = handler.getResource(path, getLocations());
+    //                    break;
+    //                }
+    //            }
+    //        }
+    //        
+    //        if (unminifiedResource == null) {
+    //            ExtensionResultHolder erh = new ExtensionResultHolder();
+    //            extensionManager.getProxy().getOverrideResource(path, erh);
+    //            if (erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR) != null) {
+    //                unminifiedResource = (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR);
+    //            }
+    //        }
+    //        
+    //        if (unminifiedResource == null) {
+    //            unminifiedResource = super.getResource(request);
+    //        }
+    //
+    //        Object o = unminifiedResource.lastModified();
+    //        Long l = System.currentTimeMillis();
+    //
+    //        try {
+    //            if (!minifyService.getEnabled() || !minifyService.getAllowSingleMinification()) {
+    //                return unminifiedResource;
+    //            }
+    //        } finally {
+    //            ThreadLocalManager.remove();
+    //        }
+    //
+    //        LOG.warn("Minifying individual file - this should only be used in development to trace down particular " +
+    //        		 "files that are causing an exception in the minification service. The results of the minification " +
+    //        		 "performed outside of a bundle are not stored to disk.");
+    //
+    //        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    //        byte[] bytes = null;
+    //        InputStream is = null;
+    //        try {
+    //            is = unminifiedResource.getInputStream();
+    //            StreamUtils.copy(is, baos);
+    //            bytes = baos.toByteArray();
+    //        } catch (IOException e) {
+    //            throw new RuntimeException(e);
+    //        } finally {
+    //            try {
+    //                is.close();
+    //                baos.close();
+    //            } catch (IOException e2) {
+    //                throw new RuntimeException("Could not close input stream", e2);
+    //            }
+    //        }
+    //        
+    //        LOG.debug("Attempting to minifiy " + unminifiedResource.getFilename());
+    //        byte[] minifiedBytes = minifyService.minify(unminifiedResource.getFilename(), bytes);
+    //
+    //        return new GeneratedResource(minifiedBytes, unminifiedResource.getFilename());
+    //    }
     
     public boolean isBundleRequest(HttpServletRequest request) {
-		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         return bundlingService.hasBundle(path);
     }
     
@@ -257,5 +256,4 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     public void setHandlers(List<AbstractGeneratedResourceHandler> handlers) {
         this.handlers = handlers;
     }
-
 }

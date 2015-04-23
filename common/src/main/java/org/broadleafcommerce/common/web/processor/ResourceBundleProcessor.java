@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
@@ -34,7 +33,6 @@ import org.thymeleaf.processor.element.AbstractElementProcessor;
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,7 +131,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     
     protected boolean getBundleEnabled() {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled") && (brc.getSandBox() == null || brc.getAdmin());
+        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled");
     }
 
     public ResourceBundleProcessor() {
@@ -157,26 +155,27 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             files.add(file.trim());
         }
         
-        if (getBundleEnabled()) {
-            String versionedBundle = bundlingService.getVersionedBundleName(name);
-            if (StringUtils.isBlank(versionedBundle)) {
-                BroadleafResourceHttpRequestHandler reqHandler = getRequestHandler(name, arguments);
-                try {
-                    versionedBundle = bundlingService.registerBundle(name, files, reqHandler);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                    .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + versionedBundle + "'}");
-            String value = (String) expression.execute(arguments.getConfiguration(), arguments);
-            Element e = getElement(value, async, defer);
-            parent.insertAfter(element, e);
-        } else {
-            List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
-            if (additionalBundleFiles != null) {
-                files.addAll(additionalBundleFiles);
-            }
+        //        if (getBundleEnabled()) {
+        //            String versionedBundle = bundlingService.getVersionedBundleName(name, files);
+        //
+        //            if (StringUtils.isBlank(versionedBundle)) {
+        //                BroadleafResourceHttpRequestHandler reqHandler = getRequestHandler(name, arguments);
+        //                try {
+        //                    versionedBundle = bundlingService.registerBundle(name, files, reqHandler);
+        //                } catch (IOException e) {
+        //                    throw new RuntimeException(e);
+        //                }
+        //            }
+        //            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
+        //                    .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + versionedBundle + "'}");
+        //            String value = (String) expression.execute(arguments.getConfiguration(), arguments);
+        //            Element e = getElement(value, async, defer);
+        //            parent.insertAfter(element, e);
+        //        } else {
+        //            List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
+        //            if (additionalBundleFiles != null) {
+        //                files.addAll(additionalBundleFiles);
+        //            }
             for (String file : files) {
                 file = file.trim();
                 Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
@@ -185,7 +184,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
                 Element e = getElement(value, async, defer);
                 parent.insertBefore(element, e);
             }
-        }
+        //        }
         
         parent.removeChild(element);
         return ProcessorResult.OK;

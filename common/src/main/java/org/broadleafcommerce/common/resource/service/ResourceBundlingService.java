@@ -54,7 +54,7 @@ public interface ResourceBundlingService {
      * @param unversionedBundleName
      * @return the versioned bundle name
      */
-    public String getVersionedBundleName(String unversionedBundleName);
+    public String getVersionedBundleName(String unversionedBundleName, List<String> files);
 
     /**
      * Registers a new bundle with the given name to its files. Will utilize the locations map in handler as well as 
