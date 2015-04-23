@@ -237,8 +237,8 @@
     <bean id="blJsHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
-                <ref bean="blBLCJSResourceHandler" />
-                <ref bean="blBLCJSSystemPropertyResourceHandler" />
+                <!--<ref bean="blBLCJSResourceHandler" />-->
+                <!--<ref bean="blBLCJSSystemPropertyResourceHandler" />-->
             </list>
         </property>
     </bean>
@@ -262,6 +262,8 @@
     <bean id="blJsResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
+                <ref bean="blBLCJsTranformer" />
+                <ref bean="blBLCSystemPropertiesTransformer" />
                 <ref bean="blResourceMinificationTranformer" />                
             </list>
         </property>
