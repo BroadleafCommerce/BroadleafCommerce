@@ -41,11 +41,12 @@ public abstract class BLCAbstractResourceTransformer  implements ResourceTransfo
 
     @Override
     public Resource transform(HttpServletRequest httpServletRequest, Resource resource, ResourceTransformerChain resourceTransformerChain) throws IOException {
-        resource = resourceTransformerChain.transform(httpServletRequest,resource);
 
+        // delegate to the chain if Resource is not handled by this Transforrmer.
         String filename = resource.getFilename();
         if (!getResourceFileName().equalsIgnoreCase(filename)) {
-            return resource;
+            return resourceTransformerChain.transform(httpServletRequest,resource);
+
         }
 
         // Resolve properties
