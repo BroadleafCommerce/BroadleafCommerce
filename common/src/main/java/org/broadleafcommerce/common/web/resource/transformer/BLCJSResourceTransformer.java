@@ -19,24 +19,14 @@
  */
 package org.broadleafcommerce.common.web.resource.transformer;
 
-import org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager;
-import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
+
+import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.springframework.stereotype.Component;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.resource.ResourceTransformer;
-import org.springframework.web.servlet.resource.ResourceTransformerChain;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -50,11 +40,11 @@ public class BLCJSResourceTransformer extends BLCAbstractResourceTransformer {
 
     private static final String BLC_JS_NAME="BLC.js";
 
-    @Autowired
-    protected RuntimeEnvironmentPropertiesManager propMgr;
+    @Resource(name = "blBaseUrlResolver")
+    BaseUrlResolver urlResolver;
 
     @Override
-    public String getResourceFileName() {
+    protected String getResourceFileName() {
         return BLC_JS_NAME;
     }
 
@@ -65,7 +55,7 @@ public class BLCJSResourceTransformer extends BLCAbstractResourceTransformer {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             newContent = newContent.replace("//BLC-SERVLET-CONTEXT", request.getContextPath());
 
-            String siteBaseUrl = propMgr.getProperty("site.baseurl");
+            String siteBaseUrl = urlResolver.getSiteBaseUrl();
             if (org.apache.commons.lang3.StringUtils.isNotBlank(siteBaseUrl)) {
                 newContent = newContent.replace("//BLC-SITE-BASEURL", siteBaseUrl);
             }

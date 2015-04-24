@@ -40,7 +40,7 @@ public class BLCSystemPropertiesResourceTransformer extends BLCAbstractResourceT
     protected static final String BLC_SYSTEM_PROPERTY_FILE="BLC-system-property.js";
 
     @Override
-    public String getResourceFileName() {
+    protected String getResourceFileName() {
         return BLC_SYSTEM_PROPERTY_FILE;
     }
 
