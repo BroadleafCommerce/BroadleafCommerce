@@ -64,14 +64,14 @@ public abstract class BLCAbstractResourceTransformer  implements ResourceTransfo
      * The file name that the {@link ResourceTransformer} should handle
      * @return
      */
-    abstract public String getResourceFileName() ;
+     protected abstract String getResourceFileName() ;
 
     /**
      * Method that modify the content of resolved {@link Resource}.
      * @param content
      * @return
      */
-    abstract protected String generateNewContent(String content);
+     protected abstract String generateNewContent(String content);
 
 
 
