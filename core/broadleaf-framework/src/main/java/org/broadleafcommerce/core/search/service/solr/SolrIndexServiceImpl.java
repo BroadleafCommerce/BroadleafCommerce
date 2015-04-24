@@ -694,10 +694,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                     String displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    if (displayOrder == null) {
-                        displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
-                        displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    }
 
                     if (document.getField(categorySortFieldName) == null) {
                         document.addField(categorySortFieldName, displayOrder);
@@ -742,10 +738,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                     String displayOrderKey = categoryId + "-" + originalId;
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    if (displayOrder == null) {
-                        displayOrderKey = categoryId + "-" + originalId;
-                        displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    }
 
                     if (document.getField(categorySortFieldName) == null) {
                         document.addField(categorySortFieldName, displayOrder);
