@@ -20,8 +20,6 @@
 (function($, BLC) {
     
     BLC.systemProperty = {
-        /*"BLC_PROP:url.fragment.separator"*/
-
         urlFragmentSeparator : "BLC_PROP:url.fragment.separator"
     }
 
