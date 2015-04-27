@@ -326,6 +326,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     documents.add(doc);
                 }
             }
+            
+            extensionManager.getProxy().modifyBuiltDocuments(documents, products, fields, locales);
 
             logDocuments(documents);
 
