@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -178,5 +179,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @return
      */
     public ExtensionResultStatusType getSkuId(Long tentativeId, Long[] returnContainer);
+    
+    public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<Product> products, List<Field> fields, List<Locale> locales);
 
 }
