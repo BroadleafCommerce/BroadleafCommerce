@@ -197,7 +197,7 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
         }
         //Calls unique to Broadleaf Implementation of the Smart Context Loader
         // the ";classpath:/bl-applicationContext-test.xml" is required by all integration tests so we add it here.
-        context.setPatchLocation(context.getPatchLocation() + StringUtils.join(mergedConfig.getLocations(), ";") +";classpath:/bl-applicationContext-test.xml");
+        context.setPatchLocation(context.getPatchLocation() + ";classpath:/bl-applicationContext-test.xml;" + StringUtils.join(mergedConfig.getLocations(), ";") +"");
         context.setStandardLocationTypes(StandardConfigLocations.TESTCONTEXTTYPE);
         
         configureWebResources(context, webMergedConfig);
