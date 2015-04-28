@@ -176,6 +176,10 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         //            if (additionalBundleFiles != null) {
         //                files.addAll(additionalBundleFiles);
         //            }
+        List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
+        if (additionalBundleFiles != null) {
+            files.addAll(additionalBundleFiles);
+        }
             for (String file : files) {
                 file = file.trim();
                 Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
