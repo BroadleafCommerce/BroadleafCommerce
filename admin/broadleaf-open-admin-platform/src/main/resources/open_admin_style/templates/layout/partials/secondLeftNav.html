@@ -1,9 +1,10 @@
-<div class="secondary-nav" id="site-nav" style="display:  none">
+<div id="secondary-nav">
     <blc_admin:admin_module resultVar="adminMenu" />
 
-    <div class="blc-module" th:each="module : ${adminMenu.adminModules}" th:inline="text"
+    <div class="secondary-nav" th:id="${module.icon}" th:each="module : ${adminMenu.adminModules}" th:inline="text"
         th:classappend="${currentAdminModule != null and currentAdminModule.id == module.id}? 'active'">
 
+        <div class="nav-close"></div>
         <h2 th:id="${module.moduleKey}" th:text="#{__${module.moduleKey}__}"></h2>
 
         <ul class="nav-links">

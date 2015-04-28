@@ -3,7 +3,7 @@
 </comment>
 
 <div class="listgrid-header-wrapper">
-    <table class="table table-striped list-grid-table"
+    <table class="table table-striped datatable"
            th:classappend="${listGrid.className}"
            th:attr="data-listgridtype=${listGrid.listGridType},
                     data-currenturl=${currentUrl},
@@ -12,7 +12,6 @@
            blc_admin:component_id="${listGrid}">
         <thead>
             <tr>
-                
                 <th th:each="headerField : ${listGrid.headerFields}"
                     th:if="${headerField.isVisible}"
                     th:inline="text"

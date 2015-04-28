@@ -21,7 +21,7 @@
                 th:substituteby="${'fields/filter/' + #strings.toLowerCase(fieldType)}" />
             </div>
         </div>
-        
+
         <div th:style="${#strings.toLowerCase(fieldType) == 'additional_foreign_key'} ? 'display: none;'">
             <button class="listgrid-filter tiny radius dark button" th:inline="text">
                 <i class="icon-search"></i>[[#{Filter}]]
