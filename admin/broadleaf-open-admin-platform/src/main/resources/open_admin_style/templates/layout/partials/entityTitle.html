@@ -1,9 +1,9 @@
 <div class="content-area-title-bar">
     <div th:if="${entityFriendlyName}" th:remove="tag">
-        <h3 th:text="#{${entityFriendlyName}} + 's'"></h3>
+        <h3 th:text="#{${entityFriendlyName}}"></h3>
         <h4 class="main-count">
             <span th:remove="tag" th:text="${#lists.size(listGrid.records)}" />
-            <span th:remove="tag" th:text="#{${entityFriendlyName}} + 's'" />
+            <span th:remove="tag" th:text="#{${entityFriendlyName}}" />
         </h4>
 
         <button th:each="action : ${mainActions}"

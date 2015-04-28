@@ -9,6 +9,9 @@
     <div th:remove="tag"
          th:if="${(hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
 
+
+
+
         <!--<ul class="inline-list small-spacing">-->
             <div th:each="action : ${listGrid.activeToolbarActions}" th:remove="tag">
                 <button class="button primary"
@@ -23,17 +26,27 @@
             <!--<div style="color: #8495A5"-->
                 <!--th:if="${#lists.size(listGrid.activeToolbarActions) > 0 and #lists.size(listGrid.activeRowActions) > 0}"-->
                 <!--th:text="'|'" />-->
-
-            <div th:each="action : ${listGrid.activeRowActions}" th:remove="tag">
-                <button disabled="disabled"
-                    class="button disabled"
-                    th:classappend="${action.buttonClass}"
-                    th:attr="data-urlpostfix=${action.urlPostfix},
-                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
-                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
-                </button>
+        <div class="row">
+            <div class="col2">
+                <select name="toolbar-actions" id="toolbar-actions">
+                    <option value="" >Choose action...</option>
+                    <option th:each="action : ${listGrid.activeRowActions}" th:value="${action.actionId}" th:utext="#{${action.displayText}}"
+                            th:attr="data-urlpostfix=${action.urlPostfix},
+                                     data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                                     data-queryparams=${listGrid.sectionCrumbRepresentation}"></option>
+                </select>
             </div>
+        </div>
+            <!--<div th:each="action : ${listGrid.activeRowActions}" th:remove="tag">-->
+                <!--<button disabled="disabled"-->
+                    <!--class="button disabled"-->
+                    <!--th:classappend="${action.buttonClass}"-->
+                    <!--th:attr="data-urlpostfix=${action.urlPostfix},-->
+                             <!--data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},-->
+                             <!--data-queryparams=${listGrid.sectionCrumbRepresentation}">-->
+                    <!--<i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />-->
+                <!--</button>-->
+            <!--</div>-->
 
         <!--</ul>-->
 
