@@ -21,10 +21,10 @@ package org.broadleafcommerce.common.web.resource.transformer;
 
 
 import org.broadleafcommerce.common.web.BaseUrlResolver;
+import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +43,9 @@ public class BLCJSResourceTransformer extends BLCAbstractResourceTransformer {
     @Resource(name = "blBaseUrlResolver")
     BaseUrlResolver urlResolver;
 
+    @javax.annotation.Resource(name = "blBroadleafContextUtil")
+    protected BroadleafContextUtil blcContextUtil;
+
     @Override
     protected String getResourceFileName() {
         return BLC_JS_NAME;
@@ -50,6 +53,8 @@ public class BLCJSResourceTransformer extends BLCAbstractResourceTransformer {
 
     @Override
     protected String generateNewContent(String content) {
+        blcContextUtil.establishThinRequestContext(false);
+
         String newContent = content;
         if (org.apache.commons.lang3.StringUtils.isNotBlank(content)) {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();

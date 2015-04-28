@@ -23,13 +23,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.springframework.stereotype.Component;
 
-
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Handles Resource "BLC-system-property.js".
+ * Handles Resource "BLC-system-property.js" which updates provides JavaScript access to selected system properties.
+ * 
+ * 
  * @see org.broadleafcommerce.common.web.resource.transformer.BLCAbstractResourceTransformer
  * @since 4.0
  */

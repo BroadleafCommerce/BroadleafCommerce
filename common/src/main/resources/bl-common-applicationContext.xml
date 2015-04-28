@@ -234,15 +234,6 @@
         </property>
     </bean>
     
-    <bean id="blJsHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-                <!--<ref bean="blBLCJSResourceHandler" />-->
-                <!--<ref bean="blBLCJSSystemPropertyResourceHandler" />-->
-            </list>
-        </property>
-    </bean>
-    
     <!--  Spring 4.1 Resource Resolvers -->
     <bean id="blJsResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
@@ -276,13 +267,6 @@
             </list>
         </property>
     </bean>  
-    
-    <bean id="blCssHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
-    </bean>
     
     <bean id="blFileServiceProviders" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">

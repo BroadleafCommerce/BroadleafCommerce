@@ -63,7 +63,7 @@ public class BroadleafContextUtil {
 
     protected boolean versioningEnabled = false;
 
-    public void establishThinRequestContext() {
+    public void establishThinRequestContext(boolean includeTheme) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
 
         if (brc.getRequest() == null) {
@@ -84,8 +84,10 @@ public class BroadleafContextUtil {
             brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
         }
 
-        if (brc.getTheme() == null) {
-            brc.setTheme(themeResolver.resolveTheme(wr));
+        if (includeTheme) {
+            if (brc.getTheme() == null) {
+                brc.setTheme(themeResolver.resolveTheme(wr));
+            }
         }
     }
 
