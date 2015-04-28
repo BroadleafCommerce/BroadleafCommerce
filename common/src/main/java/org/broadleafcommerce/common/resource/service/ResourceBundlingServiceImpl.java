@@ -33,14 +33,13 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.web.resource.AbstractGeneratedResourceHandler;
-import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.broadleafcommerce.common.web.resource.ResourceRequestExtensionHandler;
 import org.broadleafcommerce.common.web.resource.ResourceRequestExtensionManager;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -215,7 +214,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     
     @Override
     public synchronized String registerBundle(String bundleName, List<String> files, 
-            BroadleafResourceHttpRequestHandler handler) throws IOException {
+            ResourceHttpRequestHandler handler) throws IOException {
         LinkedHashMap<String, Resource> foundResources = new LinkedHashMap<String, Resource>();
         
         // With Themes, this property will never work since the "bundleName" coming in is 
@@ -230,15 +229,19 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             
             // Check to see if there is any registered handler that understands how to generate
             // this file.
-    		if (handler.getHandlers() != null) {
+
+            // TODO: This approach no longer works
+            /**
+            if (handler.getHandlers() != null) {
                 for (AbstractGeneratedResourceHandler h : handler.getHandlers()) {
                     if (h.canHandle(file)) {
-        				foundResources.put(file, h.getResource(file, handler.getLocations()));
-        				match = true;
-        				break;
+            			foundResources.put(file, h.getResource(file, handler.getLocations()));
+            			match = true;
+            			break;
                     }
                 }
-    		}
+            }
+            **/
     		
     		// If we didn't find a generator that could handle this file, let's see if we can 
     		// look it up from our known locations

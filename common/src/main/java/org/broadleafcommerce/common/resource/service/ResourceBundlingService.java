@@ -22,8 +22,8 @@ package org.broadleafcommerce.common.resource.service;
 import net.sf.ehcache.Cache;
 
 import org.broadleafcommerce.common.web.processor.ResourceBundleProcessor;
-import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.springframework.core.io.Resource;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -67,7 +67,7 @@ public interface ResourceBundlingService {
      * @return the versioned bundle name
      * @throws IOException
      */
-    public String registerBundle(String bundleName, List<String> files, BroadleafResourceHttpRequestHandler handler) 
+    public String registerBundle(String bundleName, List<String> files, ResourceHttpRequestHandler handler)
             throws IOException;
 
     /**
