@@ -19,8 +19,8 @@
  */
 package org.broadleafcommerce.common.web.util;
 
-import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.spring4.context.SpringWebContext;
 
@@ -44,12 +44,12 @@ public class ProcessorUtils {
      * @param arguments
      * @return the "blJsResources" bean
      */
-    public static BroadleafResourceHttpRequestHandler getJsRequestHandler(Arguments arguments) {
+    public static ResourceHttpRequestHandler getJsRequestHandler(Arguments arguments) {
         String key = "blJsResources";
-        BroadleafResourceHttpRequestHandler reqHandler = (BroadleafResourceHttpRequestHandler) cachedBeans.get(key);
+        ResourceHttpRequestHandler reqHandler = (ResourceHttpRequestHandler) cachedBeans.get(key);
         if (reqHandler == null) {
             final ApplicationContext appCtx = ((SpringWebContext) arguments.getContext()).getApplicationContext();
-            reqHandler = (BroadleafResourceHttpRequestHandler) appCtx.getBean(key);
+            reqHandler = (ResourceHttpRequestHandler) appCtx.getBean(key);
             cachedBeans.put(key, reqHandler);
         }
         return reqHandler;
@@ -61,12 +61,12 @@ public class ProcessorUtils {
      * @param arguments
      * @return the "blCssResources" bean
      */
-    public static BroadleafResourceHttpRequestHandler getCssRequestHandler(Arguments arguments) {
+    public static ResourceHttpRequestHandler getCssRequestHandler(Arguments arguments) {
         String key = "blCssResources";
-        BroadleafResourceHttpRequestHandler reqHandler = (BroadleafResourceHttpRequestHandler) cachedBeans.get(key);
+        ResourceHttpRequestHandler reqHandler = (ResourceHttpRequestHandler) cachedBeans.get(key);
         if (reqHandler == null) {
             final ApplicationContext appCtx = ((SpringWebContext) arguments.getContext()).getApplicationContext();
-            reqHandler = (BroadleafResourceHttpRequestHandler) appCtx.getBean(key);
+            reqHandler = (ResourceHttpRequestHandler) appCtx.getBean(key);
             cachedBeans.put(key, reqHandler);
         }
         return reqHandler;

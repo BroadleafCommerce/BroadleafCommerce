@@ -23,8 +23,8 @@ import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
 import org.broadleafcommerce.common.web.util.ProcessorUtils;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.NestableNode;
@@ -244,8 +244,8 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         }
     }
     
-    protected BroadleafResourceHttpRequestHandler getRequestHandler(String name, Arguments arguments) {
-        BroadleafResourceHttpRequestHandler handler = null;
+    protected ResourceHttpRequestHandler getRequestHandler(String name, Arguments arguments) {
+        ResourceHttpRequestHandler handler = null;
         if (name.endsWith(".js")) {
             handler = ProcessorUtils.getJsRequestHandler(arguments);
         } else if (name.endsWith(".css")) {
