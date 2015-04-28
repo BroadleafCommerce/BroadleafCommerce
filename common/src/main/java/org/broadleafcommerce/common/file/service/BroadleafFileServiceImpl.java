@@ -156,9 +156,11 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         } else {
            String baseDirectory = getBaseDirectory(true);
            ExtensionResultHolder<String> holder = new ExtensionResultHolder<String>();
-           ExtensionResultStatusType result = extensionManager.getProxy().processPathForSite(baseDirectory, resourceName, holder);
-           if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-               return new File(holder.getResult());
+           if (extensionManager != null) {
+               ExtensionResultStatusType result = extensionManager.getProxy().processPathForSite(baseDirectory, resourceName, holder);
+               if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                   return new File(holder.getResult());
+               }
            }
            return getLocalResource(resourceName, true);
         }

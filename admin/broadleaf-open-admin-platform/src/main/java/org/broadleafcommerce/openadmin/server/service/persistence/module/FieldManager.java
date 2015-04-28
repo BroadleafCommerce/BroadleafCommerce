@@ -23,6 +23,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -159,7 +160,7 @@ public class FieldManager {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
         Field field;
-        Object value = bean;
+        Object value = HibernateUtils.deproxy(bean);
 
         while (tokens.hasMoreTokens()) {
             String fieldNamePart = tokens.nextToken();
@@ -193,6 +194,7 @@ public class FieldManager {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
         Field field;
+        bean = HibernateUtils.deproxy(bean);
         Object value = bean;
         
         int count = tokens.countTokens();

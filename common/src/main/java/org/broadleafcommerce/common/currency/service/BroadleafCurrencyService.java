@@ -48,4 +48,6 @@ public interface BroadleafCurrencyService {
     public List<BroadleafCurrency> getAllCurrencies();
 
     public BroadleafCurrency save(BroadleafCurrency currency);
+    
+    public BroadleafCurrency create();
 }

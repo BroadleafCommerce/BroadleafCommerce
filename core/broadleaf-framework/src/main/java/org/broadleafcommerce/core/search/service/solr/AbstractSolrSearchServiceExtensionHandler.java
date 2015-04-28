@@ -33,6 +33,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -111,6 +112,11 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
 
     @Override
     public ExtensionResultStatusType getSkuId(Long tentativeId, Long[] returnContainer) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+    
+    @Override
+    public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<Product> products, List<Field> fields, List<Locale> locales) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

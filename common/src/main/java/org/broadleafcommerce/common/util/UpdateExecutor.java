@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 /**
  * The purpose for this class is to provide an alternate approach to an HQL UPDATE query for batch updates on Hibernate filtered
@@ -54,10 +53,7 @@ import javax.persistence.PersistenceContext;
  *
  * @author Jeff Fischer
  */
-public abstract class AbstractUpdateExecutor {
-
-    @PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
+public class UpdateExecutor {
 
     /**
      * Perform an update query using a String template and params. Note, this is only intended for special
@@ -66,13 +62,14 @@ public abstract class AbstractUpdateExecutor {
      * </p>
      * An example looks like: 'UPDATE BLC_SNDBX_WRKFLW_ITEM SET SCHEDULED_DATE = ? WHERE WRKFLW_SNDBX_ITEM_ID IN (%s)'
      *
+     * @param em The entity manager to use for the persistence operation
      * @param template the overall update sql template. The IN clause parameter should be written using 'IN (%s)'.
      * @param params any other params that are present in the sql template, other than the IN clause. Should be written using '?'. Should be in order. Can be null.
      * @param types the {@link org.hibernate.type.Type} instances that identify the types for the params. Should be in order and match the length of params. Can be null.
      * @param ids the ids to include in the IN clause.
      * @return the total number of records updated in the database
      */
-    protected int executeUpdateQuery(String template, Object[] params, Type[] types, List<Long> ids) {
+    public static int executeUpdateQuery(EntityManager em, String template, Object[] params, Type[] types, List<Long> ids) {
         int response = 0;
         List<Long[]> runs = buildRuns(ids);
         for (Long[] run : runs) {
@@ -100,7 +97,7 @@ public abstract class AbstractUpdateExecutor {
      * @param length
      * @return
      */
-    protected String buildInClauseTemplate(int length) {
+    private static String buildInClauseTemplate(int length) {
         String[] temp = new String[length];
         Arrays.fill(temp, "?");
         return StringUtils.join(temp, ",");
@@ -114,7 +111,7 @@ public abstract class AbstractUpdateExecutor {
      * @param ids
      * @return
      */
-    protected List<Long[]> buildRuns(List<Long> ids) {
+    private static List<Long[]> buildRuns(List<Long> ids) {
         List<Long[]> runs = new ArrayList<Long[]>();
         Long[] all = ids.toArray(new Long[ids.size()]);
         int test = all.length;

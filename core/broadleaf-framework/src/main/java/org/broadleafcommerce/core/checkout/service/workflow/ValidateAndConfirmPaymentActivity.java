@@ -72,10 +72,14 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     protected static final Log LOG = LogFactory.getLog(ValidateAndConfirmPaymentActivity.class);
     
     /**
+     * <p>
      * Used by the {@link ConfirmPaymentsRollbackHandler} to roll back transactions that this activity confirms.
+     * 
+     * <p>
+     * This could also contain failed transactions that still need to be rolled back
      */
-    public static final String CONFIRMED_TRANSACTIONS = "confirmedTransactions";
-
+    public static final String ROLLBACK_TRANSACTIONS = "confirmedTransactions";
+    
     @Autowired(required = false)
     @Qualifier("blPaymentGatewayConfigurationServiceProvider")
     protected PaymentGatewayConfigurationServiceProvider paymentConfigurationServiceProvider;
@@ -240,7 +244,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
         // Once all transactions have been confirmed, add them to the rollback state.
         // If an exception is thrown after this, the confirmed transactions will need to be voided or reversed
         // (based on the implementation requirements of the Gateway)
-        rollbackState.put(CONFIRMED_TRANSACTIONS, confirmedTransactions);
+        rollbackState.put(ROLLBACK_TRANSACTIONS, confirmedTransactions);
         ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
 
         //Handle the failed transactions (default implementation is to throw a new CheckoutException)
@@ -268,11 +272,13 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     }
 
     /**
+     * <p>
      * Default implementation is to throw a generic CheckoutException which will be caught and displayed
      * on the Checkout Page where the Customer can try again. In many cases, this is
      * sufficient as it is usually recommended to display a generic Error Message to prevent
      * Credit Card fraud.
      *
+     * <p>
      * The configured payment gateway may return a more specific error.
      * Each gateway is different and will often times return different error codes based on the acquiring bank as well.
      * In that case, you may override this method to decipher these errors
@@ -283,17 +289,34 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     protected void handleUnsuccessfulTransactions(List<ResponseTransactionPair> failedTransactions, ProcessContext<CheckoutSeed> context) throws Exception {
         //The Response DTO was not successful confirming/authorizing a transaction.
         String msg = "Attempting to confirm/authorize an UNCONFIRMED transaction on the order was unsuccessful.";
-        Order order = context.getSeedData().getOrder();
         
+        
+        /**
+         * For each of the failed transactions we might need to register state with the rollback handler
+         */
         List<OrderPayment> invalidatedPayments = new ArrayList<OrderPayment>();
+        List<PaymentTransaction> failedTransactionsToRollBack = new ArrayList<PaymentTransaction>();
         for (ResponseTransactionPair responseTransactionPair : failedTransactions) {
             PaymentTransaction tx = orderPaymentService.readTransactionById(responseTransactionPair.getTransactionId());
-            if (!invalidatedPayments.contains(tx.getOrderPayment())) {
+            if (shouldRollbackFailedTransaction(responseTransactionPair)) {
+                failedTransactionsToRollBack.add(tx);
+            } else if (!invalidatedPayments.contains(tx.getOrderPayment())) {
                 paymentGatewayCheckoutService.markPaymentAsInvalid(tx.getOrderPayment().getId());
-                
-                invalidatedPayments.add(tx.getOrderPayment());
+                OrderPayment payment = orderPaymentService.save(tx.getOrderPayment());
+                invalidatedPayments.add(payment);
             }
         }
+        
+        /**
+         * Even though the original transaction confirmation failed, there is still a possibility that we need to rollback
+         * the failure. The use case is in the case of fraud checks, some payment gateways complete the AUTHORIZE prior to
+         * executing the fraud check. Thus, the AUTHORIZE technically fails because of fraud but the user's card was still
+         * charged. This handles the case of rolling back the AUTHORIZE transaction in that case
+         */
+        Map<String, Object> rollbackState = new HashMap<String, Object>(); 
+        rollbackState.put(ROLLBACK_TRANSACTIONS, failedTransactionsToRollBack);
+        ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), rollbackState);
+        
         if (LOG.isErrorEnabled()) {
             LOG.error(msg);
         }
@@ -306,7 +329,10 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
 
         throw new CheckoutException(msg, context.getSeedData());
     }
-
+    
+    protected boolean shouldRollbackFailedTransaction(ResponseTransactionPair failedTransactionPair) {
+        return false;
+    }
 
     protected void populateCreditCardOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) throws WorkflowException {
 

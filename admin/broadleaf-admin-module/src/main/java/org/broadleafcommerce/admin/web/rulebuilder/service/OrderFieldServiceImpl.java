@@ -38,43 +38,8 @@ public class OrderFieldServiceImpl extends AbstractRuleBuilderFieldService {
     @Override
     public void init() {
         fields.add(new FieldData.Builder()
-                .label("rule_orderCurrenceIsDefault")
-                .name("currency.defaultFlag")
-                .operators("blcOperators_Boolean")
-                .options("[]")
-                .type(SupportedFieldType.BOOLEAN)
-                .build());
-        fields.add(new FieldData.Builder()
                 .label("rule_orderCurrencyCode")
                 .name("currency.currencyCode")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderCurrencyName")
-                .name("currency.friendlyName")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderLocaleIsDefault")
-                .name("locale.defaultFlag")
-                .operators("blcOperators_Boolean")
-                .options("[]")
-                .type(SupportedFieldType.BOOLEAN)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderLocaleCode")
-                .name("locale.localeCode")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_orderLocaleName")
-                .name("locale.friendlyName")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)

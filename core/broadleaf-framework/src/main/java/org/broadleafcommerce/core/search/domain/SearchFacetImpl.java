@@ -213,21 +213,25 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {
         this.searchFacetRanges = searchFacetRanges;
     }
-    
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().isAssignableFrom(obj.getClass())) {
-            return false;
-        }
-        SearchFacet other = (SearchFacet) obj;
-        
-        return getField().equals(other.getField());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SearchFacetImpl)) return false;
+
+        SearchFacetImpl that = (SearchFacetImpl) o;
+
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (field != null ? !field.equals(that.field) : that.field != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (field != null ? field.hashCode() : 0);
+        return result;
     }
 
     @Override
