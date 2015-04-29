@@ -22,8 +22,6 @@ var blcOperators_Boolean = [
 ];
 
 var blcOperators_Date = [      
-	{label: "is present", name: "NOT_NULL", fieldType: "NONE"},
-	{label: "is blank", name: "IS_NULL", fieldType: "NONE"},
 	{label: "is equal to", name: "EQUALS", fieldType: "DATE"},
 	{label: "is not equal to", name: "NOT_EQUAL", fieldType: "DATE"},
 	{label: "is greater than", name: "GREATER_THAN", fieldType: "DATE"},
@@ -48,14 +46,13 @@ var blcOperators_Numeric = [
 ];
 
 var blcOperators_Text = [
-	{label: "is present", name: "NOT_NULL", fieldType: "NONE"},
 	{label: "is blank", name: "IS_NULL", fieldType: "NONE"},
 	{label: "is equal to", name: "EQUALS", fieldType: "TEXT"},
 	{label: "is equal to (ignore case)", name: "IEQUALS", fieldType: "TEXT"},
 	{label: "is not equal to", name: "NOT_EQUAL", fieldType: "TEXT"},
     {label: "is not equal to (ignore case)", name: "INOT_EQUAL", fieldType: "TEXT"},
 	{label: "contains", name: "ICONTAINS", fieldType: "TEXT"},
-	{label: "not contains", name: "INOT_CONTAINS", fieldType: "TEXT"},
+	{label: "does not contain", name: "INOT_CONTAINS", fieldType: "TEXT"},
 	{label: "starts with", name: "ISTARTS_WITH", fieldType: "TEXT"},
 	{label: "does not start with", name: "INOT_STARTS_WITH", fieldType: "TEXT"},
 	{label: "ends with", name: "IENDS_WITH", fieldType: "TEXT"},
@@ -63,17 +60,13 @@ var blcOperators_Text = [
 ];
 
 var blcOperators_Enumeration = [      
-	{label: "is present", name: "NOT_NULL", fieldType: "NONE"},
-	{label: "is blank", name: "IS_NULL", fieldType: "NONE"},
 	{label: "is equal to", name: "EQUALS", fieldType: "SELECT"},
 	{label: "is not equal to", name: "NOT_EQUAL", fieldType: "SELECT"}
 ];
 
 var blcOperators_Text_List = [
-    {label: "is present", name: "NOT_NULL", fieldType: "NONE"},
-    {label: "is blank", name: "IS_NULL", fieldType: "NONE"},
     {label: "contains", name: "CONTAINS", fieldType: "TEXT"},
-    {label: "not contains", name: "NOT_CONTAINS", fieldType: "TEXT"},
+    {label: "does not contain", name: "NOT_CONTAINS", fieldType: "TEXT"},
     {label: "is count greater than", name: "COUNT_GREATER_THAN", fieldType: "TEXT"},
     {label: "is count greater than or equal to", name: "COUNT_GREATER_OR_EQUAL", fieldType: "TEXT"},
     {label: "is count less than", name: "COUNT_LESS_THAN", fieldType: "TEXT"},

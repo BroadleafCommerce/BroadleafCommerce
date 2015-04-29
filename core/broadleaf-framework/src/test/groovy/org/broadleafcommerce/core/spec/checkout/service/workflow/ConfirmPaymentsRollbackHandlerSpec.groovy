@@ -50,6 +50,7 @@ import org.broadleafcommerce.core.checkout.service.workflow.ConfirmPaymentsRollb
 import org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity
 import org.broadleafcommerce.core.order.domain.Order
 import org.broadleafcommerce.core.order.service.OrderService
+import org.broadleafcommerce.core.payment.domain.OrderPayment
 import org.broadleafcommerce.core.payment.domain.OrderPaymentImpl
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction
 import org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl
@@ -220,7 +221,7 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         paymentTransactions = new ArrayList()
         paymentTransactions.add(tx1)
         context.seedData.order.payments.add(tx1.orderPayment)
-        stateConfiguration.put(ValidateAndConfirmPaymentActivity.CONFIRMED_TRANSACTIONS,paymentTransactions)
+        stateConfiguration.put(ValidateAndConfirmPaymentActivity.ROLLBACK_TRANSACTIONS,paymentTransactions)
         mockOrderToPaymentRequestDTOService.translatePaymentTransaction(_, _) >> { new PaymentRequestDTO() }
 
         mockOrderService = Mock()
@@ -241,7 +242,7 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         then: "PaymentException is thrown during transaction logging"
         thrown(RollbackFailureException)
     }
-
+    
     def "Test that Exception is thrown when a rollback Failure occurs when attemping to invalidate payments"() {
         setup: "Place a PaymentTransaction into the seed as well as the StateConfiguration"
         PaymentTransaction tx1 = new PaymentTransactionImpl()
@@ -254,7 +255,7 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         paymentTransactions = new ArrayList()
         paymentTransactions.add(tx1)
         context.seedData.order.payments.add(tx1.orderPayment)
-        stateConfiguration.put(ValidateAndConfirmPaymentActivity.CONFIRMED_TRANSACTIONS,paymentTransactions)
+        stateConfiguration.put(ValidateAndConfirmPaymentActivity.ROLLBACK_TRANSACTIONS,paymentTransactions)
 
         mockOrderPaymentService = Mock()
         mockOrderService = Mock()
@@ -273,7 +274,8 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
 
         then: "The Transaction is recorded and a RollbackFailureException is thrown during payment invalidation"
         1 * mockOrderPaymentService.createTransaction() >> { new PaymentTransactionImpl() }
-        1 * mockOrderPaymentService.save(_)
+        // once after adding the rollback transaction, once after marking the payment as invalid
+        2 * mockOrderPaymentService.save(_) >> { OrderPayment payment -> payment }
         thrown(RollbackFailureException)
     }
 
@@ -289,7 +291,7 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         paymentTransactions = new ArrayList()
         paymentTransactions.add(tx1)
         context.seedData.order.payments.add(tx1.orderPayment)
-        stateConfiguration.put(ValidateAndConfirmPaymentActivity.CONFIRMED_TRANSACTIONS,paymentTransactions)
+        stateConfiguration.put(ValidateAndConfirmPaymentActivity.ROLLBACK_TRANSACTIONS,paymentTransactions)
         mockOrderPaymentService = Mock()
         mockOrderService = Mock()
         order = context.seedData.order
@@ -325,7 +327,7 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         paymentTransactions = new ArrayList()
         paymentTransactions.add(tx1)
         context.seedData.order.payments.add(tx1.orderPayment)
-        stateConfiguration.put(ValidateAndConfirmPaymentActivity.CONFIRMED_TRANSACTIONS,paymentTransactions)
+        stateConfiguration.put(ValidateAndConfirmPaymentActivity.ROLLBACK_TRANSACTIONS,paymentTransactions)
 
         mockOrderPaymentService = Mock()
         mockOrderService = Mock()
@@ -346,7 +348,8 @@ class ConfirmPaymentsRollbackHandlerSpec extends BaseCheckoutRollbackSpec{
         then: "No exceptions are encountered and the orderService and orderPaymentService successfully saves the results"
         1 * mockPaymentGatewayCheckoutService.markPaymentAsInvalid(_)
         1 * mockOrderService.save(_,_)
-        1 * mockOrderPaymentService.save(_) >> { args -> return args[0] }
+        // Once to add the transaction, once to save after being marked as invalid
+        2 * mockOrderPaymentService.save(_) >> { args -> return args[0] }
         order.getPayments().size() == 1
     }
 }

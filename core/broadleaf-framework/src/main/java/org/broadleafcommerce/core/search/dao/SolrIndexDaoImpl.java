@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.springframework.stereotype.Repository;
@@ -55,89 +56,99 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-
+    
     @Override
     public void populateProductCatalogStructure(List<Long> productIds, CatalogStructure catalogStructure) {
-        Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<Long, Set<Long>>();
-        Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
-
-        Long[] products = productIds.toArray(new Long[productIds.size()]);
-        BiMap<Long, Long> sandBoxProductToOriginalMap = sandBoxHelper.getSandBoxToOriginalMap(ProductImpl.class, products);
-        int batchSize = 800;
-        int count = 0;
-        int pos = 0;
-        while (pos < products.length) {
-            int remaining = products.length - pos;
-            int mySize = remaining > batchSize ? batchSize : remaining;
-            Long[] temp = new Long[mySize];
-            System.arraycopy(products, pos, temp, 0, mySize);
-            TypedQuery<ParentCategoryByProduct> query = em.createNamedQuery("BC_READ_PARENT_CATEGORY_IDS_BY_PRODUCTS", ParentCategoryByProduct.class);
-            query.setParameter("productIds", sandBoxHelper.mergeCloneIds(ProductImpl.class, temp));
-
-            List<ParentCategoryByProduct> results = query.getResultList();
-            for (ParentCategoryByProduct item : results) {
-                Long sandBoxProductVal = item.getProduct();
-                BiMap<Long, Long> reverse = sandBoxProductToOriginalMap.inverse();
-                if (reverse.containsKey(sandBoxProductVal)) {
-                    sandBoxProductVal = reverse.get(sandBoxProductVal);
-                }
-                if (!catalogStructure.getParentCategoriesByProduct().containsKey(sandBoxProductVal)) {
-                    if (!parentCategoriesByProduct.containsKey(sandBoxProductVal)) {
-                        parentCategoriesByProduct.put(sandBoxProductVal, new HashSet<Long>());
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        Boolean oldIgnoreFilters = context.getInternalIgnoreFilters();
+        context.setInternalIgnoreFilters(false);
+        try {
+            Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<Long, Set<Long>>();
+            Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
+    
+            Long[] products = productIds.toArray(new Long[productIds.size()]);
+            BiMap<Long, Long> sandBoxProductToOriginalMap = sandBoxHelper.getSandBoxToOriginalMap(ProductImpl.class, products);
+            int batchSize = 800;
+            int count = 0;
+            int pos = 0;
+            while (pos < products.length) {
+                int remaining = products.length - pos;
+                int mySize = remaining > batchSize ? batchSize : remaining;
+                Long[] temp = new Long[mySize];
+                System.arraycopy(products, pos, temp, 0, mySize);
+                
+                //context.getAdditionalProperties().put("constrainedFilterGroups", Arrays.asList("archivedFilter"));
+                TypedQuery<ParentCategoryByProduct> query = em.createNamedQuery("BC_READ_PARENT_CATEGORY_IDS_BY_PRODUCTS", ParentCategoryByProduct.class);
+                query.setParameter("productIds", sandBoxHelper.mergeCloneIds(ProductImpl.class, temp));
+    
+                List<ParentCategoryByProduct> results = query.getResultList();
+                //context.getAdditionalProperties().remove("constrainedFilterGroups");
+                for (ParentCategoryByProduct item : results) {
+                    Long sandBoxProductVal = item.getProduct();
+                    BiMap<Long, Long> reverse = sandBoxProductToOriginalMap.inverse();
+                    if (reverse.containsKey(sandBoxProductVal)) {
+                        sandBoxProductVal = reverse.get(sandBoxProductVal);
                     }
-                    //We only want the sandbox parent - if applicable
-                    //Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(CategoryImpl.class, item.getParent());
-                    Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(CategoryImpl.class, item.getParent());
-                    if (sandBoxVal == null) {
-                        sandBoxVal = item.getParent();
-                    }
-                    parentCategoriesByProduct.get(sandBoxProductVal).add(sandBoxVal);
-                }
-            }
-            for (Map.Entry<Long, Set<Long>> entry : parentCategoriesByProduct.entrySet()) {
-                for (Long categoryId : entry.getValue()) {
-                    if (!catalogStructure.getParentCategoriesByCategory().containsKey(categoryId)) {
-                        Set<Long> hierarchy = new HashSet<Long>();
-                        parentCategoriesByCategory.put(categoryId, hierarchy);
-                    }
-                    if (!catalogStructure.getProductsByCategory().containsKey(categoryId)) {
-                        List<ProductsByCategoryWithOrder> categoryChildren = readProductIdsByCategory(categoryId);
-
-                        // Cache the display order bigdecimals
-                        BigDecimal displayOrder = new BigDecimal("1.00000");
-                        for (ProductsByCategoryWithOrder child : categoryChildren) {
-                            catalogStructure.getDisplayOrdersByCategoryProduct().put(categoryId + "-" + child.getProductId(), child.getDisplayOrder()==null?displayOrder:child.getDisplayOrder());
-                            if (child.getDisplayOrder() != null) {
-                                displayOrder = child.displayOrder;
-                            }
-                            displayOrder = displayOrder.add(new BigDecimal("1.00000"));
+                    if (!catalogStructure.getParentCategoriesByProduct().containsKey(sandBoxProductVal)) {
+                        if (!parentCategoriesByProduct.containsKey(sandBoxProductVal)) {
+                            parentCategoriesByProduct.put(sandBoxProductVal, new HashSet<Long>());
                         }
-
-                        //filter the list for sandbox values
-                        for (Map.Entry<Long, Long> sandBoxProduct : sandBoxProductToOriginalMap.entrySet()) {
+                        //We only want the sandbox parent - if applicable
+                        //Long sandBoxVal = sandBoxHelper.getCombinedSandBoxVersionId(CategoryImpl.class, item.getParent());
+                        Long sandBoxVal = sandBoxHelper.getSandBoxVersionId(CategoryImpl.class, item.getParent());
+                        if (sandBoxVal == null) {
+                            sandBoxVal = item.getParent();
+                        }
+                        parentCategoriesByProduct.get(sandBoxProductVal).add(sandBoxVal);
+                    }
+                }
+                for (Map.Entry<Long, Set<Long>> entry : parentCategoriesByProduct.entrySet()) {
+                    for (Long categoryId : entry.getValue()) {
+                        if (!catalogStructure.getParentCategoriesByCategory().containsKey(categoryId)) {
+                            Set<Long> hierarchy = new HashSet<Long>();
+                            parentCategoriesByCategory.put(categoryId, hierarchy);
+                        }
+                        if (!catalogStructure.getProductsByCategory().containsKey(categoryId)) {
+                            List<ProductsByCategoryWithOrder> categoryChildren = readProductIdsByCategory(categoryId);
+    
+                            // Cache the display order bigdecimals
+                            BigDecimal displayOrder = new BigDecimal("1.00000");
                             for (ProductsByCategoryWithOrder child : categoryChildren) {
-                                if (child.getProductId().equals(sandBoxProduct.getValue())) {
-                                    child.setProductId(sandBoxProduct.getKey());
+                                catalogStructure.getDisplayOrdersByCategoryProduct().put(categoryId + "-" + child.getProductId(), child.getDisplayOrder()==null?displayOrder:child.getDisplayOrder());
+                                if (child.getDisplayOrder() != null) {
+                                    displayOrder = child.displayOrder;
+                                }
+                                displayOrder = displayOrder.add(new BigDecimal("1.00000"));
+                            }
+    
+                            //filter the list for sandbox values
+                            for (Map.Entry<Long, Long> sandBoxProduct : sandBoxProductToOriginalMap.entrySet()) {
+                                for (ProductsByCategoryWithOrder child : categoryChildren) {
+                                    if (child.getProductId().equals(sandBoxProduct.getValue())) {
+                                        child.setProductId(sandBoxProduct.getKey());
+                                    }
                                 }
                             }
+                            
+                            List<Long> categoryChildProductIds = BLCCollectionUtils.collectList(categoryChildren, new TypedTransformer<Long>() {
+                                @Override
+                                public Long transform(Object input) {
+                                    return ((ProductsByCategoryWithOrder) input).getProductId();
+                                }
+                            });
+                            catalogStructure.getProductsByCategory().put(categoryId, categoryChildProductIds);
                         }
-                        
-                        List<Long> categoryChildProductIds = BLCCollectionUtils.collectList(categoryChildren, new TypedTransformer<Long>() {
-                            @Override
-                            public Long transform(Object input) {
-                                return ((ProductsByCategoryWithOrder) input).getProductId();
-                            }
-                        });
-                        catalogStructure.getProductsByCategory().put(categoryId, categoryChildProductIds);
                     }
                 }
+                count++;
+                pos = (count * batchSize) < products.length ? (count * batchSize) : products.length;
             }
-            count++;
-            pos = (count * batchSize) < products.length ? (count * batchSize) : products.length;
+            readFullCategoryHierarchy(parentCategoriesByCategory, new HashSet<Long>());
+            catalogStructure.getParentCategoriesByProduct().putAll(parentCategoriesByProduct);
+            catalogStructure.getParentCategoriesByCategory().putAll(parentCategoriesByCategory);
+        } finally {
+            context.setInternalIgnoreFilters(oldIgnoreFilters);
         }
-        readFullCategoryHierarchy(parentCategoriesByCategory, new HashSet<Long>());
-        catalogStructure.getParentCategoriesByProduct().putAll(parentCategoriesByProduct);
-        catalogStructure.getParentCategoriesByCategory().putAll(parentCategoriesByCategory);
     }
 
     protected List<ProductsByCategoryWithOrder> readProductIdsByCategory(Long categoryId) {

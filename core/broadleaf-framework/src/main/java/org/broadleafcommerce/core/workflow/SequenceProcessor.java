@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.core.workflow;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManager;
 import org.broadleafcommerce.core.workflow.state.ActivityStateManagerImpl;
 import org.broadleafcommerce.core.workflow.state.RollbackStateLocal;
+
+import java.util.List;
 
 public class SequenceProcessor extends BaseProcessor {
 
@@ -76,19 +76,29 @@ public class SequenceProcessor extends BaseProcessor {
                     try {
                         context = activity.execute(context);
                     } catch (Throwable th) {
-                    	th.printStackTrace();
-                        if (getAutoRollbackOnError()) {
-                            LOG.info("Automatically rolling back state for any previously registered RollbackHandlers. RollbackHandlers may be registered for workflow activities in appContext.");
-                            ActivityStateManagerImpl.getStateManager().rollbackAllState();
-                        }
-                        ErrorHandler errorHandler = activity.getErrorHandler();
-                        if (errorHandler == null) {
-                            LOG.info("no error handler for this action, run default error" + "handler and abort processing ");
-                            getDefaultErrorHandler().handleError(context, th);
-                            break;
-                        } else {
-                            LOG.info("run error handler and continue");
-                            errorHandler.handleError(context, th);
+                        try {
+                            if (getAutoRollbackOnError()) {
+                                LOG.info("Automatically rolling back state for any previously registered " +
+                                        "RollbackHandlers. RollbackHandlers may be registered for workflow activities" +
+                                        " in appContext.");
+                                ActivityStateManagerImpl.getStateManager().rollbackAllState();
+                            }
+                            ErrorHandler errorHandler = activity.getErrorHandler();
+                            if (errorHandler == null) {
+                                LOG.info("no error handler for this action, run default error" + "handler and abort " +
+                                        "processing ");
+                                getDefaultErrorHandler().handleError(context, th);
+                                break;
+                            } else {
+                                LOG.info("run error handler and continue");
+                                errorHandler.handleError(context, th);
+                            }
+                        } catch (RuntimeException e) {
+                            LOG.error("An exception was caught while attempting to handle an activity generated exception", th);
+                            throw e;
+                        } catch (WorkflowException e) {
+                            LOG.error("An exception was caught while attempting to handle an activity generated exception", th);
+                            throw e;
                         }
                     }
     

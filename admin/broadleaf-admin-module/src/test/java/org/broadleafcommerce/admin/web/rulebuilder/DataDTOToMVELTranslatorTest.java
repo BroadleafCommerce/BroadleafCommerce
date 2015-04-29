@@ -97,14 +97,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *      "groups":null,
      *      "name":"emailAddress",
      *      "operator":"NOT_EQUAL_FIELD",
-     *      "value":"username"},
-     *      {"id":null,
-     *      "quantity":null,
-     *      "groupOperator":null,
-     *      "groups":null,
-     *      "name":"deactivated",
-     *      "operator":"EQUALS",
-     *      "value":"true"}]
+     *      "value":"username"}]
      *  }]
      */
     public void testCustomerQualificationMVEL() throws MVELTranslationException {
@@ -118,17 +111,19 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
 //        e1.setOperator(BLCOperator.NOT_EQUAL_FIELD.name());
 //        e1.setValue("username");
 
-        ExpressionDTO e2 = new ExpressionDTO();
-        e2.setName("deactivated");
-        e2.setOperator(BLCOperator.EQUALS.name());
-        e2.setValue("true");
+        // Not supported
+//        ExpressionDTO e2 = new ExpressionDTO();
+//        e2.setName("deactivated");
+//        e2.setOperator(BLCOperator.EQUALS.name());
+//        e2.setValue("true");
 
         //dataDTO.getGroups().add(e1);
-        dataDTO.getGroups().add(e2);
+//        dataDTO.getGroups().add(e2);
 
-        String translated = translator.createMVEL("customer", dataDTO, customerFieldService);
-        String mvel = "customer.?deactivated==true";
-        assert (mvel.equals(translated));
+        // Not supported
+//        String translated = translator.createMVEL("customer", dataDTO, customerFieldService);
+//        String mvel = "customer.?deactivated==true";
+//        assert (mvel.equals(translated));
     }
 
     /**
@@ -145,26 +140,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *      "groups":null,
      *      "name":"subTotal",
      *      "operator":"GREATER_OR_EQUAL",
-     *      "value":"100"},
-     *      {"id":null,
-     *      "quantity":null,
-     *      "groupOperator":"OR",
-     *      "groups":[
-     *          {"id":null,
-     *          "quantity":null,
-     *          "groupOperator":null,
-     *          "groups":null,
-     *          "name":"currency.defaultFlag",
-     *          "operator":"EQUALS",
-     *          "value":"true"},
-     *          {"id":null,
-     *          "quantity":null,
-     *          "groupOperator":"null",
-     *          "groups":null,
-     *          "name":"locale.localeCode",
-     *          "operator":"EQUALS",
-     *          "value":"my"}]
-     *      }]
+     *      "value":"100"}]
      *  }]
      */
     public void testOrderQualificationMVEL() throws MVELTranslationException {
@@ -178,26 +154,8 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         expressionDTO.setValue("100");
         dataDTO.getGroups().add(expressionDTO);
 
-        DataDTO d1 = new DataDTO();
-        d1.setGroupOperator(BLCOperator.OR.name());
-
-        ExpressionDTO e1 = new ExpressionDTO();
-        e1.setName("currency.defaultFlag");
-        e1.setOperator(BLCOperator.EQUALS.name());
-        e1.setValue("true");
-
-        ExpressionDTO e2 = new ExpressionDTO();
-        e2.setName("locale.localeCode");
-        e2.setOperator(BLCOperator.EQUALS.name());
-        e2.setValue("my");
-
-        d1.getGroups().add(e1);
-        d1.getGroups().add(e2);
-
-        dataDTO.getGroups().add(d1);
-
         String translated = translator.createMVEL("order", dataDTO, orderFieldService);
-        String mvel = "order.?subTotal.getAmount()>=100&&(order.?currency.?defaultFlag==true||order.?locale.?localeCode==\"my\")";
+        String mvel = "order.?subTotal.getAmount()>=100";
         assert (mvel.equals(translated));
     }
 
@@ -228,15 +186,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *      "groups":null,
      *      "name":"product.manufacturer",
      *      "operator":"EQUALS",
-     *      "value":"test manufacturer"},
-     *      {"id":null,
-     *      "quantity":null,
-     *      "groupOperator":null,
-     *      "groups":null,
-     *      "name":"product.model",
-     *      "operator":"EQUALS",
-     *      "value":"test model"
-     *      }]
+     *      "value":"test manufacturer"}]
      *  }]
      */
     public void testItemQualificationMVEL() throws MVELTranslationException {
@@ -256,21 +206,16 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         assert(d1Mvel.equals(d1Translated));
 
         DataDTO d2 = new DataDTO();
-        d2.setQuantity(2);
+        d2.setQuantity(1);
         d2.setGroupOperator(BLCOperator.NOT.name());
         ExpressionDTO d2e1 = new ExpressionDTO();
         d2e1.setName("product.manufacturer");
         d2e1.setOperator(BLCOperator.EQUALS.name());
         d2e1.setValue("test manufacturer");
-        ExpressionDTO d2e2 = new ExpressionDTO();
-        d2e2.setName("product.model");
-        d2e2.setOperator(BLCOperator.EQUALS.name());
-        d2e2.setValue("test model");
         d2.getGroups().add(d2e1);
-        d2.getGroups().add(d2e2);
 
         String d2Translated = translator.createMVEL("discreteOrderItem", d2, orderItemFieldService);
-        String d2Mvel = "!(discreteOrderItem.?product.?manufacturer==\"test manufacturer\"&&discreteOrderItem.?product.?model==\"test model\")";
+        String d2Mvel = "!(discreteOrderItem.?product.?manufacturer==\"test manufacturer\")";
         assert (d2Mvel.equals(d2Translated));
 
     }

@@ -73,8 +73,7 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
     public synchronized void handleUpdateIndexStatus(IndexStatusInfo status) {
         try {
             if (searchService instanceof SolrSearchServiceImpl) {
-                String solrHome = ((SolrSearchServiceImpl) searchService).getSolrHomePath();
-                File statusFile = new File(new File(solrHome), "solr_status.xml");
+                File statusFile = getStatusFile((SolrSearchServiceImpl) searchService);
                 boolean exists = statusFile.exists();
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 dbf.setIgnoringElementContentWhitespace(true);
@@ -149,8 +148,7 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
     public synchronized IndexStatusInfo readIndexStatus(IndexStatusInfo status) {
         try {
             if (searchService instanceof SolrSearchServiceImpl) {
-                String solrHome = ((SolrSearchServiceImpl) searchService).getSolrHomePath();
-                File statusFile = new File(new File(solrHome), "solr_status.xml");
+                File statusFile = getStatusFile((SolrSearchServiceImpl) searchService);
                 boolean exists = statusFile.exists();
                 if (exists) {
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -182,5 +180,19 @@ public class FileSystemSolrIndexStatusProviderImpl implements SolrIndexStatusPro
         }
         return status;
     }
+    
+    protected File getStatusFile(SolrSearchServiceImpl searchService) {
+        String statusDirectory = getStatusDirectory(searchService);
+        File statusFile = new File(new File(statusDirectory), "solr_status.xml");
+        return statusFile;
+    }
 
+    protected String getStatusDirectory(SolrSearchServiceImpl searchService) {
+        String solrHome = searchService.getSolrHomePath();
+        if (solrHome == null) {
+            return System.getProperty("java.io.tmpdir");
+        }
+        return solrHome;
+    }
+    
 }

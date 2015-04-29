@@ -291,6 +291,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
         }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Building incremental product index - pageSize: [%s]...", products.size()));
+        }
         
         StopWatch s = new StopWatch();
         boolean cacheOperationManaged = false;
@@ -326,6 +330,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     documents.add(doc);
                 }
             }
+            
+            extensionManager.getProxy().modifyBuiltDocuments(documents, products, fields, locales);
 
             logDocuments(documents);
 
@@ -694,10 +700,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                     String displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    if (displayOrder == null) {
-                        displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
-                        displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    }
 
                     if (document.getField(categorySortFieldName) == null) {
                         document.addField(categorySortFieldName, displayOrder);
@@ -742,10 +744,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                     String displayOrderKey = categoryId + "-" + originalId;
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    if (displayOrder == null) {
-                        displayOrderKey = categoryId + "-" + originalId;
-                        displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    }
 
                     if (document.getField(categorySortFieldName) == null) {
                         document.addField(categorySortFieldName, displayOrder);
@@ -793,54 +791,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * { "en_US" : "A description",
      *   "es_ES" : "Una descripcion" }
      * 
-     * @param sku
-     * @param field
-     * @param fieldType
-     * @param locales
-     * @return the value of the property
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     */
-    protected Map<String, Object> getPropertyValues(Sku sku, Field field, FieldType fieldType, List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        String propertyName = field.getPropertyName();
-        Map<String, Object> values = new HashMap<String, Object>();
-
-        if (extensionManager != null) {
-            ExtensionResultStatusType result = extensionManager.getProxy().addPropertyValues(sku, field, fieldType, values, propertyName, locales);
-
-            if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                Object propertyValue;
-                if (propertyName.contains(SKU_ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(sku, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
-
-                    // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
-                    // value field out of it if it exists.
-                    if (propertyValue != null) {
-                        try {
-                            propertyValue = shs.getPropertyValue(propertyValue, "value"); //PropertyUtils.getProperty(propertyValue, "value");
-                        } catch (NoSuchMethodException e) {
-                            // Do nothing, we'll keep the existing value
-                        }
-                    }
-                } else {
-                    propertyValue = shs.getPropertyValue(sku, propertyName); //PropertyUtils.getProperty(sku, propertyName);
-                }
-                values.put("", propertyValue);
-            }
-        }
-
-        return values;
-    }
-
-    /**
-     * Returns a map of prefix to value for the requested attributes. For example, if the requested field corresponds to
-     * a Sku's description and the locales list has the en_US locale and the es_ES locale, the resulting map could be
-     * 
-     * { "en_US" : "A description",
-     *   "es_ES" : "Una descripcion" }
-     * 
      * @param product
      * @param sku
      * @param field
@@ -851,33 +801,43 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    protected Map<String, Object> getPropertyValues(Product product, Field field, FieldType fieldType, List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    protected Map<String, Object> getPropertyValues(Object indexedItem, Field field, FieldType fieldType, List<Locale> locales)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String propertyName = field.getPropertyName();
         Map<String, Object> values = new HashMap<String, Object>();
 
+        ExtensionResultStatusType extensionResult = ExtensionResultStatusType.NOT_HANDLED;
         if (extensionManager != null) {
-            ExtensionResultStatusType result = extensionManager.getProxy().addPropertyValues(product, field, fieldType, values, propertyName, locales);
-
-            if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                Object propertyValue;
-                if (propertyName.contains(PRODUCT_ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(product, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
-
-                    // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
-                    // value field out of it if it exists.
-                    if (propertyValue != null) {
-                        try {
-                            propertyValue = shs.getPropertyValue(propertyValue, "value"); //PropertyUtils.getProperty(propertyValue, "value");
-                        } catch (NoSuchMethodException e) {
-                            // Do nothing, we'll keep the existing value
-                        }
-                    }
-                } else {
-                    propertyValue = shs.getPropertyValue(product, propertyName); //PropertyUtils.getProperty(product, propertyName);
-                }
-                values.put("", propertyValue);
+            if (Product.class.isAssignableFrom(indexedItem.getClass())) {
+                extensionResult = extensionManager.getProxy().addPropertyValues((Product) indexedItem, field, fieldType, values, propertyName, locales);
+            } else if (Sku.class.isAssignableFrom(indexedItem.getClass())) {
+                extensionResult = extensionManager.getProxy().addPropertyValues((Sku) indexedItem, field, fieldType, values, propertyName, locales);
             }
+        }
+        
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
+            Object propertyValue;
+            if (propertyName.contains(PRODUCT_ATTR_MAP) || propertyName.contains(SKU_ATTR_MAP)) {
+                if (propertyName.contains(PRODUCT_ATTR_MAP)) {
+                    propertyValue = PropertyUtils.getMappedProperty(indexedItem, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
+                } else {
+                    propertyValue = PropertyUtils.getMappedProperty(indexedItem, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
+                }
+                // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
+                // value field out of it if it exists.
+                if (propertyValue != null) {
+                    try {
+                        propertyValue = shs.getPropertyValue(propertyValue, "value"); //PropertyUtils.getProperty(propertyValue, "value");
+                    } catch (NoSuchMethodException e) {
+                        // Do nothing, we'll keep the existing value
+                    }
+                }
+            } else {
+                propertyValue = shs.getPropertyValue(indexedItem, propertyName); //PropertyUtils.getProperty(product, propertyName);
+            }
+            
+            values.put("", propertyValue);
         }
 
         return values;

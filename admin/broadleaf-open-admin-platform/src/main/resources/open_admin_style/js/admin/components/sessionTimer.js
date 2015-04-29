@@ -95,7 +95,7 @@
         },
 
         timeSinceLastReset : function() {
-            return (new Date()).getTime() - $.cookie("sessionResetTime");
+            return (new Date()).getTime() - $.cookie("sessionResetTime", { path: BLC.servletContext });
         },
 
         updateTimeLeft : function() {
@@ -106,6 +106,8 @@
         },
 
         invalidateSession : function() {
+            $.doTimeout('update-admin-session');
+            $.removeCookie('sessionResetTime', { path: BLC.servletContext });
             BLC.get({
                 url : BLC.servletContext + "/adminLogout.htm"
             }, function(data) {
@@ -187,7 +189,7 @@ $(document).ready(function() {
     /*
      * This function provides the proper functionality for the "Stay Logged In" button on the expire message.
      */
-    stayLoggedIn = function() {
+    var stayLoggedIn = function() {
         /*
          * This is used to invalidate the old timeout thread
          */
@@ -205,11 +207,21 @@ $(document).ready(function() {
          * This is used to create a new timeout thread
          */
         $.doTimeout('update-admin-session', BLCAdmin.sessionTimer.getPingInterval(), BLCAdmin.sessionTimer.updateTimer);
-    }
+    };
 
     $("#stay-logged-in").click(function() {
         stayLoggedIn();
         return false;
+    });
+    
+    var sessionLogout = function() {
+        $.doTimeout('update-admin-session');
+        $.removeCookie('sessionResetTime', {path: BLC.servletContext});
+    };
+    
+    $("#session-logout").click(function() {
+        sessionLogout();
+        return true;
     });
     
     /*

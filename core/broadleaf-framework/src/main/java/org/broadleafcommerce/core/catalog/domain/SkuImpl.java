@@ -263,7 +263,8 @@ public class SkuImpl implements Sku {
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 1000,
         group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
         groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
-        tooltip = "skuStartDateTooltip")
+        tooltip = "skuStartDateTooltip",
+        defaultValue = "today")
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
@@ -586,6 +587,7 @@ public class SkuImpl implements Sku {
         return returnPrice;
     }
 
+    @Override
     public DynamicSkuPrices getPriceData() {
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
             if (dynamicPrices == null) {

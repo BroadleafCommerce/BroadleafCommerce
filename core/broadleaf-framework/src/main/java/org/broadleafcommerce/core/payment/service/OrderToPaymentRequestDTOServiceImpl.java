@@ -251,15 +251,17 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         if (BLCSystemProperty.resolveBooleanSystemProperty("validator.address.fullNameOnly")) {
             String fullName = address.getFullName();
             
-            char nameSeparatorChar = ' ';
-            int spaceCharacterIndex = fullName.indexOf(nameSeparatorChar);
-            if (spaceCharacterIndex != -1 && (fullName.length() > spaceCharacterIndex + 1)) {
-                response.firstName = fullName.substring(0, spaceCharacterIndex);
-                // use lastIndexOf instead of indexOf to deal with the case where a user put <first> <middle> <last>
-                response.lastName = fullName.substring(fullName.lastIndexOf(nameSeparatorChar) + 1, fullName.length());
-            } else {
-                response.firstName = fullName;
-                response.lastName = "";
+            if (StringUtils.isNotBlank(fullName)) {
+                char nameSeparatorChar = ' ';
+                int spaceCharacterIndex = fullName.indexOf(nameSeparatorChar);
+                if (spaceCharacterIndex != -1 && (fullName.length() > spaceCharacterIndex + 1)) {
+                    response.firstName = fullName.substring(0, spaceCharacterIndex);
+                    // use lastIndexOf instead of indexOf to deal with the case where a user put <first> <middle> <last>
+                    response.lastName = fullName.substring(fullName.lastIndexOf(nameSeparatorChar) + 1, fullName.length());
+                } else {
+                    response.firstName = fullName;
+                    response.lastName = "";
+                }
             }
         } else {
             response.firstName = address.getFirstName();
