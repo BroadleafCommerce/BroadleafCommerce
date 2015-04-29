@@ -291,6 +291,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
         }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Building incremental product index - pageSize: [%s]...", products.size()));
+        }
         
         StopWatch s = new StopWatch();
         boolean cacheOperationManaged = false;
