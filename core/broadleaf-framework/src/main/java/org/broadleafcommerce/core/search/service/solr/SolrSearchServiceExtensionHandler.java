@@ -24,6 +24,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -152,33 +153,44 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
      * in the returnContainer should be used.
      * 
-     * @param tentativeId
+     * @param category
      * @param returnContainer
      * @return the extension result status type
      */
-    public ExtensionResultStatusType getCategoryId(Long tentativeId, Long[] returnContainer);
+    public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
+
+    /**
+     * In certain scenarios, the requested category id might not be the one that should be used in Solr.
+     * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
+     * in the returnContainer should be used.
+     *
+     * @param category
+     * @param returnContainer
+     * @return the extension result status type
+     */
+    public ExtensionResultStatusType getCategoryId(Long category, Long[] returnContainer);
 
     /**
      * In certain scenarios, the requested product id might not be the one that should be used in Solr.
      * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
      * in the returnContainer should be used.
      * 
-     * @param tentativeId
+     * @param product
      * @param returnContainer
      * @return the extension result status type
      */
-    public ExtensionResultStatusType getProductId(Long tentativeId, Long[] returnContainer);
+    public ExtensionResultStatusType getProductId(Product product, Long[] returnContainer);
     
     /**
      * In certain scenarios, the requested sku id might not be the one that should be used in Solr.
      * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
      * in the returnContainer should be used.
      * 
-     * @param tentativeId
+     * @param sku
      * @param returnContainer
      * @return
      */
-    public ExtensionResultStatusType getSkuId(Long tentativeId, Long[] returnContainer);
+    public ExtensionResultStatusType getSkuId(Sku sku, Long[] returnContainer);
     
     public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<Product> products, List<Field> fields, List<Locale> locales);
 

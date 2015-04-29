@@ -315,7 +315,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                 @Override
                 public Long transform(Object input) {
-                    return shs.getProductId(((Product) input).getId());
+                    return shs.getProductId((Product) input);
                 }
             });
 
@@ -689,16 +689,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, sku));
-            document.addField(shs.getSkuIdFieldName(), shs.getSkuId(sku.getId()));
+            document.addField(shs.getSkuIdFieldName(), shs.getSkuId(sku));
             extensionManager.getProxy().attachAdditionalBasicFields(sku, document, shs);
 
             // The explicit categories are the ones defined by the product itself
-            if (cache.getParentCategoriesByProduct().containsKey(shs.getProductId(product.getId()))) {
-                for (Long categoryId : cache.getParentCategoriesByProduct().get(shs.getProductId(product.getId()))) {
+            if (cache.getParentCategoriesByProduct().containsKey(shs.getProductId(product))) {
+                for (Long categoryId : cache.getParentCategoriesByProduct().get(shs.getProductId(product))) {
                     document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
+                    String displayOrderKey = categoryId + "-" + shs.getProductId(product);
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
 
                     if (document.getField(categorySortFieldName) == null) {
@@ -730,7 +730,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
-            document.addField(shs.getProductIdFieldName(), shs.getProductId(product.getId()));
+            document.addField(shs.getProductIdFieldName(), shs.getProductId(product));
             extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
             
             Long originalId = sandBoxHelper.getOriginalId(product);

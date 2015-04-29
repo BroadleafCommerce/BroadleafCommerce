@@ -476,14 +476,14 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Override
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getExplicitCategoryFieldName() + ":\"" + shs.getCategoryId(category.getId()) + "\"";
+        String query = shs.getExplicitCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
         return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
     public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category.getId()) + "\"";
+        String query = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
         return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
@@ -498,7 +498,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
 
-        String catFq = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category.getId()) + "\"";
+        String catFq = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
         query = "(" + sanitizeQuery(query) + ")";
         
         return findSearchResults(query, facets, searchCriteria, null, catFq);
@@ -785,8 +785,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             Collections.sort(products, new Comparator<Product>() {
                 @Override
                 public int compare(Product o1, Product o2) {
-                    Long o1id = shs.getProductId(o1.getId());
-                    Long o2id = shs.getProductId(o2.getId());
+                    Long o1id = shs.getProductId(o1);
+                    Long o2id = shs.getProductId(o2);
                     return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
                 }
             });
