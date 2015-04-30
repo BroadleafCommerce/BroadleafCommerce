@@ -53,7 +53,7 @@ public class BLCJSResourceTransformer extends BLCAbstractResourceTransformer {
 
     @Override
     protected String generateNewContent(String content) {
-        blcContextUtil.establishThinRequestContext(false);
+        blcContextUtil.establishThinRequestContextWithoutThemeOrSandbox();
 
         String newContent = content;
         if (org.apache.commons.lang3.StringUtils.isNotBlank(content)) {
