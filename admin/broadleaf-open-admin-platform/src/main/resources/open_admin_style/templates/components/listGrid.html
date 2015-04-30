@@ -92,9 +92,10 @@
                         data-pagesize=${listGrid.pageSize}">
                         
             <tr th:if="${#lists.isEmpty(listGrid.records)}">
-                <td th:colspan="${#lists.size(listGrid.headerFields) + 1}" class="list-grid-no-results">
+                <td class="list-grid-no-results">
                     (No records found)
                 </td>
+                <td th:each="i : ${#numbers.sequence(1, #lists.size(listGrid.headerFields))}"></td>
             </tr>
             
             <tr th:each="record : ${listGrid.records}"
