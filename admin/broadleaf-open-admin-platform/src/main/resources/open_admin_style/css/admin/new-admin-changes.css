@@ -67,3 +67,15 @@ table.dataTable thead .sorting_desc_disabled {
 .modal .modal-header {
     padding-bottom: 0;
 }
+
+.sandbox-bar .row {
+    margin: 0;
+}
+
+.sandbox-bar .row .col3 {
+    margin-left: -15px;
+}
+.sandbox-bar .row .col9 {
+    float:right;
+    padding-right: 0;
+}
