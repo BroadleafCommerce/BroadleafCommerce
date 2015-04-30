@@ -19,16 +19,24 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
+import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
+import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -38,6 +46,9 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
 
     @Resource(name = "blOrderPaymentDao")
     protected OrderPaymentDao paymentDao;
+
+    @Resource(name = "blCustomerPaymentService")
+    protected CustomerPaymentService customerPaymentService;
 
     @Override
     @Transactional(value = TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
@@ -97,4 +108,60 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
         return paymentDao.readTransactionById(transactionId);
     }
 
+    @Override
+    public CustomerPayment saveOrderPaymentAsCustomerPayment(Customer customer, OrderPayment orderPayment) throws PaymentException {
+        CustomerPayment customerPayment = customerPaymentService.create();
+        customerPayment.setCustomer(customer);
+        customerPayment.setBillingAddress(orderPayment.getBillingAddress());
+        customerPayment.setPaymentGatewayType(orderPayment.getGatewayType());
+        
+        String cardType = null;
+        String expDate = null;
+        String lastFour = null;
+        String token = null;
+
+        for (PaymentTransaction paymentTransaction : orderPayment.getTransactions()) {
+            if (cardType == null) {
+                cardType = paymentTransaction.getAdditionalFields().get(PaymentAdditionalFieldType.CARD_TYPE.getType());
+            }
+            if (expDate == null) {
+                expDate = paymentTransaction.getAdditionalFields().get(PaymentAdditionalFieldType.EXP_DATE.getType());
+            }
+            if (lastFour == null) {
+                lastFour = paymentTransaction.getAdditionalFields().get(PaymentAdditionalFieldType.LAST_FOUR.getType());
+            }
+            if (token == null) {
+                token = paymentTransaction.getAdditionalFields().get(PaymentAdditionalFieldType.TOKEN.getType());
+            }
+        }
+
+        Calendar calendar = new GregorianCalendar();
+
+        if (expDate != null) {
+            String[] expDateArray = expDate.split("/");
+            calendar.set(Integer.parseInt(expDateArray[1]), Integer.parseInt(expDateArray[0]), 0);
+            calendar.add(Calendar.MONTH, 1);
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.set(Calendar.MILLISECOND, 0);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+
+            Date date = calendar.getTime();
+
+            customerPayment.setExpirationDate(date);
+        }
+
+        customerPayment.setCardType(cardType);
+        customerPayment.setLastFour(lastFour);
+        customerPayment.setPaymentToken(token);
+
+        //        if (customerPaymentService.findDefaultPaymentForCustomer(customer) == null) {
+        //            customerPaymentService.setAsDefaultPayment(customerPayment);
+        //        } else {
+        //            customerPaymentService.saveCustomerPayment(customerPayment);
+        //        }
+        orderPayment.setCustomerPayment(customerPayment);
+        return this.save(orderPayment).getCustomerPayment();
+    }
 }

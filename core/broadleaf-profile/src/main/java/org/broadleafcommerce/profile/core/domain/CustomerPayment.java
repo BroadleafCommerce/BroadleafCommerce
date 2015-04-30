@@ -21,6 +21,7 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.persistence.Status;
 
 import java.io.Serializable;
@@ -128,11 +129,7 @@ public interface CustomerPayment extends Status, Serializable, AdditionalFields,
 
     public void setLastExpirationNotification(Date lastExpirationNotification);
 
-    public String getGatewayType();
+    public PaymentGatewayType getPaymentGatewayType();
 
-    public void setGatewayType(String gatewayType);
-
-    public String getPaymentGatewayType();
-
-    public void setPaymentGatewayType(String paymentGatewayType);
+    public void setPaymentGatewayType(PaymentGatewayType paymentGatewayType);
 }

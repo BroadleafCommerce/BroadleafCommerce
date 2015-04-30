@@ -22,6 +22,7 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -68,6 +69,7 @@ import javax.persistence.UniqueConstraint;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PAYMENT", uniqueConstraints = @UniqueConstraint(name = "CSTMR_PAY_UNIQUE_CNSTRNT", columnNames = { "CUSTOMER_ID", "PAYMENT_TOKEN" }))
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
 {
         @AdminPresentationMergeOverride(name = "billingAddress.addressLine1", mergeEntries =
@@ -172,12 +174,6 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-
-    @Column(name = "GATEWAY_TYPE")
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Gateway_Type", order = 1000, gridOrder = 1000, prominent = true,
-            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.payment.PaymentGatewayType")
-    protected String gatewayType;
 
     @Override
     public void setId(Long id) {
@@ -375,20 +371,12 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
         this.lastExpirationNotification = lastExpirationNotification;
     }
 
-    public String getGatewayType() {
-        return gatewayType;
+    public PaymentGatewayType getPaymentGatewayType() {
+        return PaymentGatewayType.getInstance(paymentGatewayType);
     }
 
-    public void setGatewayType(String gatewayType) {
-        this.gatewayType = gatewayType;
-    }
-
-    public String getPaymentGatewayType() {
-        return paymentGatewayType;
-    }
-
-    public void setPaymentGatewayType(String paymentGatewayType) {
-        this.paymentGatewayType = paymentGatewayType;
+    public void setPaymentGatewayType(PaymentGatewayType paymentGatewayType) {
+        this.paymentGatewayType = paymentGatewayType == null ? null : paymentGatewayType.getType();
     }
 
 }

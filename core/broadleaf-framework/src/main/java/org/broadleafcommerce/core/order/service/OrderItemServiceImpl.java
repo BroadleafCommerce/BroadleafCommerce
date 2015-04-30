@@ -49,6 +49,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -127,6 +128,26 @@ public class OrderItemServiceImpl implements OrderItemService {
         if (itemRequest.getRetailPriceOverride() != null) {
             item.setRetailPriceOverride(Boolean.TRUE);
             item.setRetailPrice(itemRequest.getRetailPriceOverride());
+        }
+
+        if (itemRequest.getItemAttributes() != null && !itemRequest.getItemAttributes().isEmpty()) {
+            Map<String, OrderItemAttribute> attributeMap = new HashMap<String, OrderItemAttribute>();
+            OrderItemAttribute orderItemAttribute;
+            
+            Iterator it = itemRequest.getItemAttributes().entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                orderItemAttribute = new OrderItemAttributeImpl();
+                
+                orderItemAttribute.setName(pair.getKey().toString());
+                orderItemAttribute.setValue(pair.getValue().toString());
+                orderItemAttribute.setOrderItem(item);
+                
+                attributeMap.put(pair.getKey().toString(), orderItemAttribute);
+                it.remove();
+            }
+            
+            item.setOrderItemAttributes(attributeMap);
         }
         
         return item;

@@ -50,6 +50,8 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
     public static final PaymentAdditionalFieldType REQUEST_ID = new PaymentAdditionalFieldType("REQUEST_ID", "Request Id");
     public static final PaymentAdditionalFieldType SUBSCRIPTION_ID = new PaymentAdditionalFieldType("SUBSCRIPTION_ID", "Subscription Id");
     public static final PaymentAdditionalFieldType SUBSCRIPTION_TITLE = new PaymentAdditionalFieldType("SUBSCRIPTION_TITLE", "Subscription Title");
+    public static final PaymentAdditionalFieldType TOKEN = new PaymentAdditionalFieldType("TOKEN", "Payment Token");
+
 
     public static PaymentAdditionalFieldType getInstance(final String type) {
         return TYPES.get(type);

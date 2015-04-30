@@ -21,7 +21,6 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
@@ -33,6 +32,7 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.springframework.stereotype.Service;
 
@@ -87,9 +87,18 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
             .orderCurrencyCode(paymentTransaction.getOrderPayment().getCurrency().getCurrencyCode())
             .orderId(paymentTransaction.getOrderPayment().getOrder().getId().toString());
         
+        populateBillTo(requestDTO, paymentTransaction.getOrderPayment());
+        
         //Copy Additional Fields from PaymentTransaction into the Request DTO.
         //This will contain any gateway specific information needed to perform actions on this transaction
         Map<String, String> additionalFields = paymentTransaction.getAdditionalFields();
+
+        CustomerPayment customerPayment = paymentTransaction.getOrderPayment().getCustomerPayment();
+        if(customerPayment != null &&
+                customerPayment.getPaymentToken() != null) {
+            requestDTO.additionalField("TOKEN", customerPayment.getPaymentToken());
+        }
+        
         for (String key : additionalFields.keySet()) {
             requestDTO.additionalField(key, additionalFields.get(key));
         }
@@ -201,46 +210,49 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     public void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
-                Address billAddress = payment.getBillingAddress();
-                if (billAddress != null) {
-                    String stateAbbr = null;
-                    String countryAbbr = null;
-                    String phone = null;
-
-                    if (StringUtils.isNotBlank(billAddress.getStateProvinceRegion())) {
-                        stateAbbr = billAddress.getStateProvinceRegion();
-                    } else if (billAddress.getState() != null) {
-                        //support legacy
-                        stateAbbr = billAddress.getState().getAbbreviation();
-                    }
-
-                    if (billAddress.getIsoCountryAlpha2() != null) {
-                        countryAbbr = billAddress.getIsoCountryAlpha2().getAlpha2();
-                    } else if (billAddress.getCountry() != null) {
-                        //support legacy
-                        countryAbbr = billAddress.getCountry().getAbbreviation();
-                    }
-
-                    if (billAddress.getPhonePrimary() != null) {
-                        phone = billAddress.getPhonePrimary().getPhoneNumber();
-                    }
-                    
-                    NameResponse name = getName(billAddress);
-                    
-                    requestDTO.billTo()
-                            .addressFirstName(name.firstName)
-                            .addressLastName(name.lastName)
-                            .addressCompanyName(billAddress.getCompanyName())
-                            .addressLine1(billAddress.getAddressLine1())
-                            .addressLine2(billAddress.getAddressLine2())
-                            .addressCityLocality(billAddress.getCity())
-                            .addressStateRegion(stateAbbr)
-                            .addressPostalCode(billAddress.getPostalCode())
-                            .addressCountryCode(countryAbbr)
-                            .addressPhone(phone)
-                            .addressEmail(billAddress.getEmailAddress());
-                }
+                populateBillTo(requestDTO, payment);
             }
+        }
+    }
+
+    private void populateBillTo(PaymentRequestDTO requestDTO, OrderPayment payment) {
+        Address billAddress = payment.getBillingAddress();
+        if (billAddress != null) {
+            String stateAbbr = null;
+            String countryAbbr = null;
+            String phone = null;
+
+            if (StringUtils.isNotBlank(billAddress.getStateProvinceRegion())) {
+                stateAbbr = billAddress.getStateProvinceRegion();
+            } else if (billAddress.getState() != null) {
+                //support legacy
+                stateAbbr = billAddress.getState().getAbbreviation();
+            }
+
+            if (billAddress.getIsoCountryAlpha2() != null) {
+                countryAbbr = billAddress.getIsoCountryAlpha2().getAlpha2();
+            } else if (billAddress.getCountry() != null) {
+                //support legacy
+                countryAbbr = billAddress.getCountry().getAbbreviation();
+            }
+
+            if (billAddress.getPhonePrimary() != null) {
+                phone = billAddress.getPhonePrimary().getPhoneNumber();
+            }
+
+            requestDTO.billTo()
+                    .addressFirstName(billAddress.getFirstName())
+                    .addressLastName(billAddress.getLastName())
+                    .addressFullName(billAddress.getFullName())
+                    .addressCompanyName(billAddress.getCompanyName())
+                    .addressLine1(billAddress.getAddressLine1())
+                    .addressLine2(billAddress.getAddressLine2())
+                    .addressCityLocality(billAddress.getCity())
+                    .addressStateRegion(stateAbbr)
+                    .addressPostalCode(billAddress.getPostalCode())
+                    .addressCountryCode(countryAbbr)
+                    .addressPhone(phone)
+                    .addressEmail(billAddress.getEmailAddress());
         }
     }
 

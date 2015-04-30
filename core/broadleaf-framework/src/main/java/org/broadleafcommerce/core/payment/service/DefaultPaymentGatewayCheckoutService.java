@@ -49,7 +49,6 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
@@ -61,9 +60,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -235,7 +231,8 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
         try {
             if (savePayment) {
-                payment.setCustomerPayment(saveOrderPaymentAsCustomerPayment(order.getCustomer(), payment));
+                payment.setCustomerPayment(orderPaymentService.saveOrderPaymentAsCustomerPayment(order.getCustomer(), 
+                        payment));
             }
         } catch (PaymentException e) {
             e.printStackTrace();
@@ -253,42 +250,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         }
         
         return payment.getId();
-    }
-
-    public CustomerPayment saveOrderPaymentAsCustomerPayment(Customer customer, OrderPayment orderPayment) throws PaymentException {
-        CustomerPayment customerPayment = customerPaymentService.create();
-        customerPayment.setCustomer(customer);
-        customerPayment.setBillingAddress(orderPayment.getBillingAddress());
-        
-        PaymentTransaction transaction = orderPayment.getInitialTransaction();
-
-        customerPayment.setCardType(transaction.getAdditionalFields().get(PaymentAdditionalFieldType.CARD_TYPE.getType()));
-        
-        
-        String expDate = transaction.getAdditionalFields().get(PaymentAdditionalFieldType.EXP_DATE.getType());
-        
-        String[] expDateArray = expDate.split("/");
-        
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Integer.parseInt(expDateArray[1]), Integer.parseInt(expDateArray[0]), 0);
-        calendar.add(Calendar.MONTH, 1);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-
-        Date date = calendar.getTime();
-        
-        customerPayment.setExpirationDate(date);
-        customerPayment.setLastFour(transaction.getAdditionalFields().get(PaymentAdditionalFieldType.LAST_FOUR.getType()));
-
-//        if (customerPaymentService.findDefaultPaymentForCustomer(customer) == null) {
-//            customerPaymentService.setAsDefaultPayment(customerPayment);
-//        } else {
-//            customerPaymentService.saveCustomerPayment(customerPayment);
-//        }
-        return customerPayment;
     }
 
     protected void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress) {
