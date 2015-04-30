@@ -63,7 +63,40 @@ public class BroadleafContextUtil {
 
     protected boolean versioningEnabled = false;
 
-    public void establishThinRequestContext(boolean includeTheme) {
+    /**
+     * Creates a BroadleafRequestContext with supported values populated
+     * @see #establishThinRequestContextInternal(boolean, boolean)
+     */
+    public void establishThinRequestContext() {
+        establishThinRequestContextInternal(true, true);
+    }
+
+    /**
+     * Creates a BroadleafRequestContext without a Sandbox
+     * @see #establishThinRequestContextInternal(boolean, boolean)
+     */
+    public void establishThinRequestContextWithoutSandBox() {
+        establishThinRequestContextInternal(true, false);
+    }
+
+    /**
+     * Creates a BroadleafRequestContext without a Theme or Sandbox
+     * @see #establishThinRequestContextInternal(boolean, boolean)
+     */
+    public void establishThinRequestContextWithoutThemeOrSandbox() {
+        establishThinRequestContextInternal(false, false);
+    }
+
+    /**
+     * Adds request and site to the BroadleafRequestContext
+     * 
+     * If includeTheme is true then also adds the Theme.
+     * If includeSandBox is true then also adds the SandBox.
+     * 
+     * @param includeTheme
+     * @param includeSandBox
+     */
+    protected void establishThinRequestContextInternal(boolean includeTheme, boolean includeSandBox) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
 
         if (brc.getRequest() == null) {
