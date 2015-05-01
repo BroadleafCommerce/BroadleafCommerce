@@ -81,7 +81,13 @@
             var rules = this.buildRules(this.data);
             this.element.html(rules);
             this.element.find(".conditional-rules").unwrap();
-            
+
+            var andDivider = $("<div>", {'class' : 'and-divider'});
+            var andSpan = $("<span>", {'text' : 'AND'});
+
+            andDivider.append(andSpan);
+            this.element.append(andDivider);
+
             if (this.data[0] != null && this.data[0].quantity != null) {
                 var addMainConditionLink = this.getAddMainConditionLink();
                 this.element.append(addMainConditionLink);
@@ -356,7 +362,7 @@
 
             var addMainConditionLink = $("<div>", {
                 'class': "button and-button add-main-condition",
-                'text': "Add another condition"
+                'text': "Add And Condition"
             });
 
             outerDiv.prepend(addMainConditionLink);
