@@ -95,7 +95,10 @@
                 <td class="list-grid-no-results">
                     (No records found)
                 </td>
-                <td th:each="i : ${#numbers.sequence(1, #lists.size(listGrid.headerFields))}"></td>
+
+                <div th:remove="tag" th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
+                    <td></td>
+                </div>
             </tr>
             
             <tr th:each="record : ${listGrid.records}"
