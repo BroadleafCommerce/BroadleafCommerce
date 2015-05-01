@@ -2,7 +2,7 @@
 <div th:substituteby="components/fieldTooltip" />
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
-<div class="datepicker-container">
-    <input type="text" class="three datepicker" th:field="*{fields['__${field.name}__'].value}" />
+<div class="col3">
+    <input class="datetimepicker" type="text" th:field="*{fields['__${field.name}__'].value}" />
     <i class="icon-calendar"></i>
 </div>

@@ -59,9 +59,9 @@ $(document).ready(function(){
         equalheight('.equals .equal');
     });
 
-    $('#datetimepicker').datetimepicker({
+    $('.datetimepicker').datetimepicker({
         format:'l, F d, Y \@ g:ia',
-        step: 10,
+        step: 10
     });
 
     $('.help-tip').tipr({
@@ -107,4 +107,10 @@ $(".nav-close").on("click", function(x) {
 
 $('select').selectize({
     sortField: 'text'
+});
+
+
+$('.radio-label').on("click", function(e) {
+    e.preventDefault();
+    $(this).prev('input').prop("checked", true)
 });

@@ -17,22 +17,21 @@
             th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" />
                
         <div class="custom-checkbox rule-builder-checkbox" th:if="${!field.required}">
-            <label th:for="${field.name + '-true'}" style="font-weight: 400; display: inline-block;">
-                <input type="radio" 
-                    th:name="${field.name}" 
-                    th:id="${field.name + '-true'}" 
-                    th:class="${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" 
-                    th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" 
-                    th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
+            <input type="radio"
+                   th:name="${field.name}"
+                   th:id="${field.name + '-true'}"
+                   th:class="${field.styleClass == 'rule-builder-simple' ? 'radio add-main-rule' : 'radio add-main-item-rule'}"
+                   th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}"
+                   th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
+            <label th:for="${field.name + '-true'}" class="radio-label">
                 <span style="margin-right: 10px;" th:text="#{Yes}" />
             </label>
-                
-            <label th:for="${field.name + '-false'}" style="font-weight: 400; display: inline-block;">
-                <input type="radio" 
-                    th:name="${field.name}" 
-                    th:id="${field.name + '-false'}" 
-                    class="clear-rules"
-                    th:checked="${#arrays.isEmpty(field.dataWrapper.data) and field.dataWrapper.error == null }" />
+
+            <input type="radio" class="radio"
+                   th:name="${field.name}"
+                   th:id="${field.name + '-false'}"
+                   th:checked="${#arrays.isEmpty(field.dataWrapper.data) and field.dataWrapper.error == null }" />
+            <label th:for="${field.name + '-false'}" class="radio-label">
                 <span style="margin-right: 10px;" th:text="#{No}" />
             </label>
         </div>
