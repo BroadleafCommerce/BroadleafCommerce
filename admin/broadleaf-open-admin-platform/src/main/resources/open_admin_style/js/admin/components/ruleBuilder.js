@@ -158,7 +158,7 @@
 })($, BLCAdmin);
 
 $(document).ready(function() {
-    
+
     $('body').on('click', 'a.add-main-condition', function() {
         var $container = $(this).parent();
         BLCAdmin.conditions.addAdditionalMainCondition($container);
@@ -179,7 +179,6 @@ $(document).ready(function() {
     $('body').on('change', 'input.add-main-rule, input.add-main-item-rule', function(){
         var $ruleTitle = $($(this).closest('.rule-builder-checkbox').next());
         var $container = $($ruleTitle.next());
-        
         //if we are going to attempt to re-show something, if the error fields are around then re-show those rather
         //than the rule input
         if ($container.parent().find('.field-label.error').length > 0) {

@@ -112,5 +112,5 @@ $('select').selectize({
 
 $('.radio-label').on("click", function(e) {
     e.preventDefault();
-    $(this).prev('input').prop("checked", true)
+    $(this).prev('input').prop("checked", true).change();
 });

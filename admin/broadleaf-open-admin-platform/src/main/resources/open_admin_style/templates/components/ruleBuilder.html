@@ -27,7 +27,7 @@
                 <span style="margin-right: 10px;" th:text="#{Yes}" />
             </label>
 
-            <input type="radio" class="radio"
+            <input type="radio" class="radio clear-rules"
                    th:name="${field.name}"
                    th:id="${field.name + '-false'}"
                    th:checked="${#arrays.isEmpty(field.dataWrapper.data) and field.dataWrapper.error == null }" />

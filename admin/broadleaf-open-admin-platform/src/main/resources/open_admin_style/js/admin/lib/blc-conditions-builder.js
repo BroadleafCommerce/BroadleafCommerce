@@ -219,7 +219,7 @@
             else if (ruleData.groupOperator == "NOT") { kind = "none"; }
             if(!kind) { return; }
 
-            var div = $("<div>", {"class": "conditional " + kind});
+            var div = $("<div>", {"class": "rule-holder conditional " + kind});
             var selectWrapper = $("<div>", {"class": "all-any-none-wrapper"});
             selectWrapper.append($("<span>", {text: "Match", "class": "conditional-spacer"}));
 
@@ -241,7 +241,7 @@
                 e.preventDefault();
                 $(this).parent().remove();
             });
-            div.append(removeLink);
+            //div.append(removeLink);
 
             var select = $("<select>", {"class": "all-any-none"});
             select.append($("<option>", {"value": "all", "text": "All", "selected": kind == "all"}));
@@ -249,18 +249,10 @@
             select.append($("<option>", {"value": "none", "text": "None", "selected": kind == "none"}));
             selectWrapper.append(select);
             selectWrapper.append($("<span>", {text: "of the following rules:"}));
-            div.append(selectWrapper);
+            //div.append(selectWrapper);
 
-            var addRuleLink = $("<a>", {"href": "#", "class": "add-rule tiny secondary radius button", "text": BLCAdmin.messages.rule});
-            addRuleLink.prepend($('<i>', {'class' : 'icon-plus' }));
-            var _this = this;
-            addRuleLink.click(function(e) {
-                e.preventDefault();
-                var f = _this.fields[0];
-                var newField = {name: f.value, operator: f.operators[0], value: null};
-                $(this).parent(".conditional").append(_this.buildRule(newField));
-            });
-            div.append(addRuleLink);
+
+
 
             var addConditionLink = $("<a>", {"href": "#", "class": "add-condition tiny secondary radius button", "text": BLCAdmin.messages.subCondition});
             addConditionLink.prepend($('<i>', {'class' : 'icon-plus' }));
@@ -270,7 +262,7 @@
                 var newField = {quantity:null, groupOperator: "AND", groups: [{name: f.value, operator: f.operators[0], value: null}]};
                 $(this).parent(".conditional").append(_this.buildConditional(newField));
             });
-            div.append(addConditionLink);
+            //div.append(addConditionLink);
             
             if (isAdditional) {
                 var removeMainConditionLink = $("<a>", {"href": "#", "class": "remove-main-condition tiny secondary radius button", "text": BLCAdmin.messages.entireCondition});
@@ -279,7 +271,7 @@
                     e.preventDefault();
                     $(this).parent().parent().remove();
                 });
-                div.append(removeMainConditionLink);
+                //div.append(removeMainConditionLink);
             }
 
             var rules = ruleData.groups;
@@ -288,22 +280,46 @@
                 ruleArray.push(rules[j]);
                 div.append(this.buildRules(ruleArray));
             }
-            
+
+            var addRuleLinkOuter = $("<div>", {'class' : 'add-or-button'});
+            var addRuleLink = $("<div>", {"class": "add-rule button or-button", "text": "Add Or Condition"});
+
+
+            addRuleLinkOuter.prepend(addRuleLink);
+            div.append(addRuleLinkOuter);
+            var _this = this;
+            addRuleLink.click(function(e) {
+                e.preventDefault();
+                var f = _this.fields[0];
+                var newField = {name: f.value, operator: f.operators[0], value: null};
+
+                _this.buildRule(newField).insertBefore($(this));
+            });
+
             output.append(div);
-            
+
             return output;
         },
 
         buildRule: function(ruleData) {
-            var ruleDiv = $("<div>", {"class": "rule"});
+            var ruleDiv = $("<div>", {"class": "row or-condition"});
             var fieldSelect = getFieldSelect(this.fields, ruleData);
             var operatorSelect = getOperatorSelect();
 
             fieldSelect.change(onFieldSelectChanged.call(this, operatorSelect, ruleData));
 
-            ruleDiv.append(removeLink());
-            ruleDiv.append(fieldSelect);
-            ruleDiv.append(operatorSelect);
+            var fieldSelectOuter = $("<div>", {'class' : 'col4' });
+            var fieldSelectOuter2 = $("<div>", {'class' : 'select-style' });
+            fieldSelectOuter2.prepend(fieldSelect);
+            fieldSelectOuter.prepend(fieldSelectOuter2);
+
+            var operatorSelectOuter = $("<div>", {'class' : 'col4' });
+            var operatorSelectOuter2 = $("<div>", {'class' : 'select-style' });
+            operatorSelectOuter2.prepend(operatorSelect);
+            operatorSelectOuter.prepend(operatorSelectOuter2);
+
+            ruleDiv.append(fieldSelectOuter);
+            ruleDiv.append(operatorSelectOuter);
 
             fieldSelect.change();
 
@@ -321,6 +337,7 @@
             } else {
                 ruleDiv.find(".value").val(ruleData.value);
             }
+            ruleDiv.append(removeLink());
 
             return ruleDiv;
         },
@@ -335,20 +352,21 @@
         },
         
         getAddMainConditionLink : function() {
-            var addMainConditionLink = $("<a>", {
-                'href': "#", 
-                'class': "add-main-condition tiny secondary radius button", 
+            var outerDiv = $("<div>", {'class' : 'add-and-button' });
+
+            var addMainConditionLink = $("<div>", {
+                'class': "button and-button add-main-condition",
                 'text': "Add another condition"
             });
+
+            outerDiv.prepend(addMainConditionLink);
             
-            addMainConditionLink.prepend($('<i>', {'class' : 'icon-plus' }));
-            
-            return addMainConditionLink;
+            return outerDiv;
         }
     };
 
     function getFieldSelect(fields, ruleData) {
-        var select = $("<select>", {"class": "field"});
+        var select = $("<select>");
         for(var i=0; i < fields.length; i++) {
             var field = fields[i];
             var option = $("<option>", {
@@ -359,6 +377,7 @@
             option.data("options", window[field.options]);
             select.append(option);
         }
+
         return select;
     }
 
@@ -369,14 +388,17 @@
     }
     
     function removeLink() {
-        var removeLink = $("<a>", {"class": "remove tiny secondary radius button", "href": "#", "text": "X"});
+        var outerDiv = $("<div>", {'class' : 'col1 remove-row'});
+        var removeLink = $("<i>", {"class": "fa fa-minus-circle"});
         removeLink.click(onRemoveLinkClicked);
-        return removeLink;
+
+        outerDiv.prepend(removeLink);
+        return outerDiv;
     }
 
     function onRemoveLinkClicked(e) {
         e.preventDefault();
-        $(this).parent().remove();
+        $(this).parent().parent().remove();
     }
 
     function onFieldSelectChanged(operatorSelect, ruleData) {
@@ -406,9 +428,13 @@
     function onOperatorSelectChange(e) {
         var $this = $(this);
         var option = $this.find("> :selected");
-        var container = $this.parents(".rule");
+        var container = $this.closest(".row");
         var fieldSelect = container.find(".field");
         var currentValue = container.find(".value");
+
+        var outerDiv = $("<div>", {'class' : 'col3'});
+        //$(container).append(outerDiv);
+
         var val = currentValue.val();
         var radioContainer = container.find(".radioContainer");
         if (radioContainer != null) {
@@ -422,15 +448,16 @@
         if (rangeDatePickerContainer != null) {
             rangeDatePickerContainer.remove();
         }
+
         switch(option.data("fieldType")) {
             case "NONE":
-                $this.after($("<input>", {"type": "hidden", "class": "value"}));
+                outerDiv.append($("<input>", {"type": "hidden", "class": "value"}));
                 break;
             case "TEXT":
-                $this.after($("<input>", {"type": "text", "class": "value"}));
+                outerDiv.append($("<input>", {"type": "text", "class": "value"}));
                 break;
             case "DATE":
-                $this.after($("<div>", {"class": "datepicker-container single-picker"}));
+                outerDiv.append($("<div>", {"class": "datepicker-container single-picker"}));
                 datePickerContainer = container.find(".single-picker");
                 datePickerContainer.append($("<input>", {"type": "text", "class": "three datepicker value"}));
                 datePickerContainer.append($("<i>", {"class": "icon-calendar"}));
@@ -442,7 +469,7 @@
                     .after($("<input>", {"type": "text", "class": "start"}));
                 break;
             case "DATE_RANGE":
-                $this.after($("<span>", {"class": "datepicker-container range-picker"}));
+                outerDiv.append($("<span>", {"class": "datepicker-container range-picker"}));
                 rangeDatePickerContainer = container.find(".range-picker");
                 rangeDatePickerContainer.append($("<div>", {"class": "datepicker-container start-picker"}));
                 var startContainer = rangeDatePickerContainer.find(".start-picker");
@@ -457,7 +484,7 @@
                 BLCAdmin.dates.initialize(endContainer.find('.datepicker'));
                 break;
             case "BOOLEAN":
-                $this.after($("<span>", {"class": "radioContainer"}));
+                outerDiv.append($("<span>", {"class": "radioContainer"}));
                 radioContainer = container.find(".radioContainer");
                 var modifier = getUniqueModifier();
                 radioContainer.append($("<input>", {"type": "radio", "name": "ruleBuilderBooleanRadio" + modifier, "value":"true", "class": "true"}));
@@ -472,10 +499,15 @@
                     var opt = options[i];
                     select.append($("<option>", {"text": opt.label || opt.name, "value": opt.name}));
                 }
-                $this.after(select);
+                outerDiv.append(select);
                 break;
         }
-        currentValue.remove();
+        if (currentValue.length) {
+            currentValue.parent().replaceWith(outerDiv);
+        } else {
+            $(container).append(outerDiv);
+
+        }
     }
 
 })(jQuery);
