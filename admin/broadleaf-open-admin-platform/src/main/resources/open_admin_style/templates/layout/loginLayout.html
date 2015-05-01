@@ -6,11 +6,10 @@
 
 <head th:include="layout/partials/head" />
 
-<body class="off-canvas">
+<body>
 
-<div class="container">
-    <div class="basic-form">
-
+	<div class="login-container">
+	
         <div class="logo">
             <img th:src="@{/img/admin/blc-logo-150.png}" />
         </div>
@@ -31,9 +30,8 @@
             document.getElementById('js-warning').setAttribute('style', 'display: none;');
             document.getElementById('js-visible').setAttribute('style', 'display: block;');
         </script>
-
-    </div> <!-- /basic-form -->
-</div>
+	
+    </div> <!--  /login-container -->
 
 </body>
 </html>
