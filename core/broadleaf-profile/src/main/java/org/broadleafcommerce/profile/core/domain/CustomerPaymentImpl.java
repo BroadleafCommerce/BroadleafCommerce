@@ -42,7 +42,9 @@ import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -371,12 +373,30 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
         this.lastExpirationNotification = lastExpirationNotification;
     }
 
+    @Override
     public PaymentGatewayType getPaymentGatewayType() {
         return PaymentGatewayType.getInstance(paymentGatewayType);
     }
 
+    @Override
     public void setPaymentGatewayType(PaymentGatewayType paymentGatewayType) {
         this.paymentGatewayType = paymentGatewayType == null ? null : paymentGatewayType.getType();
+    }
+
+    @Override
+    public void setExpirationDate(String expirationDate) {
+        String[] expDateArray = expirationDate.split("/");
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(Integer.parseInt(expDateArray[1]), Integer.parseInt(expDateArray[0]), 0);
+        calendar.add(Calendar.MONTH, 1);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        Date date = calendar.getTime();
+        this.expirationDate = date;
     }
 
 }

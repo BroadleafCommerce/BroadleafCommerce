@@ -132,4 +132,6 @@ public interface CustomerPayment extends Status, Serializable, AdditionalFields,
     public PaymentGatewayType getPaymentGatewayType();
 
     public void setPaymentGatewayType(PaymentGatewayType paymentGatewayType);
+
+    public void setExpirationDate(String expirationDate);
 }
