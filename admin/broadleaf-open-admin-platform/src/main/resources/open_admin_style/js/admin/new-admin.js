@@ -85,22 +85,26 @@ $(document).ready(function(){
 $(".nav-section[data-toggle]").on("click", function(n) {
     n.preventDefault();
     var selector = $(this).data("toggle");
-    $(".nav-section").removeClass( "active" );
-    $(this).addClass( "active" );
-    $(".secondary-nav").hide();
-    $(selector).show();
+
+    $(this).blur();
+
+    if ($(this).hasClass("active")) {
+        $(".nav-section").removeClass("active");
+        $(".secondary-nav").hide();
+    } else {
+        $(".nav-section").removeClass("active");
+        $(this).addClass("active");
+        $(".secondary-nav").hide();
+        $(selector).show();
+    }
 });
 
 $(".nav-close").on("click", function(x) {
     x.preventDefault();
     $(".secondary-nav").hide();
+    $(".nav-section").removeClass("active");
 });
 
 $('select').selectize({
     sortField: 'text'
-});
-
-$(".nav-close").on("click", function(x) {
-    x.preventDefault();
-    $(".secondary-nav").hide();
 });
