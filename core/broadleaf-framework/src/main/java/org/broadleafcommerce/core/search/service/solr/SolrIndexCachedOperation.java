@@ -19,8 +19,14 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
+import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.site.domain.Catalog;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides a single cache while exposing a block of code for execution to
@@ -32,7 +38,9 @@ import org.broadleafcommerce.core.search.dao.CatalogStructure;
  */
 public class SolrIndexCachedOperation {
 
-    private static final ThreadLocal<CatalogStructure> CACHE = new ThreadLocal<CatalogStructure>();
+    public static final Long DEFAULT_CATALOG_CACHE_KEY = 0l;
+    
+    private static final ThreadLocal<Map<Long, CatalogStructure>> CACHE = new ThreadLocal<Map<Long, CatalogStructure>>();
 
     /**
      * Retrieve the cache bound to the current thread.
@@ -40,7 +48,13 @@ public class SolrIndexCachedOperation {
      * @return The cache for the current thread, or null if not set
      */
     public static CatalogStructure getCache() {
-        return CACHE.get();
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        Catalog currentCatalog = ctx == null ? null : ctx.getCurrentCatalog();
+        if (currentCatalog != null) {
+            return MapUtils.getObject(CACHE.get(), currentCatalog.getId());
+        } else {
+            return MapUtils.getObject(CACHE.get(), DEFAULT_CATALOG_CACHE_KEY);
+        }
     }
 
     /**
@@ -49,7 +63,18 @@ public class SolrIndexCachedOperation {
      * @param cache the cache object (usually an empty map)
      */
     public static void setCache(CatalogStructure cache) {
-        CACHE.set(cache);
+        BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
+        Catalog currentCatalog = ctx == null ? null : ctx.getCurrentCatalog();
+        Map<Long, CatalogStructure> catalogCaches = CACHE.get();
+        if (catalogCaches == null) {
+            catalogCaches = new HashMap<Long, CatalogStructure>();
+            CACHE.set(catalogCaches);
+        }
+        if (currentCatalog != null) {
+            catalogCaches.put(currentCatalog.getId(), cache);
+        } else {
+            catalogCaches.put(DEFAULT_CATALOG_CACHE_KEY, cache);
+        }
     }
 
     /**

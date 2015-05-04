@@ -258,28 +258,37 @@ public interface SolrHelperService {
      * In certain cases, the category id used for Solr indexing is different than the direct id on the product.
      * This method provides a hook to substitute the category id if necessary.
      * 
-     * @param tentativeCategoryId
+     * @param category
      * @return the category id to use
      */
-    public Long getCategoryId(Long tentativeCategoryId);
+    public Long getCategoryId(Category category);
+
+    /**
+     * In certain cases, the category id used for Solr indexing is different than the direct id on the product.
+     * This method provides a hook to substitute the category id if necessary.
+     *
+     * @param category
+     * @return the category id to use
+     */
+    public Long getCategoryId(Long category);
 
     /**
      * In certain cases, the product id used for Solr indexing is different than the direct id on the product.
      * This method provides a hook to substitute the product id if necessary.
      * 
-     * @param tentativeProductId
+     * @param product
      * @return the product id to use
      */
-    public Long getProductId(Long tentativeProductId);
+    public Long getProductId(Product product);
 
     /**
      * In certain cases, the sku id used for Solr indexing is different than the direct id on the sku.
      * This method provides a hook to substitute the sku id if necessary.
      * 
-     * @param tentativeSkuId
+     * @param sku
      * @return the sku id to use
      */
-    public Long getSkuId(Long tentativeSkuId);
+    public Long getSkuId(Sku sku);
 
     /**
      * See getPropertyValue(Object, String)

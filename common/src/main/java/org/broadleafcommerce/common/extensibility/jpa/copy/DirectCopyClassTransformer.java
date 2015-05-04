@@ -206,7 +206,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 }
             }
             if (xformVals != null && xformVals.length > 0) {
-                logger.lifecycle(LifeCycleEvent.START, String.format("Transform - Copying into [%s] from [%s]", xformKey,
+                logger.debug(String.format("[%s] - Transform - Copying into [%s] from [%s]", LifeCycleEvent.END, xformKey,
                         StringUtils.join(xformVals, ",")));
                 // Load the destination class and defrost it so it is eligible for modifications
                 clazz.defrost();
@@ -343,7 +343,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 if (xformTemplates.isEmpty()) {
                     annotationTransformedClasses.add(convertedClassName);
                 }
-                logger.lifecycle(LifeCycleEvent.END, String.format("Transform - Copying into [%s] from [%s]", xformKey,
+                logger.debug(String.format("[%s] - Transform - Copying into [%s] from [%s]", LifeCycleEvent.END, xformKey,
                                     StringUtils.join(xformVals, ",")));
                 return clazz.toBytecode();
             }

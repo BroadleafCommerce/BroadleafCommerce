@@ -238,33 +238,43 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
     
     @Override
-    public Long getCategoryId(Long tentativeCategoryId) {
+    public Long getCategoryId(Category category) {
         Long[] returnId = new Long[1];
-        ExtensionResultStatusType result = extensionManager.getProxy().getCategoryId(tentativeCategoryId, returnId);
+        ExtensionResultStatusType result = extensionManager.getProxy().getCategoryId(category, returnId);
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
-        return tentativeCategoryId;
+        return category.getId();
     }
 
     @Override
-    public Long getProductId(Long tentativeProductId) {
+    public Long getCategoryId(Long category) {
         Long[] returnId = new Long[1];
-        ExtensionResultStatusType result = extensionManager.getProxy().getProductId(tentativeProductId, returnId);
+        ExtensionResultStatusType result = extensionManager.getProxy().getCategoryId(category, returnId);
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
-        return tentativeProductId;
+        return category;
     }
 
     @Override
-    public Long getSkuId(Long tentativeSkuId) {
+    public Long getProductId(Product product) {
         Long[] returnId = new Long[1];
-        ExtensionResultStatusType result = extensionManager.getProxy().getSkuId(tentativeSkuId, returnId);
+        ExtensionResultStatusType result = extensionManager.getProxy().getProductId(product, returnId);
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
-        return tentativeSkuId;
+        return product.getId();
+    }
+
+    @Override
+    public Long getSkuId(Sku sku) {
+        Long[] returnId = new Long[1];
+        ExtensionResultStatusType result = extensionManager.getProxy().getSkuId(sku, returnId);
+        if (result.equals(ExtensionResultStatusType.HANDLED)) {
+            return returnId[0];
+        }
+        return sku.getId();
     }
 
     @Override
@@ -339,7 +349,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     
     @Override
     public String getCategorySortFieldName(Category category) {
-        Long categoryId = getCategoryId(category.getId());
+        Long categoryId = getCategoryId(category);
         return new StringBuilder()
                 .append(getCategoryFieldName())
                 .append("_").append(categoryId).append("_").append("sort_d")
