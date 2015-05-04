@@ -94,6 +94,9 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
 
     @Override
     public Resource minify(Resource originalResource, String filename) {
+        if (true) {
+            return originalResource;
+        }
         String type = null;
         if (filename.contains(".js")) {
             type = "js";
