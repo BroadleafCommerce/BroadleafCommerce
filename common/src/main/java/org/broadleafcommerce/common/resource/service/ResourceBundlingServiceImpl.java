@@ -238,9 +238,6 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             out.close();
             
             fileService.addOrUpdateResourceForPath(tempWorkArea, tempFile, true);
-
-            Resource r = readBundle(resource.getFilename());
-            System.out.println("R exists " + r.exists() + " Resource : " + r);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
