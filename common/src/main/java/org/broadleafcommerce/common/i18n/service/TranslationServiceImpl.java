@@ -248,10 +248,14 @@ public class TranslationServiceImpl implements TranslationService {
         if (idType instanceof StringType) {
             return (String) idValue;
         } else if (idType instanceof LongType) {
-            SandBoxHelper.OriginalIdResponse response = sandBoxHelper.getProductionOriginalId(dao.getEntityImpl(entityType),
-                    (Long) idValue);
-            if (response != null && response.isRecordFound()) {
-                idValue = response.getOriginalId();
+            SandBoxHelper.OriginalIdResponse originalIdResponse = sandBoxHelper.getOriginalId(dao.getEntityImpl(entityType), (Long) idValue);
+            if (originalIdResponse.isRecordFound() && originalIdResponse.getOriginalId() != null) {
+                idValue = originalIdResponse.getOriginalId();
+                originalIdResponse = sandBoxHelper.getProductionOriginalId(dao.getEntityImpl(entityType), (Long) idValue);
+                //We may have a standard site production id - we want the template site original id
+                if (originalIdResponse.isRecordFound() && !originalIdResponse.getOriginalId().equals(idValue)) {
+                    idValue = originalIdResponse.getOriginalId();
+                }
             }
             return String.valueOf(idValue);
         }
