@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.web.resource.resolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
+import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.resource.AbstractResourceResolver;
 import org.springframework.web.servlet.resource.CachingResourceResolver;
@@ -53,15 +54,30 @@ public class BundleResourceResolver extends AbstractResourceResolver {
     @javax.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
 
+    @javax.annotation.Resource(name = "blBroadleafContextUtil")
+    protected BroadleafContextUtil blcContextUtil;
+
     @Override
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
-        Resource bundle = bundlingService.resolveBundleResource(requestPath);
-        if (bundle != null) {
-            return bundle;
-        } else {
-            return chain.resolveResource(request, requestPath, locations);
+
+        if (requestPath != null && requestPath.contains("BDL")) {
+            blcContextUtil.establishThinRequestContext();
+
+            String bundleRequestPath = requestPath;
+            if (requestPath.contains(".css")) {
+                bundleRequestPath = "/css/" + requestPath;
+            } else if (requestPath.contains(".js")) {
+                bundleRequestPath = "/js/" + requestPath;
+            }
+
+            Resource bundle = bundlingService.resolveBundleResource(bundleRequestPath);
+            if (bundle != null && bundle.exists()) {
+                return bundle;
+            }
         }
+
+        return chain.resolveResource(request, requestPath, locations);
     }
 
     @Override
