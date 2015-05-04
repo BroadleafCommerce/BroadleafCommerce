@@ -494,6 +494,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             }
                         }
                         em.remove(original);
+                        itr.remove();
                         dirty = true;
                     }
                 }
