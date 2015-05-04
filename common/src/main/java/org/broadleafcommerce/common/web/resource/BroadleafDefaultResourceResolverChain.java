@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.web.resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.resource.ResourceResolver;
@@ -41,6 +43,8 @@ import javax.servlet.http.HttpServletRequest;
 public class BroadleafDefaultResourceResolverChain implements ResourceResolverChain {
 
     private final List<ResourceResolver> resolvers = new ArrayList<ResourceResolver>();
+
+    protected static final Log LOG = LogFactory.getLog(BroadleafDefaultResourceResolverChain.class);
 
     private int index = -1;
 
@@ -66,13 +70,14 @@ public class BroadleafDefaultResourceResolverChain implements ResourceResolverCh
     @Override
     public String resolveUrlPath(String resourcePath, List<? extends Resource> locations) {
         ResourceResolver resolver = getNext();
-        if (resolver == null) {
-            System.out.println("No more resolvers ");
+        if (resolver == null) {          
             return null;
         }
         try {
             String returnPath = resolver.resolveUrlPath(resourcePath, locations, this);
-            System.out.println("The return path for " + resourcePath + " from resolver " + resolver + " is " + returnPath);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("The return path for " + resourcePath + " from resolver " + resolver + " is " + returnPath);
+            }            
             return returnPath;
         } finally {
             this.index--;
