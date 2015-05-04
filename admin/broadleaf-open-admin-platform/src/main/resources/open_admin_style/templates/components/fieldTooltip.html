@@ -1,4 +1,3 @@
 <i th:if="${field.tooltip}"
-    class="has-tip tip-right field-tooltip icon-question" 
-    data-width="300"
-    th:attr="title=#{${field.tooltip}}" />
+   class="fa fa-question-circle help-tip"
+   th:attr="data-tip=#{${field.tooltip}}" />
