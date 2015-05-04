@@ -115,13 +115,17 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             StringBuilder combinedPathString = new StringBuilder();
             List<String> filePaths = new ArrayList<String>();
             for (String file : files) {
-                String resourcePath = resolverChain.resolveUrlPath(mappingPrefix + file, locations);                
+                String resourcePath = resolverChain.resolveUrlPath(mappingPrefix + file, locations);
+                if (resourcePath == null) {
+                    // try without the mappingPrefix
+                    resourcePath = resolverChain.resolveUrlPath(file, locations);
+                }
                 filePaths.add(resourcePath);
                 combinedPathString.append(resourcePath);
             }
 
-            int version = combinedPathString.toString().hashCode();
-            String versionedBundleName = mappingPrefix + addVersion(requestedBundleName, String.valueOf(version));
+            int version = Math.abs(combinedPathString.toString().hashCode());
+            String versionedBundleName = mappingPrefix + addVersion(requestedBundleName, "-BDLg" + String.valueOf(version));
         
             createBundleIfNeeded(versionedBundleName, filePaths, resolverChain, locations);
 
@@ -150,6 +154,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                         Resource bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations);
                         if (bundleResource != null) {
                             saveBundle(bundleResource);
+                            // TODO: Save the created bundle to the createdBundles map
                         }
                     }
                 }
@@ -178,7 +183,9 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                     throw new RuntimeException(e);
                 } finally {
                     try {
-                        is.close();
+                        if (is != null) {
+                            is.close();
+                        }
                     } catch (IOException e2) {
                         throw new RuntimeException(e2);
                     }
@@ -209,7 +216,8 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     
     protected void saveBundle(Resource resource) {
         FileWorkArea tempWorkArea = fileService.initializeWorkArea();
-        String tempFilename = FilenameUtils.concat(tempWorkArea.getFilePathLocation(), FilenameUtils.separatorsToSystem(getResourcePath(resource.getDescription())));
+        String fileToSave = FilenameUtils.separatorsToSystem(getResourcePath(resource.getDescription()));
+        String tempFilename = FilenameUtils.concat(tempWorkArea.getFilePathLocation(), fileToSave);
         File tempFile = new File(tempFilename);
         if (!tempFile.getParentFile().exists()) {
             if (!tempFile.getParentFile().mkdirs()) {
@@ -229,7 +237,10 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             ris.close();
             out.close();
             
-            fileService.addOrUpdateResource(tempWorkArea, tempFile, true);
+            fileService.addOrUpdateResourceForPath(tempWorkArea, tempFile, true);
+
+            Resource r = readBundle(resource.getFilename());
+            System.out.println("R exists " + r.exists() + " Resource : " + r);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -289,7 +300,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     }
     
     protected Resource readBundle(String versionedBundleName) {
-        File bundleFile = fileService.getResource(getResourcePath(versionedBundleName));
+        File bundleFile = fileService.getResource("/" + getResourcePath(versionedBundleName));
         return bundleFile == null ? null : new FileSystemResource(bundleFile);
     }
     
@@ -319,6 +330,10 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
      * @return
      */
     protected String getResourcePath(String name) {
-        return "bundles/" + name;
+        if (name.startsWith("/")) {
+            return "bundles" + name;
+        } else {
+            return "bundles/" + name;
+        }
     }
 }

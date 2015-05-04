@@ -67,10 +67,13 @@ public class BroadleafDefaultResourceResolverChain implements ResourceResolverCh
     public String resolveUrlPath(String resourcePath, List<? extends Resource> locations) {
         ResourceResolver resolver = getNext();
         if (resolver == null) {
+            System.out.println("No more resolvers ");
             return null;
         }
         try {
-            return resolver.resolveUrlPath(resourcePath, locations, this);
+            String returnPath = resolver.resolveUrlPath(resourcePath, locations, this);
+            System.out.println("The return path for " + resourcePath + " from resolver " + resolver + " is " + returnPath);
+            return returnPath;
         } finally {
             this.index--;
         }
