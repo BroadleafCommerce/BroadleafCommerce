@@ -19,27 +19,32 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.web.resource.ResourceRequestExtensionHandler;
-import org.broadleafcommerce.common.web.resource.ResourceRequestExtensionManager;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.resource.BroadleafDefaultResourceResolverChain;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
+import org.springframework.web.servlet.resource.ResourceResolverChain;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+
+import de.jkeylockmanager.manager.KeyLockManager;
+import de.jkeylockmanager.manager.KeyLockManagers;
+import de.jkeylockmanager.manager.LockCallback;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,82 +52,123 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @see ResourceBundlingService
  * @author Andre Azzolini (apazzolini)
+ * @author Brian Polster (bpolster)
  */
 @Service("blResourceBundlingService")
 public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     protected static final Log LOG = LogFactory.getLog(ResourceBundlingServiceImpl.class);
-    
-    // Map of known versioned bundle names ==> the resources that are part of that bundle
-    // ex: "global12345.js" ==> [Resource("/js/BLC.js"), Resource("/js/blc-admin.js")]
-    protected Map<String, Collection<Resource>> bundles = new HashMap<String, Collection<Resource>>();
-    
-    // Map of known bundle names ==> bundle version
-    // ex: "global.js" ==> "global12345.js"
-    protected Cache bundleVersionsCache;
-    
+
     // Map of known unversioned bundle names ==> additional files that should be included
     // Configured via XML
     // ex: "global.js" ==> ["classpath:/file1.js", "/js/file2.js"]
     protected Map<String, List<String>> additionalBundleFiles = new HashMap<String, List<String>>();
-    
+            
     @javax.annotation.Resource(name = "blFileService")
     protected BroadleafFileService fileService;
-    
-    @javax.annotation.Resource(name = "blResourceMinificationService")
-    protected ResourceMinificationService minifyService;
+
+    @javax.annotation.Resource(name = "blJsResources")
+    protected ResourceHttpRequestHandler jsResourceHandler;
+
+    @javax.annotation.Resource(name = "blCssResources")
+    protected ResourceHttpRequestHandler cssResourceHandler;
 
     @javax.annotation.Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
+
+    private KeyLockManager keyLockManager = KeyLockManagers.newLock();
+
+    // Abundance of caution - a typical site would only have a few active bundles.  
+    // Adding an LRU for extreme edge cases.
+    private Cache<String, String> createdBundles = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .build(new CacheLoader<String, String>() {
+
+                public String load(String key) {
+                    return key;
+                }
+            });
     
-    @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
-    protected ResourceRequestExtensionManager extensionManager;
+    @Override
+    public String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files) {
+        if (mappingPrefix == null) {
+            mappingPrefix = "";
+        }
+                
+        ResourceHttpRequestHandler resourceRequestHandler = findResourceHttpRequestHandler(requestedBundleName);
+        if (resourceRequestHandler != null && CollectionUtils.isNotEmpty(files)) {
+            ResourceResolverChain resolverChain = new BroadleafDefaultResourceResolverChain(
+                    resourceRequestHandler.getResourceResolvers());
+            List<Resource> locations = resourceRequestHandler.getLocations();
+                    
+            StringBuilder combinedPathString = new StringBuilder();
+            List<String> filePaths = new ArrayList<String>();
+            for (String file : files) {
+                String resourcePath = resolverChain.resolveUrlPath(mappingPrefix + file, locations);                
+                filePaths.add(resourcePath);
+                combinedPathString.append(resourcePath);
+            }
+
+            int version = combinedPathString.toString().hashCode();
+            String versionedBundleName = mappingPrefix + addVersion(requestedBundleName, String.valueOf(version));
+        
+            createBundleIfNeeded(versionedBundleName, filePaths, resolverChain, locations);
+
+            return versionedBundleName;
+        } else {
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("");
+            }
+            return null;
+        }
+    }
 
     @Override
-    public Resource getBundle(String versionedBundleName) {
-        // If we can find this bundle on the file system, we've already generated it
-        // and we don't need to do so again.
-        Resource r = readBundle(versionedBundleName);
-        if (r != null && r.exists()) {
-            return r;
+    public Resource resolveBundleResource(String versionedBundleResourceName) {
+        return readBundle(versionedBundleResourceName);
+    }
+
+    protected void createBundleIfNeeded(final String versionedBundleName, final List<String> filePaths,
+            final ResourceResolverChain resolverChain, final List<Resource> locations) {
+        if (createdBundles.getIfPresent(versionedBundleName) == null) {
+            keyLockManager.executeLocked(versionedBundleName, new LockCallback() {
+
+                public void doInLock() {
+                    Resource bundle = readBundle(versionedBundleName);
+                    if (bundle == null || !bundle.exists()) {
+                        Resource bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations);
+                        if (bundleResource != null) {
+                            saveBundle(bundleResource);
+                        }
+                    }
+                }
+            });
         }
-        
-        // Otherwise, we'll create the bundle, write it to the file system, and return
-        r = createBundle(versionedBundleName);
-        saveBundle(r);
-        return r;
     }
     
-    protected Resource readBundle(String versionedBundleName) {
-        File bundleFile = fileService.getResource(getResourcePath(versionedBundleName));
-        return bundleFile == null ? null : new FileSystemResource(bundleFile);
-    }
-    
-    /**
-     * Returns the resource path for the given <b>name</b> in URL-format (meaning, / separators)
-     * @param name
-     * @return
-     */
-    protected String getResourcePath(String name) {
-        return "bundles/" + name;
-    }
-    
-    protected Resource createBundle(String versionedBundleName) {
+    protected Resource createBundle(String versionedBundleName, List<String> filePaths,
+            ResourceResolverChain resolverChain, List<Resource> locations) {
+
+        HttpServletRequest req = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] bytes = null;
         
         // Join all of the resources for this bundle together into a byte[]
         try {
-            for (Resource r : bundles.get(versionedBundleName)) {
+            for (String fileName : filePaths) {
+                Resource r = resolverChain.resolveResource(req, fileName, locations);
                 InputStream is = null;
                 
                 try {
@@ -156,11 +202,8 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             }
         }
         
-        // Minify the resource
-        byte[] minifiedBytes = minifyService.minify(versionedBundleName, bytes);
-        
-        // Create our GenerateResource that holds our combined and (potentially) minified bundle
-        GeneratedResource r = new GeneratedResource(minifiedBytes, versionedBundleName);
+        // Create our GenerateResource that holds our combined bundle
+        GeneratedResource r = new GeneratedResource(bytes, versionedBundleName);
         return r;
     }
     
@@ -196,95 +239,6 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         }
     }
     
-    @Override
-    public String getVersionedBundleName(String unversionedBundleName, List<String> files) {
-        Element e = getBundleVersionsCache().get(unversionedBundleName);
-        if (e == null) {
-            statisticsService.addCacheStat(CacheStatType.RESOURCE_BUNDLING_CACHE_HIT_RATE.toString(), false);
-        } else {
-            statisticsService.addCacheStat(CacheStatType.RESOURCE_BUNDLING_CACHE_HIT_RATE.toString(), true);
-        }
-        return e == null ? null : (String) e.getValue();
-    }
-    
-    @Override
-    public boolean hasBundle(String versionedBundle) {
-        return bundles.containsKey(versionedBundle);
-    }
-    
-    @Override
-    public synchronized String registerBundle(String bundleName, List<String> files, 
-            ResourceHttpRequestHandler handler) throws IOException {
-        LinkedHashMap<String, Resource> foundResources = new LinkedHashMap<String, Resource>();
-        
-        // With Themes, this property will never work since the "bundleName" coming in is 
-        // a hashed name based on theme files and update time-stamps.   Leaving in place for
-        // community use.
-        if (additionalBundleFiles.get(bundleName) != null) {
-            files.addAll(additionalBundleFiles.get(bundleName));
-        }
-        
-        for (String file : files) {
-            boolean match = false;
-            
-            // Check to see if there is any registered handler that understands how to generate
-            // this file.
-
-            // TODO: This approach no longer works
-            /**
-            if (handler.getHandlers() != null) {
-                for (AbstractGeneratedResourceHandler h : handler.getHandlers()) {
-                    if (h.canHandle(file)) {
-            			foundResources.put(file, h.getResource(file, handler.getLocations()));
-            			match = true;
-            			break;
-                    }
-                }
-            }
-            **/
-    		
-    		// If we didn't find a generator that could handle this file, let's see if we can 
-    		// look it up from our known locations
-            if (!match) {
-                ExtensionResultHolder erh = new ExtensionResultHolder();
-                extensionManager.getProxy().getOverrideResource(file, erh);
-                if (erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR) != null) {
-                    foundResources.put(file, (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR));
-                    match = true;
-                }
-            }
-
-    		// If we didn't find an override for this file, let's see if we can 
-    		// look it up from our known locations
-    		if (!match) {
-        		for (Resource location : handler.getLocations()) {
-        			try {
-        				Resource resource = location.createRelative(file);
-        				if (resource.exists() && resource.isReadable()) {
-        				    foundResources.put(file, resource);
-        				    match = true;
-        				    break;
-        				}
-        			}
-        			catch (IOException ex) {
-        				LOG.debug("Failed to create relative resource - trying next resource location", ex);
-        			}
-        		}
-    		}
-        }
-        
-        // Create a hash of the contents of the resources in this bundle.
-        String resourcesHashedValue = getBundleVersion(foundResources);
-
-        // Use the hash to create a unique bundle name
-        String versionedName = getBundleName(bundleName, resourcesHashedValue);
-        
-        bundles.put(versionedName, foundResources.values());
-        getBundleVersionsCache().put(new Element(getCacheKey(bundleName, files), versionedName));
-        
-        return versionedName;
-    }
-
     protected String getCacheKey(String unversionedBundleName, List<String> files) {
         return unversionedBundleName;
     }
@@ -318,25 +272,53 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         return additionalBundleFiles.get(bundleName);
     }
 
-    public Map<String, List<String>> getAdditionalBundleFiles() {
-        return additionalBundleFiles;
-    }
-    
     public void setAdditionalBundleFiles(Map<String, List<String>> additionalBundleFiles) {
         this.additionalBundleFiles = additionalBundleFiles;
     }
-    
-    @Override
-    public Cache getBundleVersionsCache() {
-        if (bundleVersionsCache == null) {
-            bundleVersionsCache = CacheManager.getInstance().getCache("blBundleElements");
-        }
-        return bundleVersionsCache;
+
+    /**
+     * Copied from Spring 4.1 AbstractVersionStrategy
+     * @param requestPath
+     * @param version
+     * @return
+     */
+    protected String addVersion(String requestPath, String version) {
+        String baseFilename = StringUtils.stripFilenameExtension(requestPath);
+        String extension = StringUtils.getFilenameExtension(requestPath);
+        return baseFilename + version + "." + extension;
     }
     
-    @Override
-    public Map<String, Collection<Resource>> getBundles() {
-        return bundles;
+    protected Resource readBundle(String versionedBundleName) {
+        File bundleFile = fileService.getResource(getResourcePath(versionedBundleName));
+        return bundleFile == null ? null : new FileSystemResource(bundleFile);
+    }
+    
+
+    protected ResourceHttpRequestHandler findResourceHttpRequestHandler(String resourceName) {
+        resourceName = resourceName.toLowerCase();
+        if (isJavaScriptResource(resourceName)) {
+            return jsResourceHandler;
+        } else if (isCSSResource(resourceName)) {
+            return cssResourceHandler;
+        } else {
+            return null;
+        }
+    }
+    
+    protected boolean isJavaScriptResource(String resourceName) {
+        return (resourceName != null && resourceName.contains(".js"));
+    }
+    
+    protected boolean isCSSResource(String resourceName) {
+        return (resourceName != null && resourceName.contains(".css"));
     }
 
+    /**
+     * Returns the resource path for the given <b>name</b> in URL-format (meaning, / separators)
+     * @param name
+     * @return
+     */
+    protected String getResourcePath(String name) {
+        return "bundles/" + name;
+    }
 }
