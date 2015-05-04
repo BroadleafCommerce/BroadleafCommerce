@@ -24,6 +24,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -101,17 +102,22 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     }
 
     @Override
-    public ExtensionResultStatusType getCategoryId(Long tentativeId, Long[] returnContainer) {
+    public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType getProductId(Long tentativeId, Long[] returnContainer) {
+    public ExtensionResultStatusType getCategoryId(Long category, Long[] returnContainer) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType getSkuId(Long tentativeId, Long[] returnContainer) {
+    public ExtensionResultStatusType getProductId(Product product, Long[] returnContainer) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType getSkuId(Sku sku, Long[] returnContainer) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
     

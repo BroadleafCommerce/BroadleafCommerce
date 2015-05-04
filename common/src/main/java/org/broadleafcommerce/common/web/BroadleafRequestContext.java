@@ -25,21 +25,33 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.site.domain.Catalog;
+import org.broadleafcommerce.common.site.domain.CatalogImpl;
 import org.broadleafcommerce.common.site.domain.Site;
+import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -536,5 +548,114 @@ public class BroadleafRequestContext {
         return context;
     }
 
+    /**
+     * In some cases, it is useful to create a JSON representation of the context that does not include the actual container
+     * request and response information. This can be used subsequently to resurrect the BroadleafRequestContext state, presumably
+     * on a new thread.
+     *
+     * @return
+     */
+    public String createLightWeightCloneJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"ignoreSite\":\"");
+        sb.append(ignoreSite==null?null:ignoreSite);
+        sb.append("\",\"sandBox\":\"");
+        sb.append(sandBox==null?null:sandBox.getId());
+        sb.append("\",\"nonPersistentSite\":\"");
+        sb.append(site==null?null:site.getId());
+        sb.append("\",\"enforceEnterpriseCollectionBehaviorState\":\"");
+        sb.append(enforceEnterpriseCollectionBehaviorState==null?null:enforceEnterpriseCollectionBehaviorState.toString());
+        sb.append("\",\"admin\":\"");
+        sb.append(isAdmin==null?null:isAdmin.toString());
+        sb.append("\",\"adminUserId\":\"");
+        sb.append(adminUserId==null?null:adminUserId);
+        sb.append("\",\"broadleafCurrency\":\"");
+        sb.append(broadleafCurrency==null?null:broadleafCurrency.getCurrencyCode());
+        sb.append("\",\"currentCatalog\":\"");
+        sb.append(currentCatalog==null?null:currentCatalog.getId());
+        sb.append("\",\"currentProfile\":\"");
+        sb.append(currentProfile==null?null:currentProfile.getId());
+        sb.append("\",\"deployBehavior\":\"");
+        sb.append(deployBehavior==null?null:deployBehavior.toString());
+        sb.append("\",\"deployState\":\"");
+        sb.append(deployState==null?null:deployState.toString());
+        sb.append("\",\"internalIgnoreFilters\":\"");
+        sb.append(internalIgnoreFilters==null?null:internalIgnoreFilters.toString());
+        sb.append("\",\"locale\":\"");
+        sb.append(locale==null?null:locale.getLocaleCode());
+        sb.append("\",\"validateProductionChangesState\":\"");
+        sb.append(validateProductionChangesState==null?null:validateProductionChangesState.toString());
+        sb.append("\",\"timeZone\":\"");
+        sb.append(timeZone==null?null:timeZone.getID());
+        sb.append("\"}");
+        return sb.toString();
+    }
 
+    /**
+     * Resurrect the BroadleafRequestContext state based on a JSON representation.
+     *
+     * @param Json
+     * @param em
+     * @return
+     */
+    public static BroadleafRequestContext createLightWeightCloneFromJson(String Json, EntityManager em) {
+        BroadleafRequestContext context = new BroadleafRequestContext();
+        JsonFactory factory = new JsonFactory();
+        ObjectMapper mapper = new ObjectMapper(factory);
+        TypeReference<HashMap<String,String>> typeRef = new TypeReference<HashMap<String,String>>() {};
+        HashMap<String,String> json;
+        try {
+            json = mapper.readValue(Json, typeRef);
+        } catch (IOException e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        if (!json.get("ignoreSite").equals("null")) {
+            context.setIgnoreSite(Boolean.valueOf(json.get("ignoreSite")));
+        }
+        if (!json.get("sandBox").equals("null")) {
+            context.setSandBox(em.find(SandBoxImpl.class, Long.parseLong(json.get("sandBox"))));
+        }
+        if (!json.get("nonPersistentSite").equals("null")) {
+            context.setNonPersistentSite(em.find(SiteImpl.class, Long.parseLong(json.get("nonPersistentSite"))));
+        }
+        if (!json.get("enforceEnterpriseCollectionBehaviorState").equals("null")) {
+            context.setEnforceEnterpriseCollectionBehaviorState(EnforceEnterpriseCollectionBehaviorState.valueOf(json
+                    .get("enforceEnterpriseCollectionBehaviorState")));
+        }
+        if (!json.get("admin").equals("null")) {
+            context.setAdmin(Boolean.valueOf(json.get("admin")));
+        }
+        if (!json.get("adminUserId").equals("null")) {
+            context.setAdminUserId(Long.parseLong(json.get("ignoreSite")));
+        }
+        if (!json.get("broadleafCurrency").equals("null")) {
+            context.setBroadleafCurrency(em.find(BroadleafCurrencyImpl.class, json.get("broadleafCurrency")));
+        }
+        if (!json.get("currentCatalog").equals("null")) {
+            context.setCurrentCatalog(em.find(CatalogImpl.class, Long.parseLong(json.get("currentCatalog"))));
+        }
+        if (!json.get("currentProfile").equals("null")) {
+            context.setCurrentProfile(em.find(SiteImpl.class, Long.parseLong(json.get("currentProfile"))));
+        }
+        if (!json.get("deployBehavior").equals("null")) {
+            context.setDeployBehavior(DeployBehavior.valueOf(json.get("deployBehavior")));
+        }
+        if (!json.get("deployState").equals("null")) {
+            context.setDeployState(DeployState.valueOf(json.get("deployState")));
+        }
+        if (!json.get("internalIgnoreFilters").equals("null")) {
+            context.setInternalIgnoreFilters(Boolean.valueOf(json.get("internalIgnoreFilters")));
+        }
+        if (!json.get("locale").equals("null")) {
+            context.setLocale(em.find(LocaleImpl.class, json.get("locale")));
+        }
+        if (!json.get("validateProductionChangesState").equals("null")) {
+            context.setValidateProductionChangesState(ValidateProductionChangesState.valueOf(json.get("validateProductionChangesState")));
+        }
+        if (!json.get("timeZone").equals("null")) {
+            context.setTimeZone(TimeZone.getTimeZone(json.get("timeZone")));
+        }
+
+        return context;
+    }
 }
