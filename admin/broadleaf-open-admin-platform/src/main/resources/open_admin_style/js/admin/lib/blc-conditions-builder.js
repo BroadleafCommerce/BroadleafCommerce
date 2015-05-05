@@ -86,10 +86,11 @@
             var andSpan = $("<span>", {'text' : 'AND'});
 
             andDivider.append(andSpan);
-            this.element.append(andDivider);
 
             if (this.data[0] != null && this.data[0].quantity != null) {
                 var addMainConditionLink = this.getAddMainConditionLink();
+                this.element.append(andDivider);
+
                 this.element.append(addMainConditionLink);
             }
         },
@@ -208,9 +209,7 @@
 
                 var f = _this.fields[0];
                 var newField = {name: f.value, operator: f.operators[0], value: null};
-//debugger;
                 rules.children('.conditional-rules').last().children(':first').prepend(_this.buildRule(newField));
-                //_this.buildRule(newField).insertBefore($(this));
             }
         },
 
@@ -526,6 +525,8 @@
                     select.append($("<option>", {"text": opt.label || opt.name, "value": opt.name}));
                 }
                 outerDiv.append(select);
+                break;
+            default:
                 break;
         }
         if (currentValue.length) {
