@@ -417,10 +417,11 @@
     function onRemoveLinkClicked(e) {
         e.preventDefault();
 
-        var rules = $(this).parent().parent().parent().children('.or-condition');
+        var container = $(this).parent().parent().parent();
+        var rules = container.children('.or-condition');
         if (rules.length == 1) {
-            $(this).parent().parent().parent().parent().next('.and-divider').remove();
-            $(this).parent().parent().parent().remove();
+            container.parent().next('.and-divider').remove();
+            container.remove();
         } else {
             $(this).parent().parent().remove();
         }
