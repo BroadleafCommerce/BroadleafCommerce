@@ -20,16 +20,15 @@
 package org.broadleafcommerce.common.currency.dao;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import java.util.List;
 
 /**
  * Author: jerryocanas
@@ -49,7 +48,7 @@ public class BroadleafCurrencyDaoImpl implements BroadleafCurrencyDao {
     public BroadleafCurrency findDefaultBroadleafCurrency() {
         Query query = em.createNamedQuery("BC_READ_DEFAULT_CURRENCY");
         query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
-        List<BroadleafCurrency> currencyList = (List<BroadleafCurrency>) query.getResultList();
+        List<BroadleafCurrency> currencyList = query.getResultList();
         if (currencyList.size() >= 1) {
             return currencyList.get(0);
         }
@@ -64,7 +63,7 @@ public class BroadleafCurrencyDaoImpl implements BroadleafCurrencyDao {
         Query query = em.createNamedQuery("BC_READ_CURRENCY_BY_CODE");
         query.setParameter("currencyCode", currencyCode);
         query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
-        List<BroadleafCurrency> currencyList = (List<BroadleafCurrency>) query.getResultList();
+        List<BroadleafCurrency> currencyList = query.getResultList();
         if (currencyList.size() >= 1) {
             return currencyList.get(0);
         }
@@ -75,7 +74,7 @@ public class BroadleafCurrencyDaoImpl implements BroadleafCurrencyDao {
     public List<BroadleafCurrency> getAllCurrencies() {
         Query query = em.createNamedQuery("BC_READ_ALL_CURRENCIES");
         query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
-        return (List<BroadleafCurrency>) query.getResultList();
+        return query.getResultList();
     }
 
     @Override
@@ -85,6 +84,6 @@ public class BroadleafCurrencyDaoImpl implements BroadleafCurrencyDao {
     
     @Override
     public BroadleafCurrency create() {
-        return new BroadleafCurrencyImpl();
+        return entityConfiguration.createEntityInstance(BroadleafCurrency.class.getName(), BroadleafCurrency.class);
     }    
 }
