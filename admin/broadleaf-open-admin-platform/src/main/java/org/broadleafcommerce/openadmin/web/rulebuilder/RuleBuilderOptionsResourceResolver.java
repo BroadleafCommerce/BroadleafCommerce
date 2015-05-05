@@ -23,6 +23,7 @@ package org.broadleafcommerce.openadmin.web.rulebuilder;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.openadmin.web.rulebuilder.enums.RuleBuilderEnumOptionsExtensionListener;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
@@ -38,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Reginald Cole
  * @since 4.0
  */
+@Component("blRuleBuilderOptionResourceResolver")
 public class RuleBuilderOptionsResourceResolver implements ResourceResolver {
 
     protected static final String RULE_BUILDER_OPTIONS_JS_PATH="admin/components/ruleBuilder-options.js";

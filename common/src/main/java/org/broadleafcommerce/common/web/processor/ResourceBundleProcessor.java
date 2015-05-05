@@ -149,6 +149,10 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         for (String file : element.getAttributeValue("files").split(",")) {
             files.add(file.trim());
         }
+        List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
+        if (additionalBundleFiles != null) {
+            files.addAll(additionalBundleFiles);
+        }
         
         if (getBundleEnabled()) {
             String bundleResourceName = bundlingService.resolveBundleResourceName(name, mappingPrefix, files);
@@ -159,10 +163,6 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             Element e = getElement(value, async, defer);
             parent.insertAfter(element, e);
         } else {
-            List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
-            if (additionalBundleFiles != null) {
-                files.addAll(additionalBundleFiles);
-            }
             for (String file : files) {
                 file = file.trim();
                 Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())

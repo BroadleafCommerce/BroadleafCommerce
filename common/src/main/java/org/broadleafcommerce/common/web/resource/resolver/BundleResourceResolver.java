@@ -61,19 +61,14 @@ public class BundleResourceResolver extends AbstractResourceResolver {
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
 
-        if (requestPath != null && requestPath.contains("BDL")) {
-            blcContextUtil.establishThinRequestContext();
+        if (requestPath != null) {
+            if (isBundleFile(requestPath)) {
+                blcContextUtil.establishThinRequestContext();
 
-            String bundleRequestPath = requestPath;
-            if (requestPath.contains(".css")) {
-                bundleRequestPath = "/css/" + requestPath;
-            } else if (requestPath.contains(".js")) {
-                bundleRequestPath = "/js/" + requestPath;
-            }
-
-            Resource bundle = bundlingService.resolveBundleResource(bundleRequestPath);
-            if (bundle != null && bundle.exists()) {
-                return bundle;
+                Resource bundle = bundlingService.resolveBundleResource(requestPath);
+                if (bundle != null && bundle.exists()) {
+                    return bundle;
+                }
             }
         }
 
@@ -83,6 +78,17 @@ public class BundleResourceResolver extends AbstractResourceResolver {
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
             ResourceResolverChain chain) {
+        if (resourceUrlPath != null) {
+            if (isBundleFile(resourceUrlPath)) {
+                return resourceUrlPath;
+            }
+        }
+
         return chain.resolveUrlPath(resourceUrlPath, locations);
+
+    }
+
+    protected boolean isBundleFile(String requestPath) {
+        return bundlingService.checkForRegisteredBundleFile(requestPath);
     }
 }

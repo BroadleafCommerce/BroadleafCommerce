@@ -180,6 +180,10 @@
     <bean id="blSiteResolver" class="org.broadleafcommerce.common.web.NullBroadleafSiteResolver" />
     <bean id="blThemeResolver" class="org.broadleafcommerce.common.web.NullBroadleafThemeResolver" />
     
+    
+    <!--  Spring 4.1 Resource Handling -->
+    <bean id="blPathResourceResolver" class="org.springframework.web.servlet.resource.PathResourceResolver" />       
+    
     <bean id="blJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
