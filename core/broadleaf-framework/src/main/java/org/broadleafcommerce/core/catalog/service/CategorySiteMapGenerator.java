@@ -20,6 +20,8 @@
 package org.broadleafcommerce.core.catalog.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
@@ -45,6 +47,8 @@ import javax.annotation.Resource;
 @Component("blCategorySiteMapGenerator")
 public class CategorySiteMapGenerator implements SiteMapGenerator {
 
+    protected static final Log LOG = LogFactory.getLog(CategorySiteMapGenerator.class);
+
     @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
 
@@ -60,39 +64,37 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
         CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
-        //Construct SiteMap URL for the "root" category as you can have top level categories without a parent
-        constructSiteMapURL(categorySMGC, siteMapBuilder, categorySMGC.getRootCategory());
 
-        //Recursively construct the sub-category SiteMap URLs
-        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 1, categorySMGC, siteMapBuilder);
+        // Recursively construct the category SiteMap URLs
+        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 0, categorySMGC, siteMapBuilder);
         
     }
 
     protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth, CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder) {
-        
+        // If we've reached beyond the ending depth, don't proceed
+        if (currentDepth > categorySMGC.getEndingDepth()) {
+            return;
+        }
+
+        // If we're at or past the starting depth, add this category to the site map
+        if (currentDepth >= categorySMGC.getStartingDepth()) {
+            constructSiteMapURL(categorySMGC, siteMapBuilder, parentCategory);
+        }
+
+        // Recurse on child categories in batches of size rowLimit
         int rowOffset = 0;
         List<Category> categories;
-        
         do {
             categories = categoryDao.readActiveSubCategoriesByCategory(parentCategory, rowLimit, rowOffset);
             rowOffset += categories.size();
             for (Category category : categories) {
-                if (StringUtils.isEmpty(category.getUrl())) {
-                    continue;
-                }
-
-                if (currentDepth < categorySMGC.getEndingDepth()) {
+                if (StringUtils.isNotEmpty(category.getUrl())) {
                     addCategorySiteMapEntries(category, currentDepth + 1, categorySMGC, siteMapBuilder);
+                } else {
+                    LOG.debug("Skipping empty category URL: " + category.getId());
                 }
-
-                if (currentDepth < categorySMGC.getStartingDepth()) {
-                    continue;
-                }
-
-                constructSiteMapURL(categorySMGC, siteMapBuilder, category);
             }
         } while (categories.size() == rowLimit);
-
     }
 
     protected void constructSiteMapURL(CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder, Category category) {
