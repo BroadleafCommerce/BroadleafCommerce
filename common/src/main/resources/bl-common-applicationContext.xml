@@ -59,6 +59,8 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blBaseUrlResolver" class="org.broadleafcommerce.common.web.BaseUrlResolverImpl" />
 
     <bean id="blDirectCopyTransformTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
