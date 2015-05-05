@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.resource.AbstractResourceResolver;
@@ -49,11 +50,13 @@ import javax.servlet.http.HttpServletRequest;
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
-public class BLCJSUrlPathResolver extends AbstractResourceResolver {
+public class BLCJSUrlPathResolver extends AbstractResourceResolver implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(BLCJSUrlPathResolver.class);
 
     private static final String BLC_JS_NAME = "BLC.js";
+
+    private int order = BroadleafResourceResolverOrder.BLC_JS_PATH_RESOLVER;
 
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
@@ -79,5 +82,14 @@ public class BLCJSUrlPathResolver extends AbstractResourceResolver {
         String baseFilename = StringUtils.stripFilenameExtension(requestPath);
         String extension = StringUtils.getFilenameExtension(requestPath);
         return baseFilename + version + "." + extension;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 }

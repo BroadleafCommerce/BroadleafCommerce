@@ -23,12 +23,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
+import org.springframework.web.servlet.resource.VersionStrategy;
 
 import java.util.List;
+import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -43,15 +48,21 @@ import javax.servlet.http.HttpServletRequest;
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
-public class BroadleafVersionResourceResolver extends VersionResourceResolver {
+@Component("blVersionResourceResolver")
+public class BroadleafVersionResourceResolver extends VersionResourceResolver implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(BroadleafVersionResourceResolver.class);
+
+    private int order = BroadleafResourceResolverOrder.BLC_VERSION_RESOURCE_RESOLVER;
 
     @Value("${resource.versioning.enabled:true}")
     protected boolean resourceVersioningEnabled;
 
     @javax.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
+
+    @javax.annotation.Resource(name = "blVersionResourceResolverStrategyMap")
+    protected Map<String, VersionStrategy> versionStrategyMap;
 
     @Override
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
@@ -81,5 +92,20 @@ public class BroadleafVersionResourceResolver extends VersionResourceResolver {
         }
     }
 
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    @PostConstruct
+    public void initIt() throws Exception {
+        if (getStrategyMap() == null || getStrategyMap().isEmpty()) {
+            setStrategyMap(versionStrategyMap);
+        }
+    }
 
 }
