@@ -191,14 +191,26 @@
             var _this = this;
             var f = _this.fields[0];
             var newField = {id:null, quantity:1, groupOperator: "AND", groups: []};
-            
+
+            var andDivider = $("<div>", {'class' : 'and-divider'});
+            var andSpan = $("<span>", {'text' : 'AND'});
+
+            andDivider.append(andSpan);
+
             if (!isAdditional) {
                 rules.append(_this.buildConditional(newField, isAdditional));
                 
                 var addMainConditionLink = this.getAddMainConditionLink();
                 rules.append(addMainConditionLink);
             } else {
-                rules.children(':last').before(_this.buildConditional(newField, isAdditional));
+                _this.buildConditional(newField, isAdditional).insertBefore(rules.children(':last'));
+                andDivider.insertBefore(rules.children(':last'));
+
+                var f = _this.fields[0];
+                var newField = {name: f.value, operator: f.operators[0], value: null};
+//debugger;
+                rules.children('.conditional-rules').last().children(':first').prepend(_this.buildRule(newField));
+                //_this.buildRule(newField).insertBefore($(this));
             }
         },
 
@@ -299,7 +311,7 @@
                 var f = _this.fields[0];
                 var newField = {name: f.value, operator: f.operators[0], value: null};
 
-                _this.buildRule(newField).insertBefore($(this));
+                _this.buildRule(newField).insertBefore($(this).parent());
             });
 
             output.append(div);
@@ -404,7 +416,14 @@
 
     function onRemoveLinkClicked(e) {
         e.preventDefault();
-        $(this).parent().parent().remove();
+
+        var rules = $(this).parent().parent().parent().children('.or-condition');
+        if (rules.length == 1) {
+            $(this).parent().parent().parent().parent().next('.and-divider').remove();
+            $(this).parent().parent().parent().remove();
+        } else {
+            $(this).parent().parent().remove();
+        }
     }
 
     function onFieldSelectChanged(operatorSelect, ruleData) {

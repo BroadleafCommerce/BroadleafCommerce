@@ -159,8 +159,8 @@
 
 $(document).ready(function() {
 
-    $('body').on('click', 'a.add-main-condition', function() {
-        var $container = $(this).parent();
+    $('body').on('click', '.add-main-condition', function() {
+        var $container = $(this).parent().parent();
         BLCAdmin.conditions.addAdditionalMainCondition($container);
         return false;
     });
