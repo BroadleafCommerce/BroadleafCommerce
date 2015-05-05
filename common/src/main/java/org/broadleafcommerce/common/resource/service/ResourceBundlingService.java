@@ -67,4 +67,12 @@ public interface ResourceBundlingService {
      */
     List<String> getAdditionalBundleFiles(String bundleName);
 
+    /**
+     * Returns true if the passed in name represents a versionedBundle 
+     * 
+     * @param versionedBundleName
+     * @return
+     */
+    boolean checkForRegisteredBundleFile(String versionedBundleName);
+
 }

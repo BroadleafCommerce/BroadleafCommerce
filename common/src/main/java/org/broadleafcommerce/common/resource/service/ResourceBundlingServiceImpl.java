@@ -38,10 +38,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-
 import de.jkeylockmanager.manager.KeyLockManager;
 import de.jkeylockmanager.manager.KeyLockManagers;
 import de.jkeylockmanager.manager.LockCallback;
@@ -58,6 +54,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -89,23 +86,11 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     private KeyLockManager keyLockManager = KeyLockManagers.newLock();
 
-    // Abundance of caution - a typical site would only have a few active bundles.  
-    // Adding an LRU for extreme edge cases.
-    private Cache<String, String> createdBundles = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .build(new CacheLoader<String, String>() {
-
-                public String load(String key) {
-                    return key;
-                }
-            });
+    private ConcurrentHashMap<String, String> createdBundles = new ConcurrentHashMap<String, String>();
     
     @Override
     public String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files) {
-        if (mappingPrefix == null) {
-            mappingPrefix = "";
-        }
-                
+     
         ResourceHttpRequestHandler resourceRequestHandler = findResourceHttpRequestHandler(requestedBundleName);
         if (resourceRequestHandler != null && CollectionUtils.isNotEmpty(files)) {
             ResourceResolverChain resolverChain = new BroadleafDefaultResourceResolverChain(
@@ -125,7 +110,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             }
 
             int version = Math.abs(combinedPathString.toString().hashCode());
-            String versionedBundleName = mappingPrefix + addVersion(requestedBundleName, "-BDLg" + String.valueOf(version));
+            String versionedBundleName = mappingPrefix + addVersion(requestedBundleName, "-" + String.valueOf(version));
         
             createBundleIfNeeded(versionedBundleName, filePaths, resolverChain, locations);
 
@@ -140,12 +125,32 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     @Override
     public Resource resolveBundleResource(String versionedBundleResourceName) {
+        versionedBundleResourceName = lookupBundlePath(versionedBundleResourceName);
         return readBundle(versionedBundleResourceName);
+    }
+
+    @Override
+    public boolean checkForRegisteredBundleFile(String versionedBundleName) {
+        versionedBundleName = lookupBundlePath(versionedBundleName);
+        return createdBundles.containsKey(versionedBundleName);
+    }
+
+    protected String lookupBundlePath(String requestPath) {
+        if (requestPath.contains(".css")) {
+            if (!requestPath.startsWith("/css/")) {
+                requestPath = "/css/" + requestPath;
+            }
+        } else if (requestPath.contains(".js")) {
+            if (!requestPath.startsWith("/js/")) {
+                requestPath = "/js/" + requestPath;
+            }
+        }
+        return requestPath;
     }
 
     protected void createBundleIfNeeded(final String versionedBundleName, final List<String> filePaths,
             final ResourceResolverChain resolverChain, final List<Resource> locations) {
-        if (createdBundles.getIfPresent(versionedBundleName) == null) {
+        if (!createdBundles.containsKey(versionedBundleName)) {
             keyLockManager.executeLocked(versionedBundleName, new LockCallback() {
 
                 public void doInLock() {
@@ -154,9 +159,10 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                         Resource bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations);
                         if (bundleResource != null) {
                             saveBundle(bundleResource);
-                            // TODO: Save the created bundle to the createdBundles map
                         }
                     }
+
+                    createdBundles.put(versionedBundleName, versionedBundleName);
                 }
             });
         }

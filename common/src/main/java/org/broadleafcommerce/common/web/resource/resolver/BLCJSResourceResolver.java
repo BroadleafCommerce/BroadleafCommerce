@@ -23,9 +23,7 @@ package org.broadleafcommerce.common.web.resource.resolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
@@ -47,6 +45,8 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * A {@link ResourceResolver} that replaces the //BLC-SERVLET-CONTEXT and //BLC-SITE-BASEURL" 
  * tokens before serving the BLC.js file.
+ * 
+ * Works in conjunction with {@link BLCJSUrlPathResolver}
  * 
  * @since 4.0
  * 
@@ -73,14 +73,6 @@ public class BLCJSResourceResolver extends AbstractResourceResolver {
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
             ResourceResolverChain chain) {
-        if (resourceUrlPath.contains(BLC_JS_NAME)) {
-            Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
-            if (site != null && site.getId() != null) {
-                return addVersion(resourceUrlPath, "-"+site.getId());
-            } else {
-                return resourceUrlPath;
-            }                       
-        }
         return chain.resolveUrlPath(resourceUrlPath, locations);
     }
     
