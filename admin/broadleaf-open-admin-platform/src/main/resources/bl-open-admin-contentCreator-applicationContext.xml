@@ -243,42 +243,6 @@
     <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
         <property name="cacheManager" ref="blCacheManager"/>
     </bean>
-    
-    <bean id="blBundleResourceResolver" class="org.broadleafcommerce.common.web.resource.resolver.BundleResourceResolver"/>
-    
-    <bean id="blCacheResourceResolver" class="org.broadleafcommerce.common.web.resource.resolver.BroadleafCachingResourceResolver">
-        <constructor-arg index="0" ref="blSpringCacheManager" />
-        <constructor-arg index="1" value="blResourceCacheElements"/>                
-    </bean>
-    
-    <bean id="blVersionResourceResolverStrategyMap" class="org.springframework.beans.factory.config.MapFactoryBean">
-        <property name="sourceMap">
-            <map>
-                <entry key="/**">
-                    <bean class="org.springframework.web.servlet.resource.ContentVersionStrategy" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
-    <bean id="blVersionResourceResolver" class="org.broadleafcommerce.common.web.resource.resolver.BroadleafVersionResourceResolver">
-        <property name="strategyMap" ref="blVersionResourceResolverStrategyMap"/>
-    </bean>  
-    
-    <bean id="blCustomAdminResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-                <ref bean="blBLCJSUrlPathResolver" />                         
-                <ref bean="blCacheResourceResolver" />                
-                <ref bean="blVersionResourceResolver" />
-                <ref bean="blBundleResourceResolver" />
-                <ref bean="blBLCJSResolver" />
-                <ref bean="blSystemPropertyJSResolver" />
-                <ref bean="blRuleBuilderOptionResourceResolver" />
-                <ref bean="blPathResourceResolver" />
-            </list>
-        </property>
-    </bean>      
 
     <bean id="blOpenAdminCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">

@@ -25,7 +25,9 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -54,7 +56,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
-public class BLCJSResourceResolver extends AbstractResourceResolver {
+@Component("blBLCJSResolver")
+public class BLCJSResourceResolver extends AbstractResourceResolver implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(BLCJSResourceResolver.class);
 
@@ -67,6 +70,8 @@ public class BLCJSResourceResolver extends AbstractResourceResolver {
     @javax.annotation.Resource(name = "blBroadleafContextUtil")
     protected BroadleafContextUtil blcContextUtil;
     
+    private int order = BroadleafResourceResolverOrder.BLC_JS_RESOURCE_RESOLVER;
+
     protected static final Pattern pattern = Pattern.compile("(\\S*)BLC-(\\S*)\\.js");
 
 
@@ -123,5 +128,14 @@ public class BLCJSResourceResolver extends AbstractResourceResolver {
         String baseFilename = StringUtils.stripFilenameExtension(requestPath);
         String extension = StringUtils.getFilenameExtension(requestPath);
         return baseFilename + version + "." + extension;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 }

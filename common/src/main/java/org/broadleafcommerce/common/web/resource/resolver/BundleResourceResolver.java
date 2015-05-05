@@ -23,7 +23,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
 import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
+import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.resource.AbstractResourceResolver;
 import org.springframework.web.servlet.resource.CachingResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
@@ -47,9 +49,12 @@ import javax.servlet.http.HttpServletRequest;
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
-public class BundleResourceResolver extends AbstractResourceResolver {
+@Component("blBundleResourceResolver")
+public class BundleResourceResolver extends AbstractResourceResolver implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(BundleResourceResolver.class);
+
+    private int order = BroadleafResourceResolverOrder.BLC_BUNDLE_RESOURCE_RESOLVER;
 
     @javax.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
@@ -90,5 +95,14 @@ public class BundleResourceResolver extends AbstractResourceResolver {
 
     protected boolean isBundleFile(String requestPath) {
         return bundlingService.checkForRegisteredBundleFile(requestPath);
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 }
