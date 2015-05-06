@@ -30,6 +30,8 @@ import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.resource.BroadleafDefaultResourceResolverChain;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -75,10 +77,12 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     @javax.annotation.Resource(name = "blFileService")
     protected BroadleafFileService fileService;
 
-    @javax.annotation.Resource(name = "blJsResources")
+    @Autowired(required = false)
+    @Qualifier("blJsResources")
     protected ResourceHttpRequestHandler jsResourceHandler;
 
-    @javax.annotation.Resource(name = "blCssResources")
+    @Autowired(required = false)
+    @Qualifier("blCssResources")
     protected ResourceHttpRequestHandler cssResourceHandler;
 
     @javax.annotation.Resource(name="blStatisticsService")
