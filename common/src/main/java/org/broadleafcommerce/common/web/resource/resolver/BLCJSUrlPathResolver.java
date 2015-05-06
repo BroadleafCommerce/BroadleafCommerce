@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.resource.AbstractResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolver;
@@ -50,6 +51,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
+@Component("blBLCJSUrlPathResolver")
 public class BLCJSUrlPathResolver extends AbstractResourceResolver implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(BLCJSUrlPathResolver.class);

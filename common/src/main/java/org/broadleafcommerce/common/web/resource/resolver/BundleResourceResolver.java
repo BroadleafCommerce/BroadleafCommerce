@@ -27,7 +27,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.resource.AbstractResourceResolver;
-import org.springframework.web.servlet.resource.CachingResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
 import java.util.List;
@@ -35,17 +34,11 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * A {@code ResourceResolver} that is used solely to modify URL names of resources that are served from 
- * Theme locations or those that may be modified by ThemeConfiguration variables.
+ * A {@code ResourceResolver} that is used to serve previously bundled files.
  * 
  * <p>
- * It works with {@link ThemeFileResourceResolver} which actually resolves the resource from the DB or file system.
- * 
- * <p>
- * These two components were not combined into a single resolver in order to allow for the introduction of a 
- * {@link CachingResourceResolver} at either step (typically between the two with URL resolution occurring prior to
- * caching and resource resolution occurring after). 
- * 
+ * It works with {@link ResourceBundlingService} which is able to create and read bundle files.
+ *  
  * @author Brian Polster
  * @since Broadleaf 4.0
  */

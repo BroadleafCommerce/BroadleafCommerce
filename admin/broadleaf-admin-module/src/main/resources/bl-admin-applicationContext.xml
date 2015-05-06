@@ -34,21 +34,6 @@
         <context:exclude-filter type="regex" expression="org.broadleafcommerce.admin.web.controller.*"/>
     </context:component-scan>
 
-    <bean id="blCustomPersistenceHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
-        <property name="sourceList">
-            <list>
-                <ref bean="blCategoryCustomPersistenceHandler" />
-                <ref bean="blCustomerPasswordCustomPersistenceHandler" />
-                <ref bean="blCustomerCustomPersistenceHandler" />
-                <ref bean="blProductCustomPersistenceHandler" />
-                <ref bean="blChildCategoriesCustomPersistenceHandler" />
-                <ref bean="blSkuCustomPersistenceHandler" />
-                <ref bean="blISOCountryPersistenceHandler"/>
-                <ref bean="blSkuBundleItemCustomPersistenceHandler" />
-            </list>
-        </property>
-    </bean>
-
     <mo:override id="blMetadataOverrides">
         <!-- Add required validation to some default Sku fields. These should not occur on the additionalSkus list, which
             is why these are marked required in this fashion rather than in @AdminPresentation annotations on SkuImpl -->

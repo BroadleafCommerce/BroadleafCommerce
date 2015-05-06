@@ -189,34 +189,16 @@
     <bean id="blSiteResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
-                <ref bean="blThemeFileUrlPathResolver" />
                 <ref bean="blBLCJSUrlPathResolver" />                         
                 <ref bean="blCacheResourceResolver" />                
                 <ref bean="blVersionResourceResolver" />
                 <ref bean="blBundleResourceResolver" />
                 <ref bean="blBLCJSResolver" />
-                <ref bean="blSystemPropertyJSResolver" />
-                <ref bean="blThemeFileResolver" />                
+                <ref bean="blSystemPropertyJSResolver" />              
                 <ref bean="blPathResourceResolver" />
             </list>
         </property>
-    </bean>
-    
-    <bean id="blAdminResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-                <ref bean="blBLCJSUrlPathResolver" />                         
-                <ref bean="blCacheResourceResolver" />                
-                <ref bean="blVersionResourceResolver" />
-                <ref bean="blBundleResourceResolver" />
-                <ref bean="blBLCJSResolver" />
-                <ref bean="blSystemPropertyJSResolver" />
-                <ref bean="blRuleBuilderOptionResourceResolver" />
-                <ref bean="blPathResourceResolver" />
-            </list>
-        </property>
-    </bean>  
-     
+    </bean>     
     
     <!--  Spring 4.1 Resource Handling -->
     <bean id="blJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
@@ -306,7 +288,8 @@
     </bean>
     
     <!--  Spring 4.1 Site Resource Handling Base Classes -->
-    <bean id="siteResourceHttpRequestHandlerBase" abstract="true" class="org.springframework.web.servlet.resource.ResourceHttpRequestHandler">
+    <bean id="siteResourceHttpRequestHandlerBase" abstract="true" 
+            class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">
         <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
         <property name="resourceResolvers" ref="blSiteResourceResolvers" />
     </bean>
@@ -328,25 +311,7 @@
     
     <bean id="siteFontResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
         <property name="locations" ref="blFontLocations"/>            
-    </bean>            
-    
-   <!--  Spring 4.1 Admin Resource Handling Base Classes -->
-   <bean id="adminResourceHttpRequestHandlerBase" abstract="true" class="org.springframework.web.servlet.resource.ResourceHttpRequestHandler">
-        <!--  property name="themesBaseDirectory" value="/WEB-INF/" / -->
-        <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
-        <property name="resourceResolvers" ref="blAdminResourceResolvers" />
-        
     </bean>
-    
-   <bean id="adminJsResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
-        <property name="locations" ref="blJsLocations"/>
-        <property name="resourceTransformers" ref="blJsResourceTransformers" />     
-   </bean>    
-    
-   <bean id="adminCssResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
-        <property name="locations" ref="blCssLocations"/>
-        <property name="resourceTransformers" ref="blCssResourceTransformers" />             
-   </bean>   
    
    <!--  End Spring 4.1 Resource Handling Configuration -->
    
