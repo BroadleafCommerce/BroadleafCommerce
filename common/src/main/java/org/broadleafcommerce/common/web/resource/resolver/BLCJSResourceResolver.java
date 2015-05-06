@@ -72,7 +72,7 @@ public class BLCJSResourceResolver extends AbstractResourceResolver implements O
     
     private int order = BroadleafResourceResolverOrder.BLC_JS_RESOURCE_RESOLVER;
 
-    protected static final Pattern pattern = Pattern.compile("(\\S*)BLC-(\\S*)\\.js");
+    protected static final Pattern pattern = Pattern.compile("(\\S*)BLC((\\S{0})|([-]{1,2}[0-9]+)).js");
 
 
     @Override
