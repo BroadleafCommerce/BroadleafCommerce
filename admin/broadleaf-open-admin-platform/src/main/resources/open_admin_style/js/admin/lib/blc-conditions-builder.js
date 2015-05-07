@@ -121,7 +121,6 @@
             var id = null;
             var qty = null;
             var _this = this;
-            
             if ($element.find('.rule').length == 0 && !$element.is('.rule')) {
                 return null;
             }
@@ -198,18 +197,23 @@
 
             andDivider.append(andSpan);
 
-            if (!isAdditional) {
-                rules.append(_this.buildConditional(newField, isAdditional));
-                
-                var addMainConditionLink = this.getAddMainConditionLink();
-                rules.append(addMainConditionLink);
-            } else {
+            //if (!isAdditional) {
+            //    rules.append(_this.buildConditional(newField, isAdditional));
+            //
+            //    var addMainConditionLink = this.getAddMainConditionLink();
+            //    rules.append(addMainConditionLink);
+            //} else {
                 _this.buildConditional(newField, isAdditional).insertBefore(rules.children(':last'));
                 andDivider.insertBefore(rules.children(':last'));
 
                 var f = _this.fields[0];
                 var newField = {name: f.value, operator: f.operators[0], value: null};
                 rules.children('.conditional-rules').last().children(':first').prepend(_this.buildRule(newField));
+            //}
+
+            if (rules.children('.add-and-button').length == 0) {
+                var addMainConditionLink = this.getAddMainConditionLink();
+                    rules.append(addMainConditionLink);
             }
         },
 
@@ -319,7 +323,7 @@
         },
 
         buildRule: function(ruleData) {
-            var ruleDiv = $("<div>", {"class": "row or-condition"});
+            var ruleDiv = $("<div>", {"class": "row or-condition rule"});
             var fieldSelect = getFieldSelect(this.fields, ruleData);
             var operatorSelect = getOperatorSelect();
 
@@ -383,7 +387,7 @@
     };
 
     function getFieldSelect(fields, ruleData) {
-        var select = $("<select>");
+        var select = $("<select>", {"class": "field"});
         for(var i=0; i < fields.length; i++) {
             var field = fields[i];
             var option = $("<option>", {
@@ -518,19 +522,21 @@
                 radioContainer.append($("<span>", {"style": "margin-right: 10px; margin-left: 3px", "text" : BLCAdmin.messages.booleanFalse}));
                 break;
             case "SELECT":
+                var outerDiv2 = $("<div>", {'class' : 'select-style'});
                 var select = $("<select>", {"class": "value"});
                 var options = fieldSelect.find("> :selected").data("options");
                 for(var i=0; i < options.length; i++) {
                     var opt = options[i];
                     select.append($("<option>", {"text": opt.label || opt.name, "value": opt.name}));
                 }
-                outerDiv.append(select);
+                outerDiv2.append(select);
+                outerDiv.append(outerDiv2);
                 break;
             default:
                 break;
         }
         if (currentValue.length) {
-            currentValue.parent().replaceWith(outerDiv);
+            currentValue.parents('.col3').replaceWith(outerDiv);
         } else {
             $(container).append(outerDiv);
 

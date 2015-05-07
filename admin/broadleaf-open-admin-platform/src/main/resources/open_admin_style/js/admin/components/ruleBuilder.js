@@ -71,13 +71,12 @@
                 var builder = this.getCondition(containerId).builder;
 
                 $container.show();
-
                 if ($container.children().children().length == 0) {
-                    if (typeToCreate == 'add-main-rule') {
-                        builder.buildAddNewRule($container);
-                    } else if (typeToCreate == 'add-main-item-rule') {
+                    //if (typeToCreate == 'add-main-rule') {
+                    //    builder.buildAddNewRule($container);
+                    //} else if (typeToCreate == 'add-main-item-rule') {
                         builder.buildAddNewItemRule($container);
-                    }
+                    //}
                 }
             }
         },
