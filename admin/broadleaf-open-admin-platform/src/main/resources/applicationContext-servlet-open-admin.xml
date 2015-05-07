@@ -142,5 +142,5 @@
     <mvc:interceptors>
       <bean class="org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor" />
     </mvc:interceptors>
-    
+       
 </beans>

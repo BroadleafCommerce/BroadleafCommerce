@@ -101,6 +101,10 @@ public class GeneratedResource extends AbstractResource implements Serializable 
         return 1;
     }
 
+    public byte[] getBytes() {
+        return source;
+    }
+
     @Override
     public boolean equals(Object res) {
         if (res == null) return false;

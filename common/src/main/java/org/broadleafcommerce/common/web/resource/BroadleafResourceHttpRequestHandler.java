@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,243 +19,81 @@
  */
 package org.broadleafcommerce.common.web.resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.resource.GeneratedResource;
-import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
-import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
-import org.broadleafcommerce.common.util.DeployBehaviorUtil;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
-import org.broadleafcommerce.common.web.BroadleafSiteResolver;
-import org.broadleafcommerce.common.web.BroadleafThemeResolver;
-import org.broadleafcommerce.common.web.DeployBehavior;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.util.StreamUtils;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
+import org.springframework.web.servlet.resource.ResourceResolver;
+import org.springframework.web.servlet.resource.ResourceTransformer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
-
+/**
+ * Provides a PostConstruct method that sorts the {@link ResourceResolver}, {@link ResourceTransformer}, 
+ * or location ({@link Resource}) collections based on the {@link Ordered} interface.
+ * 
+ *  
+ * @author bpolster
+ *
+ */
 public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHandler {
-    private static final Log LOG = LogFactory.getLog(BroadleafResourceHttpRequestHandler.class);
-    
-    // XML Configured generated resource handlers
-    protected List<AbstractGeneratedResourceHandler> handlers;
-    protected List<AbstractGeneratedResourceHandler> sortedHandlers;
-    
-    @javax.annotation.Resource(name = "blResourceBundlingService")
-    protected ResourceBundlingService bundlingService;
 
-    @javax.annotation.Resource(name = "blResourceMinificationService")
-    protected ResourceMinificationService minifyService;
-    
-    @javax.annotation.Resource(name = "blResourceRequestExtensionManager")
-    protected ResourceRequestExtensionManager extensionManager;
-    
-    @javax.annotation.Resource(name = "blSiteResolver")
-    protected BroadleafSiteResolver siteResolver;
-    
-    @javax.annotation.Resource(name = "blSandBoxResolver")
-    protected BroadleafSandBoxResolver sbResolver;
-    
-    @javax.annotation.Resource(name = "blThemeResolver")
-    protected BroadleafThemeResolver themeResolver;
+    @PostConstruct
+    protected void sortCollections() {
+        OrderedComparator oc = new OrderedComparator();
 
-    @javax.annotation.Resource(name = "blDeployBehaviorUtil")
-    protected DeployBehaviorUtil deployBehaviorUtil;
+        if (getLocations() != null) {
+            Collections.sort(getLocations(), oc);
+        }
 
-    @Value("${global.admin.prefix}")
-    protected String globalAdminPrefix;
+        if (getResourceResolvers() != null) {
+            Collections.sort(getResourceResolvers(), oc);
+        }
 
-    @Value("${global.admin.url}")
-    protected String globalAdminUrl;
-    
-    /**
-     * Checks to see if the requested path corresponds to a registered bundle. If so, returns the generated bundle.
-     * Otherwise, checks to see if any of the configured GeneratedResourceHandlers can handle the given request.
-     * If neither of those cases match, delegates to the normal ResourceHttpRequestHandler
-     */
-    @Override
-	protected Resource getResource(HttpServletRequest request) throws IOException {
-        establishThinRequestContext();
-        return getResourceInternal(request);
+        if (getResourceTransformers() != null) {
+            Collections.sort(getResourceTransformers(), oc);
+        }
     }
 
-	protected Resource getResourceInternal(HttpServletRequest request) throws IOException {
-		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        if (bundlingService.hasBundle(path)) {
-            return bundlingService.getBundle(path);
-        }
-        
-        Resource unminifiedResource = null;
-        
-        if (sortedHandlers == null && handlers != null) {
-            sortHandlers();
-        }
-        
-        if (sortedHandlers != null) {
-            for (AbstractGeneratedResourceHandler handler : sortedHandlers) {
-                if (handler.canHandle(path)) {
-                    unminifiedResource = handler.getResource(path, getLocations());
-                    break;
+    /**
+     * Items that implement Ordered will sort by the value of {@link Ordered#getOrder()}.
+     * 
+     * <p>
+     * Nulls are considered greater except that a getOrder with a value of Integer.MAX_VALUE 
+     * will always sort at the end (even after nulls). 
+     *      
+     */
+    protected class OrderedComparator implements Comparator<Object> {
+
+        @Override
+        public int compare(Object o1, Object o2) {
+            if (o1 instanceof Ordered && o2 instanceof Ordered) {
+                return ((Ordered) o1).getOrder() - ((Ordered) o2).getOrder();
+            }
+
+            if (o1 instanceof Ordered) {
+                if (((Ordered) o1).getOrder() == Integer.MAX_VALUE) {
+                    // Put MAX_VALUE items at the end of the list (even behind nulls)
+                    return 1;
+                } else {
+                    return -1;
                 }
             }
-        }
-        
-        if (unminifiedResource == null) {
-            ExtensionResultHolder erh = new ExtensionResultHolder();
-            extensionManager.getProxy().getOverrideResource(path, erh);
-            if (erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR) != null) {
-                unminifiedResource = (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR);
+
+            if (o2 instanceof Ordered) {
+                if (((Ordered) o2).getOrder() == Integer.MAX_VALUE) {
+                    // Put MAX_VALUE items at the end of the list (even behind nulls)
+                    return -1;
+                } else {
+                    return 1;
+                }
             }
-        }
-        
-        if (unminifiedResource == null) {
-            unminifiedResource = super.getResource(request);
-        }
 
-        try {
-            if (!minifyService.getEnabled() || !minifyService.getAllowSingleMinification()) {
-                return unminifiedResource;
-            }
-        } finally {
-            ThreadLocalManager.remove();
+            // Neither is ordered (respect the natural order)
+            return 0;
         }
 
-        LOG.warn("Minifying individual file - this should only be used in development to trace down particular " +
-        		 "files that are causing an exception in the minification service. The results of the minification " +
-        		 "performed outside of a bundle are not stored to disk.");
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        byte[] bytes = null;
-        InputStream is = null;
-        try {
-            is = unminifiedResource.getInputStream();
-            StreamUtils.copy(is, baos);
-            bytes = baos.toByteArray();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            try {
-                is.close();
-                baos.close();
-            } catch (IOException e2) {
-                throw new RuntimeException("Could not close input stream", e2);
-            }
-        }
-        
-        LOG.debug("Attempting to minifiy " + unminifiedResource.getFilename());
-        byte[] minifiedBytes = minifyService.minify(unminifiedResource.getFilename(), bytes);
-
-        return new GeneratedResource(minifiedBytes, unminifiedResource.getFilename());
     }
-    
-    public boolean isBundleRequest(HttpServletRequest request) {
-		String path = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        return bundlingService.hasBundle(path);
-    }
-    
-    protected void establishThinRequestContext() {
-        BroadleafRequestContext oldBrc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (oldBrc == null || oldBrc.getSite() == null || oldBrc.getTheme() == null) {
-            // Resolving sites and sandboxes is often dependent on having a security context present in the request.
-            // For example, resolving a sandbox requires the current user to have the BLC_ADMIN_USER in his Authentication.
-            // For performance reasons, we do not go through the entire Spring Security filter chain on requests
-            // for resources like JavaScript and CSS files. However, when theming is enabled, we potentially have to
-            // resolve a specific version of the theme for a sandbox so that we can replace variables appropriately. This
-            // then depends on the sandbox being resolved, which requires the Authentication object to be present.
-            // We will grab the Authentication object associated with this user's session and set it on the
-            // SecurityContextHolder since Spring Security will be bypassed.
-            HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            HttpSession session = req.getSession(false);
-            SecurityContext ctx = readSecurityContextFromSession(session);
-            if (ctx != null) {
-                SecurityContextHolder.setContext(ctx);
-            }
-            
-            BroadleafRequestContext newBrc = new BroadleafRequestContext();
-            ServletWebRequest swr = new ServletWebRequest(req);
-            newBrc.setSite(siteResolver.resolveSite(swr, true));
-            newBrc.setSandBox(sbResolver.resolveSandBox(swr, newBrc.getSite()));
-            BroadleafRequestContext.setBroadleafRequestContext(newBrc);
-            newBrc.setTheme(themeResolver.resolveTheme(swr));
-            newBrc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
-        }
-    }
-
-    protected String getContextName(HttpServletRequest request) {
-        String contextName = request.getServerName();
-        int pos = contextName.indexOf('.');
-        if (pos >= 0) {
-            contextName = contextName.substring(0, contextName.indexOf('.'));
-        }
-        return contextName;
-    }
-
-    // **NOTE** This method is lifted from HttpSessionSecurityContextRepository
-    protected SecurityContext readSecurityContextFromSession(HttpSession httpSession) {
-        if (httpSession == null) {
-            return null;
-        }
-
-        Object ctxFromSession = httpSession.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-        if (ctxFromSession == null) {
-            return null;
-        }
-
-        if (!(ctxFromSession instanceof SecurityContext)) {
-            return null;
-        }
-
-        return (SecurityContext) ctxFromSession;
-    }
-    
-    
-    protected void sortHandlers() {
-        List<AbstractGeneratedResourceHandler> temp = new ArrayList<AbstractGeneratedResourceHandler>(handlers);
-        Collections.sort(temp, new Comparator<AbstractGeneratedResourceHandler>() {
-            @Override
-            public int compare(AbstractGeneratedResourceHandler o1, AbstractGeneratedResourceHandler o2) {
-                return new Integer(o1.getOrder()).compareTo(o2.getOrder());
-            }
-        });
-        sortedHandlers = temp;
-    }
-    
-    
-    /* *********** */
-    /* BOILERPLATE */
-    /* *********** */
-    
-    public List<AbstractGeneratedResourceHandler> getHandlers() {
-        if (sortedHandlers == null && handlers != null) {
-            sortHandlers();
-        }
-        return sortedHandlers;
-    }
-    
-    public void setHandlers(List<AbstractGeneratedResourceHandler> handlers) {
-        this.handlers = handlers;
-    }
-
 }
