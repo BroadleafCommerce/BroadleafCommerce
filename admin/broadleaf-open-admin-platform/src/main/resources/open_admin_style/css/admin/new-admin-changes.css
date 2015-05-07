@@ -80,3 +80,14 @@ table.dataTable thead .sorting_desc_disabled {
     float:right;
     padding-right: 0;
 }
+
+.secondary-nav {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* temporary until Ben makes change in new css */
+input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.radio-label.clr, .radio>input[type="radio"]+label {
+    padding-left: 25px;
+    padding-right: 15px;
+}

@@ -1,8 +1,7 @@
-<div th:substituteby="components/fieldTooltip" />
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 
-<label th:for="*{fields['__${field.name}__'].value}"><span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" /></label>>
+<label th:for="*{fields['__${field.name}__'].value}"><span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" /></label>
 
 <div class="select-style" th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">
     <select th:field="*{fields['__${field.name}__'].value}">
