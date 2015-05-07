@@ -37,7 +37,7 @@
         </div>
         
         <!-- Normal display -->
-        <div class="field-label" th:text="#{${field.friendlyName}}"
+        <h4 class="field-label" th:text="#{${field.friendlyName}}"
             th:classappend="${!field.required ? 'conditional-rules-header' : 'required'}"
             th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}" />
     
