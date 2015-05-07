@@ -91,3 +91,8 @@ input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.rad
     padding-left: 25px;
     padding-right: 15px;
 }
+
+/* added for rule builder button */
+.add-and-button {
+    height: 45px;
+}
