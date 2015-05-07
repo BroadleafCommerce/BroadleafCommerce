@@ -23,7 +23,7 @@
 
         <div th:if="${entityForm}" th:remove="tag">
             <button th:each="action : ${entityForm.actions}"
-                    th:attr="data-url=@{${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}"
+                    th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}"
                     th:type="${action.buttonType}"
                     class="button primary large"
                     th:classappend="${action.buttonClass}">
