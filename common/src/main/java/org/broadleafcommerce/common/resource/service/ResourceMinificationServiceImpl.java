@@ -21,10 +21,13 @@ package org.broadleafcommerce.common.resource.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.mozilla.javascript.ErrorReporter;
 import org.mozilla.javascript.EvaluatorException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.yahoo.platform.yui.compressor.CssCompressor;
@@ -32,9 +35,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
@@ -73,35 +74,45 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     
     @Override
     public byte[] minify(String filename, byte[] bytes) {
-        if (!getEnabled()) {
+        Resource modifiedResource = minify(new ByteArrayResource(bytes), filename);
+         
+        if (modifiedResource instanceof GeneratedResource) {
+            return ((GeneratedResource) modifiedResource).getBytes();
+        } else {
             return bytes;
         }
-        
-        String type = null;
-        if (filename.endsWith(".js")) {
-            type = "js";
-        } else if (filename.endsWith(".css")) {
-            type = "css";
-        }
-        
-        if (!"js".equals(type) && !"css".equals(type)) {
-            throw new IllegalArgumentException("Can only minify js or css resources");
-        }
-        
-        byte[] minifiedBytes;
-        
-        BufferedReader in = null;
-        BufferedWriter out = null;
-        try {
-            // Input streams to read the bytes
-            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-            InputStreamReader isr = new InputStreamReader(bais, "utf-8");
-            in = new BufferedReader(isr);
+    }
 
-            // Output streams to save the modified bytes
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            OutputStreamWriter osw = new OutputStreamWriter(baos, "utf-8");
-            out = new BufferedWriter(osw);
+    @Override
+    public Resource minify(Resource originalResource) {
+        if (originalResource.getFilename() == null) {
+            LOG.warn("Attempted to modify resource without a filename, returning non-minified resource");
+            return originalResource;
+        }
+        return minify(originalResource, originalResource.getFilename());
+    }
+
+    @Override
+    public Resource minify(Resource originalResource, String filename) {
+        if (true) {
+            return originalResource;
+        }
+        String type = null;
+        if (filename.contains(".js")) {
+            type = "js";
+        } else if (filename.contains(".css")) {
+            type = "css";
+        } else {
+            // Unsupported minification type
+            return originalResource;
+        }
+        
+        byte[] minifiedBytes = null;
+        try (BufferedReader in =
+                new BufferedReader(new InputStreamReader(originalResource.getInputStream(), "utf-8"));
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                BufferedWriter out =
+                        new BufferedWriter(new OutputStreamWriter(baos, "utf-8"));) {
 
             if ("js".equals(type)) {
                 JavaScriptCompressor jsc = new JavaScriptCompressor(in, getLogBasedErrorReporter());
@@ -112,23 +123,12 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             }
             out.flush();
             minifiedBytes = baos.toByteArray();
-        } catch (Exception e) { // Catch everything - on a runtime exception, we still want to return the unminified bytes
+        } catch (Exception e) {
             LOG.warn("Could not minify resources, returned unminified bytes", e);
-            return bytes;
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e2) {
-                throw new RuntimeException(e2);
-            }
+            return originalResource;
         }
         
-        return minifiedBytes;
+        return new GeneratedResource(minifiedBytes, filename);
     }
     
     protected ErrorReporter getLogBasedErrorReporter() {
@@ -160,5 +160,4 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             
         };
     }
-
 }
