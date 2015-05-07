@@ -18,6 +18,8 @@
  * #L%
  */
 $(document).ready(function(){
+    $(".secondary-nav").css("width", 0);
+    $(".secondary-nav").show();
 
     equalheight = function(container){
 
@@ -90,20 +92,38 @@ $(".nav-section[data-toggle]").on("click", function(n) {
 
     if ($(this).hasClass("active")) {
         $(".nav-section").removeClass("active");
-        $(".secondary-nav").hide();
+        close($(".secondary-nav"));
     } else {
+        var el1 = $(".nav-section .active");
         $(".nav-section").removeClass("active");
         $(this).addClass("active");
-        $(".secondary-nav").hide();
-        $(selector).show();
+
+        close($(".secondary-nav"));
+        open($(selector));
     }
 });
 
 $(".nav-close").on("click", function(x) {
     x.preventDefault();
-    $(".secondary-nav").hide();
     $(".nav-section").removeClass("active");
+    close($(".secondary-nav"));
 });
+
+function open(el) {
+    $(el).animate({
+        width: "301px"
+    }, function() {
+        // Animation complete.
+    });
+}
+
+function close(el) {
+    $(el).animate({
+        width: "0"
+    }, function() {
+        // Animation complete.
+    });
+}
 
 $('select').selectize({
     sortField: 'text'
@@ -114,3 +134,10 @@ $('.radio-label').on("click", function(e) {
     e.preventDefault();
     $(this).prev('input').prop("checked", true).change();
 });
+
+window.remodalGlobals = {
+    namespace: "modal",
+    defaults: {
+        hashTracking: false
+    }
+};
