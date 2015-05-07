@@ -233,6 +233,10 @@
         </property>
     </bean>
 
+    <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="blCacheManager"/>
+    </bean>
+
     <bean id="blOpenAdminCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
@@ -240,6 +244,7 @@
             </list>
         </property>
     </bean>
+    
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
         <property name="collectionRef" value="blOpenAdminCssLocations" />
         <property name="targetRef" value="blCssLocations" />
@@ -271,4 +276,40 @@
             </list>
         </property>
     </bean>
+    
+               <!--  Spring 4.1 Admin Resource Resolvers --> 
+    <bean id="blAdminResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blBLCJSUrlPathResolver" />                         
+                <ref bean="blCacheResourceResolver" />                
+                <ref bean="blVersionResourceResolver" />
+                <ref bean="blBundleResourceResolver" />
+                <ref bean="blBLCJSResolver" />
+                <ref bean="blSystemPropertyJSResolver" />
+                <ref bean="blRuleBuilderOptionResourceResolver" />
+                <ref bean="blPathResourceResolver" />
+            </list>
+        </property>
+    </bean>
+    
+  <!--  Spring 4.1 Admin Resource Handling Base Classes -->
+   <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 
+        class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">   
+        <!--  property name="themesBaseDirectory" value="/WEB-INF/" / -->
+        <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
+        <property name="resourceResolvers" ref="blAdminResourceResolvers" />
+        
+    </bean>
+    
+   <bean id="adminJsResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blJsLocations"/>
+        <property name="resourceTransformers" ref="blJsResourceTransformers" />     
+   </bean>    
+    
+   <bean id="adminCssResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blCssLocations"/>
+        <property name="resourceTransformers" ref="blCssResourceTransformers" />             
+   </bean>  
+    
 </beans>
