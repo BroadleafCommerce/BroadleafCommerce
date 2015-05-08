@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Brian Polster
  * @since 4.0
  */
-@Component("blResourceMinificationTranformer")
+@Component("blMinifyResourceTransformer")
 public class MinifyResourceTransformer implements ResourceTransformer {
 
     private static final Log logger = LogFactory.getLog(MinifyResourceTransformer.class);
