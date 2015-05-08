@@ -1,45 +1,10 @@
+<blc_admin:admin_module resultVar="adminMenu" />
+
 <div class="side-nav">
-    <nav id="sideMenu" role="navigation">
-
-        <blc_admin:admin_module resultVar="adminMenu" />
-        <div class="side-nav">
-            <ul>
-                <li><a class="nav-section logo" href="/">Broadleaf Commerce</a></li>
-                <li><a class="nav-section catalog" href="" data-toggle="#catalog">Catalog</a></li>
-                <li><a class="nav-section content-icon" href="" data-toggle="#content">Content</a></li>
-                <li><a class="nav-section customer-care" href="" data-toggle="#customer-care">Customer Care</a></li>
-                <li><a class="nav-section design" href="" data-toggle="#design">Design</a></li>
-                <li><a class="nav-section internationalization" href="" data-toggle="#internationalization">Internationalization</a></li>
-                <li><a class="nav-section order-management" href="" data-toggle="#order-management">Order Management</a></li>
-                <li><a class="nav-section site-updates" href="" data-toggle="#site-updates">Site Updates</a></li>
-                <li><a class="nav-section security" href="" data-toggle="#security">Security</a></li>
-                <li><a class="nav-section settings" href="" data-toggle="#settings">Settings</a></li>
-            </ul>
-        </div>
-
-
-
-        <ul class="blc-accordion">
-            <li class="blc-module" th:each="module : ${adminMenu.adminModules}" th:inline="text"
-                    th:classappend="${currentAdminModule != null and currentAdminModule.id == module.id}? 'active'">
-                <div class="title">
-                    <h5>
-                        <i th:class="${module.icon}"></i>
-                        [[#{${module.moduleKey}}]]
-                    </h5>
-                </div>
-                <div class="content" 
-                    th:style="${(currentAdminModule != null and currentAdminModule.id == module.id) ? '' : 'display: none;'}">
-                    <ul>
-                        <li th:each="section : ${module.sections}" 
-                            th:classappend="${(currentAdminSection != null) and (currentAdminSection.id == section.id) ? 'active' : ''}">
-                            <a blc_admin:admin_section_href="${section}">
-                                [[#{${section.sectionKey}}]]
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-        </ul>
-    </nav>
+    <ul>
+        <li><a href="" class="nav-section logo" data-toggle="#logo"></a></li>
+        <li th:each="module : ${adminMenu.adminModules}" th:inline="text">
+            <a th:class="${'nav-section ' + module.icon}" href="" th:attr="data-toggle=${'#' + module.icon}"></a>
+        </li>
+    </ul>
 </div>
