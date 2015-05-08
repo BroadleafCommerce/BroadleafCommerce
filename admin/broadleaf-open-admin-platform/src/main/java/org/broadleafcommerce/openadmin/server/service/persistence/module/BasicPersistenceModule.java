@@ -302,7 +302,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FlushMode originalFlushMode = session.getFlushMode();
         try {
             session.setFlushMode(FlushMode.MANUAL);
-            ParentEntityPersistenceException entityPersistenceException = null;
+            RuntimeException entityPersistenceException = null;
             for (Property property : sortedProperties) {
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
                 Class<?> returnType;
@@ -370,13 +370,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                         defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
                                                 fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
                                     }
-                                } catch (PersistenceException e) {
-                                    if (e instanceof ParentEntityPersistenceException) {
-                                        entityPersistenceException = (ParentEntityPersistenceException) e;
-                                        cleanupFailedPersistenceAttempt(instance);
-                                        break;
-                                    }
-                                    throw e;
+                                } catch (ParentEntityPersistenceException | javax.validation.ValidationException e) {
+                                    entityPersistenceException = e;
+                                    cleanupFailedPersistenceAttempt(instance);
+                                    break;
                                 }
                             }
                         } else {
