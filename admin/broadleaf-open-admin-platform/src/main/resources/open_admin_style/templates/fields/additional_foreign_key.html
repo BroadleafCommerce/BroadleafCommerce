@@ -1,7 +1,8 @@
 <div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
-    <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
-    <div th:substituteby="components/fieldTooltip" />
-    
+    <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    </label>
+
     <select class="six" th:field="*{fields['__${field.name}__'].value}" th:if="${! #maps.isEmpty(field.options)}">
         <option value="" th:text="#{Default_Select}" />
         <option th:each="entry : *{fields['__${field.name}__'].options}"
@@ -23,8 +24,9 @@
     <input type="hidden" class="value" th:field="*{fields['__${field.name}__'].value}" th:attr="data-onchangetrigger=${field.onChangeTrigger}" />
     <input type="hidden" class="hidden-display-value" th:field="*{fields['__${field.name}__'].displayValue}" />
 
-    <div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
-    <div th:substituteby="components/fieldTooltip" />
+    <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    </label>
 
     <div class="foreign-key-value-container">
         

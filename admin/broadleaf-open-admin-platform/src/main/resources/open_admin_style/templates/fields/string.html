@@ -1,9 +1,8 @@
-<!--<div class="field-label inline" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />-->
-<!--<div th:substituteby="components/fieldTooltip" />-->
 <!--<div th:substituteby="components/fieldTranslation" />-->
-<!--<span class="error" th:errors="*{fields['__${field.name}__'].value}" />-->
-
-<label th:for="*{fields['__${field.name}__'].value}"><span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" /></label>
+<label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+</label>
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
        th:required="${field.required}"
        th:placeholder="${field.hint}"

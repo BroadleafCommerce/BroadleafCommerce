@@ -1,5 +1,4 @@
 <div class="field-label" th:text="#{asset_url_image_label}" />
-<div th:substituteby="components/fieldTooltip" />
 
 <img class="thumbnail" 
     th:if="*{fields['__${field.name}__'].value != null}"
@@ -8,8 +7,10 @@
     
 <img class="thumbnail" 
     th:unless="*{fields['__${field.name}__'].value != null}" />
-    
-<div class="field-label" th:text="#{${field.friendlyName}}" th:classappend="${field.required ? 'required' : ''}" />
+
+<label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+</label>
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;">
    <span th:text="*{fields['__${field.name}__'].displayValue}"/>
