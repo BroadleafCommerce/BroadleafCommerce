@@ -12,8 +12,7 @@
     <div class="side-nav" th:substituteby="layout/partials/leftNav" />
 
     <div class="content">
-        <div th:substituteby="layout/partials/siteBar" />
-        <div th:substituteby="layout/partials/sandboxRibbon" />
+        <div th:substituteby="layout/partials/header" />
 
         <div class="section-content" th:classappend="${sandboxable != null} ? 'sandboxed'">
             <div th:substituteby="layout/partials/secondLeftNav" />
