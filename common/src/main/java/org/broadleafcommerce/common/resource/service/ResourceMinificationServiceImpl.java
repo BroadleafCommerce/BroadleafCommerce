@@ -115,7 +115,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         
         String type = getFileType(originalResource, filename);
         if (type == null) {
-            LOG.warn("Unsupported minification resource: " + filename);
+            LOG.info("Unsupported minification resource: " + filename);
             return originalResource;
         }
         
