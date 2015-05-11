@@ -7386,6 +7386,29 @@
                     this.tidy.removeWithoutAttr();
                     
                     html = this.tidy.$div.html();
+                    
+                    // START BLC MODIFICATION
+                    // The existing Redactor code does the right thing above in the onSync method and the resulting
+                    // HTML that is passed to tidy correctly replaces the unicode with their html entities. However,
+                    // the above invocation ($div.html()) decodes the HTML entities to replace them with their unicode
+                    // representation. Because of this, unicode is actually saved into the database which is bad (poor browser
+                    // and OS support). The easy fix here is to just copy the onSync functionality that already does the
+                    // right thing down here.
+                    var chars = {
+                           '\u2122': '&trade;',
+                           '\u00a9': '&copy;',
+                           '\u2026': '&hellip;',
+                           '\u2014': '&mdash;',
+                           '\u2010': '&dash;',
+                           '\u00ae': '&reg;'
+                    };
+                    // replace special characters
+                    $.each(chars, function(i,s)
+                    {
+                        html = html.replace(new RegExp(i, 'g'), s);
+                    });
+                    // END BLC MODIFICATION
+                    
                     this.tidy.$div.remove();
 
                     return html;
