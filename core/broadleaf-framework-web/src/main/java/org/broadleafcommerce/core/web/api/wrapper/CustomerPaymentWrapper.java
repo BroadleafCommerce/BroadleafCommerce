@@ -20,13 +20,8 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.core.web.api.wrapper.APIUnwrapper;
-import org.broadleafcommerce.core.web.api.wrapper.APIWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.AddressWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.BaseWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.CustomerWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.MapElementWrapper;
-import org.broadleafcommerce.core.web.api.wrapper.WrapperAdditionalFields;
+import org.broadleafcommerce.common.payment.PaymentGatewayType;
+import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
@@ -34,6 +29,7 @@ import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +38,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * This is a JAXB wrapper to wrap CustomerPayment.
@@ -66,6 +63,22 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
     @XmlElement
     protected CustomerWrapper customer;
 
+    @XmlElement
+    @XmlJavaTypeAdapter(ISO8601DateAdapter.class)
+    private Date expirationDate;
+
+    @XmlElement
+    private String cardName;
+
+    @XmlElement
+    private String lastFour;
+
+    @XmlElement
+    private String cardType;
+
+    @XmlElement
+    private String paymentGatewayType;
+
     @XmlElement(name = "element")
     @XmlElementWrapper(name = "additionalFields")
     protected List<MapElementWrapper> additionalFields;
@@ -84,6 +97,22 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
             AddressWrapper addressWrapper = (AddressWrapper) context.getBean(AddressWrapper.class.getName());
             addressWrapper.wrapDetails(model.getBillingAddress(), request);
             this.billingAddress = addressWrapper;
+        }
+
+        if (model.getExpirationDate() != null) {
+            this.setExpirationDate(model.getExpirationDate());
+        }
+        if (model.getName() != null) {
+            this.setCardName(model.getName());
+        }
+        if (model.getLastFour() != null) {
+            this.setLastFour(model.getLastFour());
+        }
+        if (model.getCardType() != null) {
+            this.setCardType(model.getCardType());
+        }
+        if (model.getPaymentGatewayType() != null) {
+            this.setPaymentGatewayType(model.getPaymentGatewayType().getType());
         }
 
         CustomerWrapper customerWrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
@@ -112,6 +141,12 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
         custPay.setCustomer(cust);
 
         custPay.setIsDefault(this.isDefault);
+        custPay.setName(this.getCardName());
+        custPay.setCardType(this.getCardType());
+        custPay.setExpirationDate(this.getExpirationDate());
+        custPay.setPaymentGatewayType(PaymentGatewayType.getInstance(this.getPaymentGatewayType()));
+        custPay.setLastFour(this.getLastFour());
+        custPay.setPaymentToken(this.getPaymentToken());
         super.transferAdditionalFieldsFromWrapper(custPay, this);
         return custPay;
 
@@ -168,5 +203,45 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
 
     public void setAdditionalFields(List<MapElementWrapper> additionalFields) {
         this.additionalFields = additionalFields;
+    }
+
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public String getCardName() {
+        return cardName;
+    }
+
+    public void setCardName(String cardName) {
+        this.cardName = cardName;
+    }
+
+    public String getLastFour() {
+        return lastFour;
+    }
+
+    public void setLastFour(String lastFour) {
+        this.lastFour = lastFour;
+    }
+
+    public String getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(String cardType) {
+        this.cardType = cardType;
+    }
+
+    public String getPaymentGatewayType() {
+        return paymentGatewayType;
+    }
+
+    public void setPaymentGatewayType(String paymentGatewayType) {
+        this.paymentGatewayType = paymentGatewayType;
     }
 }
