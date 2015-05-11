@@ -63,7 +63,7 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
     protected CatalogService catalogService;
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
-    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(100, 500));
+    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
 
     public ProductOptionsProcessor() {
         super("product_options");
