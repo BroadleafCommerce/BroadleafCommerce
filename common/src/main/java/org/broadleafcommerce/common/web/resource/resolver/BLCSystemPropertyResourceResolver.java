@@ -83,9 +83,12 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
 
         if (requestPath.equalsIgnoreCase(BLC_SYSTEM_PROPERTY_FILE)) {
             try {
+                blcContextUtil.establishThinRequestContextWithoutThemeOrSandbox();
                 resource = convertResource(resource, requestPath);
             } catch (IOException ioe) {
                 LOG.error("Exception modifying " + BLC_SYSTEM_PROPERTY_FILE, ioe);
+            } finally {
+                blcContextUtil.clearThinRequestContext();
             }
         }
 
@@ -93,7 +96,6 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
     }
 
     protected Resource convertResource(Resource origResource, String resourceFileName) throws IOException {
-        blcContextUtil.establishThinRequestContextWithoutThemeOrSandbox();
         byte[] bytes = FileCopyUtils.copyToByteArray(origResource.getInputStream());
         String content = new String(bytes, DEFAULT_CHARSET);
         

@@ -61,11 +61,15 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
 
         if (requestPath != null) {
             if (isBundleFile(requestPath)) {
-                blcContextUtil.establishThinRequestContext();
-
-                Resource bundle = bundlingService.resolveBundleResource(requestPath);
-                if (bundle != null && bundle.exists()) {
-                    return bundle;
+                try {
+                    blcContextUtil.establishThinRequestContext();
+    
+                    Resource bundle = bundlingService.resolveBundleResource(requestPath);
+                    if (bundle != null && bundle.exists()) {
+                        return bundle;
+                    }
+                } finally {
+                    blcContextUtil.clearThinRequestContext();
                 }
             }
         }

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common.web.resource;
 
+import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafSandBoxResolver;
@@ -125,7 +126,7 @@ public class BroadleafContextUtil {
     }
 
     public void clearThinRequestContext() {
-        BroadleafRequestContext.setBroadleafRequestContext(null);
+        ThreadLocalManager.remove();
     }
 
     protected String getContextName(HttpServletRequest request) {

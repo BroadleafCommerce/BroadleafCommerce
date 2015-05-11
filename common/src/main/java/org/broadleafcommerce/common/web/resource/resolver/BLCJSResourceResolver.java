@@ -95,9 +95,12 @@ public class BLCJSResourceResolver extends AbstractResourceResolver implements O
                 }
 
                 try {
+                    blcContextUtil.establishThinRequestContextWithoutThemeOrSandbox();
                     resource = convertResource(resource, requestPath);
                 } catch (IOException ioe) {
                     LOG.error("Exception modifying " + BLC_JS_NAME, ioe);
+                } finally {
+                    blcContextUtil.clearThinRequestContext();
                 }
                 return resource;
             }
@@ -106,7 +109,6 @@ public class BLCJSResourceResolver extends AbstractResourceResolver implements O
     }
 
     protected Resource convertResource(Resource origResource, String resourceFileName) throws IOException {
-        blcContextUtil.establishThinRequestContextWithoutThemeOrSandbox();
         byte[] bytes = FileCopyUtils.copyToByteArray(origResource.getInputStream());
         String content = new String(bytes, DEFAULT_CHARSET);
         
