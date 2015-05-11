@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.logging.Log;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -212,8 +213,9 @@ public interface OrderService {
      * @return the modified Order
      * @throws PricingException
      * @throws OfferMaxUseExceededException
+     * @throws OfferException 
      */
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferException;
     
     /**
      * Adds the given OfferCodes to the order. Optionally prices the order as well.
@@ -224,8 +226,9 @@ public interface OrderService {
      * @return
      * @throws PricingException
      * @throws OfferMaxUseExceededException
+     * @throws OfferException 
      */
-    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
+    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException;
 
     /**
      * Remove the given OfferCode for the order. Optionally prices the order as well.
