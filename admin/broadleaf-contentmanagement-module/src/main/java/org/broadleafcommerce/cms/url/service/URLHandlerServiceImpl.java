@@ -36,7 +36,9 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,7 +63,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     
     protected Cache urlHandlerCache;
 
-    protected LRUMap<String, Pattern> urlPatternMap = new LRUMap<String, Pattern>(10, 2000);
+    protected Map<String, Pattern> urlPatternMap = Collections.synchronizedMap(new LRUMap<String, Pattern>(2000));
 
     /**
      * Checks the passed in URL to determine if there is a matching URLHandler.
