@@ -38,6 +38,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -131,6 +132,7 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     protected String lastPaymentStatus;
 
     @Column(name = "EXPIRATION_DATE")
+    @Index(name="IDX_EXPIRATION_DATE_SEARCH", columnNames={"EXPIRATION_DATE"})
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Expiration_Date", order = 1000)
     protected Date expirationDate;
 
@@ -155,6 +157,7 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     protected String paymentGatewayType;
 
     @Column(name = "LAST_EXPIRATION_NOTIFICATION")
+    @Index(name="IDX_LAST_EXPIRATION_NOTIFICATION_SEARCH", columnNames={"LAST_EXPIRATION_NOTIFICATION"})
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Last_Expiration_Notification", order = 1001)
     protected Date lastExpirationNotification;
 
