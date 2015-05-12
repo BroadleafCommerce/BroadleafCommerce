@@ -17,14 +17,14 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.common.payment;
-
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumerationType {
 
@@ -37,7 +37,7 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
     public static final PaymentAdditionalFieldType EXP_DATE = new PaymentAdditionalFieldType("EXP_DATE", "Expiration Date");
     public static final PaymentAdditionalFieldType EXP_MONTH = new PaymentAdditionalFieldType("EXP_MONTH", "Expiration Month");
     public static final PaymentAdditionalFieldType EXP_YEAR = new PaymentAdditionalFieldType("EXP_YEAR", "Expiration Year");
-    
+
     // Generic Fields that can be used for multiple payment types
     public static final PaymentAdditionalFieldType PAYMENT_TYPE = new PaymentAdditionalFieldType("PAYMENT_TYPE", "Type of OrderPayment");
     public static final PaymentAdditionalFieldType NAME_ON_ACCOUNT = new PaymentAdditionalFieldType("NAME_ON_ACCOUNT", "Name on Account");
@@ -45,13 +45,13 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
     public static final PaymentAdditionalFieldType LAST_FOUR = new PaymentAdditionalFieldType("LAST_FOUR", "Last Four Digits ofAccount or CC");
     public static final PaymentAdditionalFieldType GIFT_CARD_NUM = new PaymentAdditionalFieldType("GIFT_CARD_NUM", "Gift Card Number");
     public static final PaymentAdditionalFieldType EMAIL = new PaymentAdditionalFieldType("EMAIL", "Email");
-    public static final PaymentAdditionalFieldType ACCOUNT_CREDIT_NUM = new PaymentAdditionalFieldType("ACCOUNT_CREDIT_NUM", "Account Credit Number");   
+    public static final PaymentAdditionalFieldType ACCOUNT_CREDIT_NUM = new PaymentAdditionalFieldType("ACCOUNT_CREDIT_NUM", "Account Credit Number");
     public static final PaymentAdditionalFieldType AUTH_CODE = new PaymentAdditionalFieldType("AUTH_CODE", "Authorization Code");
     public static final PaymentAdditionalFieldType REQUEST_ID = new PaymentAdditionalFieldType("REQUEST_ID", "Request Id");
     public static final PaymentAdditionalFieldType SUBSCRIPTION_ID = new PaymentAdditionalFieldType("SUBSCRIPTION_ID", "Subscription Id");
     public static final PaymentAdditionalFieldType SUBSCRIPTION_TITLE = new PaymentAdditionalFieldType("SUBSCRIPTION_TITLE", "Subscription Title");
     public static final PaymentAdditionalFieldType TOKEN = new PaymentAdditionalFieldType("TOKEN", "Payment Token");
-
+    public static final PaymentAdditionalFieldType DECLINE_TYPE = new PaymentAdditionalFieldType("DECLINE_TYPE", "Decline Type");
 
     public static PaymentAdditionalFieldType getInstance(final String type) {
         return TYPES.get(type);
