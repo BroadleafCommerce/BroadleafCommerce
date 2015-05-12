@@ -44,6 +44,7 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
@@ -820,7 +821,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             Object propertyValue;
             if (propertyName.contains(PRODUCT_ATTR_MAP) || propertyName.contains(SKU_ATTR_MAP)) {
                 if (propertyName.contains(PRODUCT_ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(indexedItem, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
+                    if (useSku) {
+                        // If we are using SKU as an ENTITY_TYPE and are referring to productAttributes, we will check for and use the SKU's defaultProduct
+                        if (indexedItem instanceof SkuImpl && propertyName.contains("defaultProduct")) {
+                            indexedItem = ((Sku) indexedItem).getDefaultProduct();
+                        }
+                    }
+                    propertyValue = PropertyUtils.getMappedProperty(indexedItem, PRODUCT_ATTR_MAP, propertyName.substring(propertyName.lastIndexOf(".") + 1));
                 } else {
                     propertyValue = PropertyUtils.getMappedProperty(indexedItem, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
                 }
