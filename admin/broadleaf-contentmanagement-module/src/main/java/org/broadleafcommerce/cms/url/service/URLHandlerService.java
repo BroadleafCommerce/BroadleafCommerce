@@ -47,8 +47,4 @@ public interface URLHandlerService {
 
     URLHandler findURLHandlerById(Long id);
 
-    void removeURLHandlerFromCache(SandBox sandBox, URLHandler urlhandler);
-
-    Cache getUrlHandlerCache();
-
 }

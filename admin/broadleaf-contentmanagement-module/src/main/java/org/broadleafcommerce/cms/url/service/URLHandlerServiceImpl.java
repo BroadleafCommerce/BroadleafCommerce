@@ -36,7 +36,9 @@ import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,18 +52,14 @@ import javax.annotation.Resource;
 public class URLHandlerServiceImpl implements URLHandlerService {
 
     private static final Log LOG = LogFactory.getLog(URLHandlerServiceImpl.class);
-    
-    private final NullURLHandler NULL_URL_HANDLER = new NullURLHandler();
 
     @Resource(name="blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
 
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
-    
-    protected Cache urlHandlerCache;
 
-    protected LRUMap<String, Pattern> urlPatternMap = new LRUMap<String, Pattern>(10, 2000);
+    protected Map<String, Pattern> urlPatternMap = Collections.synchronizedMap(new LRUMap<String, Pattern>(2000));
 
     /**
      * Checks the passed in URL to determine if there is a matching URLHandler.
@@ -72,22 +70,12 @@ public class URLHandlerServiceImpl implements URLHandlerService {
      */
     @Override
     public URLHandler findURLHandlerByURI(String uri) {
-        URLHandler urlHandler = lookupHandlerFromCache(uri);
-        if (urlHandler instanceof NullURLHandler) {
-            return null;
-        } else {
-            return urlHandler;
-        }               
+        return checkForMatches(uri);
     }
 
     @Override
     public URLHandler findURLHandlerById(Long id) {
         return urlHandlerDao.findURLHandlerById(id);
-    }
-
-    @Override
-    public void removeURLHandlerFromCache(SandBox sandBox, URLHandler urlhandler) {
-        getUrlHandlerCache().remove(buildKey(sandBox, urlhandler));
     }
 
     @Override
@@ -99,30 +87,6 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     @Transactional("blTransactionManager")
     public URLHandler saveURLHandler(URLHandler handler) {
         return urlHandlerDao.saveURLHandler(handler);
-    }
-
-    @Override
-    public Cache getUrlHandlerCache() {
-        if (urlHandlerCache == null) {
-            urlHandlerCache = CacheManager.getInstance().getCache("cmsUrlHandlerCache");
-        }
-        return urlHandlerCache;
-    }
-
-    protected String buildKey(SandBox sandBox, String requestUri) {
-        String key = requestUri;
-        if (sandBox != null) {
-            key = sandBox.getId() + "_" + key;
-        }       
-        return key;
-    }
-    
-    protected String buildKey(SandBox sandBox, URLHandler urlHandler) {
-        String key = urlHandler.getIncomingURL();
-        if (sandBox != null) {
-            key = sandBox.getId() + "_" + key;
-        }       
-        return key;
     }
     
     protected URLHandler checkForMatches(String requestURI) {
@@ -167,28 +131,6 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         }
 
 
-        return null;
-    }
-
-    protected URLHandler lookupHandlerFromCache(String requestURI)  {
-        return checkForMatches(requestURI);
-    }
-    
-    protected URLHandler getUrlHandlerFromCache(String key) {
-        Element cacheElement = getUrlHandlerCache().get(key);
-        if (cacheElement != null) {
-            statisticsService.addCacheStat(CacheStatType.URL_HANDLER_CACHE_HIT_RATE.toString(), true);
-            return (URLHandler) cacheElement.getValue();
-        }
-        statisticsService.addCacheStat(CacheStatType.URL_HANDLER_CACHE_HIT_RATE.toString(), false);
-        return null;
-    }
-
-    protected URLHandler findURLHandlerByURIInternal(String uri) {
-        URLHandler urlHandler = urlHandlerDao.findURLHandlerByURI(uri);
-        if (urlHandler != null) {
-            return urlHandler;
-        }
         return null;
     }
 

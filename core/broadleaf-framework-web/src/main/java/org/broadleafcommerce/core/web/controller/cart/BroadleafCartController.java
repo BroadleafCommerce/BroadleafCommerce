@@ -21,6 +21,9 @@ package org.broadleafcommerce.core.web.controller.cart;
 
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
+import org.broadleafcommerce.core.offer.service.exception.OfferException;
+import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -261,16 +264,24 @@ public class BroadleafCartController extends AbstractCartController {
                     orderService.addOfferCode(cart, offerCode, false);
                     promoAdded = true;
                     cart = orderService.save(cart, true);
-                } catch(OfferMaxUseExceededException e) {
-                    exception = "Use Limit Exceeded";
+                } catch (OfferException e) {
+                    if (e instanceof OfferMaxUseExceededException) {
+                        exception = "Use Limit Exceeded";
+                    } else if (e instanceof OfferExpiredException) {
+                        exception = "Offer Has Expired";
+                    } else if (e instanceof OfferAlreadyAddedException) {
+                        exception = "Offer Has Already Been Added";
+                    } else {
+                        exception = "An Unknown Offer Error Has Occured";
+                    }
                 }
             } else {
                 exception = "Invalid Code";
             }
         } else {
-            exception = "Invalid cart";
+            exception = "Invalid Cart";
         }
-        
+
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<String, Object>();
             extraData.put("promoAdded", promoAdded);

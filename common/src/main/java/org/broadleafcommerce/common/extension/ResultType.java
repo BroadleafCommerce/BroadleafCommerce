@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,15 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.offer.service.exception;
+package org.broadleafcommerce.common.extension;
 
-public class OfferMaxUseExceededException extends OfferException {
-    
-    private static final long serialVersionUID = 1L;
-
-    public OfferMaxUseExceededException(String string) {
-        super(string);
-    }
-
-
-
+/**
+ * Used in conjunction with {@link org.broadleafcommerce.common.extension.SparselyPopulatedQueryExtensionHandler}. Describes
+ * the current type of results desired from a query. STANDARD results relate specifically to a standard site (multitenant
+ * concept). TEMPLATE results relate specifically to a template site's catalog or profile (also a multitenant concept)
+ *
+ * @author Jeff Fischer
+ */
+public enum ResultType {
+    STANDARD,TEMPLATE,IGNORE
 }

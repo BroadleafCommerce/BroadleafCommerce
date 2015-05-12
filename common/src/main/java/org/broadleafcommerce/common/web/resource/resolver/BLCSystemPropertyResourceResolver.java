@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
-import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -65,10 +64,6 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
     @javax.annotation.Resource(name = "blBaseUrlResolver")
     BaseUrlResolver urlResolver;
 
-    @javax.annotation.Resource(name = "blBroadleafContextUtil")
-    protected BroadleafContextUtil blcContextUtil;
-
-
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
             ResourceResolverChain chain) {
@@ -93,7 +88,6 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
     }
 
     protected Resource convertResource(Resource origResource, String resourceFileName) throws IOException {
-        blcContextUtil.establishThinRequestContextWithoutThemeOrSandbox();
         byte[] bytes = FileCopyUtils.copyToByteArray(origResource.getInputStream());
         String content = new String(bytes, DEFAULT_CHARSET);
         

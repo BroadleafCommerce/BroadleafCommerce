@@ -101,7 +101,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     protected long lastCacheFlushTime = System.currentTimeMillis();
 
     protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = Collections.synchronizedMap(new
-            LRUMap<String, Map<String, FieldMetadata>>(100, 1000));
+            LRUMap<String, Map<String, FieldMetadata>>(1000));
 
     @Resource(name="blAdornedTargetListPersistenceModule")
     protected PersistenceModule adornedPersistenceModule;

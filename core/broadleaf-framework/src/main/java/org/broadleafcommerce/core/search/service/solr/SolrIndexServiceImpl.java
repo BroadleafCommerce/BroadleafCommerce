@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -139,10 +138,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-
-    public static String PRODUCT_ATTR_MAP = "productAttributes";
-
-    public static String SKU_ATTR_MAP = "skuAttributes";
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
@@ -817,27 +812,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
         
         if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
-            Object propertyValue;
-            if (propertyName.contains(PRODUCT_ATTR_MAP) || propertyName.contains(SKU_ATTR_MAP)) {
-                if (propertyName.contains(PRODUCT_ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(indexedItem, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
-                } else {
-                    propertyValue = PropertyUtils.getMappedProperty(indexedItem, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
-                }
-                // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
-                // value field out of it if it exists.
-                if (propertyValue != null) {
-                    try {
-                        propertyValue = shs.getPropertyValue(propertyValue, "value"); //PropertyUtils.getProperty(propertyValue, "value");
-                    } catch (NoSuchMethodException e) {
-                        // Do nothing, we'll keep the existing value
-                    }
-                }
-            } else {
-                propertyValue = shs.getPropertyValue(indexedItem, propertyName); //PropertyUtils.getProperty(product, propertyName);
+            Object propertyValue = shs.getPropertyValue(indexedItem, field);
+            if (propertyValue != null) {
+                values.put("", propertyValue);
             }
-            
-            values.put("", propertyValue);
         }
 
         return values;

@@ -24,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -301,7 +302,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FlushMode originalFlushMode = session.getFlushMode();
         try {
             session.setFlushMode(FlushMode.MANUAL);
-            ParentEntityPersistenceException entityPersistenceException = null;
+            RuntimeException entityPersistenceException = null;
             for (Property property : sortedProperties) {
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
                 Class<?> returnType;
@@ -369,13 +370,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                         defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
                                                 fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
                                     }
-                                } catch (PersistenceException e) {
-                                    if (e instanceof ParentEntityPersistenceException) {
-                                        entityPersistenceException = (ParentEntityPersistenceException) e;
-                                        cleanupFailedPersistenceAttempt(instance);
-                                        break;
-                                    }
-                                    throw e;
+                                } catch (ParentEntityPersistenceException | javax.validation.ValidationException e) {
+                                    entityPersistenceException = e;
+                                    cleanupFailedPersistenceAttempt(instance);
+                                    break;
                                 }
                             }
                         } else {
@@ -1361,12 +1359,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().detach(instance);
         }
         //Remove the id field value, if it's set
-        Field idField;
-        try {
-            idField = instance.getClass().getDeclaredField((String) getPersistenceManager().
-                    getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name"));
-        } catch (NoSuchFieldException e1) {
-            throw ExceptionHelper.refineException(e1);
+        String idFieldName = (String) getPersistenceManager().getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name");
+        Field idField = FieldUtils.getField(instance.getClass(), idFieldName, true);
+        if (idField == null) {
+            throw ExceptionHelper.refineException(new NoSuchFieldException("Entity " + instance.getClass().getName() + " does not contain id field " + idFieldName));
         }
         idField.setAccessible(true);
         if (idField.get(instance) != null) {

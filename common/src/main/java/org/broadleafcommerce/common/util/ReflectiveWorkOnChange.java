@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class ReflectiveWorkOnChange implements WorkOnChange {
 
-    private static Map<String, Method> methodCache = Collections.synchronizedMap(new LRUMap<String, Method>(10, 1000));
+    private static Map<String, Method> methodCache = Collections.synchronizedMap(new LRUMap<String, Method>(1000));
 
     private final Object target;
     private final String methodName;

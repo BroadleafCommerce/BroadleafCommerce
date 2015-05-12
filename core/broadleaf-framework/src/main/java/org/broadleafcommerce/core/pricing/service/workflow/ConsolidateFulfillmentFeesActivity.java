@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;

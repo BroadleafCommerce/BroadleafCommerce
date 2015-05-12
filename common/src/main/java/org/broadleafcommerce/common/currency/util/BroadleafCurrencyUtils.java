@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Map;
@@ -40,7 +41,7 @@ import java.util.Map;
  */
 public class BroadleafCurrencyUtils {
 
-    protected static final Map<String,NumberFormat> FORMAT_CACHE = new LRUMap<String, NumberFormat>(20, 100);
+    protected static final Map<String,NumberFormat> FORMAT_CACHE = Collections.synchronizedMap(new LRUMap<String, NumberFormat>(100));
 
     public static final MathContext ROUND_FLOOR_MATH_CONTEXT = new MathContext(0, RoundingMode.FLOOR);
 

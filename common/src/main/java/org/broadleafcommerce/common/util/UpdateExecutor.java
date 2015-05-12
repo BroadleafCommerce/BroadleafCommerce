@@ -125,10 +125,10 @@ public class UpdateExecutor {
             } else {
                 arraySize = 800;
                 test -= arraySize;
-                pos += arraySize;
             }
             Long[] temp = new Long[arraySize];
             System.arraycopy(all, pos, temp, 0, arraySize);
+            pos += arraySize;
             runs.add(temp);
         }
         return runs;

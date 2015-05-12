@@ -104,13 +104,23 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
             StringBuilder combinedPathString = new StringBuilder();
             List<String> filePaths = new ArrayList<String>();
             for (String file : files) {
-                String resourcePath = resolverChain.resolveUrlPath(mappingPrefix + file, locations);
+                String resourcePath = resolverChain.resolveUrlPath(file, locations);
                 if (resourcePath == null) {
-                    // try without the mappingPrefix
-                    resourcePath = resolverChain.resolveUrlPath(file, locations);
+                    // can't find the exact name specified in the bundle, try it with the mappingPrefix
+                    resourcePath = resolverChain.resolveUrlPath(mappingPrefix + file, locations);
                 }
-                filePaths.add(resourcePath);
-                combinedPathString.append(resourcePath);
+                
+                if (resourcePath != null) {
+                    filePaths.add(resourcePath);
+                    combinedPathString.append(resourcePath);
+                } else {
+                    LOG.warn(new StringBuilder().append("Could not resolve resource path specified in bundle as [")
+                            .append(file)
+                            .append("] or as [")
+                            .append(mappingPrefix + file)
+                            .append("]. Skipping file.")
+                            .toString());
+                }
             }
 
             int version = Math.abs(combinedPathString.toString().hashCode());
@@ -157,6 +167,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
         if (!createdBundles.containsKey(versionedBundleName)) {
             keyLockManager.executeLocked(versionedBundleName, new LockCallback() {
 
+                @Override
                 public void doInLock() {
                     Resource bundle = readBundle(versionedBundleName);
                     if (bundle == null || !bundle.exists()) {
@@ -186,37 +197,34 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                 Resource r = resolverChain.resolveResource(req, fileName, locations);
                 InputStream is = null;
                 
-                try {
-                    is = r.getInputStream();
-                    StreamUtils.copy(is, baos);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                } finally {
+                if (r == null) {
+                    LOG.warn(new StringBuilder().append("Could not resolve resource specified in bundle as [")
+                            .append(fileName)
+                            .append("]. Turn on trace logging to determine resolution failure. Skipping file.")
+                            .toString());
+                } else {
                     try {
-                        if (is != null) {
-                            is.close();
-                        }
-                    } catch (IOException e2) {
-                        throw new RuntimeException(e2);
+                        is = r.getInputStream();
+                        StreamUtils.copy(is, baos);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        IOUtils.closeQuietly(is);
                     }
+                    
+                    // If we're creating a JavaScript bundle, we'll put a semicolon between each
+                    // file to ensure it won't fail to compile.
+                    if (versionedBundleName.endsWith(".js")) {
+                        baos.write(";".getBytes());
+                    }
+                    baos.write(System.getProperty("line.separator").getBytes());
                 }
-                
-                // If we're creating a JavaScript bundle, we'll put a semicolon between each
-                // file to ensure it won't fail to compile.
-                if (versionedBundleName.endsWith(".js")) {
-                    baos.write(";".getBytes());
-                }
-                baos.write(System.getProperty("line.separator").getBytes());
             }
             bytes = baos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-            try {
-                baos.close();
-            } catch (IOException e2) {
-                throw new RuntimeException(e2);
-            }
+            IOUtils.closeQuietly(baos);
         }
         
         // Create our GenerateResource that holds our combined bundle
