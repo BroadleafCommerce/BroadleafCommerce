@@ -208,6 +208,10 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
             if (paymentGatewayCheckoutService != null && orderPaymentId != null) {
                 paymentGatewayCheckoutService.markPaymentAsInvalid(orderPaymentId);
             }
+            
+            if (paymentGatewayCheckoutService != null && orderPaymentId != null) {
+                paymentGatewayCheckoutService.markPaymentAsInvalid(orderPaymentId);
+            }
 
             handleProcessingException(e, redirectAttributes);
         }
