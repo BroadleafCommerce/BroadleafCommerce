@@ -25,7 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
-import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -65,10 +64,6 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
     @javax.annotation.Resource(name = "blBaseUrlResolver")
     BaseUrlResolver urlResolver;
 
-    @javax.annotation.Resource(name = "blBroadleafContextUtil")
-    protected BroadleafContextUtil blcContextUtil;
-
-
     @Override
     protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
             ResourceResolverChain chain) {
@@ -83,12 +78,9 @@ public class BLCSystemPropertyResourceResolver extends AbstractResourceResolver 
 
         if (requestPath.equalsIgnoreCase(BLC_SYSTEM_PROPERTY_FILE)) {
             try {
-                blcContextUtil.establishThinRequestContextWithoutThemeOrSandbox();
                 resource = convertResource(resource, requestPath);
             } catch (IOException ioe) {
                 LOG.error("Exception modifying " + BLC_SYSTEM_PROPERTY_FILE, ioe);
-            } finally {
-                blcContextUtil.clearThinRequestContext();
             }
         }
 

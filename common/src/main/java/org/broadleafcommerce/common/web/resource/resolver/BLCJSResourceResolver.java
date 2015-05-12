@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.GeneratedResource;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
-import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -67,9 +66,6 @@ public class BLCJSResourceResolver extends AbstractResourceResolver implements O
     @javax.annotation.Resource(name = "blBaseUrlResolver")
     BaseUrlResolver urlResolver;
 
-    @javax.annotation.Resource(name = "blBroadleafContextUtil")
-    protected BroadleafContextUtil blcContextUtil;
-    
     private int order = BroadleafResourceResolverOrder.BLC_JS_RESOURCE_RESOLVER;
 
     protected static final Pattern pattern = Pattern.compile("(\\S*)BLC((\\S{0})|([-]{1,2}[0-9]+)|([-]{1,2}[0-9]+(-[0-9]+)+)).js");
@@ -95,12 +91,9 @@ public class BLCJSResourceResolver extends AbstractResourceResolver implements O
                 }
 
                 try {
-                    blcContextUtil.establishThinRequestContextWithoutThemeOrSandbox();
                     resource = convertResource(resource, requestPath);
                 } catch (IOException ioe) {
                     LOG.error("Exception modifying " + BLC_JS_NAME, ioe);
-                } finally {
-                    blcContextUtil.clearThinRequestContext();
                 }
                 return resource;
             }

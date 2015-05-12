@@ -22,7 +22,6 @@ package org.broadleafcommerce.common.web.resource.resolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
-import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -52,24 +51,15 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
     @javax.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
 
-    @javax.annotation.Resource(name = "blBroadleafContextUtil")
-    protected BroadleafContextUtil blcContextUtil;
-
     @Override
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
 
         if (requestPath != null) {
             if (isBundleFile(requestPath)) {
-                try {
-                    blcContextUtil.establishThinRequestContext();
-    
-                    Resource bundle = bundlingService.resolveBundleResource(requestPath);
-                    if (bundle != null && bundle.exists()) {
-                        return bundle;
-                    }
-                } finally {
-                    blcContextUtil.clearThinRequestContext();
+                Resource bundle = bundlingService.resolveBundleResource(requestPath);
+                if (bundle != null && bundle.exists()) {
+                    return bundle;
                 }
             }
         }
