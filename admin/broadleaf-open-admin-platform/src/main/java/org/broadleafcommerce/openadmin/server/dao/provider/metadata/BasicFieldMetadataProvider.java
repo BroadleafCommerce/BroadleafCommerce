@@ -514,6 +514,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setRuleIdentifier(annot.ruleIdentifier());
             override.setTranslatable(annot.translatable());
             override.setDefaultValue(annot.defaultValue());
+            override.setColumn(annot.column());
 
             if (annot.validationConfigurations().length != 0) {
                 processValidationAnnotations(annot.validationConfigurations(), override);
@@ -756,6 +757,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getDefaultValue() != null) {
             metadata.setDefaultValue(basicFieldMetadata.getDefaultValue());
+        }
+        if (basicFieldMetadata.getColumn() != null) {
+            metadata.setColumn(basicFieldMetadata.getColumn());
         }
 
         attributes.put(field.getName(), metadata);

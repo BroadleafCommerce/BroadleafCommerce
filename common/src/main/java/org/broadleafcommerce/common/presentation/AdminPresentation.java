@@ -320,4 +320,9 @@ public @interface AdminPresentation {
      * @return the defaultValue set for the field.
      */
     String defaultValue() default "";
+
+    /**
+     *
+     */
+    int column() default 0;
 }

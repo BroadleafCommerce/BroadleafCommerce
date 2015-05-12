@@ -37,6 +37,7 @@ public class FieldGroup {
     protected Set<Field> alternateOrderedFields = new HashSet<Field>();
     protected Set<Field> fields = new HashSet<Field>();
     protected Boolean isVisible;
+    protected Integer column;
 
     public Boolean getIsVisible() {
         if (isVisible != null) {
@@ -68,6 +69,14 @@ public class FieldGroup {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    public Integer getColumn() {
+        return column;
+    }
+
+    public void setColumn(Integer column) {
+        this.column = column;
     }
     
     public FieldGroup withTitle(String title) {

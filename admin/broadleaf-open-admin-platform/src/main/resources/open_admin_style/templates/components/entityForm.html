@@ -1,11 +1,11 @@
 <comment th:remove="all">
-<!-- This component represents a tabbed entity form with collections -->
-<!-- Additional parameters that can be specified include: -->
-<!--    additionalClasses - any additional CSS classes to apply to the form -->
-<!--    additionalTabClasses - any additional CSS classes to apply to the tabs -->
-<!--    showSingleTab - boolean value determining whether or not to show tabs if there is only one -->
-<!--    hideTranslations - boolean value determining whether or not to hide the translation icon -->
-<!--    hideActions - boolean value determining whether or not to hide the entity form actions -->
+    <!-- This component represents a tabbed entity form with collections -->
+    <!-- Additional parameters that can be specified include: -->
+    <!--    additionalClasses - any additional CSS classes to apply to the form -->
+    <!--    additionalTabClasses - any additional CSS classes to apply to the tabs -->
+    <!--    showSingleTab - boolean value determining whether or not to show tabs if there is only one -->
+    <!--    hideTranslations - boolean value determining whether or not to hide the translation icon -->
+    <!--    hideActions - boolean value determining whether or not to hide the entity form actions -->
 </comment>
 
 <div th:object="${entityForm}" th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
@@ -40,14 +40,14 @@
                 <input type="hidden" th:field="*{sectionCrumbs}"  />
                 <input type="hidden" th:field="*{mainEntityName}" />
 
-                <div class="col8">
-                    <div class="row">
-                        <div class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
-                            <div th:each="tab : ${entityForm.tabs}"
-                                th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}"
-                                th:classappend="${(tabStat.first and tab.isVisible) or ((tabStat.index > 1 and not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
-                                th:inline="text">
+                <div class="tabs-content" th:style="${verticalTabs}? 'margin-left: 250px;'">
+                    <div th:each="tab : ${entityForm.tabs}"
+                         th:class="'tab' + ${tabStat.count} + 'Tab entityFormTab' + ${tab.tabClass}"
+                         th:classappend="${(tabStat.first and tab.isVisible) or ((tabStat.index > 1 and not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
+                         th:inline="text">
 
+                        <div th:class="${tab.isMultiColumn} ? 'col8' : 'col12'">
+                            <div class="row">
                                 <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                                     <!--<legend th:text="${group.title}" />-->
 
@@ -57,7 +57,7 @@
                                         <!-- *** IMPORTANT *** -->
                                     </comment>
                                     <div th:each="field : ${group.fields}"
-                                         th:if="${field.name}"
+                                         th:if="${field.name} and ${field.column} == 0"
                                          th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
                                          blc_admin:component_id="${field}"
                                          th:classappend="${!field.isVisible}? 'hidden'">
@@ -89,24 +89,53 @@
                                     <div th:include="components/listGridToolbar" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
                                     <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
                                 </div>
-
                             </div>
+                        </div>
+                        <div th:if="${tab.isMultiColumn}" class="col4">
+                            <fieldset th:each="group : ${tab.fieldGroups}" th:if="${group.column} != 0" th:classappend="${!group.isVisible}? 'hidden'" th:remove="tag">
+                                <div class="sidebar">
+                                    <div class="titlebar">
+                                        <!-- TODO: Do we want Group-level tooltips? -->
+                                        <span th:utext="${group.title}"/>
+                                        <i class="fa fa-question-circle help-tip" data-tip="Tip text here"></i>
+                                    </div>
+                                    <div class="sidebar-content">
+
+                                        <div th:each="field : ${group.fields}"
+                                             th:if="${field.name} and ${field.column} != 0"
+                                             th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
+                                             blc_admin:component_id="${field}"
+                                             th:classappend="${!field.isVisible}? 'hidden'">
+
+                                            <div th:if="${field.readOnly}" th:remove="tag">
+                                                <div th:substituteby="fields/readonly" />
+                                            </div>
+                                            <div th:unless="${field.readOnly}" th:remove="tag">
+                                                <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
+                                            </div>
+
+                                            <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </fieldset>
                         </div>
                     </div>
                 </div>
 
 
                 <!--<div th:unless="${hideTopLevelErrors}" class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">-->
-                    <!--<div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">-->
-                        <!--<b>[[${tab.key}]]</b>-->
-            <!--<span th:if="${#lists.size(field.value) &gt; 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">-->
+                <!--<div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">-->
+                <!--<b>[[${tab.key}]]</b>-->
+                <!--<span th:if="${#lists.size(field.value) &gt; 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">-->
                 <!--<span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:each="message : ${field.value}">[[#{__${message}__}]]</span>-->
-            <!--</span>-->
-            <!--<span th:if="${#lists.size(field.value) == 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">-->
+                <!--</span>-->
+                <!--<span th:if="${#lists.size(field.value) == 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">-->
                 <!--<span th:remove="tag" th:text="#{${field.key}}"></span>: <span th:remove="tag" th:text="#{${field.value.get(0)}}"></span>-->
-            <!--</span>-->
-                        <!--<br />-->
-                    <!--</div>-->
+                <!--</span>-->
+                <!--<br />-->
+                <!--</div>-->
                 <!--</div>-->
 
 

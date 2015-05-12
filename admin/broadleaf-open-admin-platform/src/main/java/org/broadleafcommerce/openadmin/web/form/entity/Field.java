@@ -48,6 +48,7 @@ public class Field {
     protected String onChangeTrigger;
     protected Boolean required = false;
     protected String columnWidth;
+    protected Integer column;
     protected Boolean isVisible;
     protected Boolean isAlternateOrdering;
     protected Boolean isReadOnly;
@@ -132,6 +133,11 @@ public class Field {
     
     public Field withColumnWidth(String columnWidth) {
         setColumnWidth(columnWidth);
+        return this;
+    }
+
+    public Field withColumn(Integer column) {
+        setColumn(column);
         return this;
     }
     
@@ -478,6 +484,14 @@ public class Field {
 
     public void setTranslationFieldName(String translationFieldName) {
         this.translationFieldName = translationFieldName;
+    }
+
+    public Integer getColumn() {
+        return column;
+    }
+
+    public void setColumn(Integer column) {
+        this.column = column;
     }
     
 }

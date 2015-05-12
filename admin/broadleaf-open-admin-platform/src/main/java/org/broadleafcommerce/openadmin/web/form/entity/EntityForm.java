@@ -51,6 +51,7 @@ public class EntityForm {
     public static final Integer DEFAULT_GROUP_ORDER = 99999;
     public static final String DEFAULT_TAB_NAME = "General";
     public static final Integer DEFAULT_TAB_ORDER = 100;
+    public static final Integer DEFAULT_COLUMN = 0;
 
     protected String id;
     protected String parentId;
@@ -290,18 +291,18 @@ public class EntityForm {
         if (StringUtils.isBlank(field.getFieldType())) {
             field.setFieldType(SupportedFieldType.HIDDEN.toString());
         }
-        addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+        addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
     }
 
     public void addField(Field field) {
-        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
     }
 
     public void addMapKeyField(Field field) {
-        addField(field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+        addField(field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
     }
 
-    public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
+    public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder, Integer column) {
         groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
         groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
@@ -329,7 +330,12 @@ public class EntityForm {
             fieldGroup = new FieldGroup();
             fieldGroup.setTitle(groupName);
             fieldGroup.setOrder(groupOrder);
+            fieldGroup.setColumn(column);
             tab.getFieldGroups().add(fieldGroup);
+        }
+
+        if (column != DEFAULT_COLUMN) {
+            tab.setIsMultiColumn(true);
         }
 
         fieldGroup.addField(field);

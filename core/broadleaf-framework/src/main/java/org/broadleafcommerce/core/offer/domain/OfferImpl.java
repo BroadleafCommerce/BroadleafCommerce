@@ -174,13 +174,13 @@ public class OfferImpl implements Offer, AdminMainEntity {
     protected Integer priority;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date", order = 1,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date", order = 1, column = 1,
         group = Presentation.Group.Name.ActivityRange, groupOrder = Presentation.Group.Order.ActivityRange,
         defaultValue = "today")
     protected Date startDate;
 
     @Column(name = "END_DATE")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_End_Date", order = 2,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_End_Date", order = 2, column = 1,
         group = Presentation.Group.Name.ActivityRange, groupOrder = Presentation.Group.Order.ActivityRange)
     protected Date endDate;
 
@@ -317,7 +317,7 @@ public class OfferImpl implements Offer, AdminMainEntity {
         mapDisplayFields = {
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
+                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,  column = 1,
                     group = Presentation.Group.Name.Qualifiers, groupOrder = Presentation.Group.Order.Qualifiers,
                     ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "OfferImpl_Customer_Rule")
             ),

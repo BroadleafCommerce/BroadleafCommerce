@@ -569,7 +569,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withHint(fmd.getHint())
                          .withTooltip(fmd.getTooltip())
                          .withHelp(fmd.getHelpText())
-                         .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup());
+                         .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup())
+                         .withColumn(fmd.getColumn());
 
                     String defaultValue = fmd.getDefaultValue();
                     if (StringUtils.isNotEmpty(defaultValue)) {
@@ -582,7 +583,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     // Add the field to the appropriate FieldGroup
-                    ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
+                    ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder(), fmd.getColumn());
                 }
             }
         }
