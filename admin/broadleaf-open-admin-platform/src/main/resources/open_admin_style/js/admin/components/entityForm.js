@@ -97,6 +97,8 @@ $(document).ready(function() {
                 } else {
                     showErrors(data, BLCAdmin.messages.problemSaving);
                 }
+                
+                BLCAdmin.runPostFormSubmitHandlers($form, data);
             });
         }
     }
