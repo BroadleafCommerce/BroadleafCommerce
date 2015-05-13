@@ -19,24 +19,16 @@
  */
 package org.broadleafcommerce.cms.url.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
-import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.url.dao.URLHandlerDao;
-import org.broadleafcommerce.cms.url.domain.NullURLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandlerDTO;
-import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -59,7 +51,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
 
-    protected Map<String, Pattern> urlPatternMap = Collections.synchronizedMap(new LRUMap<String, Pattern>(2000));
+    protected Map<String, Pattern> urlPatternMap = new EfficientLRUMap<String, Pattern>(2000);
 
     /**
      * Checks the passed in URL to determine if there is a matching URLHandler.

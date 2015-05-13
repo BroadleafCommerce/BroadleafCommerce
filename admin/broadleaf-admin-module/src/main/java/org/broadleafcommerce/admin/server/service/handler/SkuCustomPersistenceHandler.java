@@ -22,7 +22,6 @@ package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -32,6 +31,7 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -70,7 +70,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,8 +99,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     protected long lastCacheFlushTime = System.currentTimeMillis();
 
-    protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = Collections.synchronizedMap(new
-            LRUMap<String, Map<String, FieldMetadata>>(1000));
+    protected static final Map<String, Map<String, FieldMetadata>> METADATA_CACHE =
+            new EfficientLRUMap<String, Map<String, FieldMetadata>>(1000);
 
     @Resource(name="blAdornedTargetListPersistenceModule")
     protected PersistenceModule adornedPersistenceModule;
