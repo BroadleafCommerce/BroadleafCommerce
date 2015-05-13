@@ -63,7 +63,7 @@ import javax.annotation.Resource;
  * {@link PaymentTransactionType.AUTHORIZE_AND_CAPTURE} transactions. This will also confirm any {@link PaymentTransactionType.UNCONFIRMED} transactions
  * that exist on am {@link OrderPayment}.</p>
  * 
- * <p>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via {@link ConfirmPaymentsRollbackHandler}
+ * <p>If there is an exception (either in this activity or later downstream) the confirmed payments are rolled back via {@link GenericConfirmPaymentsRollbackHandler}
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -73,7 +73,7 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
     
     /**
      * <p>
-     * Used by the {@link ConfirmPaymentsRollbackHandler} to roll back transactions that this activity confirms.
+     * Used by the {@link GenericConfirmPaymentsRollbackHandler} to roll back transactions that this activity confirms.
      * 
      * <p>
      * This could also contain failed transactions that still need to be rolled back
