@@ -56,7 +56,7 @@ public class NullPaymentGatewayConfigurationServiceImpl implements PaymentGatewa
     protected PaymentGatewayRollbackService rollbackService;
     
     @Resource(name = "blNullPaymentGatewayHostedTransactionConfirmationService")
-    protected NullPaymentGatewayHostedTransactionConfirmationServiceImpl transactionConfirmationServiceImpl;   
+    protected NullPaymentGatewayTransactionConfirmationServiceImpl transactionConfirmationServiceImpl;   
     
     public PaymentGatewayConfiguration getConfiguration() {
         return configuration;
