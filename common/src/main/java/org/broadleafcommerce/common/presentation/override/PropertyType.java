@@ -51,6 +51,7 @@ public class PropertyType {
         public static final String READONLY = "readOnly";
         public static final String VALIDATIONCONFIGURATIONS = "validationConfigurations";
         public static final String DEFAULTVALUE = "defaultValue";
+        public static final Integer COLUMN = 0;
     }
 
     public static class AdminPresentationToOneLookup {

@@ -302,12 +302,17 @@ public class EntityForm {
         addField(field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
     }
 
+    public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
+        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
+    }
+
     public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder, Integer column) {
         groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
         groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
         tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
-        
+        column = column == null ? DEFAULT_COLUMN : column;
+
         // Tabs and groups should be looked up by their display, translated name since 2 unique strings can display the same
         // thing when they are looked up in message bundles after display
         // When displayed on the form the duplicate groups and tabs look funny
