@@ -160,7 +160,7 @@ public class TranslationServiceImpl implements TranslationService {
 
         if (!BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
             Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode,
-                    entity, ResultType.IGNORE);
+                    ResultType.IGNORE);
             if (translation != null) {
                 return translation.getTranslatedValue();
             } else {
@@ -199,9 +199,9 @@ public class TranslationServiceImpl implements TranslationService {
         String response = null;
         if (cacheResult == null) {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
-            if (dao.countTranslationEntries(entityType, entityId, entity, ResultType.STANDARD) < getThresholdForFullCache()) {
+            if (dao.countTranslationEntries(entityType, entityId, ResultType.STANDARD) < getThresholdForFullCache()) {
                 Map<String, Translation> propertyTranslationMap = new HashMap<String, Translation>();
-                List<Translation> translationList = dao.readAllTranslationEntries(entityType, entityId, entity, ResultType.STANDARD);
+                List<Translation> translationList = dao.readAllTranslationEntries(entityType, entityId, ResultType.STANDARD);
                 if (!CollectionUtils.isEmpty(translationList)) {
                     for (Translation translation : translationList) {
                         String key = translation.getFieldName() + "_" + translation.getLocaleCode();
@@ -218,7 +218,7 @@ public class TranslationServiceImpl implements TranslationService {
                 }
             } else {
                 Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode,
-                        entity, ResultType.IGNORE);
+                        ResultType.IGNORE);
                 if (translation != null) {
                     response = translation.getTranslatedValue();
                 }
@@ -249,9 +249,9 @@ public class TranslationServiceImpl implements TranslationService {
         Element cacheResult = getCache().get(cacheKey);
         if (cacheResult == null) {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
-            if (dao.countTranslationEntries(entityType, entityId, entity, ResultType.TEMPLATE) < getThresholdForFullCache()) {
+            if (dao.countTranslationEntries(entityType, entityId, ResultType.TEMPLATE) < getThresholdForFullCache()) {
                 Map<String, Translation> propertyTranslationMap = new HashMap<String, Translation>();
-                List<Translation> translationList = dao.readAllTranslationEntries(entityType, entityId, entity, ResultType.TEMPLATE);
+                List<Translation> translationList = dao.readAllTranslationEntries(entityType, entityId, ResultType.TEMPLATE);
                 if (!CollectionUtils.isEmpty(translationList)) {
                     for (Translation translation : translationList) {
                         String key = translation.getFieldName() + "_" + translation.getLocaleCode();
@@ -266,7 +266,7 @@ public class TranslationServiceImpl implements TranslationService {
                     return null;
                 }
             } else {
-                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, entity, ResultType.TEMPLATE);
+                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.TEMPLATE);
                 if (translation != null) {
                     return translation.getTranslatedValue();
                 } else {
