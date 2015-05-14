@@ -19,12 +19,10 @@
  */
 package org.broadleafcommerce.openadmin.server.service;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
@@ -42,11 +40,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
-import org.hibernate.exception.LockAcquisitionException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Constructor;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -57,7 +54,7 @@ import javax.annotation.Resource;
 public class DynamicEntityRemoteService implements DynamicEntityService {
 
     private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
-    protected static final Map<BatchPersistencePackage, BatchDynamicResultSet> METADATA_CACHE = MapUtils.synchronizedMap(new LRUMap<BatchPersistencePackage, BatchDynamicResultSet>(100, 1000));
+    protected static final Map<BatchPersistencePackage, BatchDynamicResultSet> METADATA_CACHE = Collections.synchronizedMap(new LRUMap<BatchPersistencePackage, BatchDynamicResultSet>(1000));
 
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;

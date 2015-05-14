@@ -84,11 +84,28 @@
               
                 $(this).data('previous-name', name).removeAttr('name').after($hiddenClone);
             });
+        },
+        
+        postFormSubmitHandler : function($form, data) {
+            $form.find('.datepicker-clone').each(function(index, element) {
+                var $clone = $(this);
+                var inputName = $clone.attr('name');
+                
+                var $originalInput = $clone.siblings('.datepicker');
+                
+                $originalInput.attr('name', inputName);
+                $originalInput.val($clone.val());
+                $originalInput.attr('type', 'text');
+                $clone.remove();
+                
+                BLCAdmin.dates.initialize($originalInput);
+            });
         }
     };
     
     BLCAdmin.addInitializationHandler(BLCAdmin.dates.initializationHandler);
     BLCAdmin.addPostValidationSubmitHandler(BLCAdmin.dates.postValidationSubmitHandler);
+    BLCAdmin.addPostFormSubmitHandler(BLCAdmin.dates.postFormSubmitHandler);
             
 })(jQuery, BLCAdmin);
 

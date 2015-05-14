@@ -36,6 +36,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
@@ -47,6 +48,9 @@ import java.io.OutputStreamWriter;
 public class ResourceMinificationServiceImpl implements ResourceMinificationService {
     protected static final Log LOG = LogFactory.getLog(ResourceMinificationServiceImpl.class);
 
+    public static String CSS_TYPE = "css";
+    public static String JS_TYPE = "js";
+    
     @Value("${minify.linebreak}")
     protected int linebreak;
     
@@ -74,6 +78,11 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
     
     @Override
     public byte[] minify(String filename, byte[] bytes) {
+        if (!getEnabled()) {
+            LOG.trace("Minification is disabled, returning original resource");
+            return bytes;
+        }
+        
         Resource modifiedResource = minify(new ByteArrayResource(bytes), filename);
          
         if (modifiedResource instanceof GeneratedResource) {
@@ -85,6 +94,11 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
 
     @Override
     public Resource minify(Resource originalResource) {
+        if (!getEnabled()) {
+            LOG.trace("Minification is disabled, returning original resource");
+            return originalResource;
+        }
+        
         if (originalResource.getFilename() == null) {
             LOG.warn("Attempted to modify resource without a filename, returning non-minified resource");
             return originalResource;
@@ -94,13 +108,14 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
 
     @Override
     public Resource minify(Resource originalResource, String filename) {
-        String type = null;
-        if (filename.contains(".js")) {
-            type = "js";
-        } else if (filename.contains(".css")) {
-            type = "css";
-        } else {
-            // Unsupported minification type
+        if (!getEnabled()) {
+            LOG.trace("Minification is disabled, returning original resource");
+            return originalResource;
+        }
+        
+        String type = getFileType(originalResource, filename);
+        if (type == null) {
+            LOG.info("Unsupported minification resource: " + filename);
             return originalResource;
         }
         
@@ -111,13 +126,8 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
                 BufferedWriter out =
                         new BufferedWriter(new OutputStreamWriter(baos, "utf-8"));) {
 
-            if ("js".equals(type)) {
-                JavaScriptCompressor jsc = new JavaScriptCompressor(in, getLogBasedErrorReporter());
-                jsc.compress(out, linebreak, munge, verbose, preserveAllSemiColons, disableOptimizations);
-            } else if ("css".equals(type)) {
-                CssCompressor cssc = new CssCompressor(in);
-                cssc.compress(out, 100);
-            }
+            minify(in, out, filename, type);
+            
             out.flush();
             minifiedBytes = baos.toByteArray();
         } catch (Exception e) {
@@ -126,6 +136,31 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         }
         
         return new GeneratedResource(minifiedBytes, filename);
+    }
+    
+    protected void minify(BufferedReader in, BufferedWriter out, String filename, String type) throws IOException {
+        if (JS_TYPE.equals(type)) {
+            JavaScriptCompressor jsc = new JavaScriptCompressor(in, getLogBasedErrorReporter());
+            jsc.compress(out, linebreak, munge, verbose, preserveAllSemiColons, disableOptimizations);
+        } else if (CSS_TYPE.equals(type)) {
+            CssCompressor cssc = new CssCompressor(in);
+            cssc.compress(out, 100);
+        }
+    }
+    
+    /**
+     * Return a SupportedFileType
+     * @param originalResource
+     * @param filename
+     * @return
+     */
+    protected String getFileType(Resource originalResource, String filename) {
+        if (filename.contains(".js")) {
+            return JS_TYPE;
+        } else if (filename.contains(".css")) {
+            return CSS_TYPE;
+        }
+        return null;
     }
     
     protected ErrorReporter getLogBasedErrorReporter() {

@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.common.currency.util;
 
-import org.apache.commons.collections4.map.LRUMap;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
 
@@ -30,6 +29,7 @@ import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public class BroadleafCurrencyUtils {
 
-    protected static final Map<String,NumberFormat> FORMAT_CACHE = new LRUMap<String, NumberFormat>(20, 100);
+    protected static final Map<String, NumberFormat> FORMAT_CACHE = new ConcurrentHashMap<String, NumberFormat>();
 
     public static final MathContext ROUND_FLOOR_MATH_CONTEXT = new MathContext(0, RoundingMode.FLOOR);
 

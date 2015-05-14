@@ -63,7 +63,7 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
     protected CatalogService catalogService;
 
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
-    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(100, 500));
+    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
 
     public ProductOptionsProcessor() {
         super("product_options");
@@ -134,13 +134,15 @@ public class ProductOptionsProcessor extends AbstractModelVariableModifierProces
     
     private void writeJSONToModel(Arguments arguments, String modelKey, Object o) {
         try {
-            if (!JSON_CACHE.containsKey(o)) {
+            String jsonValue = JSON_CACHE.get(o);
+            if (jsonValue == null) {
                 ObjectMapper mapper = new ObjectMapper();
                 Writer strWriter = new StringWriter();
                 mapper.writeValue(strWriter, o);
-                JSON_CACHE.put(o, strWriter.toString());
+                jsonValue = strWriter.toString();
+                JSON_CACHE.put(o, jsonValue);
             }
-            addToModel(arguments, modelKey, JSON_CACHE.get(o));
+            addToModel(arguments, modelKey, jsonValue);
         } catch (Exception ex) {
             LOG.error("There was a problem writing the product option map to JSON", ex);
         }

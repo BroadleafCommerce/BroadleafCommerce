@@ -25,6 +25,7 @@ var BLCAdmin = (function($) {
 	var preValidationFormSubmitHandlers = [];
 	var validationFormSubmitHandlers = [];
 	var postValidationFormSubmitHandlers = [];
+	var postFormSubmitHandlers = [];
 	var dependentFieldFilterHandlers = {};
 	var initializationHandlers = [];
 	var updateHandlers = [];
@@ -142,6 +143,18 @@ var BLCAdmin = (function($) {
         addPostValidationSubmitHandler : function(fn) {
             postValidationFormSubmitHandlers.push(fn);
         },
+        
+        /**
+         * Add a form submission handler that runs after the form has been submitted via AJAX. These are designed to execute
+         * after errors have already been calculated.
+         * 
+         * Method signatures should take in 2 arguments:
+         *  $form - the JQuery form object that was submitted
+         *  data - the data that came back from the server
+         */
+        addPostFormSubmitHandler : function(fn) {
+            postFormSubmitHandlers.push(fn);
+        },
 	    
 	    addInitializationHandler : function(fn) {
 	        initializationHandlers.push(fn);
@@ -172,6 +185,15 @@ var BLCAdmin = (function($) {
         runPostValidationSubmitHandlers : function($form) {
             for (var i = 0; i < postValidationFormSubmitHandlers.length; i++) {
                 postValidationFormSubmitHandlers[i]($form);
+            }
+        },
+        
+        /**
+         * Intended to run after
+         */
+        runPostFormSubmitHandlers : function($form, data) {
+            for (var i = 0; i < postFormSubmitHandlers.length; i++) {
+                postFormSubmitHandlers[i]($form, data);
             }
         },
         

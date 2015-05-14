@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
@@ -66,9 +65,6 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
     protected boolean getTranslationEnabled() {
         return BLCSystemProperty.resolveBooleanSystemProperty("i18n.translation.enabled");
     }
-
-    private static String PRODUCT_ATTR_MAP = SolrIndexServiceImpl.PRODUCT_ATTR_MAP;
-    private static String SKU_ATTR_MAP = SolrIndexServiceImpl.SKU_ATTR_MAP;
 
     @PostConstruct
     public void init() {
@@ -148,21 +144,7 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                     processedLocaleCodes.add(localeCode);
                     tempContext.setLocale(locale);
 
-                    final Object propertyValue;
-
-                    if (useSku) {
-                        if (propertyName.contains(SKU_ATTR_MAP)) {
-                            propertyValue = PropertyUtils.getMappedProperty(sku, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
-                        } else {
-                            propertyValue = shs.getPropertyValue(sku, propertyName); //PropertyUtils.getProperty(sku, propertyName);
-                        }
-                    } else {
-                        if (propertyName.contains(PRODUCT_ATTR_MAP)) {
-                            propertyValue = PropertyUtils.getMappedProperty(product, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
-                        } else {
-                            propertyValue = shs.getPropertyValue(product, propertyName); //PropertyUtils.getProperty(product, propertyName);
-                        }
-                    }
+                    final Object propertyValue = shs.getPropertyValue(product, propertyName);
 
                     values.put(localeCode, propertyValue);
                 }

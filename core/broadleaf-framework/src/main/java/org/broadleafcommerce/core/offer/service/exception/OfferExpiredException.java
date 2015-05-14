@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,12 @@
  */
 package org.broadleafcommerce.core.offer.service.exception;
 
-public class OfferMaxUseExceededException extends OfferException {
+public class OfferExpiredException extends OfferException {
     
     private static final long serialVersionUID = 1L;
 
-    public OfferMaxUseExceededException(String string) {
+    public OfferExpiredException(String string) {
         super(string);
     }
-
-
-
+    
 }

@@ -274,7 +274,8 @@
     <bean id="blJsResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
-                <ref bean="blResourceMinificationTranformer" />                
+                <ref bean="blCachingResourceTransformer" />
+                <ref bean="blMinifyResourceTransformer" />                
             </list>
         </property>
     </bean>
@@ -282,7 +283,8 @@
     <bean id="blCssResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
-                <ref bean="blResourceMinificationTranformer" />                
+                <ref bean="blCachingResourceTransformer" />
+                <ref bean="blMinifyResourceTransformer" />
             </list>
         </property>
     </bean>
