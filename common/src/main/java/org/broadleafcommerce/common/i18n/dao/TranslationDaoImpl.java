@@ -171,7 +171,7 @@ public class TranslationDaoImpl implements TranslationDao {
     }
 
     @Override
-    public Long countTranslationEntries(TranslatedEntity entityType, String entityId, Object testObject, ResultType stage) {
+    public Long countTranslationEntries(TranslatedEntity entityType, String entityId, ResultType stage) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
@@ -197,7 +197,7 @@ public class TranslationDaoImpl implements TranslationDao {
     }
 
     @Override
-    public List<Translation> readAllTranslationEntries(TranslatedEntity entityType, String entityId, Object testObject, ResultType stage) {
+    public List<Translation> readAllTranslationEntries(TranslatedEntity entityType, String entityId, ResultType stage) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
@@ -223,7 +223,7 @@ public class TranslationDaoImpl implements TranslationDao {
     }
 
     @Override
-    public Translation readTranslation(TranslatedEntity entityType, String entityId, String fieldName, String localeCode, String localeCountryCode, Object testObject, ResultType stage) {
+    public Translation readTranslation(TranslatedEntity entityType, String entityId, String fieldName, String localeCode, String localeCountryCode, ResultType stage) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
