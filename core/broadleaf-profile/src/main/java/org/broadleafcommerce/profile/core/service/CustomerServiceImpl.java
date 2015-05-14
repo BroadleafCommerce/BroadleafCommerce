@@ -563,7 +563,7 @@ public class CustomerServiceImpl implements CustomerService {
             response.addErrorCode("invalidToken");
         }
 
-        String rawToken = token.toLowerCase();
+        String rawToken = token;
         String salt = null;
 
         if (usingDeprecatedPasswordEncoder()) {
@@ -580,11 +580,17 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerForgotPasswordSecurityToken fpst = null;
         if (!response.getHasErrors()) {
-            List<CustomerForgotPasswordSecurityToken> fpstoks = customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(customer.getId());
-            for (CustomerForgotPasswordSecurityToken fpstok : fpstoks) {
-                if (isPassValid(rawToken, fpstok.getToken(), salt)) {
-                    fpst = fpstok;
-                    break;
+            if (customer == null) {
+                // customer is only null when called via deprecated checkPasswordResetToken(String) which checks
+                // that we're using the legacy passwordEncoder
+                fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(rawToken, salt));
+            } else {
+                List<CustomerForgotPasswordSecurityToken> fpstoks = customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(customer.getId());
+                for (CustomerForgotPasswordSecurityToken fpstok : fpstoks) {
+                    if (isPassValid(rawToken, fpstok.getToken(), salt)) {
+                        fpst = fpstok;
+                        break;
+                    }
                 }
             }
             if (fpst == null) {
@@ -608,7 +614,11 @@ public class CustomerServiceImpl implements CustomerService {
         }
         checkCustomer(customer, response);
         checkPassword(password, confirmPassword, response);
-        CustomerForgotPasswordSecurityToken fpst = checkPasswordResetToken(token, customer, response);
+        CustomerForgotPasswordSecurityToken fpst = null;
+
+        if (! response.getHasErrors()) {
+            fpst = checkPasswordResetToken(token, customer, response);
+        }
 
         if (! response.getHasErrors()) {
             if (! customer.getId().equals(fpst.getCustomerId())) {

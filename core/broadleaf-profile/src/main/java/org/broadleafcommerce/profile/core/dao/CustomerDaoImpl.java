@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.dao;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
@@ -54,7 +55,7 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public Customer readCustomerByUsername(String username, Boolean cacheable) {
         List<Customer> customers = readCustomersByUsername(username, cacheable);
-        return customers == null || customers.isEmpty() ? null : customers.get(0);
+        return CollectionUtils.isEmpty(customers) ? null : customers.get(0);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class CustomerDaoImpl implements CustomerDao {
     @Override
     public Customer readCustomerByEmail(String emailAddress) {
         List<Customer> customers = readCustomersByEmail(emailAddress);
-        return customers == null || customers.isEmpty() ? null : customers.get(0);
+        return CollectionUtils.isEmpty(customers) ? null : customers.get(0);
     }
     
     @Override
