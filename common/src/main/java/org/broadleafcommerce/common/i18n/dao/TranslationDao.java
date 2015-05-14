@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.common.i18n.dao;
 
+import org.broadleafcommerce.common.extension.ResultType;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 
@@ -101,4 +102,44 @@ public interface TranslationDao {
      */
     public Translation readTranslation(TranslatedEntity entity, String entityId, String fieldName, String localeCode);
 
+    /**
+     *
+     * @param entityType
+     * @param entity
+     * @return
+     */
+    String getEntityId(TranslatedEntity entityType, Object entity);
+
+    /**
+     *
+     * @param entityType
+     * @param entityId
+     * @param testObject
+     * @param stage
+     * @return
+     */
+    Long countTranslationEntries(TranslatedEntity entityType, String entityId, Object testObject, ResultType stage);
+
+    /**
+     *
+     * @param entityType
+     * @param entityId
+     * @param testObject
+     * @param stage
+     * @return
+     */
+    List<Translation> readAllTranslationEntries(TranslatedEntity entityType, String entityId, Object testObject, ResultType stage);
+
+    /**
+     *
+     * @param entityType
+     * @param entityId
+     * @param fieldName
+     * @param localeCode
+     * @param localeCountryCode
+     * @param testObject
+     * @param stage
+     * @return
+     */
+    Translation readTranslation(TranslatedEntity entityType, String entityId, String fieldName, String localeCode, String localeCountryCode, Object testObject, ResultType stage);
 }
