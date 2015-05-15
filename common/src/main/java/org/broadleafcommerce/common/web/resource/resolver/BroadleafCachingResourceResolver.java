@@ -48,6 +48,9 @@ import javax.servlet.http.HttpServletRequest;
 @Component("blCacheResourceResolver")
 public class BroadleafCachingResourceResolver extends CachingResourceResolver implements Ordered {
 
+    public static final String RESOLVED_RESOURCE_CACHE_KEY_PREFIX_NULL = "resolvedResourceNull:";
+    public static final String RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL = "resolvedUrlPathNull:";
+    private static final Object NULL_REFERENCE = new Object();
     protected static final Log LOG = LogFactory.getLog(BroadleafCachingResourceResolver.class);
     private int order = BroadleafResourceResolverOrder.BLC_CACHE_RESOURCE_RESOLVER;
     
@@ -73,7 +76,23 @@ public class BroadleafCachingResourceResolver extends CachingResourceResolver im
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
         if (resourceCachingEnabled) {
-            return super.resolveResourceInternal(request, requestPath, locations, chain);
+            String key = RESOLVED_RESOURCE_CACHE_KEY_PREFIX_NULL + requestPath;
+            Object nullResource = getCache().get(key, Object.class);
+            if (nullResource != null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace(String.format("Found null reference resource match for '%s'", requestPath));
+                }
+                return null;
+            } else {
+                Resource response = super.resolveResourceInternal(request, requestPath, locations, chain);
+                if (response == null) {
+                    if (logger.isTraceEnabled()) {
+                        logger.trace(String.format("Putting resolved null reference resource in cache for '%s'", requestPath));
+                    }
+                    getCache().put(key, NULL_REFERENCE);
+                }
+                return response;
+            }
         } else {
             return chain.resolveResource(request, requestPath, locations);
         }
@@ -83,7 +102,23 @@ public class BroadleafCachingResourceResolver extends CachingResourceResolver im
     protected String resolveUrlPathInternal(String resourceUrlPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
         if (resourceCachingEnabled) {
-            return super.resolveUrlPathInternal(resourceUrlPath, locations, chain);
+            String key = RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL + resourceUrlPath;
+            Object nullResource = getCache().get(key, Object.class);
+            if (nullResource != null) {
+                if (logger.isTraceEnabled()) {
+                    logger.trace(String.format("Found null reference url path match for '%s'", resourceUrlPath));
+                }
+                return null;
+            } else {
+                String response = super.resolveUrlPathInternal(resourceUrlPath, locations, chain);
+                if (response == null) {
+                    if (logger.isTraceEnabled()) {
+                        logger.trace(String.format("Putting resolved null reference url path in cache for '%s'", resourceUrlPath));
+                    }
+                    getCache().put(key, NULL_REFERENCE);
+                }
+                return response;
+            }
         } else {
             return chain.resolveUrlPath(resourceUrlPath, locations);
         }
