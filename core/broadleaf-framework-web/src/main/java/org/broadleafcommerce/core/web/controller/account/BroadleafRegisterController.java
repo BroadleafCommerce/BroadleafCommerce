@@ -57,7 +57,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BroadleafRegisterController extends BroadleafAbstractController {
 
-    @Value("${use.email.for.site.login}")
+    @Value("${use.email.for.site.login:true}")
     protected boolean useEmailForLogin;
 
     protected static String registerSuccessView = "ajaxredirect:/";

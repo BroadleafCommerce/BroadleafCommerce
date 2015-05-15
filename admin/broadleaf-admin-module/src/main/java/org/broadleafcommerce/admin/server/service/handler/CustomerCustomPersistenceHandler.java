@@ -48,7 +48,7 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     private static final Log LOG = LogFactory.getLog(CustomerCustomPersistenceHandler.class);
 
-    @Value("${use.email.for.site.login}")
+    @Value("${use.email.for.site.login:true}")
     protected boolean useEmailForLogin;
 
     @Resource(name="blCustomerService")
