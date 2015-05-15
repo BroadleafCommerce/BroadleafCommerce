@@ -544,7 +544,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Deprecated
     @Override
     public GenericResponse checkPasswordResetToken(String token) {
-        if (passwordEncoder == null) {
+        if (!usingDeprecatedPasswordEncoder()) {
             // We cannot proceed without a Customer when using the new PasswordEncoder
             throw new NoSuchBeanDefinitionException("This method requires the deprecated PasswordEncoder bean");
         }
@@ -581,9 +581,12 @@ public class CustomerServiceImpl implements CustomerService {
         CustomerForgotPasswordSecurityToken fpst = null;
         if (!response.getHasErrors()) {
             if (customer == null) {
-                // customer is only null when called via deprecated checkPasswordResetToken(String) which checks
-                // that we're using the legacy passwordEncoder
-                fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(rawToken, salt));
+                if (!usingDeprecatedPasswordEncoder()) {
+                    // customer can only be null when supporting use of the legacy PasswordEncoder
+                    response.addErrorCode("invalidCustomer");
+                } else {
+                    fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(rawToken, salt));
+                }
             } else {
                 List<CustomerForgotPasswordSecurityToken> fpstoks = customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(customer.getId());
                 for (CustomerForgotPasswordSecurityToken fpstok : fpstoks) {
@@ -614,11 +617,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         checkCustomer(customer, response);
         checkPassword(password, confirmPassword, response);
-        CustomerForgotPasswordSecurityToken fpst = null;
-
-        if (! response.getHasErrors()) {
-            fpst = checkPasswordResetToken(token, customer, response);
-        }
+        CustomerForgotPasswordSecurityToken fpst = checkPasswordResetToken(token, customer, response);
 
         if (! response.getHasErrors()) {
             if (! customer.getId().equals(fpst.getCustomerId())) {
