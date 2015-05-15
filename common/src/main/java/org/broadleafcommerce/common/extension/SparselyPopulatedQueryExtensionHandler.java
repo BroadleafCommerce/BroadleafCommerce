@@ -51,14 +51,13 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      *
      * @param type the class type for the query
      * @param resultType pass a ResultType of IGNORE to explicitly ignore refineRetrieve, even if the multitenant module is loaded
-     * @param testObject the multitenant object to test for catalog and profile information
      * @param builder
      * @param criteria
      * @param root
      * @param restrictions any additional JPA criteria restrictions should be added here
      * @return the status of the extension operation
      */
-    ExtensionResultStatusType refineRetrieve(Class<?> type, ResultType resultType, Object testObject, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Predicate> restrictions);
+    ExtensionResultStatusType refineRetrieve(Class<?> type, ResultType resultType, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Predicate> restrictions);
 
     /**
      * Perform any setup operations. This is usually done before executing the query and can serve to prepare the BroadleafRequestContext (if applicable).

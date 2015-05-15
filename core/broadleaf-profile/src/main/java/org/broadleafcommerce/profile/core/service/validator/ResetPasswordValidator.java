@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.core.service.validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -29,11 +30,11 @@ public class ResetPasswordValidator implements Validator {
     private String validPasswordRegex = RegistrationValidator.DEFAULT_VALID_PASSWORD_REGEX;
 
     public void validate(String username, String password, String confirmPassword, Errors errors) {
-        if (password == null || "".equals(password)) {
+        if (StringUtils.isEmpty(password)) {
             errors.reject("password", "password.required");
         }
         
-        if (username == null || "".equals(username)) {
+        if (StringUtils.isEmpty(username)) {
             errors.reject("username", "username.required");
         }
         
