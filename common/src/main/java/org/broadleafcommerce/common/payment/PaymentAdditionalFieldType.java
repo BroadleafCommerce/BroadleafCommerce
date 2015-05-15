@@ -20,11 +20,11 @@
 
 package org.broadleafcommerce.common.payment;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumerationType {
 
@@ -52,6 +52,7 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
     public static final PaymentAdditionalFieldType SUBSCRIPTION_TITLE = new PaymentAdditionalFieldType("SUBSCRIPTION_TITLE", "Subscription Title");
     public static final PaymentAdditionalFieldType TOKEN = new PaymentAdditionalFieldType("TOKEN", "Payment Token");
     public static final PaymentAdditionalFieldType DECLINE_TYPE = new PaymentAdditionalFieldType("DECLINE_TYPE", "Decline Type");
+    public static final PaymentAdditionalFieldType PAYMENT_NAME = new PaymentAdditionalFieldType("PAYMENT_NAME", "Payment Name");
 
     public static PaymentAdditionalFieldType getInstance(final String type) {
         return TYPES.get(type);

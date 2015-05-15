@@ -34,9 +34,6 @@ import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -135,8 +132,6 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
             }
         }
 
-        
-
         if (expDate != null) {
             customerPayment.setExpirationDate(expDate);
         }
@@ -145,12 +140,16 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
         customerPayment.setLastFour(lastFour);
         customerPayment.setPaymentToken(token);
 
-        //        if (customerPaymentService.findDefaultPaymentForCustomer(customer) == null) {
-        //            customerPaymentService.setAsDefaultPayment(customerPayment);
-        //        } else {
-        //            customerPaymentService.saveCustomerPayment(customerPayment);
-        //        }
-        orderPayment.setCustomerPayment(customerPayment);
-        return this.save(orderPayment).getCustomerPayment();
+        String paymentName = orderPayment.getPaymentName();
+        if (paymentName == null || paymentName.isEmpty()) {
+            if (customerPayment.getCardType() != null && customerPayment.getLastFour() != null) {
+                paymentName = customerPayment.getCardType() + " ending in " + customerPayment.getLastFour();
+            } else {
+                paymentName = "Payment #" + customer.getCustomerPayments().size();
+            }
+        }
+        customerPayment.setPaymentName(paymentName);
+
+        return customerPayment;
     }
 }

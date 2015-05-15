@@ -164,6 +164,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
         Address tempBillingAddress = null;
         Boolean savePayment = false;
+        String paymentName = null;
         if (!config.handlesMultiplePayments()) {
             PaymentGatewayType gateway = config.getGatewayType();
             for (OrderPayment p : order.getPayments()) {
@@ -181,6 +182,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
                             PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ) {
                         tempBillingAddress = p.getBillingAddress();
                         savePayment = p.isSavePayment();
+                        paymentName = p.getPaymentName();
                     }
                 }
             }
@@ -231,6 +233,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
         try {
             if (savePayment) {
+                payment.setPaymentName(paymentName);
                 payment.setCustomerPayment(orderPaymentService.saveOrderPaymentAsCustomerPayment(order.getCustomer(), 
                         payment));
             }

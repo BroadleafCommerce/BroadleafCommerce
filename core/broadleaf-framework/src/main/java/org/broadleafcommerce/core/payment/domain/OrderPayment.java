@@ -239,4 +239,11 @@ public interface OrderPayment extends Serializable, Status {
 
     public void setSavePayment(Boolean savePayment);
 
+    public String getPaymentName();
+
+    public void setPaymentName(String paymentName);
+
+    public Boolean isUseExisting();
+
+    public void setUseExisting(Boolean useExisting);
 }

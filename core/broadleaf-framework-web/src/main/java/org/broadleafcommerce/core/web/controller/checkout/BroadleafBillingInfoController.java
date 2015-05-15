@@ -64,13 +64,14 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
         if (billingForm.isUseShippingAddress()){
             copyShippingAddressToBillingAddress(cart, billingForm);
         }
-        
-        if (billingForm.getUseCustomerPayment() && billingForm.getCustomerPaymentId() != null) {
+
+        Boolean useCustomerPayment = billingForm.getUseCustomerPayment();
+        if (useCustomerPayment && billingForm.getCustomerPaymentId() != null) {
             customerPayment = customerPaymentService.readCustomerPaymentById(billingForm.getCustomerPaymentId());
 
             if (customerPayment != null) {
                 Address address = customerPayment.getBillingAddress();
-                if (address != null) {
+                if (address == null) {
                     copyAddressToBillingAddress(billingForm, address);
                 }
             }
@@ -95,12 +96,21 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
         }
 
         boolean found = false;
+        String paymentName = billingForm.getPaymentName();
+        Boolean saveNewPayment = billingForm.getSaveNewPayment();
         for (OrderPayment p : cart.getPayments()) {
-            if (PaymentType.CREDIT_CARD.equals(p.getType()) &&
-                    p.isActive()) {
-                p.setBillingAddress(billingForm.getAddress());
+            if (PaymentType.CREDIT_CARD.equals(p.getType()) && p.isActive()) {
+                if (p.getBillingAddress() == null) {
+                    p.setBillingAddress(billingForm.getAddress());
+                } else {
+                    Address updatedAddress = updateAddress(billingForm.getAddress(), p.getBillingAddress());
+                    p.setBillingAddress(updatedAddress);
+                }
+                
                 p.setCustomerPayment(customerPayment);
-                p.setSavePayment(billingForm.isSaveNewPayment());
+                p.setSavePayment(saveNewPayment);
+                p.setPaymentName(paymentName);
+                p.setUseExisting(useCustomerPayment);
                 found = true;
             }
         }
@@ -115,7 +125,9 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             tempOrderPayment.setBillingAddress(billingForm.getAddress());
             tempOrderPayment.setOrder(cart);
             tempOrderPayment.setCustomerPayment(customerPayment);
-            tempOrderPayment.setSavePayment(billingForm.isSaveNewPayment());
+            tempOrderPayment.setSavePayment(saveNewPayment);
+            tempOrderPayment.setPaymentName(paymentName);
+            tempOrderPayment.setUseExisting(useCustomerPayment);
             cart.getPayments().add(tempOrderPayment);
         }
 
@@ -145,33 +157,41 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
 
     protected void copyAddressToBillingAddress(BillingInfoForm billingInfoForm, Address address) {
         Address billing = addressService.create();
-        billing.setFullName(address.getFullName());
-        billing.setFirstName(address.getFirstName());
-        billing.setLastName(address.getLastName());
-        billing.setAddressLine1(address.getAddressLine1());
-        billing.setAddressLine2(address.getAddressLine2());
-        billing.setCity(address.getCity());
-        billing.setState(address.getState());
-        billing.setIsoCountrySubdivision(address.getIsoCountrySubdivision());
-        billing.setStateProvinceRegion(address.getStateProvinceRegion());
-        billing.setPostalCode(address.getPostalCode());
-        billing.setCountry(address.getCountry());
-        billing.setIsoCountryAlpha2(address.getIsoCountryAlpha2());
-        billing.setPrimaryPhone(address.getPrimaryPhone());
-        billing.setSecondaryPhone(address.getSecondaryPhone());
-        billing.setFax(address.getFax());
-        billing.setPhonePrimary(copyPhone(address.getPhonePrimary()));
-        billing.setPhoneSecondary(copyPhone(address.getPhoneSecondary()));
-        billing.setPhoneFax(copyPhone(address.getPhoneFax()));
-        billing.setEmailAddress(address.getEmailAddress());
-        billingInfoForm.setAddress(billing);
+        billingInfoForm.setAddress(updateAddress(address, billing));
     }
 
-    protected Phone copyPhone(Phone phoneToCopy) {
+    private Address updateAddress(Address updatedInfoAddress, Address addressToBeUpdated) {
+        addressToBeUpdated.setFullName(updatedInfoAddress.getFullName());
+        addressToBeUpdated.setFirstName(updatedInfoAddress.getFirstName());
+        addressToBeUpdated.setLastName(updatedInfoAddress.getLastName());
+        addressToBeUpdated.setAddressLine1(updatedInfoAddress.getAddressLine1());
+        addressToBeUpdated.setAddressLine2(updatedInfoAddress.getAddressLine2());
+        addressToBeUpdated.setCity(updatedInfoAddress.getCity());
+        addressToBeUpdated.setState(updatedInfoAddress.getState());
+        addressToBeUpdated.setIsoCountrySubdivision(updatedInfoAddress.getIsoCountrySubdivision());
+        addressToBeUpdated.setStateProvinceRegion(updatedInfoAddress.getStateProvinceRegion());
+        addressToBeUpdated.setPostalCode(updatedInfoAddress.getPostalCode());
+        addressToBeUpdated.setCountry(updatedInfoAddress.getCountry());
+        addressToBeUpdated.setIsoCountryAlpha2(updatedInfoAddress.getIsoCountryAlpha2());
+        addressToBeUpdated.setPrimaryPhone(updatedInfoAddress.getPrimaryPhone());
+        addressToBeUpdated.setSecondaryPhone(updatedInfoAddress.getSecondaryPhone());
+        addressToBeUpdated.setFax(updatedInfoAddress.getFax());
+        addressToBeUpdated.setPhonePrimary(copyPhone(updatedInfoAddress.getPhonePrimary(), 
+                addressToBeUpdated.getPhonePrimary()));
+        addressToBeUpdated.setPhoneSecondary(copyPhone(updatedInfoAddress.getPhoneSecondary(),
+                addressToBeUpdated.getPhoneSecondary()));
+        addressToBeUpdated.setPhoneFax(copyPhone(updatedInfoAddress.getPhoneFax(), addressToBeUpdated.getPhoneFax()));
+        addressToBeUpdated.setEmailAddress(updatedInfoAddress.getEmailAddress());
+        return addressToBeUpdated;
+    }
+
+    protected Phone copyPhone(Phone phoneToCopy, Phone phoneToUpdate) {
         if (phoneToCopy != null) {
-            Phone copy = phoneService.create();
-            copy.setPhoneNumber(phoneToCopy.getPhoneNumber());
-            return copy;
+            if (phoneToUpdate == null) {
+                phoneToUpdate = phoneService.create();
+            }
+            phoneToUpdate.setPhoneNumber(phoneToCopy.getPhoneNumber());
+            return phoneToUpdate;
         }
         return null;
     }

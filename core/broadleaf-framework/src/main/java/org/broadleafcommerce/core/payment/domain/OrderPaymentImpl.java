@@ -167,6 +167,14 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Column(name = "SAVE_PAYMENT")
     @AdminPresentation(friendlyName = "OrderPaymentImpl_Save_Payment")
     protected Boolean savePayment = false;
+
+    @Column(name = "USE_EXISTING")
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Use_Existing")
+    protected Boolean useExisting = false;
+    
+    @Column(name = "PAYMENT_NAME")
+    @AdminPresentation(friendlyName = "OrderPaymentImpl_Payment_Name")
+    protected String paymentName;
     
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -397,6 +405,26 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @Override
     public void setSavePayment(Boolean savePayment) {
         this.savePayment = savePayment == null ? false : savePayment;
+    }
+
+    @Override
+    public String getPaymentName() {
+        return paymentName;
+    }
+
+    @Override
+    public void setPaymentName(String paymentName) {
+        this.paymentName = paymentName;
+    }
+
+    @Override
+    public Boolean isUseExisting() {
+        return useExisting == null? false : useExisting;
+    }
+
+    @Override
+    public void setUseExisting(Boolean useExisting) {
+        this.useExisting = useExisting == null ? false : useExisting;
     }
 
     public static class Presentation {

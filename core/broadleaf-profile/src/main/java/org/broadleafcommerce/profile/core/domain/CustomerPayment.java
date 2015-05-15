@@ -68,14 +68,14 @@ public interface CustomerPayment extends Status, Serializable, AdditionalFields,
      *
      * @return String
      */
-    public String getName();
+    public String getPaymentName();
 
     /**
      * Sets the name of this payment.
      *
-     * @param name
+     * @param paymentName
      */
-    public void setName(String name);
+    public void setPaymentName(String paymentName);
 
     /**
      * Returns the {@link Date} on which this payment is set to expire.

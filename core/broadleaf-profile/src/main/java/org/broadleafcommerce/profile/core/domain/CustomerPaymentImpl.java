@@ -136,9 +136,9 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Expiration_Date", order = 1000)
     protected Date expirationDate;
 
-    @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Name", order = 1000)
-    protected String name;
+    @Column(name = "PAYMENT_NAME")
+    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Name", order = 1000)
+    protected String paymentName;
 
     @Column(name = "LAST_FOUR")
     @AdminPresentation(friendlyName = "CustomerPaymentImpl_Last_Four", order = 1000)
@@ -251,13 +251,13 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     }
 
     @Override
-    public String getName() {
-        return name;
+    public String getPaymentName() {
+        return paymentName;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setPaymentName(String paymentName) {
+        this.paymentName = paymentName;
     }
 
     @Override

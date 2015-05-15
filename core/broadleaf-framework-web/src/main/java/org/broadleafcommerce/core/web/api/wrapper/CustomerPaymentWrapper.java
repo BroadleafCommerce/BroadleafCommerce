@@ -102,8 +102,8 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
         if (model.getExpirationDate() != null) {
             this.setExpirationDate(model.getExpirationDate());
         }
-        if (model.getName() != null) {
-            this.setCardName(model.getName());
+        if (model.getPaymentName() != null) {
+            this.setCardName(model.getPaymentName());
         }
         if (model.getLastFour() != null) {
             this.setLastFour(model.getLastFour());
@@ -141,7 +141,7 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
         custPay.setCustomer(cust);
 
         custPay.setIsDefault(this.isDefault);
-        custPay.setName(this.getCardName());
+        custPay.setPaymentName(this.getCardName());
         custPay.setCardType(this.getCardType());
         custPay.setExpirationDate(this.getExpirationDate());
         custPay.setPaymentGatewayType(PaymentGatewayType.getInstance(this.getPaymentGatewayType()));

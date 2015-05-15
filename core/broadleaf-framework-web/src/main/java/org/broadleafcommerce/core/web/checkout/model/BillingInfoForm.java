@@ -40,8 +40,8 @@ public class BillingInfoForm implements Serializable {
     protected boolean useShippingAddress;
     protected Long customerPaymentId;
     protected CustomerPayment customerPayment;
-    protected boolean saveNewPayment = false;
-    protected boolean useCustomerPayment = false;
+    protected Boolean saveNewPayment = true;
+    protected Boolean useCustomerPayment = false;
     protected String paymentName;
 
     public BillingInfoForm() {
@@ -82,20 +82,20 @@ public class BillingInfoForm implements Serializable {
         this.customerPayment = customerPayment;
     }
 
-    public boolean getUseCustomerPayment() {
-        return useCustomerPayment;
+    public Boolean getUseCustomerPayment() {
+        return useCustomerPayment == null? false : useCustomerPayment;
     }
 
-    public void setUseCustomerPayment(boolean useCustomerPayment) {
-        this.useCustomerPayment = useCustomerPayment;
+    public void setUseCustomerPayment(Boolean useCustomerPayment) {
+        this.useCustomerPayment = useCustomerPayment == null ? false : useCustomerPayment;
     }
 
-    public boolean isSaveNewPayment() {
-        return saveNewPayment;
+    public Boolean getSaveNewPayment() {
+        return saveNewPayment == null? false : saveNewPayment;
     }
 
-    public void setSaveNewPayment(boolean saveNewPayment) {
-        this.saveNewPayment = saveNewPayment;
+    public void setSaveNewPayment(Boolean saveNewPayment) {
+        this.saveNewPayment = saveNewPayment == null ? false : saveNewPayment;
     }
 
     public String getPaymentName() {

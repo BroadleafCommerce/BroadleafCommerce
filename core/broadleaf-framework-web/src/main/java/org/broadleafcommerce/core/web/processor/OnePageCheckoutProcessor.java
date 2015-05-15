@@ -231,13 +231,18 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
                 if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
                     if (payment.getBillingAddress() != null) {
                         billingForm.setAddress(payment.getBillingAddress());
-                        Boolean useCustomerPayment = payment.getCustomerPayment() != null;
-                        if (useCustomerPayment) {
-                            billingForm.setUseCustomerPayment(useCustomerPayment);
+                        Boolean savePayment = payment.isSavePayment();
+                        billingForm.setSaveNewPayment(savePayment);
+                        Boolean useExisting = payment.isUseExisting();
+                        billingForm.setUseCustomerPayment(useExisting);
+                        if (savePayment) {
+                            billingForm.setPaymentName(payment.getPaymentName());
+                        }
+                        Boolean customerPaymentExists = payment.getCustomerPayment() != null;
+                        if (customerPaymentExists && useExisting) {
                             billingForm.setCustomerPayment(payment.getCustomerPayment());
                             billingForm.setCustomerPaymentId(payment.getCustomerPayment().getId());
                         }
-                        billingForm.setSaveNewPayment(payment.isSavePayment());
                     }
                 }
             }
