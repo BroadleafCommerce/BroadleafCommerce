@@ -50,11 +50,13 @@
     <bean id="org.broadleafcommerce.core.payment.domain.PaymentTransaction" class="org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.PaymentLog" class="org.broadleafcommerce.core.payment.domain.PaymentLogImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.catalog.domain.Product" class="org.broadleafcommerce.core.catalog.domain.ProductImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.core.catalog.domain.ProductAttribute" class="org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductBundle" class="org.broadleafcommerce.core.catalog.domain.ProductBundleImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductOption" class="org.broadleafcommerce.core.catalog.domain.ProductOptionImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.ProductOptionValue" class="org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.SkuBundleItem" class="org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.core.catalog.domain.Sku" class="org.broadleafcommerce.core.catalog.domain.SkuImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.catalog.domain.SkuAttribute" class="org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.catalog.domain.SkuFee" class="org.broadleafcommerce.core.catalog.domain.SkuFeeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.secure.BankAccountPayment" class="org.broadleafcommerce.core.payment.domain.secure.BankAccountPaymentImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.payment.domain.secure.CreditCardPayment" class="org.broadleafcommerce.core.payment.domain.secure.CreditCardPaymentInfoImpl" scope="prototype"/>

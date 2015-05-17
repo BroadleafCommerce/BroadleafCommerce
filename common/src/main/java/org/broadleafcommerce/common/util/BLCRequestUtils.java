@@ -52,6 +52,30 @@ public class BLCRequestUtils {
     }
     
     /**
+     * Takes {@link #isOKtoUseSession(WebRequest)} into account when retrieving session attributes. If it's not ok, this
+     * will return null
+     */
+    public static Object getSessionAttributeIfOk(WebRequest request, String attribute) {
+        if (isOKtoUseSession(request)) {
+            return request.getAttribute(attribute, WebRequest.SCOPE_GLOBAL_SESSION);
+        }
+        return null;
+    }
+    
+    /**
+     * Takes {@link #isOKtoUseSession(WebRequest)} into account when setting a session attribute
+     * 
+     * @return <b>true</b> if this set the session attribute, <b>false</b> otherwise
+     */
+    public static boolean setSessionAttributeIfOk(WebRequest request, String attribute, Object value) {
+        if (isOKtoUseSession(request)) {
+            request.setAttribute(attribute, value, WebRequest.SCOPE_GLOBAL_SESSION);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
      * Sets whether or not Broadleaf can utilize the session in request processing.   Used by the REST API
      * flow so that RESTful calls do not utilize the session.
      *

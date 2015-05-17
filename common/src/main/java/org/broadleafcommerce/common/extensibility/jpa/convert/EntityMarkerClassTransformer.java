@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.extensibility.jpa.convert;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.jpa.MergePersistenceUnitManager;
+import org.broadleafcommerce.common.extensibility.jpa.copy.AbstractClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern;
 
 import java.io.ByteArrayInputStream;
@@ -29,6 +30,7 @@ import java.io.DataInputStream;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -53,10 +55,12 @@ import javax.persistence.MappedSuperclass;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class EntityMarkerClassTransformer implements BroadleafClassTransformer {
+public class EntityMarkerClassTransformer extends AbstractClassTransformer implements BroadleafClassTransformer {
     protected static final Log LOG = LogFactory.getLog(EntityMarkerClassTransformer.class);
     
-    protected List<String> transformedClassNames = new ArrayList<String>();
+    protected HashSet<String> transformedEntityClassNames = new HashSet<String>();
+    
+    protected HashSet<String> transformedNonEntityClassNames = new HashSet<String>();
     
     @Resource(name = "blDirectCopyIgnorePatterns")
     protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<DirectCopyIgnorePattern>();
@@ -73,16 +77,16 @@ public class EntityMarkerClassTransformer implements BroadleafClassTransformer {
             ClassFile classFile = new ClassFile(new DataInputStream(new ByteArrayInputStream(classfileBuffer)));
             List<?> attributes = classFile.getAttributes();
             Iterator<?> itr = attributes.iterator();
-            check: {
-                while(itr.hasNext()) {
-                    Object object = itr.next();
-                    if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
-                        boolean containsTypeLevelAnnotation = containsTypeLevelPersistenceAnnotation(((AnnotationsAttribute) object).getAnnotations());
-                        if (containsTypeLevelAnnotation) {
-                            LOG.debug("Marking " + convertedClassName + " as transformed");
-                            transformedClassNames.add(convertedClassName);
-                            break check;
-                        }
+            while (itr.hasNext()) {
+                Object object = itr.next();
+                if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
+                    boolean containsTypeLevelAnnotation = containsTypeLevelPersistenceAnnotation(((AnnotationsAttribute) object).getAnnotations());
+                    if (containsTypeLevelAnnotation) {
+                        LOG.debug("Marking " + convertedClassName + " as transformed");
+                        transformedEntityClassNames.add(convertedClassName);
+                    } else {
+                        LOG.debug("Marking " + convertedClassName + " as picked up by the transformer but not detected as an entity");
+                        transformedNonEntityClassNames.add(convertedClassName);
                     }
                 }
             }
@@ -95,6 +99,13 @@ public class EntityMarkerClassTransformer implements BroadleafClassTransformer {
         return null;
     }
     
+    /**
+     * Determines if a given annotation set contains annotations that correspond to ones that someone would expect to appear
+     * in a persistence.xml
+     * 
+     * @param annotations
+     * @return
+     */
     protected boolean containsTypeLevelPersistenceAnnotation(Annotation[] annotations) {
         for (Annotation annotation : annotations) {
             if (annotation.getTypeName().equals(Entity.class.getName())
@@ -135,12 +146,22 @@ public class EntityMarkerClassTransformer implements BroadleafClassTransformer {
     }
     
     /**
-     * @return a list of fully qualified classnames of class that have an @Entity annotation and were picked
+     * @return a list of fully qualified classnames of class that have an @Entity, @MappedSuperclass or @Embeddable
+     * annotation and were picked
      * up by this class transformer (meaning that other class transformers also would have had a chance to
      * perform their necessary work on those classes)
      */
-    public List<String> getTransformedClassNames() {
-        return transformedClassNames;
+    public HashSet<String> getTransformedEntityClassNames() {
+        return transformedEntityClassNames;
+    }
+    
+    /**
+     * @return a list of fully qualified classnames of classes that <b>do not</b> have an @Entity, @MappedSuperclass or @Embeddable
+     * annotation but were picked up by this class transformer. This usually results in a benign misconfiguration as there are
+     * unnecessary classes within the {@link MergePersistenceUnitManager}
+     */
+    public HashSet<String> getTransformedNonEntityClassNames() {
+        return transformedNonEntityClassNames;
     }
 
     public List<DirectCopyIgnorePattern> getIgnorePatterns() {

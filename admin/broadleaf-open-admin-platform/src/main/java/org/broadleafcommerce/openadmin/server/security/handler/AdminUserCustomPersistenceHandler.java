@@ -71,7 +71,9 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
         try {
-            return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && AdminUser.class.isAssignableFrom(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
+            return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null
+                    && AdminUser.class.isAssignableFrom(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()))
+                    && persistencePackage.getPersistencePerspectiveItems().isEmpty();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

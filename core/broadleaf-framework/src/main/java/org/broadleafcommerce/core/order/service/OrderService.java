@@ -183,6 +183,18 @@ public interface OrderService {
     public Order save(Order order, Boolean priceOrder) throws PricingException;
     
     /**
+     * Saves the given <b>order</b> while optionally repricing the order (meaning, going through the pricing workflow)
+     * along with updating the prices of individual items in the order, as opposed to just pricing taxes/shipping/etc.
+     * 
+     * @param order
+     * @param priceOrder
+     * @param repriceItems whether or not to reprice the items inside of the order via {@link Order#updatePrices()}
+     * @return the persisted Order, which will be a different instance than the Order passed in
+     * @throws PricingException
+     */
+    public Order save(Order order, boolean priceOrder, boolean repriceItems) throws PricingException;
+    
+    /**
      * Deletes the given order. Note that the default Broadleaf implementation in 
      * OrderServiceImpl will actually remove the Order instance from the database.
      * 

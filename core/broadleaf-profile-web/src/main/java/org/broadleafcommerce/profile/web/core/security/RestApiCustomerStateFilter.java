@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.profile.web.core.security;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -86,11 +87,15 @@ public class RestApiCustomerStateFilter extends GenericFilterBean implements Ord
             }
             
             if (customerId != null && customerId.trim().length() > 0) {
-
-                //If we found it, look up the customer and put it on the request.
-                Customer customer = customerService.readCustomerById(Long.valueOf(customerId));
-                if (customer != null) {
-                    CustomerState.setCustomer(customer);
+                
+                if (NumberUtils.isNumber(customerId)) {
+                    //If we found it, look up the customer and put it on the request.
+                    Customer customer = customerService.readCustomerById(Long.valueOf(customerId));
+                    if (customer != null) {
+                        CustomerState.setCustomer(customer);
+                    }
+                } else {
+                    LOG.warn(String.format("The customer id passed in '%s' was not a number", customerId));
                 }
             }
             

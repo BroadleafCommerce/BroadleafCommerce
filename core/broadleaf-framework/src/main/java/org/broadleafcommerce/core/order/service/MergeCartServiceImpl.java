@@ -118,7 +118,7 @@ public class MergeCartServiceImpl implements MergeCartService {
         }
         
         if (mergeCartResponse.getOrder() != null) {
-            Order savedCart = orderService.save(mergeCartResponse.getOrder(), priceOrder);
+            Order savedCart = orderService.save(mergeCartResponse.getOrder(), priceOrder, priceOrder);
             mergeCartResponse.setOrder(savedCart);
         }
         

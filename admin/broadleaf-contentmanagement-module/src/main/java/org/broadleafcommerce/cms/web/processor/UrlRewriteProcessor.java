@@ -76,11 +76,8 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         
         boolean secureRequest = true;
-        String contextPath = "";
-
         if (request != null) {
             secureRequest = isRequestSecure(request);
-            contextPath = request.getContextPath();
         }
         
         String elementValue = element.getAttributeValue(attributeName);
@@ -92,7 +89,9 @@ public class UrlRewriteProcessor extends AbstractAttributeModifierAttrProcessor 
                 .parseExpression(arguments.getConfiguration(), arguments, elementValue);
         String assetPath = (String) expression.execute(arguments.getConfiguration(), arguments);
         
-        assetPath = staticAssetPathService.convertAssetPath(assetPath, contextPath, secureRequest);
+        // We are forcing an evaluation of @{} from Thymeleaf above which will automatically add a contextPath, no need to
+        // add it twice
+        assetPath = staticAssetPathService.convertAssetPath(assetPath, null, secureRequest);
         
         attrs.put("src", assetPath);
         

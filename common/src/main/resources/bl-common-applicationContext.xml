@@ -63,14 +63,54 @@
             </map>
         </property>
     </bean>
+    
+    <!-- With WebLogic 12c and JRockit 1.6, there seems to be a problem with the instrumentation of domain clases related 
+         to the fact that certain support classes are either not loaded or not initialized when they are referenced from DirectCopyClassTransformer, 
+         EntityMarkerClassTransformer, and others.  These include javassist classes and certain Broadleaf enums and Annotations.
+         The solution is to pre-load those classes before trying to use them.  This factory provides a list to support this mechanism. -->
+    <bean id="blDirectCopyClassPreLoadPatterns" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+            	<value>javassist.ClassPool</value>
+            	<value>javassist.CtClass</value>
+            	<value>javassist.CtConstructor</value>
+            	<value>javassist.CtField</value>
+            	<value>javassist.CtMethod</value>
+            	<value>javassist.LoaderClassPath</value>
+            	<value>javassist.NotFoundException</value>
+            	<value>javassist.bytecode.AnnotationsAttribute</value>
+            	<value>javassist.bytecode.ClassFile</value>
+            	<value>javassist.bytecode.ConstPool</value>
+            	<value>javassist.bytecode.annotation.Annotation</value>
+            	<value>javassist.bytecode.annotation.AnnotationMemberValue</value>
+            	<value>javassist.bytecode.annotation.ArrayMemberValue</value>
+            	<value>javassist.bytecode.annotation.BooleanMemberValue</value>
+            	<value>javassist.bytecode.annotation.MemberValue</value>
+            	<value>javassist.bytecode.annotation.StringMemberValue</value>
+            	<value>javax.annotation.Resource</value>
+            	<value>javax.persistence.EntityListeners</value>
+            	<value>javax.persistence.Embeddable</value>
+            	<value>javax.persistence.Entity</value>
+            	<value>javax.persistence.MappedSuperclass</value>
+            	<value>org.apache.commons.lang3.StringUtils</value>
+            	<value>org.broadleafcommerce.common.logging.LifeCycleEvent</value>
+            	<value>org.broadleafcommerce.common.logging.SupportLogManager</value>
+            	<value>org.broadleafcommerce.common.logging.SupportLogger</value>
+            	<value>org.broadleafcommerce.common.extensibility.jpa.copy.NonCopied</value>
+            </list>
+        </property>
+    </bean> 
 
     <!--This class transformer is responsible for picking up @DirectCopyTransform annotations on entities -->
     <bean id="blAnnotationDirectCopyClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyClassTransformer">
         <constructor-arg name="moduleName" value="Annotated Transformation" />
         <property name="templateTokens" ref="blDirectCopyTransformTokenMap"/>
+        <property name="preLoadClassNamePatterns" ref="blDirectCopyClassPreLoadPatterns"/>
     </bean>
 
-    <bean id="blEntityMarkerClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer" />
+    <bean id="blEntityMarkerClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer" >
+    	<property name="preLoadClassNamePatterns" ref="blDirectCopyClassPreLoadPatterns"/>
+    </bean>
 
     <!-- to be overriden by 3rd party modules -->
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">

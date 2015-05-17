@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -31,7 +33,6 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
 import org.broadleafcommerce.core.order.service.OrderService;
-import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -77,6 +78,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Phillip Verheyden (phillipuniverse)
  */
 public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor {
+
+    private static final Log LOG = LogFactory.getLog(GoogleUniversalAnalyticsProcessor.class);
 
     /**
      * Global value, intentionally only retrieved as a file property NOT via the system properties service
@@ -184,7 +187,7 @@ public class GoogleUniversalAnalyticsProcessor extends AbstractElementProcessor 
             element.getParent().insertAfter(element, contentNode);
             element.getParent().removeChild(element);
         } else {
-            Log.warn("No trackers were found, not outputting Google Analytics script. Set the googleAnalytics.webPropertyId"
+            LOG.warn("No trackers were found, not outputting Google Analytics script. Set the googleAnalytics.webPropertyId"
                     + " and/or the googleAnalytics.masterWebPropertyId system properties to output Google Analytics");
         }
 
