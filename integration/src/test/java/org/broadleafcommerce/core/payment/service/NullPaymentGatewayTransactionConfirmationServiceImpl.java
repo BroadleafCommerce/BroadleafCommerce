@@ -25,17 +25,12 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
-import org.broadleafcommerce.common.payment.PaymentDeclineType;
-import org.broadleafcommerce.common.payment.PaymentTransactionType;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService;
+import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.springframework.stereotype.Service;
-
-
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -51,44 +46,19 @@ public class NullPaymentGatewayTransactionConfirmationServiceImpl implements Pay
     @Resource(name = "blNullPaymentGatewayHostedConfiguration")
     protected NullPaymentGatewayHostedConfiguration configuration;
 
-    /**
-     * for the test implementation, and in order to test different response scenarios, we generate the following results:
-     * <ul>
-     *   <li>for payments with a total that is less than $100, we return an error with HARD decline</li>
-     *   <li>for payments with a total between $100 and $200 (inclusive) we return an error with SOFT decline</li>
-     *   <li>for payments with more than $200 we return success</li>
-     * </ul>
-     */
+    @Resource(name = "blNullPaymentGatewayTransactionService")
+    protected PaymentGatewayTransactionService transactionService;
+
     @Override
     public PaymentResponseDTO confirmTransaction(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Null Payment Hosted Gateway - Confirming Transaction with amount: " + paymentRequestDTO.getTransactionTotal());
         }
 
-        PaymentTransactionType type = PaymentTransactionType.AUTHORIZE_AND_CAPTURE;
-        if (!configuration.isPerformAuthorizeAndCapture()) {
-            type = PaymentTransactionType.AUTHORIZE;
-        }
-
-        Money transactionTotal = new Money(paymentRequestDTO.getTransactionTotal());
-
-        PaymentResponseDTO responseDTO = new PaymentResponseDTO(PaymentType.THIRD_PARTY_ACCOUNT, NullPaymentGatewayType.NULL_GATEWAY);
-        responseDTO.paymentTransactionType(type);
-        responseDTO.amount(new Money(paymentRequestDTO.getTransactionTotal()));
-
-        if (transactionTotal.lessThan(oneHundred)) {
-            responseDTO.rawResponse("confirmation - failure - hard decline");
-            responseDTO.successful(false);
-            responseDTO.responseMap(PaymentAdditionalFieldType.DECLINE_TYPE.getType(), PaymentDeclineType.HARD.getType());
-        } else if (transactionTotal.lessThanOrEqual(twoHundred)) {
-            responseDTO.rawResponse("confirmation - failure - soft decline");
-            responseDTO.successful(false);
-            responseDTO.responseMap(PaymentAdditionalFieldType.DECLINE_TYPE.getType(), PaymentDeclineType.SOFT.getType());
-        } else {
-            responseDTO.rawResponse("confirmation - success");
-            responseDTO.successful(true);
-        }
+        //hard-coding capture, we do not provide authorization data in tests
+        PaymentResponseDTO responseDTO = transactionService.capture(paymentRequestDTO);
 
         return responseDTO;
+
     }
 }
