@@ -73,7 +73,7 @@ public class TranslationServiceImpl implements TranslationService {
     @Resource(name="blTranslationServiceExtensionManager")
     protected TranslationServiceExtensionManager extensionManager;
 
-    @Value("${translation.thresholdForFullCache:50}")
+    @Value("${translation.thresholdForFullCache:1000}")
     protected int thresholdForFullCache;
 
     @Resource(name="blGenericEntityDao")
