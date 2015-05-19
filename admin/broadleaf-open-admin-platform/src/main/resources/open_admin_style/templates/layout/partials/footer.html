@@ -82,8 +82,11 @@
     <blc:bundle name="admin-init.js" 
                 mapping-prefix="/js/"
                 files="admin/blc-admin-init.js" />
-                          
-
+                
+    <!--  These JS files have context relative paths and can't be easily bundled -->    
+    <script type="text/javascript" th:src="@{/js/admin/ace-src-min-noconflict/ace.js}"></script>
+    <script type="text/javascript" th:src="@{/js/admin/ace-src-min-noconflict/keybinding-vim.js}"></script>                 
+                                         
     <div th:substituteby="layout/partials/postFooterContent" />
 
 </footer>
