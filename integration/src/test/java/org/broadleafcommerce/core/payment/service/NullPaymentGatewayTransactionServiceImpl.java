@@ -20,6 +20,8 @@
 
 package org.broadleafcommerce.core.payment.service;
 
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.CreditCardValidator;
 import org.broadleafcommerce.common.money.Money;
@@ -61,36 +63,37 @@ public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayT
     }
 
     /**
-     * for the test implementation, and in order to test different response scenarios, we generate the following results:
-     * <ul>
-     *   <li>for payments with a total that is less than $100, we return an error with HARD decline</li>
-     *   <li>for payments with a total between $100 and $200 (inclusive) we return an error with SOFT decline</li>
-     *   <li>for payments with more than $200 we return success</li>
-     * </ul>
+     * for the test implementation, and in order to test different failed response scenarios, check for the presence of a "desired outcome"
+     * entry in the request's additional fields
      */
     @Override
     public PaymentResponseDTO capture(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
 
-        Money transactionTotal = new Money(paymentRequestDTO.getTransactionTotal());
-
         PaymentResponseDTO responseDTO = new PaymentResponseDTO(PaymentType.THIRD_PARTY_ACCOUNT, NullPaymentGatewayType.NULL_GATEWAY);
 
-        responseDTO.paymentTransactionType(PaymentTransactionType.CAPTURE);
+        responseDTO.paymentTransactionType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
         responseDTO.amount(new Money(paymentRequestDTO.getTransactionTotal()));
 
-        if (transactionTotal.lessThan(oneHundred)) {
-            responseDTO.rawResponse("confirmation - failure - hard decline");
-            responseDTO.successful(false);
-            responseDTO.responseMap(PaymentAdditionalFieldType.DECLINE_TYPE.getType(), PaymentDeclineType.HARD.getType());
-        } else if (transactionTotal.lessThanOrEqual(twoHundred)) {
-            responseDTO.rawResponse("confirmation - failure - soft decline");
-            responseDTO.successful(false);
-            responseDTO.responseMap(PaymentAdditionalFieldType.DECLINE_TYPE.getType(), PaymentDeclineType.SOFT.getType());
+        Map<String, Object> additionalFields = paymentRequestDTO.getAdditionalFields();
+
+        if (additionalFields != null) {
+            if (additionalFields.containsKey("desiredOutcome")) {
+                String desiredOutome = (String) additionalFields.get("desiredOutcome");
+                if (desiredOutome.equals("SOFT DECLINE")) {
+                    responseDTO.successful(false);
+                    responseDTO.rawResponse("confirmation - failure - soft decline");
+                    responseDTO.responseMap(PaymentAdditionalFieldType.DECLINE_TYPE.getType(), PaymentDeclineType.SOFT.getType());
+                } else if (desiredOutome.equals("HARD DECLINE")) {
+                    responseDTO.successful(false);
+                    responseDTO.rawResponse("confirmation - failure - hard decline");
+                    responseDTO.responseMap(PaymentAdditionalFieldType.DECLINE_TYPE.getType(), PaymentDeclineType.HARD.getType());
+                }
+
+            }
         } else {
             responseDTO.rawResponse("confirmation - success");
             responseDTO.successful(true);
         }
-
         return responseDTO;
 
     }
