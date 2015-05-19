@@ -44,7 +44,7 @@ public class DatabaseResourceResolver implements IResourceResolver {
         return "BL_DATABASE";
     }
     
-    @Resource(name = "blDatabaseResourceResolvertensionManager")
+    @Resource(name = "blDatabaseResourceResolverExtensionManager")
     protected DatabaseResourceResolverExtensionManager extensionManager;
 
     @Override
