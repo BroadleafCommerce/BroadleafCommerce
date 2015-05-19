@@ -31,10 +31,13 @@ import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.dao.GenericEntityDao;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ItemStatus;
 import org.broadleafcommerce.common.extension.ResultType;
+import org.broadleafcommerce.common.extension.StandardCacheItem;
 import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
+import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +55,9 @@ import javax.annotation.Resource;
 
 @Service("blTranslationService")
 public class TranslationServiceImpl implements TranslationService {
+
     protected static final Log LOG = LogFactory.getLog(TranslationServiceImpl.class);
+    private static final Translation DELETED_TRANSLATION = new TranslationImpl();
     
     @Resource(name = "blTranslationDao")
     protected TranslationDao dao;
@@ -68,7 +73,7 @@ public class TranslationServiceImpl implements TranslationService {
     @Resource(name="blTranslationServiceExtensionManager")
     protected TranslationServiceExtensionManager extensionManager;
 
-    @Value("${pricelist.thresholdForFullCache:50}")
+    @Value("${translation.thresholdForFullCache:50}")
     protected int thresholdForFullCache;
 
     @Resource(name="blGenericEntityDao")
@@ -175,17 +180,13 @@ public class TranslationServiceImpl implements TranslationService {
     public void removeTranslationFromCache(Translation translation) {
         if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
             Object entity = genericEntityDao.readGenericEntity(dao.getEntityImpl(translation.getEntityType()), Long.parseLong(translation.getEntityId()));
-            String generalCode = translation.getLocaleCode();
-            if (generalCode.contains("_")) {
-                generalCode = generalCode.substring(0, generalCode.indexOf("_"));
+            ResultType resultType = ResultType.STANDARD;
+            if (extensionManager != null) {
+                ExtensionResultHolder<ResultType> response = new ExtensionResultHolder<ResultType>();
+                extensionManager.getProxy().getResultType(translation, response);
+                resultType = response.getResult();
             }
-            //It's necessary to remove the item from the template and standard cache to cover the case of a standard site delete,
-            //since in that case, you would expect the deletion of template item by the standard site to nullify
-            //the template influence, even if the standard site had previously overridden the translation and had
-            //their own clone.
-            String key = getCacheKey(entity, ResultType.TEMPLATE, translation.getEntityType(), translation.getEntityId(), generalCode);
-            getCache().remove(key);
-            key = getCacheKey(entity, ResultType.STANDARD, translation.getEntityType(), translation.getEntityId(), generalCode);
+            String key = getCacheKey(entity, resultType, translation.getEntityType());
             getCache().remove(key);
         }
     }
@@ -194,22 +195,26 @@ public class TranslationServiceImpl implements TranslationService {
                                                 String entityId, String localeCode, String localeCountryCode) {
         String specificPropertyKey = property + "_" + localeCountryCode;
         String generalPropertyKey = property + "_" + localeCode;
-        String cacheKey = getCacheKey(entity, ResultType.STANDARD, entityType, entityId, localeCode);
+        String cacheKey = getCacheKey(entity, ResultType.STANDARD, entityType);
         Element cacheResult = getCache().get(cacheKey);
         String response = null;
         if (cacheResult == null) {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
-            if (dao.countTranslationEntries(entityType, entityId, ResultType.STANDARD) < getThresholdForFullCache()) {
-                Map<String, Translation> propertyTranslationMap = new HashMap<String, Translation>();
-                List<Translation> translationList = dao.readAllTranslationEntries(entityType, entityId, ResultType.STANDARD);
-                if (!CollectionUtils.isEmpty(translationList)) {
-                    for (Translation translation : translationList) {
+            if (dao.countTranslationEntries(entityType, ResultType.STANDARD_CACHE) < getThresholdForFullCache()) {
+                Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = new HashMap<String, Map<String, StandardCacheItem>>();
+                List<StandardCacheItem> convertedList = dao.readConvertedTranslationEntries(entityType, ResultType.STANDARD_CACHE);
+                if (!CollectionUtils.isEmpty(convertedList)) {
+                    for (StandardCacheItem standardCache : convertedList) {
+                        Translation translation = (Translation) standardCache.getCacheItem();
                         String key = translation.getFieldName() + "_" + translation.getLocaleCode();
-                        propertyTranslationMap.put(key, translation);
+                        if (!propertyTranslationMap.containsKey(key)) {
+                            propertyTranslationMap.put(key, new HashMap<String, StandardCacheItem>());
+                        }
+                        propertyTranslationMap.get(key).put(translation.getEntityId(), standardCache);
                     }
                 }
                 getCache().put(new Element(cacheKey, propertyTranslationMap));
-                Translation bestTranslation = findBestTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap);
+                Translation bestTranslation = findBestStandardTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
                 if (bestTranslation != null) {
                     response = bestTranslation.getTranslatedValue();
                 } else {
@@ -217,16 +222,16 @@ public class TranslationServiceImpl implements TranslationService {
                             localeCountryCode, specificPropertyKey, generalPropertyKey);
                 }
             } else {
-                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode,
-                        ResultType.IGNORE);
+                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.IGNORE);
                 if (translation != null) {
                     response = translation.getTranslatedValue();
                 }
             }
         } else {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
-            Map<String, Translation> propertyTranslationMap = (Map<String, Translation>) cacheResult.getObjectValue();
-            Translation bestTranslation = findBestTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap);
+            Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = (Map<String, Map<String, StandardCacheItem>>) cacheResult.getObjectValue();
+            Translation bestTranslation = findBestStandardTranslation(specificPropertyKey, generalPropertyKey,
+                    propertyTranslationMap, entityId);
             if (bestTranslation != null) {
                 response = bestTranslation.getTranslatedValue();
             } else {
@@ -242,24 +247,27 @@ public class TranslationServiceImpl implements TranslationService {
 
     protected String getTemplateTranslatedValue(String standardCacheKey, Object entity, String property, TranslatedEntity entityType,
                         String entityId, String localeCode, String localeCountryCode, String specificPropertyKey, String generalPropertyKey) {
-        String cacheKey = getCacheKey(entity, ResultType.TEMPLATE, entityType, entityId, localeCode);
+        String cacheKey = getCacheKey(entity, ResultType.TEMPLATE, entityType);
         if (standardCacheKey.equals(cacheKey)) {
             return null;
         }
         Element cacheResult = getCache().get(cacheKey);
         if (cacheResult == null) {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
-            if (dao.countTranslationEntries(entityType, entityId, ResultType.TEMPLATE) < getThresholdForFullCache()) {
-                Map<String, Translation> propertyTranslationMap = new HashMap<String, Translation>();
-                List<Translation> translationList = dao.readAllTranslationEntries(entityType, entityId, ResultType.TEMPLATE);
+            if (dao.countTranslationEntries(entityType, ResultType.TEMPLATE_CACHE) < getThresholdForFullCache()) {
+                Map<String, Map<String, Translation>> propertyTranslationMap = new HashMap<String, Map<String, Translation>>();
+                List<Translation> translationList = dao.readAllTranslationEntries(entityType, ResultType.TEMPLATE_CACHE);
                 if (!CollectionUtils.isEmpty(translationList)) {
                     for (Translation translation : translationList) {
                         String key = translation.getFieldName() + "_" + translation.getLocaleCode();
-                        propertyTranslationMap.put(key, translation);
+                        if (!propertyTranslationMap.containsKey(key)) {
+                            propertyTranslationMap.put(key, new HashMap<String, Translation>());
+                        }
+                        propertyTranslationMap.get(key).put(translation.getEntityId(), translation);
                     }
                 }
                 getCache().put(new Element(cacheKey, propertyTranslationMap));
-                Translation translation = findBestTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap);
+                Translation translation = findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
                 if (translation != null) {
                     return translation.getTranslatedValue();
                 } else {
@@ -275,8 +283,8 @@ public class TranslationServiceImpl implements TranslationService {
             }
         } else {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
-            Map<String, Translation> propertyTranslationMap = (Map<String, Translation>) cacheResult.getObjectValue();
-            Translation bestTranslation = findBestTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap);
+            Map<String, Map<String, Translation>> propertyTranslationMap = (Map<String, Map<String, Translation>>) cacheResult.getObjectValue();
+            Translation bestTranslation = findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
             if (bestTranslation != null) {
                 return bestTranslation.getTranslatedValue();
             } else {
@@ -285,11 +293,37 @@ public class TranslationServiceImpl implements TranslationService {
         }
     }
 
-    protected Translation findBestTranslation(String specificPropertyKey, String generalPropertyKey, Map<String, Translation> propertyTranslationMap) {
+    protected Translation findBestStandardTranslation(String specificPropertyKey, String generalPropertyKey, Map<String, Map<String, StandardCacheItem>> propertyTranslationMap, String entityId) {
+        StandardCacheItem cacheItem = null;
         if (propertyTranslationMap.containsKey(specificPropertyKey)) {
-            return propertyTranslationMap.get(specificPropertyKey);
+            Map<String, StandardCacheItem> byEntity = propertyTranslationMap.get(specificPropertyKey);
+            cacheItem = byEntity.get(entityId);
         }
-        return propertyTranslationMap.get(generalPropertyKey);
+        if (cacheItem == null && propertyTranslationMap.containsKey(generalPropertyKey)) {
+            Map<String, StandardCacheItem> byEntity = propertyTranslationMap.get(generalPropertyKey);
+            cacheItem = byEntity.get(entityId);
+        }
+        if (cacheItem != null) {
+            if (ItemStatus.DELETED == cacheItem.getItemStatus()) {
+                return DELETED_TRANSLATION;
+            } else {
+                return (Translation) cacheItem.getCacheItem();
+            }
+        }
+        return null;
+    }
+
+    protected Translation findBestTemplateTranslation(String specificPropertyKey, String generalPropertyKey, Map<String, Map<String, Translation>> propertyTranslationMap, String entityId) {
+        Translation translation = null;
+        if (propertyTranslationMap.containsKey(specificPropertyKey)) {
+            Map<String, Translation> byEntity = propertyTranslationMap.get(specificPropertyKey);
+            translation = byEntity.get(entityId);
+        }
+        if (translation == null && propertyTranslationMap.containsKey(generalPropertyKey)) {
+            Map<String, Translation> byEntity = propertyTranslationMap.get(generalPropertyKey);
+            translation = byEntity.get(entityId);
+        }
+        return translation;
     }
     
     protected TranslatedEntity getEntityType(Class<?> entityClass) {
@@ -319,8 +353,8 @@ public class TranslationServiceImpl implements TranslationService {
         }
     }
 
-    protected String getCacheKey(Object entity, ResultType resultType, TranslatedEntity entityType, String entityId, String localeCode) {
-        String cacheKey = StringUtils.join(new String[] { entityType.getFriendlyType(), entityId, localeCode }, "|");
+    protected String getCacheKey(Object entity, ResultType resultType, TranslatedEntity entityType) {
+        String cacheKey = StringUtils.join(new String[] { entityType.getFriendlyType()}, "|");
         if (extensionManager != null) {
             ExtensionResultHolder<String> result = new ExtensionResultHolder<String>();
             extensionManager.getProxy().getCacheKey(entity, cacheKey, resultType, result);

@@ -122,4 +122,15 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      */
     ExtensionResultStatusType getCacheKey(Object testObject, String qualifier, ResultType resultType, ExtensionResultHolder<String> response);
 
+    /**
+     * Convert the list of query results into a list that denotes not only the query results, but also whether or not each member
+     * represents a deleted/archived item, or an active/normal item.
+     *
+     * @param type the class type for the query
+     * @param queryResults the results of the fetch query from the database
+     * @param response the response container - the list is sorted with deleted item appearing first
+     * @return the status of the extension operation
+     */
+    ExtensionResultStatusType buildStatus(Class<?> type, List queryResults, ExtensionResultHolder<List<StandardCacheItem>> response);
+
 }

@@ -20,7 +20,9 @@
 package org.broadleafcommerce.common.i18n.dao;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ResultType;
+import org.broadleafcommerce.common.extension.StandardCacheItem;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
@@ -171,14 +173,13 @@ public class TranslationDaoImpl implements TranslationDao {
     }
 
     @Override
-    public Long countTranslationEntries(TranslatedEntity entityType, String entityId, ResultType stage) {
+    public Long countTranslationEntries(TranslatedEntity entityType, ResultType stage) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
         criteria.select(builder.count(root));
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(root.get("entityType"), entityType.getFriendlyType()));
-        restrictions.add(builder.equal(root.get("entityId"), entityId));
         try {
             if (extensionManager != null) {
                 extensionManager.getProxy().setup(TranslationImpl.class, stage);
@@ -197,14 +198,13 @@ public class TranslationDaoImpl implements TranslationDao {
     }
 
     @Override
-    public List<Translation> readAllTranslationEntries(TranslatedEntity entityType, String entityId, ResultType stage) {
+    public List<Translation> readAllTranslationEntries(TranslatedEntity entityType, ResultType stage) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
         criteria.select(root);
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(root.get("entityType"), entityType.getFriendlyType()));
-        restrictions.add(builder.equal(root.get("entityId"), entityId));
         try {
             if (extensionManager != null) {
                 extensionManager.getProxy().setup(TranslationImpl.class, stage);
@@ -220,6 +220,17 @@ public class TranslationDaoImpl implements TranslationDao {
                 extensionManager.getProxy().breakdown(TranslationImpl.class, stage);
             }
         }
+    }
+
+    @Override
+    public List<StandardCacheItem> readConvertedTranslationEntries(TranslatedEntity entityType, ResultType stage) {
+        List<Translation> results = readAllTranslationEntries(entityType, stage);
+        if (extensionManager == null) {
+            throw new IllegalStateException("extensionManager cannot be null");
+        }
+        ExtensionResultHolder<List<StandardCacheItem>> response = new ExtensionResultHolder<List<StandardCacheItem>>();
+        extensionManager.getProxy().buildStatus(TranslationImpl.class, results, response);
+        return response.getResult();
     }
 
     @Override
