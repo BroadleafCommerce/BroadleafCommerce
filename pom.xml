@@ -66,13 +66,6 @@
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
     </scm>
-    <repositories>
-        <repository>
-            <id>Codehaus Internal</id>
-            <name>Codehaus Internal</name>
-            <url>http://repository.codehaus.org</url>
-        </repository>
-    </repositories>
     <build>
         <pluginManagement>
             <plugins>
