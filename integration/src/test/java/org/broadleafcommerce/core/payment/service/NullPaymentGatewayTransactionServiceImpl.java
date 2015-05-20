@@ -34,6 +34,7 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
+import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
@@ -52,10 +53,7 @@ import org.springframework.stereotype.Service;
  * @author Elbert Bautista (elbertbautista)
  */
 @Service("blNullPaymentGatewayTransactionService")
-public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayTransactionService {
-
-    private static Money oneHundred = new Money(100);
-    private static Money twoHundred = new Money(200);
+public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayTransactionService, FailureCountExposable {
 
     @Override
     public PaymentResponseDTO authorize(PaymentRequestDTO paymentRequestDTO) throws PaymentException {
@@ -208,4 +206,33 @@ public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayT
 
         return responseDTO;
     }
+
+    protected Integer failureCount = 0;
+    protected Boolean isUp = true;
+
+    public synchronized void clearStatus() {
+        isUp = true;
+        failureCount = 0;
+    }
+
+    /**
+     * arbitrarily set a failure threshold value of "3"
+     */
+    public synchronized void incrementFailure() {
+        if (failureCount >= 3) {
+            isUp = false;
+        } else {
+            failureCount++;
+        }
+    }
+
+    @Override
+    public synchronized ServiceStatusType getServiceStatus() {
+        if (isUp) {
+            return ServiceStatusType.UP;
+        } else {
+            return ServiceStatusType.DOWN;
+        }
+    }
+
 }
