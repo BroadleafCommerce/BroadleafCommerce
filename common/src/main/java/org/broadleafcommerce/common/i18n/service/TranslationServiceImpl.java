@@ -163,7 +163,7 @@ public class TranslationServiceImpl implements TranslationService {
             localeCountryCode += "_" + locale.getCountry();
         }
 
-        if (!BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
+        if (!BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox() || BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSparseCache()) {
             Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode,
                     ResultType.IGNORE);
             if (translation != null) {
