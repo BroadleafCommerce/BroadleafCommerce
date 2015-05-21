@@ -19,18 +19,8 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
-import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -43,6 +33,18 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -124,6 +126,26 @@ public class CategorySearchFacetImpl implements CategorySearchFacet {
     @Override
     public void setSequence(BigDecimal sequence) {
         this.sequence = sequence;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
+            CategorySearchFacetImpl other = (CategorySearchFacetImpl) obj;
+            return new EqualsBuilder()
+                .append(category, other.category)
+                .append(searchFacet, other.searchFacet)
+                .build();
+        }
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+            .append(category)
+            .append(searchFacet)
+            .toHashCode();
     }
     
 }

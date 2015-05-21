@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -207,18 +209,20 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
+            SearchFacetImpl other = (SearchFacetImpl) obj;
+            return new EqualsBuilder()
+                .append(field, other.field)
+                .build();
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().isAssignableFrom(obj.getClass())) {
-            return false;
-        }
-        SearchFacet other = (SearchFacet) obj;
-        
-        return getField().equals(other.getField());
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+            .append(field)
+            .toHashCode();
     }
 
 }
