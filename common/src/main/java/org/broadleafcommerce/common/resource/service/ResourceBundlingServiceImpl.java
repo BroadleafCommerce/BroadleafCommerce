@@ -146,7 +146,12 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
     @Override
     public boolean checkForRegisteredBundleFile(String versionedBundleName) {
         versionedBundleName = lookupBundlePath(versionedBundleName);
-        return createdBundles.containsKey(versionedBundleName);
+        boolean bundleRegistered = createdBundles.containsKey(versionedBundleName);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Checking for registered bundle file, versionedBundleName=\"" + versionedBundleName + "\" bundleRegistered=\"" + bundleRegistered + "\"");
+        }
+        return bundleRegistered;
     }
 
     protected String lookupBundlePath(String requestPath) {
