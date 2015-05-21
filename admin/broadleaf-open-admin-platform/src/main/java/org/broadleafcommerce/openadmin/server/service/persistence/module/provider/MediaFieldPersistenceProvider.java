@@ -113,6 +113,8 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                             populateValueRequest.getProperty().getName());
                     if (media == null) {
                         media = (Media) valueType.newInstance();
+                        populateValueRequest.getFieldManager().setFieldValue(instance,
+                                populateValueRequest.getProperty().getName(), media);
 
                         Object parent = extractParent(populateValueRequest, instance);
 
