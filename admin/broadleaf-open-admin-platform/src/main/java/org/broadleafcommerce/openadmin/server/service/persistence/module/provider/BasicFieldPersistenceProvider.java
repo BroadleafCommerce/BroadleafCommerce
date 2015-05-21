@@ -102,6 +102,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 metadata.getFieldType() == SupportedFieldType.HTML ||
                 metadata.getFieldType() == SupportedFieldType.HTML_BASIC ||
                 metadata.getFieldType() == SupportedFieldType.MONEY ||
+                metadata.getFieldType() == SupportedFieldType.ASSET_URL ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
                 (property == null ||
                         !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
