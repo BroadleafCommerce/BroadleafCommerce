@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -63,6 +64,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -122,17 +124,8 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
     
-    
-    @Resource(name ="blDynamicEntityDao")
-    protected DynamicEntityDao dynamicEntityDao;
-    
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
-
-    @PostConstruct
-    public void init() {
-        dynamicEntityDao.setStandardEntityManager(em);
-    }
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
@@ -311,8 +304,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         metadata.setMutable(false);
         metadata.setInheritedFromType(inheritedFromType.getName());
         
-        Class<?>[] classes = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SkuImpl.class);
-        metadata.setAvailableToTypes(convertToStrings(classes));
+        metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class));
         metadata.setForeignKeyCollection(false);
         metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
@@ -330,7 +322,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         return metadata;
     }
 
-    protected String[] convertToStrings(Class<?>[] classes) {
+    protected String[] getPolymorphicClasses(Class<?> clazz) {
+        DynamicDaoHelperImpl helper = new DynamicDaoHelperImpl();
+        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz,
+                helper.getSessionFactory((HibernateEntityManager) em), 
+                true,
+                useCache());
         String[] result = new String[classes.length];
         for (int i = 0; i < classes.length; i++) {
             result[i] = classes[i].getName();
@@ -402,8 +399,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
             metadata.setMutable(true);
             metadata.setInheritedFromType(SkuImpl.class.getName());
-            Class<?>[] classes = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SkuImpl.class);
-            metadata.setAvailableToTypes(convertToStrings(classes));
+            metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class));
             metadata.setForeignKeyCollection(false);
             metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
     
