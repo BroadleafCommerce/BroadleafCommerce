@@ -173,29 +173,28 @@ public class TranslationServiceImpl implements TranslationService {
             }
         }
 
-        return getOverrideTranslatedValue(entity, property, entityType, entityId, localeCode, localeCountryCode);
+        return getOverrideTranslatedValue(property, entityType, entityId, localeCode, localeCountryCode);
     }
 
     @Override
     public void removeTranslationFromCache(Translation translation) {
         if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
-            Object entity = genericEntityDao.readGenericEntity(dao.getEntityImpl(translation.getEntityType()), Long.parseLong(translation.getEntityId()));
             ResultType resultType = ResultType.STANDARD;
             if (extensionManager != null) {
                 ExtensionResultHolder<ResultType> response = new ExtensionResultHolder<ResultType>();
                 extensionManager.getProxy().getResultType(translation, response);
                 resultType = response.getResult();
             }
-            String key = getCacheKey(entity, resultType, translation.getEntityType());
+            String key = getCacheKey(resultType, translation.getEntityType());
             getCache().remove(key);
         }
     }
 
-    protected String getOverrideTranslatedValue(Object entity, String property, TranslatedEntity entityType,
+    protected String getOverrideTranslatedValue(String property, TranslatedEntity entityType,
                                                 String entityId, String localeCode, String localeCountryCode) {
         String specificPropertyKey = property + "_" + localeCountryCode;
         String generalPropertyKey = property + "_" + localeCode;
-        String cacheKey = getCacheKey(entity, ResultType.STANDARD, entityType);
+        String cacheKey = getCacheKey(ResultType.STANDARD, entityType);
         Element cacheResult = getCache().get(cacheKey);
         String response = null;
         if (cacheResult == null) {
@@ -218,7 +217,7 @@ public class TranslationServiceImpl implements TranslationService {
                 if (bestTranslation != null) {
                     response = bestTranslation.getTranslatedValue();
                 } else {
-                    response = getTemplateTranslatedValue(cacheKey, entity, property, entityType, entityId, localeCode,
+                    response = getTemplateTranslatedValue(cacheKey, property, entityType, entityId, localeCode,
                             localeCountryCode, specificPropertyKey, generalPropertyKey);
                 }
             } else {
@@ -235,7 +234,7 @@ public class TranslationServiceImpl implements TranslationService {
             if (bestTranslation != null) {
                 response = bestTranslation.getTranslatedValue();
             } else {
-                response = getTemplateTranslatedValue(cacheKey, entity, property, entityType, entityId, localeCode,
+                response = getTemplateTranslatedValue(cacheKey, property, entityType, entityId, localeCode,
                         localeCountryCode, specificPropertyKey, generalPropertyKey);
             }
         }
@@ -245,9 +244,9 @@ public class TranslationServiceImpl implements TranslationService {
         return null;
     }
 
-    protected String getTemplateTranslatedValue(String standardCacheKey, Object entity, String property, TranslatedEntity entityType,
+    protected String getTemplateTranslatedValue(String standardCacheKey, String property, TranslatedEntity entityType,
                         String entityId, String localeCode, String localeCountryCode, String specificPropertyKey, String generalPropertyKey) {
-        String cacheKey = getCacheKey(entity, ResultType.TEMPLATE, entityType);
+        String cacheKey = getCacheKey(ResultType.TEMPLATE, entityType);
         if (standardCacheKey.equals(cacheKey)) {
             return null;
         }
@@ -353,11 +352,11 @@ public class TranslationServiceImpl implements TranslationService {
         }
     }
 
-    protected String getCacheKey(Object entity, ResultType resultType, TranslatedEntity entityType) {
+    protected String getCacheKey(ResultType resultType, TranslatedEntity entityType) {
         String cacheKey = StringUtils.join(new String[] { entityType.getFriendlyType()}, "|");
         if (extensionManager != null) {
             ExtensionResultHolder<String> result = new ExtensionResultHolder<String>();
-            extensionManager.getProxy().getCacheKey(entity, cacheKey, resultType, result);
+            extensionManager.getProxy().getCacheKey(cacheKey, resultType, result);
             if (result.getResult() != null) {
                 cacheKey = result.getResult();
             }
