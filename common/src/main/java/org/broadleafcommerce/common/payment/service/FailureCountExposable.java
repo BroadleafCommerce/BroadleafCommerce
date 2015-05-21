@@ -18,7 +18,7 @@
  * #L%
  */
 
-package org.broadleafcommerce.core.payment.service;
+package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 
