@@ -569,7 +569,7 @@ public class BroadleafRequestContext {
         StringBuilder sb = new StringBuilder();
         sb.append("{\"ignoreSite\":\"");
         sb.append(ignoreSite==null?null:ignoreSite);
-        sb.append("{\"ignoreSparseCache\":\"");
+        sb.append("\",\"ignoreSparseCache\":\"");
         sb.append(ignoreSparseCache==null?null:ignoreSparseCache);
         sb.append("\",\"sandBox\":\"");
         sb.append(sandBox==null?null:sandBox.getId());
