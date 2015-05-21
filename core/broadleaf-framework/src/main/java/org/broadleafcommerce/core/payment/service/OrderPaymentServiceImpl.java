@@ -106,12 +106,7 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
     }
 
     @Override
-    public CustomerPayment saveOrderPaymentAsCustomerPayment(Customer customer, OrderPayment orderPayment) throws PaymentException {
-        CustomerPayment customerPayment = customerPaymentService.create();
-        customerPayment.setCustomer(customer);
-        customerPayment.setBillingAddress(orderPayment.getBillingAddress());
-        customerPayment.setPaymentGatewayType(orderPayment.getGatewayType());
-        
+    public CustomerPayment createCustomerPaymentFromOrderPayment(Customer customer, OrderPayment orderPayment) throws PaymentException {
         String cardType = null;
         String expDate = null;
         String lastFour = null;
@@ -132,6 +127,18 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
             }
         }
 
+        CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentByToken(token);
+        
+        if (customerPayment == null) {
+            customerPayment = customerPaymentService.create();
+        } else {
+            return customerPayment;
+        }
+        
+        customerPayment.setCustomer(customer);
+        customerPayment.setBillingAddress(orderPayment.getBillingAddress());
+        customerPayment.setPaymentGatewayType(orderPayment.getGatewayType());
+
         if (expDate != null) {
             customerPayment.setExpirationDate(expDate);
         }
@@ -150,6 +157,6 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
         }
         customerPayment.setPaymentName(paymentName);
 
-        return customerPayment;
+        return customerPaymentService.saveCustomerPayment(customerPayment);
     }
 }

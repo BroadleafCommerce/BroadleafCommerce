@@ -234,8 +234,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         try {
             if (savePayment) {
                 payment.setPaymentName(paymentName);
-                payment.setCustomerPayment(orderPaymentService.saveOrderPaymentAsCustomerPayment(order.getCustomer(), 
-                        payment));
+                payment.setCustomerPayment(orderPaymentService.createCustomerPaymentFromOrderPayment(order.getCustomer(), payment));
             }
         } catch (PaymentException e) {
             e.printStackTrace();

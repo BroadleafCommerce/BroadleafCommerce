@@ -56,6 +56,6 @@ public interface OrderPaymentService {
 
     public PaymentLog createLog();
 
-    public CustomerPayment saveOrderPaymentAsCustomerPayment(Customer customer, OrderPayment orderPayment) throws
+    public CustomerPayment createCustomerPaymentFromOrderPayment(Customer customer, OrderPayment orderPayment) throws
             PaymentException;
 }
