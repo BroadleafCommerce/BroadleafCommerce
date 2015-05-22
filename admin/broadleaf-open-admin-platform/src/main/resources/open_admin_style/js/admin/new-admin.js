@@ -111,7 +111,7 @@ $(document).ready(function(){
             close($(".secondary-nav"));
         } else {
             var el1 = $(".nav-section.active");
-            if (el1.length != 0 ) close($(".secondary-nav.active"));
+            if (el1.length != 0 ) close($(".secondary-nav"));
 
             $(".nav-section").removeClass("active");
             $(this).addClass("active");
