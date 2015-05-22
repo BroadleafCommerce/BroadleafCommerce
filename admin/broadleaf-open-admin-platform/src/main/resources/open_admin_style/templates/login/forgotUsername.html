@@ -7,7 +7,7 @@
          </div>
     </div>
 
-    <blc:form th:fragment="form" action="#" th:action="@{forgotUsername}" method="POST">
+    <blc:form th:fragment="form" action="#" th:action="@{/forgotUsername}" method="POST">
 
         <label th:text="#{password.email}" />
         <input type="email" id="emailAddress" name="emailAddress" autofocus="autofocus" class="twelve" />
@@ -16,10 +16,10 @@
     </blc:form>
 
     <div th:fragment="options">
-        <ul class="list-inline">
-            <li><a href="#" th:href="@{forgotPassword}" th:text="#{password.forgotPassword}" /></li>
+        <ul class="inline-list">
+            <li><a href="#" th:href="@{/forgotPassword}" th:text="#{password.forgotPassword}" /></li>
             <li class="divider">&nbsp;</li>
-            <li><a href="#" th:href="@{login}" th:text="#{password.login}" /></li>
+            <li><a href="#" th:href="@{/login}" th:text="#{password.login}" /></li>
         </ul>
     </div>
 </div>

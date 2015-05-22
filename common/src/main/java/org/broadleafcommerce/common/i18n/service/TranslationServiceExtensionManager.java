@@ -1,6 +1,6 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Framework Web
  * %%
  * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
@@ -17,28 +17,25 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.resolver;
+package org.broadleafcommerce.common.i18n.service;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.broadleafcommerce.common.extension.SparselyPopulatedQueryExtensionHandler;
 import org.springframework.stereotype.Service;
 
 
 /**
- * @author Andre Azzolini (apazzolini), bpolster
+ * Provide specialized cache population queries for price lists. This follows the sparsely populated cache
+ * pattern for multitenancy.
+ *
+ * @see org.broadleafcommerce.common.extension.SparselyPopulatedQueryExtensionHandler
+ * @author Jeff Fischer
  */
-@Service("blDatabaseResourceResolverExtensionManager")
-public class DatabaseResourceResolverExtensionManager extends ExtensionManager<DatabaseResourceResolverExtensionHandler> {
+@Service("blTranslationServiceExtensionManager")
+public class TranslationServiceExtensionManager extends ExtensionManager<SparselyPopulatedQueryExtensionHandler> {
 
-    public DatabaseResourceResolverExtensionManager() {
-        super(DatabaseResourceResolverExtensionHandler.class);
+    public TranslationServiceExtensionManager() {
+        super(SparselyPopulatedQueryExtensionHandler.class);
     }
 
-    /**
-     * By default, this manager will allow other handlers to process the method when a handler returns
-     * HANDLED.
-     */
-    @Override
-    public boolean continueOnHandled() {
-        return false;
-    }
 }

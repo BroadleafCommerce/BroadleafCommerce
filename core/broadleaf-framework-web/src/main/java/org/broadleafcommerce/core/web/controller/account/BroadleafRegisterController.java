@@ -34,6 +34,7 @@ import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerVa
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
 import org.broadleafcommerce.profile.web.core.service.login.LoginService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
@@ -55,8 +56,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author bpolster
  */
 public class BroadleafRegisterController extends BroadleafAbstractController {
-        
-    protected boolean useEmailForLogin = true;
+
+    @Value("${use.email.for.site.login:true}")
+    protected boolean useEmailForLogin;
+
     protected static String registerSuccessView = "ajaxredirect:/";
     protected static String registerView = "authentication/register";
     

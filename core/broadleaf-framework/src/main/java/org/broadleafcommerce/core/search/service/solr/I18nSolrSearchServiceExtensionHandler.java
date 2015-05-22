@@ -144,7 +144,12 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
                     processedLocaleCodes.add(localeCode);
                     tempContext.setLocale(locale);
 
-                    final Object propertyValue = shs.getPropertyValue(product, propertyName);
+                    final Object propertyValue;
+                    if (useSku) {
+                        propertyValue = shs.getPropertyValue(sku, propertyName);
+                    } else {
+                        propertyValue = shs.getPropertyValue(product, propertyName);
+                    }
 
                     values.put(localeCode, propertyValue);
                 }

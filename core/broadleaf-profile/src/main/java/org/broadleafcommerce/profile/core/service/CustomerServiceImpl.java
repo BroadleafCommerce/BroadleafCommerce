@@ -544,7 +544,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Deprecated
     @Override
     public GenericResponse checkPasswordResetToken(String token) {
-        if (passwordEncoder == null) {
+        if (!usingDeprecatedPasswordEncoder()) {
             // We cannot proceed without a Customer when using the new PasswordEncoder
             throw new NoSuchBeanDefinitionException("This method requires the deprecated PasswordEncoder bean");
         }
@@ -563,7 +563,7 @@ public class CustomerServiceImpl implements CustomerService {
             response.addErrorCode("invalidToken");
         }
 
-        String rawToken = token.toLowerCase();
+        String rawToken = token;
         String salt = null;
 
         if (usingDeprecatedPasswordEncoder()) {
@@ -580,11 +580,20 @@ public class CustomerServiceImpl implements CustomerService {
 
         CustomerForgotPasswordSecurityToken fpst = null;
         if (!response.getHasErrors()) {
-            List<CustomerForgotPasswordSecurityToken> fpstoks = customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(customer.getId());
-            for (CustomerForgotPasswordSecurityToken fpstok : fpstoks) {
-                if (isPassValid(rawToken, fpstok.getToken(), salt)) {
-                    fpst = fpstok;
-                    break;
+            if (customer == null) {
+                if (!usingDeprecatedPasswordEncoder()) {
+                    // customer can only be null when supporting use of the legacy PasswordEncoder
+                    response.addErrorCode("invalidCustomer");
+                } else {
+                    fpst = customerForgotPasswordSecurityTokenDao.readToken(passwordEncoder.encodePassword(rawToken, salt));
+                }
+            } else {
+                List<CustomerForgotPasswordSecurityToken> fpstoks = customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(customer.getId());
+                for (CustomerForgotPasswordSecurityToken fpstok : fpstoks) {
+                    if (isPassValid(rawToken, fpstok.getToken(), salt)) {
+                        fpst = fpstok;
+                        break;
+                    }
                 }
             }
             if (fpst == null) {

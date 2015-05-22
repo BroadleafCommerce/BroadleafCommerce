@@ -51,14 +51,13 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      *
      * @param type the class type for the query
      * @param resultType pass a ResultType of IGNORE to explicitly ignore refineRetrieve, even if the multitenant module is loaded
-     * @param testObject the multitenant object to test for catalog and profile information
      * @param builder
      * @param criteria
      * @param root
      * @param restrictions any additional JPA criteria restrictions should be added here
      * @return the status of the extension operation
      */
-    ExtensionResultStatusType refineRetrieve(Class<?> type, ResultType resultType, Object testObject, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Predicate> restrictions);
+    ExtensionResultStatusType refineRetrieve(Class<?> type, ResultType resultType, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Predicate> restrictions);
 
     /**
      * Perform any setup operations. This is usually done before executing the query and can serve to prepare the BroadleafRequestContext (if applicable).
@@ -122,5 +121,26 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      * @return the status of the extension operation
      */
     ExtensionResultStatusType getCacheKey(Object testObject, String qualifier, ResultType resultType, ExtensionResultHolder<String> response);
+
+    /**
+     * Build the cache key to be used for either the STANDARD or TEMPLATE style cache, driven by the resultType.
+     *
+     * @param qualifier the suffix for the cache key
+     * @param resultType the type of cache key to create (STANDARD or TEMPLATE)
+     * @param response the response container
+     * @return the status of the extension operation
+     */
+    ExtensionResultStatusType getCacheKey(String qualifier, ResultType resultType, ExtensionResultHolder<String> response);
+
+    /**
+     * Convert the list of query results into a list that denotes not only the query results, but also whether or not each member
+     * represents a deleted/archived item, or an active/normal item.
+     *
+     * @param type the class type for the query
+     * @param queryResults the results of the fetch query from the database
+     * @param response the response container - the list is sorted with deleted item appearing first
+     * @return the status of the extension operation
+     */
+    ExtensionResultStatusType buildStatus(Class<?> type, List queryResults, ExtensionResultHolder<List<StandardCacheItem>> response);
 
 }

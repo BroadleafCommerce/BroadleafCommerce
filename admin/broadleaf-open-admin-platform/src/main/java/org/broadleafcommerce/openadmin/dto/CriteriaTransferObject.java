@@ -124,6 +124,13 @@ public class CriteriaTransferObject {
         return criteriaMap.get(name);
     }
 
+    public void defaultSortDirectionForFieldIfUnset(String name, SortDirection defaultDirection) {
+        FilterAndSortCriteria fsc = get(name);
+        if (fsc.getSortDirection() == null) {
+            fsc.setSortDirection(defaultDirection);
+        }
+    }
+
     /**
      * This list holds additional filter mappings that might have been constructed in a custom persistence
      * handler. This is only used when very custom filtering needs to occur.

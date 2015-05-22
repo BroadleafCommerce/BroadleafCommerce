@@ -19,8 +19,6 @@
  */
 package org.broadleafcommerce.common.web.resource.transformer;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
 import org.broadleafcommerce.common.web.resource.resolver.BroadleafResourceTransformerOrder;
 import org.springframework.core.Ordered;
@@ -46,8 +44,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component("blMinifyResourceTransformer")
 public class MinifyResourceTransformer implements ResourceTransformer, Ordered {
 
-    private static final Log logger = LogFactory.getLog(MinifyResourceTransformer.class);
-
     @javax.annotation.Resource(name = "blResourceMinificationService")
     protected ResourceMinificationService minifyService;
 
@@ -59,9 +55,6 @@ public class MinifyResourceTransformer implements ResourceTransformer, Ordered {
 
         Resource transformed = transformerChain.transform(request, resource);
 
-        if (logger.isTraceEnabled()) {
-            logger.trace("Putting transformed resource in cache");
-        }
         return minifyService.minify(transformed);
     }
 

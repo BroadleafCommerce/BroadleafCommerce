@@ -127,6 +127,7 @@ public class BroadleafRequestContext {
     protected RequestDTO requestDTO;
     protected Boolean isAdmin = false;
     protected Long adminUserId;
+    protected Boolean ignoreSparseCache = false;
 
     protected DeployState deployState = DeployState.UNDEFINED;
     protected DeployBehavior deployBehavior = DeployBehavior.UNDEFINED;
@@ -516,6 +517,14 @@ public class BroadleafRequestContext {
         this.enforceEnterpriseCollectionBehaviorState = enforceEnterpriseCollectionBehaviorState;
     }
 
+    public Boolean getIgnoreSparseCache() {
+        return ignoreSparseCache;
+    }
+
+    public void setIgnoreSparseCache(Boolean ignoreSparseCache) {
+        this.ignoreSparseCache = ignoreSparseCache;
+    }
+
     /**
      * In some cases, it is useful to utilize a clone of the context that does not include the actual container request
      * and response information. Such a case would be when executing an asynchronous operation on a new thread from
@@ -527,6 +536,7 @@ public class BroadleafRequestContext {
     public BroadleafRequestContext createLightWeightClone() {
         BroadleafRequestContext context = new BroadleafRequestContext();
         context.setIgnoreSite(ignoreSite);
+        context.setIgnoreSparseCache(ignoreSparseCache);
         context.setSandBox(sandBox);
         context.setNonPersistentSite(site);
         context.setEnforceEnterpriseCollectionBehaviorState(enforceEnterpriseCollectionBehaviorState);
@@ -559,6 +569,8 @@ public class BroadleafRequestContext {
         StringBuilder sb = new StringBuilder();
         sb.append("{\"ignoreSite\":\"");
         sb.append(ignoreSite==null?null:ignoreSite);
+        sb.append("\",\"ignoreSparseCache\":\"");
+        sb.append(ignoreSparseCache==null?null:ignoreSparseCache);
         sb.append("\",\"sandBox\":\"");
         sb.append(sandBox==null?null:sandBox.getId());
         sb.append("\",\"nonPersistentSite\":\"");
@@ -611,6 +623,9 @@ public class BroadleafRequestContext {
         }
         if (!json.get("ignoreSite").equals("null")) {
             context.setIgnoreSite(Boolean.valueOf(json.get("ignoreSite")));
+        }
+        if (!json.get("ignoreSparseCache").equals("null")) {
+            context.setIgnoreSparseCache(Boolean.valueOf(json.get("ignoreSparseCache")));
         }
         if (!json.get("sandBox").equals("null")) {
             context.setSandBox(em.find(SandBoxImpl.class, Long.parseLong(json.get("sandBox"))));
