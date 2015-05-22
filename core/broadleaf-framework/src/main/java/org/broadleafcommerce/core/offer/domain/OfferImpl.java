@@ -126,6 +126,7 @@ public class OfferImpl implements Offer, AdminMainEntity {
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 1000, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description,
+        isBorderlessGroup = true,
         prominent = true, gridOrder = 1)
     protected String name;
 

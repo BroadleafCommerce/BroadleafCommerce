@@ -494,6 +494,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setExplicitFieldType(annot.fieldType());
             override.setFieldType(annot.fieldType());
             override.setGroup(annot.group());
+            override.setIsBorderlessGroup(annot.isBorderlessGroup());
             override.setGroupCollapsed(annot.groupCollapsed());
             override.setGroupOrder(annot.groupOrder());
             override.setTab(annot.tab());
@@ -633,6 +634,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getGroup()!=null) {
             metadata.setGroup(basicFieldMetadata.getGroup());
+        }
+        if (basicFieldMetadata.getIsBorderlessGroup()!=null) {
+            metadata.setIsBorderlessGroup(basicFieldMetadata.getIsBorderlessGroup());
         }
         if (basicFieldMetadata.getGroupOrder()!=null) {
             metadata.setGroupOrder(basicFieldMetadata.getGroupOrder());

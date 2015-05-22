@@ -325,4 +325,9 @@ public @interface AdminPresentation {
      *
      */
     int column() default 0;
+
+    /**
+     *
+     */
+    boolean isBorderlessGroup() default false;
 }

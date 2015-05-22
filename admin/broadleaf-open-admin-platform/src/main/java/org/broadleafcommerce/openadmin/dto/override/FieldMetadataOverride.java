@@ -94,6 +94,7 @@ public class FieldMetadataOverride {
     private String name;
     private VisibilityEnum visibility;
     private String group;
+    private Boolean isBorderlessGroup;
     private Integer groupOrder;
     protected Integer gridOrder;
     private String tab;
@@ -282,6 +283,14 @@ public class FieldMetadataOverride {
 
     public void setGroup(String group) {
         this.group = group;
+    }
+
+    public Boolean getIsBorderlessGroup() {
+        return isBorderlessGroup;
+    }
+
+    public void setIsBorderlessGroup(Boolean isBorderlessGroup) {
+        this.isBorderlessGroup = isBorderlessGroup;
     }
 
     public Boolean isLargeEntry() {

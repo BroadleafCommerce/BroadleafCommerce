@@ -49,6 +49,7 @@ public class EntityForm {
     public static final String MAP_KEY_GROUP = "keyGroup";
     public static final String DEFAULT_GROUP_NAME = "Default";
     public static final Integer DEFAULT_GROUP_ORDER = 99999;
+    public static final Boolean DEFAULT_IS_BORDERLESS_GROUP = false;
     public static final String DEFAULT_TAB_NAME = "General";
     public static final Integer DEFAULT_TAB_ORDER = 100;
     public static final Integer DEFAULT_COLUMN = 0;
@@ -291,27 +292,28 @@ public class EntityForm {
         if (StringUtils.isBlank(field.getFieldType())) {
             field.setFieldType(SupportedFieldType.HIDDEN.toString());
         }
-        addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
+        addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_IS_BORDERLESS_GROUP, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
     }
 
     public void addField(Field field) {
-        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
+        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_IS_BORDERLESS_GROUP, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
     }
 
     public void addMapKeyField(Field field) {
-        addField(field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
+        addField(field, MAP_KEY_GROUP, 0, DEFAULT_IS_BORDERLESS_GROUP, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
     }
 
     public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
-        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
+        addField(field, groupName, groupOrder, DEFAULT_IS_BORDERLESS_GROUP, tabName, tabOrder, DEFAULT_COLUMN);
     }
 
-    public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder, Integer column) {
+    public void addField(Field field, String groupName, Integer groupOrder, Boolean isBorderlessGroup, String tabName, Integer tabOrder, Integer column) {
         groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
         groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
         tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
         column = column == null ? DEFAULT_COLUMN : column;
+        isBorderlessGroup = isBorderlessGroup == null ? DEFAULT_IS_BORDERLESS_GROUP : isBorderlessGroup;
 
         // Tabs and groups should be looked up by their display, translated name since 2 unique strings can display the same
         // thing when they are looked up in message bundles after display
@@ -336,6 +338,9 @@ public class EntityForm {
             fieldGroup.setTitle(groupName);
             fieldGroup.setOrder(groupOrder);
             fieldGroup.setColumn(column);
+            if (column == DEFAULT_COLUMN) {
+                fieldGroup.setIsBorderless(isBorderlessGroup);
+            }
             tab.getFieldGroups().add(fieldGroup);
         }
 

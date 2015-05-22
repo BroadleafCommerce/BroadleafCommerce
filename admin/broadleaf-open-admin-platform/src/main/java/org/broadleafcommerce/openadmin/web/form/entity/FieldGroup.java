@@ -38,6 +38,7 @@ public class FieldGroup {
     protected Set<Field> fields = new HashSet<Field>();
     protected Boolean isVisible;
     protected Integer column;
+    protected Boolean isBorderless;
 
     public Boolean getIsVisible() {
         if (isVisible != null) {
@@ -53,6 +54,17 @@ public class FieldGroup {
 
     public void setIsVisible(Boolean isVisible) {
         this.isVisible = isVisible;
+    }
+
+    public Boolean getIsBorderless() {
+        if (isBorderless != null) {
+            return isBorderless;
+        }
+        return false;
+    }
+
+    public void setIsBorderless(Boolean isBorderless) {
+        this.isBorderless = isBorderless;
     }
 
     public String getTitle() {
