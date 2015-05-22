@@ -46,7 +46,7 @@
                          th:classappend="${(tabStat.first and tab.isVisible) or ((tabStat.index > 1 and not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
                          th:inline="text">
 
-                        <div th:class="${tab.isMultiColumn} ? 'col8' : 'col12'">
+                        <div class="col11">
                             <div class="row">
                                 <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                                     <!--<legend th:text="${group.title}" />-->
@@ -57,7 +57,7 @@
                                         <!-- *** IMPORTANT *** -->
                                     </comment>
                                     <div th:each="field : ${group.fields}"
-                                         th:if="${field.name} and ${field.column} == 0"
+                                         th:if="${field.name}"
                                          th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
                                          blc_admin:component_id="${field}"
                                          th:classappend="${!field.isVisible}? 'hidden'">
@@ -90,36 +90,6 @@
                                     <div th:include="components/listGrid" th:with="listGrid=${collectionListGrid}" th:remove="tag" />
                                 </div>
                             </div>
-                        </div>
-                        <div th:if="${tab.isMultiColumn}" class="col4">
-                            <fieldset th:each="group : ${tab.fieldGroups}" th:if="${group.column} != 0" th:classappend="${!group.isVisible}? 'hidden'" th:remove="tag">
-                                <div class="sidebar">
-                                    <div class="titlebar">
-                                        <!-- TODO: Do we want Group-level tooltips? -->
-                                        <span th:utext="${group.title}"/>
-                                        <i class="fa fa-question-circle help-tip" data-tip="Tip text here"></i>
-                                    </div>
-                                    <div class="sidebar-content">
-
-                                        <div th:each="field : ${group.fields}"
-                                             th:if="${field.name} and ${field.column} != 0"
-                                             th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
-                                             blc_admin:component_id="${field}"
-                                             th:classappend="${!field.isVisible}? 'hidden'">
-
-                                            <div th:if="${field.readOnly}" th:remove="tag">
-                                                <div th:substituteby="fields/readonly" />
-                                            </div>
-                                            <div th:unless="${field.readOnly}" th:remove="tag">
-                                                <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
-                                            </div>
-
-                                            <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </fieldset>
                         </div>
                     </div>
                 </div>
