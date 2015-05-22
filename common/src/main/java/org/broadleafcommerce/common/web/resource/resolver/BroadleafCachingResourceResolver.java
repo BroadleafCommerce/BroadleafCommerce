@@ -62,15 +62,6 @@ public class BroadleafCachingResourceResolver extends CachingResourceResolver im
     @Value("${resource.caching.enabled:true}")
     protected boolean resourceCachingEnabled;
 
-    /**
-     * Storing null resource resolution was added for performance reasons.   An issue occurred in admin (QA#603) that as 
-     * of this writing, we have not been able to be reproduce.    This property is used for defensive coding since the 
-     * section is not used for admin in normal cases.   This along with additional logging in the QA environment should
-     * help to locate the issue.    If null cache was the reason then this will fix the issue for admin.
-     */
-    @Value("${cache.null.resource.resolution:true}")
-    protected boolean cacheNullResources;
-
     @Autowired
     public BroadleafCachingResourceResolver(@Qualifier("blSpringCacheManager") CacheManager cacheManager) {
         super(cacheManager, DEFAULT_CACHE_NAME);
@@ -85,27 +76,7 @@ public class BroadleafCachingResourceResolver extends CachingResourceResolver im
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
         if (resourceCachingEnabled) {
-            if (cacheNullResources) {
-                String key = RESOLVED_RESOURCE_CACHE_KEY_PREFIX_NULL + requestPath;
-                Object nullResource = getCache().get(key, Object.class);
-                if (nullResource != null) {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace(String.format("Found null reference resource match for '%s'", requestPath));
-                    }
-                    return null;
-                } else {
-                    Resource response = super.resolveResourceInternal(request, requestPath, locations, chain);
-                    if (response == null) {
-                        if (logger.isTraceEnabled()) {
-                            logger.trace(String.format("Putting resolved null reference resource in cache for '%s'", requestPath));
-                        }
-                        getCache().put(key, NULL_REFERENCE);
-                    }
-                    return response;
-                }
-            } else {
-                return super.resolveResourceInternal(request, requestPath, locations, chain);
-            }
+            return super.resolveResourceInternal(request, requestPath, locations, chain);
         } else {
             return chain.resolveResource(request, requestPath, locations);
         }
