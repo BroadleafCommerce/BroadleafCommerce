@@ -34,6 +34,8 @@ public interface FailureCountExposable {
 
     public void incrementFailure();
 
-    public ServiceStatusType getServiceStatus();
+    ServiceStatusType getServiceStatus();
+    
+    Integer getFailureReportingThreshold();
 
 }

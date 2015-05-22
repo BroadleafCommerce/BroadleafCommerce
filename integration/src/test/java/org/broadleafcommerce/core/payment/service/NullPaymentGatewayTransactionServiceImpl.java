@@ -220,7 +220,7 @@ public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayT
      * arbitrarily set a failure threshold value of "3"
      */
     public synchronized void incrementFailure() {
-        if (failureCount >= 3) {
+        if (failureCount >= getFailureReportingThreshold()) {
             isUp = false;
         } else {
             failureCount++;
@@ -234,6 +234,11 @@ public class NullPaymentGatewayTransactionServiceImpl implements PaymentGatewayT
         } else {
             return ServiceStatusType.DOWN;
         }
+    }
+
+    @Override
+    public Integer getFailureReportingThreshold() {
+        return 3;
     }
 
 }
