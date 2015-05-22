@@ -94,11 +94,12 @@ $(".nav-section[data-toggle]").on("click", function(n) {
         $(".nav-section").removeClass("active");
         close($(".secondary-nav"));
     } else {
-        var el1 = $(".nav-section .active");
+        var el1 = $(".nav-section.active");
+        if (el1.length != 0 ) close($(".secondary-nav"));
+
         $(".nav-section").removeClass("active");
         $(this).addClass("active");
 
-        close($(".secondary-nav"));
         open($(selector));
     }
 });

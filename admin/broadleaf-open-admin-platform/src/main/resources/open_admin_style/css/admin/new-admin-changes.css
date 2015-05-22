@@ -18,25 +18,8 @@
  * #L%
  */
 
-.app-content .content .section-content.no-ribbon { padding-top: 45px; }
 .app-content .content .header .button { line-height:14px; }
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
-
-table.dataTable thead .sorting {
-    background:url("../../img/admin/sort_both.png") no-repeat center right
-}
-table.dataTable thead .sorting_asc {
-    background:url("../../img/admin/sort_asc.png") no-repeat center right
-}
-table.dataTable thead .sorting_desc {
-    background:url("../../img/admin/sort_desc.png") no-repeat center right
-}
-table.dataTable thead .sorting_asc_disabled {
-    background:url("../../img/admin/sort_asc_disabled.png") no-repeat center right
-}
-table.dataTable thead .sorting_desc_disabled {
-    background:url("../../img/admin/sort_desc_disabled.png") no-repeat center right
-}
 
 .dataTables_filter, .dataTables_length, .dataTables_info {
     display: none;
@@ -86,7 +69,7 @@ table.dataTable thead .sorting_desc_disabled {
     white-space: nowrap;
 }
 
-/* temporary until Ben makes change in new css */
+/* temporary until new css */
 input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.radio-label.clr, .radio>input[type="radio"]+label {
     padding-left: 25px;
     padding-right: 15px;
