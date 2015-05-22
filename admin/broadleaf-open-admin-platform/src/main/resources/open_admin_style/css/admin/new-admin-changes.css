@@ -21,9 +21,24 @@
 .app-content .content .header .button { line-height:14px; }
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
 
-.dataTables_filter, .dataTables_length, .dataTables_info {
-    display: none;
+.dataTables_wrapper .dataTables_length {
+    margin-top: 0;
+    margin-left: 30px;
 }
+
+.dataTables_wrapper .dataTables_length .selectize-control {
+    display: inline-block;
+    background: white;
+    width: 80px;
+    height: 40px;
+    vertical-align: middle;
+    border: 1px solid #D8D5D0
+}
+
+.dataTables_wrapper .dataTables_length .selectize-control.single .selectize-input {
+    padding: 10px;
+}
+
 
 .button{
     font-size: 11px;
@@ -78,6 +93,11 @@ input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.rad
 /* added for rule builder button */
 .add-and-button {
     height: 45px;
+}
+
+/* add nowrap to listgrids */
+.table tbody>tr>td {
+    white-space: nowrap;
 }
 
 /* change .site-bar to .header */

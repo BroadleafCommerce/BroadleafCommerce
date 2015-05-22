@@ -82,6 +82,49 @@ $(document).ready(function(){
     });
 
     $('table.datatable').DataTable();
+
+    $('select').selectize({
+        sortField: 'text'
+    });
+
+
+    $('.radio-label').on("click", function(e) {
+        e.preventDefault();
+        $(this).prev('input').prop("checked", true).change();
+    });
+
+    window.remodalGlobals = {
+        namespace: "modal",
+        defaults: {
+            hashTracking: false
+        }
+    };
+
+    $(".nav-section[data-toggle]").on("click", function(n) {
+        n.preventDefault();
+        var selector = $(this).data("toggle");
+
+        $(this).blur();
+
+        if ($(this).hasClass("active")) {
+            $(".nav-section").removeClass("active");
+            close($(".secondary-nav"));
+        } else {
+            var el1 = $(".nav-section.active");
+            if (el1.length != 0 ) close($(".secondary-nav"));
+
+            $(".nav-section").removeClass("active");
+            $(this).addClass("active");
+
+            open($(selector));
+        }
+    });
+
+    $(".nav-close").on("click", function(x) {
+        x.preventDefault();
+        $(".nav-section").removeClass("active");
+        close($(".secondary-nav"));
+    });
 });
 
 $(".nav-section[data-toggle]").on("click", function(n) {
@@ -104,12 +147,6 @@ $(".nav-section[data-toggle]").on("click", function(n) {
     }
 });
 
-$(".nav-close").on("click", function(x) {
-    x.preventDefault();
-    $(".nav-section").removeClass("active");
-    close($(".secondary-nav"));
-});
-
 function open(el) {
     $(el).animate({
         width: "301px"
@@ -125,20 +162,3 @@ function close(el) {
         // Animation complete.
     });
 }
-
-$('select').selectize({
-    sortField: 'text'
-});
-
-
-$('.radio-label').on("click", function(e) {
-    e.preventDefault();
-    $(this).prev('input').prop("checked", true).change();
-});
-
-window.remodalGlobals = {
-    namespace: "modal",
-    defaults: {
-        hashTracking: false
-    }
-};
