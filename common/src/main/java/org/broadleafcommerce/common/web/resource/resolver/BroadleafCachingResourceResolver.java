@@ -76,7 +76,17 @@ public class BroadleafCachingResourceResolver extends CachingResourceResolver im
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
         if (resourceCachingEnabled) {
-            return super.resolveResourceInternal(request, requestPath, locations, chain);
+            Resource resource = super.resolveResourceInternal(request, requestPath, locations, chain);
+
+            if (logger.isDebugEnabled()) {
+                if (resource == null) {
+                    logger.debug("Cache resolver, returned a null resource " + requestPath);
+                } else if (!resource.exists()) {
+                    logger.debug("Cache resolver, returned a resource that doesn't exist "
+                            + requestPath + " - " + resource);
+                }
+            }
+            return resource;
         } else {
             return chain.resolveResource(request, requestPath, locations);
         }
