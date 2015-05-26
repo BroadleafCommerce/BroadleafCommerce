@@ -143,4 +143,12 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      */
     ExtensionResultStatusType buildStatus(Class<?> type, List queryResults, ExtensionResultHolder<List<StandardCacheItem>> response);
 
+    /**
+     * Determine if the current thread is in a valid state for sparse cache handling
+     *
+     * @param response
+     * @return
+     */
+    ExtensionResultStatusType isValidState(ExtensionResultHolder<Boolean> response);
+
 }
