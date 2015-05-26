@@ -162,8 +162,14 @@ public class TranslationServiceImpl implements TranslationService {
         if (StringUtils.isNotBlank(locale.getCountry())) {
             localeCountryCode += "_" + locale.getCountry();
         }
-
-        if (!BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox() || BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSparseCache()) {
+        boolean isValidForCache = false;
+        if (extensionManager != null) {
+            ExtensionResultHolder<Boolean> response = new ExtensionResultHolder<Boolean>();
+            response.setResult(false);
+            extensionManager.getProxy().isValidState(response);
+            isValidForCache = response.getResult();
+        }
+        if (!BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox() || !isValidForCache) {
             Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode,
                     ResultType.IGNORE);
             if (translation != null) {
