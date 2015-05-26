@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.resource.AbstractResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,6 +59,8 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
         if (requestPath != null) {
             if (isBundleFile(requestPath)) {
                 Resource bundle = bundlingService.resolveBundleResource(requestPath);
+
+                logTraceInformation(bundle);
                 if (bundle != null && bundle.exists()) {
                     return bundle;
                 }
@@ -65,6 +68,22 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
         }
 
         return chain.resolveResource(request, requestPath, locations);
+    }
+
+    protected void logTraceInformation(Resource bundle) {
+        if (LOG.isTraceEnabled()) {
+            if (bundle == null) {
+                LOG.trace("Resolving bundle, bundle is null");
+            } else {
+                LOG.trace("Resolving bundle, bundle is not null, bundle.exists() == " + bundle.exists() +
+                        " ,filename = " + bundle.getFilename());
+                try {
+                    LOG.trace("Resolving bundle - File Path" + bundle.getFile().getAbsolutePath());
+                } catch (IOException e) {
+                    LOG.error("IOException debugging bundle code", e);
+                }
+            }
+        }
     }
 
     @Override
@@ -81,7 +100,11 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
     }
 
     protected boolean isBundleFile(String requestPath) {
-        return bundlingService.checkForRegisteredBundleFile(requestPath);
+        boolean isBundle = bundlingService.checkForRegisteredBundleFile(requestPath);
+        if (logger.isTraceEnabled()) {
+            logger.trace("Checking isBundleFile, requestPath=\"" + requestPath + "\" isBundle=\"" + isBundle + "\"");
+        }
+        return isBundle;
     }
 
     @Override

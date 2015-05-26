@@ -76,23 +76,17 @@ public class BroadleafCachingResourceResolver extends CachingResourceResolver im
     protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
             List<? extends Resource> locations, ResourceResolverChain chain) {
         if (resourceCachingEnabled) {
-            String key = RESOLVED_RESOURCE_CACHE_KEY_PREFIX_NULL + requestPath;
-            Object nullResource = getCache().get(key, Object.class);
-            if (nullResource != null) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace(String.format("Found null reference resource match for '%s'", requestPath));
+            Resource resource = super.resolveResourceInternal(request, requestPath, locations, chain);
+
+            if (logger.isDebugEnabled()) {
+                if (resource == null) {
+                    logger.debug("Cache resolver, returned a null resource " + requestPath);
+                } else if (!resource.exists()) {
+                    logger.debug("Cache resolver, returned a resource that doesn't exist "
+                            + requestPath + " - " + resource);
                 }
-                return null;
-            } else {
-                Resource response = super.resolveResourceInternal(request, requestPath, locations, chain);
-                if (response == null) {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace(String.format("Putting resolved null reference resource in cache for '%s'", requestPath));
-                    }
-                    getCache().put(key, NULL_REFERENCE);
-                }
-                return response;
             }
+            return resource;
         } else {
             return chain.resolveResource(request, requestPath, locations);
         }

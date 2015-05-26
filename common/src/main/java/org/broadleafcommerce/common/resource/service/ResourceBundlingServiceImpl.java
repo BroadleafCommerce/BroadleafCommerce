@@ -90,7 +90,7 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     private KeyLockManager keyLockManager = KeyLockManagers.newLock();
 
-    private ConcurrentHashMap<String, String> createdBundles = new ConcurrentHashMap<String, String>();
+    private ConcurrentHashMap<String, Resource> createdBundles = new ConcurrentHashMap<String, Resource>();
     
     @Override
     public String resolveBundleResourceName(String requestedBundleName, String mappingPrefix, List<String> files) {
@@ -139,14 +139,18 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
     @Override
     public Resource resolveBundleResource(String versionedBundleResourceName) {
-        versionedBundleResourceName = lookupBundlePath(versionedBundleResourceName);
-        return readBundle(versionedBundleResourceName);
+        return createdBundles.get(lookupBundlePath(versionedBundleResourceName));
     }
 
     @Override
     public boolean checkForRegisteredBundleFile(String versionedBundleName) {
         versionedBundleName = lookupBundlePath(versionedBundleName);
-        return createdBundles.containsKey(versionedBundleName);
+        boolean bundleRegistered = createdBundles.containsKey(versionedBundleName);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Checking for registered bundle file, versionedBundleName=\"" + versionedBundleName + "\" bundleRegistered=\"" + bundleRegistered + "\"");
+        }
+        return bundleRegistered;
     }
 
     protected String lookupBundlePath(String requestPath) {
@@ -169,15 +173,15 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
 
                 @Override
                 public void doInLock() {
-                    Resource bundle = readBundle(versionedBundleName);
-                    if (bundle == null || !bundle.exists()) {
-                        Resource bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations);
+                    Resource bundleResource = createdBundles.get(versionedBundleName);
+                    if (bundleResource == null || !bundleResource.exists()) {
+                        bundleResource = createBundle(versionedBundleName, filePaths, resolverChain, locations);
                         if (bundleResource != null) {
                             saveBundle(bundleResource);
                         }
                     }
-
-                    createdBundles.put(versionedBundleName, versionedBundleName);
+                    Resource savedResource = readBundle(versionedBundleName);
+                    createdBundles.put(versionedBundleName, savedResource);
                 }
             });
         }

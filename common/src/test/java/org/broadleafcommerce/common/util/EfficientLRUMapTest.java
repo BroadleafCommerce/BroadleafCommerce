@@ -34,10 +34,10 @@ public class EfficientLRUMapTest extends TestCase {
         
         // Test basics for a single name value pair
         testMap.put("key1", "value1");
-        assertTrue("The value for key1 should be value 1", "value1".equals(testMap.get("key1")));
-        assertTrue("The size() for the map should be 1", 1 == testMap.size());
-        assertTrue("The type of Map should be ConcurrentHashMap",
-                testMap.getUnderlyingMapClass().equals(ConcurrentHashMap.class));
+        assertEquals("The value for key1 should be value 1", "value1", testMap.get("key1"));
+        assertEquals("The size() for the map should be 1", 1, testMap.size());
+        assertEquals("The type of Map should be ConcurrentHashMap",
+                testMap.getUnderlyingMapClass(), ConcurrentHashMap.class);
 
         // Add keys up to the limit
         testMap.put("key2", "value2");
@@ -46,23 +46,23 @@ public class EfficientLRUMapTest extends TestCase {
         testMap.put("key5", "value5");
 
         // Validate last items and map type.
-        assertTrue("The value for key5 should be value5", "value5".equals(testMap.get("key5")));
-        assertTrue("The size() for the map should be 5", 5 == testMap.size());
-        assertTrue("The type of Map should be ConcurrentHashMap",
-                testMap.getUnderlyingMapClass().equals(ConcurrentHashMap.class));
+        assertEquals("The value for key5 should be value5", "value5", testMap.get("key5"));
+        assertEquals("The size() for the map should be 5", 5, testMap.size());
+        assertEquals("The type of Map should be ConcurrentHashMap",
+                testMap.getUnderlyingMapClass(), ConcurrentHashMap.class);
 
         // Updating an item shouldn't change the map type
         testMap.put("key5", "value5b");
-        assertTrue("The value for key5 should now be value5b", "value5b".equals(testMap.get("key5")));
-        assertTrue("The size() for the map should be 5", 5 == testMap.size());
-        assertTrue("The type of Map should be ConcurrentHashMap",
-                testMap.getUnderlyingMapClass().equals(ConcurrentHashMap.class));
+        assertEquals("The value for key5 should now be value5b", "value5b", testMap.get("key5"));
+        assertEquals("The size() for the map should be 5", 5, testMap.size());
+        assertEquals("The type of Map should be ConcurrentHashMap",
+                testMap.getUnderlyingMapClass(), ConcurrentHashMap.class);
 
         // Add another item which should trigger a switch in the map type
         testMap.put("key6", "value6");
-        assertTrue("The value for key1 should still be value1", "value1".equals(testMap.get("key1")));
-        assertTrue("The value for key6 should be value6", "value6".equals(testMap.get("key6")));
-        assertTrue("The size() for the map should be 5 since we are now LRU", 5 == testMap.size());
+        assertEquals("The value for key1 should still be value1", "value1", testMap.get("key1"));
+        assertEquals("The value for key6 should be value6", "value6", testMap.get("key6"));
+        assertEquals("The size() for the map should be 5 since we are now LRU", 5, testMap.size());
         assertTrue("The type of Map should not be a ConcurrentHashMap.   It should be a synchronized map",
                 !testMap.getUnderlyingMapClass().equals(LRUMap.class));
     }

@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
+import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
@@ -63,6 +64,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -74,7 +76,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
@@ -118,6 +123,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
+    
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
 
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
@@ -290,12 +298,13 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * display this field with a different entity then this should be that entity
      * @return
      */
-    public static FieldMetadata createConsolidatedOptionField(Class<?> inheritedFromType) {
+    public FieldMetadata createConsolidatedOptionField(Class<?> inheritedFromType) {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
         metadata.setFieldType(SupportedFieldType.STRING);
         metadata.setMutable(false);
         metadata.setInheritedFromType(inheritedFromType.getName());
-        metadata.setAvailableToTypes(new String[] { SkuImpl.class.getName() });
+        
+        metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class));
         metadata.setForeignKeyCollection(false);
         metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
 
@@ -313,6 +322,19 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         return metadata;
     }
 
+    protected String[] getPolymorphicClasses(Class<?> clazz) {
+        DynamicDaoHelperImpl helper = new DynamicDaoHelperImpl();
+        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz,
+                helper.getSessionFactory((HibernateEntityManager) em), 
+                true,
+                useCache());
+        String[] result = new String[classes.length];
+        for (int i = 0; i < classes.length; i++) {
+            result[i] = classes[i].getName();
+        }
+        return result;
+    }
+    
     /**
      * Returns a {@link Property} filled out with a delimited list of the <b>values</b> that are passed in. This should be
      * invoked on a fetch and the returned property should be added to the fetched {@link Entity} dto.
@@ -321,7 +343,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @return
      * @see {@link #createConsolidatedOptionField(Class)};
      */
-    public static Property getConsolidatedOptionProperty(Collection<ProductOptionValue> values) {
+    public Property getConsolidatedOptionProperty(Collection<ProductOptionValue> values) {
         Property optionValueProperty = new Property();
         optionValueProperty.setName(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME);
 
@@ -351,7 +373,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     /**
      * @return a blank {@link Property} corresponding to the CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME
      */
-    public static Property getBlankConsolidatedOptionProperty() {
+    public Property getBlankConsolidatedOptionProperty() {
         Property optionValueProperty = new Property();
         optionValueProperty.setName(CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME);
         optionValueProperty.setValue("");
@@ -369,7 +391,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @param order
      * @return
      */
-    public static FieldMetadata createIndividualOptionField(ProductOption option, int order) {
+    public FieldMetadata createIndividualOptionField(ProductOption option, int order) {
 
         BasicFieldMetadata metadata = new BasicFieldMetadata();
         List<ProductOptionValue> allowedValues = option.getAllowedValues();
@@ -377,7 +399,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             metadata.setFieldType(SupportedFieldType.EXPLICIT_ENUMERATION);
             metadata.setMutable(true);
             metadata.setInheritedFromType(SkuImpl.class.getName());
-            metadata.setAvailableToTypes(new String[] { SkuImpl.class.getName() });
+            metadata.setAvailableToTypes(getPolymorphicClasses(SkuImpl.class));
             metadata.setForeignKeyCollection(false);
             metadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
     
@@ -455,7 +477,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
-    public static void applyProductOptionValueCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage, String skuPropertyPrefix) {
+    public void applyProductOptionValueCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage, String skuPropertyPrefix) {
 
         //if the front
         final List<Long> productOptionValueFilterIDs = new ArrayList<Long>();

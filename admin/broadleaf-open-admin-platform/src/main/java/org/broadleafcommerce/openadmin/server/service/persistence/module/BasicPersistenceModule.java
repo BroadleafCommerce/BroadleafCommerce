@@ -1063,6 +1063,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     + " non-optional relationship. Consider changing 'optional=true' in the @ManyToOne annotation"
                                     + " or nullable=true within the @JoinColumn annotation");
                         }
+                        //Since this is occuring on a remove persistence package, merge up-front (before making a change) for proper operation in the presence of the enterprise module
+                        instance = persistenceManager.getDynamicEntityDao().merge(instance);
                         Field manyToField = fieldManager.getField(instance.getClass(), foreignKey.getManyToField());
                         Object manyToObject = manyToField.get(instance);
                         if (manyToObject != null && !(manyToObject instanceof Collection) && !(manyToObject instanceof Map)) {

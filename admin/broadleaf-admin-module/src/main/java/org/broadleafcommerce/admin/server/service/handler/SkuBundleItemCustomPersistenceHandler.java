@@ -45,6 +45,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 /**
  * Overridden to provide the option values field on the SkuBundleItem list
  * 
@@ -54,6 +56,9 @@ import java.util.Map;
 public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(SkuBundleItemCustomPersistenceHandler.class);
+    
+    @Resource(name = "blSkuCustomPersistenceHandler")
+    protected SkuCustomPersistenceHandler skuPersistenceHandler;
     
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
@@ -85,7 +90,7 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
             Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(SkuBundleItem.class.getName(), persistencePerspective);
 
             //add in the consolidated product options field
-            FieldMetadata options = SkuCustomPersistenceHandler.createConsolidatedOptionField(SkuBundleItemImpl.class);
+            FieldMetadata options = skuPersistenceHandler.createConsolidatedOptionField(SkuBundleItemImpl.class);
             options.setOrder(3);
             properties.put(SkuCustomPersistenceHandler.CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME, options);
             
@@ -115,7 +120,7 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
             List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps);
 
             //attach the product option criteria
-            SkuCustomPersistenceHandler.applyProductOptionValueCriteria(filterMappings, cto, persistencePackage, "sku");
+            skuPersistenceHandler.applyProductOptionValueCriteria(filterMappings, cto, persistencePackage, "sku");
             
             List<Serializable> records = helper.getPersistentRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
             //Convert Skus into the client-side Entity representation
@@ -127,7 +132,7 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
                 Entity entity = payload[i];
                 SkuBundleItem bundleItem = (SkuBundleItem) records.get(i);
 
-                Property optionsProperty = SkuCustomPersistenceHandler.getConsolidatedOptionProperty(bundleItem.getSku().getProductOptionValuesCollection());
+                Property optionsProperty = skuPersistenceHandler.getConsolidatedOptionProperty(bundleItem.getSku().getProductOptionValuesCollection());
                 entity.addProperty(optionsProperty);
             }
 

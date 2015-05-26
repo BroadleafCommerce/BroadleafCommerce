@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -59,6 +60,7 @@ import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
 import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -70,6 +72,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Type;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -1034,9 +1037,17 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets() {
-        final List<CategorySearchFacet> returnFacets = new ArrayList<CategorySearchFacet>();
-        returnFacets.addAll(getSearchFacets());
-        Collections.sort(returnFacets, facetPositionComparator);
+        List<CategorySearchFacet> returnCategoryFacets = new ArrayList<CategorySearchFacet>();
+        returnCategoryFacets.addAll(getSearchFacets());
+        Collections.sort(returnCategoryFacets, facetPositionComparator);
+        
+        final Collection<SearchFacet> facets = CollectionUtils.collect(returnCategoryFacets, new Transformer() {
+            
+            @Override
+            public Object transform(Object input) {
+                return ((CategorySearchFacet) input).getSearchFacet();
+            }
+        });
 
         // Add in parent facets unless they are excluded
         List<CategorySearchFacet> parentFacets = null;
@@ -1046,15 +1057,17 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
                 @Override
                 public boolean evaluate(Object arg) {
                     CategorySearchFacet csf = (CategorySearchFacet) arg;
-                    return !getExcludedSearchFacets().contains(csf.getSearchFacet()) && !returnFacets.contains(csf.getSearchFacet());
+                    return !getExcludedSearchFacets().contains(csf.getSearchFacet())
+                            && !facets.contains(csf.getSearchFacet());
                 }
             });
         }
         if (parentFacets != null) {
-            returnFacets.addAll(parentFacets);
+            returnCategoryFacets.addAll(parentFacets);
         }
         
-        return returnFacets;
+        
+        return returnCategoryFacets;
     }
 
     @Override
