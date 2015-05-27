@@ -176,7 +176,8 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     protected void validateCustomerOwnedData(CustomerAddress customerAddress) {
         if (validateCustomerOwnedData) {
             Customer activeCustomer = CustomerState.getCustomer();
-            if (! (customerAddress != null) && (customerAddress.getCustomer().equals(activeCustomer))) {
+            if (activeCustomer != null && customerAddress != null
+                    && !(activeCustomer.equals(customerAddress.getCustomer()))) {
                 throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
             }
         }
