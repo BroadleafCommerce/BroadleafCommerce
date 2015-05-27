@@ -22,8 +22,10 @@ package org.broadleafcommerce.core.web.controller.account;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,6 +36,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafManageCustomerAddressesController extends AbstractCustomerAddressController {
+
+    @Value("${validate.customer.owned.data:true}")
+    protected boolean validateCustomerOwnedData;
 
     protected String addressUpdatedMessage = "Address successfully updated";
     protected String addressAddedMessage = "Address successfully added";
@@ -50,6 +55,9 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         if (customerAddress == null) {
             throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
         }
+
+        validateCustomerOwnedData(customerAddress);
+
         CustomerAddressForm form = new CustomerAddressForm();
         form.setAddress(customerAddress.getAddress());
         form.setAddressName(customerAddress.getAddressName());
@@ -106,6 +114,9 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         if (customerAddress == null) {
             throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
         }
+
+        validateCustomerOwnedData(customerAddress);
+
         customerAddress.setAddress(form.getAddress());
         customerAddress.setAddressName(form.getAddressName());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
@@ -118,6 +129,9 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     
     public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
         try {
+            CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
+            validateCustomerOwnedData(customerAddress);
+
             customerAddressService.deleteCustomerAddressById(customerAddressId);
             redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
         } catch (DataIntegrityViolationException e) {
@@ -157,6 +171,15 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     
     public String getAddressRemovedErrorMessage() {
         return addressRemovedErrorMessage;
+    }
+
+    protected void validateCustomerOwnedData(CustomerAddress customerAddress) {
+        if (validateCustomerOwnedData) {
+            Customer activeCustomer = CustomerState.getCustomer();
+            if (! (customerAddress != null) && (customerAddress.getCustomer().equals(activeCustomer))) {
+                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
+            }
+        }
     }
     
 }

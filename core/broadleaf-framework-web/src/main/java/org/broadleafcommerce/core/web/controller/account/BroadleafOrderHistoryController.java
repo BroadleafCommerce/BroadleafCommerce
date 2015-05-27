@@ -21,7 +21,9 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
 import java.util.List;
@@ -29,6 +31,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {
+
+    @Value("${validate.customer.owned.data:true}")
+    protected boolean validateCustomerOwnedData;
 
     protected static String orderHistoryView = "account/orderHistory";
     protected static String orderDetailsView = "account/partials/orderDetails";
@@ -45,6 +50,9 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
         if (order == null) {
             throw new IllegalArgumentException("The orderNumber provided is not valid");
         }
+
+        validateCustomerOwnedData(order);
+
         model.addAttribute("order", order);
         return isAjaxRequest(request) ? getOrderDetailsView() : getOrderDetailsRedirectView();
     }
@@ -59,5 +67,14 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
 
     public String getOrderDetailsRedirectView() {
         return orderDetailsRedirectView;
+    }
+
+    protected void validateCustomerOwnedData(Order order) {
+        if (validateCustomerOwnedData) {
+            Customer activeCustomer = CustomerState.getCustomer();
+            if (! (order != null) && (order.getCustomer().equals(activeCustomer))) {
+                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
+            }
+        }
     }
 }
