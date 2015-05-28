@@ -72,8 +72,9 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     protected void validateCustomerOwnedData(Order order) {
         if (validateCustomerOwnedData) {
             Customer activeCustomer = CustomerState.getCustomer();
-            if (activeCustomer != null && order != null
-                    && !(activeCustomer.equals(order.getCustomer()))) {
+            if (activeCustomer != null && !(activeCustomer.equals(order.getCustomer()))) {
+                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
+            } else if (activeCustomer == null && order.getCustomer() != null) {
                 throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
             }
         }

@@ -130,9 +130,13 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
         try {
             CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
-            validateCustomerOwnedData(customerAddress);
 
-            customerAddressService.deleteCustomerAddressById(customerAddressId);
+            // we don't care if the address is null on a remove
+            if (customerAddress != null) {
+                validateCustomerOwnedData(customerAddress);
+                customerAddressService.deleteCustomerAddressById(customerAddressId);
+            }
+
             redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
         } catch (DataIntegrityViolationException e) {
             // This likely occurred because there is an order or cart in the system that is currently utilizing this
@@ -176,8 +180,12 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     protected void validateCustomerOwnedData(CustomerAddress customerAddress) {
         if (validateCustomerOwnedData) {
             Customer activeCustomer = CustomerState.getCustomer();
-            if (activeCustomer != null && customerAddress != null
+            if (activeCustomer != null
                     && !(activeCustomer.equals(customerAddress.getCustomer()))) {
+                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
+            }
+
+            if (activeCustomer == null && customerAddress.getCustomer() != null) {
                 throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
             }
         }
