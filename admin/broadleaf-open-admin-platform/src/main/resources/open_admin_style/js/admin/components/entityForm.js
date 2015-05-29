@@ -37,7 +37,7 @@ $(document).ready(function() {
         var $form = BLCAdmin.getForm($(this));
         var currentAction = $form.attr('action');
         var deleteUrl = currentAction + '/delete'
-        
+
         showActionSpinner($(this).closest('.entity-form-actions'));
         
         // On success this should redirect, on failure we'll get some JSON back

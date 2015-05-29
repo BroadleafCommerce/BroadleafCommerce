@@ -109,3 +109,18 @@ input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.rad
 /* change .site-bar to .header */
 .header{background-color:#2a2a2a;color:white;height:50px;left:0;padding:0 20px;position:absolute;top:0;width:100%;z-index:100}.app-content .content .header .button{background-color:#404040;padding:7px 15px;font-size:10px;text-transform:uppercase;color:#B3B3B3;letter-spacing:0.2em;display:inline-block;cursor:pointer;margin:10px 20px}.app-content .content .header h1{font-size:14px;font-weight:300;line-height:50px;margin:0;padding:0;display:inline-block;float:left;width:auto}.app-content .content .header .account-info{display:inline-block;float:right;font-size:14px}.app-content .content .header .account-info ul{margin:0;padding:0;list-style:none;color:white;display:inline}.app-content .content .header .account-info ul li{margin:0;height:50px;line-height:50px;display:inline-block;font-weight:300;float:left}.app-content .content .header .account-info ul li a{width:100%;height:50px;line-height:50px;color:white;font-size:1.25em;font-weight:300;padding:0 30px;float:left}.app-content .content .header .account-info ul li a:hover{background-color:#F1EFEB}.app-content .content .header .account-info .logout{float:left;display:inline-block;margin-right:0}
 
+.redactor-toolbar {
+    z-index: 1039 !important;
+}
+
+.content-area-title-bar .ajax-loader, .entity-form-actions .ajax-loader {
+    vertical-align: middle;
+    display: none;
+    padding: 10px 0 9px;
+}
+
+div.action-popup img.ajax-loader {
+    float: right;
+    margin-right: 10px;
+    display: none;
+}
