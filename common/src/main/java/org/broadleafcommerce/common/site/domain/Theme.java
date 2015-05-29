@@ -43,7 +43,7 @@ public interface Theme extends Serializable {
 
     /**
      * The display name for a site.  Returns blank if no theme if no path is available.   Should return
-     * a path that does not start with "/" and that ends with a "/".   For example, "store/".
+     * a path that does not start with "/" and that does not ends with a "/".
      * @return
      */
     public String getPath();

@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.apache.commons.collections4.map.LRUMap;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
@@ -27,7 +26,6 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -40,7 +38,7 @@ import java.util.Map;
  */
 public class ReflectiveWorkOnChange implements WorkOnChange {
 
-    private static Map<String, Method> methodCache = Collections.synchronizedMap(new LRUMap<String, Method>(10, 1000));
+    private static Map<String, Method> methodCache = new EfficientLRUMap<String, Method>(1000);
 
     private final Object target;
     private final String methodName;
@@ -53,10 +51,8 @@ public class ReflectiveWorkOnChange implements WorkOnChange {
     @Override
     public void doWork(Collection changed) {
         String key = target.getClass().getName() + "." + methodName + "(" + changed.getClass().getName() + ")";
-        Method method;
-        if (methodCache.containsKey(key)) {
-            method = methodCache.get(key);
-        } else {
+        Method method = methodCache.get(key);
+        if (method == null) {
             method = searchForMethod(target.getClass(), changed);
             if (method != null) {
                 methodCache.put(key, method);

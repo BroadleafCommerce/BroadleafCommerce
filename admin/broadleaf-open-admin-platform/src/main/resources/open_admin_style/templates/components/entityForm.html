@@ -105,7 +105,8 @@
         <button th:each="action : ${entityForm.actions}" 
             class="button radius dark" 
             th:type="${action.buttonType}"
-            th:attr="data-action=${action.urlPostfix}"
+            th:attr="data-url=@{${(#strings.isEmpty(action.urlOverride)) ? ('/' + sectionKey + action.urlPostfix) : action.urlOverride}},
+                     data-action=${action.urlPostfix}"
             th:classappend="${action.buttonClass}" th:unless="${hideActions}">
             <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
         </button>

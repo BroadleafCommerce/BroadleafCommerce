@@ -282,4 +282,372 @@ public class ProductWrapper extends BaseWrapper implements APIWrapper<Product> {
         }
     }
 
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    
+    /**
+     * @return the longDescription
+     */
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    
+    /**
+     * @param longDescription the longDescription to set
+     */
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    
+    /**
+     * @return the retailPrice
+     */
+    public Money getRetailPrice() {
+        return retailPrice;
+    }
+
+    
+    /**
+     * @param retailPrice the retailPrice to set
+     */
+    public void setRetailPrice(Money retailPrice) {
+        this.retailPrice = retailPrice;
+    }
+
+    
+    /**
+     * @return the salePrice
+     */
+    public Money getSalePrice() {
+        return salePrice;
+    }
+
+    
+    /**
+     * @param salePrice the salePrice to set
+     */
+    public void setSalePrice(Money salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    
+    /**
+     * @return the primaryMedia
+     */
+    public MediaWrapper getPrimaryMedia() {
+        return primaryMedia;
+    }
+
+    
+    /**
+     * @param primaryMedia the primaryMedia to set
+     */
+    public void setPrimaryMedia(MediaWrapper primaryMedia) {
+        this.primaryMedia = primaryMedia;
+    }
+
+    
+    /**
+     * @return the active
+     */
+    public Boolean getActive() {
+        return active;
+    }
+
+    
+    /**
+     * @param active the active to set
+     */
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    
+    /**
+     * @return the productOptions
+     */
+    public List<ProductOptionWrapper> getProductOptions() {
+        return productOptions;
+    }
+
+    
+    /**
+     * @param productOptions the productOptions to set
+     */
+    public void setProductOptions(List<ProductOptionWrapper> productOptions) {
+        this.productOptions = productOptions;
+    }
+
+    
+    /**
+     * @return the priority
+     */
+    public Integer getPriority() {
+        return priority;
+    }
+
+    
+    /**
+     * @param priority the priority to set
+     */
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    
+    /**
+     * @return the bundleItemsRetailPrice
+     */
+    public Money getBundleItemsRetailPrice() {
+        return bundleItemsRetailPrice;
+    }
+
+    
+    /**
+     * @param bundleItemsRetailPrice the bundleItemsRetailPrice to set
+     */
+    public void setBundleItemsRetailPrice(Money bundleItemsRetailPrice) {
+        this.bundleItemsRetailPrice = bundleItemsRetailPrice;
+    }
+
+    
+    /**
+     * @return the bundleItemsSalePrice
+     */
+    public Money getBundleItemsSalePrice() {
+        return bundleItemsSalePrice;
+    }
+
+    
+    /**
+     * @param bundleItemsSalePrice the bundleItemsSalePrice to set
+     */
+    public void setBundleItemsSalePrice(Money bundleItemsSalePrice) {
+        this.bundleItemsSalePrice = bundleItemsSalePrice;
+    }
+
+    
+    /**
+     * @return the activeStartDate
+     */
+    public Date getActiveStartDate() {
+        return activeStartDate;
+    }
+
+    
+    /**
+     * @param activeStartDate the activeStartDate to set
+     */
+    public void setActiveStartDate(Date activeStartDate) {
+        this.activeStartDate = activeStartDate;
+    }
+
+    
+    /**
+     * @return the activeEndDate
+     */
+    public Date getActiveEndDate() {
+        return activeEndDate;
+    }
+
+    
+    /**
+     * @param activeEndDate the activeEndDate to set
+     */
+    public void setActiveEndDate(Date activeEndDate) {
+        this.activeEndDate = activeEndDate;
+    }
+
+    
+    /**
+     * @return the manufacturer
+     */
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    
+    /**
+     * @param manufacturer the manufacturer to set
+     */
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    
+    /**
+     * @return the model
+     */
+    public String getModel() {
+        return model;
+    }
+
+    
+    /**
+     * @param model the model to set
+     */
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    
+    /**
+     * @return the promoMessage
+     */
+    public String getPromoMessage() {
+        return promoMessage;
+    }
+
+    
+    /**
+     * @param promoMessage the promoMessage to set
+     */
+    public void setPromoMessage(String promoMessage) {
+        this.promoMessage = promoMessage;
+    }
+
+    
+    /**
+     * @return the defaultCategoryId
+     */
+    public Long getDefaultCategoryId() {
+        return defaultCategoryId;
+    }
+
+    
+    /**
+     * @param defaultCategoryId the defaultCategoryId to set
+     */
+    public void setDefaultCategoryId(Long defaultCategoryId) {
+        this.defaultCategoryId = defaultCategoryId;
+    }
+
+    
+    /**
+     * @return the upsaleProducts
+     */
+    public List<RelatedProductWrapper> getUpsaleProducts() {
+        return upsaleProducts;
+    }
+
+    
+    /**
+     * @param upsaleProducts the upsaleProducts to set
+     */
+    public void setUpsaleProducts(List<RelatedProductWrapper> upsaleProducts) {
+        this.upsaleProducts = upsaleProducts;
+    }
+
+    
+    /**
+     * @return the crossSaleProducts
+     */
+    public List<RelatedProductWrapper> getCrossSaleProducts() {
+        return crossSaleProducts;
+    }
+
+    
+    /**
+     * @param crossSaleProducts the crossSaleProducts to set
+     */
+    public void setCrossSaleProducts(List<RelatedProductWrapper> crossSaleProducts) {
+        this.crossSaleProducts = crossSaleProducts;
+    }
+
+    
+    /**
+     * @return the productAttributes
+     */
+    public List<ProductAttributeWrapper> getProductAttributes() {
+        return productAttributes;
+    }
+
+    
+    /**
+     * @param productAttributes the productAttributes to set
+     */
+    public void setProductAttributes(List<ProductAttributeWrapper> productAttributes) {
+        this.productAttributes = productAttributes;
+    }
+
+    
+    /**
+     * @return the media
+     */
+    public List<MediaWrapper> getMedia() {
+        return media;
+    }
+
+    
+    /**
+     * @param media the media to set
+     */
+    public void setMedia(List<MediaWrapper> media) {
+        this.media = media;
+    }
+
+    
+    /**
+     * @return the skuBundleItems
+     */
+    public List<SkuBundleItemWrapper> getSkuBundleItems() {
+        return skuBundleItems;
+    }
+
+    
+    /**
+     * @param skuBundleItems the skuBundleItems to set
+     */
+    public void setSkuBundleItems(List<SkuBundleItemWrapper> skuBundleItems) {
+        this.skuBundleItems = skuBundleItems;
+    }
+
 }

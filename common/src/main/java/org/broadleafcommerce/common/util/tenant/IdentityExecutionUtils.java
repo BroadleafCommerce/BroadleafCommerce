@@ -48,17 +48,26 @@ public class IdentityExecutionUtils {
 
     private static final Log LOG = LogFactory.getLog(IdentityExecutionUtils.class);
 
-    public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Catalog catalog,
+    public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Site profile, Catalog catalog,
                                                               PlatformTransactionManager transactionManager) throws G {
         IdentityUtilContext context = new IdentityUtilContext();
         context.setIdentifier(site);
         IdentityUtilContext.setUtilContext(context);
 
-        boolean isNew = initRequestContext(site, null, catalog);
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Site previousSite = brc.getSite();
+        Catalog previousCatalog = brc.getCurrentCatalog();
+        Site previousProfile = brc.getCurrentProfile();
+        
+        boolean isNew = initRequestContext(site, profile, catalog);
 
         activateSession();
-
-        TransactionContainer container = establishTransaction(transactionManager);
+        
+        TransactionContainer container = null;
+        if (transactionManager != null) {
+            container = establishTransaction(transactionManager);
+        }
+        
         boolean isError = false;
         try {
             return operation.execute();
@@ -66,79 +75,29 @@ public class IdentityExecutionUtils {
             isError = true;
             throw e;
         } finally {
-            try {
+            if (container != null) {
                 finalizeTransaction(transactionManager, container, isError);
-                IdentityUtilContext.setUtilContext(null);
-                if (isNew) {
-                    BroadleafRequestContext.setBroadleafRequestContext(null);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+            IdentityUtilContext.setUtilContext(null);
+            if (isNew) {
+                BroadleafRequestContext.setBroadleafRequestContext(null);
+            }
+            BroadleafRequestContext.getBroadleafRequestContext().setSite(previousSite);
+            BroadleafRequestContext.getBroadleafRequestContext().setCurrentCatalog(previousCatalog);
+            BroadleafRequestContext.getBroadleafRequestContext().setCurrentProfile(previousProfile);
         }
     }
 
     public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Catalog catalog) throws G {
-        IdentityUtilContext context = new IdentityUtilContext();
-        context.setIdentifier(site);
-        IdentityUtilContext.setUtilContext(context);
-
-        boolean isNew = initRequestContext(site, null, catalog);
-
-        activateSession();
-
-        try {
-            return operation.execute();
-        } catch (RuntimeException e) {
-            throw e;
-        } finally {
-            IdentityUtilContext.setUtilContext(null);
-            if (isNew) {
-                BroadleafRequestContext.setBroadleafRequestContext(null);
-            }
-        }
+        return runOperationByIdentifier(operation, site, null, catalog, null);
     }
 
     public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Site profile, Catalog catalog) throws G {
-        IdentityUtilContext context = new IdentityUtilContext();
-        context.setIdentifier(site);
-        IdentityUtilContext.setUtilContext(context);
-
-        boolean isNew = initRequestContext(site, profile, catalog);
-
-        activateSession();
-
-        try {
-            return operation.execute();
-        } catch (RuntimeException e) {
-            throw e;
-        } finally {
-            IdentityUtilContext.setUtilContext(null);
-            if (isNew) {
-                BroadleafRequestContext.setBroadleafRequestContext(null);
-            }
-        }
+        return runOperationByIdentifier(operation, site, profile, catalog, null);
     }
 
     public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site) throws G {
-        IdentityUtilContext context = new IdentityUtilContext();
-        context.setIdentifier(site);
-        IdentityUtilContext.setUtilContext(context);
-
-        boolean isNew = initRequestContext(site, null, null);
-
-        activateSession();
-
-        try {
-            return operation.execute();
-        } catch (RuntimeException e) {
-            throw e;
-        } finally {
-            IdentityUtilContext.setUtilContext(null);
-            if (isNew) {
-                BroadleafRequestContext.setBroadleafRequestContext(null);
-            }
-        }
+        return runOperationByIdentifier(operation, site, null, null, null);
     }
 
     public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Site profile) throws G {
@@ -146,6 +105,11 @@ public class IdentityExecutionUtils {
     }
 
     public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation) throws G {
+        return runOperationAndIgnoreIdentifier(operation, null);
+    }
+    
+    public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation, 
+            PlatformTransactionManager transactionManager) throws G {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         Site previousSite = brc.getSite();
         Catalog previousCatalog = brc.getCurrentCatalog();
@@ -156,31 +120,11 @@ public class IdentityExecutionUtils {
         BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
 
         activateSession();
-
-        try {
-            return operation.execute();
-        } catch (RuntimeException e) {
-            throw e;
-        } finally {
-            if (isNew) {
-                BroadleafRequestContext.setBroadleafRequestContext(null);
-            }
-            BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(isIgnoringSite);
-            BroadleafRequestContext.getBroadleafRequestContext().setSite(previousSite);
-            BroadleafRequestContext.getBroadleafRequestContext().setCurrentCatalog(previousCatalog);
-            BroadleafRequestContext.getBroadleafRequestContext().setCurrentProfile(previousProfile);
+        
+        TransactionContainer container = null;
+        if (transactionManager != null) {
+            container = establishTransaction(transactionManager);
         }
-    }
-    
-    public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation, 
-            PlatformTransactionManager transactionManager) throws G {
-        boolean isNew = initRequestContext(null, null, null);
-        boolean isIgnoringSite = BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSite();
-        BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
-
-        activateSession();
-
-        TransactionContainer container = establishTransaction(transactionManager);
         boolean isError = false;
         try {
             return operation.execute();
@@ -188,15 +132,17 @@ public class IdentityExecutionUtils {
             isError = true;
             throw e;
         } finally {
-            try {
+            if (container != null) {
                 finalizeTransaction(transactionManager, container, isError);
-                if (isNew) {
-                    BroadleafRequestContext.setBroadleafRequestContext(null);
-                }
-                BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(isIgnoringSite);
-            } catch (Throwable e) {
-                e.printStackTrace();
             }
+            
+            if (isNew) {
+                BroadleafRequestContext.setBroadleafRequestContext(null);
+            }
+            BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(isIgnoringSite);
+            BroadleafRequestContext.getBroadleafRequestContext().setSite(previousSite);
+            BroadleafRequestContext.getBroadleafRequestContext().setCurrentCatalog(previousCatalog);
+            BroadleafRequestContext.getBroadleafRequestContext().setCurrentProfile(previousProfile);
         }
     }
 

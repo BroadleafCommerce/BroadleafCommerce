@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.broadleafcommerce.common.exception.SiteNotFoundException;
 import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -76,7 +76,6 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     public static final String CATALOG_REQ_PARAM = "blCatalogId";
 
     private static final String ADMIN_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "admin.strict.validate.production.changes";
-    public static final String USE_LEGACY_DEFAULT_CATEGORY_MODE = "use.legacy.default.category.mode";
 
     protected final Log LOG = LogFactory.getLog(getClass());
 
@@ -112,9 +111,6 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     
     @Value("${" + ADMIN_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":true}")
     protected boolean adminStrictValidateProductionChanges = true;
-
-    @Value("${" + USE_LEGACY_DEFAULT_CATEGORY_MODE + ":false}")
-    protected boolean useLegacyDefaultCategoryMode = false;
     
     @Resource(name="blEntityExtensionManagers")
     protected Map<String, ExtensionManager<?>> entityExtensionManagers;
@@ -131,7 +127,6 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         }
 
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
-        brc.getAdditionalProperties().put(USE_LEGACY_DEFAULT_CATEGORY_MODE, useLegacyDefaultCategoryMode);
 
         if (brc.getSite() == null) {
             Site site = siteResolver.resolveSite(request);
@@ -155,8 +150,14 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         brc.setTimeZone(timeZone);
 
-        BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
-        brc.setBroadleafCurrency(currency);
+        // Note: The currencyResolver will set the currency on the BroadleafRequestContext but 
+        // later modules (specifically PriceListRequestProcessor in BLC enterprise) may override based
+        // on the desired currency.
+        BroadleafRequestedCurrencyDto dto = currencyResolver.resolveCurrency(request);
+        if (dto != null) {
+            brc.setBroadleafCurrency(dto.getCurrencyToUse());
+            brc.setRequestedBroadleafCurrency(dto.getRequestedCurrency());
+        }
 
         prepareSandBox(request, brc);
         prepareProfile(request, brc);

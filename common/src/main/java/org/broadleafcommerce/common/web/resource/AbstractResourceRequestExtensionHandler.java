@@ -24,11 +24,13 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 
-/**
- * @author Andre Azzolini (apazzolini)
- */
 public class AbstractResourceRequestExtensionHandler extends AbstractExtensionHandler 
         implements ResourceRequestExtensionHandler {
+
+    @Override
+    public ExtensionResultStatusType getModifiedResource(String path, ExtensionResultHolder erh) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 
     @Override
     public ExtensionResultStatusType getOverrideResource(String path, ExtensionResultHolder erh) {

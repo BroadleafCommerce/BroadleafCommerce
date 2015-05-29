@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.currency.domain;
 
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -47,17 +48,19 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class BroadleafCurrencyImpl implements BroadleafCurrency {
+public class BroadleafCurrencyImpl implements BroadleafCurrency, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "BroadleafCurrencyImpl_Currency_Code", order = 1, group = "BroadleafCurrencyImpl_Details", prominent = true)
+    @AdminPresentation(friendlyName = "BroadleafCurrencyImpl_Currency_Code",
+            order = 1, group = "BroadleafCurrencyImpl_Details", prominent = true, gridOrder = 2000)
     protected String currencyCode;
 
     @Column(name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "BroadleafCurrencyImpl_Name", order = 2, group = "BroadleafCurrencyImpl_Details", prominent = true)
+    @AdminPresentation(friendlyName = "BroadleafCurrencyImpl_Name", order = 2, group = "BroadleafCurrencyImpl_Details",
+            prominent = true, gridOrder = 1000)
     protected String friendlyName;
 
     @Column(name = "DEFAULT_FLAG")
@@ -120,5 +123,14 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency {
     public int hashCode() {
         int result = currencyCode != null ? currencyCode.hashCode() : 0;
         return result;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        if (getFriendlyName() != null) {
+            return getFriendlyName() + " (" + getCurrencyCode() + ")";
+        } else {
+            return getCurrencyCode();
+        }
     }
 }

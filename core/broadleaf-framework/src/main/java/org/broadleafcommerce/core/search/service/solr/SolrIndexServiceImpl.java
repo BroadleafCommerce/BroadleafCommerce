@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -139,10 +138,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-
-    public static String PRODUCT_ATTR_MAP = "productAttributes";
-
-    public static String SKU_ATTR_MAP = "skuAttributes";
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
@@ -291,6 +286,10 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
         }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Building incremental product index - pageSize: [%s]...", products.size()));
+        }
         
         StopWatch s = new StopWatch();
         boolean cacheOperationManaged = false;
@@ -311,7 +310,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                 @Override
                 public Long transform(Object input) {
-                    return shs.getProductId(((Product) input).getId());
+                    return shs.getProductId((Product) input);
                 }
             });
 
@@ -326,6 +325,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     documents.add(doc);
                 }
             }
+            
+            extensionManager.getProxy().modifyBuiltDocuments(documents, products, fields, locales);
 
             logDocuments(documents);
 
@@ -631,8 +632,9 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     }
                 }
             } catch (Exception e) {
-                LOG.trace("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
+                LOG.error("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
                         + product.getId() + "]", e);
+                throw ExceptionHelper.refineException(e);
             }
         }
 
@@ -683,21 +685,17 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, sku));
-            document.addField(shs.getSkuIdFieldName(), shs.getSkuId(sku.getId()));
+            document.addField(shs.getSkuIdFieldName(), shs.getSkuId(sku));
             extensionManager.getProxy().attachAdditionalBasicFields(sku, document, shs);
 
             // The explicit categories are the ones defined by the product itself
-            if (cache.getParentCategoriesByProduct().containsKey(shs.getProductId(product.getId()))) {
-                for (Long categoryId : cache.getParentCategoriesByProduct().get(shs.getProductId(product.getId()))) {
+            if (cache.getParentCategoriesByProduct().containsKey(shs.getProductId(product))) {
+                for (Long categoryId : cache.getParentCategoriesByProduct().get(shs.getProductId(product))) {
                     document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
+                    String displayOrderKey = categoryId + "-" + shs.getProductId(product);
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    if (displayOrder == null) {
-                        displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
-                        displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    }
 
                     if (document.getField(categorySortFieldName) == null) {
                         document.addField(categorySortFieldName, displayOrder);
@@ -728,7 +726,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
-            document.addField(shs.getProductIdFieldName(), shs.getProductId(product.getId()));
+            document.addField(shs.getProductIdFieldName(), shs.getProductId(product));
             extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
             
             Long originalId = sandBoxHelper.getOriginalId(product);
@@ -742,10 +740,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                     String displayOrderKey = categoryId + "-" + originalId;
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    if (displayOrder == null) {
-                        displayOrderKey = categoryId + "-" + originalId;
-                        displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    }
 
                     if (document.getField(categorySortFieldName) == null) {
                         document.addField(categorySortFieldName, displayOrder);
@@ -793,54 +787,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * { "en_US" : "A description",
      *   "es_ES" : "Una descripcion" }
      * 
-     * @param sku
-     * @param field
-     * @param fieldType
-     * @param locales
-     * @return the value of the property
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     */
-    protected Map<String, Object> getPropertyValues(Sku sku, Field field, FieldType fieldType, List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-
-        String propertyName = field.getPropertyName();
-        Map<String, Object> values = new HashMap<String, Object>();
-
-        if (extensionManager != null) {
-            ExtensionResultStatusType result = extensionManager.getProxy().addPropertyValues(sku, field, fieldType, values, propertyName, locales);
-
-            if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                Object propertyValue;
-                if (propertyName.contains(SKU_ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(sku, SKU_ATTR_MAP, propertyName.substring(SKU_ATTR_MAP.length() + 1));
-
-                    // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
-                    // value field out of it if it exists.
-                    if (propertyValue != null) {
-                        try {
-                            propertyValue = shs.getPropertyValue(propertyValue, "value"); //PropertyUtils.getProperty(propertyValue, "value");
-                        } catch (NoSuchMethodException e) {
-                            // Do nothing, we'll keep the existing value
-                        }
-                    }
-                } else {
-                    propertyValue = shs.getPropertyValue(sku, propertyName); //PropertyUtils.getProperty(sku, propertyName);
-                }
-                values.put("", propertyValue);
-            }
-        }
-
-        return values;
-    }
-
-    /**
-     * Returns a map of prefix to value for the requested attributes. For example, if the requested field corresponds to
-     * a Sku's description and the locales list has the en_US locale and the es_ES locale, the resulting map could be
-     * 
-     * { "en_US" : "A description",
-     *   "es_ES" : "Una descripcion" }
-     * 
      * @param product
      * @param sku
      * @param field
@@ -851,31 +797,24 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    protected Map<String, Object> getPropertyValues(Product product, Field field, FieldType fieldType, List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    protected Map<String, Object> getPropertyValues(Object indexedItem, Field field, FieldType fieldType, List<Locale> locales)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String propertyName = field.getPropertyName();
         Map<String, Object> values = new HashMap<String, Object>();
 
+        ExtensionResultStatusType extensionResult = ExtensionResultStatusType.NOT_HANDLED;
         if (extensionManager != null) {
-            ExtensionResultStatusType result = extensionManager.getProxy().addPropertyValues(product, field, fieldType, values, propertyName, locales);
-
-            if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                Object propertyValue;
-                if (propertyName.contains(PRODUCT_ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(product, PRODUCT_ATTR_MAP, propertyName.substring(PRODUCT_ATTR_MAP.length() + 1));
-
-                    // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
-                    // value field out of it if it exists.
-                    if (propertyValue != null) {
-                        try {
-                            propertyValue = shs.getPropertyValue(propertyValue, "value"); //PropertyUtils.getProperty(propertyValue, "value");
-                        } catch (NoSuchMethodException e) {
-                            // Do nothing, we'll keep the existing value
-                        }
-                    }
-                } else {
-                    propertyValue = shs.getPropertyValue(product, propertyName); //PropertyUtils.getProperty(product, propertyName);
-                }
+            if (Product.class.isAssignableFrom(indexedItem.getClass())) {
+                extensionResult = extensionManager.getProxy().addPropertyValues((Product) indexedItem, field, fieldType, values, propertyName, locales);
+            } else if (Sku.class.isAssignableFrom(indexedItem.getClass())) {
+                extensionResult = extensionManager.getProxy().addPropertyValues((Sku) indexedItem, field, fieldType, values, propertyName, locales);
+            }
+        }
+        
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
+            Object propertyValue = shs.getPropertyValue(indexedItem, field);
+            if (propertyValue != null) {
                 values.put("", propertyValue);
             }
         }
@@ -941,14 +880,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      
     @Override
     public void optimizeIndex(SolrServer server) throws ServiceException, IOException {
-         try {
-             if (LOG.isDebugEnabled()) {
-                 LOG.debug("Optimizing the index...");
-             }
-             server.optimize();
-         } catch (SolrServerException e) {
-             throw new ServiceException("Could not optimize index", e);
-         }
+        shs.optimizeIndex(server);
     }
 
     @Override

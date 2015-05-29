@@ -21,7 +21,7 @@ package org.broadleafcommerce.common.util.dao;
 
 import javassist.util.proxy.ProxyFactory;
 
-import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ProxyDetectionException;
@@ -50,8 +50,8 @@ import javax.persistence.EntityManager;
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     
     public static final Object LOCK_OBJECT = new Object();
-    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap(100, 1000);
-    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap(100, 1000);
+    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<Class<?>, Class<?>[]>(1000);
+    public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<Class<?>, Class<?>[]>(1000);
     public static final String JAVASSIST_PROXY_KEY_PHRASE = "_$$_";
 
     public static Class<?> getNonProxyImplementationClassIfNecessary(Class<?> candidate) {

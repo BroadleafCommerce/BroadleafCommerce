@@ -59,7 +59,68 @@ public class FulfillmentOptionWrapper extends BaseWrapper implements APIWrapper<
         wrapDetails(model, request);
     }
 
+    
+    /**
+     * @return the id
+     */
     public Long getId() {
-        return this.id;
+        return id;
     }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    
+    /**
+     * @return the fulfillmentType
+     */
+    public BroadleafEnumerationTypeWrapper getFulfillmentType() {
+        return fulfillmentType;
+    }
+
+    
+    /**
+     * @param fulfillmentType the fulfillmentType to set
+     */
+    public void setFulfillmentType(BroadleafEnumerationTypeWrapper fulfillmentType) {
+        this.fulfillmentType = fulfillmentType;
+    }
+
 }

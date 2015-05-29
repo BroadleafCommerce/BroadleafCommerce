@@ -98,6 +98,13 @@
         timeToLiveSeconds="600"/>
         
     <cache
+        name="query.PriceList"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="600"/>
+        
+    <cache
         name="query.Cms"
         maxElementsInMemory="1000"
         eternal="false"

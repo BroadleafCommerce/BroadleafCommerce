@@ -24,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -115,6 +116,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
@@ -153,6 +155,22 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name = "blBasicPersistenceModuleExtensionManager")
     protected BasicPersistenceModuleExtensionManager extensionManager;
+
+    @PostConstruct
+    public void init() {
+        Collections.sort(fieldPersistenceProviders, new Comparator<FieldPersistenceProvider>() {
+            @Override
+            public int compare(FieldPersistenceProvider o1, FieldPersistenceProvider o2) {
+                return Integer.compare(o1.getOrder(), o2.getOrder());
+            }
+        });
+        Collections.sort(populateValidators, new Comparator<PopulateValueRequestValidator>() {
+            @Override
+            public int compare(PopulateValueRequestValidator o1, PopulateValueRequestValidator o2) {
+                return Integer.compare(o1.getOrder(), o2.getOrder());
+            }
+        });
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -284,7 +302,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FlushMode originalFlushMode = session.getFlushMode();
         try {
             session.setFlushMode(FlushMode.MANUAL);
-            ParentEntityPersistenceException entityPersistenceException = null;
+            RuntimeException entityPersistenceException = null;
             for (Property property : sortedProperties) {
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
                 Class<?> returnType;
@@ -336,26 +354,26 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             
                             if (attemptToPopulate) {
                                 try {
+                                    boolean isBreakDetected = false;
                                     for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                                        FieldProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
-                                        if (FieldProviderResponse.NOT_HANDLED != response) {
-                                            handled = true;
-                                        }
-                                        if (FieldProviderResponse.HANDLED_BREAK == response) {
-                                            break;
+                                        if (!isBreakDetected || fieldPersistenceProvider.alwaysRun()) {
+                                            FieldProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
+                                            if (FieldProviderResponse.NOT_HANDLED != response) {
+                                                handled = true;
+                                            }
+                                            if (FieldProviderResponse.HANDLED_BREAK == response) {
+                                                isBreakDetected = true;
+                                            }
                                         }
                                     }
                                     if (!handled) {
                                         defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
                                                 fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
                                     }
-                                } catch (PersistenceException e) {
-                                    if (e instanceof ParentEntityPersistenceException) {
-                                        entityPersistenceException = (ParentEntityPersistenceException) e;
-                                        cleanupFailedPersistenceAttempt(instance);
-                                        break;
-                                    }
-                                    throw e;
+                                } catch (ParentEntityPersistenceException | javax.validation.ValidationException e) {
+                                    entityPersistenceException = e;
+                                    cleanupFailedPersistenceAttempt(instance);
+                                    break;
                                 }
                             }
                         } else {
@@ -1045,6 +1063,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     + " non-optional relationship. Consider changing 'optional=true' in the @ManyToOne annotation"
                                     + " or nullable=true within the @JoinColumn annotation");
                         }
+                        //Since this is occuring on a remove persistence package, merge up-front (before making a change) for proper operation in the presence of the enterprise module
+                        instance = persistenceManager.getDynamicEntityDao().merge(instance);
                         Field manyToField = fieldManager.getField(instance.getClass(), foreignKey.getManyToField());
                         Object manyToObject = manyToField.get(instance);
                         if (manyToObject != null && !(manyToObject instanceof Collection) && !(manyToObject instanceof Map)) {
@@ -1341,12 +1361,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().detach(instance);
         }
         //Remove the id field value, if it's set
-        Field idField;
-        try {
-            idField = instance.getClass().getDeclaredField((String) getPersistenceManager().
-                    getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name"));
-        } catch (NoSuchFieldException e1) {
-            throw ExceptionHelper.refineException(e1);
+        String idFieldName = (String) getPersistenceManager().getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name");
+        Field idField = FieldUtils.getField(instance.getClass(), idFieldName, true);
+        if (idField == null) {
+            throw ExceptionHelper.refineException(new NoSuchFieldException("Entity " + instance.getClass().getName() + " does not contain id field " + idFieldName));
         }
         idField.setAccessible(true);
         if (idField.get(instance) != null) {

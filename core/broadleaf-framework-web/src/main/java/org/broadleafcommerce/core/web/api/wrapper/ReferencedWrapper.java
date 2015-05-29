@@ -156,4 +156,164 @@ public class ReferencedWrapper extends BaseWrapper implements APIWrapper<Referen
     public void wrapSummary(Referenced model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the referenceNumber
+     */
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    
+    /**
+     * @param referenceNumber the referenceNumber to set
+     */
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    
+    /**
+     * @return the type
+     */
+    public String getType() {
+        return type;
+    }
+
+    
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    
+    /**
+     * @return the pan
+     */
+    public String getPan() {
+        return pan;
+    }
+
+    
+    /**
+     * @param pan the pan to set
+     */
+    public void setPan(String pan) {
+        this.pan = pan;
+    }
+
+    
+    /**
+     * @return the cvvCode
+     */
+    public String getCvvCode() {
+        return cvvCode;
+    }
+
+    
+    /**
+     * @param cvvCode the cvvCode to set
+     */
+    public void setCvvCode(String cvvCode) {
+        this.cvvCode = cvvCode;
+    }
+
+    
+    /**
+     * @return the expirationMonth
+     */
+    public Integer getExpirationMonth() {
+        return expirationMonth;
+    }
+
+    
+    /**
+     * @param expirationMonth the expirationMonth to set
+     */
+    public void setExpirationMonth(Integer expirationMonth) {
+        this.expirationMonth = expirationMonth;
+    }
+
+    
+    /**
+     * @return the expirationYear
+     */
+    public Integer getExpirationYear() {
+        return expirationYear;
+    }
+
+    
+    /**
+     * @param expirationYear the expirationYear to set
+     */
+    public void setExpirationYear(Integer expirationYear) {
+        this.expirationYear = expirationYear;
+    }
+
+    
+    /**
+     * @return the accountNumber
+     */
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    
+    /**
+     * @param accountNumber the accountNumber to set
+     */
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    
+    /**
+     * @return the routingNumber
+     */
+    public String getRoutingNumber() {
+        return routingNumber;
+    }
+
+    
+    /**
+     * @param routingNumber the routingNumber to set
+     */
+    public void setRoutingNumber(String routingNumber) {
+        this.routingNumber = routingNumber;
+    }
+
+    
+    /**
+     * @return the pin
+     */
+    public String getPin() {
+        return pin;
+    }
+
+    
+    /**
+     * @param pin the pin to set
+     */
+    public void setPin(String pin) {
+        this.pin = pin;
+    }
 }

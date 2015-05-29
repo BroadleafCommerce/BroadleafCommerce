@@ -185,25 +185,33 @@ public class PageServiceUtility {
         return itemCriteriaDTOList;
     }
 
-    public void hydrateForeignLookups(PageDTO page) {
+    public PageDTO hydrateForeignLookups(PageDTO page) {
         for (Entry<String, Object> entry : page.getPageFields().entrySet()) {
             if (entry.getValue() instanceof String && ((String) entry.getValue()).startsWith(FOREIGN_LOOKUP)) {
                 page.getForeignPageFields().put(entry.getKey(), entry.getValue());
             }
         }
 
-        for (Entry<String, Object> entry : page.getForeignPageFields().entrySet()) {
-            String clazz = ((String) entry.getValue()).split("\\|")[1];
-            String id = ((String) entry.getValue()).split("\\|")[2];
-            Object newValue = null;
-            if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(id) && !"null".equals(id)) {
-                newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
+        if (page.getForeignPageFields().size() > 0) {
+            PageDTO clone = new PageDTO();
+            clone.copy(page);
+
+            for (Entry<String, Object> entry : page.getForeignPageFields().entrySet()) {
+                String clazz = ((String) entry.getValue()).split("\\|")[1];
+                String id = ((String) entry.getValue()).split("\\|")[2];
+                Object newValue = null;
+                if (StringUtils.isNotBlank(clazz) && StringUtils.isNotBlank(id) && !"null".equals(id)) {
+                    newValue = genericDao.readGenericEntity(genericDao.getImplClass(clazz), id);
+                }
+                if (newValue != null) {
+                    clone.getPageFields().put(entry.getKey(), newValue);
+                } else {
+                    clone.getPageFields().remove(entry.getKey());
+                }
             }
-            if (newValue != null) {
-                page.getPageFields().put(entry.getKey(), newValue);
-            } else {
-                page.getPageFields().remove(entry.getKey());
-            }
+            return clone;
+        } else {
+            return page;
         }
     }
 }

@@ -32,6 +32,13 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 
 /**
+ * Responsible for providing a JPA {@link javax.persistence.criteria.Predicate} instance for query construction based
+ * on several objects that define query construction behavior for the target field. The objects can be replaced with custom
+ * implementations for more specific behavior.
+ *
+ * @see org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider
+ * @see org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.converter.FilterValueConverter
+ * @see org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder
  * @author Jeff Fischer
  */
 public class Restriction {

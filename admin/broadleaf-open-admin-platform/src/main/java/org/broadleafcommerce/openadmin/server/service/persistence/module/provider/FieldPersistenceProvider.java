@@ -108,4 +108,10 @@ public interface FieldPersistenceProvider extends Ordered {
      */
     FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties);
 
+    /**
+     * If the provider should always run, regardless if a previous provider returned a response of HANDLED_BREAK
+     *
+     * @return if this provider should always run
+     */
+    boolean alwaysRun();
 }

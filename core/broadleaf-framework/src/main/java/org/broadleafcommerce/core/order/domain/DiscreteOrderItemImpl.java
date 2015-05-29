@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -121,7 +122,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Sku getSku() {
-        return sku;
+        return HibernateUtils.deproxy(sku);
     }
 
     @Override
@@ -144,7 +145,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Product getProduct() {
-        return product;
+        return HibernateUtils.deproxy(product);
     }
 
     @Override
@@ -217,7 +218,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         return order;
     }
 
-    private boolean updateSalePrice() {
+    protected boolean updateSalePrice() {
         if (isSalePriceOverride()) {
             return false;
         }
@@ -227,7 +228,8 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         DynamicSkuPrices priceData = getSku().getPriceData();
         if (priceData != null) {
             skuSalePrice = priceData.getPriceForQuantity(quantity);
-        } else {
+        }
+        if (skuSalePrice == null) {
             skuSalePrice = getSku().getSalePrice();
         }
 
@@ -265,7 +267,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         return updated;
     }
 
-    private boolean updateRetailPrice() {
+    protected boolean updateRetailPrice() {
         if (isRetailPriceOverride()) {
             return false;
         }

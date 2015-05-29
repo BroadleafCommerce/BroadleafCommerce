@@ -74,36 +74,58 @@ public class CategoryXrefImpl implements CategoryXref {
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected BigDecimal displayOrder;
 
+    @Column(name = "DEFAULT_REFERENCE")
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    protected Boolean defaultReference;
+
+    @Override
     public BigDecimal getDisplayOrder() {
         return displayOrder;
     }
 
+    @Override
     public void setDisplayOrder(final BigDecimal displayOrder) {
         this.displayOrder = displayOrder;
     }
 
+    @Override
     public Category getCategory() {
         return category;
     }
 
+    @Override
     public void setCategory(Category category) {
         this.category = category;
     }
 
+    @Override
     public Category getSubCategory() {
         return subCategory;
     }
 
+    @Override
     public void setSubCategory(Category subCategory) {
         this.subCategory = subCategory;
     }
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public Boolean getDefaultReference() {
+        return defaultReference;
+    }
+
+    @Override
+    public void setDefaultReference(Boolean defaultReference) {
+        this.defaultReference = defaultReference;
     }
 
     @Override

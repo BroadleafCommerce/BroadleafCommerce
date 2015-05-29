@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 /**
  * @author Andre Azzolini (apazzolini), bpolster
  */
-@Service("blDatabaseResourceResolvertensionManager")
+@Service("blDatabaseResourceResolverExtensionManager")
 public class DatabaseResourceResolverExtensionManager extends ExtensionManager<DatabaseResourceResolverExtensionHandler> {
 
     public DatabaseResourceResolverExtensionManager() {

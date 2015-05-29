@@ -19,31 +19,14 @@
  */
 package org.broadleafcommerce.core.offer.service.exception;
 
-import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
-import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
-
-public class OfferMaxUseExceededException extends CheckoutException {
-
+public class OfferMaxUseExceededException extends OfferException {
+    
     private static final long serialVersionUID = 1L;
 
-    public OfferMaxUseExceededException() {
-        super();
-    }
-    
-    public OfferMaxUseExceededException(String message) {
-        super(message, null);
+    public OfferMaxUseExceededException(String string) {
+        super(string);
     }
 
-    public OfferMaxUseExceededException(String message, Throwable cause, CheckoutSeed seed) {
-        super(message, cause, seed);
-    }
 
-    public OfferMaxUseExceededException(String message, CheckoutSeed seed) {
-        super(message, seed);
-    }
-
-    public OfferMaxUseExceededException(Throwable cause, CheckoutSeed seed) {
-        super(cause, seed);
-    }
 
 }

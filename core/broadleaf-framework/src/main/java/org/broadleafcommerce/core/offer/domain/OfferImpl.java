@@ -175,7 +175,8 @@ public class OfferImpl implements Offer, AdminMainEntity {
 
     @Column(name = "START_DATE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date", order = 1,
-        group = Presentation.Group.Name.ActivityRange, groupOrder = Presentation.Group.Order.ActivityRange)
+        group = Presentation.Group.Name.ActivityRange, groupOrder = Presentation.Group.Order.ActivityRange,
+        defaultValue = "today")
     protected Date startDate;
 
     @Column(name = "END_DATE")

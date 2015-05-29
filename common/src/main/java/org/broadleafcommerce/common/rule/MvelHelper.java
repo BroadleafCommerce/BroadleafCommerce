@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.common.rule;
 
-import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.mvel2.MVEL;
@@ -53,7 +53,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class MvelHelper {
 
-    private static final Map DEFAULT_EXPRESSION_CACHE = new LRUMap(5000);
+    private static final Map<String, Serializable> DEFAULT_EXPRESSION_CACHE = new EfficientLRUMap<String, Serializable>(5000);
     private static final Log LOG = LogFactory.getLog(MvelHelper.class);
 
     private static boolean TEST_MODE = false;
@@ -120,7 +120,8 @@ public class MvelHelper {
      * @param ruleParameters
      * @return
      */
-    public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters, Map expressionCache) {
+    public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
+            Map<String, Serializable> expressionCache) {
         // Null or empty is a match
         if (rule == null || "".equals(rule)) {
             return true;
@@ -128,14 +129,11 @@ public class MvelHelper {
             // MVEL expression compiling can be expensive so let's cache the expression
             Serializable exp = (Serializable) expressionCache.get(rule);
             if (exp == null) {
-                synchronized (expressionCache) {
-                    ParserContext context = new ParserContext();
-                    context.addImport("MVEL", MVEL.class);
-                    context.addImport("MvelHelper", MvelHelper.class);
-                    exp = MVEL.compileExpression(rule, context);
-                    expressionCache.put(rule, exp);
-
-                }
+                ParserContext context = new ParserContext();
+                context.addImport("MVEL", MVEL.class);
+                context.addImport("MvelHelper", MvelHelper.class);
+                exp = MVEL.compileExpression(rule, context);
+                expressionCache.put(rule, exp);
             }
 
             Map<String, Object> mvelParameters = new HashMap<String, Object>();

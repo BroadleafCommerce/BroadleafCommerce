@@ -204,6 +204,10 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
                         "mark the payment as invalid and delegating to the payment module to handle any other " +
                         "exception processing. The error caught was: " + e);
             }
+            
+            if (paymentGatewayCheckoutService != null && orderPaymentId != null) {
+                paymentGatewayCheckoutService.markPaymentAsInvalid(orderPaymentId);
+            }
 
             handleProcessingException(e, redirectAttributes);
         }

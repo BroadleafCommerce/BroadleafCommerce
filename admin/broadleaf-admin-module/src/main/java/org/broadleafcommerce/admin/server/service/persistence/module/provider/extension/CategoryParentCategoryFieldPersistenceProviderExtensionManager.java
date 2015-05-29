@@ -17,23 +17,22 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.extension.currency;
+package org.broadleafcommerce.admin.server.service.persistence.module.provider.extension;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.springframework.stereotype.Service;
 
 
 /**
- * Allows implementations to override the currency for a given invocation of the CurrencyResolver.
- * @author bpolster
+ * Extension manager for {@link org.broadleafcommerce.admin.server.service.persistence.module.provider.ProductParentCategoryFieldPersistenceProvider}
+ *
+ * @author Jeff Fischer
  */
-@Service("blCurrencyResolverExtensionManager")
-public class CurrencyResolverExtensionManager extends ExtensionManager<CurrencyResolverExtensionHandler> {
+@Service("blCategoryParentCategoryFieldPersistenceProviderExtensionManager")
+public class CategoryParentCategoryFieldPersistenceProviderExtensionManager extends ExtensionManager<CategoryParentCategoryFieldPersistenceProviderExtensionHandler> {
 
-    public static final String STOP_PROCESSING = "stopProcessing";
-
-    public CurrencyResolverExtensionManager() {
-        super(CurrencyResolverExtensionHandler.class);
+    public CategoryParentCategoryFieldPersistenceProviderExtensionManager() {
+        super(CategoryParentCategoryFieldPersistenceProviderExtensionHandler.class);
     }
 
 }

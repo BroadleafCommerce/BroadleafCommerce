@@ -33,6 +33,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordH
 import org.broadleafcommerce.profile.core.dao.RoleDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -47,6 +48,9 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     private static final Log LOG = LogFactory.getLog(CustomerCustomPersistenceHandler.class);
 
+    @Value("${use.email.for.site.login:true}")
+    protected boolean useEmailForLogin;
+
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
     
@@ -55,6 +59,11 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
+        return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Customer.class.getName());
+    }
+
+    @Override
+    public Boolean canHandleUpdate(PersistencePackage persistencePackage) {
         return persistencePackage.getCeilingEntityFullyQualifiedClassname() != null && persistencePackage.getCeilingEntityFullyQualifiedClassname().equals(Customer.class.getName());
     }
 
@@ -72,8 +81,10 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
             adminInstance.setId(customerService.findNextCustomerId());
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Customer.class.getName(), persistencePerspective);
             adminInstance = (Customer) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            
-            adminInstance.setUsername(adminInstance.getEmailAddress());
+
+            if (useEmailForLogin) {
+                adminInstance.setUsername(adminInstance.getEmailAddress());
+            }
             
             Entity errorEntity = validateUniqueUsername(entity, adminInstance);
             if (errorEntity != null) {
@@ -89,6 +100,34 @@ public class CustomerCustomPersistenceHandler extends CustomPersistenceHandlerAd
         } catch (Exception e) {
             LOG.error("Unable to execute persistence activity", e);
             throw new ServiceException("Unable to add entity for " + entity.getType()[0], e);
+        }
+    }
+
+    @Override
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        Entity entity = persistencePackage.getEntity();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Customer.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            Customer adminInstance = (Customer) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+
+            String passwordBefore = adminInstance.getPassword();
+            adminInstance.setPassword(null);
+            adminInstance = (Customer) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            adminInstance.setPassword(passwordBefore);
+
+            if (useEmailForLogin) {
+                adminInstance.setUsername(adminInstance.getEmailAddress());
+            }
+
+            adminInstance = customerService.saveCustomer(adminInstance);
+            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+
+            return adminEntity;
+
+        } catch (Exception e) {
+            throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
         }
     }
     

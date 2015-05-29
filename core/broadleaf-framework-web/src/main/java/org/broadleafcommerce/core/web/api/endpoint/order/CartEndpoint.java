@@ -22,6 +22,9 @@ package org.broadleafcommerce.core.web.api.endpoint.order;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
+import org.broadleafcommerce.core.offer.service.exception.OfferException;
+import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
@@ -294,9 +297,21 @@ public abstract class CartEndpoint extends BaseEndpoint {
         } catch (PricingException e) {
             throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
                     .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
-        } catch (OfferMaxUseExceededException e) {
-            throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value(), null, null, e)
-                    .addMessage(BroadleafWebServicesException.PROMO_CODE_MAX_USAGES, promoCode);
+        } catch (OfferException e) {
+            Throwable t = e.getCause();
+            if (t instanceof OfferMaxUseExceededException) {
+                throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value(), null, null, e)
+                .addMessage(BroadleafWebServicesException.PROMO_CODE_MAX_USAGES, promoCode);
+            } else if (t instanceof OfferExpiredException) {
+                throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value(), null, null, e)
+                .addMessage(BroadleafWebServicesException.PROMO_CODE_EXPIRED, promoCode);
+            } else if (t instanceof OfferAlreadyAddedException) {
+                throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value(), null, null, e)
+                .addMessage(BroadleafWebServicesException.PROMO_CODE_ALREADY_ADDED, promoCode);
+            } else {
+                throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value(), null, null, e)
+                .addMessage(BroadleafWebServicesException.PROMO_CODE_INVALID, promoCode);
+            }
         }
     }
 

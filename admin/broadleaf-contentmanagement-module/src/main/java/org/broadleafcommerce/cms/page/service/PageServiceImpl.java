@@ -176,7 +176,7 @@ public class PageServiceImpl implements PageService {
         }
         
         if (dto != null) {
-            pageServiceUtility.hydrateForeignLookups(dto);
+            dto = pageServiceUtility.hydrateForeignLookups(dto);
         }
         
         return dto;

@@ -19,14 +19,17 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.server.service.extension.CategoryCustomPersistenceHandlerExtensionManager;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
+import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
@@ -41,10 +44,10 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.web.filter.BroadleafAdminRequestProcessor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -108,10 +111,8 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
                 handled = ExtensionResultStatusType.NOT_HANDLED != result;
             }
             if (!handled) {
-                Category existingDefaultParentCategory = getExistingDefaultParentCategory(adminInstance);
-                setupXref(adminInstance, existingDefaultParentCategory);
+                setupXref(adminInstance);
             }
-
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
             return helper.getRecord(adminProperties, adminInstance, null, null);
@@ -128,21 +129,17 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Category adminInstance = (Category) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            CategoryXref oldDefault = getCurrentDefaultXref(adminInstance);
             adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
-
             boolean handled = false;
             if (extensionManager != null) {
                 ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForUpdate(persistencePackage, adminInstance);
                 handled = ExtensionResultStatusType.NOT_HANDLED != result;
             }
             if (!handled) {
-                Category existingDefaultParentCategory = getExistingDefaultParentCategory(adminInstance);
-                if (isDefaultCategoryLegacyMode() || adminInstance.getAllParentCategoryXrefs().isEmpty()) {
-                    setupXref(adminInstance, existingDefaultParentCategory);
-                } else {
-                    adminInstance.getAllParentCategoryXrefs().get(0).setCategory(existingDefaultParentCategory);
-                }
+                setupXref(adminInstance);
+                removeOldDefault(adminInstance, oldDefault, entity);
             }
 
             return helper.getRecord(adminProperties, adminInstance, null, null);
@@ -151,16 +148,15 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         }
     }
 
-    protected void setupXref(Category adminInstance, Category existingDefaultParentCategory) {
-        CategoryXref categoryXref = new CategoryXrefImpl();
-        categoryXref.setCategory(existingDefaultParentCategory);
-        categoryXref.setSubCategory(adminInstance);
-        if (existingDefaultParentCategory != null && !adminInstance.getAllParentCategoryXrefs().contains(categoryXref)) {
-            adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+    protected Boolean isDefaultCategoryLegacyMode() {
+        ParentCategoryLegacyModeService legacyModeService = ParentCategoryLegacyModeServiceImpl.getLegacyModeService();
+        if (legacyModeService != null) {
+            return legacyModeService.isLegacyMode();
         }
+        return false;
     }
 
-    protected Category getExistingDefaultParentCategory(Category category) {
+    protected Category getExistingDefaultCategory(Category category) {
         //Make sure we get the actual field value - not something manipulated in the getter
         Category parentCategory;
         try {
@@ -175,8 +171,41 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         return parentCategory;
     }
 
-    protected Boolean isDefaultCategoryLegacyMode() {
-        return (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get
-                (BroadleafAdminRequestProcessor.USE_LEGACY_DEFAULT_CATEGORY_MODE);
+    protected void removeOldDefault(Category adminInstance, CategoryXref oldDefault, Entity entity) {
+        if (!isDefaultCategoryLegacyMode()) {
+            if (entity.findProperty("defaultParentCategory") != null && StringUtils.isEmpty(entity.findProperty("defaultParentCategory").getValue())) {
+                adminInstance.setParentCategory(null);
+            }
+            CategoryXref newDefault = getCurrentDefaultXref(adminInstance);
+            if (oldDefault != null && !oldDefault.equals(newDefault)) {
+                adminInstance.getAllParentCategoryXrefs().remove(oldDefault);
+            }
+        }
     }
+
+    protected void setupXref(Category adminInstance) {
+        if (isDefaultCategoryLegacyMode()) {
+            CategoryXref categoryXref = new CategoryXrefImpl();
+            categoryXref.setCategory(getExistingDefaultCategory(adminInstance));
+            categoryXref.setSubCategory(adminInstance);
+            if (!adminInstance.getAllParentCategoryXrefs().contains(categoryXref) && categoryXref.getCategory() != null) {
+                adminInstance.getAllParentCategoryXrefs().add(categoryXref);
+            }
+        }
+    }
+
+    protected CategoryXref getCurrentDefaultXref(Category category) {
+        CategoryXref currentDefault = null;
+        List<CategoryXref> xrefs = category.getAllParentCategoryXrefs();
+        if (!CollectionUtils.isEmpty(xrefs)) {
+            for (CategoryXref xref : xrefs) {
+                if (xref.getCategory().isActive() && xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                    currentDefault = xref;
+                    break;
+                }
+            }
+        }
+        return currentDefault;
+    }
+
 }

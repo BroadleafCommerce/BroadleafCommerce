@@ -64,7 +64,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         // Immediately fail if this order has already been checked out previously
         if (hasOrderBeenCompleted(order)) {
-            throw new CheckoutException("This order has already been submitted, unable to checkout order -- id: " + order.getId(), new CheckoutSeed(order, new HashMap<String, Object>()));
+            throw new CheckoutException("This order has already been submitted or cancelled, unable to checkout order -- id: " + order.getId(), new CheckoutSeed(order, new HashMap<String, Object>()));
         }
         
         CheckoutSeed seed = null;
@@ -100,7 +100,7 @@ public class CheckoutServiceImpl implements CheckoutService {
      * @return
      */
     protected boolean hasOrderBeenCompleted(Order order) {
-        return OrderStatus.SUBMITTED.equals(order.getStatus());
+        return (OrderStatus.SUBMITTED.equals(order.getStatus()) || OrderStatus.CANCELLED.equals(order.getStatus()));
     }
 
     /**

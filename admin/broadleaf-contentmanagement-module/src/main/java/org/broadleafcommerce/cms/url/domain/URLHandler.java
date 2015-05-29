@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;
 
-public interface URLHandler extends  Serializable,MultiTenantCloneable<URLHandler> {
+public interface URLHandler extends Serializable, MultiTenantCloneable<URLHandler> {
 
     public abstract Long getId();
 
@@ -38,6 +38,8 @@ public interface URLHandler extends  Serializable,MultiTenantCloneable<URLHandle
 
     public abstract void setNewURL(String newURL);
 
-     public abstract URLRedirectType getUrlRedirectType();
-     public void setUrlRedirectType(URLRedirectType redirectType);
+    public abstract URLRedirectType getUrlRedirectType();
+
+    public void setUrlRedirectType(URLRedirectType redirectType);
+
 }

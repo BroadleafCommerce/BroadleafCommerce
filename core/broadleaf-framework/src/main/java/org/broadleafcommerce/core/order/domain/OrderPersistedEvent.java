@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import org.springframework.context.ApplicationEvent;
+import org.broadleafcommerce.common.event.BroadleafApplicationEvent;
 
 
 /**
@@ -29,7 +29,7 @@ import org.springframework.context.ApplicationEvent;
  * 
  * @see {@link OrderPersistedEntityListener}
  */
-public class OrderPersistedEvent extends ApplicationEvent {
+public class OrderPersistedEvent extends BroadleafApplicationEvent {
 
     private static final long serialVersionUID = 1L;
 

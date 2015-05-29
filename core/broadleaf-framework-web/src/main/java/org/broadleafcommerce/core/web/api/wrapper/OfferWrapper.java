@@ -78,4 +78,164 @@ public class OfferWrapper extends BaseWrapper implements APIWrapper<Offer> {
         this.marketingMessage = model.getMarketingMessage();
         this.name = model.getName();
     }
+
+    
+    /**
+     * @return the offerId
+     */
+    public Long getOfferId() {
+        return offerId;
+    }
+
+    
+    /**
+     * @param offerId the offerId to set
+     */
+    public void setOfferId(Long offerId) {
+        this.offerId = offerId;
+    }
+
+    
+    /**
+     * @return the startDate
+     */
+    public String getStartDate() {
+        return startDate;
+    }
+
+    
+    /**
+     * @param startDate the startDate to set
+     */
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    
+    /**
+     * @return the endDate
+     */
+    public String getEndDate() {
+        return endDate;
+    }
+
+    
+    /**
+     * @param endDate the endDate to set
+     */
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    
+    /**
+     * @return the marketingMessage
+     */
+    public String getMarketingMessage() {
+        return marketingMessage;
+    }
+
+    
+    /**
+     * @param marketingMessage the marketingMessage to set
+     */
+    public void setMarketingMessage(String marketingMessage) {
+        this.marketingMessage = marketingMessage;
+    }
+
+    
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    
+    /**
+     * @return the automatic
+     */
+    public Boolean getAutomatic() {
+        return automatic;
+    }
+
+    
+    /**
+     * @param automatic the automatic to set
+     */
+    public void setAutomatic(Boolean automatic) {
+        this.automatic = automatic;
+    }
+
+    
+    /**
+     * @return the offerType
+     */
+    public BroadleafEnumerationTypeWrapper getOfferType() {
+        return offerType;
+    }
+
+    
+    /**
+     * @param offerType the offerType to set
+     */
+    public void setOfferType(BroadleafEnumerationTypeWrapper offerType) {
+        this.offerType = offerType;
+    }
+
+    
+    /**
+     * @return the discountType
+     */
+    public BroadleafEnumerationTypeWrapper getDiscountType() {
+        return discountType;
+    }
+
+    
+    /**
+     * @param discountType the discountType to set
+     */
+    public void setDiscountType(BroadleafEnumerationTypeWrapper discountType) {
+        this.discountType = discountType;
+    }
+
+    
+    /**
+     * @return the maxUses
+     */
+    public int getMaxUses() {
+        return maxUses;
+    }
+
+    
+    /**
+     * @param maxUses the maxUses to set
+     */
+    public void setMaxUses(int maxUses) {
+        this.maxUses = maxUses;
+    }
 }

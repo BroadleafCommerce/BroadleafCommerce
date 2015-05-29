@@ -94,16 +94,18 @@ public class CartStateFilter extends OncePerRequestFilter implements Ordered {
 
         Object lockObject = null;
         try {
-            if (getErrorInsteadOfQueue()) {
-                lockObject = orderLockManager.acquireLockIfAvailable(order);
-                if (lockObject == null) {
-                    // We weren't able to acquire the lock immediately because some other thread has it. Because the
-                    // order.lock.errorInsteadOfQueue property was set to true, we're going to throw an exception now.
-                    throw new OrderLockAcquisitionFailureException("Thread[" + Thread.currentThread().getId() + 
-                            "] could not acquire lock for order[" + order.getId() + "]");
+            if (lockObject == null) {
+                if (getErrorInsteadOfQueue()) {
+                    lockObject = orderLockManager.acquireLockIfAvailable(order);
+                    if (lockObject == null) {
+                        // We weren't able to acquire the lock immediately because some other thread has it. Because the
+                        // order.lock.errorInsteadOfQueue property was set to true, we're going to throw an exception now.
+                        throw new OrderLockAcquisitionFailureException("Thread[" + Thread.currentThread().getId() +
+                                "] could not acquire lock for order[" + order.getId() + "]");
+                    }
+                } else {
+                    lockObject = orderLockManager.acquireLock(order);
                 }
-            } else {
-                lockObject = orderLockManager.acquireLock(order);
             }
     
             if (LOG.isTraceEnabled()) {
@@ -191,6 +193,11 @@ public class CartStateFilter extends OncePerRequestFilter implements Ordered {
 
     protected boolean getErrorInsteadOfQueue() {
         return BLCSystemProperty.resolveBooleanSystemProperty("order.lock.errorInsteadOfQueue");
+    }
+
+    @Override
+    protected boolean shouldNotFilterErrorDispatch() {
+        return false;
     }
 
 }

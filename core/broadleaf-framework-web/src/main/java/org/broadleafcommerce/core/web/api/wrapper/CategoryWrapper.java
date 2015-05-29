@@ -193,4 +193,180 @@ public class CategoryWrapper extends BaseWrapper implements APIWrapper<Category>
     protected SearchService getSearchService() {
         return (SearchService) context.getBean("blSearchService");
     }
+
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    
+    /**
+     * @return the active
+     */
+    public Boolean getActive() {
+        return active;
+    }
+
+    
+    /**
+     * @param active the active to set
+     */
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    
+    /**
+     * @return the url
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    
+    /**
+     * @param url the url to set
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    
+    /**
+     * @return the urlKey
+     */
+    public String getUrlKey() {
+        return urlKey;
+    }
+
+    
+    /**
+     * @param urlKey the urlKey to set
+     */
+    public void setUrlKey(String urlKey) {
+        this.urlKey = urlKey;
+    }
+
+    
+    /**
+     * @return the activeStartDate
+     */
+    public Date getActiveStartDate() {
+        return activeStartDate;
+    }
+
+    
+    /**
+     * @param activeStartDate the activeStartDate to set
+     */
+    public void setActiveStartDate(Date activeStartDate) {
+        this.activeStartDate = activeStartDate;
+    }
+
+    
+    /**
+     * @return the activeEndDate
+     */
+    public Date getActiveEndDate() {
+        return activeEndDate;
+    }
+
+    
+    /**
+     * @param activeEndDate the activeEndDate to set
+     */
+    public void setActiveEndDate(Date activeEndDate) {
+        this.activeEndDate = activeEndDate;
+    }
+
+    
+    /**
+     * @return the subcategories
+     */
+    public List<CategoryWrapper> getSubcategories() {
+        return subcategories;
+    }
+
+    
+    /**
+     * @param subcategories the subcategories to set
+     */
+    public void setSubcategories(List<CategoryWrapper> subcategories) {
+        this.subcategories = subcategories;
+    }
+
+    
+    /**
+     * @return the products
+     */
+    public List<ProductWrapper> getProducts() {
+        return products;
+    }
+
+    
+    /**
+     * @param products the products to set
+     */
+    public void setProducts(List<ProductWrapper> products) {
+        this.products = products;
+    }
+
+    
+    /**
+     * @return the categoryAttributes
+     */
+    public List<CategoryAttributeWrapper> getCategoryAttributes() {
+        return categoryAttributes;
+    }
+
+    
+    /**
+     * @param categoryAttributes the categoryAttributes to set
+     */
+    public void setCategoryAttributes(List<CategoryAttributeWrapper> categoryAttributes) {
+        this.categoryAttributes = categoryAttributes;
+    }
 }

@@ -45,22 +45,8 @@ public class CategoryFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .type(SupportedFieldType.STRING)
                 .build());
         fields.add(new FieldData.Builder()
-                .label("rule_categoryId")
-                .name("id")
-                .operators("blcOperators_Numeric")
-                .options("[]")
-                .type(SupportedFieldType.ID)
-                .build());
-        fields.add(new FieldData.Builder()
                 .label("rule_categoryUrl")
                 .name("url")
-                .operators("blcOperators_Text")
-                .options("[]")
-                .type(SupportedFieldType.STRING)
-                .build());
-        fields.add(new FieldData.Builder()
-                .label("rule_categoryLongDescription")
-                .name("longDescription")
                 .operators("blcOperators_Text")
                 .options("[]")
                 .type(SupportedFieldType.STRING)

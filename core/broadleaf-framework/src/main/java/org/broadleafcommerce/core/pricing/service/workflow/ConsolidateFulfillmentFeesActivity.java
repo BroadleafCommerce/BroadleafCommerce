@@ -19,9 +19,9 @@
  */
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.rule.MvelHelper;
+import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -37,7 +37,6 @@ import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,7 @@ import javax.annotation.Resource;
 public class ConsolidateFulfillmentFeesActivity extends BaseActivity<ProcessContext<Order>> {
     
     @SuppressWarnings("unchecked")
-    protected static final Map EXPRESSION_CACHE = Collections.synchronizedMap(new LRUMap(1000));
+    protected static final Map EXPRESSION_CACHE = new EfficientLRUMap(1000);
     
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;

@@ -61,4 +61,68 @@ public class ProductAttributeWrapper extends BaseWrapper implements APIWrapper<P
     public void wrapSummary(ProductAttribute model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the productId
+     */
+    public Long getProductId() {
+        return productId;
+    }
+
+    
+    /**
+     * @param productId the productId to set
+     */
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    
+    /**
+     * @return the attributeName
+     */
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    
+    /**
+     * @param attributeName the attributeName to set
+     */
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
+    }
+
+    
+    /**
+     * @return the attributeValue
+     */
+    public String getAttributeValue() {
+        return attributeValue;
+    }
+
+    
+    /**
+     * @param attributeValue the attributeValue to set
+     */
+    public void setAttributeValue(String attributeValue) {
+        this.attributeValue = attributeValue;
+    }
 }
