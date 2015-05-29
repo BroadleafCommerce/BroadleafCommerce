@@ -23,6 +23,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
@@ -114,7 +115,6 @@ public class FieldManager {
         }
         return field;
     }
-
     protected Class<?> getClassForField(PersistenceManager persistenceManager, String token, Field field, Class<?>[] entities) {
         Class<?> clazz;
         List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
@@ -160,7 +160,7 @@ public class FieldManager {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
         Field field;
-        Object value = bean;
+        Object value = HibernateUtils.deproxy(bean);
 
         while (tokens.hasMoreTokens()) {
             String fieldNamePart = tokens.nextToken();
@@ -194,6 +194,7 @@ public class FieldManager {
         StringTokenizer tokens = new StringTokenizer(fieldName, ".");
         Class<?> componentClass = bean.getClass();
         Field field;
+        bean = HibernateUtils.deproxy(bean);
         Object value = bean;
         
         int count = tokens.countTokens();
@@ -267,6 +268,30 @@ public class FieldManager {
         
         return value;
 
+    }
+
+    public Class<?> getFieldType(Field field) {
+        //consult the entity configuration manager to see if there is a user
+        //configured entity for this class
+        Class<?> response;
+        try {
+            response = entityConfiguration.lookupEntityClass(field.getType().getName());
+        } catch (Exception e) {
+            //Use the most extended type based on the field type
+            PersistenceManager persistenceManager = getPersistenceManager();
+            Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
+            if (!ArrayUtils.isEmpty(entities)) {
+                response = entities[entities.length-1];
+                LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                        "Using the most extended form of this class identified as ("+entities[0].getName()+")");
+            } else {
+                //Just use the field type
+                response = field.getType();
+                LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                        "Using the type of this class.");
+            }
+        }
+        return response;
     }
     
     public Map<String, Serializable> persistMiddleEntities() throws InstantiationException, IllegalAccessException {

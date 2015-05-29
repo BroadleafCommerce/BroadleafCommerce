@@ -42,6 +42,7 @@ import eu.medsea.mimeutil.detector.ExtensionMimeDetector;
 import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collection;
@@ -136,12 +137,16 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         String entityId = assetProperties.get("entityId");
         String fileName = assetProperties.get("fileName");
         
-        if (entityType != null) {
+        if (entityType != null && !"null".equals(entityType)) {
             path = path.append(entityType).append("/");
+        } else {
+            LOG.warn("The given entityType to build the asset URL was null for file " + originalFilename + " and entityId " + entityId + ", investigate probably cause");
         }
 
         if (entityId != null && !"null".equals(entityId)) {
             path = path.append(entityId).append("/");
+        } else {
+            LOG.warn("The given entityId to build the asset URL was null for file " + originalFilename + " and entityType " + entityType + ", investigate probably cause");
         }
 
         if (fileName != null) {
@@ -162,12 +167,21 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public StaticAsset createStaticAssetFromFile(MultipartFile file, Map<String, String> properties) {
-        
+        try {
+            return createStaticAsset(file.getInputStream(), file.getOriginalFilename(), file.getSize(), properties);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public StaticAsset createStaticAsset(InputStream inputStream, String fileName, long fileSize, Map<String, String> properties) {
         if (properties == null) {
             properties = new HashMap<String, String>();
         }
 
-        String fullUrl = buildAssetURL(properties, file.getOriginalFilename());
+        String fullUrl = buildAssetURL(properties, fileName);
         StaticAsset newAsset = staticAssetDao.readStaticAssetByFullUrl(fullUrl);
         int count = 0;
         while (newAsset != null) {
@@ -185,7 +199,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         }
 
         try {
-            ImageMetadata metadata = imageArtifactProcessor.getImageMetadata(file.getInputStream());
+            ImageMetadata metadata = imageArtifactProcessor.getImageMetadata(inputStream);
             newAsset = new ImageStaticAssetImpl();
             ((ImageStaticAsset) newAsset).setWidth(metadata.getWidth());
             ((ImageStaticAsset) newAsset).setHeight(metadata.getHeight());
@@ -199,10 +213,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             newAsset.setStorageType(StorageType.DATABASE);
         }
 
-        newAsset.setName(file.getOriginalFilename());
-        getMimeType(file, newAsset);
-        newAsset.setFileExtension(getFileExtension(file.getOriginalFilename()));
-        newAsset.setFileSize(file.getSize());
+        newAsset.setName(fileName);
+        getMimeType(inputStream, fileName, newAsset);
+        newAsset.setFileExtension(getFileExtension(fileName));
+        newAsset.setFileSize(fileSize);
         newAsset.setFullUrl(fullUrl);
 
         return staticAssetDao.addOrUpdateStaticAsset(newAsset, false);
@@ -232,17 +246,13 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return countUrl;
     }
 
-    protected void getMimeType(MultipartFile file, StaticAsset newAsset) {
-        Collection mimeTypes = MimeUtil.getMimeTypes(file.getOriginalFilename());
+    protected void getMimeType(InputStream inputStream, String fileName, StaticAsset newAsset) {
+        Collection mimeTypes = MimeUtil.getMimeTypes(fileName);
         if (!mimeTypes.isEmpty()) {
             MimeType mimeType = (MimeType) mimeTypes.iterator().next();
             newAsset.setMimeType(mimeType.toString());
         } else {
-            try {
-                mimeTypes = MimeUtil.getMimeTypes(file.getInputStream());
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
+            mimeTypes = MimeUtil.getMimeTypes(inputStream);
             if (!mimeTypes.isEmpty()) {
                 MimeType mimeType = (MimeType) mimeTypes.iterator().next();
                 newAsset.setMimeType(mimeType.toString());
@@ -296,6 +306,7 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return staticAssetPathService.getStaticAssetEnvironmentSecureUrlPrefix();
     }
 
+    @Override
     public String convertAssetPath(String assetPath, String contextPath, boolean secureRequest) {
         return staticAssetPathService.convertAssetPath(assetPath, contextPath, secureRequest);
     }

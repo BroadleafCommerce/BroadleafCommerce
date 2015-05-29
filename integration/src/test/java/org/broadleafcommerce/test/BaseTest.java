@@ -21,6 +21,7 @@ package org.broadleafcommerce.test;
 
 import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
 import org.broadleafcommerce.common.extensibility.context.StandardConfigLocations;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
@@ -58,6 +59,11 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
                 // After the framework applicationContexts are loaded, we want the module ones
                 List<String> additionalContexts = new ArrayList<String>(moduleContexts);
 
+                // We need the content applicationContexts and admin applicationContexts
+                additionalContexts.add("bl-open-admin-contentClient-applicationContext.xml");
+                additionalContexts.add("bl-open-admin-contentCreator-applicationContext.xml");
+                additionalContexts.add("bl-admin-applicationContext.xml");
+                
                 // Lastly, we want the test applicationContext
                 additionalContexts.add("bl-applicationContext-test.xml");
 

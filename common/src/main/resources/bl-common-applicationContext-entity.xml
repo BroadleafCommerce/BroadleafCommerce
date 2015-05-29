@@ -21,7 +21,7 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
     <bean id="org.broadleafcommerce.common.email.domain.EmailTracking" class="org.broadleafcommerce.common.email.domain.EmailTrackingImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
@@ -30,6 +30,7 @@
     <bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue" class="org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.common.config.domain.SystemProperty" class="org.broadleafcommerce.common.config.domain.SystemPropertyImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.i18n.domain.ISOCountry" class="org.broadleafcommerce.common.i18n.domain.ISOCountryImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.i18n.domain.Translation" class="org.broadleafcommerce.common.i18n.domain.TranslationImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" class="org.broadleafcommerce.common.structure.dto.StructuredContentDTO" scope="prototype" />
     <bean id="org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO" class="org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO" scope="prototype" />
@@ -41,5 +42,6 @@
     <bean id="org.broadleafcommerce.common.sandbox.domain.SandBoxManagement" class="org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.site.domain.Site" class="org.broadleafcommerce.common.site.domain.SiteImpl" scope="prototype" />
     <bean id="org.broadleafcommerce.common.site.domain.Catalog" class="org.broadleafcommerce.common.site.domain.CatalogImpl" scope="prototype" />
+    <bean id="org.broadleafcommerce.common.site.domain.SiteCatalogXref" class="org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl" scope="prototype" />
 
 </beans>

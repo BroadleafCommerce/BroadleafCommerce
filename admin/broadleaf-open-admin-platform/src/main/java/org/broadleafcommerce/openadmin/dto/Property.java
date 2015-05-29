@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -44,6 +46,15 @@ public class Property implements Serializable {
     protected String originalValue;
     protected Date deployDate;
 
+    public Property() {
+        // Default public constructor
+    }
+
+    public Property(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
     public String getName() {
         return name;
     }
@@ -58,6 +69,13 @@ public class Property implements Serializable {
 
     public void setValue(String value) {
         this.value = value;
+        if (unHtmlEncodedValue == null && value != null) {
+            setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(value));
+        }
+        
+        if (rawValue == null && value != null) {
+            setRawValue(value);
+        }
     }
 
     public FieldMetadata getMetadata() {
@@ -85,6 +103,9 @@ public class Property implements Serializable {
     }
 
     public String getUnHtmlEncodedValue() {
+        if (unHtmlEncodedValue == null) {
+            return StringEscapeUtils.unescapeHtml(getValue());
+        }
         return unHtmlEncodedValue;
     }
 
@@ -93,6 +114,9 @@ public class Property implements Serializable {
     }
 
     public String getRawValue() {
+        if (rawValue == null) {
+            return getValue();
+        }
         return rawValue;
     }
 

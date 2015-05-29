@@ -77,7 +77,14 @@ public class MediaWrapper extends BaseWrapper implements APIWrapper<Media> {
     public void setAllowOverrideUrl(boolean allow) {
         this.allowOverrideUrl = allow;
     }
-
+    
+    /**
+     * @return the url
+     */
+    public String getUrl() {
+        return url;
+    }
+    
     /**
      * Call this only if allowOverrideUrl is true, and only AFTER you call wrap.
      * @param url
@@ -86,5 +93,69 @@ public class MediaWrapper extends BaseWrapper implements APIWrapper<Media> {
         if (allowOverrideUrl) {
             this.url = url;
         }
+    }
+
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    
+    /**
+     * @return the altText
+     */
+    public String getAltText() {
+        return altText;
+    }
+
+    
+    /**
+     * @param altText the altText to set
+     */
+    public void setAltText(String altText) {
+        this.altText = altText;
+    }
+
+    
+    /**
+     * @return the tags
+     */
+    public String getTags() {
+        return tags;
+    }
+
+    
+    /**
+     * @param tags the tags to set
+     */
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }

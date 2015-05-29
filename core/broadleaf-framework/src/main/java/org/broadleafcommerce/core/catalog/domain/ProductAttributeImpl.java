@@ -20,6 +20,8 @@
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -32,6 +34,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,7 +54,8 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blProducts")
 @AdminPresentationClass(friendlyName = "ProductAttributeImpl_baseProductAttribute")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG, skipOverlaps=true)
 })
 public class ProductAttributeImpl implements ProductAttribute {
 
@@ -89,46 +93,31 @@ public class ProductAttributeImpl implements ProductAttribute {
     protected Boolean searchable = false;
     
     /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
+    @ManyToOne(targetEntity = ProductImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="PRODUCTATTRIBUTE_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product;
-    
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getId()
-     */
+
     @Override
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setId(java.lang.Long)
-     */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getValue()
-     */
     @Override
     public String getValue() {
         return DynamicTranslationProvider.getValue(this, "value", value);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setValue(java.lang.String)
-     */
     @Override
     public void setValue(String value) {
         this.value = value;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getSearchable()
-     */
     @Override
     public Boolean getSearchable() {
         if (searchable == null) {
@@ -138,48 +127,31 @@ public class ProductAttributeImpl implements ProductAttribute {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setSearchable(java.lang.Boolean)
-     */
     @Override
     public void setSearchable(Boolean searchable) {
         this.searchable = searchable;
     }
-    
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getName()
-     */
+
     @Override
     public String getName() {
         return DynamicTranslationProvider.getValue(this, "name", name);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setName(java.lang.String)
-     */
     @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return value;
     }
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#getProduct()
-     */
+
     @Override
     public Product getProduct() {
         return product;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.catalog.domain.ProductAttribute#setProduct(org.broadleafcommerce.core.catalog.domain.Product)
-     */
     @Override
     public void setProduct(Product product) {
         this.product = product;
@@ -225,5 +197,21 @@ public class ProductAttributeImpl implements ProductAttribute {
         } else if (!value.equals(other.value))
             return false;
         return true;
+    }
+
+    @Override
+    public <G extends ProductAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        ProductAttribute cloned = createResponse.getClone();
+        if (product != null) {
+            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setName(name);
+        cloned.setSearchable(searchable);
+        cloned.setValue(value);
+        return  createResponse;
     }
 }

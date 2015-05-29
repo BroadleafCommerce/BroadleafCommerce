@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.resource.service;
 
+import org.springframework.core.io.Resource;
+
 /**
  * Service responsible for interacting with YUI-compressor to minify JS/CSS resources.
  * 
@@ -60,5 +62,33 @@ public interface ResourceMinificationService {
      * @return the value of the system property "minify.allowSingleMinification"
      */
     boolean getAllowSingleMinification();
+
+    /**
+     * Delegates to {@link #minify(Resource, String)} where the filename argument is originalResource.getFilename().
+     * @param originalResource
+     * @return
+     */
+    Resource minify(Resource originalResource);
+
+    /**
+     * Given a {@link Resource}, will return a resource that represents the YUI-compressor minified version.
+     * 
+     * The behavior of this method is controlled via the following properties:
+     * 
+     * <ul>
+     *  <li>minify.enabled - whether or not to actually perform minification</li>
+     *  <li>minify.linebreak - if set to a value other than -1, will enforce a linebreak at that value</li>
+     *  <li>minify.munge - if true, will replace variable names with shorter versions</li>
+     *  <li>minify.verbose - if true, will display extra logging information to the console</li>
+     *  <li>minify.preserveAllSemiColons - if true, will never remove semi-colons, even if two in a row exist</li>
+     *  <li>minify.disableOptimizations - if true, will disable some micro-optimizations that are performed</li>
+     * </ul>
+     * 
+     * @param orginalResource
+     * @param the name of resource
+     * 
+     * @return The minified resource
+     */
+    Resource minify(Resource originalResource, String filename);
 
 }

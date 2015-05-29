@@ -23,6 +23,7 @@
     <li class="adornedModalTab2Tab">
         <blc:form th:include="components/entityForm"
             th:remove="tag"
-            th:with="additionalClasses='modal-form'" />
+            th:with="additionalClasses='modal-form',
+                     hideActions=${listGrid.listGridType == 'adorned'}" />
     </li>
 </ul>

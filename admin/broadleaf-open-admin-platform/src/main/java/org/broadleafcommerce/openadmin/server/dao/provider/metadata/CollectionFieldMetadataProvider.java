@@ -298,6 +298,12 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                 fieldMetadataOverride.setSecurityLevel(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SHOWIFPROPERTY)) {
                 fieldMetadataOverride.setShowIfProperty(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SORTASCENDING)) {
+                fieldMetadataOverride.setSortAscending(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                            .booleanOverrideValue() :
+                            Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SORTPROPERTY)) {
+                fieldMetadataOverride.setSortProperty(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.TAB)) {
                 fieldMetadataOverride.setTab(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.TABORDER)) {
@@ -328,6 +334,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             override.setExcluded(annotColl.excluded());
             override.setFriendlyName(annotColl.friendlyName());
             override.setReadOnly(annotColl.readOnly());
+            override.setSortProperty(annotColl.sortProperty());
+            override.setSortAscending(annotColl.sortAscending());
             override.setOrder(annotColl.order());
             override.setTab(annotColl.tab());
             override.setTabOrder(annotColl.tabOrder());
@@ -420,17 +428,37 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             throw new IllegalArgumentException("Unable to infer a ManyToOne field name for the @AdminPresentationCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the manyToField property");
         }
 
+        String sortProperty = null;
+        if (serverMetadata != null) {
+            sortProperty = ((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getSortField();
+        }
+        if (!StringUtils.isEmpty(collectionMetadata.getSortProperty())) {
+            sortProperty = collectionMetadata.getSortProperty();
+        }
+
+        Boolean isAscending = true;
+        if (serverMetadata != null) {
+            isAscending = ((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getSortAscending();
+        }
+        if (collectionMetadata.isSortAscending()!=null) {
+            isAscending = collectionMetadata.isSortAscending();
+        }
+
         if (serverMetadata != null) {
             ForeignKey foreignKey = (ForeignKey) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
             foreignKey.setManyToField(foreignKeyName);
             foreignKey.setForeignKeyClass(resolvedClass.getName());
             foreignKey.setMutable(metadata.isMutable());
             foreignKey.setOriginatingField(prefix + field.getName());
+            foreignKey.setSortField(sortProperty);
+            foreignKey.setSortAscending(isAscending);
         } else {
             ForeignKey foreignKey = new ForeignKey(foreignKeyName, resolvedClass.getName(), null, ForeignKeyRestrictionType.ID_EQ);
-            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
             foreignKey.setMutable(metadata.isMutable());
             foreignKey.setOriginatingField(prefix + field.getName());
+            foreignKey.setSortField(sortProperty);
+            foreignKey.setSortAscending(isAscending);
+            persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
         }
 
         String ceiling = null;
@@ -485,6 +513,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         }
         if (collectionMetadata.getTabOrder() != null) {
             metadata.setTabOrder(collectionMetadata.getTabOrder());
+        }
+
+        if (collectionMetadata.getSortProperty() != null) {
+            metadata.setSortProperty(collectionMetadata.getSortProperty());
         }
 
         if (collectionMetadata.getCustomCriteria() != null) {

@@ -19,6 +19,13 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +40,9 @@ import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
+import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
+import org.broadleafcommerce.core.offer.service.exception.OfferException;
+import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
@@ -74,13 +84,6 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 
 /**
  * @author apazzolini
@@ -89,7 +92,7 @@ import javax.annotation.Resource;
 @ManagedResource(objectName="org.broadleafcommerce:name=OrderService", description="Order Service", currencyTimeLimit=15)
 public class OrderServiceImpl implements OrderService {
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
-    
+
     /* DAOs */
     @Resource(name = "blOrderPaymentDao")
     protected OrderPaymentDao paymentDao;
@@ -180,7 +183,7 @@ public class OrderServiceImpl implements OrderService {
             namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         }
         
-        return orderDao.save(namedOrder); // No need to price here
+        return persist(namedOrder); // No need to price here
     }
 
     @Override
@@ -322,6 +325,10 @@ public class OrderServiceImpl implements OrderService {
                                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
             try {
                 order = persist(order);
+
+                if (extensionManager != null) {
+                    extensionManager.getProxy().attachAdditionalDataToOrder(order, priceOrder);
+                }
                 TransactionUtils.finalizeTransaction(status, transactionManager, false);
             } catch (RuntimeException ex) {
                 TransactionUtils.finalizeTransaction(status, transactionManager, true);
@@ -353,7 +360,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferException {
         ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
         offerCodes.add(offerCode);
         return addOfferCodes(order, offerCodes, priceOrder);
@@ -361,19 +368,23 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
-    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferMaxUseExceededException {
+    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException {
         preValidateCartOperation(order);
         Set<Offer> addedOffers = offerService.getUniqueOffersFromOrder(order);
 
         if (offerCodes != null && !offerCodes.isEmpty()) {
             for (OfferCode offerCode : offerCodes) {
-                //TODO: give some sort of notification that adding the offer code to the order was unsuccessful
-                if (!order.getAddedOfferCodes().contains(offerCode) && !addedOffers.contains(offerCode.getOffer())) {
-                    if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
-                        throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
-                    }
-                    order.getAddedOfferCodes().add(offerCode);
+                
+                if (order.getAddedOfferCodes().contains(offerCode) || addedOffers.contains(offerCode.getOffer())) {
+                    throw new OfferAlreadyAddedException("The offer has already been added.");
+                } else if (!offerService.verifyMaxCustomerUsageThreshold(order.getCustomer(), offerCode)) {
+                    throw new OfferMaxUseExceededException("The customer has used this offer code more than the maximum allowed number of times.");
+                } else if (!offerCode.isActive() || !offerCode.getOffer().isActive()) {
+                    throw new OfferExpiredException("The offer has expired.");
                 }
+                
+                order.getAddedOfferCodes().add(offerCode);
+                
             }
             order = save(order, priceOrder);
         }
@@ -590,6 +601,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
     public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
         preValidateCartOperation(findOrderById(orderId));
+        preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
         if (orderItemRequestDTO.getQuantity() == 0) {
             return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
         }
@@ -844,6 +856,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional("blTransactionManager")
+    public boolean acquireLock(Order order) {
+        return orderDao.acquireLock(order);
+    }
+
+    @Override
+    public boolean releaseLock(Order order) {
+        return orderDao.releaseLock(order);
+    }
+
+    @Override
     public void printOrder(Order order, Log log) {
         if (!log.isDebugEnabled()) {
             return;
@@ -892,4 +915,14 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public void preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto) {
+        ExtensionResultHolder erh = new ExtensionResultHolder();
+        extensionManager.getProxy().preValidateUpdateQuantityOperation(cart, dto, erh);
+        if (erh.getThrowable() instanceof IllegalCartOperationException) {
+            throw ((IllegalCartOperationException) erh.getThrowable());
+        } else if (erh.getThrowable() != null) {
+            throw new RuntimeException(erh.getThrowable());
+        }
+    }
 }

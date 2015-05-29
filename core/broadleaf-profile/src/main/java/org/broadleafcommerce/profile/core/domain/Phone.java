@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 
 public interface Phone extends Serializable {
@@ -27,9 +29,17 @@ public interface Phone extends Serializable {
 
     public void setId(Long id);
 
+    public String getCountryCode();
+
+    public void setCountryCode(String countryCode);
+
     public String getPhoneNumber();
 
     public void setPhoneNumber(String phoneNumber);
+
+    public String getExtension();
+
+    public void setExtension(String extension);
 
     public boolean isDefault();
 

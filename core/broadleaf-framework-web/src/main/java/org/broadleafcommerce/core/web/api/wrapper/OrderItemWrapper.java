@@ -175,17 +175,244 @@ public class OrderItemWrapper extends BaseWrapper implements APIWrapper<OrderIte
         wrapDetails(model, request);
     }
 
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    
+    /**
+     * @return the quantity
+     */
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    
+    /**
+     * @param quantity the quantity to set
+     */
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    
+    /**
+     * @return the retailPrice
+     */
+    public Money getRetailPrice() {
+        return retailPrice;
+    }
+
+    
+    /**
+     * @param retailPrice the retailPrice to set
+     */
+    public void setRetailPrice(Money retailPrice) {
+        this.retailPrice = retailPrice;
+    }
+
+    
+    /**
+     * @return the salePrice
+     */
+    public Money getSalePrice() {
+        return salePrice;
+    }
+
+    
+    /**
+     * @param salePrice the salePrice to set
+     */
+    public void setSalePrice(Money salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    
+    /**
+     * @return the orderId
+     */
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    
+    /**
+     * @param orderId the orderId to set
+     */
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    
+    /**
+     * @return the categoryId
+     */
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    
+    /**
+     * @param categoryId the categoryId to set
+     */
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    
+    /**
+     * @return the skuId
+     */
     public Long getSkuId() {
         return skuId;
     }
 
+    
+    /**
+     * @param skuId the skuId to set
+     */
     public void setSkuId(Long skuId) {
         this.skuId = skuId;
-
     }
 
+    
+    /**
+     * @return the productId
+     */
+    public Long getProductId() {
+        return productId;
+    }
+
+    
+    /**
+     * @param productId the productId to set
+     */
     public void setProductId(Long productId) {
         this.productId = productId;
-
     }
+
+    
+    /**
+     * @return the isBundle
+     */
+    public Boolean getIsBundle() {
+        return isBundle;
+    }
+
+    
+    /**
+     * @param isBundle the isBundle to set
+     */
+    public void setIsBundle(Boolean isBundle) {
+        this.isBundle = isBundle;
+    }
+
+    
+    /**
+     * @return the orderItemAttributes
+     */
+    public List<OrderItemAttributeWrapper> getOrderItemAttributes() {
+        return orderItemAttributes;
+    }
+
+    
+    /**
+     * @param orderItemAttributes the orderItemAttributes to set
+     */
+    public void setOrderItemAttributes(List<OrderItemAttributeWrapper> orderItemAttributes) {
+        this.orderItemAttributes = orderItemAttributes;
+    }
+
+    
+    /**
+     * @return the orderItemPriceDetails
+     */
+    public List<OrderItemPriceDetailWrapper> getOrderItemPriceDetails() {
+        return orderItemPriceDetails;
+    }
+
+    
+    /**
+     * @param orderItemPriceDetails the orderItemPriceDetails to set
+     */
+    public void setOrderItemPriceDetails(List<OrderItemPriceDetailWrapper> orderItemPriceDetails) {
+        this.orderItemPriceDetails = orderItemPriceDetails;
+    }
+
+    
+    /**
+     * @return the bundleItems
+     */
+    public List<OrderItemWrapper> getBundleItems() {
+        return bundleItems;
+    }
+
+    
+    /**
+     * @param bundleItems the bundleItems to set
+     */
+    public void setBundleItems(List<OrderItemWrapper> bundleItems) {
+        this.bundleItems = bundleItems;
+    }
+
+    
+    /**
+     * @return the qualifiers
+     */
+    public List<OrderItemQualifierWrapper> getQualifiers() {
+        return qualifiers;
+    }
+
+    
+    /**
+     * @param qualifiers the qualifiers to set
+     */
+    public void setQualifiers(List<OrderItemQualifierWrapper> qualifiers) {
+        this.qualifiers = qualifiers;
+    }
+
+    
+    /**
+     * @return the isDiscountingAllowed
+     */
+    public Boolean getIsDiscountingAllowed() {
+        return isDiscountingAllowed;
+    }
+
+    
+    /**
+     * @param isDiscountingAllowed the isDiscountingAllowed to set
+     */
+    public void setIsDiscountingAllowed(Boolean isDiscountingAllowed) {
+        this.isDiscountingAllowed = isDiscountingAllowed;
+    }
+
 }

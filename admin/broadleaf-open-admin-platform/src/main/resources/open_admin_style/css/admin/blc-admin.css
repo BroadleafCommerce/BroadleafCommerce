@@ -153,6 +153,10 @@ div.errors {
     margin-bottom: 10px;
 }
 
+div.errors .tabError {
+    margin-bottom: 10px;
+}
+
 div.errors span {
     color: #c60f13;
     display: block;
@@ -321,6 +325,8 @@ h2#mainEntityName {
 	margin-top: 0;
 }
 
+input[type="text"][readonly], input[type="password"][readonly], input[type="date"][readonly], input[type="datetime"][readonly], input[type="email"][readonly], input[type="number"][readonly], input[type="search"][readonly], input[type="tel"][readonly], input[type="time"][readonly], input[type="url"][readonly], textarea[readonly] { background-color: #ddd; }
+
 /* --------------------------------------------------
   Top Bar
 ----------------------------------------------------- */
@@ -337,7 +343,8 @@ h2#mainEntityName {
 .top-bar .attached {
     padding: 0 0 0 23px;
     max-width: 1280px;
-    z-index: 0 !important;
+    z-index: 1000 !important;
+    position: relative;
 }
 
 .top-bar .attached > .brand {
@@ -392,7 +399,7 @@ nav > ul.blc-accordion > li:last-child .title {
 	border-bottom: 1px solid #CCC;
 }
 
-nav > ul.blc-accordion > li .title::after {
+nav > ul.blc-accordion > li .title:after {
     content: "";
     display: block;
     width: 0;
@@ -404,7 +411,7 @@ nav > ul.blc-accordion > li .title::after {
     top: 21px;
 }
 
-nav > ul.blc-accordion > li.active .title::after {
+nav > ul.blc-accordion > li.active .title:after {
     content: "";
     display: block;
     width: 0;
@@ -1741,6 +1748,12 @@ div.action-popup a.action-popup-cancel {
 	line-height: 27px;
 }
 
+div.action-popup span.submit-error.success {
+	color: #8EAA2B;
+	font-weight: bold;
+}
+
+
 div.action-popup span.submit-error,
 div.action-popup span.sync-ok {
 	line-height: 27px;
@@ -1784,4 +1797,10 @@ div.action-popup img.ajax-loader {
     float: right;
     margin-right: 10px;
     display: none;
+}
+
+div.action-popup.change-password {
+	top: 20px;
+	right: 0;
+	width: 330px;
 }

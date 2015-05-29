@@ -29,12 +29,22 @@ public class BasicCollectionMetadata extends CollectionMetadata {
 
     private AddMethodType addMethodType;
 
+    private String sortProperty;
+
     public AddMethodType getAddMethodType() {
         return addMethodType;
     }
 
     public void setAddMethodType(AddMethodType addMethodType) {
         this.addMethodType = addMethodType;
+    }
+
+    public String getSortProperty() {
+        return sortProperty;
+    }
+
+    public void setSortProperty(String sortProperty) {
+        this.sortProperty = sortProperty;
     }
 
     @Override
@@ -45,6 +55,7 @@ public class BasicCollectionMetadata extends CollectionMetadata {
     @Override
     protected FieldMetadata populate(FieldMetadata metadata) {
         ((BasicCollectionMetadata) metadata).addMethodType = addMethodType;
+        ((BasicCollectionMetadata) metadata).sortProperty = sortProperty;
         return super.populate(metadata);
     }
 

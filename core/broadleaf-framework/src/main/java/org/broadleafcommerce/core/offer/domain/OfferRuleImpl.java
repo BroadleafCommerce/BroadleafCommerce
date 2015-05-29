@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -47,7 +49,8 @@ import javax.persistence.Table;
 @Table(name = "BLC_OFFER_RULE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferRuleImpl implements OfferRule {
 
@@ -133,5 +136,15 @@ public class OfferRuleImpl implements OfferRule {
             return false;
         return true;
     }
-    
+
+    @Override
+    public <G extends OfferRule> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OfferRule cloned = createResponse.getClone();
+        cloned.setMatchRule(matchRule);
+        return createResponse;
+    }
 }

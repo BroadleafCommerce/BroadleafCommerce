@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.checkout.model;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.payment.CreditCardType;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
@@ -49,11 +50,22 @@ public class CheckoutForm implements Serializable {
         billingAddress = new AddressImpl();
         shippingAddress.setPhonePrimary(new PhoneImpl());
         billingAddress.setPhonePrimary(new PhoneImpl());
+        shippingAddress.setPhoneSecondary(new PhoneImpl());
+        billingAddress.setPhoneSecondary(new PhoneImpl());
+        shippingAddress.setPhoneFax(new PhoneImpl());
+        billingAddress.setPhoneFax(new PhoneImpl());
+        shippingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
+        billingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
+        isSameAddress = true;
+
+        /**
+         * @deprecated - setCountry() and setState() on address have been deprecated in favor of ISO standardization.
+         * Leaving here for legacy implementations.
+         */
         shippingAddress.setCountry(new CountryImpl());
         billingAddress.setCountry(new CountryImpl());
         shippingAddress.setState(new StateImpl());
         billingAddress.setState(new StateImpl());
-        isSameAddress = true;
     }
 
     public String getEmailAddress() {

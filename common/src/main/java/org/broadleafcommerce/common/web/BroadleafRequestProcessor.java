@@ -25,13 +25,14 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
-import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -61,7 +62,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     private static String REQUEST_DTO_PARAM_NAME = BroadleafRequestFilter.REQUEST_DTO_PARAM_NAME;
     public static String REPROCESS_PARAM_NAME = "REPROCESS_BLC_REQUEST";
     
-    public static final String SITE_ENFORCE_PRODUCTION_WORKFLOW_KEY = "site.enforce.production.workflow.update";
+    private static final String SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "site.strict.validate.production.changes";
 
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
@@ -87,8 +88,11 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     @Value("${thymeleaf.threadLocalCleanup.enabled}")
     protected boolean thymeleafThreadLocalCleanupEnabled = true;
 
-    @Value("${" + SITE_ENFORCE_PRODUCTION_WORKFLOW_KEY + ":false}")
-    protected boolean enforceSiteProductionWorkflowUpdate = false;
+    @Value("${" + SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":false}")
+    protected boolean siteStrictValidateProductionChanges = false;
+
+    @Resource(name = "blDeployBehaviorUtil")
+    protected DeployBehaviorUtil deployBehaviorUtil;
     
     @Resource(name="blEntityExtensionManagers")
     protected Map<String, ExtensionManager> entityExtensionManagers;
@@ -107,15 +111,18 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
         brc.setAdmin(false);
 
-        if (enforceSiteProductionWorkflowUpdate) {
-            brc.getAdditionalProperties().put(SITE_ENFORCE_PRODUCTION_WORKFLOW_KEY, enforceSiteProductionWorkflowUpdate);
+        if (siteStrictValidateProductionChanges) {
+            brc.setValidateProductionChangesState(ValidateProductionChangesState.SITE);
+        } else {
+            brc.setValidateProductionChangesState(ValidateProductionChangesState.UNDEFINED);
         }
 
         BroadleafRequestContext.setBroadleafRequestContext(brc);
 
         Locale locale = localeResolver.resolveLocale(request);
+        brc.setLocale(locale);
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
-        BroadleafCurrency currency = currencyResolver.resolveCurrency(request);
+        BroadleafRequestedCurrencyDto currencyDto = currencyResolver.resolveCurrency(request);
         // Assumes BroadleafProcess
         RequestDTO requestDTO = (RequestDTO) request.getAttribute(REQUEST_DTO_PARAM_NAME, WebRequest.SCOPE_REQUEST);
         if (requestDTO == null) {
@@ -154,9 +161,13 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             previewSandBoxContext.setPreviewMode(true);
             SandBoxContext.setSandBoxContext(previewSandBoxContext);
         }
-        brc.setLocale(locale);
-        brc.setBroadleafCurrency(currency);
+        if (currencyDto != null) {
+            brc.setBroadleafCurrency(currencyDto.getCurrencyToUse());
+            brc.setRequestedBroadleafCurrency(currencyDto.getRequestedCurrency());
+        }
+
         brc.setSandBox(currentSandbox);
+        brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
 
         // Note that this must happen after the request context is set up as resolving a theme is dependent on site
         Theme theme = themeResolver.resolveTheme(request);

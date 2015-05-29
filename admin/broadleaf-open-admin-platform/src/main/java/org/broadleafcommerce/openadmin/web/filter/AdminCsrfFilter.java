@@ -22,8 +22,8 @@ package org.broadleafcommerce.openadmin.web.filter;
 
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.handler.CsrfFilter;
-import org.broadleafcommerce.openadmin.security.BroadleafAdminAuthenticationFailureHandler;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminCsrfFilter extends CsrfFilter {
     
     @Resource(name = "blAdminAuthenticationFailureHandler")
-    BroadleafAdminAuthenticationFailureHandler failureHandler;
+    protected AuthenticationFailureHandler failureHandler;
     
     public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
         try {

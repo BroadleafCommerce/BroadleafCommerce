@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.server.dao;
 
 
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -45,7 +46,6 @@ import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.FieldNamePropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
-import org.codehaus.jackson.map.util.LRUMap;
 import org.hibernate.Criteria;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
@@ -81,6 +81,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 
@@ -95,7 +96,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     
     private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
     
-    protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = new LRUMap<String, Map<String, FieldMetadata>>(100, 1000);
+    protected static final Map<String,Map<String, FieldMetadata>> METADATA_CACHE = new LRUMap<String, Map<String, FieldMetadata>>(1000);
     /*
      * This is the same as POLYMORPHIC_ENTITY_CACHE, except that it does not contain classes that are abstract or have been marked for exclusion 
      * from polymorphism
@@ -378,6 +379,24 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
 
             return mergedProperties;
         }
+    }
+    
+    @Override
+    public Map<String, FieldMetadata> getMergedProperties(@Nonnull Class<?> cls) {
+        Class<?>[] polymorphicTypes = getAllPolymorphicEntitiesFromCeiling(cls);
+        return getMergedProperties(
+                cls.getName(),
+                polymorphicTypes,
+                null,
+                new String[] {},
+                new ForeignKey[] {},
+                MergedPropertyType.PRIMARY,
+                true,
+                new String[] {},
+                new String[] {},
+                null,
+                ""
+                );
     }
 
     @Override

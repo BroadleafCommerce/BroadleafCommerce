@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class LocalRedirectStrategy implements RedirectStrategy {
 
-
     private boolean contextRelative = false;
     private static final Log LOG = LogFactory.getLog(LocalRedirectStrategy.class);
     private boolean enforcePortMatch = false;

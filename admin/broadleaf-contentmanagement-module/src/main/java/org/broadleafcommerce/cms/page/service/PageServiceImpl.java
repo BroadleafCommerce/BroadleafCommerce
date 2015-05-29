@@ -24,21 +24,17 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.page.dao.PageDao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
-import org.broadleafcommerce.cms.page.domain.PageItemCriteria;
-import org.broadleafcommerce.cms.page.domain.PageRule;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.cache.CacheStatType;
 import org.broadleafcommerce.common.cache.StatisticsService;
 import org.broadleafcommerce.common.extensibility.jpa.SiteDiscriminator;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
-import org.broadleafcommerce.common.file.service.StaticAssetPathService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
@@ -46,7 +42,6 @@ import org.broadleafcommerce.common.page.dto.NullPageDTO;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.rule.RuleProcessor;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 import org.broadleafcommerce.common.template.TemplateOverrideExtensionManager;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.stereotype.Service;
@@ -54,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +64,7 @@ public class PageServiceImpl implements PageService {
     protected static final Log LOG = LogFactory.getLog(PageServiceImpl.class);
     
     protected static String AND = " && ";
+    protected static final String FOREIGN_LOOKUP = "BLC_FOREIGN_LOOKUP";
 
     @Resource(name="blPageDao")
     protected PageDao pageDao;
@@ -81,16 +78,20 @@ public class PageServiceImpl implements PageService {
     @Resource(name="blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
-    @Resource(name="blStaticAssetPathService")
-    protected StaticAssetPathService staticAssetPathService;
-
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;
 
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
 
+    @Resource(name = "blPageServiceUtility")
+    protected PageServiceUtility pageServiceUtility;
+
+    @Resource(name = "blPageServiceExtensionManager")
+    protected PageServiceExtensionManager extensionManager;
+
     protected Cache pageCache;
+    protected Cache pageMapCache;
     protected final PageDTO NULL_PAGE = new NullPageDTO();
 
     /**
@@ -102,6 +103,22 @@ public class PageServiceImpl implements PageService {
     @Override
     public Page findPageById(Long pageId) {
         return pageDao.readPageById(pageId);
+    }
+
+    /**
+     * Returns the page with the passed in id.
+     *
+     * @param pageId - The id of the page.
+     * @return The associated page.
+     */
+    @Override
+    public Map<String, PageField> findPageFieldMapByPageId(Long pageId) {
+        Map<String, PageField> returnMap = new HashMap<String, PageField>();
+        List<PageField> pageFields = pageDao.readPageFieldsByPageId(pageId);
+        for (PageField pf : pageFields) {
+            returnMap.put(pf.getFieldKey(), pf);
+        }
+        return returnMap;
     }
 
     @Override
@@ -135,11 +152,11 @@ public class PageServiceImpl implements PageService {
             }
             if (returnList == null) {
                 //TODO does this pull the right sandbox in multitenant?
-                List<Page> pageList = pageDao.findPageByURI(locale, languageOnlyLocale, uri);
+                List<Page> pageList = pageDao.findPageByURI(uri);
                 returnList = buildPageDTOList(pageList, secure);
                 if (context.isProductionSandBox()) {
                     Collections.sort(returnList, new BeanComparator("priority"));
-                    addPageListToCache(returnList, key);
+                    addPageListToCache(returnList, key, uri, sandBox, site);
                 }
             }
         }
@@ -149,12 +166,17 @@ public class PageServiceImpl implements PageService {
         if (dto.getId() != null) {
             Page page = findPageById(dto.getId());
 
-            ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
-            templateOverrideManager.getProxy().getOverrideTemplate(erh, page);
-            
-            if (StringUtils.isNotBlank(erh.getResult())) {
-                dto.setTemplatePath(erh.getResult());
+            ExtensionResultHolder<PageDTO> newDTO = new ExtensionResultHolder<PageDTO>();
+
+            // Allow an extension point to override the page to render.
+            extensionManager.getProxy().overridePageDto(newDTO, dto, page);
+            if (newDTO.getResult() != null) {
+                dto = newDTO.getResult();
             }
+        }
+        
+        if (dto != null) {
+            dto = pageServiceUtility.hydrateForeignLookups(dto);
         }
         
         return dto;
@@ -171,18 +193,15 @@ public class PageServiceImpl implements PageService {
     }
 
     @Override
-    public void removePageFromCache(SandBox sandBox, Page p) {
-        // Remove secure and non-secure instances of the page.
-        // Typically the page will be in one or the other if at all.
-        removePageFromCache(buildKey(sandBox, p));
-    }
-
-    @Override
-    public void removePageFromCache(String baseKey) {
-        // Remove secure and non-secure instances of the page.
-        // Typically the page will be in one or the other if at all.
-        getPageCache().remove(baseKey+"-"+true);
-        getPageCache().remove(baseKey+"-"+false);
+    @SuppressWarnings("unchecked")
+    public void removePageFromCache(String key) {
+        Element e = getPageMapCache().get(key);
+        if (e != null && e.getObjectValue() != null) {
+            List<String> keys = (List<String>) e.getObjectValue();
+            for (String k : keys) {
+                getPageCache().remove(k);
+            }
+        }
     }
 
     /**
@@ -193,84 +212,15 @@ public class PageServiceImpl implements PageService {
      * @param secure
      * @return
      */
-    protected List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure) {
+    @Override
+    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure) {
         List<PageDTO> dtoList = new ArrayList<PageDTO>();
         if (pageList != null) {
             for(Page page : pageList) {
-                dtoList.add(buildPageDTOInternal(page, secure));
+                dtoList.add(pageServiceUtility.buildPageDTO(page, secure));
             }
         }
         return dtoList;
-    }
-
-    protected PageDTO buildPageDTOInternal(Page page, boolean secure) {
-        PageDTO pageDTO = new PageDTO();
-        pageDTO.setId(page.getId());
-        pageDTO.setDescription(page.getDescription());
-        pageDTO.setUrl(page.getFullUrl());
-        pageDTO.setPriority(page.getPriority());
-
-        if (page.getPageTemplate() != null) {
-            pageDTO.setTemplatePath(page.getPageTemplate().getTemplatePath());
-            if (page.getPageTemplate().getLocale() != null) {
-                pageDTO.setLocaleCode(page.getPageTemplate().getLocale().getLocaleCode());
-            }
-        }
-
-        String cmsPrefix = staticAssetPathService.getStaticAssetUrlPrefix();
-
-        for (String fieldKey : page.getPageFields().keySet()) {
-            PageField pf = page.getPageFields().get(fieldKey);
-            String originalValue = pf.getValue();
-            if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
-                //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
-                //If there is an environment prefix configured (e.g. a CDN), then we must replace the cmsPrefix with this one.
-                String fldValue = staticAssetPathService.convertAllAssetPathsInContent(originalValue, secure);
-                pageDTO.getPageFields().put(fieldKey, fldValue);
-            } else {
-                pageDTO.getPageFields().put(fieldKey, originalValue);
-            }
-        }
-
-        pageDTO.setRuleExpression(buildRuleExpression(page));
-
-        if (page.getQualifyingItemCriteria() != null && page.getQualifyingItemCriteria().size() > 0) {
-            pageDTO.setItemCriteriaDTOList(buildItemCriteriaDTOList(page));
-        }
-
-        return pageDTO;
-    }
-
-
-    protected String buildRuleExpression(Page page) {
-       StringBuffer ruleExpression = null;
-       Map<String, PageRule> ruleMap = page.getPageMatchRules();
-       if (ruleMap != null) {
-           for (String ruleKey : ruleMap.keySet()) {
-               if (ruleExpression == null) {
-                   ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
-               } else {
-                   ruleExpression.append(AND);
-                   ruleExpression.append(ruleMap.get(ruleKey).getMatchRule());
-               }
-           }
-       }
-       if (ruleExpression != null) {
-           return ruleExpression.toString();
-       } else {
-           return null;
-       }
-    }
-
-    protected List<ItemCriteriaDTO> buildItemCriteriaDTOList(Page page) {
-        List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<ItemCriteriaDTO>();
-        for(PageItemCriteria criteria : page.getQualifyingItemCriteria()) {
-            ItemCriteriaDTO criteriaDTO = new ItemCriteriaDTO();
-            criteriaDTO.setMatchRule(criteria.getMatchRule());
-            criteriaDTO.setQty(criteria.getQuantity());
-            itemCriteriaDTOList.add(criteriaDTO);
-        }
-        return itemCriteriaDTOList;
     }
 
     protected PageDTO evaluatePageRules(List<PageDTO> pageDTOList, Locale locale, Map<String, Object> ruleDTOs) {
@@ -298,6 +248,7 @@ public class PageServiceImpl implements PageService {
 
         return NULL_PAGE;
     }
+    
 
     protected boolean passesPageRules(PageDTO page, Map<String, Object> ruleDTOs) {
         if (pageRuleProcessors != null) {
@@ -346,14 +297,47 @@ public class PageServiceImpl implements PageService {
         return pageCache;
     }
 
-    protected String buildKey(SandBox sandBox, Page page) {
-        Long sandBoxId = sandBox==null?null:sandBox.getId();
-        Long siteId = (page instanceof SiteDiscriminator)?((SiteDiscriminator) page).getSiteDiscriminator():null;
-        return buildKey(sandBoxId, siteId, findLanguageOnlyLocale(page.getPageTemplate().getLocale()), page.getFullUrl());
+    @Override
+    public Cache getPageMapCache() {
+        if (pageMapCache == null) {
+            pageMapCache = CacheManager.getInstance().getCache("cmsPageMapCache");
+        }
+        return pageMapCache;
     }
 
-    protected void addPageListToCache(List<PageDTO> pageList, String key) {
+    protected String buildKey(SandBox sandBox, Page page) {
+        Locale locale = page.getPageTemplate() == null ? null : page.getPageTemplate().getLocale();
+        Long sandBoxId = sandBox==null?null:sandBox.getId();
+        Long siteId = (page instanceof SiteDiscriminator)?((SiteDiscriminator) page).getSiteDiscriminator():null;        
+        return buildKey(sandBoxId, siteId, findLanguageOnlyLocale(locale), page.getFullUrl());
+    }
+
+    protected void addPageListToCache(List<PageDTO> pageList, String key, String uri, Long sandBox, Long site) {
         getPageCache().put(new Element(key, pageList));
+        
+        addPageMapCacheEntry(key, uri, sandBox, site);
+        if (site != null) {
+            addPageMapCacheEntry(key, uri, sandBox, null);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected void addPageMapCacheEntry(String keyToStore, String uri, Long sandBox, Long site) {
+        String key = getPageMapCacheKey(uri, sandBox, site);
+
+        Element e = getPageMapCache().get(key);
+        if (e == null || e.getObjectValue() == null) {
+            List<String> keys = new ArrayList<String>();
+            keys.add(keyToStore);
+            getPageMapCache().put(new Element(key, keys));
+        } else {
+            ((List<String>) e.getObjectValue()).add(keyToStore);
+        }
+    }
+    
+    @Override
+    public String getPageMapCacheKey(String uri, Long sandBox, Long site) {
+        return uri + "-" + sandBox + "-" + (site == null ? "ALL" : site);
     }
 
     protected List<PageDTO> getPageListFromCache(String key) {

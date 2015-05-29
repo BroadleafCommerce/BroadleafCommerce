@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 
@@ -55,7 +56,7 @@ import javax.annotation.Nullable;
  * @author Jeff Fischer
  *
  */
-public interface StructuredContent extends Serializable {
+public interface StructuredContent extends Serializable,MultiTenantCloneable<StructuredContent> {
 
     /**
      * Gets the primary key.
@@ -118,6 +119,22 @@ public interface StructuredContent extends Serializable {
     public void setStructuredContentType(@Nonnull StructuredContentType structuredContentType);
 
     /**
+     * @deprecated - use {@link #getStructuredContentFieldXrefs()}
+     * @return
+     */
+    @Nullable
+    @Deprecated
+    public Map<String, StructuredContentField> getStructuredContentFields();
+
+    /**
+     * @deprecated - Use {@link #setStructuredContentFieldXrefs(Map)}
+     *
+     * @param structuredContentFields
+     */
+    @Deprecated
+    public void setStructuredContentFields(@Nullable Map<String, StructuredContentField> structuredContentFields);
+
+    /**
      * <b>NOTE: This method is typically only used when wanting to persist new {@link StructuredContentField}s.
      * Users trying to get a field to render should typically invoke {@link #getFieldValues()}.</b>
      * 
@@ -129,15 +146,15 @@ public interface StructuredContent extends Serializable {
      * @return
      */
     @Nullable
-    public Map<String, StructuredContentField> getStructuredContentFields();
+    public Map<String, StructuredContentFieldXref> getStructuredContentFieldXrefs();
 
     /**
-     * Sets the structured content fields for this item.   Would not typically called
+     * Sets the structured content fields for this item.   Would not typically be called
      * outside of the ContentManagementSystem.
      *
      * @param structuredContentFields
      */
-    public void setStructuredContentFields(@Nullable Map<String, StructuredContentField> structuredContentFields);
+    public void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentFieldXref> structuredContentFields);
 
     /**
      * Returns the offlineFlag.   Indicates that the item should no longer appear on the site.
@@ -189,37 +206,55 @@ public interface StructuredContent extends Serializable {
     public void setAuditable(@Nullable AdminAuditable auditable);
 
     /**
-     * Returns a map of the targeting rules associated with this content item.
-     *
-     * Targeting rules are defined in the content mangagement system and used to
-     * enforce which items are returned to the client.
-     *
+     * @deprecated - Not supported - simplifying interface
+     * 
+     * Functionality removed as of BLC 3.2
+     * 
      * @return
      */
     @Nullable
+    @Deprecated
     public Map<String, StructuredContentRule> getStructuredContentMatchRules();
 
     /**
-     * Sets the targeting rules for this content item.
+     * @deprecated - Not supported - simplifying interface
+     * 
+     * Functionality removed as of BLC 3.2
      *
      * @param structuredContentMatchRules
      */
+    @Deprecated
     public void setStructuredContentMatchRules(@Nullable Map<String, StructuredContentRule> structuredContentMatchRules);
 
     /**
-     * Returns the item (or cart) based rules associated with this content item.
+     * @deprecated - no longer supported - simplifying interface
+     * 
+     * Functionality removed as of BLC 3.2
      *
      * @return
      */
     @Nullable
+    @Deprecated
     public Set<StructuredContentItemCriteria> getQualifyingItemCriteria();
 
     /**
-     * Sets the item (e.g. cart) based rules associated with this content item.
+     * @deprecated - no longer supported - simplifying interface
+     * 
+     * Functionality removed as of BLC 3.2
      *
      * @param qualifyingItemCriteria
      */
+    @Deprecated
     public void setQualifyingItemCriteria(@Nullable Set<StructuredContentItemCriteria> qualifyingItemCriteria);
+    
+    /**
+     * Returns the value of the associated {@link StructuredContentField} if the given fieldName
+     * exists in the map returned by {@link #getStructuredContentFieldXrefs()}, and null otherwise.
+     * 
+     * @param fieldName
+     * @return the value of the given field
+     */
+    public String getFieldValue(String fieldName);
 
     /**
      * Sets the transient fieldValues map on this StructuredContent.

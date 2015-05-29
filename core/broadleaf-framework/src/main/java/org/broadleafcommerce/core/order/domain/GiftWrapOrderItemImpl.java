@@ -19,21 +19,16 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -65,6 +60,21 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         if (wrappedItems != null) orderItem.getWrappedItems().addAll(wrappedItems);
         
         return orderItem;
+    }
+
+    @Override
+    public  CreateResponse<DiscreteOrderItemImpl> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<DiscreteOrderItemImpl> createResponse = super.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        GiftWrapOrderItem cloned = (GiftWrapOrderItem)createResponse.getClone();
+        for(OrderItem entry : wrappedItems){
+            OrderItem clonedEntry = ((OrderItemImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            clonedEntry.setGiftWrapOrderItem(cloned);
+            cloned.getWrappedItems().add(clonedEntry);
+        }
+        return  createResponse;
     }
 
     @Override

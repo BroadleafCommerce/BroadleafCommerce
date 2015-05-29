@@ -22,10 +22,13 @@ package org.broadleafcommerce.admin.web.controller.entity;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.handler.ProductCustomPersistenceHandler;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassTree;
@@ -53,6 +56,7 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -69,6 +73,9 @@ public class AdminProductController extends AdminBasicEntityController {
     
     protected static final String SECTION_KEY = "product";
     
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+    
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
         //allow external links to work for ToOne items
@@ -81,6 +88,35 @@ public class AdminProductController extends AdminBasicEntityController {
     @Override
     public String[] getSectionCustomCriteria() {
         return new String[]{"productDirectEdit"};
+    }
+
+    @Override
+    protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
+        Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
+        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+    }
+
+    @Override
+    protected void modifyAddEntityForm(EntityForm ef, Map<String, String> pathVars) {
+        String defaultCategoryUrlPrefix = null;
+        Field defaultCategory = ef.findField("defaultCategory");
+        if (StringUtils.isNotBlank(defaultCategory.getValue())) {
+            Category cat = catalogService.findCategoryById(Long.parseLong(defaultCategory.getValue()));
+            defaultCategoryUrlPrefix = cat.getUrl();
+        }
+                
+        Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
+        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+        boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+        Field fullUrl = ef.findField("url");
+        if (fullUrl != null) {
+            fullUrl.withAttribute("overriddenUrl", overriddenUrl)
+                .withAttribute("sourceField", "defaultSku--name")
+                .withAttribute("toggleField", "overrideGeneratedUrl")
+                .withAttribute("prefix-selector", "#field-defaultCategory")
+                .withAttribute("prefix", defaultCategoryUrlPrefix)
+                .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+        }
     }
     
     protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -136,8 +172,6 @@ public class AdminProductController extends AdminBasicEntityController {
         formService.removeNonApplicableFields(collectionMetadata, entityForm, ppr.getCeilingEntityClassname());
 
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
-
-        removeRequiredValidation(entityForm);
         
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleAddEntity");
@@ -163,8 +197,8 @@ public class AdminProductController extends AdminBasicEntityController {
         return super.buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, entityForm, entity);
     }
     
-    protected String showUpdateAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id, String collectionItemId, Map<String, String> pathVars) throws Exception {
+    protected String showUpdateAdditionalSku(HttpServletRequest request, Model model,
+                                             String id, String collectionItemId, Map<String, String> pathVars, EntityForm entityForm) throws Exception {
         String collectionField = "additionalSkus";
         
         // Find out metadata for the additionalSkus property
@@ -181,14 +215,18 @@ public class AdminProductController extends AdminBasicEntityController {
         if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
             collectionMetadata.setCeilingType(Sku.class.getName());
         }
-        
+
         Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
-        
-        // Find the records for all subcollections of Sku
+
         Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, sectionCrumbs);
-        
-        // Build the entity form for the modal that includes the subcollections
-        EntityForm entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
+        if (entityForm == null) {
+            entityForm = formService.createEntityForm(collectionMetadata, entity, subRecordsMap, sectionCrumbs);
+        } else {
+            entityForm.clearFieldsMap();
+            formService.populateEntityForm(collectionMetadata, entity, subRecordsMap, entityForm, sectionCrumbs);
+            //remove all the actions since we're not trying to redisplay them on the form
+            entityForm.removeAllActions();
+        }
         
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
         
@@ -197,8 +235,6 @@ public class AdminProductController extends AdminBasicEntityController {
             lg.setSectionKey("org.broadleafcommerce.core.catalog.domain.Sku");
             lg.setSectionCrumbs(sectionCrumbs);
         }
-
-        removeRequiredValidation(entityForm);
         
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/simpleEditEntity");
@@ -218,9 +254,24 @@ public class AdminProductController extends AdminBasicEntityController {
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
-            return showUpdateAdditionalSku(request, response, model, id, collectionItemId, pathVars);
+            return showUpdateAdditionalSku(request, model, id, collectionItemId, pathVars, null);
         }
         return super.showUpdateCollectionItem(request, response, model, pathVars, id, collectionField, collectionItemId);
+    }
+
+    @Override
+    protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
+                                              String id, String collectionField, String collectionItemId, String alternateId, String modalHeaderType, EntityForm entityForm, Entity entity) throws ServiceException {
+        try {
+            if ("additionalSkus".equals(collectionField)) {
+                return showUpdateAdditionalSku(request, model, id, collectionItemId, pathVars, entityForm);
+            } else {
+                return super.showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
+                        "updateCollectionItem", entityForm, entity);
+            }
+        } catch (Exception e) {
+            throw new ServiceException(e);
+        }
     }
     
     @Override
@@ -235,7 +286,7 @@ public class AdminProductController extends AdminBasicEntityController {
         } 
         return super.showAddCollectionItem(request, response, model, pathVars, id, collectionField, requestParams);
     }
-    
+
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
@@ -266,18 +317,6 @@ public class AdminProductController extends AdminBasicEntityController {
         form.removeListGrid("defaultSku.skuAttributes");
         
         return view;
-    }
-    
-    /**
-     * Clears out any required validation on the fields within an entity form. Used for additional Skus since none of those
-     * fields should be required.
-     * 
-     * @param entityForm
-     */
-    protected void removeRequiredValidation(EntityForm entityForm) {
-        for (Field field : entityForm.getFields().values()) {
-            field.setRequired(false);
-        }
     }
     
 }

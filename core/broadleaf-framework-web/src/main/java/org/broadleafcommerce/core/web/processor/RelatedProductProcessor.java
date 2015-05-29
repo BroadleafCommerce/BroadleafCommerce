@@ -19,12 +19,15 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.web.dialect.AbstractModelVariableModifierProcessor;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.PromotableProduct;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductDTO;
 import org.broadleafcommerce.core.catalog.domain.RelatedProductTypeEnum;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.RelatedProductsService;
+import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.standard.expression.Expression;
@@ -38,7 +41,7 @@ import javax.annotation.Resource;
 
 
 /**
- * A Thymeleaf processor that will find related products.    A product or category id must be specified.    If both are specified, only the productId will be used.  
+ * A Thymeleaf processor that will find related products and skus.    A product or category id must be specified.    If both are specified, only the productId will be used.  
  *
  * Takes in the following parameters
  * <ul>
@@ -49,6 +52,7 @@ import javax.annotation.Resource;
  *    <li>qty - if specified, determines the max-number of results that will be returned; otherwise, all results are returned.
  *    <li>productsResultVar - if specified, adds the products to the model keyed by this var.   Otherwise, uses "products" as the model identifier.
  *    <li>relatedProductsResultVar - if specified, adds the RelatedProduct(s) to the model keyed by this var.   Otherwise, uses "relatedProducts" as the model identifier.   
+ *    <li>relatedSkusResultVar - if specified, adds the related skus to the model keyed by this var.   Otherwise, uses "relatedSkus" as the model identifier.   
  * </ul>
  * 
  * The output from this operation returns a list of PromotableProducts which represent the following. 
@@ -58,6 +62,9 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 public class RelatedProductProcessor extends AbstractModelVariableModifierProcessor {
+    
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
     
     @Resource(name = "blRelatedProductsService")
     protected RelatedProductsService relatedProductsService;
@@ -79,10 +86,15 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
      * Controller method for the processor that readies the service call and adds the results to the model.
      */
     protected void modifyModelAttributes(Arguments arguments, Element element) {
-        List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(buildDTO(arguments, element));
-        addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
-        addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
-        addCollectionToExistingSet(arguments, "blcAllProducts", buildProductList(relatedProducts));
+        RelatedProductDTO relatedProductDTO = buildDTO(arguments, element);
+        List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(relatedProductDTO);
+        if (useSku) {
+            addToModel(arguments, getRelatedSkusResultVar(element), getRelatedSkus(relatedProducts, relatedProductDTO.getQuantity()));
+        } else {
+            addToModel(arguments, getRelatedProductsResultVar(element), relatedProducts);
+            addToModel(arguments, getProductsResultVar(element), convertRelatedProductsToProducts(relatedProducts));
+            addCollectionToExistingSet(arguments, "blcAllProducts", buildProductList(relatedProducts));
+        }
     }
 
     protected List<Product> buildProductList(List<? extends PromotableProduct> relatedProducts) {
@@ -93,6 +105,34 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
             }
         }
         return productList;
+    }
+    
+    protected List<Sku> getRelatedSkus(List<? extends PromotableProduct> relatedProducts, Integer maxQuantity) {
+        List<Sku> relatedSkus = new ArrayList<Sku>();
+        if (relatedProducts != null) {
+            Integer numSkus = 0;
+            for (PromotableProduct promProduct : relatedProducts) {
+                Product relatedProduct = promProduct.getRelatedProduct();
+                List<Sku> additionalSkus = relatedProduct.getAdditionalSkus();
+                if(CollectionUtils.isNotEmpty(additionalSkus)) {
+                    for(Sku additionalSku : additionalSkus) {
+                        if(numSkus == maxQuantity) {
+                            break;
+                        }
+                        relatedSkus.add(additionalSku);
+                        numSkus++;
+                        
+                    }
+                } else {
+                    if(numSkus.equals(maxQuantity)) {
+                        break;
+                    }
+                    relatedSkus.add(relatedProduct.getDefaultSku());
+                    numSkus++;
+                }
+            }
+        }
+        return relatedSkus;
     }
     
     protected List<Product> convertRelatedProductsToProducts(List<? extends PromotableProduct> relatedProducts) {
@@ -109,6 +149,14 @@ public class RelatedProductProcessor extends AbstractModelVariableModifierProces
         String resultVar = element.getAttributeValue("relatedProductsResultVar");       
         if (resultVar == null) {
             resultVar = "relatedProducts";
+        }
+        return resultVar;
+    }
+    
+    private String getRelatedSkusResultVar(Element element) {
+        String resultVar = element.getAttributeValue("relatedSkusResultVar");       
+        if (resultVar == null) {
+            resultVar = "relatedSkus";
         }
         return resultVar;
     }

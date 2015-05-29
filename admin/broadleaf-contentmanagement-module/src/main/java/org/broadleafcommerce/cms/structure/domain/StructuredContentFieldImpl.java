@@ -19,9 +19,12 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
@@ -50,10 +53,10 @@ import javax.persistence.Table;
 @Table(name = "BLC_SC_FLD")
 @EntityListeners(value = { AdminAuditableListener.class })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-public class StructuredContentFieldImpl implements StructuredContentField {
+public class StructuredContentFieldImpl implements StructuredContentField, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -154,5 +157,16 @@ public class StructuredContentFieldImpl implements StructuredContentField {
 
         return clone;
     }
-        
+
+    @Override
+    public <G extends StructuredContentField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StructuredContentField cloned = createResponse.getClone();
+        cloned.setFieldKey(fieldKey);
+        cloned.setValue(this.getValue());
+        return createResponse;
+    }
 }

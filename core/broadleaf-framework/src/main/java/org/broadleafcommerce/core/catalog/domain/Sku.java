@@ -19,9 +19,12 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.inventory.service.InventoryService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -50,7 +53,7 @@ import java.util.Set;
  * @author btaylor
  *
  */
-public interface Sku extends Serializable {
+public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
 
     /**
      * Returns the id of this sku
@@ -62,6 +65,33 @@ public interface Sku extends Serializable {
      */
     public void setId(Long id);
 
+    /**
+     * Returns the sku specific portion of a full url used for a sku info page.
+     */ 
+    public String getUrlKey();
+
+    /**
+     * Sets the sku specific portion of a full url used for a sku info page.  
+     * 
+     * @param url
+     */
+    public void setUrlKey(String url);
+
+    /**
+     * Returns the name of a display template that is used to render this sku.  Most implementations have a default
+     * template for all skus.  This allows for the user to define a specific template to be used by this sku.
+     * 
+     * @return
+     */
+    public String getDisplayTemplate();
+
+    /**
+     * Sets the name of a display template that is used to render this sku.  Most implementations have a default
+     * template for all skus.  This allows for the user to define a specific template to be used by this sku.
+     * 
+     * @param displayTemplate
+     */
+    public void setDisplayTemplate(String displayTemplate);
     /**
      * This is the sum total of the priceAdjustments from the associated ProductOptionValues
      * 
@@ -296,14 +326,30 @@ public interface Sku extends Serializable {
     /**
      * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
      * is a media object.
+     * @deprecated use {@link #getSkuMediaXref()} instead
      */
+    @Deprecated
     public Map<String, Media> getSkuMedia();
 
     /**
      * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
      * is an object of type Media.
+     * @deprecated use {@link #setSkuMediaXref(java.util.Map)} instead
      */
+    @Deprecated
     public void setSkuMedia(Map<String, Media> skuMedia);
+
+    /**
+     * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
+     * is a cross-reference to a media object.
+     */
+    Map<String, SkuMediaXref> getSkuMediaXref();
+
+    /**
+     * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
+     * is a cross-reference object to type Media.
+     */
+    void setSkuMediaXref(Map<String, SkuMediaXref> skuMediaXref);
 
     /**
      * Returns whether or not this Sku, the given Product and the given Category are all active
@@ -358,6 +404,7 @@ public interface Sku extends Serializable {
      *
      * @return the ProductOptionValues for this Sku
      * @see {@link ProductOptionValue}, {@link ProductOption}
+     * @deprecated use {@link #getProductOptionValueXrefs()} instead
      */
     Set<ProductOptionValue> getProductOptionValuesCollection();
 
@@ -366,8 +413,24 @@ public interface Sku extends Serializable {
      *
      * @param productOptionValues
      * @see {@link ProductOptionValue}, {@link ProductOption}
+     * @deprecated use {@link #setProductOptionValueXrefs(Set)} instead
      */
     void setProductOptionValuesCollection(Set<ProductOptionValue> productOptionValues);
+
+    /**
+     * Returns the ProductOptionValues that should be mapped to this Sku using the middle 
+     * XREF entity, {@link SkuProductOptionValueXref}
+     * 
+     * @return the Set of {@link SkuProductOptionValueXref}s
+     */
+    public Set<SkuProductOptionValueXref> getProductOptionValueXrefs();
+
+    /**
+     * Sets the ProductOptionValues that should be mapped to this Sku using the middle 
+     * XREF entity, {@link SkuProductOptionValueXref}
+     */
+    public void setProductOptionValueXrefs(Set<SkuProductOptionValueXref> productOptionValueXrefs);
+
 
     /**
      * This will be a value if and only if this Sku is the defaultSku of a Product (and thus has a @OneToOne relationship with a Product).
@@ -522,11 +585,7 @@ public interface Sku extends Serializable {
     /**
      * <p>Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
      * This field is checked within the {@link CheckAvailabilityActivity} to determine if inventory is actually available
-     * for this Sku.</p>
-     * 
-     * <p>In order to enable this feature in a Broadleaf 3.1.1+ installation, you must hook up the {@link QuantityAvailableSkuTemplate}
-     * to dynamically weave in the quantityAvailable field or override this method in a subclass. This is enabled out of the
-     * box in Broadleaf 3.2+</p>
+     * for this Sku.
      */
     public Integer getQuantityAvailable();
     
@@ -534,9 +593,6 @@ public interface Sku extends Serializable {
      * <p>Used in conjunction with {@link InventoryType#CHECK_QUANTITY} from {@link #getInventoryType()}. This sets how much
      * inventory is available for this Sku.</p>
      * 
-     * <p>In order to enable this feature in a Broadleaf 3.1.1+ installation, you must hook up the {@link QuantityAvailableSkuTemplate}
-     * to dynamically weave in the quantityAvailable field or override this method in a subclass. This is enabled out of the
-     * box in Broadleaf 3.2+</p>
      * 
      * @param quantityAvailable the quantity available for this sku 
      */
@@ -569,11 +625,14 @@ public interface Sku extends Serializable {
     public void setCurrency(BroadleafCurrency currency);
 
     /**
-     * Returns the currency for this sku if there is one set. If there is not, it will return the currency for the
-     * default sku if this is not the default sku. Note that it is possible for this method to return null.
-     * 
      * <b>Note: When using dynamic pricing, this method is unreliable and should not be called outside of the 
-     * Broadleaf admin</b>
+     * Broadleaf admin</b>  Instead, you should rely on the {@link BroadleafRequestContext#getBroadleafCurrency()} 
+     * instead of storing at the SKU level.
+     * 
+     * As such, for supported, enterprise installations, this method should always return null.
+     * 
+     * This method was not deprecated as it may have some use in non-standard Broadleaf installations but
+     * using its use is not suggested for most implementations. 
      * 
      * @return the currency for this sku
      */
@@ -593,5 +652,41 @@ public interface Sku extends Serializable {
      * @param taxCode
      */
     public void setTaxCode(String taxCode);
+
+    /**
+     * Gets the Universal Product Code (UPC)
+     * @return
+     */
+    public String getUpc();
+
+    /**
+     * Sets the Universal Product Code (UPC)
+     * @param upc
+     */
+    public void setUpc(String upc);
+
+    /**
+     * Intended to hold any unique identifier not tied to the Broadleaf Database Sequence Identifier.
+     * For example, many implementations may integrate or import/export
+     * data from other systems that manage their own unique identifiers.
+     *
+     * @return external ID
+     */
+    public String getExternalId();
+
+    /**
+     * Sets a unique external ID
+     * @param externalId
+     */
+    public void setExternalId(String externalId);
+
+    /**
+     * If a DynamicPricingService is being used, this method will return the dynamic Sku prices.
+     * Otherwise, it will return an instance of DynamicSkuPrices with the retail and sale price
+     * from the underlying record.
+     * 
+     * @return
+     */
+    public DynamicSkuPrices getPriceData();
 
 }

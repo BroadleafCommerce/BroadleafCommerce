@@ -19,17 +19,9 @@
  */
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
@@ -38,8 +30,10 @@ import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.domain.PageTemplateFieldGroupXref;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.service.PageService;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.service.SandBoxService;
@@ -60,6 +54,17 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Inspect
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 /**
  * Created by jfischer
  */
@@ -77,6 +82,9 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
     protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
 
+    @PersistenceContext(unitName="blPU")
+    protected EntityManager em;
+
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -84,7 +92,7 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             PageTemplate.class.getName().equals(ceilingEntityFullyQualifiedClassname) &&
             persistencePackage.getCustomCriteria() != null &&
             persistencePackage.getCustomCriteria().length > 0 &&
-            persistencePackage.getCustomCriteria()[0].equals("constructForm");
+            persistencePackage.getCustomCriteria()[0].contains("constructForm");
     }
 
     @Override
@@ -111,17 +119,51 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         return sandBoxService.retrieveSandBoxById(SandBoxContext.getSandBoxContext().getSandBoxId());
     }
 
+    protected List<FieldGroup> getFieldGroups(Page page, PageTemplate template) {
+        List<PageTemplateFieldGroupXref> fieldGroupXrefs = null;
+
+        List<FieldGroup> fieldGroups = new ArrayList<FieldGroup>();
+        if (template != null) {
+            fieldGroupXrefs = template.getFieldGroupXrefs();
+        }
+
+        if (page.getPageTemplate() != null) {
+            fieldGroupXrefs = page.getPageTemplate().getFieldGroupXrefs();
+        }
+
+        if (fieldGroupXrefs != null) {
+            for (PageTemplateFieldGroupXref xref : fieldGroupXrefs) {
+                fieldGroups.add(xref.getFieldGroup());
+            }
+        }
+
+        return fieldGroups;
+    }
+
+    protected List<FieldGroup> getFieldGroups(PersistencePackage pp, DynamicEntityDao dynamicEntityDao) {
+        String pageId = pp.getCustomCriteria()[1];
+        String pageTemplateId = pp.getCustomCriteria().length > 3 ? pp.getCustomCriteria()[3] : null;
+
+        Page page = pageService.findPageById(Long.valueOf(pageId));
+        PageTemplate template = null;
+        if (pageTemplateId != null) {
+            template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
+        }
+        
+        return getFieldGroups(page, template);
+    }
+    
     @Override
     public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            String pageTemplateId = persistencePackage.getCustomCriteria()[3];
-            PageTemplate template = pageService.findPageTemplateById(Long.valueOf(pageTemplateId));
+            List<FieldGroup> fieldGroups = getFieldGroups(persistencePackage, dynamicEntityDao);
+
             ClassMetadata metadata = new ClassMetadata();
             metadata.setCeilingType(PageTemplate.class.getName());
             ClassTree entities = new ClassTree(PageTemplateImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(template.getFieldGroups(), PageTemplate.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(fieldGroups, PageTemplate.class);
             metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
@@ -139,6 +181,26 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             Entity entity = fetchEntityBasedOnId(pageId, null);
             DynamicResultSet results = new DynamicResultSet(new Entity[]{entity}, 1);
 
+            // Some of the values in this entity might be foreign key lookups. In this case, we need to set the display
+            // value appropriately
+            for (Property prop : entity.getProperties()) {
+                if (StringUtils.isNotBlank(prop.getValue()) && StringUtils.isNotBlank(prop.getMetadata().getOwningClass())) {
+                    Class<?> clazz = Class.forName(prop.getMetadata().getOwningClass());
+                    Class<?>[] lookupClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(clazz);
+
+                    int i = 0;
+                    Object foreignEntity = null;
+                    while (foreignEntity == null && i < lookupClasses.length) {
+                        foreignEntity = dynamicEntityDao.find(lookupClasses[i++], Long.parseLong(prop.getValue()));
+                    }
+
+                    if (foreignEntity instanceof AdminMainEntity) {
+                        prop.setDisplayValue(((AdminMainEntity) foreignEntity).getMainEntityName());
+                    }
+                    prop.getMetadata().setOwningClass(null);
+                }
+            }
+
             return results;
         } catch (Exception e) {
             throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
@@ -153,6 +215,8 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
     @Override
     public Entity fetchEntityBasedOnId(String pageId, List<String> dirtyFields) throws Exception {
         Page page = pageService.findPageById(Long.valueOf(pageId));
+        //Make sure the fieldmap is refreshed from the database based on any changes introduced in addOrUpdate()
+        em.refresh(page);
         return fetchDynamicEntity(page, dirtyFields, true);
     }
 
@@ -163,14 +227,14 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         Entity entity = new Entity();
         entity.setType(new String[]{PageTemplateImpl.class.getName()});
         List<Property> propertiesList = new ArrayList<Property>();
-        for (FieldGroup fieldGroup : page.getPageTemplate().getFieldGroups()) {
-            for (FieldDefinition definition : fieldGroup.getFieldDefinitions()) {
+        for (FieldGroup fieldGroup : getFieldGroups(page, null)) {
+            for (FieldDefinition def : fieldGroup.getFieldDefinitions()) {
                 Property property = new Property();
                 propertiesList.add(property);
-                property.setName(definition.getName());
+                property.setName(def.getName());
                 String value = null;
                 if (!MapUtils.isEmpty(pageFieldMap)) {
-                    PageField pageField = pageFieldMap.get(definition.getName());
+                    PageField pageField = pageFieldMap.get(def.getName());
                     if (pageField == null) {
                         value = "";
                     } else {
@@ -180,6 +244,9 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                 property.setValue(value);
                 if (!CollectionUtils.isEmpty(dirtyFields) && dirtyFields.contains(property.getName())) {
                     property.setIsDirty(true);
+                }
+                if (StringUtils.isNotBlank(def.getAdditionalForeignKeyClass())) {
+                    property.getMetadata().setOwningClass(def.getAdditionalForeignKeyClass());
                 }
             }
         }
@@ -209,9 +276,14 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String pageId = persistencePackage.getCustomCriteria()[1];
+            
+            if (StringUtils.isBlank(pageId)) {
+                return persistencePackage.getEntity();
+            }
+            
             Page page = pageService.findPageById(Long.valueOf(pageId));
 
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(page.getPageTemplate().getFieldGroups(), PageTemplate.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(getFieldGroups(page, null), PageTemplate.class);
             Map<String, FieldMetadata> md = new HashMap<String, FieldMetadata>();
             for (Property property : properties) {
                 md.put(property.getName(), property.getMetadata());
@@ -223,9 +295,9 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
             }
 
             List<String> templateFieldNames = new ArrayList<String>(20);
-            for (FieldGroup group : page.getPageTemplate().getFieldGroups()) {
-                for (FieldDefinition definition: group.getFieldDefinitions()) {
-                    templateFieldNames.add(definition.getName());
+            for (FieldGroup group : getFieldGroups(page, null)) {
+                for (FieldDefinition def : group.getFieldDefinitions()) {
+                    templateFieldNames.add(def.getName());
                 }
             }
             Map<String, String> dirtyFieldsOrigVals = new HashMap<String, String>();
@@ -241,14 +313,15 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
                                 !pageField.getValue().trim().equals(property.getValue().trim()))) {
                             dirtyFields.add(property.getName());
                             dirtyFieldsOrigVals.put(property.getName(), pageField.getValue());
+                            pageField.setValue(property.getValue());
+                            pageField = dynamicEntityDao.merge(pageField);
                         }
-                        pageField.setValue(property.getValue());
                     } else {
                         pageField = new PageFieldImpl();
                         pageField.setFieldKey(property.getName());
                         pageField.setValue(property.getValue());
+                        pageField.setPage(page);
                         dynamicEntityDao.persist(pageField);
-                        pageFieldMap.put(property.getName(), pageField);
                         dirtyFields.add(property.getName());
                     }
                 }

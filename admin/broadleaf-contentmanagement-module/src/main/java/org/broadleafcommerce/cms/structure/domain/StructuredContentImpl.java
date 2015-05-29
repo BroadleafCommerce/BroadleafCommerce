@@ -20,11 +20,15 @@
 package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMapOverride;
+import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -50,12 +54,14 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -70,6 +76,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -100,7 +107,7 @@ import javax.persistence.Transient;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-public class StructuredContentImpl implements StructuredContent, AdminMainEntity {
+public class StructuredContentImpl implements StructuredContent, AdminMainEntity, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -146,64 +153,15 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @JoinTable(name = "BLC_SC_RULE_MAP", inverseJoinColumns = @JoinColumn(name = "SC_RULE_ID", referencedColumnName = "SC_RULE_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
-    @AdminPresentationMapFields(
-        mapDisplayFields = {
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 1,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "Generic_Customer_Rule")
-            ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.TIME_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 2,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.TIME, friendlyName = "Generic_Time_Rule")
-            ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.REQUEST_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 3,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.REQUEST, friendlyName = "Generic_Request_Rule")
-            ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.PRODUCT_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 4,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.PRODUCT, friendlyName = "Generic_Product_Rule")
-                    ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.ORDER_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 5,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.ORDER, friendlyName = "Generic_Order_Rule")
-                    ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.CATEGORY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 6,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.CATEGORY, friendlyName = "Generic_Category_Rule")
-                    )
-        }
-    )
-    @ClonePolicyMap
+    @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+    @IgnoreEnterpriseBehavior
     Map<String, StructuredContentRule> structuredContentMatchRules = new HashMap<String, StructuredContentRule>();
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class, cascade={CascadeType.ALL})
     @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ID"), inverseJoinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"))
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @AdminPresentation(friendlyName = "Generic_Item_Rule", order = 5,
-        tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-        group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-        fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
-        ruleIdentifier = RuleIdentifier.ORDERITEM)
-    @ClonePolicyCollection
+    @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+    @IgnoreEnterpriseBehavior
     protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<StructuredContentItemCriteria>();
 
     @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
@@ -214,13 +172,15 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @AdminPresentationToOneLookup(lookupDisplayProperty = "name", forcePopulateChildProperties = true)
     protected StructuredContentType structuredContentType;
 
-    @ManyToMany(targetEntity = StructuredContentFieldImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_SC_FLD_MAP", joinColumns = @JoinColumn(name = "SC_ID", referencedColumnName = "SC_ID"), inverseJoinColumns = @JoinColumn(name = "SC_FLD_ID", referencedColumnName = "SC_FLD_ID"))
-    @MapKeyColumn(name = "MAP_KEY")
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class, cascade = CascadeType.ALL, orphanRemoval = true)
+    @MapKey(name = "key")
     @BatchSize(size = 20)
-    @ClonePolicyMap
-    protected Map<String,StructuredContentField> structuredContentFields = new HashMap<String,StructuredContentField>();
+    @ClonePolicyMapOverride
+    @ClonePolicyArchive
+    protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<String, StructuredContentFieldXref>();
+
+    @Transient
+    protected Map<String, StructuredContentField> legacyStructuredContentFields = new HashMap<String, StructuredContentField>();
 
     @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4, 
         group = Presentation.Group.Name.Description, groupOrder = Presentation.Group.Order.Description)
@@ -272,26 +232,54 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     }
 
     @Override
+    @Deprecated
     public Map<String, StructuredContentField> getStructuredContentFields() {
-        return structuredContentFields;
+        if (legacyStructuredContentFields.isEmpty()) {
+            for (Map.Entry<String, StructuredContentFieldXref> entry : getStructuredContentFieldXrefs().entrySet()) {
+                legacyStructuredContentFields.put(entry.getKey(), entry.getValue().getStructuredContentField());
+            }
+        }
+        return Collections.unmodifiableMap(legacyStructuredContentFields);
     }
     
     @Override
     public void setStructuredContentFields(Map<String, StructuredContentField> structuredContentFields) {
+        this.structuredContentFields.clear();
+        this.legacyStructuredContentFields.clear();
+        for (Map.Entry<String, StructuredContentField> entry : structuredContentFields.entrySet()) {
+            this.structuredContentFields.put(entry.getKey(), new StructuredContentFieldXrefImpl(this, entry.getValue(), entry.getKey()));
+        }
+    }
+    
+    @Override
+    public Map<String, StructuredContentFieldXref> getStructuredContentFieldXrefs() {
+        return structuredContentFields;
+    }
+
+    @Override
+    public void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentFieldXref> structuredContentFields) {
         this.structuredContentFields = structuredContentFields;
+    }
+    
+    @Override
+    public String getFieldValue(String fieldName) {
+        if (structuredContentFields.containsKey(fieldName)) {
+            return getStructuredContentFieldXrefs().get(fieldName).getStructuredContentField().getValue();
+        }
+        return null;
     }
     
     @Override
     public void setFieldValues(Map<String, String> fieldValuesMap) {
         this.fieldValuesMap = fieldValuesMap;
     }
-    
+
     @Override
     public Map<String, String> getFieldValues() {
         if (fieldValuesMap == null) {
             fieldValuesMap = new HashMap<String, String>();
-            for (Entry<String, StructuredContentField> entry : getStructuredContentFields().entrySet()) {
-                fieldValuesMap.put(entry.getKey(), entry.getValue().getValue());
+            for (Entry<String, StructuredContentFieldXref> entry : getStructuredContentFieldXrefs().entrySet()) {
+                fieldValuesMap.put(entry.getKey(), entry.getValue().getStructuredContentField().getValue());
             }
         }
         return fieldValuesMap;
@@ -351,10 +339,46 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
         this.qualifyingItemCriteria = qualifyingItemCriteria;
     }
     
+    @Override
     public String getMainEntityName() {
         return getContentName();
     }
-    
+
+    @Override
+    public <G extends StructuredContent> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StructuredContent cloned = createResponse.getClone();
+        cloned.setContentName(contentName);
+        cloned.setLocale(locale);
+        cloned.setOfflineFlag(offlineFlag);
+        cloned.setPriority(priority);
+        if (structuredContentType != null) {
+            CreateResponse<StructuredContentType> clonedType = structuredContentType.createOrRetrieveCopyInstance(context);
+            cloned.setStructuredContentType(clonedType.getClone());
+        }
+        for(StructuredContentItemCriteria itemCriteria : qualifyingItemCriteria){
+            CreateResponse<StructuredContentItemCriteria> clonedItem = itemCriteria.createOrRetrieveCopyInstance(context);
+            StructuredContentItemCriteria clonedCritera = clonedItem.getClone();
+            cloned.getQualifyingItemCriteria().add(clonedCritera);
+        }
+        for(Entry<String, StructuredContentRule> entry : structuredContentMatchRules.entrySet()){
+            CreateResponse<StructuredContentRule> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
+            StructuredContentRule clonedRule = clonedItem.getClone();
+            cloned.getStructuredContentMatchRules().put(entry.getKey(),clonedRule);
+
+        }
+        for(Entry<String, StructuredContentFieldXref> entry : structuredContentFields.entrySet() ){
+            CreateResponse<StructuredContentFieldXref> clonedItem = entry.getValue().createOrRetrieveCopyInstance(context);
+            StructuredContentFieldXref clonedContentFieldXref = clonedItem.getClone();
+            cloned.getStructuredContentFieldXrefs().put(entry.getKey(),clonedContentFieldXref);
+        }
+
+        return createResponse;
+    }
+
     public static class Presentation {
         public static class Tab {
             public static class Name {

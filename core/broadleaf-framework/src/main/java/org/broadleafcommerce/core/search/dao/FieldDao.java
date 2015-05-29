@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 
 import java.util.List;
 
@@ -48,6 +49,22 @@ public interface FieldDao {
      * @return the product Fields
      */
     public List<Field> readAllProductFields();
+
+    /**
+     * Reads all Field objects that are set to searchable. This is typically used to build an
+     * index for searching. Note that the default Broadleaf implementation returns only fields that
+     * have a FieldEntity equal to SKU
+     * 
+     * @return the product Fields
+     */
+    public List<Field> readAllSkuFields();
+
+    /**
+     * Finds all fields based on the entity type.
+     * @param entityType
+     * @return
+     */
+    public List<Field> readFieldsByEntityType(FieldEntity entityType);
 
     /**
      * Persist an instance to the data layer.

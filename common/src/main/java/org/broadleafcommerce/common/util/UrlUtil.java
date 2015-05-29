@@ -23,14 +23,18 @@ import org.apache.commons.lang.StringUtils;
 
 public class UrlUtil {
     public static String generateUrlKey(String toConvert) {
-        if (toConvert.matches(".*?\\W.*?")) {
-            //remove all non-word characters
-            String result = toConvert.replaceAll("\\W","");
-            //uncapitalizes the first letter of the url key
-            return StringUtils.uncapitalize(result);
-        } else {
-            return StringUtils.uncapitalize(toConvert);
+        if (toConvert != null) {
+            toConvert = toConvert.replaceAll(" ", "-");
+            if (toConvert.matches(".*?\\W.*?")) {
+                //remove all non-word characters
+                String result = toConvert.replaceAll("[^\\w-]+", "");
+                //uncapitalizes the first letter of the url key
+                return StringUtils.uncapitalize(result);
+            } else {
+                return StringUtils.uncapitalize(toConvert);
+            }
         }
+        return toConvert;
     }
     
         /**

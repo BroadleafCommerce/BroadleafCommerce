@@ -21,9 +21,13 @@ package org.broadleafcommerce.core.web.controller.cart;
 
 import org.broadleafcommerce.common.util.BLCMessageUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
+import org.broadleafcommerce.core.offer.service.exception.OfferException;
+import org.broadleafcommerce.core.offer.service.exception.OfferExpiredException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
 import org.broadleafcommerce.core.order.domain.NullOrderImpl;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.call.AddToCartItem;
 import org.broadleafcommerce.core.order.service.exception.AddToCartException;
 import org.broadleafcommerce.core.order.service.exception.IllegalCartOperationException;
 import org.broadleafcommerce.core.order.service.exception.ItemNotFoundException;
@@ -31,10 +35,11 @@ import org.broadleafcommerce.core.order.service.exception.RemoveFromCartExceptio
 import org.broadleafcommerce.core.order.service.exception.UpdateCartException;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.core.web.order.CartState;
-import org.broadleafcommerce.core.web.order.model.AddToCartItem;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -52,6 +57,9 @@ public class BroadleafCartController extends AbstractCartController {
     
     protected static String cartView = "cart/cart";
     protected static String cartPageRedirect = "redirect:/cart";
+    
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
     
     /**
      * Renders the cart page.
@@ -166,7 +174,11 @@ public class BroadleafCartController extends AbstractCartController {
         
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<String, Object>();
-            extraData.put("productId", itemRequest.getProductId());
+            if(useSku) {
+                extraData.put("skuId", itemRequest.getSkuId());
+            } else {
+                extraData.put("productId", itemRequest.getProductId());
+            }
             extraData.put("cartItemCount", cart.getItemCount());
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
             return getCartView();
@@ -199,7 +211,11 @@ public class BroadleafCartController extends AbstractCartController {
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<String, Object>();
             extraData.put("cartItemCount", cart.getItemCount());
-            extraData.put("productId", itemRequest.getProductId());
+            if(useSku) {
+                extraData.put("skuId", itemRequest.getSkuId());
+            } else {
+                extraData.put("productId", itemRequest.getProductId());
+            }
             model.addAttribute("blcextradata", new ObjectMapper().writeValueAsString(extraData));
             return getCartView();
         } else {
@@ -248,16 +264,24 @@ public class BroadleafCartController extends AbstractCartController {
                     orderService.addOfferCode(cart, offerCode, false);
                     promoAdded = true;
                     cart = orderService.save(cart, true);
-                } catch(OfferMaxUseExceededException e) {
-                    exception = "Use Limit Exceeded";
+                } catch (OfferException e) {
+                    if (e instanceof OfferMaxUseExceededException) {
+                        exception = "Use Limit Exceeded";
+                    } else if (e instanceof OfferExpiredException) {
+                        exception = "Offer Has Expired";
+                    } else if (e instanceof OfferAlreadyAddedException) {
+                        exception = "Offer Has Already Been Added";
+                    } else {
+                        exception = "An Unknown Offer Error Has Occured";
+                    }
                 }
             } else {
                 exception = "Invalid Code";
             }
         } else {
-            exception = "Invalid cart";
+            exception = "Invalid Cart";
         }
-        
+
         if (isAjaxRequest(request)) {
             Map<String, Object> extraData = new HashMap<String, Object>();
             extraData.put("promoAdded", promoAdded);

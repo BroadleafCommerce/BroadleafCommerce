@@ -32,12 +32,14 @@ import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
-import org.broadleafcommerce.core.search.domain.ProductSearchResult;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.broadleafcommerce.core.search.domain.SearchResult;
+import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,6 +52,10 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 
+/**
+ * @deprecated Use {@link SolrSearchServiceImpl} 
+ */
+@Deprecated
 @Service("blSearchService")
 public class DatabaseSearchServiceImpl implements SearchService {
     
@@ -67,18 +73,18 @@ public class DatabaseSearchServiceImpl implements SearchService {
     protected Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
     
     @Override
-    public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria) throws ServiceException {
+    public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         throw new UnsupportedOperationException("See findProductsByCategory or use the SolrSearchService implementation");
     }
     
     @Override
-    public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query, ProductSearchCriteria searchCriteria) throws ServiceException {
+    public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
         throw new UnsupportedOperationException("This operation is only supported by the SolrSearchService by default");
     }
     
     @Override
-    public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria) {
-        ProductSearchResult result = new ProductSearchResult();
+    public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) {
+        SearchResult result = new SearchResult();
         setQualifiedKeys(searchCriteria);
         List<Product> products = catalogService.findFilteredActiveProductsByCategory(category, searchCriteria);
         List<SearchFacetDTO> facets = getCategoryFacets(category);
@@ -92,8 +98,8 @@ public class DatabaseSearchServiceImpl implements SearchService {
     }
 
     @Override
-    public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria) {
-        ProductSearchResult result = new ProductSearchResult();
+    public SearchResult findSearchResultsByQuery(String query, SearchCriteria searchCriteria) {
+        SearchResult result = new SearchResult();
         setQualifiedKeys(searchCriteria);
         List<Product> products = catalogService.findFilteredActiveProductsByQuery(query, searchCriteria);
         List<SearchFacetDTO> facets = getSearchFacets();
@@ -118,7 +124,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
         }
         
         if (facets == null) {
-            facets = buildSearchFacetDtos(searchFacetDao.readAllSearchFacets());
+            facets = buildSearchFacetDtos(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
             element = new Element(cacheKey, facets);
             cache.put(element);
         }
@@ -153,7 +159,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
      * Perform any necessary conversion of the key to be used by the search service
      * @param criteria
      */
-    protected void setQualifiedKeys(ProductSearchCriteria criteria) {
+    protected void setQualifiedKeys(SearchCriteria criteria) {
         // Convert the filter criteria url keys
         Map<String, String[]> convertedFilterCriteria = new HashMap<String, String[]>();
         for (Entry<String, String[]> entry : criteria.getFilterCriteria().entrySet()) {
@@ -205,7 +211,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
     }
     
     
-    protected void setActiveFacets(List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria) {
+    protected void setActiveFacets(List<SearchFacetDTO> facets, SearchCriteria searchCriteria) {
         for (SearchFacetDTO facet : facets) {
             String qualifiedFieldName = getDatabaseQualifiedFieldName(facet.getFacet().getField().getQualifiedFieldName());
             for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
@@ -250,6 +256,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
         
         List<SearchFacetRange> ranges = facet.getSearchFacetRanges();
         Collections.sort(ranges, new Comparator<SearchFacetRange>() {
+            @Override
             public int compare(SearchFacetRange o1, SearchFacetRange o2) {
                 return o1.getMinValue().compareTo(o2.getMinValue());
             }

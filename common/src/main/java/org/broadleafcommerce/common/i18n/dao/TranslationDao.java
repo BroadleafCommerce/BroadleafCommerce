@@ -20,6 +20,8 @@
 
 package org.broadleafcommerce.common.i18n.dao;
 
+import org.broadleafcommerce.common.extension.ResultType;
+import org.broadleafcommerce.common.extension.StandardCacheItem;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 
@@ -63,6 +65,14 @@ public interface TranslationDao {
      * @return the id property's metadata
      */
     public Map<String, Object> getIdPropertyMetadata(TranslatedEntity entity);
+
+    /**
+     * Returns the entity implementation class based on the TranslatedEntity
+     *
+     * @param entity
+     * @return the entity implementation class
+     */
+    Class<?> getEntityImpl(TranslatedEntity entity);
     
     /**
      * Reads a translation by its own primary key
@@ -93,4 +103,53 @@ public interface TranslationDao {
      */
     public Translation readTranslation(TranslatedEntity entity, String entityId, String fieldName, String localeCode);
 
+    /**
+     * Get the id for the object. Can take into account hierarchical multitenancy to retrieve the original id.
+     *
+     * @param entityType
+     * @param entity
+     * @return
+     */
+    String getEntityId(TranslatedEntity entityType, Object entity);
+
+    /**
+     * Count the number of translations for the given params.
+     *
+     * @param entityType
+     * @param stage param drives whether to look for entries at a template level or standard site level (multitenant concepts). Can be IGNORE. Any multitenant behavior is ignored in the absence of the multitenant module.
+     * @return
+     */
+    Long countTranslationEntries(TranslatedEntity entityType, ResultType stage);
+
+    /**
+     * Read all the available translations for the given params.
+     *
+     * @param entityType
+     * @param stage param drives whether to look for entries at a template level or standard site level (multitenant concepts). Can be IGNORE. Any multitenant behavior is ignored in the absence of the multitenant module.
+     * @return
+     */
+    List<Translation> readAllTranslationEntries(TranslatedEntity entityType, ResultType stage);
+
+    /**
+     * Read all translation entries (see {@link #readAllTranslationEntries(org.broadleafcommerce.common.i18n.domain.TranslatedEntity, org.broadleafcommerce.common.extension.ResultType)}),
+     * and convert those results into a list of {@link org.broadleafcommerce.common.extension.StandardCacheItem} instances.
+     *
+     * @param entityType
+     * @param stage param drives whether to look for entries at a template level or standard site level (multitenant concepts). Can be IGNORE. Any multitenant behavior is ignored in the absence of the multitenant module.
+     * @return
+     */
+    List<StandardCacheItem> readConvertedTranslationEntries(TranslatedEntity entityType, ResultType stage);
+
+    /**
+     * Read a specific translation for the given params.
+     *
+     * @param entityType
+     * @param entityId
+     * @param fieldName
+     * @param localeCode
+     * @param localeCountryCode
+     * @param stage param drives whether to look for entries at a template level or standard site level (multitenant concepts). Can be IGNORE. Any multitenant behavior is ignored in the absence of the multitenant module.
+     * @return
+     */
+    Translation readTranslation(TranslatedEntity entityType, String entityId, String fieldName, String localeCode, String localeCountryCode, ResultType stage);
 }

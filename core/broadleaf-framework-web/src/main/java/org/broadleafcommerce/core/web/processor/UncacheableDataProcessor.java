@@ -19,8 +19,11 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.cms.web.PageHandlerMapping;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -31,8 +34,10 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.SkuAccessor;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.broadleafcommerce.core.web.processor.extension.UncacheableDataProcessorExtensionManager;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Value;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.Macro;
@@ -42,6 +47,7 @@ import org.thymeleaf.processor.element.AbstractElementProcessor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,12 +74,18 @@ import javax.annotation.Resource;
  * @author bpolster
  */
 public class UncacheableDataProcessor extends AbstractElementProcessor {
+    
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
 
     @Resource(name = "blInventoryService")
     protected InventoryService inventoryService;
 
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService eps;
+
+    @Resource(name = "blUncacheableDataProcessorExtensionManager")
+    protected UncacheableDataProcessorExtensionManager extensionManager;
 
     private String defaultCallbackFunction = "updateUncacheableData(params)";
 
@@ -122,15 +134,28 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
         } catch (ServiceException e) {
             throw new RuntimeException("Could not get a CSRF token for this session", e);
         }
-        return StringUtil.getMapAsJson(attrMap)  ;      
+        return StringUtil.getMapAsJson(attrMap);
     }
 
     protected void addProductInventoryData(Map<String, Object> attrMap, Arguments arguments) {
         List<Long> outOfStockProducts = new ArrayList<Long>();
+        List<Long> outOfStockSkus = new ArrayList<Long>();
 
+        Set<Product> allProducts = new HashSet<Product>();
+        Set<Sku> allSkus = new HashSet<Sku>();
         Set<Product> products = (Set<Product>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get("blcAllDisplayedProducts");
-        if (products != null) {
-            for (Product product : products) {
+        Set<Sku> skus = (Set<Sku>) ((Map<String, Object>) arguments.getExpressionEvaluationRoot()).get("blcAllDisplayedSkus");
+        if (!CollectionUtils.isEmpty(products)) {
+            allProducts.addAll(products);
+        }
+        if (!CollectionUtils.isEmpty(skus)) {
+            allSkus.addAll(skus);
+        }
+
+        extensionManager.getProxy().modifyProductListForInventoryCheck(arguments, allProducts, allSkus);
+
+        if (!allProducts.isEmpty()) {
+            for (Product product : allProducts) {
                 if (product.getDefaultSku() != null) {
 
                     Boolean qtyAvailable = inventoryService.isAvailable(product.getDefaultSku(), 1);
@@ -139,8 +164,18 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
                     }
                 }
             }
+        } else {
+            if (!allSkus.isEmpty()) {
+                Map<Sku, Integer> inventoryAvailable = inventoryService.retrieveQuantitiesAvailable(allSkus);
+                for (Map.Entry<Sku, Integer> entry : inventoryAvailable.entrySet()) {
+                    if (entry.getValue() == null || entry.getValue() < 1) {
+                        outOfStockSkus.add(entry.getKey().getId());
+                    }
+                }
+            }
         }
         attrMap.put("outOfStockProducts", outOfStockProducts);
+        attrMap.put("outOfStockSkus", outOfStockSkus);
     }
 
     protected void addCartData(Map<String, Object> attrMap) {
@@ -156,13 +191,18 @@ public class UncacheableDataProcessor extends AbstractElementProcessor {
                 if (item instanceof SkuAccessor) {
                     Sku sku = ((SkuAccessor) item).getSku();
                     if (sku != null && sku.getProduct() != null) {
-                        Product product = sku.getProduct();
-                        List<ProductOptionXref> optionXrefs = product.getProductOptionXrefs();
-                        if (optionXrefs == null || optionXrefs.isEmpty()) {
-                            cartItemIdsWithoutOptions.add(product.getId());
+                        if (useSku) {
+                            cartItemIdsWithoutOptions.add(sku.getId());
                         } else {
-                            cartItemIdsWithOptions.add(product.getId());
+                            Product product = sku.getProduct();
+                            List<ProductOptionXref> optionXrefs = product.getProductOptionXrefs();
+                            if (optionXrefs == null || optionXrefs.isEmpty()) {
+                                cartItemIdsWithoutOptions.add(product.getId());
+                            } else {
+                                cartItemIdsWithOptions.add(product.getId());
+                            } 
                         }
+                        
                     }
                 }
             }

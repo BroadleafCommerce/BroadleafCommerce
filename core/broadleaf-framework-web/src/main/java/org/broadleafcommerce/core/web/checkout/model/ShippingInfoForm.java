@@ -48,8 +48,10 @@ public class ShippingInfoForm implements Serializable {
 
     public ShippingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
+        address.setPhoneSecondary(new PhoneImpl());
+        address.setPhoneFax(new PhoneImpl());
     }
-    
+
     public Long getFulfillmentOptionId() {
         return fulfillmentOptionId;
     }

@@ -19,8 +19,8 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,13 +32,17 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.StopWatch;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
+import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductBundle;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsiderationContext;
@@ -93,8 +97,26 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Value("${solr.index.product.pageSize}")
     protected int pageSize;
 
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
+
+    @Value("${solr.index.commit}")
+    protected boolean commit;
+
+    @Value("${solr.index.softCommit}")
+    protected boolean softCommit;
+
+    @Value("${solr.index.waitSearcher}")
+    protected boolean waitSearcher;
+
+    @Value("${solr.index.waitFlush}")
+    protected boolean waitFlush;
+
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
+
+    @Resource(name = "blSkuDao")
+    protected SkuDao skuDao;
 
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
@@ -114,7 +136,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blSolrIndexDao")
     protected SolrIndexDao solrIndexDao;
 
-    public static String ATTR_MAP = "productAttributes";
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
@@ -132,11 +155,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     protected int getCacheSizeInMemoryApproximation(CatalogStructure structure) {
         try {
+            if (structure == null) {
+                return 0;
+            }
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
             oos.writeObject(structure);
-            oos.close();
-            return baos.size();
+            IOUtils.closeQuietly(oos);
+            int size = baos.size();
+            IOUtils.closeQuietly(baos);
+            return size;
         } catch (IOException e) {
             throw ExceptionHelper.refineException(e);
         }
@@ -170,25 +198,32 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             StopWatch s = new StopWatch();
 
             LOG.info("Deleting the reindex core prior to rebuilding the index");
-            deleteAllDocuments();
+            deleteAllReindexCoreDocuments();
 
             Object[] pack = saveState();
             try {
-                final Long numProducts = productDao.readCountAllActiveProducts();
+                final Long numItemsToIndex;
+                if (useSku) {
+                    numItemsToIndex = skuDao.readCountAllActiveSkus();
+                } else {
+                    numItemsToIndex = productDao.readCountAllActiveProducts();
+                }
+            
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("There are " + numProducts + " total products");
+                    LOG.debug("There are at most " + numItemsToIndex + " items to index");
                 }
                 performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
-
                     @Override
                     public void execute() throws ServiceException {
                         int page = 0;
-                        while ((page * pageSize) < numProducts) {
+                        while ((page * pageSize) < numItemsToIndex) {
                             buildIncrementalIndex(page, pageSize);
                             page++;
                         }
                     }
                 });
+
+                //We can call optimize here because we just updated the entire index
                 optimizeIndex(SolrContext.getReindexServer());
             } finally {
                 restoreState(pack);
@@ -228,8 +263,13 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
             SolrContext.getReindexServer().deleteByQuery(deleteQuery);
+
+            //Explicitly do a hard commit here since we just deleted the entire index
             SolrContext.getReindexServer().commit();
         } catch (Exception e) {
+            if (ServiceException.class.isAssignableFrom(e.getClass())) {
+                throw (ServiceException) e;
+            }
             throw new ServiceException("Could not delete documents", e);
         }
     }
@@ -237,21 +277,26 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     protected void buildIncrementalIndex(int page, int pageSize) throws ServiceException {
         buildIncrementalIndex(page, pageSize, true);
     }
-
+    
     @Override
-    public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException {
+    public void buildIncrementalProductIndex(List<Product> products, boolean useReindexServer) throws ServiceException {
+        TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalProductIndex",
+                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
         }
-        TransactionStatus status = TransactionUtils.createTransaction("readProducts",
-                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
+
         if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Building index - page: [%s], pageSize: [%s]", page, pageSize));
+            LOG.debug(String.format("Building incremental product index - pageSize: [%s]...", products.size()));
         }
+        
         StopWatch s = new StopWatch();
         boolean cacheOperationManaged = false;
         try {
+            Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
+            List<Locale> locales = getAllLocales();
+
             CatalogStructure cache = SolrIndexCachedOperation.getCache();
             if (cache != null) {
                 cacheOperationManaged = true;
@@ -259,19 +304,17 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 cache = new CatalogStructure();
                 SolrIndexCachedOperation.setCache(cache);
             }
-            List<Product> products = readAllActiveProducts(page, pageSize);
-            List<Long> productIds = BLCCollectionUtils.collectList(products, new TypedTransformer<Long>() {
-                @Override
-                public Long transform(Object input) {
-                    return ((Product) input).getId();
-                }
-            });
-            solrIndexDao.populateCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
 
             List<Field> fields = fieldDao.readAllProductFields();
-            List<Locale> locales = getAllLocales();
+            List<Long> productIds = BLCCollectionUtils.collectList(products, new TypedTransformer<Long>() {
 
-            Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
+                @Override
+                public Long transform(Object input) {
+                    return shs.getProductId((Product) input);
+                }
+            });
+
+            solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
 
             for (Product product : products) {
                 SolrInputDocument doc = buildDocument(product, fields, locales);
@@ -282,13 +325,15 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     documents.add(doc);
                 }
             }
+            
+            extensionManager.getProxy().modifyBuiltDocuments(documents, products, fields, locales);
 
             logDocuments(documents);
 
             if (!CollectionUtils.isEmpty(documents)) {
                 SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
                 server.add(documents);
-                server.commit();
+                commit(server);
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (SolrServerException e) {
@@ -307,7 +352,101 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Built index - page: [%s], pageSize: [%s] in [%s]", page, pageSize, s.toLapString()));
+            LOG.debug(String.format("Built incremental product index - pageSize: [%s] in [%s]", products.size(), s.toLapString()));
+        }
+    }
+
+    @Override
+    public void buildIncrementalSkuIndex(List<Sku> skus, boolean useReindexServer) throws ServiceException {
+        TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalSkuIndex",
+                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
+        if (SolrIndexCachedOperation.getCache() == null) {
+            LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
+                    "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
+        }
+
+        StopWatch s = new StopWatch();
+        boolean cacheOperationManaged = false;
+        try {
+            Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
+            List<Locale> locales = getAllLocales();
+
+            CatalogStructure cache = SolrIndexCachedOperation.getCache();
+            if (cache != null) {
+                cacheOperationManaged = true;
+            } else {
+                cache = new CatalogStructure();
+                SolrIndexCachedOperation.setCache(cache);
+            }
+
+            List<Field> fields = fieldDao.readAllSkuFields();
+            List<Long> productIds = new ArrayList<Long>();
+            for (Sku sku : skus) {
+                productIds.add(sku.getProduct().getId());
+            }
+
+            solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
+
+            for (Sku sku : skus) {
+                SolrInputDocument doc = buildDocument(sku, fields, locales);
+                //If someone overrides the buildDocument method and determines that they don't want a product 
+                //indexed, then they can return null. If the document is null it does not get added to 
+                //to the index.
+                if (doc != null) {
+                    documents.add(doc);
+                }
+            }
+
+            logDocuments(documents);
+
+            if (!CollectionUtils.isEmpty(documents)) {
+                SolrServer server = useReindexServer ? SolrContext.getReindexServer() : SolrContext.getServer();
+                server.add(documents);
+                commit(server);
+            }
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+        } catch (SolrServerException e) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw new ServiceException("Could not rebuild index", e);
+        } catch (IOException e) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw new ServiceException("Could not rebuild index", e);
+        } catch (RuntimeException e) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw e;
+        } finally {
+            if (!cacheOperationManaged) {
+                SolrIndexCachedOperation.clearCache();
+            }
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(String.format("Built incremental sku index - pageSize: [%s] in [%s]", skus.size(), s.toLapString()));
+        }
+    }
+
+    @Override
+    public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException {
+        TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex",
+                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
+        if (SolrIndexCachedOperation.getCache() == null) {
+            LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
+                    "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
+        }
+        
+        try {
+            if (useSku) {
+                List<Sku> skus = readAllActiveSkus(page, pageSize);
+                buildIncrementalSkuIndex(skus, useReindexServer);
+            } else {
+                List<Product> products = readAllActiveProducts(page, pageSize);
+                buildIncrementalProductIndex(products, useReindexServer);
+            }
+            
+            TransactionUtils.finalizeTransaction(status, transactionManager, false);
+        } catch (RuntimeException e) {
+            TransactionUtils.finalizeTransaction(status, transactionManager, true);
+            throw e;
         }
     }
 
@@ -337,9 +476,109 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         return productDao.readAllActiveProducts(page, pageSize);
     }
 
+    /**
+     * This method to read active skus utilizes paging to improve performance.
+     * While not optimal, this will reduce the memory required to load large catalogs.
+     * 
+     * It could still be improved for specific implementations by only loading fields that will be indexed or by accessing
+     * the database via direct JDBC (instead of Hibernate).
+     * 
+     * @return the list of all active SKUs to be used by the index building task
+     * @since 2.2.0
+     */
+    protected List<Sku> readAllActiveSkus(int page, int pageSize) {
+        List<Sku> skus = skuDao.readAllActiveSkus(page, pageSize);
+        ArrayList<Sku> skusToIndex = new ArrayList<Sku>();
+
+        if (skus != null && !skus.isEmpty()) {
+            for (Sku sku : skus) {
+                //If the sku is not active, don't index it...
+                if (!sku.isActive()) {
+                    continue;
+                }
+
+                //If this is the default sku and the product has product options
+                //and is not allowed to be sold without product options
+                if (sku.getDefaultProduct() != null
+                        && !sku.getProduct().getCanSellWithoutOptions()
+                        && !sku.getProduct().getAdditionalSkus().isEmpty()) {
+                    continue;
+                }
+                
+                if (sku.getDefaultProduct() instanceof ProductBundle) {
+                    continue;
+                }
+
+                skusToIndex.add(sku);
+            }
+        }
+
+        return skusToIndex;
+    }
+
     @Override
     public List<Locale> getAllLocales() {
         return localeService.findAllLocales();
+    }
+    
+    @Override
+    public SolrInputDocument buildDocument(final Sku sku, List<Field> fields, List<Locale> locales) {
+        final SolrInputDocument document = new SolrInputDocument();
+        
+        attachBasicDocumentFields(sku, document);
+
+        // Keep track of searchable fields added to the index.   We need to also add the search facets if 
+        // they weren't already added as a searchable field.
+        List<String> addedProperties = new ArrayList<String>();
+
+        for (Field field : fields) {
+            try {
+                // Index the searchable fields
+                if (field.getSearchable()) {
+                    List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(field);
+                    for (FieldType sft : searchableFieldTypes) {
+                        Map<String, Object> propertyValues = getPropertyValues(sku, field, sft, locales);
+
+                        // Build out the field for every prefix
+                        for (Entry<String, Object> entry : propertyValues.entrySet()) {
+                            String prefix = entry.getKey();
+                            prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
+
+                            String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, sft, prefix);
+                            Object value = entry.getValue();
+
+                            document.addField(solrPropertyName, value);
+                            addedProperties.add(solrPropertyName);
+                        }
+                    }
+                }
+
+                // Index the faceted field type as well
+                FieldType facetType = field.getFacetFieldType();
+                if (facetType != null) {
+                    Map<String, Object> propertyValues = getPropertyValues(sku, field, facetType, locales);
+
+                    // Build out the field for every prefix
+                    for (Entry<String, Object> entry : propertyValues.entrySet()) {
+                        String prefix = entry.getKey();
+                        prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
+
+                        String solrFacetPropertyName = shs.getPropertyNameForFieldFacet(field, prefix);
+                        Object value = entry.getValue();
+
+                        if (!addedProperties.contains(solrFacetPropertyName)) {
+                            document.addField(solrFacetPropertyName, value);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                LOG.error("Could not get value for property[" + field.getQualifiedFieldName() + "] for sku id[" + sku.getId() + "]", e);
+            }
+        }
+
+        attachAdditionalDocumentFields(sku, document);
+
+        return document;
     }
 
     @Override
@@ -395,18 +634,84 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             } catch (Exception e) {
                 LOG.error("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
                         + product.getId() + "]", e);
+                throw ExceptionHelper.refineException(e);
             }
         }
+
+        attachAdditionalDocumentFields(product, document);
 
         return document;
     }
 
     /**
-     * Adds the ID, category, and explicitCategory fields for the product to the document
+     * Implementors can extend this and override this method to add additional fields to the Solr document.
+     * 
+     * @param sku
+     * @param document
+     */
+    protected void attachAdditionalDocumentFields(Sku sku, SolrInputDocument document) {
+        //Empty implementation. Placeholder for others to extend and add additional fields
+    }
+
+    /**
+     * Implementors can extend this and override this method to add additional fields to the Solr document.
      * 
      * @param product
      * @param document
      */
+    protected void attachAdditionalDocumentFields(Product product, SolrInputDocument document) {
+        //Empty implementation. Placeholder for others to extend and add additional fields
+    }
+
+    /**
+     * Adds the ID, category, and explicitCategory fields for the product or sku to the document
+     * 
+     * @param product
+     * @param sku
+     * @param document
+     */
+    protected void attachBasicDocumentFields(Sku sku, SolrInputDocument document) {
+        boolean cacheOperationManaged = false;
+        Product product = sku.getProduct();
+        try {
+            CatalogStructure cache = SolrIndexCachedOperation.getCache();
+            if (cache != null) {
+                cacheOperationManaged = true;
+            } else {
+                cache = new CatalogStructure();
+                SolrIndexCachedOperation.setCache(cache);
+                solrIndexDao.populateProductCatalogStructure(Arrays.asList(product.getId()), SolrIndexCachedOperation.getCache());
+            }
+            // Add the namespace and ID fields for this product
+            document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
+            document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, sku));
+            document.addField(shs.getSkuIdFieldName(), shs.getSkuId(sku));
+            extensionManager.getProxy().attachAdditionalBasicFields(sku, document, shs);
+
+            // The explicit categories are the ones defined by the product itself
+            if (cache.getParentCategoriesByProduct().containsKey(shs.getProductId(product))) {
+                for (Long categoryId : cache.getParentCategoriesByProduct().get(shs.getProductId(product))) {
+                    document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
+
+                    String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
+                    String displayOrderKey = categoryId + "-" + shs.getProductId(product);
+                    BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+
+                    if (document.getField(categorySortFieldName) == null) {
+                        document.addField(categorySortFieldName, displayOrder);
+                    }
+
+                    // This is the entire tree of every category defined on the product
+                    buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
+                }
+            }
+        } finally {
+            if (!cacheOperationManaged) {
+                SolrIndexCachedOperation.clearCache();
+            }
+        }
+    }
+
     protected void attachBasicDocumentFields(Product product, SolrInputDocument document) {
         boolean cacheOperationManaged = false;
         try {
@@ -416,26 +721,25 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             } else {
                 cache = new CatalogStructure();
                 SolrIndexCachedOperation.setCache(cache);
-                solrIndexDao.populateCatalogStructure(Arrays.asList(product.getId()), SolrIndexCachedOperation.getCache());
+                solrIndexDao.populateProductCatalogStructure(Arrays.asList(product.getId()), SolrIndexCachedOperation.getCache());
             }
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, product));
-            document.addField(shs.getProductIdFieldName(), product.getId());
+            document.addField(shs.getProductIdFieldName(), shs.getProductId(product));
             extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
+            
+            Long originalId = sandBoxHelper.getOriginalId(product);
+            originalId = (originalId == null) ? product.getId() : originalId;
 
             // The explicit categories are the ones defined by the product itself
-            if (cache.getParentCategoriesByProduct().containsKey(product.getId())) {
-                for (Long categoryId : cache.getParentCategoriesByProduct().get(product.getId())) {
+            if (cache.getParentCategoriesByProduct().containsKey(originalId)) {
+                for (Long categoryId : cache.getParentCategoriesByProduct().get(originalId)) {
                     document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + shs.getProductId(product.getId());
+                    String displayOrderKey = categoryId + "-" + originalId;
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    if (displayOrder == null) {
-                        displayOrderKey = categoryId + "-" + product.getId();
-                        displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
-                    }
 
                     if (document.getField(categorySortFieldName) == null) {
                         document.addField(categorySortFieldName, displayOrder);
@@ -484,6 +788,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      *   "es_ES" : "Una descripcion" }
      * 
      * @param product
+     * @param sku
      * @param field
      * @param fieldType
      * @param locales
@@ -492,31 +797,24 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    protected Map<String, Object> getPropertyValues(Product product, Field field, FieldType fieldType,
-            List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    protected Map<String, Object> getPropertyValues(Object indexedItem, Field field, FieldType fieldType, List<Locale> locales)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String propertyName = field.getPropertyName();
         Map<String, Object> values = new HashMap<String, Object>();
 
+        ExtensionResultStatusType extensionResult = ExtensionResultStatusType.NOT_HANDLED;
         if (extensionManager != null) {
-            ExtensionResultStatusType result = extensionManager.getProxy().addPropertyValues(product, field, fieldType, values, propertyName, locales);
-
-            if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                Object propertyValue;
-                if (propertyName.contains(ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
-                    // It's possible that the value is an actual object, like ProductAttribute. We'll attempt to pull the 
-                    // value field out of it if it exists.
-                    if (propertyValue != null) {
-                        try {
-                            propertyValue = PropertyUtils.getProperty(propertyValue, "value");
-                        } catch (NoSuchMethodException e) {
-                            // Do nothing, we'll keep the existing value
-                        }
-                    }
-                } else {
-                    propertyValue = PropertyUtils.getProperty(product, propertyName);
-                }
+            if (Product.class.isAssignableFrom(indexedItem.getClass())) {
+                extensionResult = extensionManager.getProxy().addPropertyValues((Product) indexedItem, field, fieldType, values, propertyName, locales);
+            } else if (Sku.class.isAssignableFrom(indexedItem.getClass())) {
+                extensionResult = extensionManager.getProxy().addPropertyValues((Sku) indexedItem, field, fieldType, values, propertyName, locales);
+            }
+        }
+        
+        if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
+            Object propertyValue = shs.getPropertyValue(indexedItem, field);
+            if (propertyValue != null) {
                 values.put("", propertyValue);
             }
         }
@@ -538,9 +836,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      * @param listPropertyName
      * @param mapPropertyName
      * @return the converted property name
+     * 
+     * @deprecated see SolrHelperService.getPropertyValue()
      */
+    @Deprecated
     protected String convertToMappedProperty(String propertyName, String listPropertyName, String mapPropertyName) {
-        String[] splitName = StringUtils.split(propertyName, ".");
+        String[] splitName = StringUtils.split(propertyName, "\\.");
         StringBuilder convertedProperty = new StringBuilder();
         for (int i = 0; i < splitName.length; i++) {
             if (convertedProperty.length() > 0) {
@@ -579,16 +880,36 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      
     @Override
     public void optimizeIndex(SolrServer server) throws ServiceException, IOException {
-         try {
-             if (LOG.isDebugEnabled()) {
-                 LOG.debug("Optimizing the index...");
-             }
-             server.optimize();
-         } catch (SolrServerException e) {
-             throw new ServiceException("Could not optimize index", e);
-         }
-     }
-    
+        shs.optimizeIndex(server);
+    }
+
+    @Override
+    public void commit(SolrServer server) throws ServiceException, IOException {
+        if (this.commit) {
+            commit(server, this.softCommit, this.waitSearcher, this.waitFlush);
+        } else if (LOG.isDebugEnabled()) {
+            LOG.debug("The flag / property \"solr.index.commit\" is false. Not committing! Ensure autoCommit is configured.");
+        }
+    }
+
+    @Override
+    public void commit(SolrServer server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException {
+        try {
+            if (!this.commit) {
+                LOG.warn("The flag / property \"solr.index.commit\" is set to false but a commit is being forced via the API.");
+            }
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Committing changes to Solr index: softCommit: " + softCommit
+                        + ", waitSearcher: " + waitSearcher + ", waitFlush: " + waitFlush);
+            }
+
+            server.commit(waitFlush, waitSearcher, softCommit);
+        } catch (SolrServerException e) {
+            throw new ServiceException("Could not commit changes to Solr index", e);
+        }
+    }
+
     @Override
     public void logDocuments(Collection<SolrInputDocument> documents) {
         if (LOG.isTraceEnabled()) {
@@ -597,5 +918,4 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             }
         }
     }
-
 }

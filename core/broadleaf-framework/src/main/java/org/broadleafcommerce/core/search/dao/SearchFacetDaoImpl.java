@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.search.dao;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetImpl;
 import org.hibernate.ejb.QueryHints;
@@ -48,7 +49,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
     protected EntityConfiguration entityConfiguration;
     
     @Override
-    public List<SearchFacet> readAllSearchFacets() {
+    public List<SearchFacet> readAllSearchFacets(FieldEntity entityType) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<SearchFacet> criteria = builder.createQuery(SearchFacet.class);
         
@@ -56,8 +57,10 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         
         criteria.select(facet);
         criteria.where(
-            builder.equal(facet.get("showOnSearch").as(Boolean.class), true)
+                builder.equal(facet.get("showOnSearch").as(Boolean.class), true),
+                builder.equal(facet.join("field").get("entityType").as(String.class), entityType.getType())
         );
+
         TypedQuery<SearchFacet> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         
@@ -100,6 +103,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
         return query.getResultList();
     }
 
+    @Override
     public SearchFacet save(SearchFacet searchFacet) {
         return em.merge(searchFacet);
     }

@@ -28,6 +28,8 @@ import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldXref;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentFieldXrefImpl;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
 import org.broadleafcommerce.cms.structure.service.StructuredContentService;
@@ -57,6 +59,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * Created by jfischer
@@ -71,6 +75,9 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     
     @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
     protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
+
+    @PersistenceContext(unitName="blPU")
+    protected EntityManager em;
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -112,7 +119,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             metadata.setCeilingType(StructuredContentType.class.getName());
             ClassTree entities = new ClassTree(StructuredContentTypeImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContentType.getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentType.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContentType.getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentTypeImpl.class);
             metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
@@ -140,6 +147,8 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     @Override
     public Entity fetchEntityBasedOnId(String structuredContentId, List<String> dirtyFields) throws Exception {
         StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
+        //Make sure the fieldmap is refreshed from the database based on any changes introduced in addOrUpdate()
+        em.refresh(structuredContent);
         return fetchDynamicEntity(structuredContent, dirtyFields, true);
     }
 
@@ -151,18 +160,18 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     @Override
     public Entity fetchDynamicEntity(Serializable root, List<String> dirtyFields, boolean includeId) throws Exception {
         StructuredContent structuredContent = (StructuredContent) root;
-        Map<String, StructuredContentField> structuredContentFieldMap = structuredContent.getStructuredContentFields();
+        Map<String, StructuredContentFieldXref> structuredContentFieldMap = structuredContent.getStructuredContentFieldXrefs();
         Entity entity = new Entity();
         entity.setType(new String[]{StructuredContentType.class.getName()});
         List<Property> propertiesList = new ArrayList<Property>();
         for (FieldGroup fieldGroup : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
-            for (FieldDefinition definition : fieldGroup.getFieldDefinitions()) {
+            for (FieldDefinition def : fieldGroup.getFieldDefinitions()) {
                 Property property = new Property();
                 propertiesList.add(property);
-                property.setName(definition.getName());
+                property.setName(def.getName());
                 String value = null;
                 if (!MapUtils.isEmpty(structuredContentFieldMap)) {
-                    StructuredContentField structuredContentField = structuredContentFieldMap.get(definition.getName());
+                    StructuredContentField structuredContentField = structuredContentFieldMap.get(def.getName()).getStructuredContentField();
                     if (structuredContentField != null) {
                         value = structuredContentField.getValue();
                     }
@@ -220,31 +229,39 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
             
             List<String> templateFieldNames = new ArrayList<String>(20);
             for (FieldGroup group : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
-                for (FieldDefinition definition: group.getFieldDefinitions()) {
-                    templateFieldNames.add(definition.getName());
+                for (FieldDefinition def : group.getFieldDefinitions()) {
+                    templateFieldNames.add(def.getName());
                 }
             }
             Map<String, String> dirtyFieldsOrigVals = new HashMap<String, String>();
             List<String> dirtyFields = new ArrayList<String>();
-            Map<String, StructuredContentField> structuredContentFieldMap = structuredContent.getStructuredContentFields();
+            Map<String, StructuredContentFieldXref> structuredContentFieldMap =
+                    structuredContent.getStructuredContentFieldXrefs();
             for (Property property : persistencePackage.getEntity().getProperties()) {
                 if (templateFieldNames.contains(property.getName())) {
-                    StructuredContentField structuredContentField = structuredContentFieldMap.get(property.getName());
-                    if (structuredContentField != null) {
+                    StructuredContentFieldXref scXref = structuredContentFieldMap.get(property.getName());
+                    if (scXref != null && scXref.getStructuredContentField() != null) {
+                        StructuredContentField structuredContentField = scXref.getStructuredContentField();
                         boolean isDirty = (structuredContentField.getValue() == null && property.getValue() != null) ||
                                 (structuredContentField.getValue() != null && property.getValue() == null);
                         if (isDirty || (structuredContentField.getValue() != null && property.getValue() != null &&
                                 !structuredContentField.getValue().trim().equals(property.getValue().trim()))) {
                             dirtyFields.add(property.getName());
                             dirtyFieldsOrigVals.put(property.getName(), structuredContentField.getValue());
+                            structuredContentField.setValue(property.getValue());
+                            scXref = dynamicEntityDao.merge(scXref);
                         }
-                        structuredContentField.setValue(property.getValue());
                     } else {
-                        structuredContentField = new StructuredContentFieldImpl();
+                        StructuredContentField structuredContentField = new StructuredContentFieldImpl();
                         structuredContentField.setFieldKey(property.getName());
                         structuredContentField.setValue(property.getValue());
-                        dynamicEntityDao.persist(structuredContentField);
-                        structuredContentFieldMap.put(property.getName(), structuredContentField);
+
+                        StructuredContentFieldXref scfx = new StructuredContentFieldXrefImpl();
+                        scfx.setStructuredContent(structuredContent);
+                        scfx.setKey(property.getName());
+                        scfx.setStrucuturedContentField(structuredContentField);
+
+                        scfx = dynamicEntityDao.persist(scfx);
                         dirtyFields.add(property.getName());
                     }
                 }

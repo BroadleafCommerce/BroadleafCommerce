@@ -23,6 +23,10 @@ import org.broadleafcommerce.profile.core.domain.State;
 
 import java.util.List;
 
+/**
+ * @deprecated - use {@link org.broadleafcommerce.profile.core.dao.CountrySubdivisionDao} instead.
+ */
+@Deprecated
 public interface StateDao {
 
     public List<State> findStates();

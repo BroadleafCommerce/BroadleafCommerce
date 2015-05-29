@@ -19,13 +19,14 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 
 import java.io.Serializable;
 import java.util.List;
 
-public interface OrderItemPriceDetail extends Serializable {
+public interface OrderItemPriceDetail extends Serializable, MultiTenantCloneable<OrderItemPriceDetail> {
 
     /**
      * The unique identifier of this OrderItem

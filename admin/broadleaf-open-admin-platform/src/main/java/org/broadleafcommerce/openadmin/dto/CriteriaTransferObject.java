@@ -42,6 +42,7 @@ public class CriteriaTransferObject {
     private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
 
     private List<FilterMapping> additionalFilterMappings = new ArrayList<FilterMapping>();
+    private List<FilterMapping> nonCountAdditionalFilterMappings = new ArrayList<FilterMapping>();
     
     /**
      * The index of records in the database for which a fetch will start.
@@ -123,6 +124,13 @@ public class CriteriaTransferObject {
         return criteriaMap.get(name);
     }
 
+    public void defaultSortDirectionForFieldIfUnset(String name, SortDirection defaultDirection) {
+        FilterAndSortCriteria fsc = get(name);
+        if (fsc.getSortDirection() == null) {
+            fsc.setSortDirection(defaultDirection);
+        }
+    }
+
     /**
      * This list holds additional filter mappings that might have been constructed in a custom persistence
      * handler. This is only used when very custom filtering needs to occur.
@@ -134,6 +142,23 @@ public class CriteriaTransferObject {
     public void setAdditionalFilterMappings(List<FilterMapping> additionalFilterMappings) {
         this.additionalFilterMappings = additionalFilterMappings;
     }
-    
-    
+
+    /**
+     * This list holds additional filter mappings that might have been constructed in a custom persistence
+     * handler. This is only used when very custom filtering needs to occur.
+     *
+     * These filter mappings will NOT be applied to the query that gathers the total number of results.
+     * This especially applies to queries that include join fetches where the total number of results
+     * should not include the join fetched items. An example of this is defaultSku and defaultCategory
+     * being join fetched when querying for a set of products. In this case, these filter mappings are
+     * applied to also return the defaultSku and defaultCategory of each product, but the total number
+     * of results should only include the number of products.
+     */
+    public List<FilterMapping> getNonCountAdditionalFilterMappings() {
+        return nonCountAdditionalFilterMappings;
+    }
+
+    public void setNonCountAdditionalFilterMappings(List<FilterMapping> nonCountAdditionalFilterMappings) {
+        this.nonCountAdditionalFilterMappings = nonCountAdditionalFilterMappings;
+    }
 }

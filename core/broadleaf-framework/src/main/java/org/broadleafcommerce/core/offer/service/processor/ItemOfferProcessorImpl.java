@@ -66,7 +66,8 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
      */
     @Override
     public void filterItemLevelOffer(PromotableOrder order, List<PromotableCandidateItemOffer> qualifiedItemOffers, Offer offer) {
-        boolean isNewFormat = CollectionUtils.isNotEmpty(offer.getQualifyingItemCriteria()) || CollectionUtils.isNotEmpty(offer.getTargetItemCriteria());
+        boolean isNewFormat = CollectionUtils.isNotEmpty(offer.getQualifyingItemCriteriaXref()) ||
+                CollectionUtils.isNotEmpty(offer.getTargetItemCriteriaXref());
         boolean itemLevelQualification = false;
         boolean offerCreated = false;
 

@@ -3,7 +3,7 @@
 </comment>
 
 <div class="listgrid-header-wrapper">
-    <table class="list-grid-table responsive twelve table-hover"
+    <table class="list-grid-table twelve table-hover"
            th:classappend="${listGrid.className}"
            th:attr="data-listgridtype=${listGrid.listGridType},
                     data-currenturl=${currentUrl},
@@ -27,14 +27,16 @@
                     
                     <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                         <div class="listgrid-title">
-                            [[#{${headerField.friendlyName}}]]
+                            <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
+                            <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
                         </div>
                         <div class="resizer" th:unless="${headerField.resizeDisabled}">||</div>
                     </div>
     
                     <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
                         <div class="listgrid-title">
-                            [[#{${headerField.friendlyName}}]]
+                            <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
+                            <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
                             <div class="listgrid-filter-sort-container">
                                 <i class="sort-icon icon-sort"></i>
                                 <i class="filter-icon icon-filter"></i>
@@ -181,7 +183,8 @@
 
 <span class="listgrid-table-footer" th:inline="text">
     <span class="listgrid-table-footer-message" th:inline="text">
-        <span class="low-index" th:text="${listGrid.startIndex + 1}" />
+        <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}" />
+        <span class="low-index" th:unless="${records}">0</span>
         -
         <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
         <span th:text="${'of'}" />

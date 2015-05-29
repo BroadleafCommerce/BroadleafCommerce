@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
 
 /**
@@ -26,7 +27,7 @@ import org.broadleafcommerce.common.rule.QuantityBasedRule;
  * @author jfischer
  *
  */
-public interface OfferItemCriteria extends QuantityBasedRule {
+public interface OfferItemCriteria extends QuantityBasedRule, MultiTenantCloneable<OfferItemCriteria> {
 
     //place abstract method definitions here
     

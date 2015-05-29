@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.server.security.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.springframework.stereotype.Repository;
@@ -47,6 +48,16 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
 
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    @Override
+    public AdminSection save(AdminSection adminSection) {
+        return em.merge(adminSection);
+    }
+
+    @Override
+    public void remove(AdminSection adminSection) {
+        em.remove(adminSection);
+    }
 
     @Override
     public List<AdminModule> readAllAdminModules() {
@@ -54,6 +65,14 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
         List<AdminModule> modules = query.getResultList();
         return modules;
+    }
+    
+    @Override
+    public AdminModule readAdminModuleByModuleKey(String moduleKey) {
+        TypedQuery<AdminModule> q = new TypedQueryBuilder<AdminModule>(AdminModule.class, "am")
+            .addRestriction("am.moduleKey", "=", moduleKey)
+            .toQuery(em);
+        return q.getSingleResult();
     }
 
     @Override
@@ -65,29 +84,41 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     }
     
     @Override
-    public AdminSection readAdminSectionByClass(Class<?> clazz) {
+    public AdminSection readAdminSectionByClassAndSectionId(Class<?> clazz, String sectionId) {
         String className = clazz.getName();
         
         // Try to find a section for the exact input received
-        AdminSection section = readAdminSectionForClassName(className);
-        if (section != null) return section;
-        
-        // If we didn't find a section, and this class ends in Impl, try again without the Impl.
-        // Most of the sections should match to the interface
-        if (className.endsWith("Impl")) {
-            className = className.substring(0, className.length() - 4);
-            section = readAdminSectionForClassName(className);
+        List<AdminSection> sections = readAdminSectionForClassName(className);
+        if (CollectionUtils.isEmpty(sections)) {
+            // If we didn't find a section, and this class ends in Impl, try again without the Impl.
+            // Most of the sections should match to the interface
+            if (className.endsWith("Impl")) {
+                className = className.substring(0, className.length() - 4);
+                sections = readAdminSectionForClassName(className);
+            }
         }
-        if (section != null) return section;
         
-        // If we still didn't find a section, we should walk up the inheritance hierarchy tree looking for
-        // implemented interfaces or extensions of those interfaces.
-        // TODO: APA
+        if (!CollectionUtils.isEmpty(sections)) {
+            AdminSection returnSection = sections.get(0);
+
+            if (sectionId != null) {
+                if (!sectionId.startsWith("/")) {
+                    sectionId = "/" + sectionId;
+                }
+                for (AdminSection section : sections) {
+                    if (sectionId.equals(section.getUrl())) {
+                        returnSection = section;
+                        break;
+                    }
+                }
+            }
+            return returnSection;
+        }
         
         return null;
     }
     
-    protected AdminSection readAdminSectionForClassName(String className) {
+    protected List<AdminSection> readAdminSectionForClassName(String className) {
         TypedQuery<AdminSection> q = em.createQuery(
             "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
         q.setParameter("className", className);
@@ -96,7 +127,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         if (CollectionUtils.isEmpty(result)) {
             return null;
         }
-        return q.getResultList().get(0);
+        return q.getResultList();
     }
 
     @Override

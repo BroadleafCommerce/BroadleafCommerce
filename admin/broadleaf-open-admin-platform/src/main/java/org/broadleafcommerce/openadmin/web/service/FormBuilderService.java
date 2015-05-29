@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.web.service;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
+import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -71,6 +72,18 @@ public interface FormBuilderService {
      */
     public ListGrid buildCollectionListGrid(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey, List<SectionCrumb> sectionCrumbs)
             throws ServiceException;
+
+    /**
+     * Extracts the DefaultValue from the FieldMetaData and parses it based on the
+     * {@link org.broadleafcommerce.common.presentation.client.SupportedFieldType} that the field uses.
+     *
+     * Logs a warning in the event of failure to parse the value and returns null.
+     *
+     * @param fieldType
+     * @param fmd
+     * @return The value to be used on the form field.
+     */
+    public String extractDefaultValueFromFieldData(String fieldType, BasicFieldMetadata fmd);
 
     /**
      * Loops through all of the fields that are specified in given class metadata and removes fields that

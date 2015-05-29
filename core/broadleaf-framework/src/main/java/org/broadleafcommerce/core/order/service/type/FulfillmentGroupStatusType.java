@@ -45,6 +45,11 @@ public class FulfillmentGroupStatusType implements Serializable, BroadleafEnumer
     public static final FulfillmentGroupStatusType SHIPPED = new FulfillmentGroupStatusType("SHIPPED", "Shipped");
     
     /**
+     * CANCELLED: Used to indicate that the fulfillment group will not be shipped.
+     */
+    public static final FulfillmentGroupStatusType CANCELLED = new FulfillmentGroupStatusType("CANCELLED", "Cancelled");
+
+    /**
      * PROCESSING: Used to indicate that the fulfillment group is being processed. For example, during pick or pack processes 
      * in a warehouse.
      */

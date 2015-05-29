@@ -19,7 +19,31 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cms.field.domain.FieldGroup;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollectionOverride;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -30,31 +54,11 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
-
-import org.broadleafcommerce.cms.field.domain.FieldGroup;
-import org.broadleafcommerce.cms.field.domain.FieldGroupImpl;
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
+import javax.persistence.Transient;
 
 /**
  * Created by bpolster.
@@ -65,10 +69,12 @@ import org.hibernate.annotations.Parameter;
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageTemplateImpl_basePageTemplate")
 @DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
+public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileEntity {
 
+    private static final Log LOG = LogFactory.getLog(PageTemplateImpl.class);
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -104,18 +110,18 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(excluded = true)
+    @Deprecated
     protected Locale locale;
 
-    @ManyToMany(targetEntity = FieldGroupImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_PGTMPLT_FLDGRP_XREF", joinColumns = @JoinColumn(name = "PAGE_TMPLT_ID",
-            referencedColumnName = "PAGE_TMPLT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "FLD_GROUP_ID", referencedColumnName = "FLD_GROUP_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(targetEntity = PageTemplateFieldGroupXrefImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true, mappedBy = "pageTemplate")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCMSElements")
-    @OrderColumn(name = "GROUP_ORDER")
+    @OrderBy("groupOrder")
     @BatchSize(size = 20)
-    @ClonePolicyCollection(deepClone = false)
-    protected List<FieldGroup> fieldGroups = new ArrayList<FieldGroup>();
+    @ClonePolicyCollectionOverride
+    protected List<PageTemplateFieldGroupXref> fieldGroups = new ArrayList<PageTemplateFieldGroupXref>();
+
+    @Transient
+    protected List<FieldGroup> legacyFieldGroups = new ArrayList<FieldGroup>();
 
     @Override
     public Long getId() {
@@ -168,12 +174,33 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
     }
 
     @Override
+    @Deprecated
     public List<FieldGroup> getFieldGroups() {
+        if (legacyFieldGroups.isEmpty()) {
+            for (PageTemplateFieldGroupXref xref : getFieldGroupXrefs()) {
+                legacyFieldGroups.add(xref.getFieldGroup());
+            }
+        }
+        return Collections.unmodifiableList(legacyFieldGroups);
+    }
+
+    @Override
+    @Deprecated
+    public void setFieldGroups(List<FieldGroup> fieldGroups) {
+        this.legacyFieldGroups.clear();
+        this.fieldGroups.clear();
+        for (FieldGroup group : fieldGroups) {
+            this.fieldGroups.add(new PageTemplateFieldGroupXrefImpl(this, group));
+        }
+    }
+
+    @Override
+    public List<PageTemplateFieldGroupXref> getFieldGroupXrefs() {
         return fieldGroups;
     }
 
     @Override
-    public void setFieldGroups(List<FieldGroup> fieldGroups) {
+    public void setFieldGroupXrefs(List<PageTemplateFieldGroupXref> fieldGroups) {
         this.fieldGroups = fieldGroups;
     }
 
@@ -181,5 +208,25 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity {
     public String getMainEntityName() {
         return getTemplateName();
     }
+
+    @Override
+    public <G extends PageTemplate> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        PageTemplate cloned = createResponse.getClone();
+        cloned.setTemplateName(templateName);
+        cloned.setTemplateDescription(templateDescription);
+        cloned.setTemplatePath(templatePath);
+        cloned.setLocale(locale);
+        for (PageTemplateFieldGroupXref fieldGroup : fieldGroups) {
+            CreateResponse<PageTemplateFieldGroupXref> clonedGroupResponse = fieldGroup.createOrRetrieveCopyInstance(context);
+            PageTemplateFieldGroupXref clonedGroup = clonedGroupResponse.getClone();
+            cloned.getFieldGroupXrefs().add(clonedGroup);
+        }
+        return createResponse;
+    }
+
 }
 

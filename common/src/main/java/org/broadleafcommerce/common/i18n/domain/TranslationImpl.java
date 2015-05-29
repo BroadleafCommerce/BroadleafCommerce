@@ -20,16 +20,8 @@
 
 package org.broadleafcommerce.common.i18n.domain;
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Lob;
-
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -38,24 +30,26 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Table;
-import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
+import javax.persistence.Entity;
+import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @javax.persistence.Table(name = "BLC_TRANSLATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blTranslationElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "TranslationImpl_baseTranslation")
 //multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
 @Table(appliesTo = "BLC_TRANSLATION", indexes = {
         @Index(name = "TRANSLATION_INDEX", columnNames = {"ENTITY_TYPE","ENTITY_ID","FIELD_NAME","LOCALE_CODE"})
 })
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class TranslationImpl implements Serializable, Translation {
@@ -76,7 +70,7 @@ public class TranslationImpl implements Serializable, Translation {
     protected Long id;
 
     @Column(name = "ENTITY_TYPE")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "TranslationImpl_EntityType", prominent = true)
     protected String entityType;
 
     @Column(name = "ENTITY_ID")
@@ -84,17 +78,17 @@ public class TranslationImpl implements Serializable, Translation {
     protected String entityId;
 
     @Column(name = "FIELD_NAME")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "TranslationImpl_FieldName", prominent = true)
     protected String fieldName;
 
     @Column(name = "LOCALE_CODE")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "TranslationImpl_LocaleCode", prominent = true)
     protected String localeCode;
 
     @Column(name = "TRANSLATED_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "TranslationImpl_TranslatedValue", prominent = true)
     protected String translatedValue;
 
     /* ************************ */
@@ -165,4 +159,18 @@ public class TranslationImpl implements Serializable, Translation {
         this.translatedValue = translatedValue;
     }
 
+    @Override
+    public <G extends Translation> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        Translation cloned = createResponse.getClone();
+        cloned.setEntityId(entityId);
+        cloned.setFieldName(fieldName);
+        cloned.setLocaleCode(localeCode);
+        cloned.setTranslatedValue(translatedValue);
+        cloned.setEntityType(getEntityType());
+        return createResponse;
+    }
 }

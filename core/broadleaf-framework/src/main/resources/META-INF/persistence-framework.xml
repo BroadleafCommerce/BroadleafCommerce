@@ -49,6 +49,7 @@
         <class>org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryMediaXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl</class>
@@ -56,9 +57,11 @@
         <class>org.broadleafcommerce.core.catalog.domain.ProductBundleImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.SkuFeeImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
         <class>org.broadleafcommerce.core.util.domain.CodeTypeImpl</class>
@@ -72,6 +75,9 @@
         <class>org.broadleafcommerce.core.offer.domain.OfferCodeImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferRuleImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferOfferRuleXrefImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXrefImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferInfoImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl</class>
@@ -91,6 +97,7 @@
         <class>org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl</class>
         <class>org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderLockImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderAttributeImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderItemImpl</class>
         <class>org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl</class>
@@ -103,7 +110,6 @@
         <class>org.broadleafcommerce.core.order.domain.TaxDetailImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.OrderPaymentImpl</class>
         <class>org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl</class>
-
         <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
         <class>org.broadleafcommerce.core.pricing.domain.ShippingRateImpl</class>
         <class>org.broadleafcommerce.core.store.domain.StoreImpl</class>
@@ -120,23 +126,12 @@
         <class>org.broadleafcommerce.core.rating.domain.ReviewDetailImpl</class>
         <class>org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl</class>
         <class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
-        <class>org.broadleafcommerce.core.offer.domain.CriteriaOfferXref</class>
         <class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
         <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl</class>
         <class>org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfigurationImpl</class>
         <exclude-unlisted-classes/>
-        <properties>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
-            <property name="hibernate.cache.use_second_level_cache" value="true"/>
-            <property name="hibernate.cache.use_query_cache" value="true"/>
-            <property name="hibernate.generate_statistics" value="false" />
-            <property name="hibernate.archive.autodetection" value="false" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
-            <property name="hibernate.id.new_generator_mappings" value="true"/>
-        </properties>
+        <!-- JPA properties are inherited from persistence-common.xml -->
     </persistence-unit>
     
     <persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
@@ -156,6 +151,7 @@
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

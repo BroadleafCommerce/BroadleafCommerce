@@ -19,27 +19,23 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import java.math.BigDecimal;
-
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -49,7 +45,7 @@ import org.hibernate.annotations.Parameter;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class UpSaleProductImpl implements RelatedProduct {
+public class UpSaleProductImpl implements RelatedProduct, MultiTenantCloneable<UpSaleProductImpl> {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,12 +70,12 @@ public class UpSaleProductImpl implements RelatedProduct {
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     private BigDecimal sequence;
     
-    @ManyToOne(targetEntity = ProductImpl.class)
+    @ManyToOne(targetEntity = ProductImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="UPSALE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     private Product product;
     
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="UPSALE_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     protected Category category;
@@ -147,5 +143,26 @@ public class UpSaleProductImpl implements RelatedProduct {
     @Override
     public void setRelatedProduct(Product relatedSaleProduct) {
         this.relatedSaleProduct = relatedSaleProduct;
+    }
+
+    @Override
+    public <G extends UpSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        UpSaleProductImpl cloned = createResponse.getClone();
+        if (product != null) {
+            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (category != null) {
+            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setPromotionMessage(promotionMessage);
+        if (relatedSaleProduct != null) {
+            cloned.setRelatedProduct(relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setSequence(sequence);
+        return createResponse;
     }
 }

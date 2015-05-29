@@ -21,14 +21,15 @@ package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.deser.std.StdDeserializer;
-import org.codehaus.jackson.node.ObjectNode;
-import org.codehaus.jackson.type.TypeReference;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.type.CollectionType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
         ObjectNode root = (ObjectNode) mapper.readTree(jp);
         Iterator<Map.Entry<String, JsonNode>> elementsIterator =
-                root.getFields();
+                root.fields();
         DataDTO dataDTO = new DataDTO();
         ExpressionDTO expressionDTO = new ExpressionDTO();
         boolean isExpression = false;
@@ -57,47 +58,46 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
             Map.Entry<String, JsonNode> element=elementsIterator.next();
             String name = element.getKey();
             if ("name".equals(name)) {
-                expressionDTO.setName(element.getValue().asText());
+                expressionDTO.setName(getNullAwareText(element.getValue()));
                 isExpression = true;
             }
             if ("operator".equals(name)) {
-                expressionDTO.setOperator(element.getValue().asText());
+                expressionDTO.setOperator(getNullAwareText(element.getValue()));
                 isExpression = true;
             }
             if ("value".equals(name)) {
-                expressionDTO.setValue(element.getValue().asText());
+                expressionDTO.setValue(getNullAwareText(element.getValue()));
                 isExpression = true;
             }
             if ("start".equals(name)) {
-                expressionDTO.setStart(element.getValue().asText());
+                expressionDTO.setStart(getNullAwareText(element.getValue()));
                 isExpression = true;
             }
             if ("end".equals(name)) {
-                expressionDTO.setEnd(element.getValue().asText());
+                expressionDTO.setEnd(getNullAwareText(element.getValue()));
                 isExpression = true;
             }
             if ("id".equals(name)) {
-                if ("null".equals(element.getValue().asText())) {
+                if (getNullAwareText(element.getValue()) == null) {
                     dataDTO.setId(null);
                 } else {
                     dataDTO.setId(element.getValue().asLong());
                 }
             }
             if ("quantity".equals(name)) {
-                if ("null".equals(element.getValue().asText())) {
+                if (getNullAwareText(element.getValue()) == null) {
                     dataDTO.setQuantity(null);
                 } else {
                     dataDTO.setQuantity(element.getValue().asInt());
                 }
             }
             if ("groupOperator".equals(name)) {
-                dataDTO.setGroupOperator(element.getValue().asText());
+                dataDTO.setGroupOperator(getNullAwareText(element.getValue()));
             }
             if ("groups".equals(name)){
-                dataDTO.setGroups((ArrayList<DataDTO>)mapper.readValue(element.getValue(), new TypeReference<ArrayList<DataDTO>>(){}));
+                CollectionType dtoCollectionType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, DataDTO.class);
+                dataDTO.setGroups((ArrayList<DataDTO>)mapper.readValue(element.getValue().traverse(jp.getCodec()), dtoCollectionType));
             }
-
-
         }
 
         if (isExpression) {
@@ -105,6 +105,13 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
         } else {
             return dataDTO;
         }
+    }
+    
+    /**
+     * Handles the string "null" when using asText() in a JsonNode and returns the literal null instead
+     */
+    protected String getNullAwareText(JsonNode node) {
+        return "null".equals(node.asText()) ? null : node.asText();
     }
 
 }

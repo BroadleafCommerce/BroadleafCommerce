@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
 
@@ -34,5 +35,13 @@ public interface OrderServiceExtensionHandler extends ExtensionHandler {
     public ExtensionResultStatusType attachAdditionalDataToNewNamedCart(Customer customer, Order cart);
 
     public ExtensionResultStatusType preValidateCartOperation(Order cart, ExtensionResultHolder erh);
+
+    public ExtensionResultStatusType preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto, 
+            ExtensionResultHolder erh);
     
+    /**
+     * Can be used to attach or update fields must prior to saving an order.
+     * @return
+     */
+    public ExtensionResultStatusType attachAdditionalDataToOrder(Order order, boolean priceOrder);
 }

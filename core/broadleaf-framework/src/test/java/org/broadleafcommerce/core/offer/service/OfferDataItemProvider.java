@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.offer.service;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
@@ -37,8 +39,14 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
+import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
+import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXrefImpl;
+import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXref;
+import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OfferRuleImpl;
+import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
+import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableItemFactoryImpl;
@@ -82,6 +90,7 @@ import org.easymock.classextension.EasyMock;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -373,8 +382,13 @@ public class OfferDataItemProvider {
         Country country = new CountryImpl();
         country.setAbbreviation("US");
         country.setName("United States");
-        
+
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("US");
+        isoCountry.setName("UNITED STATES");
+
         address1.setCountry(country);
+        address1.setIsoCountryAlpha2(isoCountry);
         address1.setDefault(true);
         address1.setFirstName("John");
         address1.setLastName("Tester");
@@ -390,6 +404,7 @@ public class OfferDataItemProvider {
         state.setName("Texas");
         
         address1.setState(state);
+        address1.setIsoCountrySubdivision("US-TX");
         fg1.setAddress(address1);
         fg1.setOrder(order);
         fg1.setPrimary(true);
@@ -416,8 +431,13 @@ public class OfferDataItemProvider {
         Country country2 = new CountryImpl();
         country2.setAbbreviation("US");
         country2.setName("United States");
+
+        ISOCountry isoCountry2 = new ISOCountryImpl();
+        isoCountry2.setAlpha2("US");
+        isoCountry2.setName("UNITED STATES");
         
         address2.setCountry(country2);
+        address2.setIsoCountryAlpha2(isoCountry2);
         address2.setDefault(true);
         address2.setFirstName("John");
         address2.setLastName("Tester");
@@ -433,6 +453,7 @@ public class OfferDataItemProvider {
         state2.setName("Texas");
         
         address2.setState(state2);
+        address2.setIsoCountrySubdivision("US-TX");
         fg2.setAddress(address2);
         fg2.setOrder(order);
         fg2.setPrimary(true);
@@ -579,7 +600,12 @@ public class OfferDataItemProvider {
         country.setAbbreviation("US");
         country.setName("United States");
 
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("US");
+        isoCountry.setName("UNITED STATES");
+
         address1.setCountry(country);
+        address1.setIsoCountryAlpha2(isoCountry);
         address1.setDefault(true);
         address1.setFirstName("John");
         address1.setLastName("Tester");
@@ -595,6 +621,7 @@ public class OfferDataItemProvider {
         state.setName("Texas");
 
         address1.setState(state);
+        address1.setIsoCountrySubdivision("US-TX");
         fg1.setAddress(address1);
         fg1.setOrder(order);
         fg1.setPrimary(true);
@@ -622,7 +649,12 @@ public class OfferDataItemProvider {
         country2.setAbbreviation("US");
         country2.setName("United States");
 
+        ISOCountry isoCountry2 = new ISOCountryImpl();
+        isoCountry2.setAlpha2("US");
+        isoCountry2.setName("UNITED STATES");
+
         address2.setCountry(country2);
+        address2.setIsoCountryAlpha2(isoCountry2);
         address2.setDefault(true);
         address2.setFirstName("John");
         address2.setLastName("Tester");
@@ -638,6 +670,7 @@ public class OfferDataItemProvider {
         state2.setName("Texas");
 
         address2.setState(state2);
+        address2.setIsoCountrySubdivision("US-TX");
         fg2.setAddress(address2);
         fg2.setOrder(order);
         fg2.setPrimary(true);
@@ -661,6 +694,10 @@ public class OfferDataItemProvider {
         return order;
     }
 
+    public OfferOfferRuleXref createXref(OfferRule offerRule, Offer offer, String key) {
+        return new OfferOfferRuleXrefImpl(offer, offerRule, key);
+    }
+
     public Offer createOffer(
         String appliesToCustomerRules, 
         String appliesToFulfillmentGroupRules, 
@@ -674,10 +711,10 @@ public class OfferDataItemProvider {
         OfferItemRestrictionRuleType qualifierType,
         OfferItemRestrictionRuleType targetType,
         int priority,
-        Set<OfferItemCriteria> qualifyingItemCriteria,
+            Set<OfferQualifyingCriteriaXref> qualifyingItemCriteriaXref,
         boolean stackable,
         Date startDate,
-        Set<OfferItemCriteria> targetItemCriteria,
+            Set<OfferTargetCriteriaXref> targetItemCriteriaXref,
         boolean totalitarianOffer,
         OfferType offerType,
         BigDecimal value
@@ -685,13 +722,16 @@ public class OfferDataItemProvider {
         Offer offer = new OfferImpl();
         OfferRule customerRule = new OfferRuleImpl();
         customerRule.setMatchRule(appliesToCustomerRules);
-        offer.getOfferMatchRules().put(OfferRuleType.CUSTOMER.getType(), customerRule);
+        offer.getOfferMatchRulesXref().put(OfferRuleType.CUSTOMER.getType(), createXref(customerRule, offer,
+                OfferRuleType.CUSTOMER.getType()));
         OfferRule fgRule = new OfferRuleImpl();
         fgRule.setMatchRule(appliesToFulfillmentGroupRules);
-        offer.getOfferMatchRules().put(OfferRuleType.FULFILLMENT_GROUP.getType(), fgRule);
+        offer.getOfferMatchRulesXref().put(OfferRuleType.FULFILLMENT_GROUP.getType(), createXref(fgRule, offer,
+                OfferRuleType.FULFILLMENT_GROUP.getType()));
         OfferRule orderRule = new OfferRuleImpl();
         orderRule.setMatchRule(appliesToRules);
-        offer.getOfferMatchRules().put(OfferRuleType.ORDER.getType(), orderRule);
+        offer.getOfferMatchRulesXref().put(OfferRuleType.ORDER.getType(), createXref(orderRule, offer,
+                OfferRuleType.ORDER.getType()));
         offer.setApplyDiscountToSalePrice(applyToSalePrice);
         offer.setCombinableWithOtherOffers(combinableWithOtherOffers);
         offer.setDeliveryType(deliveryType);
@@ -702,10 +742,10 @@ public class OfferDataItemProvider {
         offer.setOfferItemQualifierRuleType(qualifierType);
         offer.setOfferItemTargetRuleType(targetType);
         offer.setPriority(priority);
-        offer.setQualifyingItemCriteria(qualifyingItemCriteria);
+        offer.setQualifyingItemCriteriaXref(qualifyingItemCriteriaXref);
         offer.setStackable(stackable);
         offer.setStartDate(startDate);
-        offer.setTargetItemCriteria(targetItemCriteria);
+        offer.setTargetItemCriteriaXref(targetItemCriteriaXref);
         offer.setTotalitarianOffer(totalitarianOffer);
         offer.setType(offerType);
         offer.setValue(value);
@@ -755,14 +795,18 @@ public class OfferDataItemProvider {
         offers.get(0).setType(OfferType.ORDER_ITEM);
         
         if (targetRule != null) {
-            Set<OfferItemCriteria> targetSet = new HashSet<OfferItemCriteria>();
+            Offer offer = offers.get(0);
+
             OfferItemCriteria targetCriteria = new OfferItemCriteriaImpl();
             //targetCriteria.setQualifyingOffer(offers.get(0));
             targetCriteria.setQuantity(1);
             targetCriteria.setMatchRule(targetRule);
-            targetSet.add(targetCriteria);
             
-            offers.get(0).setTargetItemCriteria(targetSet);
+            OfferTargetCriteriaXref targetXref = new OfferTargetCriteriaXrefImpl();
+            targetXref.setOffer(offer);
+            targetXref.setOfferItemCriteria(targetCriteria);
+
+            offer.setTargetItemCriteriaXref(Collections.singleton(targetXref));
         }
         
         return offers;
@@ -771,29 +815,37 @@ public class OfferDataItemProvider {
     public List<Offer> createOrderBasedOfferWithItemCriteria(String orderRule, OfferDiscountType discountType, String orderItemMatchRule) {
         List<Offer> offers = createOrderBasedOffer(orderRule, discountType);
         
+        Offer firstOffer = offers.get(0);
+
         OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
         //qualCriteria.setQualifyingOffer(offers.get(0));
         qualCriteria.setQuantity(1);
         qualCriteria.setMatchRule(orderItemMatchRule);
-        Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
-        criterias.add(qualCriteria);
+        Set<OfferQualifyingCriteriaXref> criterias = new HashSet<OfferQualifyingCriteriaXref>();
+        OfferQualifyingCriteriaXref xref = new OfferQualifyingCriteriaXrefImpl();
+        xref.setOffer(firstOffer);
+        xref.setOfferItemCriteria(qualCriteria);
+        criterias.add(xref);
         
-        offers.get(0).setQualifyingItemCriteria(criterias);
+        firstOffer.setQualifyingItemCriteriaXref(criterias);
         
         return offers;
     }
     
     public List<Offer> createFGBasedOfferWithItemCriteria(String orderRule, String fgRule, OfferDiscountType discountType, String orderItemMatchRule) {
         List<Offer> offers = createFGBasedOffer(orderRule, fgRule, discountType);
+        Offer firstOffer = offers.get(0);
         
         OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
-        //qualCriteria.setQualifyingOffer(offers.get(0));
         qualCriteria.setQuantity(1);
         qualCriteria.setMatchRule(orderItemMatchRule);
-        Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
-        criterias.add(qualCriteria);
+        Set<OfferQualifyingCriteriaXref> criterias = new HashSet<OfferQualifyingCriteriaXref>();
+        OfferQualifyingCriteriaXref xref = new OfferQualifyingCriteriaXrefImpl();
+        xref.setOffer(firstOffer);
+        xref.setOfferItemCriteria(qualCriteria);
+        criterias.add(xref);
         
-        offers.get(0).setQualifyingItemCriteria(criterias);
+        firstOffer.setQualifyingItemCriteriaXref(criterias);
         
         return offers;
     }
@@ -802,14 +854,19 @@ public class OfferDataItemProvider {
         List<Offer> offers = createItemBasedOffer(orderRule, targetRule, discountType);
         
         if (qualRule != null) {
+            Offer firstOffer = offers.get(0);
+
             OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
             //qualCriteria.setQualifyingOffer(offers.get(0));
             qualCriteria.setQuantity(1);
             qualCriteria.setMatchRule(qualRule);
-            Set<OfferItemCriteria> criterias = new HashSet<OfferItemCriteria>();
-            criterias.add(qualCriteria);
+            Set<OfferQualifyingCriteriaXref> criterias = new HashSet<OfferQualifyingCriteriaXref>();
+            OfferQualifyingCriteriaXref xref = new OfferQualifyingCriteriaXrefImpl();
+            xref.setOffer(firstOffer);
+            xref.setOfferItemCriteria(qualCriteria);
+            criterias.add(xref);
             
-            offers.get(0).setQualifyingItemCriteria(criterias);
+            firstOffer.setQualifyingItemCriteriaXref(criterias);
         }
         
         return offers;

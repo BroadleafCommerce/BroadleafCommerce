@@ -221,6 +221,10 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     
     @Override
     public boolean isValueValidForType(String value, SystemPropertyFieldType type) {
+        if (value == null) {
+            return true;
+        }
+
         if (type.equals(SystemPropertyFieldType.BOOLEAN_TYPE)) {
             value = value.toUpperCase();
             if (value != null && (value.equals("TRUE") || value.equals("FALSE"))) {

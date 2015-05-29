@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>3.1.13-GA</version>
+    <version>4.0.0-GA</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -51,14 +46,15 @@
     </developers>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>3.2.12.RELEASE</spring.version>
-        <spring.security.version>3.1.3.RELEASE</spring.security.version>
+        <spring.version>4.1.6.RELEASE</spring.version>
+        <spring.security.version>3.2.6.RELEASE</spring.security.version>
         <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
-        <thymeleaf.version>2.1.3.RELEASE</thymeleaf.version>
-        <geb.version>0.9.3</geb.version>
-        <spock.version>0.7-groovy-2.0</spock.version>
-        <selenium.version>2.42.2</selenium.version>
-        <groovy.version>2.1.8</groovy.version>
+        <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
+        <geb.version>0.10.0</geb.version>
+        <spock.core.version>1.0-groovy-2.3</spock.core.version>
+        <spock.spring.version>1.0-groovy-2.3</spock.spring.version>
+        <selenium.version>2.43.1</selenium.version>
+        <groovy.version>2.3.10</groovy.version>
         <project.uri>${project.baseUri}</project.uri>
     </properties>
     <scm>
@@ -66,23 +62,16 @@
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
     </scm>
-    <repositories>
-        <repository>
-            <id>Codehaus Internal</id>
-            <name>Codehaus Internal</name>
-            <url>http://repository.codehaus.org</url>
-        </repository>
-    </repositories>
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>2.0.2</version>
+                    <version>3.1</version>
                     <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
+                        <source>1.7</source>
+                        <target>1.7</target>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -121,7 +110,7 @@
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>1.2</version>
+                    <version>1.3</version>
                     <executions>
                         <execution>
                             <goals>
@@ -173,6 +162,47 @@
                                         <ignore />
                                     </action>
                                 </pluginExecution>
+                                <pluginExecution>
+                                	<pluginExecutionFilter>
+                                		<groupId>org.jacoco</groupId>
+                                		<artifactId>
+                                			jacoco-maven-plugin
+                                		</artifactId>
+                                		<versionRange>
+                                			[0.7.2.201409121644,)
+                                		</versionRange>
+                                		<goals>
+                                			<goal>prepare-agent</goal>
+                                		</goals>
+                                	</pluginExecutionFilter>
+                                	<action>
+                                		<ignore />
+                                	</action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                	<pluginExecutionFilter>
+                                		<groupId>
+                                			org.codehaus.mojo
+                                		</groupId>
+                                		<artifactId>
+                                			license-maven-plugin
+                                		</artifactId>
+                                		<versionRange>
+                                			[1.5,)
+                                		</versionRange>
+                                		<goals>
+                                			<goal>
+                                				update-file-header
+                                			</goal>
+                                			<goal>
+                                				update-project-license
+                                			</goal>
+                                		</goals>
+                                	</pluginExecutionFilter>
+                                	<action>
+                                		<ignore />
+                                	</action>
+                                </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
@@ -181,19 +211,13 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.5.1</version>
-                <configuration>
-                    <formats>
-                        <format>xml</format>
-                    </formats>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.2.1</version>
+                <configuration>
+                    <!-- Only here for the Spock SNAPSHOT dependency since it has not been fully released -->
+                    <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -244,6 +268,54 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Jacoco Code Coverage Plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.2.201409121644</version>
+                <executions>
+                    <!-- Unit test coverage prep; generates jacoco.exec -->
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <propertyName>surefire.argLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <!-- Unit test coverage report -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <!-- Integration test prep -->
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/jacoco-it.exec</destFile>
+                            <propertyName>failsafe.argLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <!-- Integration test report -->
+                    <execution>
+                        <id>post-integration-test</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <modules>
@@ -259,6 +331,10 @@
             <id>snapshots</id>
             <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>releases</id>
+            <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/releases</url>
+        </repository>
     </distributionManagement>
     <profiles>
         <profile>
@@ -290,15 +366,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>milestone-release</id>
-            <distributionManagement>
-                <repository>
-                    <id>releases</id>
-                    <url>http://nexus.broadleafcommerce.org/nexus/content/repositories/releases</url>
-                </repository>
-            </distributionManagement>
         </profile>
         <profile>
             <id>aggregate-javadocs</id>
@@ -455,19 +522,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-tools</artifactId>
-                <version>4.0.0-CR1</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>ant</groupId>
-                        <artifactId>ant</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
 
             <!-- Commons Libraries -->
             <dependency>
@@ -496,6 +550,11 @@
                 <version>4.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.3</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -649,35 +708,43 @@
                 <scope>runtime</scope>
             </dependency>
 
-            <!-- JAX-RS Libraries -->
+            <!-- Allow JAXB Annotations with Jackson -->
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-json</artifactId>
-                <version>1.17.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <version>2.5.0</version>
+            </dependency>
+            <!-- Add in Jackson's XML converter along with a faster serializer (Woodstox) -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-xml</artifactId>
+                <version>2.5.0</version>
             </dependency>
             <dependency>
-                <groupId>com.sun.jersey.contribs</groupId>
-                <artifactId>jersey-spring</artifactId>
-                <version>1.17.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>woodstox-core-asl</artifactId>
+                <version>4.1.4</version>
+            </dependency>
+            
+            <!-- Added for JAXRS backwards compatibility with the Broadleaf REST APIs in Broadleaf 4.0 -->
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>jsr311-api</artifactId>
+                <version>1.1.1</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>1.17.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.1</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-core</artifactId>
-                <version>1.17.1</version>
-                <type>jar</type>
-                <scope>compile</scope>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>2.5.0</version>
             </dependency>
+            
 
             <!-- JMS Libraries -->
             <dependency>
@@ -728,8 +795,15 @@
             </dependency>
             <dependency>
                 <groupId>org.thymeleaf</groupId>
-                <artifactId>thymeleaf-spring3</artifactId>
+                <artifactId>thymeleaf-spring4</artifactId>
                 <version>${thymeleaf.version}</version>
+                <type>jar</type>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>nz.net.ultraq.thymeleaf</groupId>
+                <artifactId>thymeleaf-layout-dialect</artifactId>
+                <version>1.2.5</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -791,7 +865,7 @@
             <dependency>
                 <groupId>org.spockframework</groupId>
                 <artifactId>spock-core</artifactId>
-                <version>${spock.version}</version>
+                <version>${spock.core.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -817,14 +891,22 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.7.2</version>
+                <version>4.10.3</version>
                 <type>jar</type>
                 <scope>compile</scope>
+                <exclusions>
+                    <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
+                        Jackson dependencies -->
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>wstx-asl</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.4.0</version>
+                <version>4.10.3</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -835,6 +917,39 @@
                     <exclusion>
                         <groupId>javax.servlet.jsp</groupId>
                         <artifactId>jsp-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty.orbit</groupId>
+                        <artifactId>javax.servlet</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <!-- This brings in a very old version of Woodstox, we are manually including this above, next to the
+                        Jackson dependencies -->
+                    <exclusion>
+                        <groupId>org.codehaus.woodstox</groupId>
+                        <artifactId>wstx-asl</artifactId>
+                    </exclusion>
+                    <!-- The jdk.tools transitive dependency uses system scope -->
+                        <!-- which has to be resolved in a platform agnostic way -->
+                        <!-- in order to have a clean compile in Eclipse. That -->
+                        <!-- turned out to be surprisingly difficult to achieve. -->
+        
+                        <!-- From the dependency tree below we can see that -->
+                        <!-- jdk.tools is pulled in by hadoop-annotations -->
+                        <!-- and since this is a normal JDK system jar we can avoid the -->
+                        <!-- problem by excluding the jdk.tools dependency. -->
+        
+                        <!-- Relevant output from mvn dependency:tree follows -->
+                        <!-- +- org.broadleafcommerce:broadleaf-framework:jar:{version}:compile -->
+                        <!--    +- org.apache.solr:solr-core:jar:4.4.0:compile -->
+                        <!--        +- org.apache.hadoop:hadoop-annotations:jar:2.0.5-alpha:compile -->
+                        <!--            \- jdk.tools:jdk.tools:jar:1.6:system -->
+                    <exclusion>
+                        <groupId>jdk.tools</groupId>
+                        <artifactId>jdk.tools</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -881,7 +996,7 @@
             <dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
-                <version>2.2.0.Final</version>
+                <version>2.2.1.Final</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1225,18 +1340,6 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-core-asl</artifactId>
-                <version>1.9.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.12</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>eu.medsea.mimeutil</groupId>
                 <artifactId>mime-util</artifactId>
                 <version>2.1.3</version>
@@ -1272,7 +1375,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator-annotation-processor</artifactId>
-                <version>4.1.0.Final</version>
+                <version>4.3.0.Final</version>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
@@ -1284,6 +1387,11 @@
                 <artifactId>guava</artifactId>
                 <version>12.0</version>
             </dependency>
+            <dependency>
+                <groupId>de.jkeylockmanager</groupId>
+                <artifactId>jkeylockmanager</artifactId>
+                <version>1.1.0</version>
+            </dependency>            
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>

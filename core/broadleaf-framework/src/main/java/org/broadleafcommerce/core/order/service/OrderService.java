@@ -22,7 +22,9 @@ package org.broadleafcommerce.core.order.service;
 import org.apache.commons.logging.Log;
 import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
+import org.broadleafcommerce.core.offer.service.exception.OfferException;
 import org.broadleafcommerce.core.offer.service.exception.OfferMaxUseExceededException;
+import org.broadleafcommerce.core.order.dao.OrderDao;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.call.GiftWrapOrderItemRequest;
@@ -211,8 +213,9 @@ public interface OrderService {
      * @return the modified Order
      * @throws PricingException
      * @throws OfferMaxUseExceededException
+     * @throws OfferException 
      */
-    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
+    public Order addOfferCode(Order order, OfferCode offerCode, boolean priceOrder) throws PricingException, OfferException;
     
     /**
      * Adds the given OfferCodes to the order. Optionally prices the order as well.
@@ -223,8 +226,9 @@ public interface OrderService {
      * @return
      * @throws PricingException
      * @throws OfferMaxUseExceededException
+     * @throws OfferException 
      */
-    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferMaxUseExceededException;
+    public Order addOfferCodes(Order order, List<OfferCode> offerCodes, boolean priceOrder) throws PricingException, OfferException;
 
     /**
      * Remove the given OfferCode for the order. Optionally prices the order as well.
@@ -548,6 +552,14 @@ public interface OrderService {
      * @param cart
      */
     public void preValidateCartOperation(Order cart);
+
+    /**
+     * Invokes the extension handler of the same name to provide the ability for a module to throw an exception
+     * and interrupt an update quantity operation.
+     * 
+     * @param cart
+     */
+    public void preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto);
     
     /**
      * Detaches the given order from the current entity manager and then reloads a fresh version from
@@ -558,4 +570,18 @@ public interface OrderService {
      */
     public Order reloadOrder(Order order);
 
+
+    /**
+     * @see OrderDao#acquireLock(Order)
+     * @param order
+     * @return whether or not the lock was acquired
+     */
+    public boolean acquireLock(Order order);
+
+    /**
+     * @see OrderDao#releaseLock(Order)
+     * @param order
+     * @return whether or not the lock was released
+     */
+    public boolean releaseLock(Order order);
 }

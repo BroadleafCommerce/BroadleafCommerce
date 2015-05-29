@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.currency.BroadleafCurrencyProvider;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.service.BroadleafCurrencyService;
 import org.broadleafcommerce.common.encryption.EncryptionModule;
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -284,6 +286,10 @@ public class CheckoutTest extends BaseTest {
         country.setName("United States");
         state.setCountry(country);
         address.setCountry(country);
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("US");
+        isoCountry.setName("UNITED STATES");
+        address.setIsoCountryAlpha2(isoCountry);
         return address;
     }
 }

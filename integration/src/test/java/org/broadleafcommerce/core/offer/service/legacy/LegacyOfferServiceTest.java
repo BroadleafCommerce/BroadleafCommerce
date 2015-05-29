@@ -90,6 +90,8 @@ public class LegacyOfferServiceTest extends LegacyCommonSetupBaseTest {
         address.setPrimaryPhone("972-978-9067");
         address.setState(stateService.findStateByAbbreviation("KY"));
         address.setCountry(countryService.findCountryByAbbreviation("US"));
+        address.setIsoCountrySubdivision("US-KY");
+        address.setIsoCountryAlpha2(isoService.findISOCountryByAlpha2Code("US"));
 
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);

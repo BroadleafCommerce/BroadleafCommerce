@@ -23,11 +23,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common"/>
+    
+    <!-- Override Spring's default ApplicationEventMultiCaster with one that is a little smarter about asynchronous -->
+    <bean id="applicationEventMulticaster" class="org.broadleafcommerce.common.event.BroadleafApplicationEventMulticaster"/>
 
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
         <property name="xsrfProtectionEnabled" value="${exploitProtection.xsrfEnabled}" />
@@ -56,6 +59,8 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blBaseUrlResolver" class="org.broadleafcommerce.common.web.BaseUrlResolverImpl" />
 
     <bean id="blDirectCopyTransformTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
@@ -138,6 +143,10 @@
             </props>
         </property>
     </bean>
+    
+    <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="blCacheManager"/>
+    </bean>    
 
     <!-- This mail sender will log the html content generated for the email to the console  -->
     <!-- To enable logging set log level in Log4j to INFO  -->
@@ -175,41 +184,23 @@
     <bean id="blSiteResolver" class="org.broadleafcommerce.common.web.NullBroadleafSiteResolver" />
     <bean id="blThemeResolver" class="org.broadleafcommerce.common.web.NullBroadleafThemeResolver" />
     
-<!--  Message creator for velocity templates.  Now should be defined in client properties file. -->
-    <!-- bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.VelocityMessageCreator">
-        <constructor-arg ref="blVelocityEngine"/>
-        <constructor-arg ref="blMailSender"/>
-        <constructor-arg>
-            <map>
-                <entry key="number">
-                    <bean class="org.apache.velocity.tools.generic.NumberTool" scope="prototype"/>
-                </entry>
-                <entry key="date">
-                    <bean class="org.apache.velocity.tools.generic.ComparisonDateTool" scope="prototype"/>
-                </entry>
-                <entry key="list">
-                    <bean class="org.apache.velocity.tools.generic.ListTool" scope="prototype"/>
-                </entry>
-                <entry key="math">
-                    <bean class="org.apache.velocity.tools.generic.MathTool" scope="prototype"/>
-                </entry>
-                <entry key="iterator">
-                    <bean class="org.apache.velocity.tools.generic.IteratorTool" scope="prototype"/>
-                </entry>
-                <entry key="alternator">
-                    <bean class="org.apache.velocity.tools.generic.AlternatorTool" scope="prototype"/>
-                </entry>
-                <entry key="sorter">
-                    <bean class="org.apache.velocity.tools.generic.SortTool" scope="prototype"/>
-                </entry>
-                <entry key="esc">
-                    <bean class="org.apache.velocity.tools.generic.EscapeTool" scope="prototype"/>
-                </entry>
-                <entry key="serverInfo" value-ref="blServerInfo"/>
-            </map>
-        </constructor-arg>
-    </bean  -->
     
+    <!-- Resource Resolver Chains  -->
+    <bean id="blSiteResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blBLCJSUrlPathResolver" />                         
+                <ref bean="blCacheResourceResolver" />                
+                <ref bean="blVersionResourceResolver" />
+                <ref bean="blBundleResourceResolver" />
+                <ref bean="blBLCJSResolver" />
+                <ref bean="blSystemPropertyJSResolver" />              
+                <ref bean="blPathResourceResolver" />
+            </list>
+        </property>
+    </bean>     
+    
+    <!--  Spring 4.1 Resource Handling -->
     <bean id="blJsLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
@@ -264,27 +255,75 @@
         </property>
     </bean>
     
-    <bean id="blJsHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+    <!--  Spring 4.1 Resource Resolvers -->
+    <bean id="blJsResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
-            <list>
-                <ref bean="blBLCJSResourceHandler" />
+            <list>             
             </list>
         </property>
     </bean>
     
-    <bean id="blCssHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+    <bean id="blCssResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>         
+            </list>
+        </property>
+    </bean>     
+
+    <!--  Spring 4.1 Resource Transformers -->
+    <bean id="blJsResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
+                <ref bean="blCachingResourceTransformer" />
+                <ref bean="blMinifyResourceTransformer" />                
             </list>
         </property>
     </bean>
     
+    <bean id="blCssResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blCachingResourceTransformer" />
+                <ref bean="blMinifyResourceTransformer" />
+            </list>
+        </property>
+    </bean>
+    
+    <!--  Spring 4.1 Site Resource Handling Base Classes -->
+    <bean id="siteResourceHttpRequestHandlerBase" abstract="true" 
+            class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">
+        <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
+        <property name="resourceResolvers" ref="blSiteResourceResolvers" />
+    </bean>
+    
+    <bean id="siteJsResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blJsLocations" />
+        <property name="resourceTransformers" ref="blJsResourceTransformers" />    
+    </bean>
+    
+    <bean id="siteCssResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blCssLocations" />
+        <property name="resourceTransformers" ref="blCssResourceTransformers" />    
+    </bean>
+    
+    <bean id="siteImageResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blCssLocations" />
+        <property name="resourceTransformers" ref="blCssResourceTransformers" />    
+    </bean> 
+    
+    <bean id="siteFontResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blFontLocations"/>            
+    </bean>
+   
+   <!--  End Spring 4.1 Resource Handling Configuration -->
+   
     <bean id="blFileServiceProviders" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
             </list>
         </property>
-    </bean>
+    </bean>   
+     
     
     <bean id="blPaymentGatewayConfigurationServices" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">

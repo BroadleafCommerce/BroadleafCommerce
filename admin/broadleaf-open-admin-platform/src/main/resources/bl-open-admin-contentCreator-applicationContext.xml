@@ -24,9 +24,9 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mo="http://schema.broadleafcommerce.org/mo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-3.2.xsd
+           http://www.springframework.org/schema/context/spring-context-4.1.xsd
            http://schema.broadleafcommerce.org/mo
            http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
@@ -35,8 +35,6 @@
     </context:component-scan>
 
     <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer" />
-
-    <bean id="blAdminPasswordEncoder" class="${password.admin.encoder}"/>
 
     <bean id="blPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -235,6 +233,10 @@
         </property>
     </bean>
 
+    <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="blCacheManager"/>
+    </bean>
+
     <bean id="blOpenAdminCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
@@ -242,6 +244,7 @@
             </list>
         </property>
     </bean>
+    
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
         <property name="collectionRef" value="blOpenAdminCssLocations" />
         <property name="targetRef" value="blCssLocations" />
@@ -259,10 +262,54 @@
         <property name="targetRef" value="blJsLocations" />
     </bean>
 
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.openadmin.web.expression.EntityFormVariableExpression" />
+            </list>
+        </property>
+    </bean>
+
     <bean id="blCriteriaTranslatorEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
             </list>
         </property>
     </bean>
+    
+               <!--  Spring 4.1 Admin Resource Resolvers --> 
+    <bean id="blAdminResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blBLCJSUrlPathResolver" />                         
+                <ref bean="blCacheResourceResolver" />                
+                <ref bean="blVersionResourceResolver" />
+                <ref bean="blBundleResourceResolver" />
+                <ref bean="blBLCJSResolver" />
+                <ref bean="blSystemPropertyJSResolver" />
+                <ref bean="blRuleBuilderOptionResourceResolver" />
+                <ref bean="blPathResourceResolver" />
+            </list>
+        </property>
+    </bean>
+    
+  <!--  Spring 4.1 Admin Resource Handling Base Classes -->
+   <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 
+        class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">   
+        <!--  property name="themesBaseDirectory" value="/WEB-INF/" / -->
+        <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
+        <property name="resourceResolvers" ref="blAdminResourceResolvers" />
+        
+    </bean>
+    
+   <bean id="adminJsResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blJsLocations"/>
+        <property name="resourceTransformers" ref="blJsResourceTransformers" />     
+   </bean>    
+    
+   <bean id="adminCssResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blCssLocations"/>
+        <property name="resourceTransformers" ref="blCssResourceTransformers" />             
+   </bean>  
+    
 </beans>

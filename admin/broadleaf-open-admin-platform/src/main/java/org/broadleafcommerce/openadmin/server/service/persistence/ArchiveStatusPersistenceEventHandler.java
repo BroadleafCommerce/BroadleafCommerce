@@ -23,8 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
+import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.server.service.persistence.extension.ArchiveStatusPersistenceEventHandlerExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
@@ -34,7 +37,9 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.Resource;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
@@ -50,22 +55,36 @@ import javax.persistence.criteria.Predicate;
 public class ArchiveStatusPersistenceEventHandler extends PersistenceManagerEventHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(ArchiveStatusPersistenceEventHandler.class);
+
+    @Resource(name = "blArchiveStatusPersistenceEventHandlerExtensionManager")
+    protected ArchiveStatusPersistenceEventHandlerExtensionManager extensionManager;
     
     @Override
     public PersistenceManagerEventHandlerResponse preFetch(PersistenceManager persistenceManager, PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         try {
             Class<?>[] entityClasses = persistenceManager.getDynamicEntityDao()
                     .getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
-            boolean isArchivable = false;
+            AtomicBoolean isArchivable = new AtomicBoolean(false);
             for (Class<?> entity : entityClasses) {
-                if (Status.class.isAssignableFrom(entity)) {
-                    isArchivable = true;
+                AtomicBoolean test = new AtomicBoolean(true);
+                extensionManager.getProxy().isArchivable(entity, test);
+                if (!test.get()) {
+                    isArchivable.set(false);
                     break;
                 }
+
+                if (Status.class.isAssignableFrom(entity)) {
+                    isArchivable.set(true);
+                }
             }
-            if (isArchivable && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
+            if (isArchivable.get() && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
+                String targetPropertyName = "archiveStatus.archived";
+                if (persistencePackage.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST)) {
+                    AdornedTargetList atl = (AdornedTargetList) persistencePackage.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+                    targetPropertyName = atl.getTargetObjectPath() + "." + targetPropertyName;
+                }
                 FilterMapping filterMapping = new FilterMapping()
-                    .withFieldPath(new FieldPath().withTargetProperty("archiveStatus.archived"))
+                    .withFieldPath(new FieldPath().withTargetProperty(targetPropertyName))
                     .withDirectFilterValues(new EmptyFilterValues())
                     .withRestriction(new Restriction()
                             .withPredicateProvider(new PredicateProvider<Character, Character>() {

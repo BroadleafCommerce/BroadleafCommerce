@@ -50,6 +50,7 @@ public class PropertyType {
         public static final String RULEIDENTIFIER = "ruleIdentifier";
         public static final String READONLY = "readOnly";
         public static final String VALIDATIONCONFIGURATIONS = "validationConfigurations";
+        public static final String DEFAULTVALUE = "defaultValue";
     }
 
     public static class AdminPresentationToOneLookup {
@@ -103,6 +104,8 @@ public class PropertyType {
         public static final String ADDTYPE = "addType";
         public static final String MANYTOFIELD = "manyToField";
         public static final String ORDER = "order";
+        public static final String SORTPROPERTY = "sortProperty";
+        public static final String SORTASCENDING = "sortAscending";
         public static final String TAB = "tab";
         public static final String TABORDER = "tabOrder";
         public static final String CUSTOMCRITERIA = "customCriteria";

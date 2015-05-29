@@ -73,4 +73,31 @@
         </query>
     </named-query>
 
+    <named-query name="BC_ORDER_LOCK_READ">
+        <query>
+            SELECT COUNT(*) FROM org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            WHERE  orderLock.orderLockPK.orderId = :orderId
+            AND orderLock.orderLockPK.key = :key
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_ACQUIRE">
+        <query>
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            SET orderLock.locked = 'Y', orderLock.lastUpdated = :currentTime
+            WHERE orderLock.orderLockPK.orderId = :orderId
+              AND (orderLock.locked = 'N' OR orderLock.lastUpdated &lt; :timeout)
+              AND orderLock.orderLockPK.key = :key
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_RELEASE">
+        <query>
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            SET orderLock.locked = 'N'
+            WHERE orderLock.orderLockPK.orderId = :orderId
+               AND orderLock.orderLockPK.key = :key
+        </query>
+    </named-query>
+
 </entity-mappings>

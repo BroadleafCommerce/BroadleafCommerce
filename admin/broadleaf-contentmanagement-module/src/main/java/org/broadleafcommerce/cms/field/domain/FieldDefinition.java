@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
@@ -27,7 +28,7 @@ import java.io.Serializable;
 /**
  * Created by bpolster.
  */
-public interface FieldDefinition extends Serializable {
+public interface FieldDefinition extends Serializable, MultiTenantCloneable<FieldDefinition> {
 
     public Long getId();
 
@@ -92,6 +93,18 @@ public interface FieldDefinition extends Serializable {
     public int getFieldOrder();
 
     public void setFieldOrder(int fieldOrder);
+
+    public String getTooltip();
+
+    public void setTooltip(String tooltip);
+
+    public String getHelpText();
+
+    public void setHelpText(String helpText);
+
+    public String getHint();
+
+    public void setHint(String hint);
 
     public String getAdditionalForeignKeyClass();
 

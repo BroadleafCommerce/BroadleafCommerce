@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.pricing.service;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
+import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -33,6 +36,8 @@ import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
+import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
+import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -56,8 +61,6 @@ import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.Country;
 import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.IdGeneration;
-import org.broadleafcommerce.profile.core.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CountryService;
@@ -103,6 +106,9 @@ public class PricingTest extends BaseTest {
     @Resource
     private StateService stateService;
 
+    @Resource
+    private ISOService isoService;
+
     @Test(groups =  {"testShippingInsert"}, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
     @Rollback(false)
     public void testShippingInsert(ShippingRate shippingRate, ShippingRate sr2) throws Exception {
@@ -123,6 +129,12 @@ public class PricingTest extends BaseTest {
 
         country = countryService.save(country);
 
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("US");
+        isoCountry.setName("UNITED STATES");
+
+        isoCountry = isoService.save(isoCountry);
+
         State state = new StateImpl();
         state.setAbbreviation("TX");
         state.setName("Texas");
@@ -139,6 +151,8 @@ public class PricingTest extends BaseTest {
         address.setPrimaryPhone("972-978-9067");
         address.setState(state);
         address.setCountry(country);
+        address.setIsoCountrySubdivision("US-TX");
+        address.setIsoCountryAlpha2(isoCountry);
         
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setAddress(address);
@@ -254,6 +268,12 @@ public class PricingTest extends BaseTest {
 
         country = countryService.save(country);
 
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("US");
+        isoCountry.setName("UNITED STATES");
+
+        isoCountry = isoService.save(isoCountry);
+
         State state = new StateImpl();
         state.setAbbreviation("TX");
         state.setName("Texas");
@@ -271,6 +291,8 @@ public class PricingTest extends BaseTest {
 
         address.setState(state);
         address.setCountry(country);
+        address.setIsoCountrySubdivision("US-TX");
+        address.setIsoCountryAlpha2(isoCountry);
         group1.setAddress(address);
         group1.setOrder(order);
 
@@ -325,16 +347,6 @@ public class PricingTest extends BaseTest {
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax().add(order.getTotalShipping()))));
     }
     
-    @Test(groups = { "createCustomerIdGeneration" })
-    @Rollback(false)
-    public void createCustomerIdGeneration() {
-        IdGeneration idGeneration = new IdGenerationImpl();
-        idGeneration.setType("org.broadleafcommerce.profile.core.domain.Customer");
-        idGeneration.setBatchStart(1L);
-        idGeneration.setBatchSize(10L);
-        em.persist(idGeneration);
-    }
-
     public Customer createCustomer() {
         Customer customer = customerService.createCustomerFromId(null);
         return customer;
@@ -367,7 +379,12 @@ public class PricingTest extends BaseTest {
         OfferItemCriteria oic = new OfferItemCriteriaImpl();
         oic.setQuantity(1);
         oic.setMatchRule(orderRule);
-        offer.setTargetItemCriteria(Collections.singleton(oic));
+
+        OfferTargetCriteriaXref targetXref = new OfferTargetCriteriaXrefImpl();
+        targetXref.setOffer(offer);
+        targetXref.setOfferItemCriteria(oic);
+
+        offer.setTargetItemCriteriaXref(Collections.singleton(targetXref));
 
         offer.setAppliesToCustomerRules(customerRule);
         offer.setCombinableWithOtherOffers(true);

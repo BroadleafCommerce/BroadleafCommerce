@@ -133,7 +133,7 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "addAnotherItemToOrder" }, dependsOnGroups = { "addItemToOrder" })
     @Rollback(false)
     @Transactional
-    public void addAnotherItemToOrder() throws AddToCartException {
+    public void addAnotherItemToOrder() throws AddToCartException, PricingException, RemoveFromCartException {
      // In the database, some Skus are inactive and some are active. This ensures that we pull back an active one
         // to test a successful cart add
         Sku sku = getFirstActiveSku();
@@ -166,6 +166,27 @@ public class OrderTest extends OrderBaseTest {
         FulfillmentGroupItem fgItem = fg.getFulfillmentGroupItems().get(0);
         assert fgItem.getOrderItem().equals(item);
         assert fgItem.getQuantity() == item.getQuantity();
+
+        //add the same item multiple times to the cart without merging or pricing
+        boolean currentVal = orderService.getAutomaticallyMergeLikeItems();
+        orderService.setAutomaticallyMergeLikeItems(false);
+        itemRequest = new OrderItemRequestDTO();
+        itemRequest.setQuantity(1);
+        itemRequest.setSkuId(sku.getId());
+        order = orderService.addItem(orderId, itemRequest, false);
+        order = orderService.addItem(orderId, itemRequest, false);
+        DiscreteOrderItem item2 = (DiscreteOrderItem) orderService.findLastMatchingItem(order, sku.getId(), null);
+        assert item2.getSku() != null;
+        assert item2.getSku().equals(sku);
+        assert item2.getQuantity() == 1;  // item-was not auto-merged with prior items.
+        order = orderService.findOrderById(orderId);
+        assert(order.getOrderItems().size()==3);
+        //reset the cart state back to what it was prior
+        order = orderService.removeItem(order.getId(), order.getOrderItems().get(1).getId(), true);
+        order = orderService.removeItem(order.getId(), order.getOrderItems().get(1).getId(), true);
+        orderService.setAutomaticallyMergeLikeItems(currentVal);
+        assert(order.getOrderItems().size()==1);
+        assert(order.getOrderItems().get(0).getQuantity()==2);
 
         /*
         This test is not supported currently, as the order service may only do like item merging
@@ -287,6 +308,8 @@ public class OrderTest extends OrderBaseTest {
             assert e.getCause() instanceof IllegalArgumentException;
         }
         assert !addSuccessful;
+
+
         
     }
     

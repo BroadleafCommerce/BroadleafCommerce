@@ -27,6 +27,8 @@ import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXref;
+import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
@@ -298,7 +300,8 @@ public class ItemOfferProcessorTest extends TestCase {
             "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
         );
 
-        boolean couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableOrderItems().get(0));
+        OfferQualifyingCriteriaXref xref = offers.get(0).getQualifyingItemCriteriaXref().iterator().next();
+        boolean couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(xref.getOfferItemCriteria(), order.getDiscountableOrderItems().get(0));
         //test that the valid order item offer is included
         assertTrue(couldApply);
 
@@ -308,7 +311,8 @@ public class ItemOfferProcessorTest extends TestCase {
             "([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))",
             "([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
         );
-        couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableOrderItems().get(0));
+        xref = offers.get(0).getQualifyingItemCriteriaXref().iterator().next();
+        couldApply = itemProcessor.couldOrderItemMeetOfferRequirement(xref.getOfferItemCriteria(), order.getDiscountableOrderItems().get(0));
         //test that the invalid order item offer is excluded
         assertFalse(couldApply);
 
@@ -433,7 +437,8 @@ public class ItemOfferProcessorTest extends TestCase {
             "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
         ).get(0);
         offer1.setId(1L);
-        offer1.getQualifyingItemCriteria().iterator().next().setQuantity(2);
+        OfferQualifyingCriteriaXref xref = offer1.getQualifyingItemCriteriaXref().iterator().next();
+        xref.getOfferItemCriteria().setQuantity(2);
         offer1.setCombinableWithOtherOffers(false);
         Offer offer2 = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",
@@ -505,8 +510,11 @@ public class ItemOfferProcessorTest extends TestCase {
         // Set qualifying criteria quantity to 1
         // Set qualifying target criteria to 2 
         order = dataProvider.createBasicOrder();
-        offer1.getQualifyingItemCriteria().iterator().next().setQuantity(1);
-        offer1.getTargetItemCriteria().iterator().next().setQuantity(2);
+        xref = offer1.getQualifyingItemCriteriaXref().iterator().next();
+        xref.getOfferItemCriteria().setQuantity(1);
+
+        OfferTargetCriteriaXref targetXref = offer1.getTargetItemCriteriaXref().iterator().next();
+        targetXref.getOfferItemCriteria().setQuantity(2);
         order.updatePrices();
         offerService.applyAndSaveOffersToOrder(offerListWithOneOffer, order);
         assertTrue(checkOrderItemOfferAppliedQuantity(order, offer1) == 2);
@@ -547,8 +555,10 @@ public class ItemOfferProcessorTest extends TestCase {
             "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
         ).get(0);
         offer2.setId(2L);
-        offer2.getTargetItemCriteria().iterator().next().setQuantity(4);
-        offer2.getQualifyingItemCriteria().clear();
+
+        OfferTargetCriteriaXref targetXref = offer2.getTargetItemCriteriaXref().iterator().next();
+        targetXref.getOfferItemCriteria().setQuantity(4);
+        offer2.getQualifyingItemCriteriaXref().clear();
         offer2.setOfferItemTargetRuleType(OfferItemRestrictionRuleType.TARGET);
         Offer offer3 = dataProvider.createItemBasedOfferWithItemCriteria(
             "order.subTotal.getAmount()>20",

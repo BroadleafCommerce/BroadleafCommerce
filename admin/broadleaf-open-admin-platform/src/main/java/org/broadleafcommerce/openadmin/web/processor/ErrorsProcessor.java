@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.web.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
@@ -34,7 +35,7 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 import org.thymeleaf.processor.attr.AbstractAttrProcessor;
-import org.thymeleaf.spring3.util.FieldUtils;
+import org.thymeleaf.spring4.util.FieldUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,11 +119,17 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                 }
             }
             
+            String translatedGeneralTab = GENERAL_ERRORS_TAB_KEY;
+            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+            if (context != null && context.getMessageSource() != null) {
+                translatedGeneralTab = context.getMessageSource().getMessage(translatedGeneralTab, null, translatedGeneralTab, context.getJavaLocale());
+            }
+            
             for (ObjectError err : bindStatus.getErrors().getGlobalErrors()) {
                 Map<String, List<String>> tabErrors = result.get(GENERAL_ERRORS_TAB_KEY);
                 if (tabErrors == null) {
                     tabErrors = new HashMap<String, List<String>>();
-                    result.put(GENERAL_ERRORS_TAB_KEY, tabErrors);
+                    result.put(translatedGeneralTab, tabErrors);
                 }
                 addFieldError(GENERAL_ERROR_FIELD_KEY, err.getCode(), tabErrors);
             }

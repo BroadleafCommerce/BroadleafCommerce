@@ -20,21 +20,21 @@
 package org.broadleafcommerce.cms.page.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyCollection;
-import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMap;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
+import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMapOverride;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
@@ -42,11 +42,14 @@ import org.broadleafcommerce.common.web.Locatable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -66,6 +69,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -95,7 +99,8 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class PageImpl implements Page, AdminMainEntity, Locatable {
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
+public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
     
@@ -116,103 +121,101 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     
     @ManyToOne(targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TMPLT_ID")
-    @AdminPresentation(friendlyName = "PageImpl_Page_Template", order = 2,
+    @AdminPresentation(friendlyName = "PageImpl_Page_Template", order = 4000,
         group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic, prominent = true,
         requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "templateName")
     protected PageTemplate pageTemplate;
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "PageImpl_Description", order = 3, 
+    @AdminPresentation(friendlyName = "PageImpl_Description", order = 1000, 
         group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+            requiredOverride = RequiredOverride.REQUIRED,
         prominent = true, gridOrder = 1)
     protected String description;
 
     @Column (name = "FULL_URL")
     @Index(name="PAGE_FULL_URL_INDEX", columnNames={"FULL_URL"})
-    @AdminPresentation(friendlyName = "PageImpl_Full_Url", order = 1, 
+    @AdminPresentation(friendlyName = "PageImpl_Full_Url", order = 3000, 
         group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
-            prominent = true, gridOrder = 2,
-            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
+        prominent = true, gridOrder = 2,
+        validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String fullUrl;
 
-    @ManyToMany(targetEntity = PageFieldImpl.class, cascade = CascadeType.ALL)
-    @JoinTable(name = "BLC_PAGE_FLD_MAP", 
-        joinColumns = @JoinColumn(name = "PAGE_ID", referencedColumnName = "PAGE_ID"), 
-        inverseJoinColumns = @JoinColumn(name = "PAGE_FLD_ID", referencedColumnName = "PAGE_FLD_ID"))
-    @MapKeyColumn(name = "MAP_KEY")
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(mappedBy = "page", targetEntity = PageFieldImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @MapKey(name = "fieldKey")
     @BatchSize(size = 20)
-    @ClonePolicyMap
+    @ClonePolicyMapOverride
+    @ClonePolicyArchive
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
     
     @Column(name = "PRIORITY")
-    @AdminPresentation(friendlyName = "PageImpl_Priority", order = 3, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    @Deprecated
     protected Integer priority;
     
     @Column(name = "OFFLINE_FLAG")
-    @AdminPresentation(friendlyName = "PageImpl_Offline", order = 4, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    @AdminPresentation(friendlyName = "PageImpl_Offline", order = 3500,
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic, defaultValue = "false")
     protected Boolean offlineFlag = false;     
 
+    /*
+     * This will not work with Enterprise workflows.  Do not use.
+     */
     @ManyToMany(targetEntity = PageRuleImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_PAGE_RULE_MAP", 
         inverseJoinColumns = @JoinColumn(name = "PAGE_RULE_ID", referencedColumnName = "PAGE_RULE_ID"))
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
-    @AdminPresentationMapFields(
-        mapDisplayFields = {
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 1,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "Generic_Customer_Rule")
-            ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.TIME_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 2,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.TIME, friendlyName = "Generic_Time_Rule")
-            ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.REQUEST_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 3,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.REQUEST, friendlyName = "Generic_Request_Rule")
-            ),
-            @AdminPresentationMapField(
-                fieldName = RuleIdentifier.PRODUCT_FIELD_KEY,
-                fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, order = 4,
-                    tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-                    group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-                    ruleIdentifier = RuleIdentifier.PRODUCT, friendlyName = "Generic_Product_Rule")
-            )
-        }
-    )
-    @ClonePolicyMap
-    Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
+    @Deprecated
+    protected Map<String, PageRule> pageMatchRules = new HashMap<String, PageRule>();
 
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade={CascadeType.ALL})
+    /*
+     * This will not work with Enterprise workflows. Do not use.
+     */
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
     @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF", 
         joinColumns = @JoinColumn(name = "PAGE_ID"), 
         inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @AdminPresentation(friendlyName = "Generic_Item_Rule", order = 5,
-        tab = Presentation.Tab.Name.Rules, tabOrder = Presentation.Tab.Order.Rules,
-        group = Presentation.Group.Name.Rules, groupOrder = Presentation.Group.Order.Rules,
-        fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
-        ruleIdentifier = RuleIdentifier.ORDERITEM)
-    @ClonePolicyCollection
+    @Deprecated
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
 
     @Column(name = "EXCLUDE_FROM_SITE_MAP")
-    @AdminPresentation(friendlyName = "PageImpl_Exclude_From_Site_Map", order = 6,
-            group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    @AdminPresentation(friendlyName = "PageImpl_Exclude_From_Site_Map", order = 1000,
+        tab = Presentation.Tab.Name.Seo, tabOrder = Presentation.Tab.Order.Seo,
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
     protected Boolean excludeFromSiteMap;
+
+    @OneToMany(mappedBy = "page", targetEntity = PageAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @MapKey(name = "name")
+    @BatchSize(size = 50)
+    @AdminPresentationMap(friendlyName = "PageImpl_Page_Attributes_Title",
+        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "PageAttributeImpl_Name"
+    )
+    protected Map<String, PageAttribute> additionalAttributes = new HashMap<String, PageAttribute>();
+
+    @Column(name = "ACTIVE_START_DATE")
+    @AdminPresentation(friendlyName = "PageImpl_activeStartDate", order = 5000,
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+        excluded = true)
+    protected Date activeStartDate;
+
+    @Column(name = "ACTIVE_END_DATE")
+    @AdminPresentation(friendlyName = "PageImpl_activeEndDate", order = 6000, 
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+        excluded = true)
+    protected Date activeEndDate;
+
+    @Column (name = "META_TITLE")
+    @AdminPresentation(friendlyName = "PageImpl_metaTitle", order = 2000, 
+        tab = Presentation.Tab.Name.Seo, tabOrder = Presentation.Tab.Order.Seo,
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    protected String metaTitle;
+
+    @Column (name = "META_DESCRIPTION")
+    @AdminPresentation(friendlyName = "PageImpl_metaDescription", order = 3000, 
+        tab = Presentation.Tab.Name.Seo, tabOrder = Presentation.Tab.Order.Seo,
+        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    protected String metaDescription;
 
     @Embedded
     @AdminPresentation(excluded = true)
@@ -280,16 +283,12 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     
     @Override
     public Boolean getOfflineFlag() {
-        if (offlineFlag == null) {
-            return Boolean.FALSE;
-        } else {
-            return offlineFlag;
-        }
+        return offlineFlag == null ? false : offlineFlag;
     }
 
     @Override
     public void setOfflineFlag(Boolean offlineFlag) {
-        this.offlineFlag = offlineFlag;
+        this.offlineFlag = offlineFlag == null ? false : offlineFlag;
     }
 
     @Override
@@ -338,14 +337,50 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
         this.excludeFromSiteMap = excludeFromSiteMap;
     }
 
+    @Override
+    public <G extends Page> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+
+        Page cloned = createResponse.getClone();
+        cloned.setPriority(priority);
+        cloned.setActiveEndDate(activeEndDate);
+        cloned.setActiveStartDate(activeStartDate);
+        cloned.setDescription(description);
+        cloned.setExcludeFromSiteMap(getExcludeFromSiteMap());
+        cloned.setFullUrl(fullUrl);
+        cloned.setMetaDescription(metaDescription);
+        cloned.setOfflineFlag(offlineFlag);
+        cloned.setMetaTitle(metaTitle);
+        for(Map.Entry<String, PageField> entry : pageFields.entrySet()){
+            CreateResponse<PageField> clonedPageField = entry.getValue().createOrRetrieveCopyInstance(context);
+            PageField pageField = clonedPageField.getClone();
+            cloned.getPageFields().put(entry.getKey(),pageField);
+        }
+        for(Map.Entry<String,PageRule> entry : pageMatchRules.entrySet()){
+            CreateResponse<PageRule> clonedRsp = entry.getValue().createOrRetrieveCopyInstance(context);
+            PageRule clonedRule = clonedRsp.getClone();
+            cloned.getPageMatchRules().put(entry.getKey(),clonedRule);
+        }
+        if (pageTemplate != null){
+            CreateResponse<PageTemplate> clonedTemplateRsp = pageTemplate.createOrRetrieveCopyInstance(context);
+            cloned.setPageTemplate(clonedTemplateRsp.getClone());
+        }
+        return createResponse;
+    }
+
     public static class Presentation {
         public static class Tab {
             public static class Name {
                 public static final String Rules = "PageImpl_Rules_Tab";
+                public static final String Seo = "PageImpl_Seo_Tab";
             }
             
             public static class Order {
                 public static final int Rules = 1000;
+                public static final int Seo = 2000;
             }
         }
             
@@ -373,5 +408,56 @@ public class PageImpl implements Page, AdminMainEntity, Locatable {
     public String getLocation() {
         return getFullUrl();
     }
+
+    @Override
+    public Map<String, PageAttribute> getAdditionalAttributes() {
+        return additionalAttributes;
+    }
+
+    @Override
+    public void setAdditionalAttributes(Map<String, PageAttribute> additionalAttributes) {
+        this.additionalAttributes = additionalAttributes;
+    }
+
+    @Override
+    public Date getActiveStartDate() {
+        return activeStartDate;
+    }
+
+    @Override
+    public void setActiveStartDate(Date activeStartDate) {
+        this.activeStartDate = activeStartDate;
+    }
+
+    @Override
+    public Date getActiveEndDate() {
+        return activeEndDate;
+    }
+
+    @Override
+    public void setActiveEndDate(Date activeEndDate) {
+        this.activeEndDate = activeEndDate;
+    }
+
+    @Override
+    public String getMetaTitle() {
+        return metaTitle;
+    }
+
+    @Override
+    public void setMetaTitle(String metaTitle) {
+        this.metaTitle = metaTitle;
+    }
+
+    @Override
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+
+    @Override
+    public void setMetaDescription(String metaDescription) {
+        this.metaDescription = metaDescription;
+    }
+    
 }
 

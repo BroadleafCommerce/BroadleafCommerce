@@ -98,9 +98,16 @@ public interface AdminUser extends AdminSecurityContext {
     public void setAllPermissions(Set<AdminPermission> allPermissions);
     //public AdminUser clone();
 
-    public Map<String, String> getAdditionalFields();
+    /**
+     * Returns a map representing just the key-value pairs inside the {@link #getAdditionalFields()} map.
+     * 
+     * @return the collapsed map
+     */
+    public Map<String, String> getFlatAdditionalFields();
 
-    public void setAdditionalFields(Map<String, String> additionalFields);
+    public Map<String, AdminUserAttribute> getAdditionalFields();
+
+    public void setAdditionalFields(Map<String, AdminUserAttribute> additionalFields);
     
     /**
      * @return the id of the last sandbox this admin user used

@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.store.domain.Store;
 import org.broadleafcommerce.core.store.domain.ZipCode;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("blStoreService")
 public class StoreServiceImpl implements StoreService {
@@ -59,6 +60,12 @@ public class StoreServiceImpl implements StoreService {
 
     public List<Store> readAllStoresByState(String state) {
         return storeDao.readAllStoresByState(state);
+    }
+
+    @Override
+    @Transactional("blTransactionManager")
+    public Store saveStore(Store store) {
+        return storeDao.save(store);
     }
 
     public Map<Store, Double> findStoresByAddress(Address searchAddress, double distance) {

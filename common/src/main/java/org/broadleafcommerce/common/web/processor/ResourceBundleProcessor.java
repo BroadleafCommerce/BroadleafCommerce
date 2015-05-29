@@ -21,12 +21,9 @@ package org.broadleafcommerce.common.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.resource.service.ResourceBundlingService;
-import org.broadleafcommerce.common.resource.service.ResourceMinificationService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler;
-import org.broadleafcommerce.common.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
+import org.thymeleaf.context.IWebContext;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.dom.NestableNode;
 import org.thymeleaf.processor.ProcessorResult;
@@ -34,26 +31,27 @@ import org.thymeleaf.processor.element.AbstractElementProcessor;
 import org.thymeleaf.standard.expression.Expression;
 import org.thymeleaf.standard.expression.StandardExpressions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * <p>
- * Takes a list of resources and optionally minifies (using the Yahoo YUI minifier) and combines them together to present a
- * single file in the response. This will also automatically version the file name when minifying so that changes to bundles
- * will not be cached by the browser. Most of the heavy lifting of this processor is done in {@link ResourceBundlingService}
- * which uses {@link ResourceMinificationService}.
+ * Works with the blc:bundle tag.   
  * 
  * <p>
- * The operation of this processor is dependent upon the {@code bundle.enabled} system property. If bundling is disabled
- * via this system property then each file is individually linked in the HTML source
+ * This processor does not do the actual bundling.   It merely changes the URL which causes the 
+ * other bundling components to be invoked through the normal static resource handling processes.
  * 
  * <p>
- * For example, given this bundle:
+ * This processor relies {@code bundle.enabled}.   If this property is false (typical for dev) then the list of
+ * resources will be output as individual SCRIPT or LINK elements for each JavaScript or CSS file respectively.
+ * 
+ * <p>
+ * To use this processor, supply a name, mapping prefix, and list of files.   
  * 
  * <pre>
  * {@code
@@ -70,13 +68,15 @@ import javax.annotation.Resource;
  * With bundling enabled this will turn into:
  * 
  * <pre>
+ * 
  * {@code
- *  <script type="text/javascript" src="/js/lib-123412.js" />
+ *  <script type="text/javascript" src="/js/lib-blbundle12345.js" />
  * }
  * </pre>
  * 
  * <p>
- * Where <b>lib-123412.js</b> is the result of minifying and combining all of the referenced <b>files</b> together.
+ * Where the <b>-blbundle12345</b> is used by the BundleUrlResourceResolver to determine the
+ * actual bundle name.  
  * 
  * <p>
  * With bundling disabled this turns into:
@@ -91,11 +91,7 @@ import javax.annotation.Resource;
  * </pre>
  * 
  * <p>
- * The files are presented without any additional processing done on them. This is beneficial for development when things
- * like Javascript debugging is necessary.
- * 
- * <p>
- * As of 3.1.9-GA, this also supports producing the 'async' and 'defer' attributes for Javascript files. For instance:
+ * This processor also supports producing the 'async' and 'defer' attributes for Javascript files. For instance:
  * 
  * <pre>
  * {@code
@@ -117,14 +113,14 @@ import javax.annotation.Resource;
  * <p>
  * This processor only supports files that end in <b>.js</b> and <b>.css</b>
  * 
- * @param name (required) the final name of the minified bundle
- * @param <b>mapping-prefix</b> (required) the prefix appended to the final tag output whether that be the list of <b>files</b>
- * or the single minified file
- * @param files (required) a comma-separated list of files that should be bundled together
+ * @param <b>name</b>           (required) the final name prefix of the bundle
+ * @param <b>mapping-prefix</b> (required) the prefix appended to the final tag output whether that be 
+ *                              the list of files or the single minified file
+ * @param <b>files</b>          (required) a comma-separated list of files that should be bundled together
  * 
  * @author apazzolini
+ * @author bpolster
  * @see {@link ResourceBundlingService}
- * @see {@link ResourceMinificationService}
  */
 public class ResourceBundleProcessor extends AbstractElementProcessor {
     
@@ -132,8 +128,7 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     protected ResourceBundlingService bundlingService;
     
     protected boolean getBundleEnabled() {
-        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled") && (brc.getSandBox() == null || brc.getAdmin());
+        return BLCSystemProperty.resolveBooleanSystemProperty("bundle.enabled");
     }
 
     public ResourceBundleProcessor() {
@@ -156,27 +151,17 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         for (String file : element.getAttributeValue("files").split(",")) {
             files.add(file.trim());
         }
+        List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
+        if (additionalBundleFiles != null) {
+            files.addAll(additionalBundleFiles);
+        }
         
         if (getBundleEnabled()) {
-            String versionedBundle = bundlingService.getVersionedBundleName(name);
-            if (StringUtils.isBlank(versionedBundle)) {
-                BroadleafResourceHttpRequestHandler reqHandler = getRequestHandler(name, arguments);
-                try {
-                    versionedBundle = bundlingService.registerBundle(name, files, reqHandler);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
-                    .parseExpression(arguments.getConfiguration(), arguments, "@{'" + mappingPrefix + versionedBundle + "'}");
-            String value = (String) expression.execute(arguments.getConfiguration(), arguments);
-            Element e = getElement(value, async, defer);
+            String bundleResourceName = bundlingService.resolveBundleResourceName(name, mappingPrefix, files);
+            String bundleUrl = getBundleUrl(arguments, bundleResourceName);
+            Element e = getElement(bundleUrl, async, defer);
             parent.insertAfter(element, e);
         } else {
-            List<String> additionalBundleFiles = bundlingService.getAdditionalBundleFiles(name);
-            if (additionalBundleFiles != null) {
-                files.addAll(additionalBundleFiles);
-            }
             for (String file : files) {
                 file = file.trim();
                 Expression expression = (Expression) StandardExpressions.getExpressionParser(arguments.getConfiguration())
@@ -192,13 +177,34 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
     }
     
     /**
-     * @deprecated use {@link #getScriptElement(String, boolean, boolean)} instead
+     * Adds the context path to the bundleUrl.    We don't use the Thymeleaf "@" syntax or any other mechanism to 
+     * encode this URL as the resolvers could have a conflict.   
+     * 
+     * For example, resolving a bundle named "style.css" that has a file also named "style.css" creates problems as
+     * the TF or version resolvers both want to version this file.
+     *  
+     * @param arguments
+     * @param bundleName
+     * @return
      */
-    @Deprecated
-    protected Element getScriptElement(String src) {
-        return getScriptElement(src, false, false);
+    protected String getBundleUrl(Arguments arguments, String bundleName) {
+        String bundleUrl = bundleName;
+
+        if (!StringUtils.startsWith(bundleUrl, "/")) {
+            bundleUrl = "/" + bundleUrl;
+        }
+
+        IWebContext context = (IWebContext) arguments.getContext();
+        HttpServletRequest request = context.getHttpServletRequest();
+        String contextPath = request.getContextPath();
+
+        if (StringUtils.isNotEmpty(contextPath)) {
+            bundleUrl = contextPath + bundleUrl;
+        }
+
+        return bundleUrl;
     }
-    
+
     protected Element getScriptElement(String src, boolean async, boolean defer) {
         Element e = new Element("script");
         e.setAttribute("type", "text/javascript");
@@ -219,14 +225,6 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
         return e;
     }
     
-    /**
-     * @deprecated use {@link #getElement(String, boolean, boolean)} instead
-     */
-    @Deprecated
-    protected Element getElement(String src) {
-        return getElement(src, false, false);
-    }
-    
     protected Element getElement(String src, boolean async, boolean defer) {
         if (src.contains(";")) {
             src = src.substring(0, src.indexOf(';'));
@@ -240,20 +238,4 @@ public class ResourceBundleProcessor extends AbstractElementProcessor {
             throw new IllegalArgumentException("Unknown extension for: " + src + " - only .js and .css are supported");
         }
     }
-    
-    protected BroadleafResourceHttpRequestHandler getRequestHandler(String name, Arguments arguments) {
-        BroadleafResourceHttpRequestHandler handler = null;
-        if (name.endsWith(".js")) {
-            handler = ProcessorUtils.getJsRequestHandler(arguments);
-        } else if (name.endsWith(".css")) {
-            handler = ProcessorUtils.getCssRequestHandler(arguments);
-        }
-        
-        if (handler == null) {
-            throw new IllegalArgumentException("Unknown extension for: " + name + " - only .js and .css are supported");
-        }
-        
-        return handler;
-    }
-    
 }

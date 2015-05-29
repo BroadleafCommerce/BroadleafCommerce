@@ -19,14 +19,7 @@
  */
 package org.broadleafcommerce.core.store.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -38,9 +31,19 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+
 @Entity
 @Table(name = "BLC_STORE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@SQLDelete(sql="UPDATE BLC_STORE SET ARCHIVED = 'Y' WHERE STORE_ID = ?")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StoreImpl_baseStore")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class StoreImpl implements Store {
@@ -124,6 +127,9 @@ public class StoreImpl implements Store {
             group = Presentation.Group.Name.Geocoding, groupOrder = Presentation.Group.Order.Geocoding,
             gridOrder = 10, columnWidth = "200px")
     private Double longitude;
+
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.store.domain.Store#getId()
@@ -343,6 +349,30 @@ public class StoreImpl implements Store {
      */
     public String getState() {
         return state;
+    }
+
+    @Override
+    public Character getArchived() {
+       ArchiveStatus temp;
+       if (archiveStatus == null) {
+           temp = new ArchiveStatus();
+       } else {
+           temp = archiveStatus;
+       }
+       return temp.getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public boolean isActive() {
+        return 'Y'!=getArchived();
     }
 
     public static class Presentation {

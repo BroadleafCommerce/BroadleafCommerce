@@ -49,12 +49,11 @@ import org.hibernate.annotations.Parameter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -65,7 +64,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -139,7 +139,8 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
 
     @Column(name = "ACTIVE_STATUS_FLAG")
     @AdminPresentation(friendlyName = "AdminUserImpl_Active_Status",
-            order = 4000, group = "AdminUserImpl_User")
+            order = 4000, group = "AdminUserImpl_User",
+            defaultValue = "true")
     protected Boolean activeStatusFlag = Boolean.TRUE;
 
     /** All roles that this user has */
@@ -175,12 +176,12 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     @AdminPresentation(excluded = true)
     protected SandBox overrideSandBox;
 
-    @ElementCollection
-    @MapKeyColumn(name = "FIELD_NAME")
-    @Column(name = "FIELD_VALUE")
-    @CollectionTable(name = "BLC_ADMIN_USER_ADDTL_FIELDS", joinColumns = @JoinColumn(name="ADMIN_USER_ID"))
+    @OneToMany(mappedBy = "adminUser", targetEntity = AdminUserAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @MapKey(name = "name")
     @BatchSize(size = 50)
-    protected Map<String, String> additionalFields = new HashMap<String, String>();
+    @AdminPresentation(excluded = true)
+    protected Map<String, AdminUserAttribute> additionalFields = new HashMap<String, AdminUserAttribute>();
 
     @Override
     public void setUnencodedPassword(String unencodedPassword) {
@@ -308,27 +309,43 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     }
     
     @Override
-    public Map<String, String> getAdditionalFields() {
+    public Map<String, String> getFlatAdditionalFields() {
+        Map<String, String> map = new HashMap<String, String>();
+        for (Entry<String, AdminUserAttribute> entry : getAdditionalFields().entrySet()) {
+            map.put(entry.getKey(), entry.getValue().getValue());
+        }
+        return map;
+    }
+    
+    @Override
+    public Map<String, AdminUserAttribute> getAdditionalFields() {
         return additionalFields;
     }
 
     @Override
-    public void setAdditionalFields(Map<String, String> additionalFields) {
+    public void setAdditionalFields(Map<String, AdminUserAttribute> additionalFields) {
         this.additionalFields = additionalFields;
     }
     
     @Override
     public Long getLastUsedSandBoxId() {
-        String sandBox = getAdditionalFields().get(LAST_USED_SANDBOX);
-        if (StringUtils.isNotBlank(sandBox)) {
-            return Long.parseLong(sandBox);
+        AdminUserAttribute attr = getAdditionalFields().get(LAST_USED_SANDBOX);
+        if (attr != null && StringUtils.isNotBlank(attr.getValue())) {
+            return Long.parseLong(attr.getValue());
         }
         return null;
     }
     
     @Override
     public void setLastUsedSandBoxId(Long sandBoxId) {
-        getAdditionalFields().put(LAST_USED_SANDBOX, String.valueOf(sandBoxId));
+        AdminUserAttribute attr = getAdditionalFields().get(LAST_USED_SANDBOX);
+        if (attr == null) {
+            attr = new AdminUserAttributeImpl();
+            attr.setName(LAST_USED_SANDBOX);
+            attr.setAdminUser(this);
+            getAdditionalFields().put(LAST_USED_SANDBOX, attr);
+        }
+        attr.setValue(String.valueOf(sandBoxId));
     }
 
     @Override

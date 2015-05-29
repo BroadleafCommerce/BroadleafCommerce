@@ -19,8 +19,18 @@
  */
 package org.broadleafcommerce.cms.field.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -44,7 +54,12 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FLD_DEF")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-public class FieldDefinitionImpl implements FieldDefinition {
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE)
+public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -62,12 +77,19 @@ public class FieldDefinitionImpl implements FieldDefinition {
     protected Long id;
 
     @Column (name = "NAME")
+    @AdminPresentation(fieldType = SupportedFieldType.HIDDEN)
     protected String name;
 
     @Column (name = "FRIENDLY_NAME")
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_friendlyName", order = 2000, prominent = true, gridOrder = 2000)
     protected String friendlyName;
 
     @Column (name = "FLD_TYPE")
+    @AdminPresentation(fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
+        broadleafEnumeration = "org.broadleafcommerce.common.presentation.client.DynamicSupportedFieldType",
+        prominent = true, gridOrder = 3000, order = 1000,
+        requiredOverride = RequiredOverride.REQUIRED,
+        friendlyName = "FieldDefinitionImpl_fieldType")
     protected String fieldType;
 
     @Column (name = "SECURITY_LEVEL")
@@ -94,7 +116,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
     @Column(name = "REQUIRED_FLAG")
     protected Boolean requiredFlag = false;
 
-    @ManyToOne (targetEntity = DataDrivenEnumerationImpl.class)
+    @ManyToOne(targetEntity = DataDrivenEnumerationImpl.class)
     @JoinColumn(name = "ENUM_ID")
     protected DataDrivenEnumeration dataDrivenEnumeration;
 
@@ -106,7 +128,17 @@ public class FieldDefinitionImpl implements FieldDefinition {
     protected FieldGroup fieldGroup;
 
     @Column(name="FLD_ORDER")
-    protected int fieldOrder;
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_fieldOrder", order = 3000)
+    protected Integer fieldOrder = 0;
+
+    @Column (name = "TOOLTIP")
+    protected String tooltip;
+
+    @Column (name = "HELP_TEXT")
+    protected String helpText;
+
+    @Column (name = "HINT")
+    protected String hint;
 
     @Override
     public Long getId() {
@@ -120,7 +152,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Override
     public String getName() {
-        return name;
+        return (name != null) ? name : "";
     }
 
     @Override
@@ -152,7 +184,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
     
     @Override
     public void setAdditionalForeignKeyClass(String className) {
-        if (fieldType == null || !fieldType.startsWith(SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|')) {
+        if (fieldType == null || !SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString().equals(fieldType)) {
             throw new IllegalArgumentException("Cannot set an additional foreign key class when the field type is not ADDITIONAL_FOREIGN_KEY");
         }
         
@@ -177,7 +209,7 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Override
     public Boolean getHiddenFlag() {
-        return hiddenFlag;
+        return hiddenFlag == null ? false : hiddenFlag;
     }
 
     @Override
@@ -277,6 +309,9 @@ public class FieldDefinitionImpl implements FieldDefinition {
 
     @Override
     public int getFieldOrder() {
+        if (fieldOrder == null) {
+            return 0;
+        }
         return fieldOrder;
     }
 
@@ -294,5 +329,69 @@ public class FieldDefinitionImpl implements FieldDefinition {
     public void setDataDrivenEnumeration(DataDrivenEnumeration dataDrivenEnumeration) {
         this.dataDrivenEnumeration = dataDrivenEnumeration;
     }
+
+    @Override
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    @Override
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+    }
+
+    @Override
+    public String getHelpText() {
+        return helpText;
+    }
+
+    @Override
+    public void setHelpText(String helpText) {
+        this.helpText = helpText;
+    }
+
+    @Override
+    public String getHint() {
+        return hint;
+    }
+
+    @Override
+    public void setHint(String hint) {
+        this.hint = hint;
+    }
+
+    @Override
+    public <G extends FieldDefinition> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FieldDefinition cloned = createResponse.getClone();
+        cloned.setName(name);
+        cloned.setFriendlyName(friendlyName);
+        cloned.setFieldType(getFieldType());
+        cloned.setSecurityLevel(securityLevel);
+        cloned.setHiddenFlag(hiddenFlag);
+        cloned.setValidationRegEx(validationRegEx);
+        cloned.setValidationErrorMesageKey(validationErrorMesageKey);
+        cloned.setMaxLength(maxLength);
+        cloned.setColumnWidth(columnWidth);
+        cloned.setTextAreaFlag(textAreaFlag);
+        cloned.setRequiredFlag(requiredFlag);
+        if (dataDrivenEnumeration != null) {
+            cloned.setDataDrivenEnumeration(dataDrivenEnumeration.createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setAllowMultiples(allowMultiples);
+        if (fieldGroup != null) {
+            cloned.setFieldGroup(fieldGroup.createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setFieldOrder(fieldOrder);
+        cloned.setTooltip(tooltip);
+        cloned.setHelpText(helpText);
+        cloned.setHint(hint);
+        return createResponse;
+    }
+
 }
 

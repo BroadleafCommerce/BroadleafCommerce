@@ -30,12 +30,16 @@
     </named-query>
 
     <named-query name="BC_FIND_ALL_STORES" >
-        <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store </query>
+        <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store
+            WHERE (store.archiveStatus.archived IS NULL OR store.archiveStatus.archived = :archived)
+        </query>
     </named-query>
 
     <named-query name="BC_FIND_ALL_STORES_BY_STATE" >
         <query>SELECT store FROM org.broadleafcommerce.core.store.domain.Store store
-            WHERE store.state = :state</query>
+            WHERE store.state = :state
+            AND (store.archiveStatus.archived IS NULL OR store.archiveStatus.archived = :archived)
+        </query>
     </named-query>
 
 </entity-mappings>

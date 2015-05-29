@@ -19,9 +19,21 @@
         <priority>0.5</priority>
     </url>
     <url>
+        <loc>http://www.heatclinic.com/mens</loc>
+        <lastmod>2013-11-04T15:02:08-06:00</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>http://www.heatclinic.com/womens</loc>
+        <lastmod>2013-11-04T15:02:08-06:00</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
         <loc>http://www.heatclinic.com/clearance</loc>
         <lastmod>2013-11-04T15:02:08-06:00</lastmod>
         <changefreq>hourly</changefreq>
         <priority>0.5</priority>
-    </url>    
+    </url>
 </urlset>

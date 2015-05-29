@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -128,5 +129,9 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
         }
         return new PropertyValidationResult(true);
     }
-    
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE - 1000;
+    }
 }

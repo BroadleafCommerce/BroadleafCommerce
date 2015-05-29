@@ -19,10 +19,19 @@
  */
 package org.broadleafcommerce.cms.structure.dao;
 
+import org.broadleafcommerce.cms.structure.domain.StructuredContent;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
+import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.sandbox.domain.SandBox;
+import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
+import org.hibernate.ejb.QueryHints;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -33,18 +42,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-
-import org.broadleafcommerce.cms.structure.domain.StructuredContent;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentField;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentImpl;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentType;
-import org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
-import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
-import org.hibernate.ejb.QueryHints;
-import org.springframework.stereotype.Repository;
 
 /**
  * Created by bpolster.
@@ -131,6 +128,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         query.setParameter("contentType", type);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }
@@ -150,6 +148,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         query.setParameter("contentName", name);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }
@@ -170,6 +169,7 @@ public class StructuredContentDaoImpl implements StructuredContentDao {
         query.setParameter("contentName", name);
         query.setParameter("fullLocale", fullLocale);
         query.setParameter("languageOnlyLocale", languageOnlyLocale);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
 
         return query.getResultList();
     }

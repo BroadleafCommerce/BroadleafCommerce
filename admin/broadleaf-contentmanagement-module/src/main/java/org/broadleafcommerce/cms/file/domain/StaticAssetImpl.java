@@ -19,48 +19,31 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -83,7 +66,6 @@ import org.hibernate.annotations.Parameter;
 )
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
@@ -294,6 +276,29 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity {
     @Override
     public void setStorageType(StorageType storageType) {
         this.storageType = storageType.getType();
+    }
+
+    @Override
+    public <G extends StaticAsset> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StaticAsset cloned = createResponse.getClone();
+        cloned.setName(name);
+        cloned.setAltText(altText);
+        cloned.setFileExtension(fileExtension);
+        cloned.setFileSize(fileSize);
+        cloned.setFullUrl(fullUrl);
+        cloned.setMimeType(mimeType);
+        cloned.setTitle(title);
+        cloned.setStorageType(getStorageType());
+        for(Map.Entry<String, StaticAssetDescription> entry : contentMessageValues.entrySet()){
+            CreateResponse<StaticAssetDescription> clonedDescRsp = entry.getValue().createOrRetrieveCopyInstance(context);
+            cloned.getContentMessageValues().put(entry.getKey(),clonedDescRsp.getClone());
+        }
+
+        return createResponse;
     }
 
     public static class Presentation {

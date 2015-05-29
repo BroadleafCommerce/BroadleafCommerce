@@ -19,7 +19,10 @@
  */
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -58,4 +61,19 @@ public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl imp
         this.bands = bands;
     }
 
+    @Override
+    public CreateResponse<BandedWeightFulfillmentOption> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws CloneNotSupportedException {
+        CreateResponse<BandedWeightFulfillmentOption> createResponse = super.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        BandedWeightFulfillmentOption myClone = createResponse.getClone();
+
+        for (FulfillmentWeightBand band : bands) {
+            myClone.getBands().add(band);
+        }
+
+        return createResponse;
+    }
 }

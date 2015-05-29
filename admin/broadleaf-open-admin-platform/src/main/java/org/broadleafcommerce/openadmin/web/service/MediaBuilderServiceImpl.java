@@ -24,9 +24,10 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Resource;
 
@@ -46,7 +47,7 @@ public class MediaBuilderServiceImpl implements MediaBuilderService {
         if (json != null && !"".equals(json)) {
             try {
                 ObjectMapper om = new ObjectMapper();
-                om.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 return (Media) om.readValue(json, type);
             } catch (Exception e) {
                 LOG.warn("Error parsing json to media " + json, e);

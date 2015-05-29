@@ -24,7 +24,9 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +63,11 @@ public class SandBoxServiceImpl implements SandBoxService {
         return sandBoxDao.retrieveUserSandBoxForParent(authorId, parentSandBoxId);
     }
     
+    @Override
+    public SandBox retrieveSandBoxManagementById(Long sandBoxId) {
+        return sandBoxDao.retrieveSandBoxManagementById(sandBoxId);
+    }
+
     @Override
     public List<SandBox> retrievePreviewSandBoxes(Long authorId) {
         List<SandBox> returnList = new ArrayList<SandBox>();
@@ -131,8 +138,29 @@ public class SandBoxServiceImpl implements SandBoxService {
     }
 
     @Override
+    @Deprecated
     public List<SandBox> retrieveAllUserSandBoxes(Long authorId) {
         return sandBoxDao.retrieveAllUserSandBoxes(authorId);
     }
-    
+
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
+    public void archiveChildSandboxes(Long parentSandBoxId) {
+        List<SandBox> childSandBoxes = retrieveChildSandBoxesByParentId(parentSandBoxId);
+        for (SandBox sandbox : childSandBoxes) {
+            sandbox.setArchived('Y');
+            sandBoxDao.merge(sandbox);
+        }
+    }
+
+    public List<SandBox> retrieveChildSandBoxesByParentId(Long parentSandBoxId) {
+        return sandBoxDao.retrieveChildSandBoxesByParentId(parentSandBoxId);
+    }
+
+    @Override
+    public boolean checkForExistingApprovalSandboxWithName(String sandboxName) {
+        SandBox sb = sandBoxDao.retrieveNamedSandBox(SandBoxType.APPROVAL, sandboxName);
+        return sb == null;
+    }
+
 }

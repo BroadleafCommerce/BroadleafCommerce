@@ -40,6 +40,7 @@ public class ListGridRecord {
     protected Boolean isDirty;
     protected Boolean isError;
     protected String errorKey;
+    protected String errorMessage;
     protected ListGridRecordIcon icon;
 
     /**
@@ -48,7 +49,11 @@ public class ListGridRecord {
     protected Map<String, Field> fieldMap;
     
     public String getPath() {
-        return listGrid.getPath() + "/" + id;
+        String path = listGrid.getPath() + "/" + id;
+        if (!StringUtils.isEmpty(altId)) {
+            path += "/" + altId;
+        }
+        return path;
     }
     
     public boolean getCanLinkToExternalEntity() {
@@ -177,15 +182,37 @@ public class ListGridRecord {
         this.errorKey = errorKey;
     }
     
+    /**
+     * Actual, localized error message.  If set, this will override the error key.
+     * @return
+     */
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
+
+    /**
+     * If set, this will override the errorKey.
+     * 
+     * @param errorMessage
+     */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
     public ListGridRecordIcon getIcon() {
         if (icon != null) {
             return icon;
         }
         
         if (getIsError()) {
+            String msgToUser = getErrorMessage();
+            if (msgToUser == null) {
+                msgToUser = BLCMessageUtils.getMessage(getErrorKey());
+            }
+
             return new ListGridRecordIcon()
                 .withCssClass("icon-exclamation-sign")
-                .withMessage(BLCMessageUtils.getMessage(getErrorKey()));
+                    .withMessage(msgToUser);
         }
 
         if (getIsDirty()) {

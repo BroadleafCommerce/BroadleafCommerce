@@ -19,7 +19,8 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
-import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.collections4.map.LRUMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.RequestDTO;
@@ -30,7 +31,9 @@ import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.core.offer.domain.OfferRule;
+import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
+import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXref;
+import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
@@ -39,7 +42,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.hibernate.tool.hbm2x.StringUtils;
 import org.joda.time.LocalDateTime;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -76,20 +78,22 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
-        if (offer.getQualifyingItemCriteria() == null || offer.getQualifyingItemCriteria().size() == 0) {
+        if (offer.getQualifyingItemCriteriaXref() == null || offer.getQualifyingItemCriteriaXref().size() == 0) {
             candidates.setMatchedQualifier(true);
         } else {
-            for (OfferItemCriteria criteria : offer.getQualifyingItemCriteria()) {
-                checkForItemRequirements(offer, candidates, criteria, promotableOrderItems, true);
-                if (!candidates.isMatchedQualifier()) {
-                    break;
+            for (OfferQualifyingCriteriaXref criteriaXref : offer.getQualifyingItemCriteriaXref()) {
+                if (criteriaXref.getOfferItemCriteria() != null) {
+                    checkForItemRequirements(offer, candidates, criteriaXref.getOfferItemCriteria(), promotableOrderItems, true);
+                    if (!candidates.isMatchedQualifier()) {
+                        break;
+                    }
                 }
             }           
         }
         
-        if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteria() != null) {
-            for (OfferItemCriteria criteria : offer.getTargetItemCriteria()) {
-                checkForItemRequirements(offer, candidates, criteria, promotableOrderItems, false);
+        if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteriaXref() != null) {
+            for (OfferTargetCriteriaXref xref : offer.getTargetItemCriteriaXref()) {
+                checkForItemRequirements(offer, candidates, xref.getOfferItemCriteria(), promotableOrderItems, false);
                 if (!candidates.isMatchedTarget()) {
                     break;
                 }
@@ -122,7 +126,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             return true;
         }
 
-        if (isEmpty(offer.getQualifyingItemCriteria())) {
+        if (isEmpty(offer.getQualifyingItemCriteriaXref())) {
             if (OfferType.ORDER_ITEM.equals(offer.getType())) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Offer " + offer.getName() + " has a subtotal item requirement but no item qualification criteria.");
@@ -337,9 +341,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         String rule = null;
 
-        OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.REQUEST.getType());
-        if (customerRule != null) {
-            rule = customerRule.getMatchRule();
+        OfferOfferRuleXref ruleXref = offer.getOfferMatchRulesXref().get(OfferRuleType.REQUEST.getType());
+        if (ruleXref != null && ruleXref.getOfferRule() != null) {
+            rule = ruleXref.getOfferRule().getMatchRule();
         }
 
         if (rule != null) {
@@ -382,12 +386,12 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         boolean appliesToTimePeriod = false;
 
         String rule = null;
-
-        OfferRule timeRule = offer.getOfferMatchRules().get(OfferRuleType.TIME.getType());
-        if (timeRule != null) {
-            rule = timeRule.getMatchRule();
-        }
         
+        OfferOfferRuleXref ruleXref = offer.getOfferMatchRulesXref().get(OfferRuleType.TIME.getType());
+        if (ruleXref != null && ruleXref.getOfferRule() != null) {
+            rule = ruleXref.getOfferRule().getMatchRule();
+        }
+
         if (rule != null) {
             TimeZone timeZone = getOfferTimeZoneProcessor().getTimeZone(offer);
             TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar(timeZone));
@@ -503,9 +507,10 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         if (!StringUtils.isEmpty(offer.getAppliesToCustomerRules())) {
             rule = offer.getAppliesToCustomerRules();
         } else {
-            OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.CUSTOMER.getType());
-            if (customerRule != null) {
-                rule = customerRule.getMatchRule();
+
+            OfferOfferRuleXref ruleXref = offer.getOfferMatchRulesXref().get(OfferRuleType.CUSTOMER.getType());
+            if (ruleXref != null && ruleXref.getOfferRule() != null) {
+                rule = ruleXref.getOfferRule().getMatchRule();
             }
         }
 

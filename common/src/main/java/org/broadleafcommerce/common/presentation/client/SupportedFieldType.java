@@ -54,5 +54,6 @@ public enum SupportedFieldType {
     STRING_LIST,
     IMAGE,
     COLOR,
-    CODE
+    CODE,
+    GENERATED_URL
 }

@@ -74,6 +74,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     protected static final Log LOG = LogFactory.getLog(StructuredContentServiceImpl.class);
 
     protected static String AND = " && ";
+    protected static final String FOREIGN_LOOKUP = "BLC_FOREIGN_LOOKUP";
 
     @Resource(name="blStructuredContentDao")
     protected StructuredContentDao structuredContentDao;
@@ -278,6 +279,31 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         return evaluateAndPriortizeContent(contentDTOList, count, ruleDTOs);
     }
+    
+    @Override
+    public List<StructuredContentDTO> convertToDtos(List<StructuredContent> scs, boolean isSecure) {
+        List<StructuredContentDTO> contentDTOList = new ArrayList<StructuredContentDTO>();
+
+        for (StructuredContent sc : scs) {
+            String cacheKey = "SC|" + sc.getId();
+            StructuredContentDTO dto = null;
+            BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+
+            if (context.isProductionSandBox()) {
+                dto = getSingleStructuredContentFromCache(cacheKey);
+            }
+
+            if (dto == null) {
+                dto = buildStructuredContentDTO(sc, isSecure);
+                if (context.isProductionSandBox()) {
+                    addSingleStructuredContentToCache(cacheKey, dto);
+                }
+            }
+            
+            contentDTOList.add(dto);
+        }
+        return contentDTOList;
+    }
 
     @Override
     public List<StructuredContentDTO> lookupStructuredContentItemsByName(String contentName,
@@ -364,15 +390,17 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
     protected String buildRuleExpression(StructuredContent sc) {
        StringBuffer ruleExpression = null;
-       Map<String, StructuredContentRule> ruleMap = sc.getStructuredContentMatchRules();
+        Map<String, StructuredContentRule> ruleMap = sc.getStructuredContentMatchRules();
        if (ruleMap != null) {
            for (String ruleKey : ruleMap.keySet()) {
-                if (ruleMap.get(ruleKey).getMatchRule() == null) continue;
+                if (ruleMap.get(ruleKey).getMatchRule() == null) {
+                    continue;
+                }
                if (ruleExpression == null) {
-                   ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
+                    ruleExpression = new StringBuffer(ruleMap.get(ruleKey).getMatchRule());
                } else {
                    ruleExpression.append(AND);
-                   ruleExpression.append(ruleMap.get(ruleKey).getMatchRule());
+                    ruleExpression.append(ruleMap.get(ruleKey).getMatchRule());
                }
            }
        }
@@ -421,8 +449,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
 
         scDTO.getValues().put("id", sc.getId());
 
-        for (String fieldKey : sc.getStructuredContentFields().keySet()) {
-            StructuredContentField scf = sc.getStructuredContentFields().get(fieldKey);
+        for (String fieldKey : sc.getStructuredContentFieldXrefs().keySet()) {
+            StructuredContentField scf = sc.getStructuredContentFieldXrefs().get(fieldKey).getStructuredContentField();
             String originalValue = scf.getValue();
             if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
                 //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
@@ -465,6 +493,9 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                             case MONEY:
                                 value = new Money(originalValue);
                                 break;
+                            case ADDITIONAL_FOREIGN_KEY:
+                                value = FOREIGN_LOOKUP + '|' + definition.getAdditionalForeignKeyClass() + '|' + originalValue;
+                                break;
                             default:
                                 value = originalValue;
                                 break;
@@ -472,7 +503,7 @@ public class StructuredContentServiceImpl implements StructuredContentService {
                     }
                     scDTO.getValues().put(fieldKey, value);
                 } else {
-                    scDTO.getValues().put(fieldKey,  sc.getStructuredContentFields().get(fieldKey).getValue());
+                    scDTO.getValues().put(fieldKey, sc.getStructuredContentFieldXrefs().get(fieldKey).getStructuredContentField().getValue());
                 }
             }
         }
@@ -492,7 +523,8 @@ public class StructuredContentServiceImpl implements StructuredContentService {
      * @param secure
      * @return
      */
-    protected StructuredContentDTO buildStructuredContentDTO(StructuredContent sc, boolean secure) {
+    @Override
+    public StructuredContentDTO buildStructuredContentDTO(StructuredContent sc, boolean secure) {
         StructuredContentDTO scDTO = entityConfiguration.createEntityInstance(StructuredContentDTO.class.getName(), StructuredContentDTO.class);
         scDTO.setContentName(sc.getContentName());
         scDTO.setContentType(sc.getStructuredContentType().getName());
@@ -574,6 +606,20 @@ public class StructuredContentServiceImpl implements StructuredContentService {
     @Override
     public void addStructuredContentListToCache(String key, List<StructuredContentDTO> scDTOList) {
         getStructuredContentCache().put(new Element(key, scDTOList));
+    }
+
+    protected void addSingleStructuredContentToCache(String key, StructuredContentDTO scDTO) {
+        getStructuredContentCache().put(new Element(key, scDTO));
+    }
+
+    protected StructuredContentDTO getSingleStructuredContentFromCache(String key) {
+        Element scElement =  getStructuredContentCache().get(key);
+        if (scElement != null) {
+            statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), true);
+            return (StructuredContentDTO) scElement.getValue();
+        }
+        statisticsService.addCacheStat(CacheStatType.STRUCTURED_CONTENT_CACHE_HIT_RATE.toString(), false);
+        return null;
     }
 
     @Override

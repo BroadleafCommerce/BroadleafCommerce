@@ -74,7 +74,7 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
         if (model.getProductOptionValidationStrategyType() != null) {
             this.productOptionValidationStrategyType = model.getProductOptionValidationStrategyType().getType();
         }
-        if (model.getProductOptionValidationStrategyType() != null) {
+        if (model.getProductOptionValidationType() != null) {
             this.productOptionValidationType = model.getProductOptionValidationType().getType();
         }
         this.validationString = model.getValidationString();
@@ -93,5 +93,133 @@ public class ProductOptionWrapper extends BaseWrapper implements APIWrapper<Prod
     @Override
     public void wrapSummary(ProductOption model, HttpServletRequest request) {
         wrapDetails(model, request);
+    }
+
+    
+    /**
+     * @return the attributeName
+     */
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    
+    /**
+     * @param attributeName the attributeName to set
+     */
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
+    }
+
+    
+    /**
+     * @return the label
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    
+    /**
+     * @param label the label to set
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    
+    /**
+     * @return the required
+     */
+    public Boolean getRequired() {
+        return required;
+    }
+
+    
+    /**
+     * @param required the required to set
+     */
+    public void setRequired(Boolean required) {
+        this.required = required;
+    }
+
+    
+    /**
+     * @return the productOptionType
+     */
+    public String getProductOptionType() {
+        return productOptionType;
+    }
+
+    
+    /**
+     * @param productOptionType the productOptionType to set
+     */
+    public void setProductOptionType(String productOptionType) {
+        this.productOptionType = productOptionType;
+    }
+
+    
+    /**
+     * @return the productOptionValidationStrategyType
+     */
+    public String getProductOptionValidationStrategyType() {
+        return productOptionValidationStrategyType;
+    }
+
+    
+    /**
+     * @param productOptionValidationStrategyType the productOptionValidationStrategyType to set
+     */
+    public void setProductOptionValidationStrategyType(String productOptionValidationStrategyType) {
+        this.productOptionValidationStrategyType = productOptionValidationStrategyType;
+    }
+
+    
+    /**
+     * @return the productOptionValidationType
+     */
+    public String getProductOptionValidationType() {
+        return productOptionValidationType;
+    }
+
+    
+    /**
+     * @param productOptionValidationType the productOptionValidationType to set
+     */
+    public void setProductOptionValidationType(String productOptionValidationType) {
+        this.productOptionValidationType = productOptionValidationType;
+    }
+
+    
+    /**
+     * @return the allowedValues
+     */
+    public List<ProductOptionValueWrapper> getAllowedValues() {
+        return allowedValues;
+    }
+
+    
+    /**
+     * @param allowedValues the allowedValues to set
+     */
+    public void setAllowedValues(List<ProductOptionValueWrapper> allowedValues) {
+        this.allowedValues = allowedValues;
+    }
+
+    
+    /**
+     * @return the validationString
+     */
+    public String getValidationString() {
+        return validationString;
+    }
+
+    
+    /**
+     * @param validationString the validationString to set
+     */
+    public void setValidationString(String validationString) {
+        this.validationString = validationString;
     }
 }

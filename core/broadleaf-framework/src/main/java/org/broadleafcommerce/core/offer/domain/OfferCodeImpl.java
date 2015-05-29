@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -43,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -64,9 +67,7 @@ import javax.persistence.Table;
 @SQLDelete(sql="UPDATE BLC_OFFER_CODE SET ARCHIVED = 'Y' WHERE OFFER_CODE_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX_PRECLONE_INFORMATION),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferCodeImpl implements OfferCode {
 
@@ -86,7 +87,7 @@ public class OfferCodeImpl implements OfferCode {
     @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code_Id")
     protected Long id;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional=false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
     @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", order=2000,
@@ -100,7 +101,8 @@ public class OfferCodeImpl implements OfferCode {
     protected String offerCode;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date", order = 3000)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date", order = 3000,
+            defaultValue = "today")
     protected Date offerCodeStartDate;
 
     @Column(name = "END_DATE")
@@ -269,4 +271,22 @@ public class OfferCodeImpl implements OfferCode {
     }
 
 
+    @Override
+    public <G extends OfferCode> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OfferCode cloned = createResponse.getClone();
+        cloned.setEndDate(offerCodeEndDate);
+        cloned.setMaxUses(maxUses);
+        if (offer != null) {
+            cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setStartDate(offerCodeStartDate);
+        cloned.setArchived(getArchived());
+        cloned.setOfferCode(offerCode);
+        cloned.setUses(uses);
+        return  createResponse;
+    }
 }

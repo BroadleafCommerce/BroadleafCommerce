@@ -40,6 +40,21 @@ public interface SkuDao {
     public Sku readSkuById(Long skuId);
 
     /**
+     * Queries for a {@code Sku} instance by its Universal Product Code (UPC).
+     * @param upc
+     * @return
+     */
+    public Sku readSkuByUpc(String upc);
+
+    /**
+     * Retrieve a {@link Sku} instance by its external id
+     *
+     * @param externalId the external id of the sku
+     * @return the sku with this external id
+     */
+    public Sku readSkuByExternalId(String externalId);
+
+    /**
      * Persist a {@code Sku} instance to the datastore
      *
      * @param sku the sku to persist
@@ -71,7 +86,7 @@ public interface SkuDao {
      * @param ids the list of primary key values
      * @return the list of skus that match the list of primary key values
      */
-    public List<Sku> readSkusById(List<Long> ids);
+    public List<Sku> readSkusByIds(List<Long> ids);
 
     /**
      * Remove the {@code Sku} instance from the datastore
@@ -102,5 +117,51 @@ public interface SkuDao {
      * @return a {@code Sku} instance based on the Broadleaf entity configuration.
      */
     public Sku create();
+    
+    /**
+     * Returns the number of Skus that are currently active.
+     * 
+     * @return the number of currently active Skus
+     */
+    public Long readCountAllActiveSkus();
+
+    /**
+     * Reads all Skus from the database that are currently active. This method utilizes database paging.
+     * 
+     * It will fetch results in pages. For example, if page = 3 and pageSize = 25, this method would
+     * return rows 75-99 from the database.
+     * 
+     * @param page - the number of the page to get (0 indexed)
+     * @param pageSize - the number of results per page
+     * @return a list of active Skus for the given page
+     */
+    public List<Sku> readAllActiveSkus(int page, int pageSize);
+
+    /**
+     * Returns the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @return the milliseconds to cache the current date/time
+     */
+    public Long getCurrentDateResolution();
+
+    /**
+     * Sets the number of milliseconds that the current date/time will be cached for queries before refreshing.
+     * This aids in query caching, otherwise every query that utilized current date would be different and caching
+     * would be ineffective.
+     *
+     * @param currentDateResolution the milliseconds to cache the current date/time
+     */
+    public void setCurrentDateResolution(Long currentDateResolution);
+
+    /**
+     * Look up a sku that matches the given URI
+     * 
+     * @param uri - the relative URL to look up the sku by
+     * @return List of skus that match the passed in URI.
+     * 
+     */
+    public List<Sku> findSkuByURI(String key);
     
 }

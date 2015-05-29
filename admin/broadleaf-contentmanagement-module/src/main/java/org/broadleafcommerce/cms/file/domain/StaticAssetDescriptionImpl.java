@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
@@ -122,6 +124,18 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     @Override
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
+    }
+
+    @Override
+    public <G extends StaticAssetDescription> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StaticAssetDescription cloned = createResponse.getClone();
+        cloned.setDescription(description);
+        cloned.setLongDescription(longDescription);
+        return createResponse;
     }
 }
 

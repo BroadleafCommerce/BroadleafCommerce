@@ -19,12 +19,13 @@
  */
 package org.broadleafcommerce.common.page.dto;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 
 /**
  * Page fields must be pre-processed (for example to fix image paths).
@@ -42,9 +43,32 @@ public class PageDTO implements Serializable {
     protected String templatePath;
     protected String url;
     protected Integer priority;
-    protected Map<String, String> pageFields = new HashMap<String,String>();
+    protected Map<String, Object> pageFields = new HashMap<String, Object>();
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
+    protected Map<String, String> pageAttributes = new HashMap<String, String>();
+    protected Map<String, Object> foreignPageFields = new HashMap<String, Object>();
+
+    /**
+     * Attempts to obtain the given property value from the dynamic property map first, and then an actual bean property
+     * via a getter
+     * 
+     * @param propertyName
+     * @return
+     */
+    public Object getPropertyValue(String propertyName) {
+        if (getPageFields().containsKey(propertyName)) {
+            return getPageFields().get(propertyName);
+        } else if (getPageAttributes().containsKey(propertyName)) {
+            return getPageAttributes().get(propertyName);
+        } else {
+            try {
+                return BeanUtils.getProperty(this, propertyName);
+            } catch (Exception e) {
+                return null;
+            }
+        }
+    }
 
     public Long getId() {
         return id;
@@ -86,11 +110,11 @@ public class PageDTO implements Serializable {
         this.url = url;
     }
 
-    public Map<String, String> getPageFields() {
+    public Map<String, Object> getPageFields() {
         return pageFields;
     }
 
-    public void setPageFields(Map<String, String> pageFields) {
+    public void setPageFields(Map<String, Object> pageFields) {
         this.pageFields = pageFields;
     }
     
@@ -116,7 +140,37 @@ public class PageDTO implements Serializable {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+    
+    public Map<String, String> getPageAttributes() {
+        return pageAttributes;
+    }
+    
+    public void setPageAttributes(Map<String, String> pageAttributes) {
+        this.pageAttributes = pageAttributes;
     }   
     
-}
+    public Map<String, Object> getForeignPageFields() {
+        return foreignPageFields;
+    }
+    
+    public void setForeignPageFields(Map<String, Object> foreignPageFields) {
+        this.foreignPageFields = foreignPageFields;
+    }
 
+    public void copy(PageDTO original) {
+        description = original.description;
+        id = original.id;
+        localeCode = original.localeCode;
+        templatePath = original.templatePath;
+        url = original.url;
+        priority = original.priority;
+        
+        // Extension Handlers Might Modify This
+        pageFields = new HashMap<String, Object>(original.pageFields);
+        ruleExpression = original.ruleExpression;
+        itemCriteriaDTOList = original.itemCriteriaDTOList;
+        pageAttributes = original.pageAttributes;
+    }
+    
+}

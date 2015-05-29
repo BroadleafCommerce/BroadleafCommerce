@@ -19,10 +19,12 @@
  */
 package org.broadleafcommerce.cms.structure.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -48,10 +50,11 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SC_RULE")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
-public class StructuredContentRuleImpl implements StructuredContentRule {
+public class StructuredContentRuleImpl implements StructuredContentRule, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -73,33 +76,21 @@ public class StructuredContentRuleImpl implements StructuredContentRule {
     @Column(name = "MATCH_RULE", length = Integer.MAX_VALUE - 1)
     protected String matchRule;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentRule#getId()
-     */
     @Override
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentRule#setId(java.lang.Long)
-     */
     @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentRule#getMatchRule()
-     */
     @Override
     public String getMatchRule() {
         return matchRule;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.core.offer.domain.StructuredContentRule#setMatchRule(java.lang.String)
-     */
     @Override
     public void setMatchRule(String matchRule) {
         this.matchRule = matchRule;
@@ -142,5 +133,16 @@ public class StructuredContentRuleImpl implements StructuredContentRule {
         newField.matchRule = matchRule;
 
         return newField;
+    }
+
+    @Override
+    public <G extends StructuredContentRule> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        StructuredContentRule cloned = createResponse.getClone();
+        cloned.setMatchRule(matchRule);
+        return  createResponse;
     }
 }

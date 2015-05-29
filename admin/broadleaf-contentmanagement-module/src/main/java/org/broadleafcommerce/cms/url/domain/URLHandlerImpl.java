@@ -21,14 +21,18 @@ package org.broadleafcommerce.cms.url.domain;
 
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.web.Locatable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -58,7 +62,7 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity {
+public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, ProfileEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -76,13 +80,15 @@ public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity
     @AdminPresentation(friendlyName = "URLHandlerImpl_ID", order = 1, group = "URLHandlerImpl_friendyName", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
-    @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1,
+            helpText = "urlHandlerIncoming_help")
     @Column(name = "INCOMING_URL", nullable = false)
     @Index(name="INCOMING_URL_INDEX", columnNames={"INCOMING_URL"})
     protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)
-    @AdminPresentation(friendlyName = "URLHandlerImpl_newURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "URLHandlerImpl_newURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1,
+            helpText = "urlHandlerNew_help")
     protected String newURL;
 
     @Column(name = "URL_REDIRECT_TYPE")
@@ -134,4 +140,52 @@ public class URLHandlerImpl implements URLHandler, Serializable, AdminMainEntity
         return getIncomingURL();
     }
 
+    @Override
+    public String getLocation() {
+        String location = getIncomingURL();
+        if (location == null) {
+            return null;
+        } else if (hasRegExCharacters(location)) {
+            return getNewURL();
+        } else {
+            return location;
+        }
+    }
+
+    /**
+     * In a preview environment, {@link #getLocation()} attempts to navigate to the 
+     * provided URL.    If the URL contains a Regular Expression, then we can't 
+     * navigate to it. 
+     * 
+     * @param location
+     * @return
+     */
+    protected boolean hasRegExCharacters(String location) {
+        return location.contains(".") ||
+                location.contains("(") ||
+                location.contains(")") ||
+                location.contains("?") ||
+                location.contains("*") ||
+                location.contains("^") ||
+                location.contains("$") ||
+                location.contains("[") ||
+                location.contains("{") ||
+                location.contains("|") ||
+                location.contains("+") ||
+                location.contains("\\");
+    }
+
+    @Override
+    public <G extends URLHandler> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        URLHandler cloned = createResponse.getClone();
+        cloned.setIncomingURL(incomingURL);
+        cloned.setNewURL(newURL);
+        cloned.setUrlRedirectType( URLRedirectType.getInstance(urlRedirectType));
+
+        return createResponse;
+    }
 }

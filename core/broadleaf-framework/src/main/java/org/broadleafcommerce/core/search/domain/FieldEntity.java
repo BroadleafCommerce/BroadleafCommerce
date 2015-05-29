@@ -37,6 +37,7 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
     private static final Map<String, FieldEntity> TYPES = new LinkedHashMap<String, FieldEntity>();
 
     public static final FieldEntity PRODUCT = new FieldEntity("PRODUCT", "product");
+    public static final FieldEntity SKU = new FieldEntity("SKU", "sku");
     public static final FieldEntity CUSTOMER = new FieldEntity("CUSTOMER", "customer");
     public static final FieldEntity ORDER = new FieldEntity("ORDER", "order");
     public static final FieldEntity ORDERITEM = new FieldEntity("ORDERITEM", "orderItem");

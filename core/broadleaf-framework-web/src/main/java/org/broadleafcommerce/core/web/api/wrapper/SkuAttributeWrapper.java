@@ -61,4 +61,68 @@ public class SkuAttributeWrapper extends BaseWrapper implements APIWrapper<SkuAt
     public void wrapSummary(SkuAttribute model, HttpServletRequest request) {
         wrapDetails(model, request);
     }
+
+    
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
+
+    
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    
+    /**
+     * @return the skuId
+     */
+    public Long getSkuId() {
+        return skuId;
+    }
+
+    
+    /**
+     * @param skuId the skuId to set
+     */
+    public void setSkuId(Long skuId) {
+        this.skuId = skuId;
+    }
+
+    
+    /**
+     * @return the attributeName
+     */
+    public String getAttributeName() {
+        return attributeName;
+    }
+
+    
+    /**
+     * @param attributeName the attributeName to set
+     */
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
+    }
+
+    
+    /**
+     * @return the attributeValue
+     */
+    public String getAttributeValue() {
+        return attributeValue;
+    }
+
+    
+    /**
+     * @param attributeValue the attributeValue to set
+     */
+    public void setAttributeValue(String attributeValue) {
+        this.attributeValue = attributeValue;
+    }
 }

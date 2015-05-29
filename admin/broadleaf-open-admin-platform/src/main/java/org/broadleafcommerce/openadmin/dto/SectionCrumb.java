@@ -28,6 +28,7 @@ public class SectionCrumb implements Serializable {
 
     protected String sectionIdentifier;
     protected String sectionId;
+    protected String originalSectionIdentifier;
 
     public String getSectionIdentifier() {
         return sectionIdentifier;
@@ -43,6 +44,14 @@ public class SectionCrumb implements Serializable {
 
     public void setSectionId(String sectionId) {
         this.sectionId = sectionId;
+    }
+
+    public String getOriginalSectionIdentifier() {
+        return originalSectionIdentifier;
+    }
+
+    public void setOriginalSectionIdentifier(String originalSectionIdentifier) {
+        this.originalSectionIdentifier = originalSectionIdentifier;
     }
 
     @Override

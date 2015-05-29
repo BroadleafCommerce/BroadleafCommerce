@@ -58,8 +58,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
-import javax.validation.constraints.NotNull;
 
 /**
  * The Class OfferServiceImpl.
@@ -424,7 +424,7 @@ public class OfferServiceImpl implements OfferService {
     }
     
     @Override
-    public boolean verifyMaxCustomerUsageThreshold(@NotNull Customer customer, OfferCode code) {
+    public boolean verifyMaxCustomerUsageThreshold(@Nonnull Customer customer, OfferCode code) {
         boolean underCodeMaxUses = true;
         if (code.isLimitedUse()) {
             Long currentCodeUses = offerAuditService.countOfferCodeUses(code.getId());

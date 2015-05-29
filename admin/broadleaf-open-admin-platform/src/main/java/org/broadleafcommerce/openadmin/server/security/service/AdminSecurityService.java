@@ -62,7 +62,7 @@ public interface AdminSecurityService {
      * Looks up the corresponding AdminUser and emails the address on file with
      * the associated username.
      *
-     * @param emailAddress
+     * @param emailAddress email address of user to email
      * @return Response can contain errors including (notFound)
      *
      */
@@ -71,7 +71,7 @@ public interface AdminSecurityService {
     /**
      * Generates an access token and then emails the user.
      *
-     * @param userName
+     * @param userName the username of the user to send a password reset email
      * @return Response can contain errors including (invalidEmail, invalidUsername, inactiveUser)
      * 
      */
@@ -81,23 +81,37 @@ public interface AdminSecurityService {
      * Updates the password for the passed in user only if the passed
      * in token is valid for that user.
      *
-     * @param username Name of the user
-     * @param token Valid reset token
-     * @param password new password
-     *
+     * @param username the username of the user
+     * @param token a valid reset token from the email
+     * @param password the new desired password
+     * @param confirmPassword the password confirmation to match password
      * @return Response can contain errors including (invalidUsername, inactiveUser, invalidToken, invalidPassword, tokenExpired, passwordMismatch)
      */
     GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword);
+
+    /**
+     * Change a user's password only if oldPassword matches what's stored for that user
+     *
+     * @param username the username to change the password for
+     * @param oldPassword the user's current password
+     * @param password the desired new password
+     * @param confirmPassword the confirm password to ensure it matches password
+     * @return Response can contain errors including (invalidUser, emailNotFound, inactiveUser, invalidPassword, passwordMismatch)
+     */
     GenericResponse changePassword(String username, String oldPassword, String password, String confirmPassword);
     
     /**
-     * @deprecated use {@link #getSaltSource()} instead
+     * @deprecated use {@link #getSaltSource()} instead, this will be removed in 4.2
+     *
+     * @return the currently used salt string
      */
     @Deprecated
     public String getSalt();
     
     /**
-     * @deprecated use {@link #setSaltSource(SaltSource)} instead
+     * @deprecated use {@link #setSaltSource(SaltSource)} instead, this will be removed in 4.2
+     *
+     * @param salt the new salt string to use
      */
     @Deprecated
     public void setSalt(String salt);
@@ -105,32 +119,44 @@ public interface AdminSecurityService {
     /**
      * Returns the {@link SaltSource} used with the blAdminPasswordEncoder to encrypt the user password. Usually configured in
      * applicationContext-admin-security.xml. This is not a required property and will return null if not configured
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
+     *
+     * @return the currently used {@link SaltSource}
      */
+    @Deprecated
     public SaltSource getSaltSource();
     
     /**
-     * Sets the {@link SaltSource} used with blAdminPasswordencoder to encrypt the user password. Usually configured within
+     * Sets the {@link SaltSource} used with blAdminPasswordEncoder to encrypt the user password. Usually configured within
      * applicationContext-admin-security.xml
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
      * 
-     * @param saltSource
+     * @param saltSource the new {@link SaltSource} to use
      */
+    @Deprecated
     public void setSaltSource(SaltSource saltSource);
     
     /**
      * Gets the salt object for the current admin user. By default this delegates to {@link #getSaltSource()}. If there is
      * not a {@link SaltSource} configured ({@link #getSaltSource()} returns null) then this also returns null.
+     *
+     * @deprecated the new {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} handles salting internally, this will be removed in 4.2
      * 
-     * @param user
-     * @param unencodedPassword
+     * @param user the {@link AdminUser} to get {@link org.springframework.security.core.userdetails.UserDetails UserDetails} from
+     * @param unencodedPassword the unencoded password
      * @return the salt for the current admin user
      */
+    @Deprecated
     public Object getSalt(AdminUser user, String unencodedPassword);
 
     /**
      * Returns a list of admin users that match the given email. This could potentially return more than one user if the
      * admin.user.requireUniqueEmailAddress property is set to false.
-     * @param email
-     * @return
+     *
+     * @param email the email address to search for
+     * @return a {@link List} of {@link AdminUser} matching the provided email address
      */
     public List<AdminUser> readAdminUsersByEmail(String email);
 

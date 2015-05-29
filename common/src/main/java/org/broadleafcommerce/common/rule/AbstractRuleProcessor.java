@@ -19,15 +19,14 @@
  */
 package org.broadleafcommerce.common.rule;
 
-import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.mvel2.CompileException;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +36,7 @@ public abstract class AbstractRuleProcessor<T> implements RuleProcessor<T> {
     protected final Log LOG = LogFactory.getLog(this.getClass());
 
     @SuppressWarnings("unchecked")
-    protected Map<String, Serializable> expressionCache = Collections.synchronizedMap(new LRUMap(1000));
+    protected Map<String, Serializable> expressionCache = new EfficientLRUMap<String, Serializable>(1000);
     protected ParserContext parserContext;
     protected Map<String, String> contextClassNames = new HashMap<String, String> ();
 

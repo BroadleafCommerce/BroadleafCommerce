@@ -32,6 +32,7 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTOToMVELTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -100,7 +101,7 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                             if (dto.getId() != null) {
                                 boolean foundIdToUpdate = false;
                                 for (QuantityBasedRule quantityBasedRule : existingRules) {
-                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(em, quantityBasedRule.getClass(), dto.getId());
+                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(quantityBasedRule.getClass(), dto.getId());
                                     if (sandBoxVersionId == null) {
                                         sandBoxVersionId = dto.getId();
                                     }
@@ -146,4 +147,8 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                 populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
     }
 
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE - 1000;
+    }
 }

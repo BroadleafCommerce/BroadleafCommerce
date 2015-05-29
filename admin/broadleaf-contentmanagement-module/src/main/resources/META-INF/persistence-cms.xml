@@ -26,14 +26,15 @@
     <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
         <mapping-file>config/bc/jpa/domain/Page.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/StructuredContent.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/StaticAsset.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/URLHandler.orm.xml</mapping-file>
         <class>org.broadleafcommerce.common.locale.domain.LocaleImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldGroupImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageAttributeImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageFieldImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageTemplateImpl</class>
+        <class>org.broadleafcommerce.cms.page.domain.PageTemplateFieldGroupXrefImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageRuleImpl</class>
         <class>org.broadleafcommerce.cms.page.domain.PageItemCriteriaImpl</class>
         <class>org.broadleafcommerce.cms.file.domain.StaticAssetImpl</class>
@@ -43,24 +44,14 @@
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplateImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>
-        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl</class>        
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldXrefImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentItemCriteriaImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationImpl</class>
         <class>org.broadleafcommerce.cms.field.domain.FieldEnumerationItemImpl</class>
-        <class>org.broadleafcommerce.cms.structure.domain.CriteriaStructuredContentXref</class>
         <class>org.broadleafcommerce.cms.url.domain.URLHandlerImpl</class>
         <exclude-unlisted-classes/>
-        <properties>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory"/>
-            <property name="hibernate.cache.use_second_level_cache" value="true"/>
-            <property name="hibernate.cache.use_query_cache" value="true"/>
-            <property name="hibernate.generate_statistics" value="false" />
-            <property name="hibernate.archive.autodetection" value="false" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
-            <property name="hibernate.id.new_generator_mappings" value="true"/>
-        </properties>
+        <!-- Inherits JPA properties from persistence-common.xml -->
     </persistence-unit>
 
     <persistence-unit name="blCMSStorage" transaction-type="RESOURCE_LOCAL">
@@ -77,6 +68,7 @@
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

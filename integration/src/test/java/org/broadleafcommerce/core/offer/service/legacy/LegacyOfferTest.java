@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.offer.service.legacy;
 
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.SkuDaoDataProvider;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -545,6 +547,12 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         country.setName("United States");
         
         countryService.save(country);
+
+        ISOCountry isoCountry = new ISOCountryImpl();
+        isoCountry.setAlpha2("US");
+        isoCountry.setName("UNITED STATES");
+
+        isoService.save(isoCountry);
         
         State state = new StateImpl();
         state.setAbbreviation("TX");
@@ -555,6 +563,8 @@ public class LegacyOfferTest extends LegacyCommonSetupBaseTest {
         
         address.setState(state);
         address.setCountry(country);
+        address.setIsoCountrySubdivision("US-TX");
+        address.setIsoCountryAlpha2(isoCountry);
         
         for (OrderItem orderItem : order.getOrderItems()) {
             FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();

@@ -20,6 +20,7 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
@@ -80,6 +81,7 @@ public class SiteMapGeneratorTest {
         fileService.removeResource("/sitemap_index.xml");
         fileService.removeResource("/sitemap1.xml");
         fileService.removeResource("/sitemap2.xml");
+        fileService.removeResource("/sitemap3.xml");
         fileService.removeResource("/sitemap.xml");
     }
 
@@ -90,32 +92,43 @@ public class SiteMapGeneratorTest {
 
     protected void testGenerator(SiteMapGeneratorConfiguration smgc, SiteMapGenerator smg, int maxEntriesPerFile)
             throws SiteMapException, IOException {
-
         List<SiteMapGeneratorConfiguration> smgcList = new ArrayList<SiteMapGeneratorConfiguration>();
         smgcList.add(smgc);
+        testGenerator(smgcList, smg, maxEntriesPerFile);
+    }
 
-        SiteMapConfiguration smc = new SiteMapConfigurationImpl();
-        smc.setMaximumUrlEntriesPerFile(maxEntriesPerFile);
-        smc.setSiteMapGeneratorConfigurations(smgcList);
-        smc.setIndexedSiteMapFileName("sitemap_index.xml");
-        smgc.setSiteMapConfiguration(smc);
+    protected void testGenerator(List<SiteMapGeneratorConfiguration> smgcList, SiteMapGenerator smg, int maxEntriesPerFile)
+            throws SiteMapException, IOException {
 
-        List<ModuleConfiguration> mcList = new ArrayList<ModuleConfiguration>();
-        mcList.add(smc);
+        if (CollectionUtils.isNotEmpty(smgcList)) {
 
-        ModuleConfigurationService mcs = EasyMock.createMock(ModuleConfigurationService.class);
-        EasyMock.expect(mcs.findActiveConfigurationsByType(ModuleConfigurationType.SITE_MAP)).andReturn(mcList);
-        EasyMock.replay(mcs);
+            SiteMapConfiguration smc = new SiteMapConfigurationImpl();
+            smc.setMaximumUrlEntriesPerFile(maxEntriesPerFile);
+            smc.setSiteMapGeneratorConfigurations(smgcList);
+            smc.setIndexedSiteMapFileName("sitemap_index.xml");
 
-        List<SiteMapGenerator> smgList = new ArrayList<SiteMapGenerator>();
-        smgList.add(smg);
+            for (SiteMapGeneratorConfiguration smgc : smgcList) {
+                smgc.setSiteMapConfiguration(smc);
+            }
 
-        siteMapService.setGzipSiteMapFiles(false);
-        siteMapService.setModuleConfigurationService(mcs);
-        siteMapService.setSiteMapGenerators(smgList);
-        SiteMapGenerationResponse smgr = siteMapService.generateSiteMap();
+            List<ModuleConfiguration> mcList = new ArrayList<ModuleConfiguration>();
+            mcList.add(smc);
 
-        Assert.assertFalse(smgr.isHasError());
+            ModuleConfigurationService mcs = EasyMock.createMock(ModuleConfigurationService.class);
+            EasyMock.expect(mcs.findActiveConfigurationsByType(ModuleConfigurationType.SITE_MAP)).andReturn(mcList);
+            EasyMock.replay(mcs);
+
+            List<SiteMapGenerator> smgList = new ArrayList<SiteMapGenerator>();
+            smgList.add(smg);
+
+            siteMapService.setGzipSiteMapFiles(false);
+            siteMapService.setModuleConfigurationService(mcs);
+            siteMapService.setSiteMapGenerators(smgList);
+            SiteMapGenerationResponse smgr = siteMapService.generateSiteMap();
+
+            Assert.assertFalse(smgr.isHasError());
+        }
+
     }
 
     protected void compareFiles(File file1, String pathToFile2) throws IOException {

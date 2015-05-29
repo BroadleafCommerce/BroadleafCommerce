@@ -37,98 +37,105 @@ import javax.persistence.EntityManager;
 public interface SandBoxHelper {
 
     /**
-     * A query hint that can be passed to Query.setHint(). Should
-     * be a regular expression matching Hibernate filter names. This
-     * drives which sandbox filters will be active for the query.
-     */
-    public static class QueryHints {
-
-        public static final String FILTER_INCLUDE = "filterInclude";
-
-    }
-
-    /**
      * Retrieve a list of values that includes the the original ids passed in and any
      * sandbox versions of those ids, if available. This is useful for some queries that
      * require search values for both the original id and the sandbox id.
      *
-     * @param em the Entity Manager
      * @param type the type of the entity in question
      * @param originalIds one or more ids values for which sandbox versions should be included
      * @return the merged id list
      */
-    List<Long> mergeCloneIds(EntityManager em, Class<?> type, Long... originalIds);
+    List<Long> mergeCloneIds(Class<?> type, Long... originalIds);
 
     /**
      * Retrieve a map keyed by sandbox id, with the value being the matching original
      * item id for that sandbox item. Only members from the ids list passed
      * in that have a sandbox counterpart are included.
      *
-     * @param em the Entity Manager
      * @param type the type of the entity in question
      * @param ids list of ids to check
      * @return the map of sandbox to original ids
      */
-    BiMap<Long, Long> getSandBoxToOriginalMap(EntityManager em, Class<?> type, Long... ids);
+    BiMap<Long, Long> getSandBoxToOriginalMap(Class<?> type, Long... ids);
 
     /**
      * Return the sandbox version id for the requested original id. Will return null
      * if no sandbox version is available.
      *
-     * @param entityManager the Entity Manager
      * @param linkedObjectType the type of the entity in question
      * @param requestedParent the id to check
      * @return the sandbox version, or null
      */
-    Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent);
+    Long getSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent);
+
+    Long getCascadedProductionStateId(Class<?> linkedObjectType, Long requestedParent);
 
     /**
      * Return the sandbox version id for the requested original id. Will return null
      * if no sandbox version is available.
      *
-     * @param entityManager the Entity Manager
      * @param linkedObjectType the type of the entity in question
      * @param requestedParent the id to check
-     * @param includeSandBoxInheritance override whether or not parent sandbox ids should be included in the query. Can be null - True by default.
      * @return the sandbox version, or null
      */
-    Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
+    //Long getSandBoxVersionId(EntityManager entityManager, Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
+
+    //Long getCascadedProductionStateId(EntityManager em, Class<?> linkedObjectType, Long requestedParent,
+                                      //Boolean includeSandBoxInheritance);
+
+    //Long getCombinedSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent);
+
+    //Long getCombinedSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent, Boolean includeSandBoxInheritance);
 
     /**
      * Return the original id for the requested id. Will return the passed in id if
      * the type is not sandboxable. Will return null if the passed in id
      * is not a sandbox record, or if it's a sandbox add.
      *
-     * @param em the Entity Manager
      * @param type the type of the entity in question
      * @param id the id to check
      * @return the original id for the requested sandbox id
      */
-    OriginalIdResponse getOriginalId(EntityManager em, Class<?> type, Long id);
+    OriginalIdResponse getOriginalId(Class<?> type, Long id);
 
     /**
-     * Setup basic required fields for sandbox support
+     * Return the original id for the requested id as if this was a production request. The id passed
+     * in should be a production id. You will receive back the original id for this production id. The
+     * only time this makes sense is when the passed in id is for the production record from a standard
+     * site. This method is useful when you want the template record id for a standard site production id
+     * while in a sandbox context.
      *
-     * @param clone the entity instance to setup
-     * @param em the Entity Manager
+     * @param type
+     * @param id
+     * @return
      */
-    void setupSandBoxState(Object clone, EntityManager em);
+    OriginalIdResponse getProductionOriginalId(Class<?> type, Long id);
 
-    /**
-     * Archive an object so that it is no longer recognized
-     * by the sandbox support
-     *
-     * @param start the object to archive
-     * @param em the Entity Manager
-     */
-    void archiveObject(Object start, EntityManager em);
+    Long getOriginalId(Object test);
 
-    /**
-     * Retrieve the field names related to sandbox support
-     *
-     * @return the sandbox support fields
-     */
-    String[] getSandBoxDiscriminatorFieldList();
+//    /**
+//     * Setup basic required fields for sandbox support
+//     *
+//     * @param clone the entity instance to setup
+//     * @param em the Entity Manager
+//     */
+//    void setupSandBoxState(Object clone, EntityManager em);
+
+//    /**
+//     * Archive an object so that it is no longer recognized
+//     * by the sandbox support
+//     *
+//     * @param start the object to archive
+//     * @param em the Entity Manager
+//     */
+//    void archiveObject(Object start, EntityManager em);
+
+//    /**
+//     * Retrieve the field names related to sandbox support
+//     *
+//     * @return the sandbox support fields
+//     */
+//    String[] getSandBoxDiscriminatorFieldList();
 
     /**
      * Whether or not the class is sandboxable
@@ -161,6 +168,14 @@ public interface SandBoxHelper {
      * @param includeDeleted whether or not to include deleted sandbox items
      */
     void optionallyIncludeDeletedItemsInQueriesAndCollections(Runnable runnable, boolean includeDeleted);
+
+    /**
+     *
+     * @param em
+     * @param startFieldValue
+     * @return
+     */
+    Long getProductionRecordIdIfApplicable(EntityManager em, Object startFieldValue);
 
     public class OriginalIdResponse {
 

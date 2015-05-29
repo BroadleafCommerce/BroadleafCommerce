@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -84,6 +86,19 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public Category readCategoryById(Long categoryId) {
         return em.find(CategoryImpl.class, categoryId);
+    }
+
+    @Override
+    public Category readCategoryByExternalId(@Nonnull String externalId) {
+        TypedQuery<Category> query = new TypedQueryBuilder<Category>(Category.class, "cat")
+                .addRestriction("cat.externalId", "=", externalId)
+                .toQuery(em);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
@@ -175,7 +190,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readAllSubCategories(Category category) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
-        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
+        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, category.getId()));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
@@ -185,7 +200,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readAllSubCategories(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES", Category.class);
-        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
+        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, category.getId()));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
         query.setFirstResult(offset);
@@ -197,7 +212,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readActiveSubCategoriesByCategory(Category category) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
-        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
+        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, category.getId()));
         query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
@@ -208,7 +223,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public List<Category> readActiveSubCategoriesByCategory(Category category, int limit, int offset) {
         TypedQuery<Category> query = em.createNamedQuery("BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY", Category.class);
-        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(em, CategoryImpl.class, category.getId()));
+        query.setParameter("parentCategoryId", sandBoxHelper.mergeCloneIds(CategoryImpl.class, category.getId()));
         query.setParameter("currentDate", getCurrentDateAfterFactoringInDateResolution());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");

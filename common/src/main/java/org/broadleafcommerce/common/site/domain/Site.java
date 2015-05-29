@@ -20,6 +20,7 @@
 package org.broadleafcommerce.common.site.domain;
 
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 
 import java.io.Serializable;
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * Created by bpolster.
  */
-public interface Site extends Serializable {
+public interface Site extends Serializable, Status {
 
     /**
      * Unique/internal id for a site.
@@ -108,7 +109,9 @@ public interface Site extends Serializable {
      * this site has access to
      *
      * @return a list of catalog groupings
+     * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3
      */
+    @Deprecated
     public List<Catalog> getCatalogs();
 
     /**
@@ -116,7 +119,9 @@ public interface Site extends Serializable {
      * this site has access to
      *
      * @param catalogs a list of catalog groupings
+     * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3
      */
+    @Deprecated
     public void setCatalogs(List<Catalog> catalogs);
 
     /**
@@ -137,6 +142,8 @@ public interface Site extends Serializable {
      * This method will return true when the given site was created based on a template.
      * 
      * @return whether or not this site is a TemplateSite
+     * @deprecated Not used by Broadleaf - scheduled to remove on or after 3.3     
      */
+    @Deprecated
     public boolean isTemplateSite();
 }

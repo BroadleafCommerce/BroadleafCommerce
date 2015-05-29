@@ -19,11 +19,12 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
-import org.broadleafcommerce.core.search.domain.SearchFacet;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -45,7 +46,7 @@ import javax.annotation.Nullable;
  * @author Jeff Fischer
  * 
  */
-public interface Category extends Serializable {
+public interface Category extends Serializable, MultiTenantCloneable<Category> {
 
     /**
      * Gets the primary key.
@@ -78,19 +79,43 @@ public interface Category extends Serializable {
     public void setName(@Nonnull String name);
 
     /**
-     * Gets the default parent category.
-     * 
+     * Gets the default parent category. This method will delegate to
+     * {@link #getParentCategory()} by default, unless the "use.legacy.default.category.mode" property is set to
+     * true in the implementation's property file. If set to true, this method will use legacy behavior,
+     * which is to return the deprecated defaultParentCategory field.
+     *
+     * @deprecated use {@link #getParentCategory()} instead
      * @return the default parent category
      */
+    @Deprecated
     @Nullable
     public Category getDefaultParentCategory();
 
     /**
-     * Sets the default parent category.
-     * 
+     * Sets the default parent category. This method will delegate to
+     * {@link #setParentCategory(Category)} by default, unless the "use.legacy.default.category.mode" property is set to
+     * true in the implementation's property file. If set to true, this method will use legacy behavior,
+     * which is to set the deprecated defaultParentCategory field.
+     *
+     * @deprecated use {@link #setParentCategory(Category)} instead
      * @param defaultParentCategory the new default parent category
      */
+    @Deprecated
     public void setDefaultParentCategory(@Nullable Category defaultParentCategory);
+
+    /**
+     * Return the category that is the parent of this category - if applicable
+     *
+     * @return
+     */
+    Category getParentCategory();
+
+    /**
+     * Set the parent category of this category
+     *
+     * @param category
+     */
+    void setParentCategory(Category category);
 
     /**
      * Gets the url. The url represents the presentation layer destination for
@@ -112,6 +137,18 @@ public interface Category extends Serializable {
      * @param url the new url for the presentation layer component for this category
      */
     public void setUrl(@Nullable String url);
+
+    /**
+     * @return the flag for whether or not the URL should not be generated in the admin
+     */
+    public Boolean getOverrideGeneratedUrl();
+
+    /**
+     * Sets the flag for whether or not the URL should not be generated in the admin
+     * 
+     * @param overrideGeneratedUrl
+     */
+    public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl);
 
     /**
      * Gets the url key. The url key is used as part of SEO url generation for this
@@ -249,34 +286,27 @@ public interface Category extends Serializable {
     public void setChildCategoryURLMap(@Nonnull Map<String, List<Long>> childCategoryURLMap);
 
     /**
-     * Gets the category images.
-     * @deprecated replaced by {@link #getCategoryMedia()}
+     * Gets the category media map. The key is of arbitrary meaning
+     * and the {@code Media} instance stores information about the
+     * media itself (image url, etc...)
      * 
-     * @return the category images
+     * @deprecated use {@link #getCategoryMediaXref()} instead
+     * @return the category Media
      */
-    @Deprecated
     @Nonnull
-    public Map<String, String> getCategoryImages();
+    @Deprecated
+    public Map<String, Media> getCategoryMedia() ;
 
     /**
-     * Gets the category image.
-     * @deprecated replaced by {@link #getCategoryMedia()}
-     *
-     * @param imageKey the image key
-     * @return the category image
+     * Sets the category media. The key is of arbitrary meaning
+     * and the {@code Media} instance stores information about the
+     * media itself (image url, etc...)
+     * 
+     * @deprecated use {@link #setCategoryMediaXref(Map)} instead
+     * @param categoryMedia the category media
      */
     @Deprecated
-    @Nullable
-    public String getCategoryImage(@Nonnull String imageKey);
-
-    /**
-     * Sets the category images.
-     * @deprecated replaced by {@link #setCategoryMedia(java.util.Map)}
-     *
-     * @param categoryImages the category images
-     */
-    @Deprecated
-    public void setCategoryImages(@Nonnull Map<String, String> categoryImages);
+    public void setCategoryMedia(@Nonnull Map<String, Media> categoryMedia);
 
     /**
      * Gets the category media map. The key is of arbitrary meaning
@@ -285,8 +315,7 @@ public interface Category extends Serializable {
      * 
      * @return the category Media
      */
-    @Nonnull
-    public Map<String, Media> getCategoryMedia() ;
+    public Map<String, CategoryMediaXref> getCategoryMediaXref();
 
     /**
      * Sets the category media. The key is of arbitrary meaning
@@ -295,7 +324,7 @@ public interface Category extends Serializable {
      * 
      * @param categoryMedia the category media
      */
-    public void setCategoryMedia(@Nonnull Map<String, Media> categoryMedia);
+    public void setCategoryMediaXref(Map<String, CategoryMediaXref> categoryMediaXref);
 
     /**
      * Gets the long description.
@@ -403,13 +432,13 @@ public interface Category extends Serializable {
      * 
      * @param excludedSearchFacets
      */
-    public void setExcludedSearchFacets(List<SearchFacet> excludedSearchFacets);
+    public void setExcludedSearchFacets(List<CategoryExcludedSearchFacet> excludedSearchFacets);
 
     /**
      * Gets the excluded SearchFacets
      * @return the excluded SearchFacets
      */
-    public List<SearchFacet> getExcludedSearchFacets();
+    public List<CategoryExcludedSearchFacet> getExcludedSearchFacets();
 
     /**
      * Returns a list of CategorySearchFacets that takes into consideration the search facets for this Category,
@@ -601,9 +630,14 @@ public interface Category extends Serializable {
 
     public void setAllChildCategoryXrefs(List<CategoryXref> childCategories);
 
-
+    /**
+     * Retrieve all the xref entities linking this category to parent categories
+     */
     public List<CategoryXref> getAllParentCategoryXrefs();
 
+    /**
+     * Set all the xref entities linking this product to parent categories
+     */
     public void setAllParentCategoryXrefs(List<CategoryXref> allParentCategories);
 
     /**
@@ -677,4 +711,20 @@ public interface Category extends Serializable {
      * @param taxCode
      */
     public void setTaxCode(String taxCode);
+
+    /**
+     * Intended to hold any unique identifier not tied to the Broadleaf Database Sequence Identifier.
+     * For example, many implementations may integrate or import/export
+     * data from other systems that manage their own unique identifiers.
+     *
+     * @return external ID
+     */
+    public String getExternalId();
+
+    /**
+     * Sets a unique external ID
+     * @param externalId
+     */
+    public void setExternalId(String externalId);
+
 }

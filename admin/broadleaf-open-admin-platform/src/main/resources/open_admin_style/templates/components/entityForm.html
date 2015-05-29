@@ -25,7 +25,7 @@
     <input type="hidden" th:field="*{sectionCrumbs}"  />
     <input type="hidden" th:field="*{mainEntityName}" />
 
-    <div class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
+    <div th:unless="${hideTopLevelErrors}" class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
         <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
             <b>[[${tab.key}]]</b>
             <span th:if="${#lists.size(field.value) &gt; 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">
@@ -37,11 +37,11 @@
             <br />
         </div>
     </div>
-    
+
     <div class="tabs-container" th:if="${renderTabs}">
         <dl class="tabs" th:classappend="${additionalTabClasses}">
             <dd th:each="tab : ${entityForm.tabs}"
-                th:class="${(tabStat.first and tab.isVisible) or ((not entityForm.tabs[tabStat.index-1].isVisible) and tab.isVisible)}? 'active'"
+                th:class="${#ef.isTabActive(entityForm, tab)}? 'active'"
                 th:if="${tab.isVisible}">
                 <a th:href="'#tab' + ${tabStat.count}" 
                    th:classappend="${tab.tabClass}"
@@ -59,6 +59,11 @@
             <fieldset th:each="group : ${tab.fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'">
                 <legend th:text="${group.title}" />
 
+                <comment th:remove="all">
+                <!-- *** IMPORTANT *** -->
+                <!-- When changing this block of code, make sure standaloneField.html is also updated -->
+                <!-- *** IMPORTANT *** -->
+                </comment>
                 <div th:each="field : ${group.fields}" 
                      th:if="${field.name}" 
                      th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 
@@ -100,7 +105,8 @@
         <button th:each="action : ${entityForm.actions}" 
             class="button radius dark" 
             th:type="${action.buttonType}"
-            th:attr="data-action=${action.urlPostfix}"
+            th:attr="data-url=@{${(#strings.isEmpty(action.urlOverride)) ? ('/' + sectionKey + action.urlPostfix) : action.urlOverride}},
+                     data-action=${action.urlPostfix}"
             th:classappend="${action.buttonClass}" th:unless="${hideActions}">
             <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
         </button>

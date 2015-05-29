@@ -72,6 +72,12 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     protected PaymentGatewayWebResponsePrintService webResponsePrintService;
 
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO) throws IllegalArgumentException {
+        if (LOG.isErrorEnabled()) {
+            if (paymentGatewayCheckoutService == null) {
+                LOG.trace("applyPaymentToOrder: PaymentCheckoutService is null. Please check your configuration.");
+            }
+        }
+
         if (paymentGatewayCheckoutService != null) {
             return paymentGatewayCheckoutService.applyPaymentToOrder(responseDTO, getConfiguration());
         }
@@ -79,17 +85,45 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     }
 
     public String initiateCheckout(Long orderId) throws Exception {
-        if (paymentGatewayCheckoutService != null && orderId != null) {
-            return paymentGatewayCheckoutService.initiateCheckout(orderId);
+        String orderNumber = null;
+        if (LOG.isErrorEnabled()) {
+            if (paymentGatewayCheckoutService == null) {
+                LOG.trace("initiateCheckout: PaymentCheckoutService is null. Please check your configuration.");
+            }
         }
-        return null;
+
+        if (paymentGatewayCheckoutService != null && orderId != null) {
+            orderNumber = paymentGatewayCheckoutService.initiateCheckout(orderId);
+        }
+
+        if (orderNumber == null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("The result from calling initiateCheckout with paymentCheckoutService and orderId: " + orderId + " is null");
+            }
+        }
+
+        return orderNumber;
     }
 
     public String lookupOrderNumberFromOrderId(PaymentResponseDTO responseDTO) {
-        if (paymentGatewayCheckoutService != null) {
-            return paymentGatewayCheckoutService.lookupOrderNumberFromOrderId(responseDTO);
+        String orderNumber = null;
+        if (LOG.isErrorEnabled()) {
+            if (paymentGatewayCheckoutService == null) {
+                LOG.trace("lookupOrderNumberFromOrderId: PaymentCheckoutService is null. Please check your configuration.");
+            }
         }
-        return null;
+
+        if (paymentGatewayCheckoutService != null) {
+            orderNumber = paymentGatewayCheckoutService.lookupOrderNumberFromOrderId(responseDTO);
+        }
+
+        if (orderNumber == null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("The result from calling lookupOrderNumberFromOrderId is null");
+            }
+        }
+
+        return orderNumber;
     }
 
     // ***********************************************
@@ -162,13 +196,17 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
 
         } catch (Exception e) {
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("HTTPRequest - " + webResponsePrintService.printRequest(request)) ;
+            if (LOG.isErrorEnabled()) {
+                LOG.error("HTTPRequest - " + webResponsePrintService.printRequest(request));
 
-                LOG.trace("An exception was caught either from processing the response and applying the payment to " +
+                LOG.error("An exception was caught either from processing the response and applying the payment to " +
                         "the order, or an activity in the checkout workflow threw an exception. Attempting to " +
                         "mark the payment as invalid and delegating to the payment module to handle any other " +
-                        "exception processing. The error caught was: " + e.getMessage() + " : " + e.toString());
+                        "exception processing. The error caught was: " + e);
+            }
+            
+            if (paymentGatewayCheckoutService != null && orderPaymentId != null) {
+                paymentGatewayCheckoutService.markPaymentAsInvalid(orderPaymentId);
             }
 
             handleProcessingException(e, redirectAttributes);

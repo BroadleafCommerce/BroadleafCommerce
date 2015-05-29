@@ -40,6 +40,8 @@ public class BillingInfoForm implements Serializable {
 
     public BillingInfoForm() {
         address.setPhonePrimary(new PhoneImpl());
+        address.setPhoneSecondary(new PhoneImpl());
+        address.setPhoneFax(new PhoneImpl());
     }
 
     public Address getAddress() {

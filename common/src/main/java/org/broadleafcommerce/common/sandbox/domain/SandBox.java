@@ -19,11 +19,13 @@
  */
 package org.broadleafcommerce.common.sandbox.domain;
 
+import org.broadleafcommerce.common.persistence.Status;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public interface SandBox extends Serializable {
+public interface SandBox extends Serializable, Status {
 
     Long getId();
 
@@ -72,6 +74,12 @@ public interface SandBox extends Serializable {
      * @return whether or not this sandbox, or any of its parent sandboxes, has type DEFAULT.
      */
     public boolean getIsInDefaultHierarchy();
+
+    public void setArchived(Character archived);
+
+    public Character getArchived();
+
+    public boolean isActive();
 
 }
 

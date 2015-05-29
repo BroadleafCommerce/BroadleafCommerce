@@ -19,13 +19,15 @@
  */
 package org.broadleafcommerce.openadmin.server.service;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
+import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.openadmin.dto.BatchDynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.BatchPersistencePackage;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
@@ -38,11 +40,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
-import org.codehaus.jackson.map.util.LRUMap;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Constructor;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -53,13 +54,16 @@ import javax.annotation.Resource;
 public class DynamicEntityRemoteService implements DynamicEntityService {
 
     private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
-    protected static final Map<BatchPersistencePackage, BatchDynamicResultSet> METADATA_CACHE = MapUtils.synchronizedMap(new LRUMap<BatchPersistencePackage, BatchDynamicResultSet>(100, 1000));
+    protected static final Map<BatchPersistencePackage, BatchDynamicResultSet> METADATA_CACHE = Collections.synchronizedMap(new LRUMap<BatchPersistencePackage, BatchDynamicResultSet>(1000));
 
     @Resource(name="blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
     @Resource(name="blPersistenceThreadManager")
     protected PersistenceThreadManager persistenceThreadManager;
+
+    @Resource(name="blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
 
     protected ServiceException recreateSpecificServiceException(ServiceException e, String message, Throwable cause) {
         try {
@@ -139,8 +143,79 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     }
 
     @Override
-    @Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
     public PersistenceResponse add(final PersistencePackage persistencePackage) throws ServiceException {
+        final PersistenceResponse[] response = new PersistenceResponse[1];
+        try {
+            transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                @Override
+                public void execute() throws Throwable {
+                    response[0] = nonTransactionalAdd(persistencePackage);
+                }
+
+                @Override
+                public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+                    return super.shouldRetryOnTransactionLockAcquisitionFailure();
+                }
+            }, RuntimeException.class);
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof ServiceException) {
+                throw (ServiceException) e.getCause();
+            }
+            throw e;
+        }
+        return response[0];
+    }
+
+    @Override
+    public PersistenceResponse update(final PersistencePackage persistencePackage) throws ServiceException {
+        final PersistenceResponse[] response = new PersistenceResponse[1];
+        try {
+            transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                @Override
+                public void execute() throws Throwable {
+                    response[0] = nonTransactionalUpdate(persistencePackage);
+                }
+
+                @Override
+                public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+                    return super.shouldRetryOnTransactionLockAcquisitionFailure();
+                }
+            }, RuntimeException.class);
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof ServiceException) {
+                throw (ServiceException) e.getCause();
+            }
+            throw e;
+        }
+        return response[0];
+    }
+
+    @Override
+    public PersistenceResponse remove(final PersistencePackage persistencePackage) throws ServiceException {
+        final PersistenceResponse[] response = new PersistenceResponse[1];
+        try {
+            transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                @Override
+                public void execute() throws Throwable {
+                    response[0] = nonTransactionalRemove(persistencePackage);
+                }
+
+                @Override
+                public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+                    return super.shouldRetryOnTransactionLockAcquisitionFailure();
+                }
+            }, RuntimeException.class);
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof ServiceException) {
+                throw (ServiceException) e.getCause();
+            }
+            throw e;
+        }
+        return response[0];
+    }
+
+    @Override
+    public PersistenceResponse nonTransactionalAdd(final PersistencePackage persistencePackage) throws ServiceException {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
@@ -167,8 +242,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     }
 
     @Override
-    @Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
-    public PersistenceResponse update(final PersistencePackage persistencePackage) throws ServiceException {
+    public PersistenceResponse nonTransactionalUpdate(final PersistencePackage persistencePackage) throws ServiceException {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
@@ -195,8 +269,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     }
 
     @Override
-    @Transactional(value="blTransactionManager", rollbackFor = ServiceException.class)
-    public PersistenceResponse remove(final PersistencePackage persistencePackage) throws ServiceException {
+    public PersistenceResponse nonTransactionalRemove(final PersistencePackage persistencePackage) throws ServiceException {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {

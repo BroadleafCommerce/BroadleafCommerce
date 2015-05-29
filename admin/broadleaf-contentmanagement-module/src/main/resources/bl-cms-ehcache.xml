@@ -42,12 +42,19 @@
         overflowToDisk="true"
         timeToLiveSeconds="3600"/>
 
+    <!-- Page Map Cache - 1 hour cache -->
+    <cache name="cmsPageMapCache"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="3600"/>
+
     <!-- Structured Content Cache - 1 hour cache -->
     <cache name="cmsStructuredContentCache"
         maxElementsInMemory="5000"
         eternal="false"
         overflowToDisk="true"
-        timeToLiveSeconds="3600"/>
+        timeToLiveSeconds="3600"/>             
     
     <!--  URLHandlerCache -->
     <cache name="cmsUrlHandlerCache"

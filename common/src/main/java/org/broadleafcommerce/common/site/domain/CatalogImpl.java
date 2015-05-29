@@ -25,30 +25,32 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * @author Jeff Fischer
@@ -57,10 +59,11 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_CATALOG")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+@AdminPresentationClass(friendlyName = "CatalogImpl")
+@SQLDelete(sql="UPDATE BLC_CATALOG SET ARCHIVED = 'Y' WHERE CATALOG_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITEMARKER)
 })
-@AdminPresentationClass(friendlyName = "CatalogImpl")
 public class CatalogImpl implements Catalog, AdminMainEntity {
 
     private static final Log LOG = LogFactory.getLog(CatalogImpl.class);
@@ -81,13 +84,18 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "Catalog_Name", gridOrder = 1, order=1, prominent = true)
     protected String name;
-    
-    @ManyToMany(targetEntity = SiteImpl.class)
-    @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "CATALOG_ID"), inverseJoinColumns = @JoinColumn(name = "SITE_ID"))
+
+    @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "catalog", orphanRemoval = true)
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP, friendlyName = "sitesTitle", manyToField = "catalogs")
+    protected List<SiteCatalogXref> siteXrefs = new ArrayList<SiteCatalogXref>();
+
+    @Transient
     protected List<Site> sites = new ArrayList<Site>();
+
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
     
     @Override
     public Long getId() {
@@ -111,12 +119,27 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
 
     @Override
     public List<Site> getSites() {
-        return sites;
+        if (sites.isEmpty()) {
+            for (SiteCatalogXref xref : siteXrefs) {
+                sites.add(xref.getSite());
+            }
+        }
+        return Collections.unmodifiableList(sites);
     }
 
     @Override
     public void setSites(List<Site> sites) {
         this.sites = sites;
+    }
+
+    @Override
+    public List<SiteCatalogXref> getSiteXrefs() {
+        return siteXrefs;
+    }
+
+    @Override
+    public void setSiteXrefs(List<SiteCatalogXref> siteXrefs) {
+        this.siteXrefs = siteXrefs;
     }
 
     public void checkCloneable(Catalog catalog) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
@@ -151,4 +174,32 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
         return getName();
     }
 
+    @Override
+    public Character getArchived() {
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
+    }
+
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public boolean isActive() {
+        if (LOG.isDebugEnabled()) {
+            if ('Y'==getArchived()) {
+                LOG.debug("catalog, " + id + ", inactive due to archived status");
+            }
+        }
+        return 'Y'!=getArchived();
+    }
 }

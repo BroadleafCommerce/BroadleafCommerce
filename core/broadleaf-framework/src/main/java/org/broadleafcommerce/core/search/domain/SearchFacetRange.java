@@ -19,12 +19,14 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.math.BigDecimal;
 
 /**
  * @author Andre Azzolini (apazzolini)
  */
-public interface SearchFacetRange {
+public interface SearchFacetRange extends MultiTenantCloneable<SearchFacetRange> {
 
     /**
      * Returns the internal id

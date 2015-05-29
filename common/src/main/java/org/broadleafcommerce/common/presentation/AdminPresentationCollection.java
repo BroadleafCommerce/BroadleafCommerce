@@ -91,9 +91,15 @@ public @interface AdminPresentationCollection {
     /**
      * <p>Optional - only required if you want to lookup an item
      * for this association, rather than creating a new instance of the
-     * target item. Note - if the type is changed to LOOKUP, this has
-     * the side effect of causing the only the association to be deleted
-     * during a remove, leaving the target lookup entity intact.</p>
+     * target item. Note - if the type is changed to LOOKUP, and you
+     * do not wish for the lookup entity to be deleted during an admin
+     * collection item removal operation, you should specify a removeType
+     * of OperationType.NONDESTRUCTIVEREMOVE in {@link #operationTypes()}
+     * param for this annotation.</p>
+     * 
+     * <p>If the type is set to LOOKUP_FOR_UPDATE, the system will trigger
+     * an update call on the target entity instead of an add. This is typically
+     * used when the target entity also has a to-one lookup to this field.</p>
      *
      * <p>Define whether or not added items for this
      * collection are acquired via search or construction.</p>
@@ -190,4 +196,22 @@ public @interface AdminPresentationCollection {
      */
     String currencyCodeField() default "";
 
+    /**
+     * <p>Optional - only required if the collection
+     * a field used for sorting</p>  Enables the reorder functionality in list grids.
+     * 
+     *
+     * @return the sort field in the target entity
+     */
+    String sortProperty() default "";
+
+    /**
+     * <p>Optional - only required if the sort order should be
+     * descending</p>
+     *
+     * <p>This is the sort direction for the targets</p>
+     *
+     * @return the sort direction
+     */
+    boolean sortAscending() default true;
 }

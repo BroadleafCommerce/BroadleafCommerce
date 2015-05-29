@@ -37,6 +37,7 @@ import java.util.List;
  */
 public class AttributePreserveInsert extends BaseHandler {
 
+    @Override
     public Node[] merge(List<Node> nodeList1, List<Node> nodeList2, List<Node> exhaustedNodes) {
         if (CollectionUtils.isEmpty(nodeList1) || CollectionUtils.isEmpty(nodeList2)) {
             return null;
@@ -46,6 +47,7 @@ public class AttributePreserveInsert extends BaseHandler {
         NamedNodeMap attributes2 = node2.getAttributes();
 
         Comparator<Object> nameCompare = new Comparator<Object>() {
+            @Override
             public int compare(Object arg0, Object arg1) {
                 return ((Node) arg0).getNodeName().compareTo(((Node) arg1).getNodeName());
             }
@@ -58,7 +60,8 @@ public class AttributePreserveInsert extends BaseHandler {
             Node temp = attributes2.item(j);
             int pos = Arrays.binarySearch(tempNodes, temp, nameCompare);
             if (pos < 0) {
-                ((Element) node1).setAttributeNode((Attr) node1.getOwnerDocument().importNode(temp.cloneNode(true), true));
+                Attr clone = (Attr) temp.cloneNode(true);
+                ((Element) node1).setAttributeNode((Attr) node1.getOwnerDocument().importNode(clone, true));
             }
         }
 

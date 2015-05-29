@@ -43,6 +43,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_ACTIVE_CUSTOMER_ADDRESSES_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
+        query.setParameter("archived", 'N');
         return query.getResultList();
     }
 

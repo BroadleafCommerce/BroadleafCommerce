@@ -19,13 +19,15 @@
  */
 package org.broadleafcommerce.common.site.domain;
 
+import org.broadleafcommerce.common.persistence.Status;
+
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Jeff Fischer
  */
-public interface Catalog extends Serializable {
+public interface Catalog extends Status, Serializable {
 
     Long getId();
 
@@ -35,8 +37,14 @@ public interface Catalog extends Serializable {
 
     void setName(String name);
 
+    @Deprecated
     List<Site> getSites();
 
+    @Deprecated
     void setSites(List<Site> sites);
     
+    public List<SiteCatalogXref> getSiteXrefs();
+
+    public void setSiteXrefs(List<SiteCatalogXref> siteXrefs);
+
 }

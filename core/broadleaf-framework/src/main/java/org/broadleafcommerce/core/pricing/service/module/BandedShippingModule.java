@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.pricing.service.module;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -76,7 +77,13 @@ public class BandedShippingModule implements ShippingModule {
             return;
         }
         Address address = fulfillmentGroup.getAddress();
-        String state = (address != null && address.getState() != null) ? address.getState().getAbbreviation() : null;
+        String state = null;
+        if (StringUtils.isNotBlank(address.getStateProvinceRegion())) {
+            state = address.getStateProvinceRegion();
+        } else if (address.getState() != null) {
+            state = address.getState().getAbbreviation();
+        }
+
         BigDecimal retailTotal = new BigDecimal(0);
         String feeType = feeTypeMapping.get(fulfillmentGroup.getMethod());
         String feeSubType = ((feeSubTypeMapping.get(state) == null) ? feeSubTypeMapping.get("ALL") : feeSubTypeMapping.get(state));

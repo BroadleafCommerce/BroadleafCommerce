@@ -29,12 +29,13 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerTest extends BaseTest {
+import javax.annotation.Resource;
 
+public class CustomerTest extends BaseTest {
+    
     @Resource
     private CustomerService customerService;
 
@@ -44,12 +45,16 @@ public class CustomerTest extends BaseTest {
 
     @Test(groups = { "createCustomerIdGeneration" })
     @Rollback(false)
+    @Transactional
     public void createCustomerIdGeneration() {
-        IdGeneration idGeneration = new IdGenerationImpl();
-        idGeneration.setType("org.broadleafcommerce.profile.core.domain.Customer");
-        idGeneration.setBatchStart(1L);
-        idGeneration.setBatchSize(10L);
-        em.persist(idGeneration);
+        IdGenerationImpl gen = em.find(IdGenerationImpl.class, "org.broadleafcommerce.profile.core.domain.Customer");
+        if (gen == null) {
+            IdGeneration idGeneration = new IdGenerationImpl();
+            idGeneration.setType("org.broadleafcommerce.profile.core.domain.Customer");
+            idGeneration.setBatchStart(1L);
+            idGeneration.setBatchSize(10L);
+            em.persist(idGeneration);
+        }
     }
 
     @Test(groups = "createCustomers", dependsOnGroups="createCustomerIdGeneration", dataProvider = "setupCustomers", dataProviderClass = CustomerDataProvider.class)

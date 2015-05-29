@@ -36,7 +36,17 @@ public class DateUtil {
 
     public static boolean isActive(Date startDate, Date endDate, boolean includeTime) {
         Long date = SystemTime.asMillis(includeTime);
-        return !(startDate == null || startDate.getTime() > date || (endDate != null && endDate.getTime() < date));
+        return !(startDate == null || startDate.getTime() >= date || (endDate != null && endDate.getTime() < date));
+    }
+
+    public static Date getCurrentDateAfterFactoringInDateResolution(Date cachedDate, Long currentDateResolution) {
+        Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, currentDateResolution);
+        if (returnDate != cachedDate) {
+            if (SystemTime.shouldCacheDate()) {
+                cachedDate = returnDate;
+            }
+        }
+        return returnDate;
     }
 
 }

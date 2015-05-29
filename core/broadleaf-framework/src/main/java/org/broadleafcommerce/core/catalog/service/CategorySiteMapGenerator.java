@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
@@ -28,7 +31,6 @@ import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
 import org.broadleafcommerce.core.catalog.dao.CategoryDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfiguration;
-import org.hibernate.tool.hbm2x.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +46,8 @@ import javax.annotation.Resource;
  */
 @Component("blCategorySiteMapGenerator")
 public class CategorySiteMapGenerator implements SiteMapGenerator {
+
+    protected static final Log LOG = LogFactory.getLog(CategorySiteMapGenerator.class);
 
     @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
@@ -61,49 +65,54 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
 
         CategorySiteMapGeneratorConfiguration categorySMGC = (CategorySiteMapGeneratorConfiguration) smgc;
 
-        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 1, categorySMGC, siteMapBuilder);
+        // Recursively construct the category SiteMap URLs
+        addCategorySiteMapEntries(categorySMGC.getRootCategory(), 0, categorySMGC, siteMapBuilder);
         
     }
 
     protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth, CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder) {
-        
+        // If we've reached beyond the ending depth, don't proceed
+        if (currentDepth > categorySMGC.getEndingDepth()) {
+            return;
+        }
+
+        // If we're at or past the starting depth, add this category to the site map
+        if (currentDepth >= categorySMGC.getStartingDepth()) {
+            constructSiteMapURL(categorySMGC, siteMapBuilder, parentCategory);
+        }
+
+        // Recurse on child categories in batches of size rowLimit
         int rowOffset = 0;
         List<Category> categories;
-        
         do {
             categories = categoryDao.readActiveSubCategoriesByCategory(parentCategory, rowLimit, rowOffset);
             rowOffset += categories.size();
             for (Category category : categories) {
-                if (StringUtils.isEmpty(category.getUrl())) {
-                    continue;
-                }
-
-                if (currentDepth < categorySMGC.getEndingDepth()) {
+                if (StringUtils.isNotEmpty(category.getUrl())) {
                     addCategorySiteMapEntries(category, currentDepth + 1, categorySMGC, siteMapBuilder);
+                } else {
+                    LOG.debug("Skipping empty category URL: " + category.getId());
                 }
-
-                if (currentDepth < categorySMGC.getStartingDepth()) {
-                    continue;
-                }
-                
-                SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
-
-                // location
-                siteMapUrl.setLoc(generateUri(siteMapBuilder, category));
-
-                // change frequency
-                siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreq());
-
-                // priority
-                siteMapUrl.setPriorityType(categorySMGC.getSiteMapPriority());
-
-                // lastModDate
-                siteMapUrl.setLastModDate(generateDate(category));
-
-                siteMapBuilder.addUrl(siteMapUrl);
             }
         } while (categories.size() == rowLimit);
+    }
 
+    protected void constructSiteMapURL(CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder, Category category) {
+        SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
+
+        // location
+        siteMapUrl.setLoc(generateUri(siteMapBuilder, category));
+
+        // change frequency
+        siteMapUrl.setChangeFreqType(categorySMGC.getSiteMapChangeFreq());
+
+        // priority
+        siteMapUrl.setPriorityType(categorySMGC.getSiteMapPriority());
+
+        // lastModDate
+        siteMapUrl.setLastModDate(generateDate(category));
+
+        siteMapBuilder.addUrl(siteMapUrl);
     }
 
     protected String generateUri(SiteMapBuilder siteMapBuilder, Category category) {

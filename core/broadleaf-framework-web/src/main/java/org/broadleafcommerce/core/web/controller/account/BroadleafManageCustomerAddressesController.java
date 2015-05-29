@@ -21,109 +21,30 @@ package org.broadleafcommerce.core.web.controller.account;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
-import org.broadleafcommerce.core.web.controller.account.validator.CustomerAddressValidator;
 import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerAddress;
-import org.broadleafcommerce.profile.core.domain.Phone;
-import org.broadleafcommerce.profile.core.domain.PhoneImpl;
-import org.broadleafcommerce.profile.core.domain.State;
-import org.broadleafcommerce.profile.core.service.AddressService;
-import org.broadleafcommerce.profile.core.service.CountryService;
-import org.broadleafcommerce.profile.core.service.CustomerAddressService;
-import org.broadleafcommerce.profile.core.service.StateService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import java.beans.PropertyEditorSupport;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-public class BroadleafManageCustomerAddressesController extends BroadleafAbstractController {
+public class BroadleafManageCustomerAddressesController extends AbstractCustomerAddressController {
 
-    @Resource(name = "blCustomerAddressService")
-    private CustomerAddressService customerAddressService;
-    @Resource(name = "blAddressService")
-    private AddressService addressService;
-    @Resource(name = "blCountryService")
-    private CountryService countryService;
-    @Resource(name = "blCustomerAddressValidator")
-    private CustomerAddressValidator customerAddressValidator;
-    @Resource(name = "blStateService")
-    private StateService stateService;
-   
+    @Value("${validate.customer.owned.data:true}")
+    protected boolean validateCustomerOwnedData;
+
     protected String addressUpdatedMessage = "Address successfully updated";
     protected String addressAddedMessage = "Address successfully added";
     protected String addressRemovedMessage = "Address successfully removed";
     protected String addressRemovedErrorMessage = "Address could not be removed as it is in use";
-    
-    protected static String customerAddressesView = "account/manageCustomerAddresses";
-    protected static String customerAddressesRedirect = "redirect:/account/addresses";
-    
-    /**
-     * Initializes some custom binding operations for the managing an address. 
-     * More specifically, this method will attempt to bind state and country
-     * abbreviations to actual State and Country objects when the String 
-     * representation of the abbreviation is submitted.
-     * 
-     * @param request
-     * @param binder
-     * @throws Exception
-     */
-    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
 
-        binder.registerCustomEditor(State.class, "address.state", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                State state = stateService.findStateByAbbreviation(text);
-                setValue(state);
-            }
-        });
-
-        binder.registerCustomEditor(Country.class, "address.country", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                Country country = countryService.findCountryByAbbreviation(text);
-                setValue(country);
-            }
-        });
-
-        binder.registerCustomEditor(Phone.class, "address.phonePrimary", new PropertyEditorSupport() {
-            @Override
-            public void setAsText(String text) {
-                if (!StringUtils.isBlank(text)) {
-                    Phone phone = new PhoneImpl();
-                    phone.setPhoneNumber(text);
-                    setValue(phone);
-                } else {
-                    setValue(null);
-                }
-            }
-        });
-    }
-     
-    protected List<State> populateStates() {
-        return stateService.findStates();
-    }
-    
-    protected List<Country> populateCountries() {
-        return countryService.findCountries();
-    }
-    
-    protected List<CustomerAddress> populateCustomerAddresses() {
-        return customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
-    }
-    
     public String viewCustomerAddresses(HttpServletRequest request, Model model) {
         model.addAttribute("customerAddressForm", new CustomerAddressForm());
         return getCustomerAddressesView();
@@ -134,6 +55,9 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         if (customerAddress == null) {
             throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
         }
+
+        validateCustomerOwnedData(customerAddress);
+
         CustomerAddressForm form = new CustomerAddressForm();
         form.setAddress(customerAddress.getAddress());
         form.setAddressName(customerAddress.getAddressName());
@@ -147,6 +71,9 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         if (result.hasErrors()) {
             return getCustomerAddressesView();
         }
+
+        removeUnusedPhones(form);
+        
         Address address = addressService.saveAddress(form.getAddress());
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddress(address);
@@ -169,10 +96,27 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         if (result.hasErrors()) {
             return getCustomerAddressesView();
         }
+
+        if ((form.getAddress().getPhonePrimary() != null) &&
+                (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            form.getAddress().setPhonePrimary(null);
+        }
+        if ((form.getAddress().getPhoneSecondary() != null) &&
+                (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            form.getAddress().setPhoneSecondary(null);
+        }
+        if ((form.getAddress().getPhoneFax() != null) &&
+                (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
+            form.getAddress().setPhoneFax(null);
+        }
+
         CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
         if (customerAddress == null) {
             throw new IllegalArgumentException("Customer Address not found with the specified customerAddressId");
         }
+
+        validateCustomerOwnedData(customerAddress);
+
         customerAddress.setAddress(form.getAddress());
         customerAddress.setAddressName(form.getAddressName());
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
@@ -185,7 +129,14 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     
     public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
         try {
-            customerAddressService.deleteCustomerAddressById(customerAddressId);
+            CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
+
+            // we don't care if the address is null on a remove
+            if (customerAddress != null) {
+                validateCustomerOwnedData(customerAddress);
+                customerAddressService.deleteCustomerAddressById(customerAddressId);
+            }
+
             redirectAttributes.addFlashAttribute("successMessage", getAddressRemovedMessage());
         } catch (DataIntegrityViolationException e) {
             // This likely occurred because there is an order or cart in the system that is currently utilizing this
@@ -195,12 +146,19 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
         return getCustomerAddressesRedirect();
     }
 
-    public String getCustomerAddressesView() {
-        return customerAddressesView;
-    }
-
-    public String getCustomerAddressesRedirect() {
-        return customerAddressesRedirect;
+    public void removeUnusedPhones(CustomerAddressForm form) {
+        if ((form.getAddress().getPhonePrimary() != null) &&
+                    (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            form.getAddress().setPhonePrimary(null);
+        }
+        if ((form.getAddress().getPhoneSecondary() != null) &&
+                    (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            form.getAddress().setPhoneSecondary(null);
+        }
+        if ((form.getAddress().getPhoneFax() != null) &&
+                    (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
+            form.getAddress().setPhoneFax(null);
+        }
     }
 
     public String getAddressUpdatedMessage() {
@@ -217,6 +175,20 @@ public class BroadleafManageCustomerAddressesController extends BroadleafAbstrac
     
     public String getAddressRemovedErrorMessage() {
         return addressRemovedErrorMessage;
+    }
+
+    protected void validateCustomerOwnedData(CustomerAddress customerAddress) {
+        if (validateCustomerOwnedData) {
+            Customer activeCustomer = CustomerState.getCustomer();
+            if (activeCustomer != null
+                    && !(activeCustomer.equals(customerAddress.getCustomer()))) {
+                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
+            }
+
+            if (activeCustomer == null && customerAddress.getCustomer() != null) {
+                throw new SecurityException("The active customer does not own the object that they are trying to view, edit, or remove.");
+            }
+        }
     }
     
 }

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.media.domain;
 
+import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
+
 /**
  * A null safe media object.
  * @author bpolster
@@ -83,4 +85,16 @@ public class MediaDto implements Media {
     public void setTags(String tags) {
         this.tags = tags;
     }
+
+    @Override
+    public boolean isUnwrappableAs(Class unwrapType) {
+        return false;
+    }
+
+    @Override
+    public <T> T unwrap(Class<T> unwrapType) {
+        throw new UnknownUnwrapTypeException(unwrapType);
+    }
+
+
 }

@@ -57,10 +57,24 @@ public interface FileServiceProvider {
      * Takes in a work area and application type and moves all of the files to the configured FileProvider.
      * 
      * @param workArea
-     * @param applicationType
+     * @param files the files that should be copied
+     * @deprecated use {@link #addOrUpdateResourcesForPaths(FileWorkArea, List, boolean)}
      */
+    @Deprecated
     void addOrUpdateResources(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea);
 
+    /**
+     * Adds all of the given <b>files</b> and returns the resource names of all of them suitable for invoking
+     * {@link #getResource(String)} and/or {@link #removeResource(String)}
+     * 
+     * @param workArea
+     * @param files
+     * @param removeFilesFromWorkArea
+     * @return the resource names for each file that was uploaded. The resource names that are returned should be for each
+     * file in <b>file</b>
+     */
+    List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea);
+    
     /**
      * Removes the resource from the file service.
      * 

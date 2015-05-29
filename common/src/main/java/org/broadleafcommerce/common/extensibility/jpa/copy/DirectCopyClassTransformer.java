@@ -19,6 +19,23 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
+
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
@@ -37,23 +54,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.AnnotationMemberValue;
-import javassist.bytecode.annotation.ArrayMemberValue;
-import javassist.bytecode.annotation.BooleanMemberValue;
-import javassist.bytecode.annotation.MemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityListeners;
@@ -176,7 +176,8 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                                                                 }
                                                             }
                                                         }
-                                                        templates.add(templateTokens.get(val));
+                                                        String[] templateVals = templateTokens.get(val).split(",");
+                                                        templates.addAll(Arrays.asList(templateVals));
                                                     }
                                                 }
                                             }
@@ -205,7 +206,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 }
             }
             if (xformVals != null && xformVals.length > 0) {
-                logger.lifecycle(LifeCycleEvent.START, String.format("Transform - Copying into [%s] from [%s]", xformKey,
+                logger.debug(String.format("[%s] - Transform - Copying into [%s] from [%s]", LifeCycleEvent.END, xformKey,
                         StringUtils.join(xformVals, ",")));
                 // Load the destination class and defrost it so it is eligible for modifications
                 clazz.defrost();
@@ -342,7 +343,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                 if (xformTemplates.isEmpty()) {
                     annotationTransformedClasses.add(convertedClassName);
                 }
-                logger.lifecycle(LifeCycleEvent.END, String.format("Transform - Copying into [%s] from [%s]", xformKey,
+                logger.debug(String.format("[%s] - Transform - Copying into [%s] from [%s]", LifeCycleEvent.END, xformKey,
                                     StringUtils.join(xformVals, ",")));
                 return clazz.toBytecode();
             }

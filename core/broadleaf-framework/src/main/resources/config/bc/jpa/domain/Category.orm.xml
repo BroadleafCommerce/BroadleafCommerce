@@ -36,10 +36,10 @@
     </named-query>
 
     <named-query name="BC_READ_ALL_SUBCATEGORIES">
-        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
-               LEFT OUTER JOIN category.allParentCategoryXrefs xref
-               WHERE category.defaultParentCategory.id IN :parentCategoryId OR xref.category.id IN :parentCategoryId
-               ORDER BY xref.displayOrder, category.id</query>
+        <query>SELECT xref.subCategory FROM org.broadleafcommerce.core.catalog.domain.CategoryXref xref
+                WHERE xref.category.id IN :parentCategoryId
+                ORDER BY COALESCE (xref.displayOrder,999999)
+        </query>
     </named-query>
     
     <named-query name="BC_READ_CATEGORY_BY_URL_KEY">
@@ -52,13 +52,12 @@
     </named-query>
 
     <named-query name="BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY" >
-        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
-                LEFT OUTER JOIN category.allParentCategoryXrefs xref
-                WHERE (category.defaultParentCategory.id = :parentCategoryId OR xref.category.id = :parentCategoryId)
-                AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N')           
-                AND (category.activeStartDate &lt; :currentDate)
-                AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; :currentDate) 
-                ORDER BY xref.displayOrder, category.id
+        <query>SELECT xref.subCategory FROM org.broadleafcommerce.core.catalog.domain.CategoryXref xref
+                WHERE xref.category.id IN :parentCategoryId
+                AND (xref.subCategory.archiveStatus.archived IS NULL OR xref.subCategory.archiveStatus.archived = 'N')
+                AND (xref.subCategory.activeStartDate &lt; :currentDate)
+                AND (xref.subCategory.activeEndDate IS NULL OR xref.subCategory.activeEndDate &gt; :currentDate)
+                ORDER BY COALESCE (xref.displayOrder,999999)
         </query>
     </named-query>
     
@@ -71,4 +70,5 @@
                AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; :currentDate)
         </query>
     </named-query>
+
 </entity-mappings>

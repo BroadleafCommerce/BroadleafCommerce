@@ -24,6 +24,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +32,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
@@ -48,6 +50,7 @@ import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.EntityResult;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -56,6 +59,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.AdvancedCollectionFieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
+import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.CriteriaConversionException;
@@ -67,6 +71,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.EqPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.LikePredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.extension.BasicPersistenceModuleExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
@@ -81,6 +86,7 @@ import org.hibernate.Session;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -96,6 +102,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -109,11 +116,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
  * @author jfischer
  */
+@Primary
 @Component("blBasicPersistenceModule")
 @Scope("prototype")
 public class BasicPersistenceModule implements PersistenceModule, RecordHelper, ApplicationContextAware {
@@ -143,6 +152,25 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Resource(name="blRestrictionFactory")
     protected RestrictionFactory restrictionFactory;
+
+    @Resource(name = "blBasicPersistenceModuleExtensionManager")
+    protected BasicPersistenceModuleExtensionManager extensionManager;
+
+    @PostConstruct
+    public void init() {
+        Collections.sort(fieldPersistenceProviders, new Comparator<FieldPersistenceProvider>() {
+            @Override
+            public int compare(FieldPersistenceProvider o1, FieldPersistenceProvider o2) {
+                return Integer.compare(o1.getOrder(), o2.getOrder());
+            }
+        });
+        Collections.sort(populateValidators, new Comparator<PopulateValueRequestValidator>() {
+            @Override
+            public int compare(PopulateValueRequestValidator o1, PopulateValueRequestValidator o2) {
+                return Integer.compare(o1.getOrder(), o2.getOrder());
+            }
+        });
+    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -234,7 +262,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     @Override
     public Serializable createPopulatedInstance(Serializable instance, Entity entity, 
             Map<String, FieldMetadata> unfilteredProperties, Boolean setId, Boolean validateUnsubmittedProperties) throws ValidationException {
-        Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(unfilteredProperties);
+        final Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(unfilteredProperties);
         FieldManager fieldManager = getFieldManager();
         boolean handled = false;
         for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
@@ -249,11 +277,33 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         if (!handled) {
             defaultFieldPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity), unfilteredProperties);
         }
+        //Order media field, map field and rule builder fields last, as they will have some validation components that depend on previous values
+        Property[] sortedProperties = entity.getProperties();
+        Arrays.sort(sortedProperties, new Comparator<Property>() {
+            @Override
+            public int compare(Property o1, Property o2) {
+                BasicFieldMetadata mo1 = (BasicFieldMetadata) mergedProperties.get(o1.getName());
+                BasicFieldMetadata mo2 = (BasicFieldMetadata) mergedProperties.get(o2.getName());
+                boolean isLate1 = mo1 != null && mo1.getFieldType() != null && mo1.getName() != null && (SupportedFieldType.RULE_SIMPLE==mo1.getFieldType() ||
+                        SupportedFieldType.RULE_WITH_QUANTITY==mo1.getFieldType() || SupportedFieldType.MEDIA==mo1.getFieldType() ||
+                        o1.getName().contains(FieldManager.MAPFIELDSEPARATOR));
+                boolean isLate2 = mo2 != null && mo2.getFieldType() != null && mo2.getName() != null && (SupportedFieldType.RULE_SIMPLE==mo2.getFieldType() ||
+                        SupportedFieldType.RULE_WITH_QUANTITY==mo2.getFieldType() || SupportedFieldType.MEDIA==mo2.getFieldType() ||
+                        o2.getName().contains(FieldManager.MAPFIELDSEPARATOR));
+                if (isLate1 && !isLate2) {
+                    return 1;
+                } else if (!isLate1 && isLate2) {
+                    return -1;
+                }
+                return 0;
+            }
+        });
         Session session = getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
         FlushMode originalFlushMode = session.getFlushMode();
         try {
             session.setFlushMode(FlushMode.MANUAL);
-            for (Property property : entity.getProperties()) {
+            RuntimeException entityPersistenceException = null;
+            for (Property property : sortedProperties) {
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
                 Class<?> returnType;
                 if (!property.getName().contains(FieldManager.MAPFIELDSEPARATOR) && !property.getName().startsWith("__")) {
@@ -303,18 +353,27 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             }
                             
                             if (attemptToPopulate) {
-                                for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                                    FieldProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
-                                    if (FieldProviderResponse.NOT_HANDLED != response) {
-                                        handled = true;
+                                try {
+                                    boolean isBreakDetected = false;
+                                    for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
+                                        if (!isBreakDetected || fieldPersistenceProvider.alwaysRun()) {
+                                            FieldProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
+                                            if (FieldProviderResponse.NOT_HANDLED != response) {
+                                                handled = true;
+                                            }
+                                            if (FieldProviderResponse.HANDLED_BREAK == response) {
+                                                isBreakDetected = true;
+                                            }
+                                        }
                                     }
-                                    if (FieldProviderResponse.HANDLED_BREAK == response) {
-                                        break;
+                                    if (!handled) {
+                                        defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
+                                                fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
                                     }
-                                }
-                                if (!handled) {
-                                    defaultFieldPersistenceProvider.populateValue(new PopulateValueRequest(setId,
-                                            fieldManager, property, metadata, returnType, value, persistenceManager, this), instance);
+                                } catch (ParentEntityPersistenceException | javax.validation.ValidationException e) {
+                                    entityPersistenceException = e;
+                                    cleanupFailedPersistenceAttempt(instance);
+                                    break;
                                 }
                             }
                         } else {
@@ -339,7 +398,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 if (persistenceManager.getDynamicEntityDao().getStandardEntityManager().contains(instance)) {
                     persistenceManager.getDynamicEntityDao().refresh(instance);
                 }
-                
+
                 //re-initialize the valid properties for the entity in order to deal with the potential of not
                 //completely sending over all checkbox/radio fields
                 List<Serializable> entityList = new ArrayList<Serializable>(1);
@@ -351,7 +410,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 StringBuilder sb = new StringBuilder();
                 for (Map.Entry<String, List<String>> entry : invalid.getPropertyValidationErrors().entrySet()) {
                     Iterator<String> itr = entry.getValue().iterator();
-                    while(itr.hasNext()) {
+                    while (itr.hasNext()) {
                         sb.append(entry.getKey());
                         sb.append(" : ");
                         sb.append(itr.next());
@@ -360,10 +419,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         }
                     }
                 }
-                
+
                 throw new ValidationException(invalid, "The entity has failed validation - " + sb.toString());
-            }
-            else {
+            } else if (entityPersistenceException != null) {
+                throw ExceptionHelper.refineException(entityPersistenceException.getCause());
+            } else {
                 fieldManager.persistMiddleEntities();
             }
         } catch (IllegalAccessException e) {
@@ -374,21 +434,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             session.setFlushMode(originalFlushMode);
         }
         return instance;
-    }
-
-    protected Class<?> getMapFieldType(Serializable instance, FieldManager fieldManager, Property property) {
-        Class<?> returnType = null;
-        Field field = fieldManager.getField(instance.getClass(), property.getName().substring(0, property.getName().indexOf(FieldManager.MAPFIELDSEPARATOR)));
-        java.lang.reflect.Type type = field.getGenericType();
-        if (type instanceof ParameterizedType) {
-            ParameterizedType pType = (ParameterizedType) type;
-            Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
-            Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
-            if (!ArrayUtils.isEmpty(entities)) {
-                returnType = entities[entities.length-1];
-            }
-        }
-        return returnType;
     }
 
     @Override
@@ -470,7 +515,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             alternateOnEntity.put(entry.getKey(), entry.getValue());
                             List<Property> props2 = new ArrayList<Property>();
                             extractPropertiesFromPersistentEntity(alternateOnEntity, recordEntity, props2);
-                            if (props2.size() == 1) {
+                            if (props2.size() == 1 && !props2.get(0).getName().contains(".")) {
                                 Property alternateIdProp = props2.get(0);
                                 alternateIdProp.setName(ALTERNATE_ID_PROPERTY);
                                 props.add(alternateIdProp);
@@ -691,8 +736,19 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
             Assert.isTrue(instance != null, "Entity not found");
 
-            instance = createPopulatedInstance(instance, entity, mergedProperties, false, persistencePackage.isValidateUnsubmittedProperties());
             if (!entity.isValidationFailure()) {
+                //Re-Balance the list if it is a Foreign Key toMany collection with a sort field property
+                if (foreignKey != null && foreignKey.getSortField() != null &&
+                        entity.findProperty(foreignKey.getSortField()) != null &&
+                        entity.findProperty(foreignKey.getSortField()).getValue() != null) {
+                    ExtensionResultHolder<Serializable> result = new ExtensionResultHolder<Serializable>();
+                    extensionManager.getProxy().rebalanceForUpdate(this, persistencePackage, instance,
+                            mergedProperties, primaryKey, result);
+                    instance = result.getResult();
+                } else {
+                    instance = createPopulatedInstance(instance, entity, mergedProperties, false, persistencePackage.isValidateUnsubmittedProperties());
+                }
+
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
                 if (includeRealEntity) {
                     entityResult.setEntityBackingObject(instance);
@@ -711,6 +767,18 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         } catch (Exception e) {
             throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
         }
+    }
+
+    public String getIdPropertyName(Map<String, FieldMetadata> mergedUnfilteredProperties) {
+        Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
+        for (String property : mergedProperties.keySet()) {
+            BasicFieldMetadata temp = (BasicFieldMetadata) mergedProperties.get(property);
+            if (temp.getFieldType() == SupportedFieldType.ID && !property.contains(".")) {
+                return property;
+            }
+        }
+
+        throw new RuntimeException("Could not find a primary key property in the passed merged properties list");
     }
 
     @Override
@@ -818,7 +886,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                         //don't warn for id field collisions, but still ignore the colliding fields
                         break logWarn;
                     }
-                    LOG.warn("Detected a field name collision (" + metadata.getTargetClass() + "." + property + ") during inspection for the inheritance line starting with (" + inheritanceLine[0].getName() + "). Ignoring the additional field. This can occur most commonly when using the @AdminPresentationAdornedTargetCollection and the collection type and target class have field names in common. This situation should be avoided, as the system will strip the repeated fields, which can cause unpredictable behavior.");
+                    //LOG.warn("Detected a field name collision (" + metadata.getTargetClass() + "." + property + ") during inspection for the inheritance line starting with (" + inheritanceLine[0].getName() + "). Ignoring the additional field. This can occur most commonly when using the @AdminPresentationAdornedTargetCollection and the collection type and target class have field names in common. This situation should be avoided, as the system will strip the repeated fields, which can cause unpredictable behavior.");
                 }
                 continue;
             }
@@ -920,6 +988,12 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
 
+                if (foreignKey != null && foreignKey.getSortField() != null) {
+                    ExtensionResultHolder<Serializable> result = new ExtensionResultHolder<Serializable>();
+                    extensionManager.getProxy().rebalanceForAdd(this, persistencePackage, instance, mergedProperties, result);
+                    instance = result.getResult();
+                }
+
                 instance = persistenceManager.getDynamicEntityDao().merge(instance);
                 if (includeRealEntityObject) {
                     entityResult.setEntityBackingObject(instance);
@@ -989,6 +1063,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     + " non-optional relationship. Consider changing 'optional=true' in the @ManyToOne annotation"
                                     + " or nullable=true within the @JoinColumn annotation");
                         }
+                        //Since this is occuring on a remove persistence package, merge up-front (before making a change) for proper operation in the presence of the enterprise module
+                        instance = persistenceManager.getDynamicEntityDao().merge(instance);
                         Field manyToField = fieldManager.getField(instance.getClass(), foreignKey.getManyToField());
                         Object manyToObject = manyToField.get(instance);
                         if (manyToObject != null && !(manyToObject instanceof Collection) && !(manyToObject instanceof Map)) {
@@ -1044,21 +1120,35 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         int totalRecords;
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
 
         try {
+            if (foreignKey != null && foreignKey.getSortField() != null) {
+                FilterAndSortCriteria sortCriteria = cto.get(foreignKey.getSortField());
+                sortCriteria.setSortAscending(foreignKey.getSortAscending());
+            }
+
             Map<String, FieldMetadata> mergedProperties = getMergedProperties(persistencePackage, cto);
 
             List<FilterMapping> filterMappings = getFilterMappings(persistencePerspective, cto, persistencePackage
                     .getFetchTypeFullyQualifiedClassname(), mergedProperties);
-            
+            List<FilterMapping> standardFilterMappings = new ArrayList<FilterMapping>(filterMappings);
             if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
-                filterMappings.addAll(cto.getAdditionalFilterMappings());
+                standardFilterMappings.addAll(cto.getAdditionalFilterMappings());
+            }
+            if (CollectionUtils.isNotEmpty(cto.getNonCountAdditionalFilterMappings())) {
+                standardFilterMappings.addAll(cto.getNonCountAdditionalFilterMappings());
             }
 
-            List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
-            totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), filterMappings);
-            payload = getRecords(mergedProperties, records, null, null);
+            List<Serializable> records = getPersistentRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), standardFilterMappings, cto.getFirstResult(), cto.getMaxResults());
 
+            List<FilterMapping> countFilterMappings = new ArrayList<FilterMapping>(filterMappings);
+            if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
+                countFilterMappings.addAll(cto.getAdditionalFilterMappings());
+            }
+            totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), countFilterMappings);
+
+            payload = getRecords(mergedProperties, records, null, null);
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
         }
@@ -1263,5 +1353,37 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
         }
         return restrictions;
+    }
+
+    protected void cleanupFailedPersistenceAttempt(Serializable instance) throws IllegalAccessException {
+        //Remove the entity from ORM management - no further attempts to persist
+        if (getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().contains(instance)) {
+            getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().detach(instance);
+        }
+        //Remove the id field value, if it's set
+        String idFieldName = (String) getPersistenceManager().getDynamicEntityDao().getIdMetadata(instance.getClass()).get("name");
+        Field idField = FieldUtils.getField(instance.getClass(), idFieldName, true);
+        if (idField == null) {
+            throw ExceptionHelper.refineException(new NoSuchFieldException("Entity " + instance.getClass().getName() + " does not contain id field " + idFieldName));
+        }
+        idField.setAccessible(true);
+        if (idField.get(instance) != null) {
+            idField.set(instance, null);
+        }
+    }
+
+    protected Class<?> getMapFieldType(Serializable instance, FieldManager fieldManager, Property property) {
+        Class<?> returnType = null;
+        Field field = fieldManager.getField(instance.getClass(), property.getName().substring(0, property.getName().indexOf(FieldManager.MAPFIELDSEPARATOR)));
+        java.lang.reflect.Type type = field.getGenericType();
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pType = (ParameterizedType) type;
+            Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
+            Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
+            if (!ArrayUtils.isEmpty(entities)) {
+                returnType = entities[entities.length-1];
+            }
+        }
+        return returnType;
     }
 }

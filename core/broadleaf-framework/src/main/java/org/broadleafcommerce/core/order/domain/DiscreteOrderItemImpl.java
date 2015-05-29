@@ -19,18 +19,22 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -49,6 +53,7 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -76,7 +81,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             group = "DiscreteOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
-    @ManyToOne(targetEntity = SkuImpl.class, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
     @AdminPresentation(friendlyName = "DiscreteOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
@@ -84,7 +89,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
-    @ManyToOne(targetEntity = ProductImpl.class)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     @NotFound(action = NotFoundAction.IGNORE)
@@ -117,7 +122,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Sku getSku() {
-        return sku;
+        return HibernateUtils.deproxy(sku);
     }
 
     @Override
@@ -140,7 +145,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Product getProduct() {
-        return product;
+        return HibernateUtils.deproxy(product);
     }
 
     @Override
@@ -213,12 +218,20 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         return order;
     }
 
-    private boolean updateSalePrice() {
+    protected boolean updateSalePrice() {
         if (isSalePriceOverride()) {
             return false;
         }
 
-        Money skuSalePrice = (getSku().getSalePrice() == null ? null : getSku().getSalePrice());
+        Money skuSalePrice = null;
+
+        DynamicSkuPrices priceData = getSku().getPriceData();
+        if (priceData != null) {
+            skuSalePrice = priceData.getPriceForQuantity(quantity);
+        }
+        if (skuSalePrice == null) {
+            skuSalePrice = getSku().getSalePrice();
+        }
 
         // Override retail/sale prices from skuBundle.
         if (skuBundleItem != null) {
@@ -254,7 +267,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         return updated;
     }
 
-    private boolean updateRetailPrice() {
+    protected boolean updateRetailPrice() {
         if (isRetailPriceOverride()) {
             return false;
         }
@@ -439,6 +452,25 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             }
         }
         return null;
+    }
+
+    @Override
+    public CreateResponse<DiscreteOrderItemImpl> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<DiscreteOrderItemImpl> createResponse = super.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        DiscreteOrderItem cloned = createResponse.getClone();
+        cloned.setBaseRetailPrice(getBaseRetailPrice());
+        cloned.setBaseSalePrice(getBaseSalePrice());
+        cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setDiscountingAllowed(discountsAllowed);
+        cloned.setName(name);
+        // dont clone
+        cloned.setOrder(order);
+        return  createResponse;
     }
 
     public static class Presentation {

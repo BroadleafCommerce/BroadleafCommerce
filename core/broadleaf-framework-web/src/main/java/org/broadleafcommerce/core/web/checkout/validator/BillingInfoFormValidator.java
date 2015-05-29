@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.web.checkout.validator;
 
+import org.broadleafcommerce.common.web.form.BroadleafFormType;
+import org.broadleafcommerce.common.web.validator.BroadleafCommonAddressValidator;
 import org.broadleafcommerce.core.web.checkout.model.BillingInfoForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -26,7 +28,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component("blBillingInfoFormValidator")
-public class BillingInfoFormValidator implements Validator {
+public class BillingInfoFormValidator extends BroadleafCommonAddressValidator implements Validator {
 
     @SuppressWarnings("rawtypes")
     public boolean supports(Class clazz) {
@@ -35,15 +37,6 @@ public class BillingInfoFormValidator implements Validator {
 
     public void validate(Object obj, Errors errors) {
         BillingInfoForm billingInfoForm = (BillingInfoForm) obj;
-
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.firstName", "firstName.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.lastName", "lastName.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.addressLine1", "addressLine1.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.city", "city.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address.postalCode", "postalCode.required");
-
-        if (billingInfoForm.getAddress().getCountry() == null) {
-            errors.rejectValue("address.country", "country.required", null, null);
-        }
+        super.validate(BroadleafFormType.BILLING_FORM, billingInfoForm.getAddress(), errors);
     }
 }

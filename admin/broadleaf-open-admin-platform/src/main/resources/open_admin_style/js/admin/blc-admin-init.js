@@ -45,6 +45,7 @@
         $.fn.broadleafListgrid          ? $doc.broadleafListgrid() : null;
     
         BLCAdmin.initializeFields();
+
     });
 
     // UNCOMMENT THE LINE YOU WANT BELOW IF YOU WANT IE8 SUPPORT AND ARE USING .block-grids

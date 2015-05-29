@@ -166,4 +166,11 @@ public interface SiteService {
      */
     public Catalog save(Catalog catalog);
 
+    /**
+     * Finds all catalogs
+     * 
+     * @return the list of catalogs
+     */
+    public List<Catalog> findAllCatalogs();
+
 }

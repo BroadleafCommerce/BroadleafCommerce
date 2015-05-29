@@ -82,7 +82,7 @@ public class StandardConfigLocations {
                     ((contextType == WEBCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") >= 0) ||
                     ((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") < 0 && temp.indexOf("-test") < 0 && temp.indexOf("-admin-") < 0) ||
                     ((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-admin-applicationContext-persistence") >= 0) ||
-                    (contextType == TESTCONTEXTTYPE && (temp.indexOf("-test") >= 0 || temp.indexOf("-admin-") >= 0 || temp.indexOf("-web-") >= 0))
+                    (contextType == TESTCONTEXTTYPE && (temp.indexOf("-test") >= 0 || temp.indexOf("-web-") >= 0))
             ){
                 items.add(temp.trim());
             }

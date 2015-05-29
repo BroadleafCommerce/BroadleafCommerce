@@ -25,6 +25,8 @@ var BLCAdmin = (function($) {
 	var preValidationFormSubmitHandlers = [];
 	var validationFormSubmitHandlers = [];
 	var postValidationFormSubmitHandlers = [];
+	var postFormSubmitHandlers = [];
+	var dependentFieldFilterHandlers = {};
 	var initializationHandlers = [];
 	var updateHandlers = [];
 	var stackedModalOptions = {
@@ -113,6 +115,10 @@ var BLCAdmin = (function($) {
 		BLCAdmin.setModalMaxHeight(BLCAdmin.currentModal());
 		BLCAdmin.initializeFields();
 	}
+
+	function getDependentFieldFilterKey(className, childFieldName) {
+	    return className + '-' + childFieldName;
+	}
 	
 	return {
 	    /**
@@ -137,6 +143,18 @@ var BLCAdmin = (function($) {
         addPostValidationSubmitHandler : function(fn) {
             postValidationFormSubmitHandlers.push(fn);
         },
+        
+        /**
+         * Add a form submission handler that runs after the form has been submitted via AJAX. These are designed to execute
+         * after errors have already been calculated.
+         * 
+         * Method signatures should take in 2 arguments:
+         *  $form - the JQuery form object that was submitted
+         *  data - the data that came back from the server
+         */
+        addPostFormSubmitHandler : function(fn) {
+            postFormSubmitHandlers.push(fn);
+        },
 	    
 	    addInitializationHandler : function(fn) {
 	        initializationHandlers.push(fn);
@@ -145,7 +163,7 @@ var BLCAdmin = (function($) {
 	    addUpdateHandler : function(fn) {
 	        updateHandlers.push(fn);
 	    },
-	    
+
     	runPreValidationSubmitHandlers : function($form) {
             for (var i = 0; i < preValidationFormSubmitHandlers.length; i++) {
                 preValidationFormSubmitHandlers[i]($form);
@@ -167,6 +185,15 @@ var BLCAdmin = (function($) {
         runPostValidationSubmitHandlers : function($form) {
             for (var i = 0; i < postValidationFormSubmitHandlers.length; i++) {
                 postValidationFormSubmitHandlers[i]($form);
+            }
+        },
+        
+        /**
+         * Intended to run after
+         */
+        runPostFormSubmitHandlers : function($form, data) {
+            for (var i = 0; i < postFormSubmitHandlers.length; i++) {
+                postFormSubmitHandlers[i]($form, data);
             }
         },
         
@@ -328,7 +355,7 @@ var BLCAdmin = (function($) {
     	initializeFields : function($container) {
     	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
     	    if ($container == null) {
-    	        $container = this.getActiveTab();
+    	        $container = BLCAdmin.getActiveTab();
     	    }
     	    
     	    // If we've already initialized this container, we'll skip it.
@@ -378,6 +405,8 @@ var BLCAdmin = (function($) {
             
             // Mark this container as initialized
     	    $container.data('initialized', 'true');
+
+    	    return false;
     	},
     	
     	updateFields : function($container) {
@@ -417,34 +446,65 @@ var BLCAdmin = (function($) {
     	getFieldSelectors : function getFieldSelectors() {
     	    return fieldSelectors.concat();
     	},
+    	
+    	extractFieldValue : function extractFieldValue($field) {
+            var value = $field.find('input[type="radio"]:checked').val();
+            if (value == null) {
+                value = $field.find('select').val();
+            }
+            if (value == null) {
+                value = $field.find('input[type="text"]').val();
+            }
+            if (value == null) {
+                value = $field.find('input[type="hidden"].value').val();
+            }
+            return value;
+    	},
+    	
+    	setFieldValue : function setFieldValue($field, value) {
+    	    if (value == null) {
+    	        $field.find('input[type="radio"]:checked').removeAttr('checked')
+    	    } else {
+    	        $field.find('input[type="radio"][value="' + value + '"]').attr('checked', 'checked');
+    	    }
+
+            $field.find('select').val(value);
+            $field.find('input[type="text"]').val(value);
+            
+            if (value == null && $field.find('button.clear-foreign-key')) {
+                $field.find('button.clear-foreign-key').click();
+            }
+            $field.trigger('change');
+    	},
 
         /**
          * Adds an initialization handler that is responsible for toggling the visiblity of a child field based on the
          * current value of the associated parent field.
          * 
          * @param className - The class name that this handler should be bound to
-         * @param parentFieldName - A jQuery selector to use to find the div.field-box for the parent field
-         * @param childFieldName - A jQuery selector to use to find the div.field-box for the child field
+         * @param parentFieldSelector - A jQuery selector to use to find the div.field-box for the parent field
+         * @param childFieldSelector - A jQuery selector to use to find the div.field-box for the child field
          * @param showIfValue - Either a function that takes one argument (the parentValue) and returns true if the
          *                      child field should be visible or a string to directly match against the parentValue
+         * @param options - Additional options:
+         *   - clearChildData (boolean) - if true, will null out the data of the child field if the parent field's
+         *     value becomes null
+         *   - additionalChangeAction (fn) - A function to execute when the value of the parent field changes. The args
+         *     passed to the function will be [$parentField, $childField, shouldShow, parentValue]
+         *   - additionalChangeAction-runOnInitialization (boolean) - If set to true, will invoke the 
+         *     additionalChangeAction on initialization
          */
-        addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldName, childFieldName, showIfValue) {
+        addDependentFieldHandler : function addDependentFieldHandler(className, parentFieldSelector, childFieldSelector, 
+                showIfValue, options) {
             BLCAdmin.addInitializationHandler(function($container) {
                 var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
                 if (thisClass != null && thisClass.indexOf(className) >= 0) {
                     var toggleFunction = function(event) {
                         // Extract the parent and child field DOM elements from the data
                         var $parentField = event.data.$parentField;
-                        var $childField = event.data.$childField;
-                        
-                        // Figure out what the current value of the parent field is
-                        var parentValue = $parentField.find('input[type="radio"]:checked').val();
-                        if (parentValue == null) {
-                            parentValue = $parentField.find('select').val();
-                        }
-                        if (parentValue == null) {
-                            parentValue = $parentField.find('input[type="text"]').val();
-                        }
+                        var $childField = event.data.$container.find(event.data.childFieldSelector);
+                        var options = event.data.options;
+                        var parentValue = BLCAdmin.extractFieldValue($parentField);
                         
                         // Either match the string or execute a function to figure out if the child field should be shown
                         // Additionally, if the parent field is not visible, we'll assume that the child field shouldn't
@@ -452,34 +512,76 @@ var BLCAdmin = (function($) {
                         var shouldShow = false;
                         if ($parentField.is(':visible')) {
                             if (typeof showIfValue == "function") {
-                                shouldShow = showIfValue(parentValue);
+                                shouldShow = showIfValue(parentValue, event.data.$container);
                             } else {
                                 shouldShow = (parentValue == showIfValue);
                             }
                         }
                         
+                        // Clear the data in the child field if that option was set and the parent value is null
+                        if (options != null && options['clearChildData'] && !event.initialization) {
+                            BLCAdmin.setFieldValue($childField, null);
+                        }
+                        
                         // Toggle the visiblity of the child field appropriately
                         $childField.toggle(shouldShow);
-                        $childField.trigger('change');
+                        
+                        if (options != null 
+                                && options['additionalChangeAction'] 
+                                && (options['additionalChangeAction-runOnInitialization'] || !event.initialization)) {
+                            options['additionalChangeAction']($parentField, $childField, shouldShow, parentValue);
+                        }
                     };
                     
-                    var $parentField = $container.find(parentFieldName);
-                    var $childField = $container.find(childFieldName);
+                    var $parentField = $container.find(parentFieldSelector);
                     
                     var data = {
                         '$parentField' : $parentField,
-                        '$childField' : $childField
+                        '$container' : $container,
+                        'childFieldSelector' : childFieldSelector,
+                        'options' : options
                     };
                     
                     // Bind the change event for the parent field
                     $parentField.on('change', data, toggleFunction);
     
                     // Run the toggleFunction immediately to set initial states appropriately
-                    toggleFunction({ data : data });
+                    toggleFunction({ data : data, initialization : true });
                 }
             })
-        }
+        },
 
+        /**
+         * Adds a dependent field filter handler that will restrict child lookups based on the value of the parent field.
+         * 
+         * @param className - The class name that this handler should be bound to
+         * @param parentFieldSelector - A jQuery selector to use to find the div.field-box for the parent field
+         * @param childFieldName - The name of this field (the id value in the containing div.field-box)
+         * @param childFieldPropertyName - The name of the back-end field that will receive the filter on the child lookup
+         * @param options - Additional options:
+         *   parentFieldRequired (boolean) - whether or not to disable the child lookup if the parent field is null
+         */
+        addDependentFieldFilterHandler : function addDependentFieldFilterHandler(className, parentFieldSelector, 
+                childFieldName, childFieldPropertyName, options) {
+            // Register the handler so that the lookup knows how to filter itself
+            dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)] = {
+                parentFieldSelector : parentFieldSelector,
+                childFieldPropertyName : childFieldPropertyName
+            }
+            
+            // If the parentFieldRequired option is turned on, we need to toggle the behavior of the child field accordingly
+            if (options != null && options['parentFieldRequired']) {
+                BLCAdmin.addDependentFieldHandler(className, parentFieldSelector, '#' + childFieldName, function(val) {
+                    return val != null && val != "";
+                }, { 
+                    'clearChildData' : true
+                });
+            }
+        },
+        
+        getDependentFieldFilterHandler : function getDependentFieldFilterHandler(className, childFieldName) {
+            return dependentFieldFilterHandlers[getDependentFieldFilterKey(className, childFieldName)];
+        }
 	};
 	
 })(jQuery);
@@ -613,4 +715,75 @@ $(document).keyup(function(e){
             $actionPopup.remove();
         }
     }
+});
+
+$('body').on('click', 'a.change-password', function(event) {
+    event.preventDefault();
+    var $this = $(this);
+    BLC.ajax({
+        url : $this.attr('href')
+    }, function(data) {
+        $this.closest('div.attached').append(data);
+        /*$this.parent().find('div.action-popup').find('div.generated-url-container').each(function(idx, el) {
+            if ($(el).data('overridden-url') != true) {
+                BLCAdmin.generatedUrl.registerUrlGenerator($(el));
+            }
+        })
+        */
+    });
+    
+});
+
+$('body').on('click', 'button.change-password-confirm', function(event) {
+    var $this = $(this);
+    var $form = $this.closest('form');
+    
+	BLC.ajax({
+		url: $form.attr('action'),
+		type: "POST",
+		data: $form.serialize(),
+		error: function(data) {
+            $this.closest('.actions').show();
+            $this.closest('.workflow-comment-prompt').find('img.ajax-loader').hide();
+    		BLC.defaultErrorHandler(data);
+		}
+	}, function(data) {
+	    if (data instanceof Object && data.hasOwnProperty('status') && data.status == 'error') {
+            $this.closest('div.action-popup')
+                .find('span.submit-error')
+                    .text(data.errorText)
+                    .show();
+
+            $this.closest('.actions').show();
+            $this.closest('.workflow-comment-prompt').find('img.ajax-loader').hide();
+		} else {
+            $this.closest('div.action-popup')
+                .find('span.submit-error')
+                    .text(data.successMessage)
+                    .addClass('success')
+                    .show();
+
+            $this.closest('.action-popup').find('img.ajax-loader').show();
+            
+            setTimeout(function() {
+                $this.closest('div.action-popup')
+                    .find('a.action-popup-cancel')
+                    .click();
+            }, 2000);
+            
+		    /*
+            $ef.find('input[name="fields[\'name\'].value"]').val($form.find('input[name="name"]').val());
+            $ef.find('input[name="fields[\'path\'].value"]').val($form.find('input[name="path"]').val());
+            $ef.find('input[name="fields[\'overrideGeneratedPath\'].value"]').val($form.find('input[name="overrideGeneratedPath"]').val());
+            $ef.append($('<input type="hidden" name="fields[\'saveAsNew\'].value" value="true" />'));
+            */
+            
+		    $this.closest('')
+            $this.closest('.actions').hide();
+            
+            //$ef.submit();
+		}
+    });
+	
+    event.preventDefault();
 });

@@ -27,8 +27,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.media.domain.MediaDto;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -58,6 +60,8 @@ import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityS
 import org.broadleafcommerce.openadmin.server.security.service.navigation.AdminNavigationService;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFormatProvider;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
@@ -72,20 +76,28 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -116,6 +128,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Resource(name = "blMediaBuilderService")
     protected MediaBuilderService mediaBuilderService;
     
+    @Resource(name = "blListGridErrorMessageExtensionManager")
+    protected ListGridErrorMessageExtensionManager listGridErrorExtensionManager;
+
+    @Resource
+    protected DataFormatProvider dataFormatProvider;
+
     protected static final VisibilityEnum[] FORM_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.FORM_HIDDEN 
     };
@@ -194,6 +212,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         FieldMetadata fmd = field.getMetadata();
         // Get the class metadata for this particular field
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(fmd, sectionCrumbs);
+        if (field != null) {
+            ppr.setSectionEntityField(field.getName());
+        }
         ClassMetadata cmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
         List<Field> headerFields = new ArrayList<Field>();
@@ -235,7 +256,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             type = ListGrid.Type.TO_ONE;
         } else if (fmd instanceof BasicCollectionMetadata) {
-            readOnly = !((BasicCollectionMetadata) fmd).isMutable();
+            BasicCollectionMetadata bcm = (BasicCollectionMetadata) fmd;
+            readOnly = !bcm.isMutable();
             for (Property p : cmd.getProperties()) {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -249,9 +271,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             type = ListGrid.Type.BASIC;
             
-            if (((BasicCollectionMetadata) fmd).getAddMethodType().equals(AddMethodType.PERSIST)) {
+            if (bcm.getAddMethodType().equals(AddMethodType.PERSIST)) {
                 editable = true;
             }
+
+            sortable = StringUtils.isNotBlank(bcm.getSortProperty());
         } else if (fmd instanceof AdornedTargetCollectionMetadata) {
             readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
@@ -295,7 +319,26 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 for (Property p : cmd.getProperties()) {
                     if (p.getMetadata() instanceof BasicFieldMetadata) {
                         BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                        if (md.getTargetClass().equals(mmd.getValueClassName())) {
+                        String valueClassName = mmd.getValueClassName();
+                        if (!StringUtils.isEmpty(mmd.getToOneTargetProperty())) {
+                            Class<?> clazz;
+                            try {
+                                clazz = Class.forName(mmd.getValueClassName());
+                            } catch (ClassNotFoundException e) {
+                                throw ExceptionHelper.refineException(e);
+                            }
+                            java.lang.reflect.Field nestedField = FieldManager.getSingleField(clazz, mmd.getToOneTargetProperty());
+                            ManyToOne manyToOne = nestedField.getAnnotation(ManyToOne.class);
+                            if (manyToOne != null && !manyToOne.targetEntity().getName().equals(void.class.getName())) {
+                                valueClassName = manyToOne.targetEntity().getName();
+                            } else {
+                                OneToOne oneToOne = nestedField.getAnnotation(OneToOne.class);
+                                if (oneToOne != null && !oneToOne.targetEntity().getName().equals(void.class.getName())) {
+                                    valueClassName = oneToOne.targetEntity().getName();
+                                }
+                            }
+                        }
+                        if (md.getTargetClass().equals(valueClassName)) {
                             if (md.isProminent() != null && md.isProminent() 
                                     && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                                 hf = createHeaderField(p, md);
@@ -370,7 +413,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.setTotalRecords(drs.getTotalRecords());
         listGrid.setPageSize(drs.getPageSize());
         
-        AdminSection section = navigationService.findAdminSectionByClass(className);
+        String sectionIdentifier = extractSectionIdentifierFromCrumb(sectionCrumbs);
+        AdminSection section = navigationService.findAdminSectionByClassAndSectionId(className, sectionIdentifier);
         if (section != null) {
             listGrid.setExternalEntitySectionKey(section.getUrl());
         }
@@ -386,7 +430,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (e.findProperty("hasError") != null) {
                 Boolean hasError = Boolean.parseBoolean(e.findProperty("hasError").getValue());
                 record.setIsError(hasError);
-                record.setErrorKey("listgrid.record.error");
+                ExtensionResultStatusType messageResultStatus = listGridErrorExtensionManager
+                        .getProxy().determineErrorMessageForEntity(e, record);
+                
+                if (ExtensionResultStatusType.NOT_HANDLED.equals(messageResultStatus)) {
+                    record.setErrorKey("listgrid.record.error");
+                }
             }
 
             if (e.findProperty(idProperty) != null) {
@@ -522,6 +571,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withHelp(fmd.getHelpText())
                          .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup());
 
+                    String defaultValue = fmd.getDefaultValue();
+                    if (StringUtils.isNotEmpty(defaultValue)) {
+                        defaultValue = extractDefaultValueFromFieldData(fieldType, fmd);
+                        f.withValue(defaultValue);
+                    }
+
                     if (StringUtils.isBlank(f.getFriendlyName())) {
                         f.setFriendlyName(f.getName());
                     }
@@ -532,7 +587,58 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
         }
     }
-    
+
+    @Override
+    public String extractDefaultValueFromFieldData(String fieldType, BasicFieldMetadata fmd) {
+        String defaultValue = fmd.getDefaultValue();
+        if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
+                || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
+            return null;
+        } else if (fieldType.equals(SupportedFieldType.INTEGER.toString())) {
+            try {
+                Integer.parseInt(defaultValue);
+            } catch (NumberFormatException  e) {
+                String msg = buildMsgForDefValException(SupportedFieldType.INTEGER.toString(), fmd, defaultValue);
+                LOG.warn(msg);
+                return null;
+            }
+        } else if (fieldType.equals(SupportedFieldType.DECIMAL.toString())) {
+            try {
+                BigDecimal val = new BigDecimal(defaultValue);
+            } catch (NumberFormatException  e) {
+                String msg = buildMsgForDefValException(SupportedFieldType.DECIMAL.toString(), fmd, defaultValue);
+                LOG.warn(msg);
+                return null;
+            }
+        } else if (fieldType.equals(SupportedFieldType.BOOLEAN.toString())) {
+            if (!defaultValue.toLowerCase().equals("true") && !defaultValue.toLowerCase().equals("false")) {
+                String msg = buildMsgForDefValException(SupportedFieldType.BOOLEAN.toString(), fmd, defaultValue);
+                LOG.warn(msg);
+                return null;
+            }
+        } else if (fieldType.equals(SupportedFieldType.DATE.toString())) {
+            DateFormat format = dataFormatProvider.getSimpleDateFormatter();
+            if (defaultValue.toLowerCase().contains("today")) {
+                defaultValue = format.format(new Date());
+            } else {
+                try {
+                    Date date = format.parse(defaultValue);
+                    defaultValue = format.format(date);
+                } catch (ParseException e) {
+                    String msg = buildMsgForDefValException(SupportedFieldType.DATE.toString(), fmd, defaultValue);
+                    LOG.warn(msg);
+                    return null;
+                }
+            }
+        }
+        return defaultValue;
+    }
+
+    private String buildMsgForDefValException(String type, BasicFieldMetadata fmd, String defaultValue) {
+        return fmd.getTargetClass() + " : " + fmd.getName() + " - Failed to parse " + type +
+                    " from DefaultValue [ " + defaultValue + " ]";
+    }
+
     @Override
     public void removeNonApplicableFields(ClassMetadata cmd, EntityForm entityForm, String entityType) {
         for (Property p : cmd.getProperties()) {
@@ -550,12 +656,23 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return ef;
     }
     
+    protected String extractSectionIdentifierFromCrumb(List<SectionCrumb> sectionCrumbs) {
+        if (sectionCrumbs != null && sectionCrumbs.size() > 0) {
+            return sectionCrumbs.get(0).getSectionIdentifier();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public void populateEntityForm(ClassMetadata cmd, EntityForm ef, List<SectionCrumb> sectionCrumbs)
             throws ServiceException {
         ef.setCeilingEntityClassname(cmd.getCeilingType());
         
-        AdminSection section = navigationService.findAdminSectionByClass(cmd.getCeilingType());
+        String sectionIdentifier = extractSectionIdentifierFromCrumb(sectionCrumbs);
+
+        AdminSection section = navigationService.findAdminSectionByClassAndSectionId(cmd.getCeilingType(),
+                sectionIdentifier);
         if (section != null) {
             ef.setSectionKey(section.getUrl());
         } else {
@@ -601,7 +718,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         ef.setEntityType(entity.getType()[0]);
 
         populateEntityFormFieldValues(cmd, entity, ef);
-        
+
         Property p = entity.findProperty(BasicPersistenceModule.MAIN_ENTITY_NAME_PROPERTY);
         if (p != null) {
             ef.setMainEntityName(p.getValue());
@@ -680,7 +797,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected DataWrapper convertJsonToDataWrapper(String json) {
         ObjectMapper mapper = new ObjectMapper();
         DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
-        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null));
+        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null, null, null));
         module.addDeserializer(DataDTO.class, dtoDeserializer);
         mapper.registerModule(module);
         try {

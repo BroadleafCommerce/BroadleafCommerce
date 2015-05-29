@@ -19,11 +19,18 @@
  */
 package org.broadleafcommerce.core.order.dao;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
+import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.domain.OrderLock;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
@@ -33,15 +40,26 @@ import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.UUID;
+
 import javax.annotation.Resource;
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
-import java.util.ListIterator;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 @Repository("blOrderDao")
 public class OrderDaoImpl implements OrderDao {
+
+    private static final Log LOG = LogFactory.getLog(OrderDaoImpl.class);
+    private static final String ORDER_LOCK_KEY = UUID.randomUUID().toString();
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -55,6 +73,9 @@ public class OrderDaoImpl implements OrderDao {
     @Resource(name = "blOrderDaoExtensionManager")
     protected OrderDaoExtensionManager extensionManager;
 
+    @Resource(name = "blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
+    
     @Override
     public Order readOrderById(final Long orderId) {
         return em.find(OrderImpl.class, orderId);
@@ -67,6 +88,56 @@ public class OrderDaoImpl implements OrderDao {
             em.refresh(order);
         }
         return order;
+    }
+
+    @Override
+    public List<Order> readOrdersByIds(List<Long> orderIds) {
+        if (orderIds == null || orderIds.size() == 0) {
+            return null;
+        }
+        if (orderIds.size() > 100) {
+            LOG.warn("Not recommended to use the readOrdersByIds method for long lists of orderIds, since " +
+                    "Hibernate is required to transform the distinct results. The list of requested" +
+                    "order ids was (" + orderIds.size() + ") in length.");
+        }
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+
+        // We only want results that match the order IDs
+        criteria.where(order.get("id").as(Long.class).in(orderIds));
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Order> readBatchOrders(int start, int pageSize, List<OrderStatus> statuses) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+
+        if (CollectionUtils.isNotEmpty(statuses)) {
+            // We only want results that match the orders with the correct status
+            ArrayList<String> statusStrings = new ArrayList<String>();
+            for (OrderStatus status : statuses) {
+                statusStrings.add(status.getType());
+            }
+            criteria.where(order.get("status").as(String.class).in(statusStrings));
+        }
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setFirstResult(start);
+        query.setMaxResults(pageSize);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
+
+        return query.getResultList();
     }
 
     @Override
@@ -233,4 +304,83 @@ public class OrderDaoImpl implements OrderDao {
         return order;
     }
 
+    @Override
+    public boolean acquireLock(Order order) {
+        String orderLockKey = getOrderLockKey();
+        // First, we'll see if there's a record of a lock for this order
+        Query q = em.createNamedQuery("BC_ORDER_LOCK_READ");
+        q.setParameter("orderId", order.getId());
+        q.setParameter("key", orderLockKey);
+        q.setHint(QueryHints.HINT_CACHEABLE, false);
+        Long count = (Long) q.getSingleResult();
+        
+        if (count == 0L) {
+            // If there wasn't a lock, we'll try to create one. It's possible that another thread is attempting the
+            // same thing at the same time, so we might get a constraint violation exception here. That's ok. If we 
+            // successfully inserted a record, that means that we are the owner of the lock right now.
+            try {
+                OrderLock ol = (OrderLock) entityConfiguration.createEntityInstance(OrderLock.class.getName());
+                ol.setOrderId(order.getId());
+                ol.setLocked(true);
+                ol.setKey(orderLockKey);
+                ol.setLastUpdated(System.currentTimeMillis());
+                em.persist(ol);
+                return true;
+            } catch (EntityExistsException e) {
+                return false;
+            }
+        }
+
+        // We weren't successful in creating a lock, which means that there was some previously created lock
+        // for this order. We'll attempt to update the status from unlocked to locked. If that is successful,
+        // we acquired the lock. 
+        q = em.createNamedQuery("BC_ORDER_LOCK_ACQUIRE");
+        q.setParameter("orderId", order.getId());
+        q.setParameter("currentTime", System.currentTimeMillis());
+        q.setParameter("key", orderLockKey);
+        Long orderLockTimeToLive = getDatabaseOrderLockTimeToLive();
+        q.setParameter("timeout", orderLockTimeToLive==-1L?orderLockTimeToLive:System.currentTimeMillis() - orderLockTimeToLive);
+        q.setHint(QueryHints.HINT_CACHEABLE, false);
+        int rowsAffected = q.executeUpdate();
+
+        return rowsAffected == 1;
+    }
+
+    @Override
+    public boolean releaseLock(final Order order) {
+        final boolean[] response = {false};
+        try {
+            transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                @Override
+                public void execute() throws Throwable {
+                    Query q = em.createNamedQuery("BC_ORDER_LOCK_RELEASE");
+                    q.setParameter("orderId", order.getId());
+                    q.setParameter("key", getOrderLockKey());
+                    q.setHint(QueryHints.HINT_CACHEABLE, false);
+                    int rowsAffected = q.executeUpdate();
+                    response[0] = rowsAffected == 1;
+                }
+
+                @Override
+                public boolean shouldRetryOnTransactionLockAcquisitionFailure() {
+                    return true;
+                }
+            }, RuntimeException.class);
+        } catch (RuntimeException e) {
+            LOG.error(String.format("Could not release order lock (%s)", order.getId()), e);
+        }
+        return response[0];
+    }
+
+    protected String getOrderLockKey() {
+        return getDatabaseOrderLockSessionAffinity()?ORDER_LOCK_KEY:"NO_KEY";
+    }
+
+    protected Boolean getDatabaseOrderLockSessionAffinity() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("order.lock.database.session.affinity", true);
+    }
+
+    protected Long getDatabaseOrderLockTimeToLive() {
+        return BLCSystemProperty.resolveLongSystemProperty("order.lock.database.time.to.live", -1L);
+    }
 }

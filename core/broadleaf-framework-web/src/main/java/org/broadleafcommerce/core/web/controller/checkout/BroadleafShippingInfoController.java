@@ -124,6 +124,14 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                 (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
             shippingForm.getAddress().setPhonePrimary(null);
         }
+        if ((shippingForm.getAddress().getPhoneSecondary() != null) &&
+                (StringUtils.isEmpty(shippingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            shippingForm.getAddress().setPhoneSecondary(null);
+        }
+        if ((shippingForm.getAddress().getPhoneFax() != null) &&
+                (StringUtils.isEmpty(shippingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
+            shippingForm.getAddress().setPhoneFax(null);
+        }
 
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
         if (shippableFulfillmentGroup != null) {
@@ -159,16 +167,24 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                     Address billing = payment.getBillingAddress();
                     if (billing != null) {
                         Address shipping = addressService.create();
+                        shipping.setFullName(billing.getFullName());
                         shipping.setFirstName(billing.getFirstName());
                         shipping.setLastName(billing.getLastName());
                         shipping.setAddressLine1(billing.getAddressLine1());
                         shipping.setAddressLine2(billing.getAddressLine2());
                         shipping.setCity(billing.getCity());
                         shipping.setState(billing.getState());
+                        shipping.setIsoCountrySubdivision(billing.getIsoCountrySubdivision());
+                        shipping.setStateProvinceRegion(billing.getStateProvinceRegion());
                         shipping.setPostalCode(billing.getPostalCode());
                         shipping.setCountry(billing.getCountry());
+                        shipping.setIsoCountryAlpha2(billing.getIsoCountryAlpha2());
                         shipping.setPrimaryPhone(billing.getPrimaryPhone());
+                        shipping.setSecondaryPhone(billing.getSecondaryPhone());
+                        shipping.setFax(billing.getFax());
                         shipping.setPhonePrimary(copyPhone(billing.getPhonePrimary()));
+                        shipping.setPhoneSecondary(copyPhone(billing.getPhoneSecondary()));
+                        shipping.setPhoneFax(copyPhone(billing.getPhoneFax()));
                         shipping.setEmailAddress(billing.getEmailAddress());
                         shippingInfoForm.setAddress(shipping);
                     }
@@ -245,6 +261,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
     public String showMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model) {
         model.addAttribute("states", stateService.findStates());
         model.addAttribute("countries", countryService.findCountries());
+        model.addAttribute("countrySubdivisions", countrySubdivisionService.findSubdivisions());
         return getMultishipAddAddressView();
     }
 

@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.web.controller.account.validator.UpdateAccount
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -33,6 +34,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafUpdateAccountController extends BroadleafAbstractController {
+
+    @Value("${use.email.for.site.login:true}")
+    protected boolean useEmailForLogin;
 
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
@@ -62,6 +66,11 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
         customer.setEmailAddress(form.getEmailAddress());
         customer.setFirstName(form.getFirstName());
         customer.setLastName(form.getLastName());
+
+        if (useEmailForLogin) {
+            customer.setUsername(form.getEmailAddress());
+        }
+
         customerService.saveCustomer(customer);
         redirectAttributes.addFlashAttribute("successMessage", getAccountUpdatedMessage());
         return getAccountRedirectView();

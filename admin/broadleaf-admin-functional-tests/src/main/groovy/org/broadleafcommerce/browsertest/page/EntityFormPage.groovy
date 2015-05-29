@@ -55,6 +55,8 @@ class EntityFormPage extends AdminPage {
         tabs { container.find('.tabs-container dd') }
         form { container.find('form.entity-form') }
         submitButton(to: EntityFormPage) { container.find('button.submit-button') }
+        deleteButton(to: TopLevelEntity) { container.find('button.delete-button') }
+        closeButton(to: EntityFormPage) { container.find('button.close') }
         grids(required: false) { index ->
             moduleList ActionableListGridModule, container.find('.listgrid-container'), index
         }

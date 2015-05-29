@@ -42,6 +42,8 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
     private ForeignKeyRestrictionType restrictionType = ForeignKeyRestrictionType.ID_EQ;
     private String displayValueProperty = "name";
     private Boolean mutable = true;
+    private String sortField;
+    private Boolean sortAscending;
     
     public ForeignKey() {
         //do nothing
@@ -54,11 +56,11 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
     public ForeignKey(String manyToField, String foreignKeyClass, String dataSourceName) {
         this(manyToField, foreignKeyClass, dataSourceName, ForeignKeyRestrictionType.ID_EQ);
     }
-    
+
     public ForeignKey(String manyToField, String foreignKeyClass, String dataSourceName, ForeignKeyRestrictionType restrictionType) {
         this(manyToField, foreignKeyClass, dataSourceName, restrictionType, "name");
     }
-    
+
     public ForeignKey(String manyToField, String foreignKeyClass, String dataSourceName, ForeignKeyRestrictionType restrictionType, String displayValueProperty) {
         this.manyToField = manyToField;
         this.foreignKeyClass = foreignKeyClass;
@@ -115,6 +117,22 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         this.displayValueProperty = displayValueProperty;
     }
 
+    public String getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
+    }
+
+    public Boolean getSortAscending() {
+        return sortAscending;
+    }
+
+    public void setSortAscending(Boolean sortAscending) {
+        this.sortAscending = sortAscending;
+    }
+
     public Boolean getMutable() {
         return mutable;
     }
@@ -145,6 +163,8 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         sb.append(", dataSourceName='").append(dataSourceName).append('\'');
         sb.append(", restrictionType=").append(restrictionType);
         sb.append(", displayValueProperty='").append(displayValueProperty).append('\'');
+        sb.append(", sortField='").append(sortField).append('\'');
+        sb.append(", sortAscending=").append(sortAscending).append('\'');
         sb.append(", mutable=").append(mutable);
         sb.append('}');
         return sb.toString();
@@ -158,6 +178,8 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         foreignKey.dataSourceName = dataSourceName;
         foreignKey.restrictionType = restrictionType;
         foreignKey.displayValueProperty = displayValueProperty;
+        foreignKey.sortField = sortField;
+        foreignKey.sortAscending = sortAscending;
         foreignKey.mutable = mutable;
         foreignKey.originatingField = originatingField;
 
@@ -185,6 +207,9 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
             return false;
         if (foreignKeyClass != null ? !foreignKeyClass.equals(that.foreignKeyClass) : that.foreignKeyClass != null)
             return false;
+        if (sortAscending != null ? !sortAscending.equals(that.sortAscending) : that.sortAscending != null)
+            return false;
+        if (sortField != null ? !sortField.equals(that.sortField) : that.sortField != null) return false;
         if (manyToField != null ? !manyToField.equals(that.manyToField) : that.manyToField != null) return false;
         if (mutable != null ? !mutable.equals(that.mutable) : that.mutable != null) return false;
         if (originatingField != null ? !originatingField.equals(that.originatingField) : that.originatingField != null)
@@ -201,6 +226,8 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         result = 31 * result + (foreignKeyClass != null ? foreignKeyClass.hashCode() : 0);
         result = 31 * result + (currentValue != null ? currentValue.hashCode() : 0);
         result = 31 * result + (dataSourceName != null ? dataSourceName.hashCode() : 0);
+        result = 31 * result + (sortField != null ? sortField.hashCode() : 0);
+        result = 31 * result + (sortAscending != null ? sortAscending.hashCode() : 0);
         result = 31 * result + (restrictionType != null ? restrictionType.hashCode() : 0);
         result = 31 * result + (displayValueProperty != null ? displayValueProperty.hashCode() : 0);
         result = 31 * result + (mutable != null ? mutable.hashCode() : 0);

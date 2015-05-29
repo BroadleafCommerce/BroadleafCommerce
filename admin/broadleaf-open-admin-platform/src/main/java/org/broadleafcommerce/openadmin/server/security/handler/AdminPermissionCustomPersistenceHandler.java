@@ -133,9 +133,7 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
 
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        if (ArrayUtils.contains(persistencePackage.getCustomCriteria(), "includeFriendlyOnly")) {
-            addFriendlyRestriction(cto);
-        }
+        addFriendlyRestriction(cto);
         addDefaultSort(cto);
 
         PersistenceModule myModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());

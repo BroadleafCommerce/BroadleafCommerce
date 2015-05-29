@@ -123,6 +123,9 @@ public class Entity implements Serializable {
     }
     
     public Property findProperty(String name) {
+        if (properties == null) {
+            return null;
+        }
         Arrays.sort(properties, new Comparator<Property>() {
             @Override
             public int compare(Property o1, Property o2) {
@@ -170,6 +173,26 @@ public class Entity implements Serializable {
         }
         newProps[newProps.length - 1] = property;
         setProperties(newProps);
+    }
+
+    public Property removeProperty(String name) {
+        boolean exists = findProperty(name) != null;
+        Property response = null;
+        if (exists) {
+            Property[] allProps = getProperties();
+            Property[] newProps = new Property[allProps.length - 1];
+            int count = 0;
+            for (int j = 0; j < allProps.length; j++) {
+                if (!allProps[j].getName().equals(name)) {
+                    newProps[count] = allProps[j];
+                    count++;
+                } else {
+                    response = allProps[j];
+                }
+            }
+            setProperties(newProps);
+        }
+        return response;
     }
 
     /**

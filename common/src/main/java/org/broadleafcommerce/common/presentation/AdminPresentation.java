@@ -19,13 +19,13 @@
  */
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
 
 /**
@@ -307,4 +307,17 @@ public @interface AdminPresentation {
      * @return whether or not this field is translatable
      */
     boolean translatable() default false;
+
+    /**
+     * <p>Optional - only required if you want to display a default value to the user when adding a new entity</p>
+     *
+     * <p>The default value to present to a user for this field when adding a new entity.</p>
+     *
+     * <p>Default values on <code>Boolean</code> require {@code "true"} or {@code "false"}.</p>
+     * <p>Default values on <code>Date</code> support the string {@code "today"} and strings with the
+     * format of <b>{@code yyyy.MM.dd HH:mm:ss}</b> (e.g. {@code "2020.02.05 22:11:05"}).</p>
+     *
+     * @return the defaultValue set for the field.
+     */
+    String defaultValue() default "";
 }

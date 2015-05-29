@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.enumeration.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -30,6 +32,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -69,7 +72,7 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     @Column(name = "ENUM_VAL_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = DataDrivenEnumerationImpl.class)
+    @ManyToOne(targetEntity = DataDrivenEnumerationImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "ENUM_TYPE")
     protected DataDrivenEnumeration type;
 
@@ -139,5 +142,21 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     @Override
     public void setType(DataDrivenEnumeration type) {
         this.type = type;
+    }
+
+    @Override
+    public <G extends DataDrivenEnumerationValue> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        DataDrivenEnumerationValue cloned = createResponse.getClone();
+        cloned.setKey(key);
+        cloned.setDisplay(display);
+        cloned.setHidden(hidden);
+        if (type != null) {
+            cloned.setType(type.createOrRetrieveCopyInstance(context).getClone());
+        }
+        return createResponse;
     }
 }

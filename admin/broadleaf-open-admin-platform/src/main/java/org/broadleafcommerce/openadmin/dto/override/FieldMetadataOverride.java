@@ -122,6 +122,7 @@ public class FieldMetadataOverride {
     private String ruleIdentifier;
     private Boolean translatable;
     private LookupType lookupType;
+    private String defaultValue;
 
     //@AdminPresentationMapField derived fields
     private Boolean searchable;
@@ -324,6 +325,14 @@ public class FieldMetadataOverride {
     
     public void setTranslatable(Boolean translatable) {
         this.translatable = translatable;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     public String getTab() {
@@ -698,6 +707,8 @@ public class FieldMetadataOverride {
     private String mapKeyOptionEntityValueField;
     private String currencyCodeField;
     private Boolean forceFreeFormKeys;
+    private String toOneTargetProperty;
+    private String toOneParentProperty;
 
     public Boolean isDeleteEntityUponRemove() {
         return deleteEntityUponRemove;
@@ -770,6 +781,22 @@ public class FieldMetadataOverride {
 
     public void setMediaField(String mediaField) {
         this.mediaField = mediaField;
+    }
+
+    public String getToOneTargetProperty() {
+        return toOneTargetProperty;
+    }
+
+    public void setToOneTargetProperty(String toOneTargetProperty) {
+        this.toOneTargetProperty = toOneTargetProperty;
+    }
+
+    public String getToOneParentProperty() {
+        return toOneParentProperty;
+    }
+
+    public void setToOneParentProperty(String toOneParentProperty) {
+        this.toOneParentProperty = toOneParentProperty;
     }
 
     public String getValueClass() {

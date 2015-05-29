@@ -38,13 +38,13 @@ import org.broadleafcommerce.core.web.api.wrapper.FulfillmentGroupWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.FulfillmentOptionWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.core.web.order.CartState;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 
 /**
  * This endpoint depends on JAX-RS.  It should be extended by components that actually wish 
@@ -81,7 +81,7 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
             }
             return fulfillmentGroupWrappers;
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
     }
 
@@ -95,11 +95,11 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                 wrapper.wrapDetails(cart, request);
                 return wrapper;
             } catch (PricingException e) {
-                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
                         .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
             }
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
@@ -119,12 +119,12 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                     fulfillmentGroupWrapper.wrapDetails(fulfillmentGroup, request);
                     return fulfillmentGroupWrapper;
                 } catch (PricingException e) {
-                    throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                    throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
                             .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
                 }
             }
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
@@ -162,13 +162,13 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                         return fulfillmentGroupWrapper;
 
                     } catch (PricingException e) {
-                        throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                        throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
                                 .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
                     }
                 }
             }
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
 
     }
@@ -180,7 +180,7 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
 
         FulfillmentOption option = fulfillmentOptionService.readFulfillmentOptionById(fulfillmentOptionId);
         if (option == null) {
-            throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+            throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                     .addMessage(BroadleafWebServicesException.FULFILLMENT_OPTION_NOT_FOUND, fulfillmentOptionId);
         }
 
@@ -208,15 +208,15 @@ public abstract class FulfillmentEndpoint extends BaseEndpoint {
                         }
                     }
                 } else {
-                    throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+                    throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                             .addMessage(BroadleafWebServicesException.FULFILLMENT_GROUP_NOT_FOUND, fulfillmentGroupId);
                 }
             } catch (PricingException e) {
-                throw BroadleafWebServicesException.build(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), null, null, e)
+                throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value(), null, null, e)
                         .addMessage(BroadleafWebServicesException.CART_PRICING_ERROR);
             }
         }
-        throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
     }
 

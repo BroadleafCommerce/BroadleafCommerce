@@ -133,6 +133,20 @@
             return fields;
         },
         
+        getSelectedRowIds : function($button) {
+            var link = BLC.servletContext + $button.data('urlpostfix');
+            
+            var $container = $button.closest('.listgrid-container');
+            var $selectedRows = $container.find('table tr.selected');
+            
+            var selectedRowIds = [];
+            $selectedRows.each(function(index, element) {
+                selectedRowIds.push($(element).data('rowid'));
+            });
+            
+            return selectedRowIds;
+        },
+        
         updateToolbarRowActionButtons : function($listGridContainer) {
             var numSelected = $listGridContainer.find('tr.selected').length;
             if (numSelected) {
@@ -205,6 +219,10 @@
             if (BLCAdmin.listGrid.filter) {
                 BLCAdmin.listGrid.filter.initialize($container);
             }
+        },
+        
+        getListGridCount : function($container) {
+            return $container.find('.listgrid-container').length;
         }
     };
     
@@ -284,7 +302,7 @@ $(document).ready(function() {
      * for the field that we are performing the to-one lookup on.
      */
     $('body').on('listGrid-to_one-rowSelected', function(event, link, fields, currentUrl) {
-        $('div.additional-foreign-key-container').trigger('valueSelected', fields);
+        $('div.additional-foreign-key-container').trigger('valueSelected', [fields, link, currentUrl]);
     });
     
     /**
@@ -356,14 +374,21 @@ $(document).ready(function() {
     $('body').on('click', '.to-one-lookup', function(event) {
         var $container = $(this).closest('div.additional-foreign-key-container');
         
-        $container.on('valueSelected', function(event, fields) {
+        $container.on('valueSelected', function(event, fields, link, currentUrl) {
             var $this = $(this);
             var displayValueProp = $this.find('input.display-value-property').val();
             
+            var displayValue = fields[displayValueProp];
+            var $selectedRow = BLCAdmin.currentModal().find('tr[data-link="' + link + '"]');
+            var $displayField = $selectedRow.find('td[data-fieldname=' + displayValueProp + ']');
+            if ($displayField.hasClass('derived')) {
+                displayValue = $.trim($displayField.text());
+            }
+            
             var $valueField = $this.find('input.value');
             $valueField.val(fields['id']);
-            $this.find('span.display-value').html(fields[displayValueProp]);
-            $this.find('input.hidden-display-value').val(fields[displayValueProp]);
+            $this.find('span.display-value').html(displayValue);
+            $this.find('input.hidden-display-value').val(displayValue);
             
             // Ensure that the clear button shows up after selecting a value
             $this.find('button.clear-foreign-key').show();
@@ -397,11 +422,24 @@ $(document).ready(function() {
                 }
             }
             
-            $valueField.trigger('change');
+            $valueField.trigger('change', fields);
+            $valueField.closest('.field-box').trigger('change');
             BLCAdmin.hideCurrentModal();
         });
         
-        BLCAdmin.showLinkAsModal($(this).data('select-url'), function() {
+        var url = $(this).data('select-url');
+        var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
+        var thisField = $(this).closest('.field-box').attr('id');
+        var handler = BLCAdmin.getDependentFieldFilterHandler(thisClass, thisField);
+        if (handler != null) {
+            var $parentField = $container.closest('form').find(handler['parentFieldSelector']);
+            url = url + '&' + handler['childFieldPropertyName'] + '=' + BLCAdmin.extractFieldValue($parentField);
+        }
+        if ($(this).data('dynamic-field')) {
+            url = url + '&dynamicField=true';
+        }
+
+        BLCAdmin.showLinkAsModal(url, function() {
             $('div.additional-foreign-key-container').unbind('valueSelected');
         });
         
@@ -472,11 +510,15 @@ $(document).ready(function() {
             data: rowFields,
             type: "POST"
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
-                message: BLCAdmin.messages.saved + '!', 
-                alertType: 'save-alert', 
-                autoClose: 1000 
-            });
+            if (data.status == 'error') {
+                BLCAdmin.listGrid.showAlert($container, data.message);
+            } else {
+                BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
+                    message: BLCAdmin.messages.saved + '!', 
+                    alertType: 'save-alert', 
+                    autoClose: 1000 
+                });
+            }
         });
         
         return false;
@@ -573,7 +615,7 @@ $(document).ready(function() {
         $this.prev().html($(this).prev().prev().html());
         
         // Remove the criteria input val
-        $container.find('.value').val('');
+        $container.find('.value').val('').trigger('change');
         $this.toggle();
         
         $container.find('.external-link-container').hide();
@@ -583,8 +625,7 @@ $(document).ready(function() {
         if (onChangeTrigger) {
             var trigger = onChangeTrigger.split("-");
             if (trigger[0] == 'dynamicForm') {
-                var $fieldSet = $("fieldset[data-dynamicpropertyname='" + trigger[1] + "']");
-                $fieldSet.hide();
+                $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "'] fieldset").remove();
             }
         }
         

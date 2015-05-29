@@ -61,11 +61,44 @@ public interface DynamicEntityService {
      */
     @Secured("PERMISSION_OTHER_DEFAULT")
     public PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException;
-    
+
+    /**
+     * The exact same as {@link #add(PersistencePackage)} except this is not bound to a transaction. This is useful when
+     * transactions are handled by the caller that has its own rollback logic (like when batching multiple adds).
+     * 
+     * @param persistencePackage
+     * @return
+     * @throws ServiceException
+     */
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public PersistenceResponse nonTransactionalAdd(PersistencePackage persistencePackage) throws ServiceException;
+
     @Secured("PERMISSION_OTHER_DEFAULT")
     public PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException;
-    
+
+    /**
+     * The exact same as {@link #update(PersistencePackage)} except this is not bound to a transaction. This is useful when
+     * transactions are handled by the caller that has its own rollback logic (like when batching multiple updates).
+     * 
+     * @param persistencePackage
+     * @return
+     * @throws ServiceException
+     */
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public PersistenceResponse nonTransactionalUpdate(PersistencePackage persistencePackage) throws ServiceException;
+
     @Secured("PERMISSION_OTHER_DEFAULT")
     public PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
+    
+    /**
+     * The exact same as {@link #remove(PersistencePackage)} except this is not bound to a transaction. This is useful when
+     * transactions are handled by the caller that has its own rollback logic (like when batching multiple removes).
+     * 
+     * @param persistencePackage
+     * @return
+     * @throws ServiceException
+     */
+    @Secured("PERMISSION_OTHER_DEFAULT")
+    public PersistenceResponse nonTransactionalRemove(PersistencePackage persistencePackage) throws ServiceException;
     
 }

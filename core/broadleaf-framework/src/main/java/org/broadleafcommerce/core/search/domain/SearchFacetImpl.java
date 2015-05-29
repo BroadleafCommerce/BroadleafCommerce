@@ -19,6 +19,10 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -56,6 +60,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_SEARCH_FACET")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SearchFacetImpl implements SearchFacet, Serializable {
@@ -76,27 +81,38 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
-    @ManyToOne(optional=false, targetEntity = FieldImpl.class)
-    @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_field",  order = 2, group = "SearchFacetImpl_description", prominent = true, gridOrder = 1)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "propertyName")
-    protected Field field;
-    
     @Column(name = "LABEL")
     @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description",
-            groupOrder = 1, prominent = true, translatable = true, gridOrder = 2)
+            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000)
     protected String label;
+
+    @ManyToOne(optional=false, targetEntity = FieldImpl.class)
+    @JoinColumn(name = "FIELD_ID")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = "SearchFacetImpl_description",
+            prominent = true, gridOrder = 2000)
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
+    protected Field field;
     
     @Column(name =  "SHOW_ON_SEARCH")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4, group = "SearchFacetImpl_description", groupOrder = 1,prominent=false)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4000,
+            group = "SearchFacetImpl_description", groupOrder = 1, prominent = false,
+            tooltip = "SearchFacetImpl_showOnSearchTooltip")
     protected Boolean showOnSearch = false;
     
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority", order = 5, group = "SearchFacetImpl_description", groupOrder = 1, prominent=true)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority",
+            order = 5000,
+            group = "SearchFacetImpl_description",
+            groupOrder = 1,
+            prominent = true,
+            tooltip = "SearchFacetImpl_searchPriorityTooltip")
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6, group = "SearchFacetImpl_description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6000,
+            group = "SearchFacetImpl_description",
+            groupOrder = 1,
+            tooltip = "SearchFacetImpl_multiselectTooltip")
     protected Boolean canMultiselect = true;
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
@@ -108,11 +124,16 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @OneToMany(mappedBy = "searchFacet", targetEntity = RequiredFacetImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "requiredFacet", friendlyName = "requiredFacetTitle", gridVisibleFields = { "label", "searchDisplayPriority", "canMultiselect", "requiresAllDependentFacets" })
+    @AdminPresentationAdornedTargetCollection(targetObjectProperty = "requiredFacet", friendlyName = "requiredFacetTitle",
+            gridVisibleFields = { "label", "searchDisplayPriority", "canMultiselect", "requiresAllDependentFacets" })
     protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
     
     @Column(name = "REQUIRES_ALL_DEPENDENT")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets", order = 6, group = "SearchFacetImpl_description", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets",
+            order = 7000,
+            group = "SearchFacetImpl_description",
+            groupOrder = 1,
+            tooltip = "SearchFacetImpl_requiresAllDependentFacetsTooltip")
     protected Boolean requiresAllDependentFacets = false;
     
     @Override
@@ -204,21 +225,49 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {
         this.searchFacetRanges = searchFacetRanges;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+        if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
+            SearchFacetImpl other = (SearchFacetImpl) obj;
+            return new EqualsBuilder()
+                .append(id, other.id)
+                .append(field, other.field)
+                .build();
         }
-        if (obj == null) {
-            return false;
-        }
-        if (!getClass().isAssignableFrom(obj.getClass())) {
-            return false;
-        }
-        SearchFacet other = (SearchFacet) obj;
-        
-        return getField().equals(other.getField());
+        return false;
+    }
+    
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(1, 31)
+            .append(id)
+            .append(field)
+            .toHashCode();
     }
 
+    @Override
+    public <G extends SearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SearchFacet cloned = createResponse.getClone();
+        cloned.setCanMultiselect(canMultiselect);
+        cloned.setLabel(label);
+        cloned.setRequiresAllDependentFacets(requiresAllDependentFacets);
+        cloned.setShowOnSearch(showOnSearch);
+        cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
+        for(RequiredFacet entry : requiredFacets){
+            RequiredFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getRequiredFacets().add(clonedEntry);
+        }
+        cloned.setSearchDisplayPriority(searchDisplayPriority);
+        for(SearchFacetRange entry : searchFacetRanges){
+            SearchFacetRange clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
+            cloned.getSearchFacetRanges().add(clonedEntry);
+        }
+
+        return createResponse;
+    }
 }

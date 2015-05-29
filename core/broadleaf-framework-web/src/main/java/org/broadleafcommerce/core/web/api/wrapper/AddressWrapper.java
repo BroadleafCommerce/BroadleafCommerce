@@ -17,17 +17,18 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.profile.core.domain.Address;
-import org.broadleafcommerce.profile.core.service.AddressService;
-import org.springframework.context.ApplicationContext;
+package org.broadleafcommerce.core.web.api.wrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.service.AddressService;
+import org.springframework.context.ApplicationContext;
 
 /**
  * This is a JAXB wrapper around Address.
@@ -60,11 +61,28 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
     @XmlElement
     protected String city;
 
+    /**
+     * Deprecated. Use "isoCountrySubdivision" and/or "stateProvinceRegion" instead.
+     */
     @XmlElement
+    @Deprecated
     protected StateWrapper state;
 
+    /**
+     * Deprecated. Use "isoCountryAlpha2" instead.
+     */
     @XmlElement
+    @Deprecated
     protected CountryWrapper country;
+
+    @XmlElement
+    protected String isoCountrySubdivision;
+
+    @XmlElement
+    protected String stateProvinceRegion;
+
+    @XmlElement
+    protected ISOCountryWrapper isoCountryAlpha2;
 
     @XmlElement
     protected String postalCode;
@@ -87,7 +105,6 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
     @XmlElement
     protected Boolean isDefault;
 
-
     @Override
     public void wrapDetails(Address model, HttpServletRequest request) {
         this.id = model.getId();
@@ -101,6 +118,8 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         this.companyName = model.getCompanyName();
         this.isBusiness = model.isBusiness();
         this.isDefault = model.isDefault();
+        this.isoCountrySubdivision = model.getIsoCountrySubdivision();
+        this.stateProvinceRegion = model.getStateProvinceRegion();
 
         if (model.getState() != null) {
             StateWrapper stateWrapper = (StateWrapper) context.getBean(StateWrapper.class.getName());
@@ -112,6 +131,12 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
             CountryWrapper countryWrapper = (CountryWrapper) context.getBean(CountryWrapper.class.getName());
             countryWrapper.wrapDetails(model.getCountry(), request);
             this.country = countryWrapper;
+        }
+
+        if (model.getIsoCountryAlpha2() != null) {
+            ISOCountryWrapper isoCountryWrapper = (ISOCountryWrapper) context.getBean(ISOCountryWrapper.class.getName());
+            isoCountryWrapper.wrapDetails(model.getIsoCountryAlpha2(), request);
+            this.isoCountryAlpha2 = isoCountryWrapper;
         }
 
         if (model.getPhonePrimary() != null) {
@@ -152,6 +177,8 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         address.setCity(this.city);
         address.setPostalCode(this.postalCode);
         address.setCompanyName(this.companyName);
+        address.setIsoCountrySubdivision(this.isoCountrySubdivision);
+        address.setStateProvinceRegion(this.stateProvinceRegion);
 
         if (this.isBusiness != null) {
             address.setBusiness(this.isBusiness);
@@ -169,6 +196,10 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
             address.setCountry(this.country.unwrap(request, appContext));
         }
 
+        if (this.isoCountryAlpha2 != null) {
+            address.setIsoCountryAlpha2(this.isoCountryAlpha2.unwrap(request, appContext));
+        }
+
         if (this.phonePrimary != null) {
             address.setPhonePrimary(this.phonePrimary.unwrap(request, appContext));
         }
@@ -182,5 +213,157 @@ public class AddressWrapper extends BaseWrapper implements APIWrapper<Address>, 
         }
 
         return address;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAddressLine1() {
+        return addressLine1;
+    }
+
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+    }
+
+    public String getAddressLine2() {
+        return addressLine2;
+    }
+
+    public void setAddressLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
+    }
+
+    public String getAddressLine3() {
+        return addressLine3;
+    }
+
+    public void setAddressLine3(String addressLine3) {
+        this.addressLine3 = addressLine3;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public StateWrapper getState() {
+        return state;
+    }
+
+    public void setState(StateWrapper state) {
+        this.state = state;
+    }
+
+    public CountryWrapper getCountry() {
+        return country;
+    }
+
+    public void setCountry(CountryWrapper country) {
+        this.country = country;
+    }
+
+    public String getIsoCountrySubdivision() {
+        return isoCountrySubdivision;
+    }
+
+    public void setIsoCountrySubdivision(String isoCountrySubdivision) {
+        this.isoCountrySubdivision = isoCountrySubdivision;
+    }
+
+    public String getStateProvinceRegion() {
+        return stateProvinceRegion;
+    }
+
+    public void setStateProvinceRegion(String stateProvinceRegion) {
+        this.stateProvinceRegion = stateProvinceRegion;
+    }
+
+    public ISOCountryWrapper getIsoCountryAlpha2() {
+        return isoCountryAlpha2;
+    }
+
+    public void setIsoCountryAlpha2(ISOCountryWrapper isoCountryAlpha2) {
+        this.isoCountryAlpha2 = isoCountryAlpha2;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public PhoneWrapper getPhonePrimary() {
+        return phonePrimary;
+    }
+
+    public void setPhonePrimary(PhoneWrapper phonePrimary) {
+        this.phonePrimary = phonePrimary;
+    }
+
+    public PhoneWrapper getPhoneSecondary() {
+        return phoneSecondary;
+    }
+
+    public void setPhoneSecondary(PhoneWrapper phoneSecondary) {
+        this.phoneSecondary = phoneSecondary;
+    }
+
+    public PhoneWrapper getPhoneFax() {
+        return phoneFax;
+    }
+
+    public void setPhoneFax(PhoneWrapper phoneFax) {
+        this.phoneFax = phoneFax;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public Boolean getIsBusiness() {
+        return isBusiness;
+    }
+
+    public void setIsBusiness(Boolean isBusiness) {
+        this.isBusiness = isBusiness;
+    }
+
+    public Boolean getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Boolean isDefault) {
+        this.isDefault = isDefault;
     }
 }

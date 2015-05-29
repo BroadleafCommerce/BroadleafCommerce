@@ -19,21 +19,14 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
 import org.hibernate.annotations.Cache;
@@ -41,10 +34,15 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.math.BigDecimal;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CAT_SEARCH_FACET_EXCL_XREF")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
@@ -69,13 +67,17 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
     @Column(name = "CAT_EXCL_SEARCH_FACET_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category;
 
     @ManyToOne(targetEntity = SearchFacetImpl.class)
     @JoinColumn(name = "SEARCH_FACET_ID")
     protected SearchFacet searchFacet;
+    
+    @Column(name = "SEQUENCE")
+    @AdminPresentation(friendlyName = "CategorySearchFacetImpl_sequence")
+    protected BigDecimal sequence;
 
     @Override
     public Long getId() {
@@ -107,4 +109,30 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
         this.searchFacet = searchFacet;
     }
 
+    @Override
+    public BigDecimal getSequence() {
+        return sequence;
+    }
+
+    @Override
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
+    }
+
+    @Override
+    public <G extends CategoryExcludedSearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        CategoryExcludedSearchFacet cloned = createResponse.getClone();
+        if (searchFacet != null) {
+            cloned.setSearchFacet(searchFacet.createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setSequence(sequence);
+        if (category != null) {
+            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        }
+        return createResponse;
+    }
 }

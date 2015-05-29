@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -42,6 +44,7 @@ import org.springframework.util.ClassUtils;
 import java.lang.reflect.Proxy;
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -92,7 +95,7 @@ public class SkuBundleItemImpl implements SkuBundleItem {
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal itemSalePrice;
 
-    @ManyToOne(targetEntity = ProductBundleImpl.class, optional = false)
+    @ManyToOne(targetEntity = ProductBundleImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID", referencedColumnName = "PRODUCT_ID")
     protected ProductBundle bundle;
 
@@ -193,5 +196,23 @@ public class SkuBundleItemImpl implements SkuBundleItem {
     @Override
     public void clearDynamicPrices() {
         this.dynamicPrices = null;
+    }
+
+    @Override
+    public <G extends SkuBundleItem> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SkuBundleItem cloned = createResponse.getClone();
+        cloned.setQuantity(quantity);
+        cloned.setSalePrice(getSalePrice());
+        if (sku != null) {
+            cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (bundle != null) {
+            cloned.setBundle((ProductBundle) bundle.createOrRetrieveCopyInstance(context).getClone());
+        }
+        return createResponse;
     }
 }

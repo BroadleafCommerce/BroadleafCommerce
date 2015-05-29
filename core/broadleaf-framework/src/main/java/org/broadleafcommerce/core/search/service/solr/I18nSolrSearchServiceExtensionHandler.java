@@ -19,7 +19,6 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.i18n.service.TranslationConsiderationContext;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
@@ -28,6 +27,7 @@ import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
@@ -66,8 +66,6 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
         return BLCSystemProperty.resolveBooleanSystemProperty("i18n.translation.enabled");
     }
 
-    private static String ATTR_MAP = SolrIndexServiceImpl.ATTR_MAP;
-
     @PostConstruct
     public void init() {
         boolean shouldAdd = true;
@@ -97,47 +95,71 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
             Map<String, Object> values, String propertyName, List<Locale> locales)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         
+        return addPropertyValues(product, null, false, field, fieldType, values, propertyName, locales);
+    }
+
+    @Override
+    public ExtensionResultStatusType addPropertyValues(Sku sku, Field field, FieldType fieldType,
+            Map<String, Object> values, String propertyName, List<Locale> locales)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        return addPropertyValues(null, sku, true, field, fieldType, values, propertyName, locales);
+    }
+
+    protected ExtensionResultStatusType addPropertyValues(Product product, Sku sku, boolean useSku, Field field, FieldType fieldType,
+            Map<String, Object> values, String propertyName, List<Locale> locales)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
         Set<String> processedLocaleCodes = new HashSet<String>();
 
         ExtensionResultStatusType result = ExtensionResultStatusType.NOT_HANDLED;
         if (field.getTranslatable()) {
             result = ExtensionResultStatusType.HANDLED;
 
-            for (Locale locale : locales) {
-                String localeCode = locale.getLocaleCode();
-                if (! Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
-                    int pos = localeCode.indexOf("_");
-                    if (pos > 0) {
-                        localeCode = localeCode.substring(0, pos);
-                        if (processedLocaleCodes.contains(localeCode)) {
-                            continue;
-                        } else {
-                            locale = localeService.findLocaleByCode(localeCode);
+            TranslationConsiderationContext.setTranslationConsiderationContext(getTranslationEnabled());
+            TranslationConsiderationContext.setTranslationService(translationService);
+            BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
+            if (tempContext == null) {
+                tempContext = new BroadleafRequestContext();
+                BroadleafRequestContext.setBroadleafRequestContext(tempContext);
+            }
+
+            Locale originalLocale = tempContext.getLocale();
+
+            try {
+                for (Locale locale : locales) {
+                    String localeCode = locale.getLocaleCode();
+                    if (!Boolean.TRUE.equals(locale.getUseCountryInSearchIndex())) {
+                        int pos = localeCode.indexOf("_");
+                        if (pos > 0) {
+                            localeCode = localeCode.substring(0, pos);
+                            if (processedLocaleCodes.contains(localeCode)) {
+                                continue;
+                            } else {
+                                locale = localeService.findLocaleByCode(localeCode);
+                            }
                         }
                     }
-                }
-                
-                processedLocaleCodes.add(localeCode);
-                
-                TranslationConsiderationContext.setTranslationConsiderationContext(getTranslationEnabled());
-                TranslationConsiderationContext.setTranslationService(translationService);
-                BroadleafRequestContext tempContext = BroadleafRequestContext.getBroadleafRequestContext();
-                if (tempContext == null) {
-                    tempContext = new BroadleafRequestContext();
-                }
-                tempContext.setLocale(locale);
-                BroadleafRequestContext.setBroadleafRequestContext(tempContext);
 
-                final Object propertyValue;
-                if (propertyName.contains(ATTR_MAP)) {
-                    propertyValue = PropertyUtils.getMappedProperty(product, ATTR_MAP, propertyName.substring(ATTR_MAP.length() + 1));
-                } else {
-                    propertyValue = PropertyUtils.getProperty(product, propertyName);
+                    processedLocaleCodes.add(localeCode);
+                    tempContext.setLocale(locale);
+
+                    final Object propertyValue;
+                    if (useSku) {
+                        propertyValue = shs.getPropertyValue(sku, propertyName);
+                    } else {
+                        propertyValue = shs.getPropertyValue(product, propertyName);
+                    }
+
+                    values.put(localeCode, propertyValue);
                 }
-                values.put(localeCode, propertyValue);
+            } finally {
+                //Reset the original locale.
+                tempContext.setLocale(originalLocale);
             }
         }
         return result;
+
     }
 
     /**

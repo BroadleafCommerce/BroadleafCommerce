@@ -20,7 +20,6 @@
 
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import org.broadleafcommerce.common.rule.QuantityBasedRule;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.RuleFieldValidator;
@@ -31,13 +30,13 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldServiceFactory;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.annotation.Resource;
 
@@ -137,43 +136,4 @@ public class RuleFieldExtractionUtility {
         return p;
     }
 
-    public Property convertQuantityBasedRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper,
-            Collection<QuantityBasedRule> quantityBasedRules, String jsonProp, String fieldService) {
-
-        int k = 0;
-        Entity[] targetItemCriterias = new Entity[quantityBasedRules.size()];
-        for (QuantityBasedRule quantityBasedRule : quantityBasedRules) {
-            Property[] properties = new Property[3];
-            Property mvelProperty = new Property();
-            mvelProperty.setName("matchRule");
-            mvelProperty.setValue(quantityBasedRule.getMatchRule());
-            Property quantityProperty = new Property();
-            quantityProperty.setName("quantity");
-            quantityProperty.setValue(quantityBasedRule.getQuantity().toString());
-            Property idProperty = new Property();
-            idProperty.setName("id");
-            idProperty.setValue(String.valueOf(quantityBasedRule.getId()));
-            properties[0] = mvelProperty;
-            properties[1] = quantityProperty;
-            properties[2] = idProperty;
-            Entity criteria = new Entity();
-            criteria.setProperties(properties);
-            targetItemCriterias[k] = criteria;
-            k++;
-        }
-
-        String json;
-        try {
-            DataWrapper oiWrapper = translator.createRuleData(targetItemCriterias, "matchRule", "quantity", "id",
-                    ruleBuilderFieldServiceFactory.createInstance(fieldService));
-            json = mapper.writeValueAsString(oiWrapper);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        Property p = new Property();
-        p.setName(jsonProp);
-        p.setValue(json);
-
-        return p;
-    }
 }

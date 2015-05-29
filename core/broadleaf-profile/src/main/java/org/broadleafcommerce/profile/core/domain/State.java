@@ -21,6 +21,10 @@ package org.broadleafcommerce.profile.core.domain;
 
 import java.io.Serializable;
 
+/**
+ * @deprecated - use {@link org.broadleafcommerce.profile.core.domain.CountrySubdivision} instead.
+ */
+@Deprecated
 public interface State extends Serializable {
 
     public String getAbbreviation();

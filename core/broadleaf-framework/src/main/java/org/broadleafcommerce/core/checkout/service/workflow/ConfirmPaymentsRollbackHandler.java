@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.checkout.service.workflow;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
@@ -43,12 +44,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * Rolls back all payments that have been processed or were confirmed in {@link ValidateAndConfirmPaymentActivity}.
@@ -86,80 +88,83 @@ public class ConfirmPaymentsRollbackHandler implements RollbackHandler<CheckoutS
         }
 
         Map<OrderPayment, PaymentTransaction> rollbackResponseTransactions = new HashMap<OrderPayment, PaymentTransaction>();
-        Collection<PaymentTransaction> transactions = (Collection<PaymentTransaction>) stateConfiguration.get(ValidateAndConfirmPaymentActivity.CONFIRMED_TRANSACTIONS);
-        for (PaymentTransaction tx : transactions) {
-            PaymentRequestDTO rollbackRequest = transactionToPaymentRequestDTOService.translatePaymentTransaction(tx.getAmount(), tx);
-            
-            PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
-            try {
-
-                PaymentResponseDTO responseDTO = null;
-                if (PaymentTransactionType.AUTHORIZE.equals(tx.getType())) {
-                    if (cfg.getRollbackService() != null) {
-                        responseDTO = cfg.getRollbackService().rollbackAuthorize(rollbackRequest);
+        Collection<PaymentTransaction> transactions = (Collection<PaymentTransaction>) stateConfiguration.get(ValidateAndConfirmPaymentActivity.ROLLBACK_TRANSACTIONS);
+        
+        if (CollectionUtils.isNotEmpty(transactions)) {
+            for (PaymentTransaction tx : transactions) {
+                PaymentRequestDTO rollbackRequest = transactionToPaymentRequestDTOService.translatePaymentTransaction(tx.getAmount(), tx);
+                
+                PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
+                try {
+    
+                    PaymentResponseDTO responseDTO = null;
+                    if (PaymentTransactionType.AUTHORIZE.equals(tx.getType())) {
+                        if (cfg.getRollbackService() != null) {
+                            responseDTO = cfg.getRollbackService().rollbackAuthorize(rollbackRequest);
+                        }
+                    } else if (PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
+                        if (cfg.getRollbackService() != null) {
+                            responseDTO = cfg.getRollbackService().rollbackAuthorizeAndCapture(rollbackRequest);
+                        }
+                    } else {
+                        LOG.warn("The transaction with id " + tx.getId() + " will NOT be rolled back as it is not an AUTHORIZE or AUTHORIZE_AND_CAPTURE transaction but is"
+                                + " of type " + tx.getType() + ". If you need to roll back transactions of this type then provide a customized rollback handler for"
+                                        + " confirming transactions.");
                     }
-                } else if (PaymentTransactionType.AUTHORIZE_AND_CAPTURE.equals(tx.getType())) {
-                    if (cfg.getRollbackService() != null) {
-                        responseDTO = cfg.getRollbackService().rollbackAuthorizeAndCapture(rollbackRequest);
+    
+                    if (responseDTO != null) {
+                        PaymentTransaction transaction = orderPaymentService.createTransaction();
+                        transaction.setAmount(responseDTO.getAmount());
+                        transaction.setRawResponse(responseDTO.getRawResponse());
+                        transaction.setSuccess(responseDTO.isSuccessful());
+                        transaction.setType(responseDTO.getPaymentTransactionType());
+                        transaction.setParentTransaction(tx);
+                        transaction.setOrderPayment(tx.getOrderPayment());
+                        transaction.setAdditionalFields(responseDTO.getResponseMap());
+                        rollbackResponseTransactions.put(tx.getOrderPayment(), transaction);
+    
+                        if (!responseDTO.isSuccessful()) {
+                            LOG.fatal("Unable to rollback transaction with id " + tx.getId() + ". The call was unsuccessful with"
+                                    + " raw response: " + responseDTO.getRawResponse());
+                        }
                     }
-                } else {
-                    LOG.warn("The transaction with id " + tx.getId() + " will NOT be rolled back as it is not an AUTHORIZE or AUTHORIZE_AND_CAPTURE transaction but is"
-                            + " of type " + tx.getType() + ". If you need to roll back transactions of this type then provide a customized rollback handler for"
-                                    + " confirming transactions.");
-                }
-
-                if (responseDTO != null) {
-                    PaymentTransaction transaction = orderPaymentService.createTransaction();
-                    transaction.setAmount(responseDTO.getAmount());
-                    transaction.setRawResponse(responseDTO.getRawResponse());
-                    transaction.setSuccess(responseDTO.isSuccessful());
-                    transaction.setType(responseDTO.getPaymentTransactionType());
-                    transaction.setParentTransaction(tx);
-                    transaction.setOrderPayment(tx.getOrderPayment());
-                    transaction.setAdditionalFields(responseDTO.getResponseMap());
-                    rollbackResponseTransactions.put(tx.getOrderPayment(), transaction);
-
-                    if (!responseDTO.isSuccessful()) {
-                        LOG.fatal("Unable to rollback transaction with id " + tx.getId() + ". The call was unsuccessful with"
-                                + " raw response: " + responseDTO.getRawResponse());
-                    }
-                }
-
-
-            } catch (PaymentException e) {
-                throw new RollbackFailureException("The transaction with id " + tx.getId() + " encountered and exception when it was attempted to roll back"
-                        + " its confirmation", e);
-            }
-        }
-
-        Order order = seed.getOrder();
-        List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
-
-        // Add the new rollback transactions to the appropriate payment and mark the payment as invalid.
-        // If there was a failed transaction rolling back we will need to throw a RollbackFailureException after saving the
-        // Transaction Response to the DB
-        boolean rollbackFailure = false;
-        for (OrderPayment payment : order.getPayments()) {
-            if (rollbackResponseTransactions.containsKey(payment)) {
-                PaymentTransaction rollbackTX = rollbackResponseTransactions.get(payment);
-                payment.addTransaction(rollbackTX);
-                payment = orderPaymentService.save(payment);
-                paymentsToInvalidate.add(payment);
-                if (!rollbackTX.getSuccess()) {
-                    rollbackFailure = true;
+    
+    
+                } catch (PaymentException e) {
+                    throw new RollbackFailureException("The transaction with id " + tx.getId() + " encountered and exception when it was attempted to roll back"
+                            + " its confirmation", e);
                 }
             }
-        }
-
-        if (rollbackFailure) {
-            throw new RollbackFailureException("The ConfirmPaymentsRollbackHandler encountered and exception when it " +
-                    "attempted to roll back a transaction on one of the payments. Please see LOG for details.");
-        } else {
+    
+            Order order = seed.getOrder();
+            List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
+    
+            // Add the new rollback transactions to the appropriate payment and mark the payment as invalid.
+            // If there was a failed transaction rolling back we will need to throw a RollbackFailureException after saving the
+            // Transaction Response to the DB
+            boolean rollbackFailure = false;
+            for (OrderPayment payment : order.getPayments()) {
+                if (rollbackResponseTransactions.containsKey(payment)) {
+                    PaymentTransaction rollbackTX = rollbackResponseTransactions.get(payment);
+                    payment.addTransaction(rollbackTX);
+                    payment = orderPaymentService.save(payment);
+                    paymentsToInvalidate.add(payment);
+                    if (!rollbackTX.getSuccess()) {
+                        rollbackFailure = true;
+                    }
+                }
+            }
+    
             for (OrderPayment payment : paymentsToInvalidate) {
-                order.getPayments().remove(payment);
                 paymentGatewayCheckoutService.markPaymentAsInvalid(payment.getId());
+                orderPaymentService.save(payment);
             }
-
+            
+            if (rollbackFailure) {
+                throw new RollbackFailureException("The ConfirmPaymentsRollbackHandler encountered and exception when it " +
+                        "attempted to roll back a transaction on one of the payments. Please see LOG for details.");
+            }
+    
             try {
                 orderService.save(order, false);
             } catch (PricingException e) {

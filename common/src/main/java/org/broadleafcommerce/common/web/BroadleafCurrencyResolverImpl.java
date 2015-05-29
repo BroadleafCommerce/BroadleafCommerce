@@ -22,6 +22,7 @@ package org.broadleafcommerce.common.web;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
+import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.broadleafcommerce.common.currency.service.BroadleafCurrencyService;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
@@ -62,48 +63,55 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
      * Responsible for returning the currency to use for the current request.
      */
     @Override
-    public BroadleafCurrency resolveCurrency(HttpServletRequest request) {
+    public BroadleafRequestedCurrencyDto resolveCurrency(HttpServletRequest request) {
         return resolveCurrency(new ServletWebRequest(request));
     }
 
     @Override
-    public BroadleafCurrency resolveCurrency(WebRequest request) {
-        BroadleafCurrency currency = null;
+    public BroadleafRequestedCurrencyDto resolveCurrency(WebRequest request) {
+        BroadleafCurrency desiredCurrency = null;
 
         // 1) Check request for currency
-        currency = (BroadleafCurrency) request.getAttribute(CURRENCY_VAR, WebRequest.SCOPE_REQUEST);
+        desiredCurrency = (BroadleafCurrency) request.getAttribute(CURRENCY_VAR, WebRequest.SCOPE_REQUEST);
 
         // 2) Check for a request parameter
-        if (currency == null && BLCRequestUtils.getURLorHeaderParameter(request, CURRENCY_CODE_PARAM) != null) {
+        if (desiredCurrency == null && BLCRequestUtils.getURLorHeaderParameter(request, CURRENCY_CODE_PARAM) != null) {
             String currencyCode = BLCRequestUtils.getURLorHeaderParameter(request, CURRENCY_CODE_PARAM);
-            currency = broadleafCurrencyService.findCurrencyByCode(currencyCode);
+            desiredCurrency = broadleafCurrencyService.findCurrencyByCode(currencyCode);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Attempt to find currency by param " + currencyCode + " resulted in " + currency);
+                LOG.trace("Attempt to find currency by param " + currencyCode + " resulted in " + desiredCurrency);
             }
         }
 
         // 3) Check session for currency
-        if (currency == null && BLCRequestUtils.isOKtoUseSession(request)) {
-            currency = (BroadleafCurrency) request.getAttribute(CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
+        if (desiredCurrency == null && BLCRequestUtils.isOKtoUseSession(request)) {
+            desiredCurrency = (BroadleafCurrency) request.getAttribute(CURRENCY_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
         }
 
         // 4) Check locale for currency
-        if (currency == null) {
+        if (desiredCurrency == null) {
             Locale locale = (Locale) request.getAttribute(BroadleafLocaleResolverImpl.LOCALE_VAR, WebRequest.SCOPE_REQUEST);
             if (locale != null) {
-                currency = locale.getDefaultCurrency();
+                desiredCurrency = locale.getDefaultCurrency();
             }
         }
 
-        // 5) Check default currency from DB
-        if (currency == null) {
-            currency = broadleafCurrencyService.findDefaultBroadleafCurrency();
+        // 5) Lookup default currency from DB
+        BroadleafCurrency defaultCurrency = broadleafCurrencyService.findDefaultBroadleafCurrency();
+        if (desiredCurrency == null) {
+            desiredCurrency = defaultCurrency;
         }
 
+        // For an out-of-box installation, only one currency is supported, so even though we have a 
+        // desired currency, we may not have any prices that support it. 
+        BroadleafCurrency currencyToUse = defaultCurrency;
+
         if (BLCRequestUtils.isOKtoUseSession(request)) {
-            request.setAttribute(CURRENCY_VAR, currency, WebRequest.SCOPE_GLOBAL_SESSION);
+            request.setAttribute(CURRENCY_VAR, currencyToUse, WebRequest.SCOPE_GLOBAL_SESSION);
         }
-        return currency;
+
+        BroadleafRequestedCurrencyDto dto = new BroadleafRequestedCurrencyDto(currencyToUse, desiredCurrency);
+        return dto;
     }
 
 

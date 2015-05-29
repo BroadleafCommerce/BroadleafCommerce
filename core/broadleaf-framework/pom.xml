@@ -3,7 +3,7 @@
     <parent>
         <artifactId>core</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>3.1.13-GA</version>
+        <version>4.0.0-GA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>broadleaf-framework</artifactId>
@@ -81,7 +81,26 @@
                     </execution>
                 </executions>
             </plugin>
-
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+            </plugin>
+            <!-- Include Spock specifications -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Spec*</include>
+                    </includes>
+                    <argLine>${surefire.argLine}</argLine>
+                </configuration>
+            </plugin>
+            <!-- Jacoco Code Coverage Plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -115,27 +134,6 @@
         <dependency>
             <artifactId>solr-core</artifactId>
             <groupId>org.apache.solr</groupId>
-            <exclusions>
-                <!-- The jdk.tools transitive dependency uses system scope -->
-                <!-- which has to be resolved in a platform agnostic way -->
-                <!-- in order to have a clean compile in Eclipse. That -->
-                <!-- turned out to be surprisingly difficult to achieve. -->
-
-                <!-- From the dependency tree below we can see that -->
-                <!-- jdk.tools is pulled in by hadoop-annotations -->
-                <!-- and since this is a normal JDK system jar we can avoid the -->
-                <!-- problem by excluding the jdk.tools dependency. -->
-
-                <!-- Relevant output from mvn dependency:tree follows -->
-                <!-- +- org.broadleafcommerce:broadleaf-framework:jar:{version}:compile -->
-                <!--    +- org.apache.solr:solr-core:jar:4.4.0:compile -->
-                <!--        +- org.apache.hadoop:hadoop-annotations:jar:2.0.5-alpha:compile -->
-                <!--            \- jdk.tools:jdk.tools:jar:1.6:system -->
-                <exclusion>
-                    <groupId>jdk.tools</groupId>
-                    <artifactId>jdk.tools</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mvel</groupId>
@@ -176,16 +174,29 @@
             <artifactId>easymockclassextension</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-        </dependency>
-        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
+        </dependency>
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <type>jar</type>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

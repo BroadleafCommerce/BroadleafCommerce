@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.audit.Auditable;
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.money.Money;
@@ -59,7 +60,7 @@ import java.util.Map;
  * 
  * 5.  Order shipping (e.g. fulfillment) are represented with Fulfillment objects.
  */
-public interface Order extends Serializable {
+public interface Order extends Serializable, MultiTenantCloneable<Order> {
 
     Long getId();
 

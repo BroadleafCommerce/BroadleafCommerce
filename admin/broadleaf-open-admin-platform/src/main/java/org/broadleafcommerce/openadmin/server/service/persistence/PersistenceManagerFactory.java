@@ -24,6 +24,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Jeff Fischer
  */
@@ -31,6 +34,7 @@ import org.springframework.stereotype.Service;
 public class PersistenceManagerFactory implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
+    private static final Map<TargetModeType, PersistenceManager> persistenceManagers = new HashMap<TargetModeType, PersistenceManager>();
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
     protected static String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
 
@@ -48,10 +52,14 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
     }
 
     public static PersistenceManager getPersistenceManager(TargetModeType targetModeType) {
-        PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
-        persistenceManager.setTargetMode(targetModeType);
-
-        return persistenceManager;
+        synchronized (persistenceManagers) {
+            if (!persistenceManagers.containsKey(targetModeType)) {
+                PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+                persistenceManager.setTargetMode(targetModeType);
+                persistenceManagers.put(targetModeType, persistenceManager);
+            }
+            return persistenceManagers.get(targetModeType);
+        }
     }
 
     public static boolean isPersistenceManagerActive() {

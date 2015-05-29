@@ -19,47 +19,44 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.client.solrj.response.FacetField;
-import org.apache.solr.client.solrj.response.FacetField.Count;
-import org.apache.solr.client.solrj.response.Group;
-import org.apache.solr.client.solrj.response.GroupCommand;
-import org.apache.solr.client.solrj.response.GroupResponse;
+import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.util.BLCMapUtils;
-import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
+import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
-import org.broadleafcommerce.core.search.domain.ProductSearchResult;
-import org.broadleafcommerce.core.search.domain.RequiredFacet;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
-import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
+import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
 
 import java.io.BufferedInputStream;
@@ -75,12 +72,11 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
@@ -93,11 +89,25 @@ import javax.xml.parsers.ParserConfigurationException;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public class SolrSearchServiceImpl implements SearchService, DisposableBean {
+public class SolrSearchServiceImpl implements SearchService, InitializingBean, DisposableBean {
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
+
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
+
+    //This is the name of the config that Zookeeper has associated with Solr configs
+    @Value("${solr.cloud.configName}")
+    protected String solrCloudConfigName = "blc";
+
+    //This is the default number of shards that should be created if a SolrCloud collection is created via API
+    @Value("${solr.cloud.defaultNumShards}")
+    protected int solrCloudNumShards = 2;
 
     @Resource(name = "blProductDao")
     protected ProductDao productDao;
+
+    @Resource(name = "blSkuDao")
+    protected SkuDao skuDao;
 
     @Resource(name = "blFieldDao")
     protected FieldDao fieldDao;
@@ -114,12 +124,14 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
 
+    protected String solrHomePath;
+
     public SolrSearchServiceImpl(String solrServer) throws IOException, ParserConfigurationException, SAXException {
         if ("solrhome".equals(solrServer)) {
 
             final String baseTempPath = System.getProperty("java.io.tmpdir");
 
-            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome");
+            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome-4.10.3");
             if (System.getProperty("tmpdir.solrhome") != null) {
                 //allow for an override of tmpdir
                 tempDir = new File(System.getProperty("tmpdir.solrhome"));
@@ -127,24 +139,17 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             if (!tempDir.exists()) {
                 tempDir.mkdirs();
             }
-            
+
             solrServer = tempDir.getAbsolutePath();
-            
-            // create the 'lib' directory with a placeholder file that has to exist in Solr's home directory to avoid a
-            // warning log message
-            String libDir = FilenameUtils.concat(solrServer, "lib");
-            LOG.debug("Creating Solr home lib directory: " + libDir);
-            new File(libDir).mkdir();
-            
-            String placeholder = FilenameUtils.concat(libDir, "solrlib_placeholder.deleteme");
-            LOG.debug("Creating Solr lib placeholder file: " + placeholder);
-            new File(placeholder).createNewFile();
         }
-        
+        solrHomePath = solrServer;
+
         File solrXml = new File(new File(solrServer), "solr.xml");
         if (!solrXml.exists()) {
             copyConfigToSolrHome(this.getClass().getResourceAsStream("/solr-default.xml"), solrXml);
         }
+
+        buildSolrCoreDirectories(solrServer);
 
         LOG.debug(String.format("Using [%s] as solrhome", solrServer));
         LOG.debug(String.format("Using [%s] as solr.xml", solrXml.getAbsoluteFile()));
@@ -180,6 +185,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         //if the admin server is not set...
     }
 
+    public String getSolrHomePath() {
+        return solrHomePath;
+    }
+
     public void copyConfigToSolrHome(InputStream configIs, File destFile) throws IOException {
         BufferedInputStream bis = null;
         BufferedOutputStream bos = null;
@@ -211,6 +220,63 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                     //do nothing
                 }
             }
+        }
+    }
+
+    /**
+     * This creates the proper directories and writes the correct properties files for Solr to run in embedded mode.
+     * @param solrServer
+     * @throws IOException
+     */
+    protected void buildSolrCoreDirectories(String solrServer) throws IOException {
+        //Create a "cores" directory if it does not exist
+        File cores = new File(new File(solrServer), "cores");
+        if (!cores.exists() || !cores.isDirectory()) {
+            cores.mkdirs();
+        }
+
+        //Create a "cores/primary" if it does not exist
+        File primaryCoreDir = new File(cores, "primary");
+        if (!primaryCoreDir.exists() || !primaryCoreDir.isDirectory()) {
+            primaryCoreDir.mkdirs();
+        }
+
+        //Create a cores/primary/core.properties file, populated with "name=primary"
+        File primaryCoreFile = new File(primaryCoreDir, "core.properties");
+        if (!primaryCoreFile.exists()) {
+            FileOutputStream os = new FileOutputStream(primaryCoreFile);
+            Properties prop = new Properties();
+            prop.put("name", SolrContext.PRIMARY);
+            prop.store(os, "Generated Solr core properties file");
+            IOUtils.closeQuietly(os);
+        }
+
+        //Create a "cores/primary/conf" directory if it does not exist
+        File primaryConfDir = new File(primaryCoreDir, "conf");
+        if (!primaryConfDir.exists() || !primaryConfDir.isDirectory()) {
+            primaryConfDir.mkdirs();
+        }
+
+        //Create a "cores/reindex" if it does not exist
+        File reindexCoreDir = new File(cores, "reindex");
+        if (!reindexCoreDir.exists() || !reindexCoreDir.isDirectory()) {
+            reindexCoreDir.mkdirs();
+        }
+
+        //Create a cores/reindex/core.properties file, populated with "name=reindex"
+        File reindexCoreFile = new File(reindexCoreDir, "core.properties");
+        if (!reindexCoreFile.exists()) {
+            FileOutputStream os = new FileOutputStream(reindexCoreFile);
+            Properties prop = new Properties();
+            prop.put("name", SolrContext.REINDEX);
+            prop.store(os, "Generated Solr core properties file");
+            IOUtils.closeQuietly(os);
+        }
+
+        //Create a "cores/reindex/conf" directory if it does not exist
+        File reindexConfDir = new File(reindexCoreDir, "conf");
+        if (!reindexConfDir.exists() || !reindexConfDir.isDirectory()) {
+            reindexConfDir.mkdirs();
         }
     }
 
@@ -267,45 +333,175 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     @Override
-    public void destroy() throws Exception {
-        if (SolrContext.getServer() instanceof EmbeddedSolrServer) {
-            ((EmbeddedSolrServer) SolrContext.getServer()).shutdown();
+    public void afterPropertiesSet() throws Exception {
+        if (SolrContext.isSolrCloudMode()) {
+            //We want to use the Solr APIs to make sure the correct collections are set up.
+
+            CloudSolrServer primary = (CloudSolrServer) SolrContext.getServer();
+            CloudSolrServer reindex = (CloudSolrServer) SolrContext.getReindexServer();
+            if (primary == null || reindex == null) {
+                throw new IllegalStateException("The primary and reindex CloudSolrServers must not be null. Check "
+                        + "your configuration and ensure that you are passing a different instance for each to the "
+                        + "constructor of "
+                        + this.getClass().getName()
+                        + " and ensure that each has a null (empty)"
+                        + " defaultCollection property, or ensure that defaultCollection is unique between"
+                        + " the two instances. All other things, like Zookeeper addresses should be the same.");
+            }
+
+            if (primary == reindex) {
+                //These are the same object instances.  They should be separate instances, with generally 
+                //the same configuration, except for the defaultCollection name.
+                throw new IllegalStateException("The primary and reindex CloudSolrServers must be different instances "
+                        + "and their defaultCollection property must be unique or null.  All other things like the "
+                        + "Zookeeper addresses should be the same.");
+            }
+            
+            //Set the default collection if it's null
+            if (StringUtils.isEmpty(primary.getDefaultCollection())) {
+                primary.setDefaultCollection(SolrContext.PRIMARY);
+            }
+
+            //Set the default collection if it's null
+            if (StringUtils.isEmpty(reindex.getDefaultCollection())) {
+                reindex.setDefaultCollection(SolrContext.REINDEX);
+            }
+
+            if (primary.getDefaultCollection().equals(reindex.getDefaultCollection())) {
+                throw new IllegalStateException("The primary and reindex CloudSolrServers must have a null (empty) or "
+                        + "unique defaultCollection property.  All other things like the "
+                        + "Zookeeper addresses should be the same.");
+            }
+
+            primary.connect(); //This is required to ensure no NPE!
+
+            //Get a list of existing collections so we don't overwrite one
+            Set<String> collectionNames = primary.getZkStateReader().getClusterState().getCollections();
+            if (collectionNames == null) {
+                collectionNames = new HashSet<String>();
+            }
+
+            Aliases aliases = primary.getZkStateReader().getAliases();
+            Map<String, String> aliasCollectionMap = aliases.getCollectionAliasMap();
+
+            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(primary.getDefaultCollection())) {
+                //Create a completely new collection
+                String collectionName = null;
+                for (int i = 0; i < 1000; i++) {
+                    collectionName = "blcCollection" + i;
+                    if (collectionNames.contains(collectionName)) {
+                        collectionName = null;
+                    } else {
+                        break;
+                    }
+                }
+
+                CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                CollectionAdminRequest.createAlias(primary.getDefaultCollection(), collectionName, primary);
+            } else {
+                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
+                String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
+                collectionName = collectionName.split(",")[0];
+                if (!collectionNames.contains(collectionName)) {
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                }
+            }
+
+            //Reload the collection names
+            collectionNames = primary.getZkStateReader().getClusterState().getCollections();
+            if (collectionNames == null) {
+                collectionNames = new HashSet<String>();
+            }
+
+            //Reload these maps for the next collection.
+            aliases = primary.getZkStateReader().getAliases();
+            aliasCollectionMap = aliases.getCollectionAliasMap();
+
+            if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
+                //Create a completely new collection
+                String collectionName = null;
+                for (int i = 0; i < 1000; i++) {
+                    collectionName = "blcCollection" + i;
+                    if (collectionNames.contains(collectionName)) {
+                        collectionName = null;
+                    } else {
+                        break;
+                    }
+                }
+
+                CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), collectionName, primary);
+            } else {
+                //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
+                String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
+                collectionName = collectionName.split(",")[0];
+                if (!collectionNames.contains(collectionName)) {
+                    CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                }
+            }
         }
     }
 
     @Override
-    public ProductSearchResult findExplicitProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
-            throws ServiceException {
-        List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getExplicitCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
-        return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
+    public void destroy() throws Exception {
+        //Make sure we shut down each of the SolrServer references (these is really the Solr clients despite the name)
+        try {
+            if (SolrContext.getServer() != null) {
+                SolrContext.getServer().shutdown();
+            }
+        } catch (Exception e) {
+            LOG.error("Error shutting down primary SolrServer (client).", e);
+        }
+
+        try {
+            if (SolrContext.getReindexServer() != null
+                    && SolrContext.getReindexServer() != SolrContext.getServer()) {
+                SolrContext.getReindexServer().shutdown();
+            }
+        } catch (Exception e) {
+            LOG.error("Error shutting down reindex SolrServer (client).", e);
+        }
+
+        try {
+            if (SolrContext.getAdminServer() != null
+                    && SolrContext.getAdminServer() != SolrContext.getServer()
+                    && SolrContext.getAdminServer() != SolrContext.getReindexServer()) {
+                SolrContext.getAdminServer().shutdown();
+            }
+        } catch (Exception e) {
+            LOG.error("Error shutting down admin SolrServer (client).", e);
+        }
     }
 
     @Override
-    public ProductSearchResult findProductsByCategory(Category category, ProductSearchCriteria searchCriteria)
-            throws ServiceException {
+    public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getCategoryFacets(category);
-        String query = shs.getCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
-        return findProducts("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
+        String query = shs.getExplicitCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
+        return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
     }
 
     @Override
-    public ProductSearchResult findProductsByQuery(String query, ProductSearchCriteria searchCriteria)
-            throws ServiceException {
+    public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
+        List<SearchFacetDTO> facets = getCategoryFacets(category);
+        String query = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
+        return findSearchResults("*:*", facets, searchCriteria, shs.getCategorySortFieldName(category) + " asc", query);
+    }
+
+    @Override
+    public SearchResult findSearchResultsByQuery(String query, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
         query = "(" + sanitizeQuery(query) + ")";
-        return findProducts(query, facets, searchCriteria, null);
+        return findSearchResults(query, facets, searchCriteria, null);
     }
 
     @Override
-    public ProductSearchResult findProductsByCategoryAndQuery(Category category, String query,
-            ProductSearchCriteria searchCriteria) throws ServiceException {
+    public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
         List<SearchFacetDTO> facets = getSearchFacets();
 
-        String catFq = shs.getCategoryFieldName() + ":" + shs.getCategoryId(category.getId());
+        String catFq = shs.getCategoryFieldName() + ":\"" + shs.getCategoryId(category) + "\"";
         query = "(" + sanitizeQuery(query) + ")";
         
-        return findProducts(query, facets, searchCriteria, null, catFq);
+        return findSearchResults(query, facets, searchCriteria, null, catFq);
     }
 
     public String getLocalePrefix() {
@@ -320,7 +516,13 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     protected String buildQueryFieldsString() {
         StringBuilder queryBuilder = new StringBuilder();
-        List<Field> fields = fieldDao.readAllProductFields();
+        List<Field> fields = null;
+        if (useSku) {
+            fields = fieldDao.readAllSkuFields();
+        } else {
+            fields = fieldDao.readAllProductFields();
+        }
+
         for (Field currentField : fields) {
             if (currentField.getSearchable()) {
                 appendFieldToQuery(queryBuilder, currentField);
@@ -337,12 +539,12 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     /**
-     * @deprecated in favor of the other findProducts() method
+     * @deprecated in favor of the other findSearchResults() method
      */
     @Deprecated
-    protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
-            ProductSearchCriteria searchCriteria, String defaultSort) throws ServiceException {
-        return findProducts(qualifiedSolrQuery, facets, searchCriteria, defaultSort, null);
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
+            SearchCriteria searchCriteria, String defaultSort) throws ServiceException {
+        return findSearchResults(qualifiedSolrQuery, facets, searchCriteria, defaultSort, (String[]) null);
     }
 
     /**
@@ -355,8 +557,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return the ProductSearchResult of the search
      * @throws ServiceException
      */
-    protected ProductSearchResult findProducts(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
-            ProductSearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Build the basic query
@@ -364,9 +565,17 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         int start = (searchCriteria.getPage() <= 0) ? 0 : (searchCriteria.getPage() - 1);
         SolrQuery solrQuery = new SolrQuery()
                 .setQuery(qualifiedSolrQuery)
-                .setFields(shs.getProductIdFieldName())
                 .setRows(searchCriteria.getPageSize())
                 .setStart((start) * searchCriteria.getPageSize());
+
+        //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
+        solrQuery.setParam("collection", SolrContext.PRIMARY); //This should be ignored if not using SolrCloud
+
+        if (useSku) {
+            solrQuery.setFields(shs.getSkuIdFieldName());
+        } else {
+            solrQuery.setFields(shs.getProductIdFieldName());
+        }
         if (filterQueries != null) {
             solrQuery.setFilterQueries(filterQueries);
         }
@@ -397,7 +606,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         List<SolrDocument> responseDocuments;
         int numResults = 0;
         try {
-            response = SolrContext.getServer().query(solrQuery);
+            response = SolrContext.getServer().query(solrQuery, getSolrQueryMethod());
             responseDocuments = getResponseDocuments(response);
             numResults = (int) response.getResults().getNumFound();
 
@@ -416,20 +625,26 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         setFacetResults(namedFacetMap, response);
         sortFacetResults(namedFacetMap);
 
-        // Get the products
-        List<Product> products = getProducts(responseDocuments);
-
-        ProductSearchResult result = new ProductSearchResult();
+        SearchResult result = new SearchResult();
         result.setFacets(facets);
-        result.setProducts(products);
         setPagingAttributes(result, numResults, searchCriteria);
+
+        if (useSku) {
+            List<Sku> skus = getSkus(responseDocuments);
+            result.setSkus(skus);
+        } else {
+            // Get the products
+            List<Product> products = getProducts(responseDocuments);
+            result.setProducts(products);
+        }
+
         return result;
     }
 
     /**
      * Provides a hook point for implementations to modify all SolrQueries before they're executed.
      * Modules should leverage the extension manager method of the same name,
-     * {@link SolrSearchServiceExtensionHandler#modifySolrQuery(SolrQuery, String, List, ProductSearchCriteria, String)}
+     * {@link SolrSearchServiceExtensionHandler#modifySolrQuery(SolrQuery, String, List, SearchCriteria, String)}
      * 
      * @param query
      * @param qualifiedSolrQuery
@@ -438,32 +653,19 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param defaultSort
      */
     protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-            List<SearchFacetDTO> facets, ProductSearchCriteria searchCriteria, String defaultSort) {
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
     }
     
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {
-        List<SolrDocument> docs;
-        
-        if (response.getGroupResponse() == null) {
-            docs = response.getResults();
-        } else {
-            docs = new ArrayList<SolrDocument>();
-            GroupResponse gr = response.getGroupResponse();
-            for (GroupCommand gc : gr.getValues()) {
-                for (Group g : gc.getValues()) {
-                    for (SolrDocument d : g.getResult()) {
-                        docs.add(d);
-                    }
-                }
-            }
-        }
-        
-        return docs;
+        return shs.getResponseDocuments(response);
     }
 
     @Override
     public List<SearchFacetDTO> getSearchFacets() {
-        return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets());
+        if (useSku) {
+            return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.SKU));
+        }
+        return buildSearchFacetDTOs(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
     }
 
     @Override
@@ -484,28 +686,14 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param query
      * @param searchCriteria
      */
-    protected void attachSortClause(SolrQuery query, ProductSearchCriteria searchCriteria, String defaultSort) {
-        Map<String, String> solrFieldKeyMap = getSolrFieldKeyMap(searchCriteria);
-
-        String sortQuery = searchCriteria.getSortQuery();
-        if (StringUtils.isBlank(sortQuery)) {
-            sortQuery = defaultSort;
+    protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
+        List<Field> fields = null;
+        if (useSku) {
+            fields = fieldDao.readAllSkuFields();
+        } else {
+            fields = fieldDao.readAllProductFields();
         }
-
-        if (StringUtils.isNotBlank(sortQuery)) {
-            String[] sortFields = sortQuery.split(",");
-            for (String sortField : sortFields) {
-                String field = sortField.split(" ")[0];
-                if (solrFieldKeyMap.containsKey(field)) {
-                    field = solrFieldKeyMap.get(field);
-                }
-                ORDER order = "desc".equals(sortField.split(" ")[1]) ? ORDER.desc : ORDER.asc;
-
-                if (field != null) {
-                    query.addSortField(field, order);
-                }
-            }
-        }
+        shs.attachSortClause(query, searchCriteria, defaultSort, fields);
     }
 
     /**
@@ -516,41 +704,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param searchCriteria
      */
     protected void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap,
-            ProductSearchCriteria searchCriteria) {
-        for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
-            String solrKey = null;
-            for (Entry<String, SearchFacetDTO> dtoEntry : namedFacetMap.entrySet()) {
-                if (dtoEntry.getValue().getFacet().getField().getAbbreviation().equals(entry.getKey())) {
-                    solrKey = dtoEntry.getKey();
-                    dtoEntry.getValue().setActive(true);
-                }
-            }
-
-            if (solrKey != null) {
-                String solrTag = getSolrFieldTag(shs.getGlobalFacetTagField(), "tag");
-
-                String[] selectedValues = entry.getValue().clone();
-                for (int i = 0; i < selectedValues.length; i++) {
-                    if (selectedValues[i].contains("range[")) {
-                        String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
-                                selectedValues[i].indexOf(']'));
-                        String[] rangeValues = StringUtils.split(rangeValue, ':');
-                        if (rangeValues[1].equals("null")) {
-                            rangeValues[1] = "*";
-                        }
-                        selectedValues[i] = solrKey + ":[" + rangeValues[0] + " TO " + rangeValues[1] + "]";
-                    } else {
-                        selectedValues[i] = solrKey + ":\"" + scrubFacetValue(selectedValues[i]) + "\"";
-                    }
-                }
-                String valueString = StringUtils.join(selectedValues, " OR ");
-
-                StringBuilder sb = new StringBuilder();
-                sb.append(solrTag).append("(").append(valueString).append(")");
-
-                query.addFilterQuery(sb.toString());
-            }
-        }
+            SearchCriteria searchCriteria) {
+        shs.attachActiveFacetFilters(query, namedFacetMap, searchCriteria);
     }
     
     /**
@@ -560,14 +715,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return The facet value with all special characters properly escaped, safe to be used in construction of a Solr query
      */
     protected String scrubFacetValue(String facetValue) {
-        String scrubbedFacetValue = facetValue;
-        
-        String[] specialCharacters = new String[] { "\\\\", "\\+", "-", "&&", "\\|\\|", "\\!", "\\(", "\\)", "\\{", "\\}", "\\[", "\\]", "\\^", "\"", "~", "\\*", "\\?", ":" };
-        for(String character : specialCharacters) {
-            scrubbedFacetValue = scrubbedFacetValue.replaceAll(character, "\\\\" + character);
-        }
-        
-        return scrubbedFacetValue;
+        return shs.scrubFacetValue(facetValue);
     }
 
     /**
@@ -577,26 +725,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param namedFacetMap
      */
     protected void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap) {
-        query.setFacet(true);
-        for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
-            SearchFacetDTO dto = entry.getValue();
-            String facetTagField = entry.getValue().isActive() ? shs.getGlobalFacetTagField() : entry.getKey();
-
-            // Clone the list - we don't want to remove these facets from the DB
-            List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
-
-            if (extensionManager != null) {
-                extensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
-            }
-
-            if (facetRanges != null && facetRanges.size() > 0) {
-                for (SearchFacetRange range : facetRanges) {
-                    query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), facetTagField, "ex", range));
-                }
-            } else {
-                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), facetTagField, "ex", null));
-            }
-        }
+        shs.attachFacets(query, namedFacetMap);
     }
 
     /**
@@ -607,42 +736,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param response
      */
     protected void setFacetResults(Map<String, SearchFacetDTO> namedFacetMap, QueryResponse response) {
-        if (response.getFacetFields() != null) {
-            for (FacetField facet : response.getFacetFields()) {
-                String facetFieldName = facet.getName();
-                SearchFacetDTO facetDTO = namedFacetMap.get(facetFieldName);
-
-                for (Count value : facet.getValues()) {
-                    SearchFacetResultDTO resultDTO = new SearchFacetResultDTO();
-                    resultDTO.setFacet(facetDTO.getFacet());
-                    resultDTO.setQuantity(new Long(value.getCount()).intValue());
-                    resultDTO.setValue(value.getName());
-                    facetDTO.getFacetValues().add(resultDTO);
-                }
-            }
-        }
-
-        if (response.getFacetQuery() != null) {
-            for (Entry<String, Integer> entry : response.getFacetQuery().entrySet()) {
-                String key = entry.getKey();
-                String facetFieldName = key.substring(key.indexOf("}") + 1, key.indexOf(':'));
-                SearchFacetDTO facetDTO = namedFacetMap.get(facetFieldName);
-
-                String minValue = key.substring(key.indexOf("[") + 1, key.indexOf(" TO"));
-                String maxValue = key.substring(key.indexOf(" TO ") + 4, key.indexOf("]"));
-                if (maxValue.equals("*")) {
-                    maxValue = null;
-                }
-
-                SearchFacetResultDTO resultDTO = new SearchFacetResultDTO();
-                resultDTO.setFacet(facetDTO.getFacet());
-                resultDTO.setQuantity(entry.getValue());
-                resultDTO.setMinValue(new BigDecimal(minValue));
-                resultDTO.setMaxValue(maxValue == null ? null : new BigDecimal(maxValue));
-
-                facetDTO.getFacetValues().add(resultDTO);
-            }
-        }
+        shs.setFacetResults(namedFacetMap, response);
     }
 
     /**
@@ -653,19 +747,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param namedFacetMap
      */
     protected void sortFacetResults(Map<String, SearchFacetDTO> namedFacetMap) {
-        for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
-            Collections.sort(entry.getValue().getFacetValues(), new Comparator<SearchFacetResultDTO>() {
-                @Override
-                public int compare(SearchFacetResultDTO o1, SearchFacetResultDTO o2) {
-                    if (o1.getValue() != null && o2.getValue() != null) {
-                        return o1.getValue().compareTo(o2.getValue());
-                    } else if (o1.getMinValue() != null && o2.getMinValue() != null) {
-                        return o1.getMinValue().compareTo(o2.getMinValue());
-                    }
-                    return 0; // Don't know how to compare
-                }
-            });
-        }
+        shs.sortFacetResults(namedFacetMap);
     }
 
     /**
@@ -676,7 +758,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param response
      * @param searchCriteria
      */
-    public void setPagingAttributes(ProductSearchResult result, int numResults, ProductSearchCriteria searchCriteria) {
+    public void setPagingAttributes(SearchResult result, int numResults, SearchCriteria searchCriteria) {
         result.setTotalResults(numResults);
         result.setPage(searchCriteria.getPage());
         result.setPageSize(searchCriteria.getPageSize());
@@ -703,8 +785,8 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             Collections.sort(products, new Comparator<Product>() {
                 @Override
                 public int compare(Product o1, Product o2) {
-                    Long o1id = shs.getProductId(o1.getId());
-                    Long o2id = shs.getProductId(o2.getId());
+                    Long o1id = shs.getProductId(o1);
+                    Long o2id = shs.getProductId(o2);
                     return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
                 }
             });
@@ -714,25 +796,42 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     /**
+     * Given a list of Sku IDs from solr, this method will look up the IDs via the skuDao and build out
+     * actual Sku instances. It will return a Sku list that is sorted by the order of the IDs in the passed
+     * in list.
+     * 
+     * @param response
+     * @return the actual Sku instances as a result of the search
+     */
+    protected List<Sku> getSkus(List<SolrDocument> responseDocuments) {
+        final List<Long> skuIds = new ArrayList<Long>();
+        for (SolrDocument doc : responseDocuments) {
+            skuIds.add((Long) doc.getFieldValue(shs.getSkuIdFieldName()));
+        }
+
+        List<Sku> skus = skuDao.readSkusByIds(skuIds);
+
+        // We have to sort the skus list by the order of the skuIds list to maintain sortability in the UI
+        if (skus != null) {
+            Collections.sort(skus, new Comparator<Sku>() {
+                @Override
+                public int compare(Sku o1, Sku o2) {
+                    return new Integer(skuIds.indexOf(o1.getId())).compareTo(skuIds.indexOf(o2.getId()));
+                }
+            });
+        }
+
+        return skus;
+    }
+
+    /**
      * Create the wrapper DTO around the SearchFacet
      * 
      * @param searchFacets
      * @return the wrapper DTO
      */
     protected List<SearchFacetDTO> buildSearchFacetDTOs(List<SearchFacet> searchFacets) {
-        List<SearchFacetDTO> facets = new ArrayList<SearchFacetDTO>();
-        Map<String, String[]> requestParameters = BroadleafRequestContext.getRequestParameterMap();
-
-        for (SearchFacet facet : searchFacets) {
-            if (facetIsAvailable(facet, requestParameters)) {
-                SearchFacetDTO dto = new SearchFacetDTO();
-                dto.setFacet(facet);
-                dto.setShowQuantity(true);
-                facets.add(dto);
-            }
-        }
-
-        return facets;
+        return shs.buildSearchFacetDTOs(searchFacets);
     }
 
     /**
@@ -743,36 +842,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return whether or not the facet parameter is available 
      */
     protected boolean facetIsAvailable(SearchFacet facet, Map<String, String[]> params) {
-        // Facets are available by default if they have no requiredFacets
-        if (CollectionUtils.isEmpty(facet.getRequiredFacets())) {
-            return true;
-        }
-
-        // If we have at least one required facet but no active facets, it's impossible for this facet to be available
-        if (MapUtils.isEmpty(params)) {
-            return false;
-        }
-
-        // We must either match all or just one of the required facets depending on the requiresAllDependentFacets flag
-        int requiredMatches = facet.getRequiresAllDependentFacets() ? facet.getRequiredFacets().size() : 1;
-        int matchesSoFar = 0;
-
-        for (RequiredFacet requiredFacet : facet.getRequiredFacets()) {
-            if (requiredMatches == matchesSoFar) {
-                return true;
-            }
-
-            // Check to see if the required facet has a value in the current request parameters
-            for (Entry<String, String[]> entry : params.entrySet()) {
-                String key = entry.getKey();
-                if (key.equals(requiredFacet.getRequiredFacet().getField().getAbbreviation())) {
-                    matchesSoFar++;
-                    break;
-                }
-            }
-        }
-
-        return requiredMatches == matchesSoFar;
+        return shs.isFacetAvailable(facet, params);
     }
 
     /**
@@ -784,48 +854,36 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return the sanitized query
      */
     protected String sanitizeQuery(String query) {
-        return query.replace("(", "").replace("%28", "")
-                .replace(")", "").replace("%29", "")
-                .replace(":", "").replace("%3A", "").replace("%3a", "")
-                .replace("&quot;", "\""); // Allow quotes in the query for more finely tuned matches
-    }
-
-    /**
-     * Returns a field string. Given indexField = a and a non-null range, would produce the following String:
-     * a:[minVal TO maxVal]
-     */
-    protected String getSolrFieldString(String indexField, SearchFacetRange range) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(indexField);
-
-        if (range != null) {
-            String minValue = range.getMinValue().toPlainString();
-            String maxValue = range.getMaxValue() == null ? "*" : range.getMaxValue().toPlainString();
-            sb.append(":[").append(minValue).append(" TO ").append(maxValue).append("]");
-        }
-
-        return sb.toString();
+        return shs.sanitizeQuery(query);
     }
 
     /**
      * Returns a fully composed solr field string. Given indexField = a, tag = ex, and a non-null range,
-     * would produce the following String: {!ex=a}a:[minVal TO maxVal]
+     * would produce the following String: {!tag=a frange incl=false l=minVal u=maxVal}a
      */
-    protected String getSolrTaggedFieldString(String indexField, String tagField, String tag, SearchFacetRange range) {
-        return getSolrFieldTag(tagField, tag) + getSolrFieldString(indexField, range);
+    protected String getSolrTaggedFieldString(String indexField, String tag, SearchFacetRange range) {
+        return shs.getSolrTaggedFieldString(indexField, tag, range);
     }
 
     /**
-     * Returns a solr field tag. Given indexField = a, tag = ex, would produce the following String:
-     * {!ex=a}
+     * Returns a solr field tag. Given indexField = a, tag = tag, would produce the following String:
+     * {!tag=a}. if range is not null it will produce {!tag=a frange incl=false l=minVal u=maxVal} 
      */
-    protected String getSolrFieldTag(String tagField, String tag) {
-        StringBuilder sb = new StringBuilder();
-        if (StringUtils.isNotBlank(tag)) {
-            sb.append("{!").append(tag).append("=").append(tagField).append("}");
-        }
-        return sb.toString();
+    protected String getSolrFieldTag(String tagField, String tag, SearchFacetRange range) {
+        return shs.getSolrFieldTag(tagField, tag, range);
+    }
+
+    protected String getSolrRangeString(String fieldName, BigDecimal minValue, BigDecimal maxValue) {
+        return shs.getSolrRangeString(fieldName, minValue, maxValue);
+    }
+
+    /**
+     * @param minValue
+     * @param maxValue
+     * @return a string representing a call to the frange solr function. it is not inclusive of lower limit, inclusive of upper limit
+     */
+    protected String getSolrRangeFunctionString(BigDecimal minValue, BigDecimal maxValue) {
+        return shs.getSolrRangeFunctionString(minValue, maxValue);
     }
 
     /**
@@ -834,43 +892,33 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return a map of fully qualified solr index field key to the searchFacetDTO object
      */
     protected Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets,
-            final ProductSearchCriteria searchCriteria) {
-        return BLCMapUtils.keyedMap(facets, new TypedClosure<String, SearchFacetDTO>() {
-
-            @Override
-            public String getKey(SearchFacetDTO facet) {
-                return getSolrFieldKey(facet.getFacet().getField(), searchCriteria);
-            }
-        });
-    }
-
-    /**
-     * This method will be used to map a field abbreviation to the appropriate solr index field to use. Typically,
-     * this default implementation that maps to the facet field type will be sufficient. However, there may be 
-     * cases where you would want to use a different solr index depending on other currently active facets. In that
-     * case, you would associate that mapping here. For example, for the "price" abbreviation, we would generally
-     * want to use "defaultSku.retailPrice_td". However, if a secondary facet on item condition is selected (such
-     * as "refurbished", we may want to index "price" to "refurbishedSku.retailPrice_td". That mapping occurs here.
-     * 
-     * @param fields
-     * @param searchCriteria the searchCriteria in case it is needed to determine the field key
-     * @return the solr field index key to use
-     */
-    protected String getSolrFieldKey(Field field, ProductSearchCriteria searchCriteria) {
-        return shs.getPropertyNameForFieldFacet(field);
+            final SearchCriteria searchCriteria) {
+        return shs.getNamedFacetMap(facets, searchCriteria);
     }
 
     /**
      * @param searchCriteria
      * @return a map of abbreviated key to fully qualified solr index field key for all product fields
      */
-    protected Map<String, String> getSolrFieldKeyMap(ProductSearchCriteria searchCriteria) {
-        List<Field> fields = fieldDao.readAllProductFields();
-        Map<String, String> solrFieldKeyMap = new HashMap<String, String>();
-        for (Field field : fields) {
-            solrFieldKeyMap.put(field.getAbbreviation(), getSolrFieldKey(field, searchCriteria));
+    protected Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria) {
+        List<Field> fields = null;
+        if (useSku) {
+            fields = fieldDao.readAllSkuFields();
+        } else {
+            fields = fieldDao.readAllProductFields();
         }
-        return solrFieldKeyMap;
+        return shs.getSolrFieldKeyMap(searchCriteria, fields);
     }
 
+    /**
+     * Allows the user to choose the query method to use.  POST allows for longer, more complex queries with 
+     * a higher number of facets.
+     * 
+     * Default value is POST.  Implementors can override this to use GET if they wish.
+     * 
+     * @return
+     */
+    protected METHOD getSolrQueryMethod() {
+        return METHOD.POST;
+    }
 }

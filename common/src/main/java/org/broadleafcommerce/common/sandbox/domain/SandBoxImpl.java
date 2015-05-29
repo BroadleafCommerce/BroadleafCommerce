@@ -25,7 +25,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
@@ -33,6 +35,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +43,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -54,6 +58,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_SANDBOX")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSandBoxElements")
+@SQLDelete(sql="UPDATE BLC_SANDBOX SET ARCHIVED = 'Y' WHERE SANDBOX_ID = ?")
 public class SandBoxImpl implements SandBox, AdminMainEntity {
 
     private static final Log LOG = LogFactory.getLog(SandBoxImpl.class);
@@ -76,7 +81,8 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     @Column(name = "SANDBOX_NAME")
     @Index(name="SANDBOX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
     @AdminPresentation(friendlyName = "SandBoxImpl_Name", group = "SandBoxImpl_Description", prominent = true, 
-        gridOrder = 2000, order = 1000)
+            gridOrder = 2000, order = 1000,
+            validationConfigurations = { @ValidationConfiguration(validationImplementation = "blSandBoxNameValidator") })
     protected String name;
     
     @Column(name="AUTHOR")
@@ -117,6 +123,9 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     */
     @Column(name = "GO_LIVE_DATE")
     protected Date goLiveDate;
+
+    @Embedded
+    protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     @Override
     public Long getId() {
@@ -272,4 +281,27 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
         return false;
     }
 
+    @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
+    public Character getArchived() {
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
+    }
+
+    @Override
+    public boolean isActive() {
+        return 'Y'!=getArchived();
+    }
 }

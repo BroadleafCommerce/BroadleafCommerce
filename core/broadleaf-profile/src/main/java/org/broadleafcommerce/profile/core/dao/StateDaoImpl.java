@@ -33,6 +33,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
+/**
+ * @deprecated - use {@link org.broadleafcommerce.profile.core.dao.CountrySubdivisionDaoImpl} instead.
+ */
+@Deprecated
 @Repository("blStateDao")
 public class StateDaoImpl implements StateDao {
 

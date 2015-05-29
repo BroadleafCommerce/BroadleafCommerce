@@ -19,12 +19,13 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.value.Searchable;
 
 /**
  * The Interface ProductAttribute.
  */
-public interface ProductAttribute extends Searchable<String> {
+public interface ProductAttribute extends Searchable<String>, MultiTenantCloneable<ProductAttribute> {
 
     /**
      * Gets the id.

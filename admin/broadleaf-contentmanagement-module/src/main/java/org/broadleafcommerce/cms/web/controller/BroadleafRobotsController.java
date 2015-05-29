@@ -64,7 +64,7 @@ public class BroadleafRobotsController {
                 "/robots.txt", buildMvelParameters(request), isSecure(request));
 
         if (page != null && page.getPageFields().containsKey("body")) {
-            String body = page.getPageFields().get("body");
+            String body = (String) page.getPageFields().get("body");
             body = body.replace("${siteBaseUrl}", baseUrlResolver.getSiteBaseUrl());
             return body;
         } else {

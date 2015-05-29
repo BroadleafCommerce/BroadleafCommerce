@@ -19,10 +19,15 @@
  */
 package org.broadleafcommerce.admin.web.controller.entity;
 
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
+import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,21 +43,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 
- * ***********************************************
- * IMPORTANT NOTE:
- * 
- * This controller is purposefully disabled. We will eventually want to bring it back when an AJAX
- * based category tree is implemented, but for now the category tree is disabled. I'm not deleting 
- * this file along with categoryTree.html because they will find their way back in the future.
- * ***********************************************
- * 
  * Handles admin operations for the {@link Category} entity.
  * 
  * @author Andre Azzolini (apazzolini)
  */
-//@Controller("blAdminCategoryController")
-//@RequestMapping("/" + AdminCategoryController.SECTION_KEY)
+@Controller("blAdminCategoryController")
+@RequestMapping("/" + AdminCategoryController.SECTION_KEY)
 public class AdminCategoryController extends AdminBasicEntityController {
     
     protected static final String SECTION_KEY = "category";
@@ -69,13 +65,43 @@ public class AdminCategoryController extends AdminBasicEntityController {
         return SECTION_KEY;
     }
     
-    @SuppressWarnings("unchecked")
+    protected boolean getTreeViewEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("admin.category.treeViewEnabled");
+    }
+
+    @Override
+    protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
+        Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
+        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+    }
+
+    @Override
+    protected void modifyAddEntityForm(EntityForm ef, Map<String, String> pathVars) {
+        Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
+        overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+        boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+        Field fullUrl = ef.findField("url");
+        fullUrl.withAttribute("overriddenUrl", overriddenUrl)
+            .withAttribute("sourceField", "name")
+            .withAttribute("toggleField", "overrideGeneratedUrl")
+            .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+    }
+    
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
-        super.viewEntityList(request, response, model, pathVars, requestParams);
-        
+            @PathVariable Map<String, String> pathVars,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+        String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
+
+        if (getTreeViewEnabled()) {
+            return entityListWithTreeView(model);
+        } else {
+            return returnPath;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected String entityListWithTreeView(Model model) {
         List<Category> parentCategories = catalogService.findAllParentCategories();
         model.addAttribute("parentCategories", parentCategories);
         
@@ -92,5 +118,9 @@ public class AdminCategoryController extends AdminBasicEntityController {
         model.addAttribute("viewType", "categoryTree");
         return "modules/defaultContainer";
     }
-    
+
+    @Override
+    public String[] getSectionCustomCriteria() {
+            return new String[]{"categoryDirectEdit"};
+        }
 }

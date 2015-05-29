@@ -574,7 +574,9 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         for (PromotionDiscount discount : promotionDiscounts) {
             if (discount.getQuantity() != quantity) {
                 Long offerId = discount.getCandidateItemOffer().getOffer().getId();
-                return this.split(discount.getQuantity(), offerId, !CollectionUtils.isEmpty(discount.getCandidateItemOffer().getOffer().getQualifyingItemCriteria()));
+                Offer offer = discount.getCandidateItemOffer().getOffer();
+                return this.split(discount.getQuantity(), offerId,
+                        !CollectionUtils.isEmpty(offer.getQualifyingItemCriteriaXref()));
             }
         }
         return returnDetail;

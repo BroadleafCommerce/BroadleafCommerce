@@ -49,6 +49,63 @@ import java.util.Map;
  */
 @Component("blDynamicFieldPersistenceHandlerHelper")
 public class DynamicFieldPersistenceHandlerHelper {
+    
+    public Property buildDynamicProperty(FieldDefinition definition, Class<?> inheritedType) {
+        Property property = new Property();
+        property.setName(definition.getName());
+        BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
+        property.setMetadata(fieldMetadata);
+        fieldMetadata.setFieldType(definition.getFieldType());
+        
+        fieldMetadata.setMutable(true);
+        fieldMetadata.setInheritedFromType(inheritedType.getName());
+        fieldMetadata.setAvailableToTypes(new String[] {inheritedType.getName()});
+        fieldMetadata.setForeignKeyCollection(false);
+        fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
+        fieldMetadata.setLength(definition.getMaxLength());
+        if (definition.getDataDrivenEnumeration() != null && !CollectionUtils.isEmpty(definition.getDataDrivenEnumeration().getEnumValues())) {
+            int count = definition.getDataDrivenEnumeration().getEnumValues().size();
+            String[][] enumItems = new String[count][2];
+            for (int j = 0; j < count; j++) {
+                DataDrivenEnumerationValue item = definition.getDataDrivenEnumeration().getEnumValues().get(j);
+                enumItems[j][0] = item.getKey();
+                enumItems[j][1] = item.getDisplay();
+            }
+            fieldMetadata.setEnumerationValues(enumItems);
+        }
+        fieldMetadata.setName(definition.getName());
+        fieldMetadata.setFriendlyName(definition.getFriendlyName());
+        fieldMetadata.setSecurityLevel(definition.getSecurityLevel()==null?"":definition.getSecurityLevel());
+        fieldMetadata.setVisibility(definition.getHiddenFlag()?VisibilityEnum.HIDDEN_ALL:VisibilityEnum.VISIBLE_ALL);
+        fieldMetadata.setTab("General");
+        fieldMetadata.setTabOrder(100);
+        fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
+        fieldMetadata.setLargeEntry(definition.getTextAreaFlag());
+        fieldMetadata.setProminent(false);
+        fieldMetadata.setColumnWidth(String.valueOf(definition.getColumnWidth()));
+        fieldMetadata.setBroadleafEnumeration("");
+        fieldMetadata.setReadOnly(false);
+        fieldMetadata.setRequiredOverride(definition.getRequiredFlag());
+        fieldMetadata.setHint(definition.getHint());
+        fieldMetadata.setHelpText(definition.getHelpText());
+        fieldMetadata.setTooltip(definition.getTooltip());
+        fieldMetadata.setTranslatable(true);
+        if (definition.getValidationRegEx() != null) {
+            Map<String, String> itemMap = new HashMap<String, String>();
+            itemMap.put("regularExpression", definition.getValidationRegEx());
+            itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
+            fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", itemMap);
+        }
+        
+        
+        if (definition.getFieldType().equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) {
+            fieldMetadata.setForeignKeyClass(definition.getAdditionalForeignKeyClass());
+            fieldMetadata.setOwningClass(definition.getAdditionalForeignKeyClass());
+            fieldMetadata.setForeignKeyDisplayValueProperty("__adminMainEntity");
+        }
+
+        return property;
+    }
 
     /**
      * Builds all of the metadata for all of the dynamic properties within a {@link StructuredContentType}, gleaned from
@@ -65,60 +122,13 @@ public class DynamicFieldPersistenceHandlerHelper {
         int fieldCount = 0;
         for (FieldGroup group : fieldGroups) {
             List<FieldDefinition> definitions = group.getFieldDefinitions();
-            for (FieldDefinition definition : definitions) {
-                Property property = new Property();
-                property.setName(definition.getName());
-                BasicFieldMetadata fieldMetadata = new BasicFieldMetadata();
-                property.setMetadata(fieldMetadata);
-                fieldMetadata.setFieldType(definition.getFieldType());
-                
-                fieldMetadata.setMutable(true);
-                fieldMetadata.setInheritedFromType(inheritedType.getName());
-                fieldMetadata.setAvailableToTypes(new String[] {inheritedType.getName()});
-                fieldMetadata.setForeignKeyCollection(false);
-                fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
-                fieldMetadata.setLength(definition.getMaxLength());
-                if (definition.getDataDrivenEnumeration() != null && !CollectionUtils.isEmpty(definition.getDataDrivenEnumeration().getEnumValues())) {
-                    int count = definition.getDataDrivenEnumeration().getEnumValues().size();
-                    String[][] enumItems = new String[count][2];
-                    for (int j = 0; j < count; j++) {
-                        DataDrivenEnumerationValue item = definition.getDataDrivenEnumeration().getEnumValues().get(j);
-                        enumItems[j][0] = item.getKey();
-                        enumItems[j][1] = item.getDisplay();
-                    }
-                    fieldMetadata.setEnumerationValues(enumItems);
-                }
-                fieldMetadata.setName(definition.getName());
-                fieldMetadata.setFriendlyName(definition.getFriendlyName());
-                fieldMetadata.setSecurityLevel(definition.getSecurityLevel()==null?"":definition.getSecurityLevel());
+            for (FieldDefinition def : definitions) {
+                Property property = buildDynamicProperty(def, inheritedType);
+                BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) property.getMetadata();
                 fieldMetadata.setOrder(fieldCount++);
-                fieldMetadata.setVisibility(definition.getHiddenFlag()?VisibilityEnum.HIDDEN_ALL:VisibilityEnum.VISIBLE_ALL);
                 fieldMetadata.setGroup(group.getName());
                 fieldMetadata.setGroupOrder(groupCount);
-                fieldMetadata.setTab("General");
-                fieldMetadata.setTabOrder(100);
                 fieldMetadata.setGroupCollapsed(group.getInitCollapsedFlag());
-                fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
-                fieldMetadata.setLargeEntry(definition.getTextAreaFlag());
-                fieldMetadata.setProminent(false);
-                fieldMetadata.setColumnWidth(String.valueOf(definition.getColumnWidth()));
-                fieldMetadata.setBroadleafEnumeration("");
-                fieldMetadata.setReadOnly(false);
-                fieldMetadata.setRequiredOverride(definition.getRequiredFlag());
-                if (definition.getValidationRegEx() != null) {
-                    Map<String, String> itemMap = new HashMap<String, String>();
-                    itemMap.put("regularExpression", definition.getValidationRegEx());
-                    itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
-                    fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", itemMap);
-                }
-                
-                
-                if (definition.getFieldType().equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) {
-                    fieldMetadata.setForeignKeyClass(definition.getAdditionalForeignKeyClass());
-                    fieldMetadata.setOwningClass(definition.getAdditionalForeignKeyClass());
-                    fieldMetadata.setForeignKeyDisplayValueProperty("__adminMainEntity");
-                }
-                
                 propertiesList.add(property);
             }
             groupCount++;

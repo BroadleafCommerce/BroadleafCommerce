@@ -30,6 +30,8 @@ import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.core.offer.domain.CustomerOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXref;
+import org.broadleafcommerce.core.offer.domain.OfferOfferRuleXrefImpl;
 import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.domain.OfferRuleImpl;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
@@ -251,7 +253,9 @@ public class OfferServiceTest extends TestCase {
         OfferRule orderRule = new OfferRuleImpl();
         //orderRule.setMatchRule("order.subTotal.getAmount()>124");
         orderRule.setMatchRule("order.subTotal.getAmount()>100");
-        offers.get(0).getOfferMatchRules().put(OfferRuleType.ORDER.getType(), orderRule);
+        Offer offer = offers.get(0);
+        OfferOfferRuleXref ruleXref = new OfferOfferRuleXrefImpl(offer, orderRule, OfferRuleType.ORDER.getType());
+        offer.getOfferMatchRulesXref().put(OfferRuleType.ORDER.getType(), ruleXref);
 
         offerService.applyAndSaveOffersToOrder(offers, order);
 

@@ -21,11 +21,14 @@ package org.broadleafcommerce.common.config.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -73,12 +76,14 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
     protected Long id;
 
     @Column(name = "PROPERTY_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "SystemPropertyImpl_name", order = 1000, 
+    @AdminPresentation(friendlyName = "SystemPropertyImpl_name", order = 1000,
+            requiredOverride = RequiredOverride.REQUIRED,
         group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 1000)
     protected String name;
 
-    @Column(name= "PROPERTY_VALUE", nullable = false)
+    @Column(name= "PROPERTY_VALUE")
     @AdminPresentation(friendlyName = "SystemPropertyImpl_value", order = 3000,
+            requiredOverride = RequiredOverride.REQUIRED,
         group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 3000)
     protected String value;
 
@@ -86,7 +91,8 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
     @AdminPresentation(friendlyName = "SystemPropertyImpl_propertyType", order = 2000, 
         group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 2000,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType")
+        broadleafEnumeration = "org.broadleafcommerce.common.config.service.type.SystemPropertyFieldType",
+        requiredOverride = RequiredOverride.REQUIRED)
     protected String propertyType;
 
     @Column(name = "FRIENDLY_NAME")
@@ -183,4 +189,19 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
         return getName();
     }
 
+    @Override
+    public <G extends SystemProperty> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SystemProperty cloned = createResponse.getClone();
+        cloned.setFriendlyGroup(friendlyGroup);
+        cloned.setFriendlyName(friendlyName);
+        cloned.setFriendlyTab(friendlyTab);
+        cloned.setName(name);
+        cloned.setValue(value);
+        cloned.setPropertyType(getPropertyType());
+        return createResponse;
+    }
 }

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
@@ -150,5 +152,19 @@ public class OrderAttributeImpl implements OrderAttribute {
         }
         
         return value.equals(((OrderAttribute) obj).getValue());
+    }
+
+    @Override
+    public <G extends OrderAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OrderAttribute cloned = createResponse.getClone();
+        cloned.setName(name);
+        cloned.setValue(value);
+        //dont clone
+        cloned.setOrder(order);
+        return createResponse;
     }
 }

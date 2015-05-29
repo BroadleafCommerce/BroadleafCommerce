@@ -21,7 +21,7 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
            
     <!-- Entity mappings - override for extensibility -->
     <bean id="org.broadleafcommerce.profile.core.domain.Address" class="org.broadleafcommerce.profile.core.domain.AddressImpl" scope="prototype">
@@ -49,5 +49,8 @@
     <bean id="org.broadleafcommerce.profile.core.domain.IdGeneration" class="org.broadleafcommerce.profile.core.domain.IdGenerationImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.Phone" class="org.broadleafcommerce.profile.core.domain.PhoneImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.profile.core.domain.Role" class="org.broadleafcommerce.profile.core.domain.RoleImpl" scope="prototype"/>
-    <bean id="org.broadleafcommerce.profile.core.domain.State" class="org.broadleafcommerce.profile.core.domain.StateImpl" scope="prototype"/>  
+    <bean id="org.broadleafcommerce.profile.core.domain.State" class="org.broadleafcommerce.profile.core.domain.StateImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.core.domain.CountrySubdivision" class="org.broadleafcommerce.profile.core.domain.CountrySubdivisionImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategory" class="org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategoryImpl" scope="prototype"/>
+
 </beans>

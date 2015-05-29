@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.dto;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 
 import java.io.Serializable;
@@ -44,6 +45,9 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     protected Map<String, PersistencePackage> subPackages = new LinkedHashMap<String, PersistencePackage>();
     protected boolean validateUnsubmittedProperties = true;
     protected SectionCrumb[] sectionCrumbs;
+
+    //internalUsage
+    protected boolean isProcessedInternal = false;
 
     public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
         this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
@@ -87,6 +91,9 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     }
     
     public String getSecurityCeilingEntityFullyQualifiedClassname() {
+        if (StringUtils.isBlank(securityCeilingEntityFullyQualifiedClassname)) {
+            return ceilingEntityFullyQualifiedClassname;
+        }
         return securityCeilingEntityFullyQualifiedClassname;
     }
 
@@ -238,6 +245,24 @@ public class PersistencePackage implements Serializable, StateDescriptor {
             return new SectionCrumb();
         }
         return sectionCrumbs[0];
+    }
+
+    /**
+     * Internally used field when passing the persistence package through the admin pipeline
+     *
+     * @return whether or not this persistence package has been exposed to a internal processing step
+     */
+    public boolean isProcessedInternal() {
+        return isProcessedInternal;
+    }
+
+    /**
+     * Internally used field when passing the persistence package through the admin pipeline
+     *
+     * @param isProcessedInternal whether or not this persistence package has been exposed to a internal processing step
+     */
+    public void setProcessedInternal(boolean isProcessedInternal) {
+        this.isProcessedInternal = isProcessedInternal;
     }
 
     @Override

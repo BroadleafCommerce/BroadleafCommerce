@@ -138,7 +138,8 @@ public class CandidateItemOfferTest extends TestCase {
         
         promotableCandidate = new PromotableCandidateItemOfferImpl(promotableOrder, offer);
         
-        promotableCandidate.getCandidateTargetsMap().put(offer.getTargetItemCriteria().iterator().next(), items);
+        OfferTargetCriteriaXref xref = offer.getTargetItemCriteriaXref().iterator().next();
+        promotableCandidate.getCandidateTargetsMap().put(xref.getOfferItemCriteria(), items);
     }
     
     public void testCalculateSavingsForOrderItem() throws Exception {
@@ -165,8 +166,8 @@ public class CandidateItemOfferTest extends TestCase {
     
     public void testCalculateMaxUsesForItemCriteria() throws Exception {
         int maxItemCriteriaUses = 9999;
-        for (OfferItemCriteria targetCriteria : offer.getTargetItemCriteria()) {
-            int temp = promotableCandidate.calculateMaxUsesForItemCriteria(targetCriteria, offer);
+        for (OfferTargetCriteriaXref targetXref : offer.getTargetItemCriteriaXref()) {
+            int temp = promotableCandidate.calculateMaxUsesForItemCriteria(targetXref.getOfferItemCriteria(), offer);
             maxItemCriteriaUses = Math.min(maxItemCriteriaUses, temp);
         }
         assertTrue(maxItemCriteriaUses == 2);

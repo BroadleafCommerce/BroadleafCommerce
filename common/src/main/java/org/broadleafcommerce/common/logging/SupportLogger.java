@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
  * <ul>
  * <li>show up in the logs as a SUPPORT item (not ERROR or WARN etc...)</li>
  * <li>always show up unless configured otherwise, as we want users to always see SUPPORT messages</li>
- * <li>allow state messages to be associated with the log (e.g. “Enterprise Module — …”)</li>
+ * <li>allow state messages to be associated with the log (e.g. "Enterprise Module — …")</li>
  * </ul>
  * </p>
  *

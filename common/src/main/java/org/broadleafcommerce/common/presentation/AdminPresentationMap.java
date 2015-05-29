@@ -204,6 +204,24 @@ public @interface AdminPresentationMap {
     UnspecifiedBooleanType isSimpleValue() default UnspecifiedBooleanType.UNSPECIFIED;
 
     /**
+     * <p>Optional - if the intended map value is actually buried inside of a modelled join entity, specify the
+     * the path to that value here. For example, SkuImpl.skuMedia uses SkuMediaXrefImpl, but the intended value
+     * is Media, so the toOneTargetProperty annotation param is "media"</p>
+     *
+     * @return the path to the intended map value field in the join entity
+     */
+    String toOneTargetProperty() default "";
+
+    /**
+     * <p>Optional - if the intended map value is actually buried inside of a modelled join entity, specify the
+     * the path to that parent here. For example, SkuImpl.skuMedia uses SkuMediaXrefImpl, and the parent reference
+     * inside SkuMediaXrefImpl is to Sku, so the toOneParentProperty annotation param is "sku"</p>
+     *
+     * @return the path to the parent in the join entity
+     */
+    String toOneParentProperty() default "";
+
+    /**
      * <p>Optional - only required if the value type for the map is complex (JPA managed) and one of the fields
      * of the complex value provides a URL value that points to a resolvable image url.</p>
      *

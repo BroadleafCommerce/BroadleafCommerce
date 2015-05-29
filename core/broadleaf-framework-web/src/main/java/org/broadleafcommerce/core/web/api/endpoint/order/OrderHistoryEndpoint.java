@@ -27,13 +27,13 @@ import org.broadleafcommerce.core.web.api.endpoint.BaseEndpoint;
 import org.broadleafcommerce.core.web.api.wrapper.OrderWrapper;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 
 /**
  * This endpoint depends on JAX-RS.  It should be extended by components that actually wish 
@@ -68,11 +68,11 @@ public abstract class OrderHistoryEndpoint extends BaseEndpoint {
                 return wrappers;
             }
 
-            throw BroadleafWebServicesException.build(Response.Status.NOT_FOUND.getStatusCode())
+            throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                     .addMessage(BroadleafWebServicesException.CART_NOT_FOUND);
         }
 
-        throw BroadleafWebServicesException.build(Response.Status.BAD_REQUEST.getStatusCode())
+        throw BroadleafWebServicesException.build(HttpStatus.BAD_REQUEST.value())
                 .addMessage(BroadleafWebServicesException.CUSTOMER_NOT_FOUND);
     }
 }

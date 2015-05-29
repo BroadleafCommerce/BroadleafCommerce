@@ -22,13 +22,16 @@ package org.broadleafcommerce.common.email.service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.email.dao.EmailReportingDao;
+import org.broadleafcommerce.common.util.TransactionUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author jfischer
@@ -41,10 +44,14 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
     @Resource(name = "blEmailReportingDao")
     protected EmailReportingDao emailReportingDao;
 
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public Long createTrackedEmail(String emailAddress, String type, String extraValue) {
         return emailReportingDao.createTracking(emailAddress, type, extraValue);
     }
 
+    @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void recordClick(Long emailId, Map<String, String> parameterMap, String customerId, Map<String, String> extraValues) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("recordClick() => Click detected for Email[" + emailId + "]");
@@ -89,6 +96,7 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
      * com.containerstore.web.task.service.EmailTrackingManager#recordOpen(java
      * .lang.String, javax.servlet.http.HttpServletRequest)
      */
+    @Override
     public void recordOpen(Long emailId, Map<String, String> extraValues) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Recording open for email id: " + emailId);

@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.CategoryMediaXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
 import org.broadleafcommerce.core.catalog.domain.CategoryXref;
@@ -39,7 +40,6 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -120,16 +120,15 @@ public class CatalogTest extends BaseTest {
         testCategory = catalogService.findCategoryById(category.getId());
         assert testCategory.getId().equals(category.getId());
                 
-        Map<String, Media> categoryMedia = testCategory.getCategoryMedia();
         Media media = new MediaImpl();
         media.setAltText("test");
         media.setTitle("large");
         media.setUrl("http://myUrl");
-        categoryMedia.put("large", media);
+        category.getCategoryMediaXref().put("large", new CategoryMediaXrefImpl(category, media, "large"));
         catalogService.saveCategory(testCategory);
 
         testCategory = catalogService.findCategoryById(category.getId());
-        assert(testCategory.getCategoryMedia().get("large") != null);
+        assert(testCategory.getCategoryMediaXref().get("large") != null);
 
         List<Category> categories = catalogService.findAllCategories();
         assert categories != null && categories.size() == 3;

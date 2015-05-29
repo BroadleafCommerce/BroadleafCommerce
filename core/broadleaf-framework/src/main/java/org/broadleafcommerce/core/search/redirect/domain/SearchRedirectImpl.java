@@ -70,31 +70,30 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable 
         }
     )
     @Column(name = "SEARCH_REDIRECT_ID")
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_ID", order = 1, group = "SearchRedirectImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "PRIORITY")
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchPriority", order = 1, group = "SearchRedirectImpl_description", groupOrder = 1, prominent=true)
-    @Index(name="SEARCH_PRIORITY_INDEX", columnNames={"PRIORITY"})
+    @AdminPresentation(excluded = true)
     protected Integer searchPriority;
 
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 2, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 1000, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1)
     @Column(name = "SEARCH_TERM", nullable = false)
     protected String searchTerm;
     
     @Column(name = "URL", nullable = false)
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 3, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 2000, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1)
     protected String url;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE" )
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order=7, group = "SearchRedirectImpl_description", tooltip="skuStartDateTooltip", groupOrder=1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 3000, group = "SearchRedirectImpl_description", tooltip = "skuStartDateTooltip", groupOrder = 1)
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SEARCH_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order=8, group = "SearchRedirectImpl_description", tooltip="skuEndDateTooltip", groupOrder=1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 4000, group = "SearchRedirectImpl_description", tooltip = "skuEndDateTooltip", groupOrder = 1)
     protected Date activeEndDate;
     
     @Override

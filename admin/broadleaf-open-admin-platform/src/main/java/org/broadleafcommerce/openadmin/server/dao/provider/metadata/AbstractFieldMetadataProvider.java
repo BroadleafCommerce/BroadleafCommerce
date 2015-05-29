@@ -19,35 +19,30 @@
  */
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.annotation.Resource;
-import javax.persistence.ManyToMany;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.ManyToMany;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
 
 /**
  * @author Jeff Fischer
@@ -58,6 +53,9 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    
+    @Resource(name = "blBroadleafEnumerationUtility")
+    protected BroadleafEnumerationUtility enumerationUtility;
 
     @Resource(name="blMetadataOverrides")
     public void setMetadataOverrides(Map metadataOverrides) {
@@ -217,53 +215,16 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
 
     protected void setupBroadleafEnumeration(String broadleafEnumerationClass, BasicFieldMetadata fieldMetadata, DynamicEntityDao dynamicEntityDao) {
         try {
-            
-            Map<String, String> enumVals;
-            Class<?> broadleafEnumeration = Class.forName(broadleafEnumerationClass);  
-
-            Method typeMethod = broadleafEnumeration.getMethod("getType");
-            Method friendlyTypeMethod = broadleafEnumeration.getMethod("getFriendlyType");
-            Field types = dynamicEntityDao.getFieldManager().getField(broadleafEnumeration, "TYPES");
-            
-            if (Comparable.class.isAssignableFrom(broadleafEnumeration)) {
-                enumVals = new LinkedHashMap<String, String>();
-                Set<BroadleafEnumerationType> blcEnumSet = new TreeSet<BroadleafEnumerationType>();
-                if (types != null) {
-                    Map typesMap = (Map) types.get(null);
-                    for (Object value : typesMap.values()) {
-                        blcEnumSet.add((BroadleafEnumerationType) value);
-                    }
-
-                    for (Object value : typesMap.values()) {
-                        enumVals.put((String) friendlyTypeMethod.invoke(value), (String) typeMethod.invoke(value));
-                    }
-                }
-            } else {
-                enumVals = new TreeMap<String, String>();
-                if (types != null) {
-                    Map typesMap = (Map) types.get(null);
-                    for (Object value : typesMap.values()) {
-                        enumVals.put((String) friendlyTypeMethod.invoke(value), (String) typeMethod.invoke(value));
-                    }
-                } else {
-                    Field[] fields = dynamicEntityDao.getAllFields(broadleafEnumeration);
-                    for (Field field : fields) {
-                        boolean isStatic = Modifier.isStatic(field.getModifiers());
-                        if (isStatic && field.getType().isAssignableFrom(broadleafEnumeration)){
-                            enumVals.put((String) friendlyTypeMethod.invoke(field.get(null)), (String) typeMethod.invoke(field.get(null)));
-                        }
-                    }
-                }
-            }
-            
+            List<Tuple<String, String>> enumVals = enumerationUtility.getEnumerationValues(broadleafEnumerationClass, dynamicEntityDao);
             
             String[][] enumerationValues = new String[enumVals.size()][2];
             int j = 0;
-            for (String key : enumVals.keySet()) {
-                enumerationValues[j][0] = enumVals.get(key);
-                enumerationValues[j][1] = key;
+            for (Tuple<String, String> t : enumVals) {
+                enumerationValues[j][0] = t.getFirst();
+                enumerationValues[j][1] = t.getSecond();
                 j++;
             }
+            
             fieldMetadata.setEnumerationValues(enumerationValues);
             fieldMetadata.setEnumerationClass(broadleafEnumerationClass);
         } catch (Exception e) {

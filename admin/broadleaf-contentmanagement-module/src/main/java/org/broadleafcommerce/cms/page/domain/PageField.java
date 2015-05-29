@@ -19,14 +19,15 @@
  */
 package org.broadleafcommerce.cms.page.domain;
 
-import java.io.Serializable;
-
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
+
+import java.io.Serializable;
 
 /**
  * Created by bpolster.
  */
-public interface PageField extends Serializable {
+public interface PageField extends Serializable,MultiTenantCloneable<PageField> {
 
     public Long getId();
 
@@ -43,5 +44,9 @@ public interface PageField extends Serializable {
     public AdminAuditable getAuditable();
 
     public void setAuditable(AdminAuditable auditable);
+
+    public Page getPage();
+
+    public void setPage(Page page);
 
 }

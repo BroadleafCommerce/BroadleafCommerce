@@ -116,7 +116,12 @@ public interface FormBuilderExtensionHandler extends ExtensionHandler {
     public ExtensionResultStatusType modifyListGridRecord(String className, ListGridRecord record, Entity entity);
     
     /**
+     * <p>
      * Provides a hook to add additional actions to all entity forms.
+     * 
+     * <p>
+     * For order of operation purposes, this is the last thing that is run when building an entity form, which means
+     * that it occurs after {@link #modifyDetailEntityForm(EntityForm)}.
      * 
      * @param entityForm
      * @return whether or not it was handled

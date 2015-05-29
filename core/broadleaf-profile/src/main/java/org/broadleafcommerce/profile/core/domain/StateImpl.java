@@ -35,6 +35,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+/**
+ * @deprecated - use {@link org.broadleafcommerce.profile.core.domain.CountrySubdivision} instead.
+ */
+@Deprecated
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STATE")

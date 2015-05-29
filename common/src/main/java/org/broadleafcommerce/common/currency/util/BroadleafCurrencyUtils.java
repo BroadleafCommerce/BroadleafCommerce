@@ -21,8 +21,6 @@ package org.broadleafcommerce.common.currency.util;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.codehaus.jackson.map.util.LRUMap;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -31,6 +29,7 @@ import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -41,7 +40,7 @@ import java.util.Map;
  */
 public class BroadleafCurrencyUtils {
 
-    protected static final Map<String,NumberFormat> FORMAT_CACHE = new LRUMap<String, NumberFormat>(20, 100);
+    protected static final Map<String, NumberFormat> FORMAT_CACHE = new ConcurrentHashMap<String, NumberFormat>();
 
     public static final MathContext ROUND_FLOOR_MATH_CONTEXT = new MathContext(0, RoundingMode.FLOOR);
 

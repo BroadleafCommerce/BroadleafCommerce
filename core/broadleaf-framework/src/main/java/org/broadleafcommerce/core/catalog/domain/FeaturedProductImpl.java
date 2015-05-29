@@ -19,27 +19,22 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import java.math.BigDecimal;
-
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -75,7 +70,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @AdminPresentation(friendlyName = "FeaturedProductImpl_Featured_Product_Promotion_Message", largeEntry=true)
     protected String promotionMessage;
     
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="PRODFEATURED_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
     protected Category category = new CategoryImpl();
@@ -139,5 +134,22 @@ public class FeaturedProductImpl implements FeaturedProduct {
     public Product getRelatedProduct() {
         return product;
     }
-    
+
+    @Override
+    public <G extends FeaturedProduct> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FeaturedProduct cloned = createResponse.getClone();
+        if (category != null) {
+            cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        }
+        if (product != null) {
+            cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
+        }
+        cloned.setPromotionMessage(promotionMessage);
+        cloned.setSequence(sequence);
+        return createResponse;
+    }
 }

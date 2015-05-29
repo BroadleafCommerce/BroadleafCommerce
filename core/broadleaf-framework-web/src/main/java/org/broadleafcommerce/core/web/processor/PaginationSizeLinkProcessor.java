@@ -20,7 +20,7 @@
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -61,9 +61,9 @@ public class PaginationSizeLinkProcessor extends AbstractAttributeModifierAttrPr
         Integer pageSize = Integer.parseInt(element.getAttributeValue(attributeName));
 
         if (pageSize != null && pageSize > 1) {
-            params.put(ProductSearchCriteria.PAGE_SIZE_STRING, new String[]{pageSize.toString()});
+            params.put(SearchCriteria.PAGE_SIZE_STRING, new String[]{pageSize.toString()});
         } else {
-            params.remove(ProductSearchCriteria.PAGE_SIZE_STRING);
+            params.remove(SearchCriteria.PAGE_SIZE_STRING);
         }
 
         String url = ProcessorUtils.getUrl(baseUrl, params);

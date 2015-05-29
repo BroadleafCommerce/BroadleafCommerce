@@ -40,8 +40,16 @@
         error : 'Error',
         forbidden403 : '403 Forbidden',
         errorOccurred : 'An error occurred',
-        loading : 'Loading'
-            
+        loading : 'Loading',
+        
+        // Session timer messages
+        sessionCountdown: 'Your session expires in <span>',
+        sessionCountdownEnd: '</span> seconds',
+
+        problemSaving : 'There was a problem saving. See errors below',
+        problemDeleting : 'There was a problem deleting this record. See errors below',
+        globalErrors : 'Global Errors'
+
     };
             
 })(jQuery, BLCAdmin);

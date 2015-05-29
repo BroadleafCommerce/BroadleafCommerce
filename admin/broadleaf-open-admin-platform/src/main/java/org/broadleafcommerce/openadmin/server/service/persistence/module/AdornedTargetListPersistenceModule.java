@@ -348,8 +348,8 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             if (adornedTargetList.getSortField() != null && entity.findProperty(adornedTargetList.getSortField()).getValue() != null) {
                 myRecord = records.get(index);
                 
-                Integer requestedSequence = Integer.valueOf(entity.findProperty(adornedTargetList.getSortField()).getValue());
-                Integer previousSequence = new BigDecimal(String.valueOf(getFieldManager().getFieldValue(myRecord, adornedTargetList.getSortField()))).intValue();
+                BigDecimal requestedSequence = new BigDecimal(entity.findProperty(adornedTargetList.getSortField()).getValue());
+                BigDecimal previousSequence = new BigDecimal(String.valueOf(getFieldManager().getFieldValue(myRecord, adornedTargetList.getSortField())));
                 
                 if (!previousSequence.equals(requestedSequence)) {
                     // Sequence has changed. Rebalance the list
@@ -358,7 +358,7 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     if (CollectionUtils.isEmpty(records)) {
                         records.add(myRecord);
                     } else {
-                        records.add(requestedSequence - 1, myRecord);
+                        records.add(requestedSequence.intValue() - 1, myRecord);
                     }
                     
                     index = 1;
@@ -569,6 +569,10 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
                     ""
             );
             filterMappings = getAdornedTargetFilterMappings(persistencePerspective, cto, mergedProperties, adornedTargetList);
+
+            if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
+                filterMappings.addAll(cto.getAdditionalFilterMappings());
+            }
             
             String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
             Class<?>[] entities2 = persistenceManager.getPolymorphicEntities(ceilingEntityFullyQualifiedClassname);
@@ -593,29 +597,6 @@ public class AdornedTargetListPersistenceModule extends BasicPersistenceModule {
             for (Entry<String, FieldMetadata> entry : mergedPropertiesTarget.entrySet()) {
                 convertedMergedPropertiesTarget.put(prefix + "." + entry.getKey(), entry.getValue());
             }
-            
-            // We also need to make sure that the cto filter and sort criteria have the prefix
-            Map<String, FilterAndSortCriteria> convertedCto = new HashMap<String, FilterAndSortCriteria>();
-            for (Entry<String, FilterAndSortCriteria> entry : cto.getCriteriaMap().entrySet()) {
-                if (adornedTargetList.getSortField() != null && entry.getKey().equals(adornedTargetList.getSortField())) {
-                    convertedCto.put(entry.getKey(), entry.getValue());
-                } else {
-                    convertedCto.put(prefix + "." + entry.getKey(), entry.getValue());
-                }
-            }
-            cto.setCriteriaMap(convertedCto);
-
-            for (Entry<String, FilterAndSortCriteria> entry : convertedCto.entrySet()) {
-                if (convertedMergedPropertiesTarget.containsKey(entry.getKey())) {
-                    convertedMergedPropertiesTarget.get(entry.getKey()).setInheritedFromType(entities[0].getName());
-                }
-            }
-            
-            List<FilterMapping> filterMappings2 = getBasicFilterMappings(persistencePerspective, cto, convertedMergedPropertiesTarget, ceilingEntityFullyQualifiedClassname);
-            for (FilterMapping fm : filterMappings2) {
-                fm.setInheritedFromClass(entities[0]);
-            }
-            filterMappings.addAll(filterMappings2);
             
             records = getPersistentRecords(adornedTargetList.getAdornedTargetEntityClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
         }

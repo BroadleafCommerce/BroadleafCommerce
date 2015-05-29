@@ -9,3 +9,5 @@ test-output
 .metadata
 *.ipr
 bin/
+**/*maven-eclipse.xml
+**/*externalToolBuilders

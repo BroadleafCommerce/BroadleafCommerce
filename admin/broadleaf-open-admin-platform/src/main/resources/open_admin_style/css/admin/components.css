@@ -17,6 +17,57 @@
  * limitations under the License.
  * #L%
  */
+ 
+#lightbox {
+    /** Default lightbox to hidden */
+    display: none;
+    z-index: 1030;
+}
+
+#lightbox #expire-message {
+    height: 300px;
+    text-align: center;
+    top: 50%;
+    width: 500px;
+    margin-left: -250px;
+    margin-top: -150px;
+}
+
+#lightbox #expire-message #expire-header {
+    text-align: left;
+    background: linear-gradient(to bottom, #525252 0%,#424242 100%);
+    border: 1px solid #464646;
+    
+}
+
+#lightbox #expire-message #expire-header #expire-header-message {
+    color: #F0F0F0;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+#lightbox #expire-message #expire-header span {
+    margin-left: 10px;
+}
+
+#lightbox #expire-message .expire-button {
+    background: linear-gradient(to bottom, #525252 0%,#424242 100%);
+    border: 1px solid #464646;
+    color: #F0F0F0;
+    margin-top: 25px;
+    
+}
+
+#lightbox #expire-message #expire-text {
+    color: #333;
+    font-size: 16px;
+}
+
+#lightbox #expire-message #expire-text span {
+    color: #8EAA2B;
+    font-weight: bold;
+}
+
 ul.entity-type-selection {
 	list-style-type: none;
 }

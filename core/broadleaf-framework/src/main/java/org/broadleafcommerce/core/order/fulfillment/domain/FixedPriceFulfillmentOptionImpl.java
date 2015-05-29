@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.fulfillment.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -79,4 +81,17 @@ public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl imple
         this.currency = currency;
     }
 
+    @Override
+    public CreateResponse<FixedPriceFulfillmentOption> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
+            throws CloneNotSupportedException {
+        CreateResponse<FixedPriceFulfillmentOption> createResponse = super.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FixedPriceFulfillmentOption myClone = createResponse.getClone();
+        myClone.setPrice(getPrice());
+        myClone.setCurrency(currency);
+
+        return createResponse;
+    }
 }

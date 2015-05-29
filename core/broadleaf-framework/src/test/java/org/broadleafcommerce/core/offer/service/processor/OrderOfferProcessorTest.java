@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.offer.service.processor;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXref;
 import org.broadleafcommerce.core.offer.service.OfferDataItemProvider;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateOrderOffer;
@@ -143,12 +144,14 @@ public class OrderOfferProcessorTest extends TestCase {
         
         PromotableOrder order = dataProvider.createBasicPromotableOrder();
         List<Offer> offers = dataProvider.createOrderBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
-        boolean couldApply = orderProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableOrderItems().get(0));
+        OfferQualifyingCriteriaXref xref = offers.get(0).getQualifyingItemCriteriaXref().iterator().next();
+        boolean couldApply = orderProcessor.couldOrderItemMeetOfferRequirement(xref.getOfferItemCriteria(), order.getDiscountableOrderItems().get(0));
         //test that the valid order offer is included
         assertTrue(couldApply);
         
         offers = dataProvider.createOrderBasedOfferWithItemCriteria("order.subTotal.getAmount()>20", OfferDiscountType.PERCENT_OFF, "([MVEL.eval(\"toUpperCase()\",\"test5\"), MVEL.eval(\"toUpperCase()\",\"test6\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))");
-        couldApply = orderProcessor.couldOrderItemMeetOfferRequirement(offers.get(0).getQualifyingItemCriteria().iterator().next(), order.getDiscountableOrderItems().get(0));
+        xref = offers.get(0).getQualifyingItemCriteriaXref().iterator().next();
+        couldApply = orderProcessor.couldOrderItemMeetOfferRequirement(xref.getOfferItemCriteria(), order.getDiscountableOrderItems().get(0));
         //test that the invalid order offer is excluded
         assertFalse(couldApply);
         

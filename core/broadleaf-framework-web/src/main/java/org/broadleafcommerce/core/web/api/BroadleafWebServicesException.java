@@ -33,6 +33,7 @@ public class BroadleafWebServicesException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public static final String UNKNOWN_ERROR = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.unknownError";
+    public static final String NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.notFound";
     public static final String PRODUCT_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.productNotFound";
     public static final String CATEGORY_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.categoryNotFound";
     public static final String SKU_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.skuNotFound";
@@ -46,10 +47,14 @@ public class BroadleafWebServicesException extends RuntimeException {
     public static final String UPDATE_CART_ERROR = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.updateCartError";
     public static final String PROMO_CODE_MAX_USAGES = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.promoCodeMaxUsages";
     public static final String PROMO_CODE_INVALID = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.promoCodeInvalid";
+    public static final String PROMO_CODE_EXPIRED = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.promoCodeExpired";
+    public static final String PROMO_CODE_ALREADY_ADDED = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.promoCodeAlreadyAdded";
     public static final String FULFILLMENT_GROUP_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.fulfillmentGroupNotFound";
     public static final String FULFILLMENT_OPTION_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.fulfillmentOptionNotFound";
     public static final String CUSTOMER_NOT_FOUND = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.customerNotFound";
     public static final String CHECKOUT_PROCESSING_ERROR = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.checkoutProcessingError";
+    public static final String CONTENT_TYPE_NOT_SUPPORTED = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.contentTypeNotSupported";
+    public static final String QUERY_PARAMETER_NOT_PRESENT = "org.broadleafcommerce.core.web.api.BroadleafWebServicesException.queryParameterNotPresent";
 
     protected int httpStatusCode = 500;
 

@@ -5,32 +5,37 @@
     th:attr="data-dynamicpropertyname=${dynamicPropertyName},
              data-currenturl=@{${'/' + sectionKey + '/' + dynamicPropertyName + '/dynamicForm'}}">
     
-    <fieldset th:each="group : ${df.tabs[0].fieldGroups}" th:classappend="${!group.isVisible}? 'hidden'" class="dynamic-form">
-        <legend th:text="#{${group.title}}" />
+    <div th:unless="${#sets.isEmpty(df.tabs)}" th:remove="tag">
+        <fieldset th:each="group : ${df.tabs[0].fieldGroups}" 
+            th:classappend="${!group.isVisible}? 'hidden'" class="dynamic-form">
+            <legend th:text="#{${group.title}}" />
+        
+            <div th:each="field : ${group.fields}" 
+                 th:if="${field.name}" 
+                 th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 
+                 blc_admin:component_id="${field}"
+                 th:classappend="${!field.isVisible}? 'hidden'">
+                 
+                 <div th:if="${renderOriginalValue}" 
+                      class="original-value"
+                      th:attr="data-original-value=${field.attributes['originalValue']},
+                               data-original-overriden-value=${field.attributes['originalOverridenValue']}" />
+                
+                <div th:if="${field.readOnly}" th:remove="tag">
+                    <div th:substituteby="fields/readonly" />
+                </div>
+                <div th:unless="${field.readOnly}" th:remove="tag">
+                    <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
+                </div>
     
-        <div th:each="field : ${group.fields}" 
-             th:if="${field.name}" 
-             th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 
-             blc_admin:component_id="${field}"
-             th:classappend="${!field.isVisible}? 'hidden'">
-             
-             <div th:if="${renderOriginalValue}" 
-                  class="original-value"
-                  th:attr="data-original-value=${field.attributes['originalValue']},
-                           data-original-overriden-value=${field.attributes['originalOverridenValue']}" />
+                <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
+            </div>
             
-            <div th:if="${field.readOnly}" th:remove="tag">
-                <div th:substituteby="fields/readonly" />
+            <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">
+                <div th:substituteby="${dynamicFormActionsTemplate}" />
             </div>
-            <div th:unless="${field.readOnly}" th:remove="tag">
-                <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
-            </div>
-        </div>
-        
-        <div th:if="${dynamicFormActionsTemplate}" th:remove="tag">
-            <div th:substituteby="${dynamicFormActionsTemplate}" />
-        </div>
-        
-    </fieldset>
+            
+        </fieldset>
+    </div>
     
 </div>

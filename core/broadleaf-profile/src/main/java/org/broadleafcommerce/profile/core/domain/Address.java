@@ -19,9 +19,11 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import java.io.Serializable;
 
-public interface Address extends Serializable {
+public interface Address extends Serializable, MultiTenantCloneable<Address> {
 
     public void setId(Long id);
 
@@ -43,9 +45,44 @@ public interface Address extends Serializable {
 
     public String getCity();
 
+    /**
+     * @deprecated Should use {@link #setIsoCountrySubdivision()} or {@link #setStateProvinceRegion()} instead
+     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
+     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
+     */
+    @Deprecated
     public void setState(State state);
 
+    /**
+     * @deprecated Should use {@link #getIsoCountrySubdivision()} or {@link #getStateProvinceRegion()} instead
+     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
+     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
+     */
+    @Deprecated
     public State getState();
+
+    /**
+     * gets the ISO 3166-2 code for the country subdivision (state/region/province) where this address resides
+     * @return - the code
+     */
+    public String getIsoCountrySubdivision();
+
+    /**
+     * sets the ISO 3166-2 code for the country subdivision (state/region/province) where this address resides
+     * @param isoCountrySubdivision - ISO 3166-2 country subdivision code
+     */
+    public void setIsoCountrySubdivision(String isoCountrySubdivision);
+
+    /**
+     * @return - a friendly name indicating a countries subdivision, i.e. State, Province, Region etc...
+     */
+    public String getStateProvinceRegion();
+
+    /**
+     * sets the friendly name indicating a countries subdivision, i.e. State, Province, Region etc...
+     * @param stateProvinceRegion - friendly name
+     */
+    public void setStateProvinceRegion(String stateProvinceRegion);
 
     public void setPostalCode(String postalCode);
 
@@ -59,9 +96,33 @@ public interface Address extends Serializable {
 
     public void setZipFour(String zipFour);
 
+    /**
+     * @deprecated Should use {@link #setIsoCountryAlpha2(ISOCountry)} instead
+     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
+     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
+     */
+    @Deprecated
     public void setCountry(Country country);
 
+    /**
+     * @deprecated Should use {@link #getIsoCountryAlpha2()} instead
+     * The Broadleaf Country and State domains will no longer be used for addresses to better support i18n.
+     * BLC_STATE and BLC_COUNTRY should primarily be used for look-ups or filtering to those country/states you wish to ship.
+     */
+    @Deprecated
     public Country getCountry();
+
+    /**
+     * gets the ISO 3166-1 alpha-2 code for the country where this address resides
+     * @return - the ISOCountry representation of the code
+     */
+    public ISOCountry getIsoCountryAlpha2();
+
+    /**
+     * sets the ISO 3166-1 alpha-2 code for the country where this address resides
+     * @param isoCountryAlpha2 - ISO 3166-1 alpha-2 code
+     */
+    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2);
 
     public String getTokenizedAddress();
 
@@ -86,6 +147,10 @@ public interface Address extends Serializable {
     public String getLastName();
 
     public void setLastName(String lastName);
+
+    public String getFullName();
+
+    public void setFullName(String fullName);
 
     /**
      * @deprecated Should use {@link #getPhonePrimary()} instead
@@ -148,6 +213,14 @@ public interface Address extends Serializable {
     public boolean isBusiness();
 
     public void setBusiness(boolean isBusiness);
+
+    public boolean isStreet();
+
+    public void setStreet(boolean isStreet);
+
+    public boolean isMailing();
+
+    public void setMailing(boolean isMailing);
 
     public String getVerificationLevel();
 

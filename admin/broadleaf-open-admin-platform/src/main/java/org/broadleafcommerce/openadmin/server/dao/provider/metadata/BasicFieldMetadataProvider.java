@@ -439,6 +439,8 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.EXCLUDED)) {
                 fieldMetadataOverride.setExcluded(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
                                         Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.DEFAULTVALUE)) {
+                fieldMetadataOverride.setDefaultValue(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.VALIDATIONCONFIGURATIONS)) {
                 processValidationAnnotations(entry.getValue().validationConfigurations(), fieldMetadataOverride);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationToOneLookup.LOOKUPDISPLAYPROPERTY)) {
@@ -513,6 +515,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setCurrencyCodeField(annot.currencyCodeField());
             override.setRuleIdentifier(annot.ruleIdentifier());
             override.setTranslatable(annot.translatable());
+            override.setDefaultValue(annot.defaultValue());
 
             if (annot.validationConfigurations().length != 0) {
                 processValidationAnnotations(annot.validationConfigurations(), override);
@@ -752,6 +755,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getIsDerived() != null) {
             metadata.setDerived(basicFieldMetadata.getIsDerived());
+        }
+        if (basicFieldMetadata.getDefaultValue() != null) {
+            metadata.setDefaultValue(basicFieldMetadata.getDefaultValue());
         }
 
         attributes.put(field.getName(), metadata);

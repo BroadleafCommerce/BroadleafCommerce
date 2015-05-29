@@ -1,5 +1,7 @@
 <footer>
 
+    <div th:substituteby="layout/partials/preFooterContent" />
+
     <script th:inline="text">
         //<![CDATA[
         window.jQuery || document.write('<script src="[[@{/js/lib/jquery-1.9.1.js}]]"><\/script>');
@@ -8,7 +10,7 @@
 
     <blc_admin:admin_user resultVar="adminUser" />
     <script th:with="adminUser=${adminUser}" th:inline="javascript">
-        var BLC_USER_PREFS = /*[[${adminUser.additionalFields}]]*/ {};
+        var BLC_USER_PREFS = /*[[${adminUser.flatAdditionalFields}]]*/ {};
     </script>
     
     <blc:bundle name="adminlib.js" 
@@ -52,6 +54,7 @@
     <blc:bundle name="admin.js" 
                 mapping-prefix="/js/"
                 files="BLC.js,
+                       BLC-system-property.js,
                        blc-dates.js,
                        admin/blc-admin.js,
                        admin/blc-admin-history.js,
@@ -64,6 +67,7 @@
                        admin/ui/imagezoom.js,
                       
                        admin/components/entityForm.js,
+                       admin/components/entityForm-generatedUrl.js,
                        admin/components/translations.js,
                        admin/components/assetSelector.js,
                        admin/components/ruleBuilder-operators.js,
@@ -72,10 +76,14 @@
                        admin/components/listGrid.js,
                        admin/components/listGrid-filter.js,
                        admin/components/listGrid-paginate.js,
-                       admin/components/typeahead.js" />
+                       admin/components/typeahead.js,
+                       admin/components/sessionTimer.js" />
                       
     <blc:bundle name="admin-init.js" 
                 mapping-prefix="/js/"
                 files="admin/blc-admin-init.js" />
+                          
+
+    <div th:substituteby="layout/partials/postFooterContent" />
 
 </footer>

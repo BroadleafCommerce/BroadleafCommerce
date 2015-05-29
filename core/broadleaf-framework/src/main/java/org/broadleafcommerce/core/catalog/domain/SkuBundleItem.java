@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 
 import java.io.Serializable;
@@ -31,7 +32,7 @@ import java.io.Serializable;
  * @author Phillip Verheyden
  * @see ProductBundle, Product
  */
-public interface SkuBundleItem extends Serializable {
+public interface SkuBundleItem extends Serializable, MultiTenantCloneable<SkuBundleItem> {
 
     public Long getId();
 

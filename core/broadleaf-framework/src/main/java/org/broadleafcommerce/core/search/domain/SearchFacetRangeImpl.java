@@ -19,6 +19,11 @@
  */
 package org.broadleafcommerce.core.search.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -26,23 +31,15 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -51,6 +48,10 @@ import javax.persistence.Table;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @AdminPresentationOverrides({
         @AdminPresentationOverride(name = "priceList.friendlyName", value = @AdminPresentation(excluded = false, friendlyName = "PriceListImpl_Friendly_Name", order=1, group = "SearchFacetRangeImpl_Description", prominent=true, visibility = VisibilityEnum.FORM_HIDDEN))
+})
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
 
@@ -69,7 +70,7 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
     @Column(name = "SEARCH_FACET_RANGE_ID")
     protected Long id;
     
-    @ManyToOne(targetEntity = SearchFacetImpl.class)
+    @ManyToOne(targetEntity = SearchFacetImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SEARCH_FACET_ID")
     @Index(name="SEARCH_FACET_INDEX", columnNames={"SEARCH_FACET_ID"})
     @AdminPresentation(excluded = true, visibility = VisibilityEnum.HIDDEN_ALL)
@@ -122,5 +123,19 @@ public class SearchFacetRangeImpl implements SearchFacetRange,Serializable {
     public void setMaxValue(BigDecimal maxValue) {
         this.maxValue = maxValue;
     }
-    
+
+    @Override
+    public <G extends SearchFacetRange> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        SearchFacetRange cloned = createResponse.getClone();
+        cloned.setMaxValue(maxValue);
+        cloned.setMinValue(minValue);
+        if (searchFacet != null) {
+            cloned.setSearchFacet(searchFacet.createOrRetrieveCopyInstance(context).getClone());
+        }
+        return  createResponse;
+    }
 }

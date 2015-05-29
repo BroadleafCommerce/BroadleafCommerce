@@ -19,23 +19,23 @@
  */
 package org.broadleafcommerce.core.web.catalog;
 
-import java.net.URLDecoder;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.net.URLDecoder;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 /**
- * This handler mapping works with the Category entity to determine if a category has been configured for
+ * This handler mapping works with the Product entity to determine if a product has been configured for
  * the passed in URL.   
  * 
- * If the URL matches a valid Category then this mapping returns the handler configured via the 
- * controllerName property or blCategoryController by default. 
+ * If the URL matches a valid Product then this mapping returns the handler configured via the 
+ * controllerName property or blProductController by default. 
  *
  * @author bpolster
  * @since 2.0
@@ -44,7 +44,10 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
     
-    private String controllerName="blProductController";
+    private final String controllerName="blProductController";
+    
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
 
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;
@@ -58,6 +61,9 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
+        if(useSku) {
+            return null;
+        }
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
             String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);

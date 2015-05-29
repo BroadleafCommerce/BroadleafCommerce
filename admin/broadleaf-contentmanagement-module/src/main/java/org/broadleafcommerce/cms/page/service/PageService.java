@@ -21,14 +21,14 @@ package org.broadleafcommerce.cms.page.service;
 
 import net.sf.ehcache.Cache;
 
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.page.dto.PageDTO;
-import org.broadleafcommerce.common.sandbox.domain.SandBox;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -43,6 +43,13 @@ public interface PageService {
      * @return The associated page.
      */
     public Page findPageById(Long pageId);
+
+    /**
+     * Returns the page-fields associated with a page.
+     * @param pageId
+     * @return
+     */
+    public Map<String, PageField> findPageFieldMapByPageId(Long pageId);
 
     /**
      * Returns the page template with the passed in id.
@@ -87,21 +94,26 @@ public interface PageService {
     public List<PageTemplate> readAllPageTemplates();
 
     /**
-     * Call to evict both secure and non-secure pages matching
-     * the passed in key.
-     *
-     * @param baseKey
+     * Call to evict all known PageDTOs that are associated with the given page from cache
+     * 
+     * @param key
      */
-    public void removePageFromCache(String baseKey);
-
-    /**
-     * Call to evict a page for a sandbox
-     *
-     * @param sandBox The sandbox in which the page resides
-     * @param p The page instance to evict from cache
-     */
-    public void removePageFromCache(SandBox sandBox, Page p);
+    public void removePageFromCache(String key);
 
     Cache getPageCache();
+
+    Cache getPageMapCache();
+
+    /**
+     * Builds a list of {@link PageDTO} objects from the given list of {@link Page} objects.
+     * 
+     * @param pageList
+     * @param secure
+     * @return
+     */
+    public List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure);
+
+    String getPageMapCacheKey(String uri, Long sandBox, Long site);
+
 
 }

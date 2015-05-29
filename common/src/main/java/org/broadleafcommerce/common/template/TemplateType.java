@@ -39,6 +39,7 @@ public class TemplateType implements Serializable, BroadleafEnumerationType, Com
     public static final TemplateType PRODUCT = new TemplateType("PRODUCT", "Product", 1000);
     public static final TemplateType CATEGORY = new TemplateType("CATEGORY", "Category", 2000);
     public static final TemplateType PAGE = new TemplateType("PAGE", "Page", 3000);
+    public static final TemplateType SKU = new TemplateType("SKU", "Sku", 4000);
     public static final TemplateType OTHER = new TemplateType("OTHER", "Other", Integer.MAX_VALUE);
 
     public static TemplateType getInstance(final String type) {

@@ -46,6 +46,13 @@ public interface CategoryDao {
     public Category readCategoryById(@Nonnull Long categoryId);
 
     /**
+     * Retrieve a {@link Category} instance by the external id
+     * @param externalId
+     * @return
+     */
+    public Category readCategoryByExternalId(@Nonnull String externalId);
+
+    /**
      * Retrieve a {@code Category} instance by its name.
      *
      * Broadleaf allows more than one category to have the same name. Calling

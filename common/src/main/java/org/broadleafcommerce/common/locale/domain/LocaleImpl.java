@@ -19,8 +19,12 @@
  */
 package org.broadleafcommerce.common.locale.domain;
 
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
@@ -43,7 +47,10 @@ import javax.persistence.Table;
 @Table(name = "BLC_LOCALE")
 @Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
 @AdminPresentationClass(friendlyName = "LocaleImpl_baseLocale")
-public class LocaleImpl implements Locale {
+@DirectCopyTransform({
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+})
+public class LocaleImpl implements Locale, AdminMainEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -161,4 +168,10 @@ public class LocaleImpl implements Locale {
         result = 31 * result + (friendlyName != null ? friendlyName.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String getMainEntityName() {
+        return getLocaleCode();
+    }
+
 }

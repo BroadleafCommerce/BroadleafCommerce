@@ -25,6 +25,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.file.FileServiceException;
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
 import org.broadleafcommerce.common.file.service.type.FileApplicationType;
@@ -86,6 +88,9 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     @Value("${asset.server.file.classpath.directory}")
     protected String fileServiceClasspathDirectory;
 
+    @Resource(name = "blBroadleafFileServiceExtensionManager")
+    protected BroadleafFileServiceExtensionManager extensionManager;
+
     /**
      * Create a file work area that can be used for further operations. 
      * @return
@@ -142,13 +147,23 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     }
 
     protected File getLocalResource(String resourceName, boolean skipSite) {
-        String baseDirectory = getBaseDirectory(skipSite);
-        
-        // convert the separators to the system this is currently run on
-        String systemResourcePath = FilenameUtils.separatorsToSystem(resourceName);
-        
-        String filePath = FilenameUtils.normalize(baseDirectory + File.separator + systemResourcePath);
-        return new File(filePath);
+        if (skipSite) {
+            String baseDirectory = getBaseDirectory(skipSite);
+            // convert the separators to the system this is currently run on
+            String systemResourcePath = FilenameUtils.separatorsToSystem(resourceName);
+            String filePath = FilenameUtils.normalize(baseDirectory + File.separator + systemResourcePath);
+            return new File(filePath);
+        } else {
+           String baseDirectory = getBaseDirectory(true);
+           ExtensionResultHolder<String> holder = new ExtensionResultHolder<String>();
+           if (extensionManager != null) {
+               ExtensionResultStatusType result = extensionManager.getProxy().processPathForSite(baseDirectory, resourceName, holder);
+               if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                   return new File(holder.getResult());
+               }
+           }
+           return getLocalResource(resourceName, true);
+        }
     }
 
     @Override
@@ -233,41 +248,49 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     }
 
     /**
-     * Takes in a work area and a fileName. Loads the file onto the provider.
-     * 
-     * Passing in removeFilesFromWorkArea to true allows for more efficient file processing
-     * when using a local file system as it performs a move operation instead of a copy.
-     * 
-     * @param workArea
-     * @param applicationType
-     * @param fileNames
-     * @param removeFilesFromWorkArea
+     * {@inheritDoc}
      */
     @Override
     public void addOrUpdateResource(FileWorkArea workArea, File file, boolean removeFilesFromWorkArea) {
+        addOrUpdateResourcesForPaths(workArea, removeFilesFromWorkArea);
+        
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String addOrUpdateResourceForPath(FileWorkArea workArea, File file, boolean removeFilesFromWorkArea) {
         List<File> files = new ArrayList<File>();
         files.add(file);
-        addOrUpdateResources(workArea, files, removeFilesFromWorkArea);
+        return addOrUpdateResourcesForPaths(workArea, files, removeFilesFromWorkArea).get(0);
     }
 
     /**
-     * Takes in a work area and application type and moves all of the files to the configured FileProvider.
-     * 
-     * @param workArea
-     * @param applicationType
+     * {@inheritDoc}
      */
     @Override
     public void addOrUpdateResources(FileWorkArea workArea, boolean removeFilesFromWorkArea) {
+        addOrUpdateResourcesForPaths(workArea, removeFilesFromWorkArea);
+    }
+    
+    @Override
+    public List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, boolean removeFilesFromWorkArea) {
         File folder = new File(workArea.getFilePathLocation());
         List<File> fileList = new ArrayList<File>();
         buildFileList(folder, fileList);
-        addOrUpdateResources(workArea, fileList, removeFilesFromWorkArea);
+        return addOrUpdateResourcesForPaths(workArea, fileList, removeFilesFromWorkArea);
     }
     
     @Override
     public void addOrUpdateResources(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea) {
+        addOrUpdateResourcesForPaths(workArea, files, removeFilesFromWorkArea);
+    }
+
+    @Override
+    public List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea) {
         checkFiles(workArea, files);
-        selectFileServiceProvider().addOrUpdateResources(workArea, files, removeFilesFromWorkArea);
+        return selectFileServiceProvider().addOrUpdateResourcesForPaths(workArea, files, removeFilesFromWorkArea);
     }
 
     /**
@@ -399,4 +422,5 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     public void setDefaultFileServiceProvider(FileServiceProvider defaultFileServiceProvider) {
         this.defaultFileServiceProvider = defaultFileServiceProvider;
     }
+
 }

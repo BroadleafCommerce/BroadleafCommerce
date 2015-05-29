@@ -17,12 +17,15 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.profile.core.domain;
 
 import java.io.Serializable;
 import java.util.Map;
 
-public interface CustomerPayment extends Serializable {
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
+public interface CustomerPayment extends Serializable, AdditionalFields, MultiTenantCloneable<CustomerPayment> {
 
     public void setId(Long id);
 

@@ -31,8 +31,17 @@
         <query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.Sku sku</query>
     </named-query>
 
-    <named-query name="BC_READ_SKUS_BY_ID">
-        <query>SELECT sku FROM org.broadleafcommerce.core.catalog.domain.Sku sku
-        WHERE sku.id IN (:skuIds)</query>
+    <named-query name="BC_READ_SKU_BY_OUTGOING_URL" >
+        <query>SELECT sku
+               FROM org.broadleafcommerce.core.catalog.domain.Sku sku
+               LEFT JOIN sku.product product
+               LEFT JOIN sku.defaultProduct defaultProduct
+               WHERE (defaultProduct.url = :url
+               OR (product.url = :productUrl AND sku.urlKey = :skuUrlKey))
+               AND (sku.activeStartDate IS NOT NULL AND sku.activeStartDate &lt;= :currentDate)
+               AND (sku.activeEndDate &gt;= :currentDate OR sku.activeEndDate IS NULL)
+               AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
+        </query>
     </named-query>
+
 </entity-mappings>

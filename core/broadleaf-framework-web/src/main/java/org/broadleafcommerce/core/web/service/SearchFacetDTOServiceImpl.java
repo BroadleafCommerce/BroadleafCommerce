@@ -21,7 +21,7 @@ package org.broadleafcommerce.core.web.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
-import org.broadleafcommerce.core.search.domain.ProductSearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.springframework.stereotype.Service;
@@ -47,8 +47,8 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
     
     @Override
     @SuppressWarnings("unchecked")
-    public ProductSearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets) {
-        ProductSearchCriteria searchCriteria = new ProductSearchCriteria();
+    public SearchCriteria buildSearchCriteria(HttpServletRequest request, List<SearchFacetDTO> availableFacets) {
+        SearchCriteria searchCriteria = new SearchCriteria();
         searchCriteria.setPageSize(getDefaultPageSize());
         
         Map<String, String[]> facets = new HashMap<String, String[]>();
@@ -57,15 +57,15 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
             Map.Entry<String, String[]> entry = iter.next();
             String key = entry.getKey();
             
-            if (key.equals(ProductSearchCriteria.SORT_STRING)) {
+            if (key.equals(SearchCriteria.SORT_STRING)) {
                 searchCriteria.setSortQuery(StringUtils.join(entry.getValue(), ","));
-            } else if (key.equals(ProductSearchCriteria.PAGE_NUMBER)) {
+            } else if (key.equals(SearchCriteria.PAGE_NUMBER)) {
                 searchCriteria.setPage(Integer.parseInt(entry.getValue()[0]));
-            } else if (key.equals(ProductSearchCriteria.PAGE_SIZE_STRING)) {
+            } else if (key.equals(SearchCriteria.PAGE_SIZE_STRING)) {
                 int requestedPageSize = Integer.parseInt(entry.getValue()[0]);
                 int maxPageSize = getMaxPageSize();
                 searchCriteria.setPageSize(Math.min(requestedPageSize, maxPageSize));
-            } else if (key.equals(ProductSearchCriteria.QUERY_STRING)) {
+            } else if (key.equals(SearchCriteria.QUERY_STRING)) {
                 continue; // This is handled by the controller
             } else {
                 facets.put(key, entry.getValue());

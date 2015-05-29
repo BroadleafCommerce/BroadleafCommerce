@@ -28,10 +28,12 @@
         <mapping-file>config/bc/jpa/domain/ModuleConfiguration.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/BroadleafCurrency.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Locale.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ISOCountry.orm.xml</mapping-file>
         <class>org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingImpl</class>
         <class>org.broadleafcommerce.common.email.domain.EmailTrackingOpensImpl</class>
+        <class>org.broadleafcommerce.common.i18n.domain.ISOCountryImpl</class>
         <class>org.broadleafcommerce.common.i18n.domain.TranslationImpl</class>
         <class>org.broadleafcommerce.common.locale.domain.LocaleImpl</class>
         <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
@@ -39,12 +41,11 @@
         <class>org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl</class>
         <class>org.broadleafcommerce.common.site.domain.SiteImpl</class>
         <class>org.broadleafcommerce.common.site.domain.CatalogImpl</class>
+        <class>org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl</class>
         <class>org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationImpl</class>
         <class>org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValueImpl</class>
         <class>org.broadleafcommerce.common.config.domain.SystemPropertyImpl</class>
-        <class>org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl</class>
         <class>org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration</class>
-        <class>org.broadleafcommerce.common.media.domain.MediaImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl</class>
         <class>org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntryImpl</class>
@@ -60,6 +61,7 @@
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
         </properties>
     </persistence-unit>
 </persistence>

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -34,17 +36,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -87,7 +80,7 @@ public class ProductOptionValueImpl implements ProductOptionValue {
             prominent = true, gridOrder = Presentation.FieldOrder.PRICE_ADJUSTMENT, order = Presentation.FieldOrder.PRICE_ADJUSTMENT)
     protected BigDecimal priceAdjustment;
 
-    @ManyToOne(targetEntity = ProductOptionImpl.class)
+    @ManyToOne(targetEntity = ProductOptionImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_OPTION_ID")
     protected ProductOption productOption;
 
@@ -180,6 +173,23 @@ public class ProductOptionValueImpl implements ProductOptionValue {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public <G extends ProductOptionValue> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        ProductOptionValue cloned = createResponse.getClone();
+        cloned.setAttributeValue(attributeValue);
+        cloned.setDisplayOrder(displayOrder);
+        cloned.setPriceAdjustment(getPriceAdjustment());
+        if (productOption != null) {
+            cloned.setProductOption(productOption.createOrRetrieveCopyInstance(context).getClone());
+        }
+        
+        return  createResponse;
     }
 
     public static class Presentation {

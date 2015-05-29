@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.web.catalog.taglib;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.payment.PaymentType;
@@ -72,13 +73,14 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
-        String webPropertyId = getWebPropertyId();
         
-        if (webPropertyId == null) {
+        if (this.webPropertyId == null) {
             ServletContext sc = ((PageContext) getJspContext()).getServletContext();
             ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(sc);
             context.getAutowireCapableBeanFactory().autowireBeanProperties(this, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, false);
         }
+        
+        String webPropertyId = getWebPropertyId();
         
         if (webPropertyId.equals("UA-XXXXXXX-X")) {
             LOG.warn("googleAnalytics.webPropertyId has not been overridden in a custom property file. Please set this in order to properly use the Google Analytics tag");
@@ -118,10 +120,31 @@ public class GoogleAnalyticsTag extends SimpleTagSupport {
             sb.append(",'" + order.getTotal() + "'");
             sb.append(",'" + order.getTotalTax() + "'");
             sb.append(",'" + order.getTotalShipping() + "'");
+
             if (paymentAddress != null) {
+                String state = null;
+                if (StringUtils.isNotBlank(paymentAddress.getStateProvinceRegion())) {
+                    state = paymentAddress.getStateProvinceRegion();
+                } else if (paymentAddress.getState() != null) {
+                    state = paymentAddress.getState().getName();
+                }
+
+                String country = null;
+                if (paymentAddress.getIsoCountryAlpha2() != null) {
+                    country = paymentAddress.getIsoCountryAlpha2().getName();
+                } else if (paymentAddress.getCountry() != null) {
+                    country = paymentAddress.getCountry().getName();
+                }
+
                 sb.append(",'" + paymentAddress.getCity() + "'");
-                sb.append(",'" + paymentAddress.getState().getName() + "'");
-                sb.append(",'" + paymentAddress.getCountry().getName() + "'");
+
+                if (state != null) {
+                    sb.append(",'" + state + "'");
+                }
+
+                if (country != null) {
+                    sb.append(",'" + country + "'");
+                }
             }
             sb.append("]);");
 
