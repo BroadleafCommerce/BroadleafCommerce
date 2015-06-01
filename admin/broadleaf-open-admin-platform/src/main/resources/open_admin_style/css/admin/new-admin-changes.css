@@ -18,6 +18,10 @@
  * #L%
  */
 
+.hidden {
+    display: none;
+}
+
 .app-content .content .header .button { line-height:14px; }
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
 
@@ -122,5 +126,10 @@ input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.rad
 div.action-popup img.ajax-loader {
     float: right;
     margin-right: 10px;
+    display: none;
+}
+
+
+.select-site {
     display: none;
 }

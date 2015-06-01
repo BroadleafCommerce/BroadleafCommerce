@@ -3,7 +3,7 @@
 </comment>
 
 <div class="listgrid-header-wrapper">
-    <table class="table table-striped datatable"
+    <table class="list-grid-table table table-striped"
            th:classappend="${listGrid.className}"
            th:attr="data-listgridtype=${listGrid.listGridType},
                     data-currenturl=${currentUrl},
@@ -184,7 +184,11 @@
 
                 <td>
                     <span>
-                        <a th:href="@{${record.path}}" th:text="#{Edit}">Edit</a>
+                        <a th:href="@{${record.path}}" th:text="#{Edit}"
+                           th:attr="data-link=@{${record.path}},
+                                     data-index=${record.index},
+                                     data-rowid=${record.id},
+                                     data-hiddenfields=${record.getHiddenFieldsJson()}">Edit</a>
                     </span>
                 </td>
                 
