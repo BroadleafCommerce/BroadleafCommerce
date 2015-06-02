@@ -17,18 +17,23 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.web.catalog;
 
-import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.springframework.beans.factory.annotation.Value;
+package org.broadleafcommerce.core.web.catalog;
 
 import java.net.URLDecoder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.ServletRequestUtils;
 
 /**
  * This handler mapping works with the Product entity to determine if a product has been configured for
@@ -43,9 +48,11 @@ import javax.servlet.http.HttpServletRequest;
  * @see CatalogService
  */
 public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
-    
-    private final String controllerName="blProductController";
-    
+
+    private static final Log LOG = LogFactory.getLog(ProductHandlerMapping.class);
+
+    private final String controllerName = "blProductController";
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
 
@@ -61,13 +68,28 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-        if(useSku) {
+        if (useSku) {
             return null;
         }
+
+        boolean usesProductId = BLCSystemProperty.resolveBooleanSystemProperty("product.url.use.id");
+        //if usesProductId exists, it is useful to bypass the normal product retrieval mechanism (by URI),
+        //beause of URL caching
+
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getRequestURIWithoutContext() != null) {
-            String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
-            Product product = catalogService.findProductByURI(requestUri);
+        if (context != null) {
+            Product product = null;
+            Long productId = ServletRequestUtils.getLongParameter(context.getRequest(), "productId");
+            if (usesProductId && productId!=null) {
+                product = catalogService.findProductById(productId);
+                LOG.info("obtained the product based on ID=" + productId);
+            } else {
+                if (context.getRequestURIWithoutContext() != null) {
+                    String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
+                    product = catalogService.findProductByURI(requestUri);
+                    LOG.info("obtained the product based on URI=" + requestUri);
+                }
+            }
             if (product != null) {
                 context.getRequest().setAttribute(CURRENT_PRODUCT_ATTRIBUTE_NAME, product);
                 return controllerName;
