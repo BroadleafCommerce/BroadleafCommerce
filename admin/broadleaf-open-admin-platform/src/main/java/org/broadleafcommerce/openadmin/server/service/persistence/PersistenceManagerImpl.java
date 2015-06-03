@@ -28,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.file.domain.FileWorkArea;
+import org.broadleafcommerce.common.file.service.BroadleafFileService;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -100,6 +102,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     protected TargetModeType targetMode;
     protected ApplicationContext applicationContext;
+
+    @Resource(name = "blFileService")
+    protected BroadleafFileService blcFileService;
 
     @PostConstruct
     public void postConstruct() {
@@ -660,6 +665,11 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
                 }
             }
+        }
+        if (persistencePackage.getCeilingEntityFullyQualifiedClassname().endsWith("StaticAsset")) {
+            FileWorkArea fileWorkArea = blcFileService.initializeWorkArea();
+            blcFileService.removeResource(persistencePackage.getRequestingEntityName());
+            blcFileService.closeWorkArea(fileWorkArea);
         }
 
         return persistenceResponse;
