@@ -80,9 +80,6 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
         customerService.saveCustomer(customer);
         redirectAttributes.addFlashAttribute("successMessage", getAccountUpdatedMessage());
         
-        if (useEmailForLogin) {
-            loginService.loginCustomer(customer.getUsername(), customer.getPassword());
-        }
         
         return getAccountRedirectView();
     }
