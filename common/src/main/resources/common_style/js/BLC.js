@@ -168,8 +168,10 @@ var BLC = (function($) {
                 runInternalDataHandlers(internalData);
             }
             
-            trackAjaxAnalytics(this, data);
-            
+            if (options.trackAnalytics != false) {
+                trackAjaxAnalytics(this, data);
+            }
+                        
             if (runPreAjaxCallbackHandlers(data)) {
                 var extraData = getExtraData(data);
                 callback(data, extraData);
