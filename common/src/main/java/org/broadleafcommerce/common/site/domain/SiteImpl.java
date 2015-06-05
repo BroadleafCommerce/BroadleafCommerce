@@ -288,5 +288,22 @@ public class SiteImpl implements Site, AdminMainEntity {
     public String getMainEntityName() {
         return getName();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SiteImpl)) return false;
+
+        SiteImpl site = (SiteImpl) o;
+
+        if (id != null && site.id != null && id.equals(site.id)) return true;
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }
 
