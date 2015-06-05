@@ -30,7 +30,9 @@ import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
@@ -106,7 +108,12 @@ public class OfferCodeImpl implements OfferCode {
     protected Date offerCodeStartDate;
 
     @Column(name = "END_DATE")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date", order = 4000)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date", order = 4000,
+            validationConfigurations = { @ValidationConfiguration(
+                    validationImplementation = "blAfterStartDateValidator",
+                    configurationItems = {
+                            @ConfigurationItem(itemName = "otherField", itemValue = "offerCodeStartDate")
+                    }) })
     protected Date offerCodeEndDate;
 
     @Column(name = "MAX_USES")

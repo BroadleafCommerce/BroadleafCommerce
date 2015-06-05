@@ -45,6 +45,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnum
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
@@ -231,7 +232,12 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "ACTIVE_END_DATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order = 2000,
-            group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange)
+            group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange,
+            validationConfigurations = { @ValidationConfiguration(
+                    validationImplementation = "blAfterStartDateValidator",
+                    configurationItems = {
+                            @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
+                    }) })
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")
