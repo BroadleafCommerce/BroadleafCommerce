@@ -42,6 +42,8 @@ public interface FieldDefinition extends Serializable, MultiTenantCloneable<Fiel
 
     public void setFieldType(SupportedFieldType fieldType);
 
+    void setFieldType(String fieldType);
+
     public String getSecurityLevel();
 
     public void setSecurityLevel(String securityLevel);
