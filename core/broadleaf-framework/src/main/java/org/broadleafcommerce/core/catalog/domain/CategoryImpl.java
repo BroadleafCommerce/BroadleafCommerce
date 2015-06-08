@@ -232,12 +232,13 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "ACTIVE_END_DATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order = 2000,
-            group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange,
-            validationConfigurations = { @ValidationConfiguration(
-                    validationImplementation = "blAfterStartDateValidator",
-                    configurationItems = {
-                            @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
-                    }) })
+        group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange,
+        validationConfigurations = { 
+            @ValidationConfiguration(validationImplementation = "blAfterStartDateValidator",
+                configurationItems = { 
+                    @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
+            }) 
+        })
     protected Date activeEndDate;
 
     @Column(name = "DISPLAY_TEMPLATE")

@@ -184,11 +184,13 @@ public class OfferImpl implements Offer, AdminMainEntity {
     @Column(name = "END_DATE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_End_Date", order = 2,
         group = Presentation.Group.Name.ActivityRange, groupOrder = Presentation.Group.Order.ActivityRange,
-        validationConfigurations = { @ValidationConfiguration(
+        validationConfigurations = { 
+            @ValidationConfiguration(
                 validationImplementation = "blAfterStartDateValidator",
                 configurationItems = {
                         @ConfigurationItem(itemName = "otherField", itemValue = "startDate")
-                }) })
+                }) 
+        })
     protected Date endDate;
 
     @Column(name = "STACKABLE")

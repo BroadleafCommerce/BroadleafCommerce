@@ -275,11 +275,13 @@ public class SkuImpl implements Sku {
         group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
         groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
         tooltip = "skuEndDateTooltip",
-        validationConfigurations = { @ValidationConfiguration(
+        validationConfigurations = {
+            @ValidationConfiguration(
                 validationImplementation = "blAfterStartDateValidator",
                 configurationItems = {
                         @ConfigurationItem(itemName = "otherField", itemValue = "defaultSku.activeStartDate")
-                }) })
+                }) 
+        })
     protected Date activeEndDate;
 
     @Embedded

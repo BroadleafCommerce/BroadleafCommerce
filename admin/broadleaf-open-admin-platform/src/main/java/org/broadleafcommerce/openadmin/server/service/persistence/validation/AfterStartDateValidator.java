@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.springframework.stereotype.Component;
 
 /**
@@ -38,7 +39,7 @@ import org.springframework.stereotype.Component;
 @Component("blAfterStartDateValidator")
 public class AfterStartDateValidator extends ValidationConfigurationBasedPropertyValidator {
     
-    private static final String END_DATE_BEFORE_START = "End date cannot be before the start date";    
+    private static final String END_DATE_BEFORE_START = "End date cannot be before the start date";   
     
     @Override
     public PropertyValidationResult validate(Entity entity,
@@ -58,28 +59,33 @@ public class AfterStartDateValidator extends ValidationConfigurationBasedPropert
         Date endDate = null;
         
         
-        if(value == null || value.equals("") || otherField == null || otherField.equals(""))
+        if (value == null || value.equals("") || otherField == null || otherField.equals("")) {
             return new PropertyValidationResult(true);
+        }
         
-        try {
-            startDate = (Date) fm.getFieldValue(instance, otherField);
-            endDate = (Date) fm.getFieldValue(instance, propertyName);
-        }
-        catch (Exception e) {
-            valid = false;
-            message = e.getMessage();
-        }
+
+            try {
+                startDate = (Date) fm.getFieldValue(instance, otherField);
+                endDate = (Date) fm.getFieldValue(instance, propertyName);
+            } catch (IllegalAccessException iae) {
+                valid = false;
+                message = iae.getMessage();
+            } catch (FieldNotAvailableException fnae) {
+                valid = false;
+                message = fnae.getMessage();
+            }
+        
 
         
-        if(valid && endDate != null && startDate != null && endDate.before(startDate)) {
+        if (valid && endDate != null && startDate != null && endDate.before(startDate)) {
             valid = false;
             message = END_DATE_BEFORE_START;
         }
                     
-        if(valid)
+        if (valid)
             return new PropertyValidationResult(true);
         else
-            return new PropertyValidationResult(false,message);
+            return new PropertyValidationResult(false, message);
     }
 
 

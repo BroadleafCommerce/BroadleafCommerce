@@ -109,11 +109,13 @@ public class OfferCodeImpl implements OfferCode {
 
     @Column(name = "END_DATE")
     @AdminPresentation(friendlyName = "OfferCodeImpl_Code_End_Date", order = 4000,
-            validationConfigurations = { @ValidationConfiguration(
-                    validationImplementation = "blAfterStartDateValidator",
-                    configurationItems = {
-                            @ConfigurationItem(itemName = "otherField", itemValue = "offerCodeStartDate")
-                    }) })
+        validationConfigurations = {
+            @ValidationConfiguration(
+                validationImplementation = "blAfterStartDateValidator",
+                configurationItems = {
+                    @ConfigurationItem(itemName = "otherField", itemValue = "offerCodeStartDate")
+                    }) 
+        })
     protected Date offerCodeEndDate;
 
     @Column(name = "MAX_USES")
