@@ -423,6 +423,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.TABORDER)) {
                 fieldMetadataOverride.setTabOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():
                                         Integer.parseInt(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.COLUMN)) {
+                fieldMetadataOverride.setColumn(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():
+                                        Integer.parseInt(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.LARGEENTRY)) {
                 fieldMetadataOverride.setLargeEntry(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
                                         Boolean.parseBoolean(stringValue));

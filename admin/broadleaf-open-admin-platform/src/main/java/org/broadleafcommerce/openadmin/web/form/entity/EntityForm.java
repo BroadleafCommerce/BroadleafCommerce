@@ -365,6 +365,10 @@ public class EntityForm {
             tabs.add(tab);
         }
 
+        if (listGrid.getColumn() != 0) {
+            tab.setIsMultiColumn(true);
+        }
+
         tab.getListGrids().add(listGrid);
     }
 

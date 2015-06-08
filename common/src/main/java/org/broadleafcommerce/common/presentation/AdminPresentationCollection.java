@@ -214,4 +214,9 @@ public @interface AdminPresentationCollection {
      * @return the sort direction
      */
     boolean sortAscending() default true;
+
+    /**
+     *
+     */
+    int column() default 0;
 }

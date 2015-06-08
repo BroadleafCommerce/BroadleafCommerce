@@ -40,7 +40,8 @@ public class ListGrid {
     protected String friendlyName = null;
     protected String idProperty;
     protected int order;
-    
+    protected int column;
+
     protected Set<Field> headerFields = new TreeSet<Field>(new Comparator<Field>() {
 
         @Override
@@ -281,6 +282,14 @@ public class ListGrid {
     
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
     }
 
     public Set<Field> getHeaderFields() {

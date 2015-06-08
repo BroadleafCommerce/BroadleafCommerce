@@ -310,6 +310,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                 fieldMetadataOverride.setTabOrder(StringUtils.isEmpty(stringValue) ? entry.getValue()
                         .intOverrideValue() :
                         Integer.parseInt(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.COLUMN)) {
+                fieldMetadataOverride.setColumn(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                        .intOverrideValue() :
+                        Integer.parseInt(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.USESERVERSIDEINSPECTIONCACHE)) {
                 fieldMetadataOverride.setUseServerSideInspectionCache(StringUtils.isEmpty(stringValue) ? entry
                         .getValue().booleanOverrideValue() :
@@ -339,6 +343,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             override.setOrder(annotColl.order());
             override.setTab(annotColl.tab());
             override.setTabOrder(annotColl.tabOrder());
+            override.setColumn(annotColl.column());
             override.setSecurityLevel(annotColl.securityLevel());
             override.setAddType(annotColl.operationTypes().addType());
             override.setFetchType(annotColl.operationTypes().fetchType());
@@ -377,6 +382,9 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         }
         if (collectionMetadata.getShowIfProperty()!=null) {
             metadata.setShowIfProperty(collectionMetadata.getShowIfProperty());
+        }
+        if (collectionMetadata.getColumn()!=null) {
+            metadata.setColumn(collectionMetadata.getColumn());
         }
 
         org.broadleafcommerce.openadmin.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.dto.OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);

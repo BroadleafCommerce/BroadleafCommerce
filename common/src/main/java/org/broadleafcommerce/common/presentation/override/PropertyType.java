@@ -51,7 +51,7 @@ public class PropertyType {
         public static final String READONLY = "readOnly";
         public static final String VALIDATIONCONFIGURATIONS = "validationConfigurations";
         public static final String DEFAULTVALUE = "defaultValue";
-        public static final Integer COLUMN = 0;
+        public static final String COLUMN = "column";
     }
 
     public static class AdminPresentationToOneLookup {
@@ -109,6 +109,7 @@ public class PropertyType {
         public static final String SORTASCENDING = "sortAscending";
         public static final String TAB = "tab";
         public static final String TABORDER = "tabOrder";
+        public static final String COLUMN = "column";
         public static final String CUSTOMCRITERIA = "customCriteria";
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
