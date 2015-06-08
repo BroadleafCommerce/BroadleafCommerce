@@ -260,6 +260,12 @@ $(document).ready(function() {
         if ($tr.find('td.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
 
             $('body').trigger('listGrid-' + listGridSelectType + '-rowSelected', [link, fields, currentUrl]);
+
+            // If Adorned or Asset ListGrid, process row click by adding item id to form.
+            // Else, wait for confirmation button click.
+            if (listGridType === 'adorned_with_form' || listGridType === 'adorned'|| listGridType === 'asset') {
+                $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
+            }
         }
     });
     
@@ -358,10 +364,6 @@ $(document).ready(function() {
      */
     $('body').on('listGrid-adorned_with_form-rowSelected', function(event, link, fields, currentUrl) {
         $(this).find('input#adornedTargetIdProperty').val(fields['id']);
-        var $a = $('a#adornedModalTab2Link');
-        $a.removeClass('disabled');
-        $a.click();
-        $a.addClass('disabled');
     });
     
     /**

@@ -1,29 +1,12 @@
-<div class="tabs-container">
-    <dl class="tabs" th:if="${listGrid.listGridType == 'adorned_with_form'}">
-        <dd class="active">
-            <a id="adornedModalTab1Link" href="#adornedModalTab1" th:inline="text">
-                1. [[#{modal.adorned.pick}]] [[#{${listGrid.friendlyName}}]]
-            </a>
-        </dd>
-        <dd>
-            <a id="adornedModalTab2Link" class="disabled" href="#adornedModalTab2" th:inline="text">
-                2. [[#{modal.adorned.additionalFields}]]
-            </a>
-        </dd>
-    </dl> 
-</div>
-
 <ul class="tabs-content">
-    <li class="active adornedModalTab1Tab">
+    <li class="adornedModalTab1Tab">
+        <blc:form th:include="components/entityForm"
+                  th:remove="tag"
+                  th:with="additionalClasses='modal-form',
+                     hideActions=${listGrid.listGridType == 'adorned'}" />
+
         <div class="listgrid-container">
             <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
         </div>
-    </li>
-    
-    <li class="adornedModalTab2Tab">
-        <blc:form th:include="components/entityForm"
-            th:remove="tag"
-            th:with="additionalClasses='modal-form',
-                     hideActions=${listGrid.listGridType == 'adorned'}" />
     </li>
 </ul>
