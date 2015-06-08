@@ -508,8 +508,6 @@ $(document).ready(function() {
         var $firstInput = $($('body').find('#listGrid-main-header th input.listgrid-criteria-input')[0]);
         
         $firstInput.val(search);
-
-        $(this).closest('form').find('input').val('');
         
         var submitData = {};
         submitData[$firstInput.data('name')] =  $firstInput.val();

@@ -10,7 +10,7 @@
     </li>
     <li class="divider"></li>
 </div> -->
-<li>
+<li style="display: none;" >
     <div class="filter-fields" th:attr="data-action=@{${listGrid.path}}">
         <input type="hidden" class="sort-property" data-name="sortProperty" th:value="${fieldName}" />
         <input type="hidden" class="sort-direction" data-name="sortDirection" />
@@ -22,13 +22,13 @@
             </div>
         </div>
 
-        <div th:style="${#strings.toLowerCase(fieldType) == 'additional_foreign_key'} ? 'display: none;'">
-            <button class="listgrid-filter tiny radius dark button" th:inline="text">
-                <i class="icon-search"></i>[[#{Filter}]]
-            </button>
-            <button class="listgrid-clear-filter tiny radius dark button" disabled="disabled" th:inline="text">
-                <i class="icon-remove"></i>[[#{Filter_Clear}]]
-            </button>
-        </div>
+        <!--<div th:style="${#strings.toLowerCase(fieldType) == 'additional_foreign_key'} ? 'display: none;'">-->
+            <!--<button class="listgrid-filter tiny radius dark button" th:inline="text">-->
+                <!--<i class="icon-search"></i>[[#{Filter}]]-->
+            <!--</button>-->
+            <!--<button class="listgrid-clear-filter tiny radius dark button" disabled="disabled" th:inline="text">-->
+                <!--<i class="icon-remove"></i>[[#{Filter_Clear}]]-->
+            <!--</button>-->
+        <!--</div>-->
     </div>
 </li>
