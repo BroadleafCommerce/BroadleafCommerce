@@ -68,6 +68,15 @@ public class DefaultListGridActions {
         .withUrlPostfix("/view")
         .withForListGridReadOnly(true);
 
+    public static final ListGridAction SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
+        .withButtonClass("list-grid-single-select")
+        .withDisplayText("Select")
+        .withSingleActionOnly(true);
+
+    public static final ListGridAction MULTI_SELECT = new ListGridAction(ListGridAction.MULTI_SELECT)
+        .withButtonClass("list-grid-multi-select")
+        .withDisplayText("Select");
+
 
     public static final ListGridAction PREVIEW = new ListGridAction("PREVIEW")
             .withButtonClass("workflow-preview")

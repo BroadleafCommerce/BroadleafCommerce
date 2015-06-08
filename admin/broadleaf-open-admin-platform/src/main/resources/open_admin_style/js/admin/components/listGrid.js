@@ -247,7 +247,8 @@ $(document).ready(function() {
         var $tr = $(this);
         var $table = $tr.closest('table');
         var listGridType = $table.data('listgridtype');
-        
+        var listGridSelectType = $table.data('listgridselecttype');
+
         if (listGridType != 'main' && !$tr.hasClass('clickable')) {
             return false;
         }
@@ -257,7 +258,8 @@ $(document).ready(function() {
         var fields = BLCAdmin.listGrid.getRowFields($tr);
         
         if ($tr.find('td.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
-            $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
+
+            $('body').trigger('listGrid-' + listGridSelectType + '-rowSelected', [link, fields, currentUrl]);
         }
     });
     
@@ -287,13 +289,13 @@ $(document).ready(function() {
         
         BLCAdmin.listGrid.updateToolbarRowActionButtons($listGridContainer);
     }
-    $('body').on('listGrid-inline-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-single_select-rowSelected', function(event, link, fields, currentUrl) {
         inlineRowSelected(event, link, fields, currentUrl, false);
     });
     $('body').on('listGrid-translation-rowSelected', function(event, link, fields, currentUrl) {
         inlineRowSelected(event, link, fields, currentUrl, false);
     });
-    $('body').on('listGrid-inlinemulti-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-multi_select-rowSelected', function(event, link, fields, currentUrl) {
         inlineRowSelected(event, link, fields, currentUrl, true);
     });
     
@@ -538,6 +540,19 @@ $(document).ready(function() {
         BLCAdmin.showLinkAsModal(link);
 
         return false;
+    });
+
+    $('body').on('click', 'button.list-grid-single-select', function() {
+        var $container = $(this).closest('.listgrid-container');
+        var $table = $container.find('table');
+        var $selectedRow = $table.find('tr.selected');
+        var listGridType = $table.data('listgridtype');
+
+        var link = $selectedRow.data('link');
+        var fields = BLCAdmin.listGrid.getRowFields($selectedRow);
+        var currentUrl = $container.find("table").data('currenturl');
+
+        $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
     });
     
     $('body').on('submit', 'form.modal-form', function(event) { 

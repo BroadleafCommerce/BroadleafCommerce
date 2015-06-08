@@ -58,6 +58,9 @@ public class ListGrid {
     
     // These actions will start greyed out and unable to be clicked until a specific row has been selected
     protected List<ListGridAction> rowActions = new ArrayList<ListGridAction>();
+
+    // These actions will start greyed out and unable to be clicked until a specific row has been selected
+    protected List<ListGridAction> modalRowActions = new ArrayList<ListGridAction>();
     protected int totalRecords;
     protected int startIndex;
     protected int pageSize;
@@ -67,7 +70,8 @@ public class ListGrid {
     
     protected AddMethodType addMethodType;
     protected String listGridType;
-    
+    protected String listGridSelectType;
+
     // The section url that maps to this particular list grid
     protected String sectionKey;
 
@@ -84,8 +88,6 @@ public class ListGrid {
 
     public enum Type {
         MAIN,
-        INLINE,
-        INLINEMULTI,
         TO_ONE,
         BASIC,
         ADORNED,
@@ -93,6 +95,11 @@ public class ListGrid {
         MAP,
         TRANSLATION,
         ASSET
+    }
+
+    public enum SelectType {
+        SINGLE_SELECT,
+        MULTI_SELECT,
     }
 
     /* ************** */
@@ -175,9 +182,28 @@ public class ListGrid {
             }
         });
     }
+
+    /**
+     * Grabs a filtered list of row actions filtered by whether or not they match the same readonly state as the listgrid
+     * and are thus shown on the screen
+     */
+    @SuppressWarnings("unchecked")
+    public List<ListGridAction> getActiveModalRowActions() {
+        return (List<ListGridAction>) CollectionUtils.select(getModalRowActions(), new TypedPredicate<ListGridAction>() {
+
+            @Override
+            public boolean eval(ListGridAction action) {
+                return action.getForListGridReadOnly().equals(getReadOnly());
+            }
+        });
+    }
     
     public void addRowAction(ListGridAction action) {
         getRowActions().add(action);
+    }
+
+    public void addModalRowAction(ListGridAction action) {
+        getModalRowActions().add(action);
     }
     
     public void addToolbarAction(ListGridAction action) {
@@ -191,6 +217,10 @@ public class ListGrid {
     public void removeAllRowActions() {
         getRowActions().clear();
     }
+
+    public void removeAllModalRowActions() {
+        getModalRowActions().clear();
+    }
     
     public ListGridAction findToolbarAction(String actionId) {
         for (ListGridAction action : getToolbarActions()) {
@@ -203,6 +233,15 @@ public class ListGrid {
     
     public ListGridAction findRowAction(String actionId) {
         for (ListGridAction action : getRowActions()) {
+            if (action.getActionId().equals(actionId)) {
+                return action;
+            }
+        }
+        return null;
+    }
+
+    public ListGridAction findModalRowAction(String actionId) {
+        for (ListGridAction action : getModalRowActions()) {
             if (action.getActionId().equals(actionId)) {
                 return action;
             }
@@ -238,6 +277,14 @@ public class ListGrid {
      */
     public void setListGridTypeString(String listGridType) {
         this.listGridType = listGridType;
+    }
+
+    public void setListGridSelectType(SelectType listGridSelectType) {
+        this.listGridSelectType = listGridSelectType.toString().toLowerCase();
+    }
+
+    public void setListGridSelectTypeString(String listGridSelectType) {
+        this.listGridSelectType = listGridSelectType;
     }
     
     public Boolean getCanFilterAndSort() {
@@ -324,6 +371,14 @@ public class ListGrid {
         this.rowActions = rowActions;
     }
 
+    public List<ListGridAction> getModalRowActions() {
+        return modalRowActions;
+    }
+
+    public void setModalRowActions(List<ListGridAction> modalRowActions) {
+        this.modalRowActions = modalRowActions;
+    }
+
     public int getStartIndex() {
         return startIndex;
     }
@@ -362,6 +417,10 @@ public class ListGrid {
 
     public String getListGridType() {
         return listGridType;
+    }
+
+    public String getListGridSelectType() {
+        return listGridSelectType;
     }
 
     public String getContainingEntityId() {

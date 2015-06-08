@@ -205,7 +205,6 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
 
         ListGrid listGrid = formService.buildCollectionListGrid(entity.findProperty(idProperty).getValue(), drs,
                 collectionProperty, sectionKey, sectionCrumbs);
-        listGrid.setListGridType(ListGrid.Type.INLINE);
 
         return listGrid;
     }

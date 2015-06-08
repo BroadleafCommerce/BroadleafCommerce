@@ -64,6 +64,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.DataFor
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.component.MediaField;
 import org.broadleafcommerce.openadmin.web.form.component.RuleBuilderField;
@@ -224,6 +225,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean readOnly = false;
         boolean hideIdColumn = false;
         boolean canFilterAndSort = true;
+        boolean modalSingleSelectable = false;
+        boolean modalMultiSelectable = false;
         String idProperty = "id";
         for (Property property : cmd.getProperties()) {
             if (property.getMetadata() instanceof BasicFieldMetadata &&
@@ -238,6 +241,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         // kind of field this is.
         if (fmd instanceof BasicFieldMetadata) {
             readOnly = ((BasicFieldMetadata) fmd).getReadOnly();
+            modalSingleSelectable = true;
             for (Property p : cmd.getProperties()) {
                 if (p.getMetadata() instanceof BasicFieldMetadata) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
@@ -273,6 +277,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             
             if (bcm.getAddMethodType().equals(AddMethodType.PERSIST)) {
                 editable = true;
+            } else {
+                modalMultiSelectable = true;
             }
 
             sortable = StringUtils.isNotBlank(bcm.getSortProperty());
@@ -393,6 +399,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (sortable) {
             listGrid.setCanFilterAndSort(false);
             listGrid.getToolbarActions().add(DefaultListGridActions.REORDER);
+        }
+
+        if (modalSingleSelectable) {
+            listGrid.addModalRowAction(DefaultListGridActions.SINGLE_SELECT);
+        }
+        listGrid.setListGridSelectType(ListGrid.SelectType.SINGLE_SELECT);
+
+        if (modalMultiSelectable) {
+            listGrid.addModalRowAction(DefaultListGridActions.MULTI_SELECT);
+            listGrid.setListGridSelectType(ListGrid.SelectType.MULTI_SELECT);
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
@@ -894,7 +910,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 DynamicResultSet subCollectionEntities = collectionRecords.get(p.getName());
                 String containingEntityId = entity.getPMap().get(ef.getIdProperty()).getValue();
                 ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey(), sectionCrumbs);
-                listGrid.setListGridType(ListGrid.Type.INLINE);
 
                 CollectionMetadata md = ((CollectionMetadata) p.getMetadata());
                 ef.addListGrid(listGrid, md.getTab(), md.getTabOrder());

@@ -6,6 +6,7 @@
     <table class="list-grid-table table table-striped"
            th:classappend="${listGrid.className}"
            th:attr="data-listgridtype=${listGrid.listGridType},
+                    data-listgridselecttype=${listGrid.listGridSelectType},
                     data-currenturl=${currentUrl},
                     data-path=@{${listGrid.path}},
                     data-currentparams=${currentParams}"
