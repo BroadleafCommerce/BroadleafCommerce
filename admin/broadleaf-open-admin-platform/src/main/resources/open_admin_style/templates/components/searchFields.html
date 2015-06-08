@@ -1,24 +1,26 @@
-<div class="table-actions row">
+<div class="listgrid-search row">
     <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
 
         <div class="search-form col4">
             <input id="listgrid-search" type="search" name="table-search" style="width:100%;"
                    th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
         </div>
-        <button class="button primary search-button" th:inline="text" th:utext="#{Search}" />
-        <a th:href="@{${'/' + sectionKey}}" class="button secondary" th:inline="text" th:utext="#{Clear_Search}" />
-
-        <div class="filter-products">
-            <div class="filter-count">
-                <span th:remove="tag" th:if="${records}" th:text="${listGrid.startIndex + 1}" />
-                <span th:remove="tag" th:unless="${records}">0</span>
-
-                <span th:remove="tag" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
-                <span th:remove="tag" th:text="${'of'}" />
-                <span th:remove="tag" th:text="${#lists.size(listGrid.records)}" />
-                <span th:remove="tag" th:text="#{${entityFriendlyName}} + 's'" />
-            </div>
-            <!--<button class="button primary" th:text="#{Filter_Button_Text(#{${entityFriendlyName}})}">Filter Products</button>-->
+        <div class="listgrid-search-actions">
+            <button class="button primary search-button" th:inline="text" th:utext="#{Search}" />
+            <a th:href="@{${'/' + sectionKey}}" class="button secondary" th:inline="text" th:utext="#{Clear_Search}" />
         </div>
+
+        <!--<div class="filter-products">-->
+            <!--<div class="filter-count">-->
+                <!--<span th:remove="tag" th:if="${records}" th:text="${listGrid.startIndex + 1}" />-->
+                <!--<span th:remove="tag" th:unless="${records}">0</span>-->
+
+                <!--<span th:remove="tag" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />-->
+                <!--<span th:remove="tag" th:text="${'of'}" />-->
+                <!--<span th:remove="tag" th:text="${#lists.size(listGrid.records)}" />-->
+                <!--<span th:remove="tag" th:text="#{${entityFriendlyName}} + 's'" />-->
+            <!--</div>-->
+            <!--<button class="button primary" th:text="#{Filter_Button_Text(#{${entityFriendlyName}})}">Filter Products</button>-->
+        <!--</div>-->
     </form>
 </div>

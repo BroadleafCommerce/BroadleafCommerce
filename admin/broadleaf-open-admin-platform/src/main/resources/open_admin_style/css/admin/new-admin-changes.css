@@ -155,6 +155,15 @@ div.action-popup img.ajax-loader {
 
 .listgrid-modal-actions {
     padding: 10px 0;
+}
+
+.listgrid-search {
+    margin-bottom: 25px;
+}
+
+.listgrid-search-actions {
+    padding-top: 12px;
+}
 
 .table {
     margin-bottom: 0 !important;
