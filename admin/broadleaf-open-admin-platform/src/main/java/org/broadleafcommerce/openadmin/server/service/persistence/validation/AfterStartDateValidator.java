@@ -19,10 +19,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -31,6 +27,10 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * Checks to make sure that the end date being updated is after the start date
@@ -75,12 +75,8 @@ public class AfterStartDateValidator extends ValidationConfigurationBasedPropert
             valid = false;
             message = END_DATE_BEFORE_START;
         }
-                    
-        if (valid) {
-            return new PropertyValidationResult(true);
-        } else {
-            return new PropertyValidationResult(false, message);
-        }
+
+        return new PropertyValidationResult(valid, message);
     }
 
 
