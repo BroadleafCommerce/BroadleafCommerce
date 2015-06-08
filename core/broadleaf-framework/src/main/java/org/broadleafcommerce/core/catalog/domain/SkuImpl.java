@@ -43,8 +43,10 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
 import org.broadleafcommerce.common.presentation.OptionFilterParam;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -272,7 +274,14 @@ public class SkuImpl implements Sku {
     @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 2000, 
         group = ProductImpl.Presentation.Group.Name.ActiveDateRange, 
         groupOrder = ProductImpl.Presentation.Group.Order.ActiveDateRange,
-        tooltip = "skuEndDateTooltip")
+        tooltip = "skuEndDateTooltip",
+        validationConfigurations = {
+            @ValidationConfiguration(
+                validationImplementation = "blAfterStartDateValidator",
+                configurationItems = {
+                        @ConfigurationItem(itemName = "otherField", itemValue = "defaultSku.activeStartDate")
+                }) 
+        })
     protected Date activeEndDate;
 
     @Embedded
