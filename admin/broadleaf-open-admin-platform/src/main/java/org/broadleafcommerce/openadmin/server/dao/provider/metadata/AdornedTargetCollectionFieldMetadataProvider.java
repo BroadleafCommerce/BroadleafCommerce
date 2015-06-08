@@ -280,8 +280,10 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
                 fieldMetadataOverride.setTab(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.TABORDER)) {
                 fieldMetadataOverride.setTabOrder(StringUtils.isEmpty(stringValue) ? entry.getValue()
-                        .intOverrideValue() :
-                        Integer.parseInt(stringValue));
+                        .intOverrideValue() : Integer.parseInt(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.COLUMN)) {
+                fieldMetadataOverride.setColumn(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                        .intOverrideValue() : Integer.parseInt(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.TARGETOBJECTIDPROPERTY)) {
                 fieldMetadataOverride.setTargetObjectIdProperty(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.TARGETOBJECTPROPERTY)) {
@@ -380,6 +382,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
             override.setOrder(adornedTargetCollection.order());
             override.setTab(adornedTargetCollection.tab());
             override.setTabOrder(adornedTargetCollection.tabOrder());
+            override.setColumn(adornedTargetCollection.column());
             override.setSecurityLevel(adornedTargetCollection.securityLevel());
             override.setAddType(adornedTargetCollection.operationTypes().addType());
             override.setFetchType(adornedTargetCollection.operationTypes().fetchType());
@@ -604,6 +607,9 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
         }
         if (adornedTargetCollectionMetadata.getTabOrder() != null) {
             metadata.setTabOrder(adornedTargetCollectionMetadata.getTabOrder());
+        }
+        if (adornedTargetCollectionMetadata.getColumn() != null) {
+            metadata.setColumn(adornedTargetCollectionMetadata.getColumn());
         }
 
         if (adornedTargetCollectionMetadata.getCustomCriteria() != null) {

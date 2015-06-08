@@ -94,6 +94,7 @@ public class PropertyType {
         public static final String CUSTOMCRITERIA = "customCriteria";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
         public static final String OPERATIONTYPES = "operationTypes";
+        public static final String COLUMN = "column";
     }
 
     public static class AdminPresentationCollection {
@@ -109,11 +110,11 @@ public class PropertyType {
         public static final String SORTASCENDING = "sortAscending";
         public static final String TAB = "tab";
         public static final String TABORDER = "tabOrder";
-        public static final String COLUMN = "column";
         public static final String CUSTOMCRITERIA = "customCriteria";
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
+        public static final String COLUMN = "column";
     }
 
     public static class AdminPresentationMap {
@@ -143,5 +144,6 @@ public class PropertyType {
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
+        public static final String COLUMN = "column";
     }
 }

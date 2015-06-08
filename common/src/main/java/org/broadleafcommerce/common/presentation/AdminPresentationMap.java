@@ -340,4 +340,9 @@ public @interface AdminPresentationMap {
      */
     String currencyCodeField() default "";
 
+    /**
+     *
+     */
+    int column() default 0;
+
 }

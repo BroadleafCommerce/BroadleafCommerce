@@ -341,6 +341,9 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
             } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.TABORDER)) {
                 fieldMetadataOverride.setTabOrder(StringUtils.isEmpty(stringValue) ? entry.getValue()
                         .intOverrideValue() : Integer.parseInt(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.COLUMN)) {
+                fieldMetadataOverride.setColumn(StringUtils.isEmpty(stringValue) ? entry.getValue()
+                        .intOverrideValue() : Integer.parseInt(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationMap.USESERVERSIDEINSPECTIONCACHE)) {
                 fieldMetadataOverride.setUseServerSideInspectionCache(StringUtils.isEmpty(stringValue) ? entry
                         .getValue().booleanOverrideValue() : Boolean.parseBoolean(stringValue));
@@ -389,6 +392,7 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
             override.setOrder(map.order());
             override.setTab(map.tab());
             override.setTabOrder(map.tabOrder());
+            override.setColumn(map.column());
             override.setSecurityLevel(map.securityLevel());
             override.setAddType(map.operationTypes().addType());
             override.setFetchType(map.operationTypes().fetchType());
@@ -684,6 +688,9 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
         }
         if (map.getTabOrder() != null) {
             metadata.setTabOrder(map.getTabOrder());
+        }
+        if (map.getColumn() != null) {
+            metadata.setColumn(map.getColumn());
         }
 
         if (map.getCustomCriteria() != null) {

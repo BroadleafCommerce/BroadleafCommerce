@@ -573,6 +573,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.groupCollapsed = groupCollapsed;
         metadata.setTab(getTab());
         metadata.setTabOrder(getTabOrder());
+        metadata.setColumn(getColumn());
         metadata.explicitFieldType = explicitFieldType;
         metadata.largeEntry = largeEntry;
         metadata.prominent = prominent;

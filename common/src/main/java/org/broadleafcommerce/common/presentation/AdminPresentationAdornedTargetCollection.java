@@ -283,4 +283,9 @@ public @interface AdminPresentationAdornedTargetCollection {
      * @return the currency property field
      */
     String currencyCodeField() default "";
+
+    /**
+     *
+     */
+    int column() default 0;
 }
