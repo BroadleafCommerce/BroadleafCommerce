@@ -141,6 +141,22 @@ div.action-popup img.ajax-loader {
     display: none;
 }
 
+.listgrid-container {
+    margin: 20px 0;
+}
+
+.listgrid-toolbar ul {
+    list-style-type: none;
+    padding-left: 15px;
+    margin-bottom: 3px;
+    display: inline-block;
+}
+
+.listgrid-toolbar li {
+    float: left;
+    padding: 0 2px;
+ }
+
 .listgrid-header-wrapper {
     background-color: #E1E0DD;
 }
