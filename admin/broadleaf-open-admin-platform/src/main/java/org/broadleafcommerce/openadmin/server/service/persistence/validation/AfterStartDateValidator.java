@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -58,34 +59,28 @@ public class AfterStartDateValidator extends ValidationConfigurationBasedPropert
         Date startDate = null;
         Date endDate = null;
         
-        
-        if (value == null || value.equals("") || otherField == null || otherField.equals("")) {
+        if (StringUtils.isBlank(value) || StringUtils.isBlank(otherField)) {
             return new PropertyValidationResult(true);
         }
-        
 
-            try {
-                startDate = (Date) fm.getFieldValue(instance, otherField);
-                endDate = (Date) fm.getFieldValue(instance, propertyName);
-            } catch (IllegalAccessException iae) {
-                valid = false;
-                message = iae.getMessage();
-            } catch (FieldNotAvailableException fnae) {
-                valid = false;
-                message = fnae.getMessage();
-            }
-        
-
+        try {
+            startDate = (Date) fm.getFieldValue(instance, otherField);
+            endDate = (Date) fm.getFieldValue(instance, propertyName);
+        } catch (IllegalAccessException | FieldNotAvailableException e) {
+            valid = false;
+            message = e.getMessage();
+        }
         
         if (valid && endDate != null && startDate != null && endDate.before(startDate)) {
             valid = false;
             message = END_DATE_BEFORE_START;
         }
                     
-        if (valid)
+        if (valid) {
             return new PropertyValidationResult(true);
-        else
+        } else {
             return new PropertyValidationResult(false, message);
+        }
     }
 
 
