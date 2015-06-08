@@ -168,7 +168,7 @@
             options = options || {};
     	    var alertType = options.alertType || '';
     	    
-    	    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass(alertType);
+    	    var $alert = $('<li>').addClass('alert-box list-grid-alert').addClass(alertType);
     	    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
     	    
     	    $alert.append(message);
@@ -177,8 +177,8 @@
     	    if (options.clearOtherAlerts) {
     	        $container.children('.list-grid-alert').find('a.close').click();
     	    }
-    	    
-    	    $container.children().first().after($alert);
+
+            $container.find('.listgrid-toolbar ul').append($alert);
     	    
     	    if (options.autoClose) {
     	        setTimeout(function() {

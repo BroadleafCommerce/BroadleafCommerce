@@ -157,6 +157,12 @@ div.action-popup img.ajax-loader {
     padding: 0 2px;
  }
 
+.listgrid-toolbar li.alert-box {
+    padding-top: 8px;
+    padding-left: 10px;
+    color: #94AF39;
+ }
+
 .listgrid-header-wrapper {
     background-color: #E1E0DD;
 }
