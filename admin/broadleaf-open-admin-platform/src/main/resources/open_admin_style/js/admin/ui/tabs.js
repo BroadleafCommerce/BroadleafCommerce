@@ -66,6 +66,9 @@
                     $(value).hide();
                 }
             });
+
+            BLCAdmin.initializeFields(BLCAdmin.getActiveTab());
+            BLCAdmin.updateFields(BLCAdmin.getActiveTab());
         });
 
         initTabs();

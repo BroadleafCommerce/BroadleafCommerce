@@ -332,22 +332,22 @@ var BLCAdmin = (function($) {
     	getActiveTab : function() {
     	    var $modal = this.currentModal();
     	    if ($modal != null) {
-        	    var $tabs = $modal.find('ul.tabs-content');
+        	    var $tabs = $modal.find('div.section-tabs');
         	    
         	    if ($tabs.length == 0) {
         	        return $modal;
         	    } else {
-        	        return $modal.find('li.active');
+        	        return $modal.find('.entityFormTab.active');
         	    }
     	        
     	    } else {
         	    var $body = $('body');
-        	    var $tabs = $body.find('ul.tabs-content');
+        	    var $tabs = $body.find('div.section-tabs');
         	    
         	    if ($tabs.length == 0) {
         	        return $body;
         	    } else {
-        	        return $tabs.find('li.active');
+        	        return $body.find('.entityFormTab.active');
         	    }
     	    }
     	},
