@@ -25,8 +25,10 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 public interface MultiTenantCopierExtensionHandler extends ExtensionHandler {
     
-    public ExtensionResultStatusType transformCopy(MultiTenantCopyContext context, Object from, Object to);
+    ExtensionResultStatusType transformCopy(MultiTenantCopyContext context, Object from, Object to);
     
-    public ExtensionResultStatusType prepareForSave(MultiTenantCopyContext context, Object from, Object to);
+    ExtensionResultStatusType prepareForSave(MultiTenantCopyContext context, Object from, Object to);
+
+    ExtensionResultStatusType postSave(MultiTenantCopyContext context, Object from, Object to);
 
 }

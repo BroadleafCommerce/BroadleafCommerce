@@ -35,4 +35,8 @@ public class AbstractMultiTenantCopierExtensionHandler extends AbstractExtension
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    @Override
+    public ExtensionResultStatusType postSave(MultiTenantCopyContext context, Object from, Object to) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }
