@@ -510,6 +510,10 @@
             });
             $table.find('th').each(function(index, thElement) {
                 $(thElement).css('width', thWidths[index]);
+                var columnNo = $(thElement).index();
+                $(thElement).closest("table")
+                    .find("tr td:nth-child(" + (columnNo+1) + ")")
+                    .css("max-width", thWidths[index]);
             });
             
             var $wrapper = $tbody.closest('.listgrid-body-wrapper');
@@ -666,7 +670,7 @@
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
-                scrollInertia: 700,
+                scrollInertia: 2000,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;

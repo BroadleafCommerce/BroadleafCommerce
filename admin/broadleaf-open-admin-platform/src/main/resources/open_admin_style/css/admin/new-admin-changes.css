@@ -101,6 +101,9 @@ input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.rad
 
 /* add nowrap to listgrids */
 .table tbody>tr>td {
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
@@ -152,4 +155,7 @@ div.action-popup img.ajax-loader {
 
 .listgrid-modal-actions {
     padding: 10px 0;
+
+.table {
+    margin-bottom: 0 !important;
 }
