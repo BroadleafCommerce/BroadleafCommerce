@@ -41,6 +41,7 @@ public abstract class FieldMetadata implements Serializable {
     private String friendlyName;
     private String securityLevel;
     private Integer order;
+    private Integer column;
     private String owningClassFriendlyName;
 
     private String tab;
@@ -109,6 +110,7 @@ public abstract class FieldMetadata implements Serializable {
         metadata.fieldName = fieldName;
         metadata.showIfProperty = showIfProperty;
         metadata.currencyCodeField = currencyCodeField;
+        metadata.column = column;
         for (Map.Entry<String, Object> entry : additionalMetadata.entrySet()) {
             metadata.additionalMetadata.put(entry.getKey(), entry.getValue());
         }
@@ -217,6 +219,14 @@ public abstract class FieldMetadata implements Serializable {
 
     public void setTabOrder(Integer tabOrder) {
         this.tabOrder = tabOrder;
+    }
+
+    public Integer getColumn() {
+        return column;
+    }
+
+    public void setColumn(Integer column) {
+        this.column = column;
     }
 
     public abstract FieldMetadata cloneFieldMetadata();
