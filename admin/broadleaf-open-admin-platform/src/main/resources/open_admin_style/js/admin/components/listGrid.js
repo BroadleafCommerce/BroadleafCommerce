@@ -147,7 +147,7 @@
             return selectedRowIds;
         },
         
-        updateToolbarRowActionButtons : function($listGridContainer) {
+        updateRowActionButtons : function($listGridContainer) {
             var numSelected = $listGridContainer.find('tr.selected').length;
             if (numSelected) {
                 $listGridContainer.find('button.row-action').removeAttr('disabled');
@@ -287,7 +287,7 @@ $(document).ready(function() {
             $tr.removeClass("selected");
         }
         
-        BLCAdmin.listGrid.updateToolbarRowActionButtons($listGridContainer);
+        BLCAdmin.listGrid.updateRowActionButtons($listGridContainer);
     }
     $('body').on('listGrid-single_select-rowSelected', function(event, link, fields, currentUrl) {
         inlineRowSelected(event, link, fields, currentUrl, false);
@@ -467,7 +467,7 @@ $(document).ready(function() {
             $(this).html($('<i>', { 'class' : 'icon-move' }));
             $(this).append(' ' + BLCAdmin.messages.reorder);
             
-            BLCAdmin.listGrid.updateToolbarRowActionButtons($container);
+            BLCAdmin.listGrid.updateRowActionButtons($container);
             
             $trs.removeClass('draggable').addClass('clickable');
             $tbody.sortable("destroy");

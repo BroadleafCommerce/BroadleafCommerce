@@ -658,7 +658,7 @@
             $clonedTable.wrap($('<div>', { 'class' : 'listgrid-body-wrapper' }));
             var $wrapper = $clonedTable.parent();
             
-            $clonedTable.find('thead').find('tr').addClass('width-control-header').find('th').empty();
+            $clonedTable.find('thead').find('tr').addClass('width-control-header').find('th').empty().css("padding",0,"height",0);
             $clonedTable.append($tbody);
             $tbody = $clonedTable.find('tbody');
             $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
@@ -666,7 +666,7 @@
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
-                scrollInertia: 70,
+                scrollInertia: 700,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;

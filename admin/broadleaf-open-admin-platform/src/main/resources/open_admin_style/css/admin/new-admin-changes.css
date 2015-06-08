@@ -133,3 +133,23 @@ div.action-popup img.ajax-loader {
 .select-site {
     display: none;
 }
+
+.mCS_no_scrollbar + .mCSB_scrollTools .mCSB_draggerContainer .mCSB_dragger {
+    display: none;
+}
+
+.listgrid-header-wrapper {
+    background-color: #E1E0DD;
+}
+
+.list-grid-table tbody tr:hover {
+    background-color: #E4E2DF;
+}
+
+.list-grid-table tbody tr.selected {
+    background-color: #E4E2DF;
+}
+
+.listgrid-modal-actions {
+    padding: 10px 0;
+}

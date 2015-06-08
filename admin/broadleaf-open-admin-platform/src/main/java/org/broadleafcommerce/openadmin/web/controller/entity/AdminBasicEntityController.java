@@ -933,7 +933,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
-            ListGrid listGrid = formService.buildMainListGrid(drs, collectionMetadata, sectionKey, sectionCrumbs);
+            ListGrid listGrid = formService.buildCollectionListGrid(id, drs, collectionProperty, sectionKey, sectionCrumbs);
             listGrid.setSubCollectionFieldName(collectionField);
             listGrid.setPathOverride(request.getRequestURL().toString());
             listGrid.setFriendlyName(collectionMetadata.getPolymorphicEntities().getFriendlyName());

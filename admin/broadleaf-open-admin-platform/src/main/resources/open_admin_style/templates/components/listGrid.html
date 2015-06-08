@@ -44,17 +44,17 @@
                         </div>
 
                         <!--<div class="resizer" th:unless="${headerField?.resizeDisabled}">||</div>-->
-                        <!--<ul th:include="${'components/partials/listGridHeaderFilter'}"-->
-                            <!--class="no-hover"-->
-                            <!--th:classappend="${headerField.mainEntityLink ? 'first' : ''}"-->
-                            <!--th:with="fieldType=${headerField.fieldType},-->
-                                     <!--fieldName=${headerField.name},-->
-                                     <!--fieldFriendlyName=${headerField.friendlyName},-->
-                                     <!--index=${headerFieldStat.index}">-->
-                        <!--</ul>-->
+                        <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                            class="no-hover"
+                            th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
+                            th:with="fieldType=${headerField.fieldType},
+                                     fieldName=${headerField.name},
+                                     fieldFriendlyName=${headerField.friendlyName},
+                                     index=${headerFieldStat.index}">
+                        </ul>
                     </div>
                 </th>
-                <th>
+                <th th:if="${listGrid.listGridType} == 'main'">
                     <th:comment th:remove="all">
                         This entry acting as placeholder for Edit links
                     </th:comment>
@@ -77,13 +77,13 @@
                         </div>
                         
                         <!--<div class="resizer" th:unless="${headerField?.resizeDisabled}">||</div>-->
-                        <!--<ul th:include="${'components/partials/listGridHeaderFilter'}"-->
-                            <!--class="no-hover end"-->
-                            <!--th:with="fieldType=${'id'},-->
-                                     <!--fieldName=${listGrid.idProperty},-->
-                                     <!--fieldFriendlyName=${listGrid.idProperty},-->
-                                     <!--index=${#lists.size(listGrid.headerFields) - 1}">-->
-                        <!--</ul>-->
+                        <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                            class="no-hover end"
+                            th:with="fieldType=${'id'},
+                                     fieldName=${listGrid.idProperty},
+                                     fieldFriendlyName=${listGrid.idProperty},
+                                     index=${#lists.size(listGrid.headerFields) - 1}">
+                        </ul>
                    </div>
                 </th>
             </tr>
@@ -93,12 +93,12 @@
                         data-pagesize=${listGrid.pageSize}">
                         
             <tr th:if="${#lists.isEmpty(listGrid.records)}">
-                <td class="list-grid-no-results">
-                    (No records found)
-                </td>
-
                 <div th:remove="tag" th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
-                    <td></td>
+                    <td th:if="${index.count == 1}" class="list-grid-no-results">
+                        (No records found)
+                    </td>
+
+                    <td th:unless="${index.count == 1}"></td>
                 </div>
             </tr>
             
@@ -179,11 +179,10 @@
                                 or field.fieldType == 'IMAGE'
                                 or field.fieldType == 'COLOR'}"
                               th:remove="tag" th:text="${field.displayValue}" />
-
                     </span>
                 </td>
 
-                <td>
+                <td th:if="${listGrid.listGridType} == 'main'">
                     <span>
                         <a th:href="@{${record.path}}" th:text="#{Edit}"
                            th:attr="data-link=@{${record.path}},
@@ -199,6 +198,18 @@
         </tbody>
     </table>
 </div>
+
+<span class="listgrid-table-footer" th:inline="text">
+    <span class="listgrid-table-footer-message" th:inline="text">
+        <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}" />
+        <span class="low-index" th:unless="${records}">0</span>
+        -
+        <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
+        <span th:text="${'of'}" />
+        <span class="total-records" th:text="${#lists.size(listGrid.records)}" />
+        <span th:text="${'records'}" />
+    </span>
+</span>
 
 <span class="listgrid-table-spinner-container" th:inline="text">
     <i class="listgrid-table-spinner icon-spin icon-spinner" />
