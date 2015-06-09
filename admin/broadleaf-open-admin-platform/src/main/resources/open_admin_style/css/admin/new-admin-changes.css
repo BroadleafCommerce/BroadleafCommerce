@@ -190,3 +190,20 @@ div.action-popup img.ajax-loader {
 .table {
     margin-bottom: 0 !important;
 }
+
+.listgrid-filter-sort-container {
+    display: inline-block;
+    padding: 0 5px;
+    float: right;
+}
+
+.listgrid-filter-sort-container i {
+    color: #B9B9B9;
+    margin: 0px 0px 0px 4px;
+    cursor: pointer;
+}
+
+.listgrid-filter-sort-container i.active {
+    color: #8EAA2B;
+}
+

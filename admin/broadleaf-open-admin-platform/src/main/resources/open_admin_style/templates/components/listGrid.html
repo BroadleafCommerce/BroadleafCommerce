@@ -30,7 +30,6 @@
                             <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
                             <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
                         </div>
-
                     </div>
     
                     <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
@@ -39,7 +38,6 @@
                             <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
                             <div class="listgrid-filter-sort-container">
                                 <i class="sort-icon icon-sort"></i>
-                                <i class="filter-icon icon-filter"></i>
                             </div>
                         </div>
 
@@ -71,7 +69,6 @@
                             Id
                             <div class="listgrid-filter-sort-container">
                                 <i class="sort-icon icon-sort"></i>
-                                <i class="filter-icon icon-filter"></i>
                             </div>
                         </div>
 
