@@ -18,8 +18,6 @@
  * #L%
  */
 $(document).ready(function(){
-    $(".secondary-nav").css("width", 0);
-    $(".secondary-nav").show();
 
     equalheight = function(container){
 
@@ -108,37 +106,18 @@ $(document).ready(function(){
 
         if ($(this).hasClass("active")) {
             $(".nav-section").removeClass("active");
-            close($(".secondary-nav"));
+            $(".secondary-nav").hide();
         } else {
-            var el1 = $(".nav-section.active");
-            if (el1.length != 0 ) close($(".secondary-nav"));
-
             $(".nav-section").removeClass("active");
             $(this).addClass("active");
-
-            open($(selector));
+            $(".secondary-nav").hide();
+            $(selector).show();
         }
     });
 
     $(".nav-close").on("click", function(x) {
         x.preventDefault();
+        $(".secondary-nav").hide();
         $(".nav-section").removeClass("active");
-        close($(".secondary-nav"));
     });
 });
-
-function open(el) {
-    $(el).animate({
-        width: "301px"
-    }, function() {
-        // Animation complete.
-    });
-}
-
-function close(el) {
-    $(el).animate({
-        width: "0"
-    }, function() {
-        // Animation complete.
-    });
-}
