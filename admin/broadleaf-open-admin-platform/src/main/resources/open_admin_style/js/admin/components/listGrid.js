@@ -210,7 +210,7 @@
         },
         
         initialize : function($container) {
-            BLCAdmin.listGrid.updateToolbarRowActionButtons($container);
+            BLCAdmin.listGrid.updateRowActionButtons($container);
             
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
