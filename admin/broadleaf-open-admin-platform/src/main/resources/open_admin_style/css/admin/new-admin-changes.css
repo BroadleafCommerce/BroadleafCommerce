@@ -163,7 +163,7 @@ div.action-popup img.ajax-loader {
     color: #94AF39;
  }
 
-.listgrid-toolbar button:disabled {
+button:disabled {
     background-color: #999999;
  }
 
