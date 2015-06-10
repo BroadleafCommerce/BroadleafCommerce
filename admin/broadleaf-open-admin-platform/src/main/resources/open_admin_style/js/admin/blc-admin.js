@@ -363,15 +363,11 @@ var BLCAdmin = (function($) {
                     }, function(data) {
 
                         $.each(data, function (index, value) {
-                            //var json = jQuery.parseJSON(value);
-                            $(selectizeCollection)
-                                .append($("<option></option>")
-                                    .attr("value", value.id)
-                                    .text(value.name));
+                            $(selectizeCollection).append($("<option></option>").attr("value", value.id).text(value.name));
                         });
 
                         $(selectizeCollection).selectize({
-                            plugins: ['remove_button'],
+                            plugins: ['remove_button', 'silent_remove'],
                             maxItems: null,
                             persist: false,
                             onItemAdd: function(value, $item) {
@@ -392,9 +388,7 @@ var BLCAdmin = (function($) {
                                     url: selectizeUrl + "/" + value + "/delete",
                                     type: "POST"
                                 }, function(data) {
-                                    //$(selectizeCollection)[0].selectize.close();
                                 });
-                                //$(selectizeCollection)[0].selectize.close();
                             }
                         });
                     });
