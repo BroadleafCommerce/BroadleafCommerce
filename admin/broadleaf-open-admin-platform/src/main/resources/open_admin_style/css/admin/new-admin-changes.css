@@ -169,6 +169,8 @@ div.action-popup img.ajax-loader {
 
 .listgrid-header-wrapper {
     background-color: #E1E0DD;
+    border-bottom: 3px solid #D4D2CF;
+    margin-bottom: -1px;
 }
 
 .list-grid-table tbody tr:hover {
@@ -193,6 +195,10 @@ div.action-popup img.ajax-loader {
 
 .table {
     margin-bottom: 0 !important;
+}
+
+.table thead>tr>th {
+    border-bottom: none;
 }
 
 .listgrid-filter-sort-container {
