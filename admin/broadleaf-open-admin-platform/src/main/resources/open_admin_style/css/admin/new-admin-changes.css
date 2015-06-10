@@ -268,3 +268,10 @@ button:disabled {
 .no-hover {
     margin-bottom: 0;
 }
+
+
+.table.list-grid-table, .table>tbody>tr.selected>td:first-child, .table>tbody>tr.selected>td:last-child {
+    -moz-box-shadow: none;
+     -webkit-box-shadow: none;
+     box-shadow: none;
+}
