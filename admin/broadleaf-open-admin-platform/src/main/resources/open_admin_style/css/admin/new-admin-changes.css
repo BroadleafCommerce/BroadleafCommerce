@@ -164,7 +164,7 @@ div.action-popup img.ajax-loader {
  }
 
 button:disabled {
-    background-color: #999999;
+    background-color: #999999 !important;
  }
 
 .listgrid-header-wrapper {
@@ -182,7 +182,7 @@ button:disabled {
 }
 
 .listgrid-modal-actions {
-    padding: 10px 0;
+    padding-top: 10px;
 }
 
 .listgrid-search {
@@ -278,4 +278,22 @@ button:disabled {
 
 .listgrid-container .listgrid-icon {
     color: #CAC8C4;
+}}}
+
+.modal-header {
+    padding: 30px 30px 0 30px;
+    border-bottom: 0;
+}
+
+.modal-body {
+    padding: 15px 30px 30px 30px;
+}
+
+.close {
+    font-size: 30px;
+    line-height: 30px;
+}
+
+.modal-header h3 {
+    font-weight: 500;
 }
