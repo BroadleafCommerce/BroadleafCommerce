@@ -465,7 +465,7 @@ $(document).ready(function() {
         $table.toggleClass('reordering');
         
         if (doneReordering) {
-            $container.find('.listgrid-icon').removeClass('fa-arrows-v');
+            $container.find('.listgrid-icon').removeClass('fa fa-arrows-v fa-lg');
 
             $container.find('.listgrid-toolbar button').removeAttr('disabled');
             $(this).html($('<i>', { 'class' : 'icon-move' }));
@@ -476,7 +476,7 @@ $(document).ready(function() {
             $trs.removeClass('draggable').addClass('clickable');
             $tbody.sortable("destroy");
         } else {
-            $container.find('.listgrid-icon').addClass('fa-arrows-v');
+            $container.find('.listgrid-icon').addClass('fa fa-arrows-v fa-lg');
 
             $container.find('.listgrid-toolbar button').attr('disabled', 'disabled');
             $(this).removeAttr('disabled').html(BLCAdmin.messages.done);

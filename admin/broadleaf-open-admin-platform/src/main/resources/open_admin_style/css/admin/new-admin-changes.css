@@ -275,3 +275,7 @@ button:disabled {
      -webkit-box-shadow: none;
      box-shadow: none;
 }
+
+.listgrid-container .listgrid-icon {
+    color: #CAC8C4;
+}
