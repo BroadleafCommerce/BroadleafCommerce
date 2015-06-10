@@ -670,7 +670,6 @@
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
-                scrollInertia: 2000,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
