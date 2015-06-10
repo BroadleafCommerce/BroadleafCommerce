@@ -265,3 +265,6 @@ div.action-popup img.ajax-loader {
     text-transform: none;
 }
 
+.no-hover {
+    margin-bottom: 0;
+}
