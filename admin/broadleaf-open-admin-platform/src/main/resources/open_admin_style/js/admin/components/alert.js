@@ -23,25 +23,25 @@
     BLCAdmin.alert = {
         showAlert : function($container, message, options) {
             options = options || {};
-    	    var alertType = options.alertType || '';
-    	    
-    	    var $alert = $('<span>').addClass('alert-box alert').addClass(alertType);
-    	    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;').css("display","none");
-    	    
-    	    $alert.append(message);
-    	    $alert.append($closeLink);
-    	    
-    	    if (options.clearOtherAlerts) {
-    	        $container.closest('.field-box').find('.alert-wrapper').find('a.close').click();
-    	    }
+            var alertType = options.alertType || '';
+            
+            var $alert = $('<span>').addClass('alert-box alert').addClass(alertType);
+            var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;').css("display","none");
+            
+            $alert.append(message);
+            $alert.append($closeLink);
+            
+            if (options.clearOtherAlerts) {
+                $container.closest('.field-box').find('.alert-wrapper').find('.alert-box').remove();
+            }
 
             $container.closest('.field-box').find('.alert-wrapper').append($alert);
-    	    
-    	    if (options.autoClose) {
-    	        setTimeout(function() {
-    	            $closeLink.click();
-    	        }, options.autoClose);
-    	    }
+            
+            if (options.autoClose) {
+                setTimeout(function() {
+                    $closeLink.click();
+                }, options.autoClose);
+            }
         }
     };
 

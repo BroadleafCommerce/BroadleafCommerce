@@ -380,7 +380,8 @@ var BLCAdmin = (function($) {
                                 }, function(data) {
                                     BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
                                         alertType: 'save-alert',
-                                        autoClose: 400
+                                        autoClose: 400,
+                                        clearOtherAlerts: true
                                     });
                                 })
                             },
@@ -393,7 +394,8 @@ var BLCAdmin = (function($) {
                                 }, function(data) {
                                     BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
                                         alertType: 'save-alert',
-                                        autoClose: 400
+                                        autoClose: 400,
+                                        clearOtherAlerts: true
                                     });
                                 });
                             }
