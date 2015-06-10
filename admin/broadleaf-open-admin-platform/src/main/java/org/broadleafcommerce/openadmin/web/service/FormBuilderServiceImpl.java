@@ -404,11 +404,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (modalSingleSelectable) {
             listGrid.addModalRowAction(DefaultListGridActions.SINGLE_SELECT);
         }
-        listGrid.setListGridSelectType(ListGrid.SelectType.SINGLE_SELECT);
+        listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
 
         if (modalMultiSelectable) {
             listGrid.addModalRowAction(DefaultListGridActions.MULTI_SELECT);
-            listGrid.setListGridSelectType(ListGrid.SelectType.MULTI_SELECT);
+            listGrid.setSelectType(ListGrid.SelectType.MULTI_SELECT);
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 

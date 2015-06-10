@@ -70,7 +70,7 @@ public class ListGrid {
     
     protected AddMethodType addMethodType;
     protected String listGridType;
-    protected String listGridSelectType;
+    protected String selectType;
 
     // The section url that maps to this particular list grid
     protected String sectionKey;
@@ -279,12 +279,12 @@ public class ListGrid {
         this.listGridType = listGridType;
     }
 
-    public void setListGridSelectType(SelectType listGridSelectType) {
-        this.listGridSelectType = listGridSelectType.toString().toLowerCase();
+    public void setSelectType(SelectType selectType) {
+        this.selectType = selectType.toString().toLowerCase();
     }
 
-    public void setListGridSelectTypeString(String listGridSelectType) {
-        this.listGridSelectType = listGridSelectType;
+    public void setSelectTypeString(String selectType) {
+        this.selectType = selectType;
     }
     
     public Boolean getCanFilterAndSort() {
@@ -419,8 +419,8 @@ public class ListGrid {
         return listGridType;
     }
 
-    public String getListGridSelectType() {
-        return listGridSelectType;
+    public String getSelectType() {
+        return selectType;
     }
 
     public String getContainingEntityId() {
