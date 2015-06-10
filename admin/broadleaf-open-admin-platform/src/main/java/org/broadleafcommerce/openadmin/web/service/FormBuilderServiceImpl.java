@@ -38,6 +38,9 @@ import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
@@ -98,6 +101,7 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -227,6 +231,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean canFilterAndSort = true;
         boolean modalSingleSelectable = false;
         boolean modalMultiSelectable = false;
+        boolean selectize = false;
         String idProperty = "id";
         for (Property property : cmd.getProperties()) {
             if (property.getMetadata() instanceof BasicFieldMetadata &&
@@ -277,6 +282,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             
             if (bcm.getAddMethodType().equals(AddMethodType.PERSIST)) {
                 editable = true;
+            } else if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+                selectize = true;
             } else {
                 modalMultiSelectable = true;
             }
@@ -406,6 +413,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         listGrid.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
 
+        if (selectize) {
+            listGrid.setSelectizeUrl(buildSelectizeUrl(listGrid));
+            listGrid.setSelectType(ListGrid.SelectType.SELECTIZE);
+        }
+
         if (modalMultiSelectable) {
             listGrid.addModalRowAction(DefaultListGridActions.MULTI_SELECT);
             listGrid.setSelectType(ListGrid.SelectType.MULTI_SELECT);
@@ -413,6 +425,59 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
 
         return listGrid;
+    }
+
+    @Override
+    public List<Map<String, String>> buildSelectizeCollectionOptions(String containingEntityId, DynamicResultSet drs, Property field,
+            String sectionKey, List<SectionCrumb> sectionCrumbs)
+            throws ServiceException {
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+
+        FieldMetadata fmd = field.getMetadata();
+        // Get the class metadata for this particular field
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(fmd, sectionCrumbs);
+        if (field != null) {
+            ppr.setSectionEntityField(field.getName());
+        }
+        ClassMetadata cmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+
+        List<Field> headerFields = new ArrayList<Field>();
+        for (Property p : cmd.getProperties()) {
+            if (p.getMetadata() instanceof BasicFieldMetadata) {
+                BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                if (md.isProminent() != null && md.isProminent()
+                        && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
+                    Field hf = createHeaderField(p, md);
+                    headerFields.add(hf);
+                }
+            }
+        }
+
+        for (Entity e : drs.getRecords()) {
+            Map<String, String> selectizeOption = new HashMap<>();
+            for (Field headerField : headerFields) {
+                Property p = e.findProperty(headerField.getName());
+                if (p != null) {
+                    selectizeOption.put("name", p.getValue());
+                    break;
+                }
+            }
+            if (e.findProperty("id") != null) {
+                selectizeOption.put("id", e.findProperty("id").getValue());
+            }
+            result.add(selectizeOption);
+        }
+
+        return result;
+    }
+
+    private String buildSelectizeUrl(ListGrid listGrid) {
+        HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+        String url = request.getContextPath();
+        url += listGrid.getSectionKey();
+        url += "/" + listGrid.getContainingEntityId();
+        url += "/" + listGrid.getSubCollectionFieldName();
+        return url;
     }
 
     protected ListGrid createListGrid(String className, List<Field> headerFields, ListGrid.Type type, DynamicResultSet drs, 

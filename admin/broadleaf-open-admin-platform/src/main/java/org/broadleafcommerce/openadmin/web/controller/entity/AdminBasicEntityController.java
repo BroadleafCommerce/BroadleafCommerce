@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,6 +57,7 @@ import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -803,6 +805,42 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
 
         return buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, null, null);
+    }
+
+    /**
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param pathVars
+     * @param id
+     * @param collectionField
+     * @param requestParams
+     * @return Json collection data
+     * @throws Exception
+     */
+    @RequestMapping(value = "/{id}/{collectionField:.*}/selectize", method = RequestMethod.GET)
+    public @ResponseBody List<Map<String, String>> getSelectizeCollectionOptions(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id,
+            @PathVariable(value = "collectionField") String collectionField,
+            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+        String sectionKey = getSectionKey(pathVars);
+        String mainClassName = getClassNameForSection(sectionKey);
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName,
+                sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+        FieldMetadata md = collectionProperty.getMetadata();
+
+        PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
+                .withFilterAndSortCriteria(getCriteria(requestParams))
+                .withStartIndex(getStartIndex(requestParams))
+                .withMaxIndex(getMaxIndex(requestParams));
+
+        DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
+
+        return formService.buildSelectizeCollectionOptions(id, drs, collectionProperty, sectionKey, sectionCrumbs);
     }
     
     /**

@@ -404,7 +404,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             dtoOperationTypes.setUpdateType(collectionMetadata.getUpdateType());
         }
 
-        if (AddMethodType.LOOKUP == metadata.getAddMethodType()) {
+        if (AddMethodType.LOOKUP == metadata.getAddMethodType()
+                || AddMethodType.SELECTIZE_LOOKUP == metadata.getAddMethodType()) {
             dtoOperationTypes.setRemoveType(OperationType.NONDESTRUCTIVEREMOVE);
         }
 

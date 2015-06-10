@@ -74,6 +74,18 @@ public interface FormBuilderService {
             throws ServiceException;
 
     /**
+     *
+     * @param containingEntityId
+     * @param drs
+     * @param field
+     * @param sectionKey
+     * @return the ListGrid
+     * @throws ServiceException
+     */
+    public List<Map<String, String>> buildSelectizeCollectionOptions(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey, List<SectionCrumb> sectionCrumbs)
+            throws ServiceException;
+
+    /**
      * Extracts the DefaultValue from the FieldMetaData and parses it based on the
      * {@link org.broadleafcommerce.common.presentation.client.SupportedFieldType} that the field uses.
      *

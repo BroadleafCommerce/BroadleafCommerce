@@ -351,8 +351,56 @@ var BLCAdmin = (function($) {
         	    }
     	    }
     	},
-    	
-    	initializeFields : function($container) {
+
+        initializeFields : function($container) {
+
+            function initializeSelectizeFields ($container) {
+                $container.find('.selectize-collection').each(function(index, selectizeCollection) {
+                    var selectizeUrl = $(selectizeCollection).data("selectizeurl");
+                    BLC.ajax({
+                        url : selectizeUrl + "/selectize",
+                        type : "GET"
+                    }, function(data) {
+
+                        $.each(data, function (index, value) {
+                            //var json = jQuery.parseJSON(value);
+                            $(selectizeCollection)
+                                .append($("<option></option>")
+                                    .attr("value", value.id)
+                                    .text(value.name));
+                        });
+
+                        $(selectizeCollection).selectize({
+                            plugins: ['remove_button'],
+                            maxItems: null,
+                            persist: false,
+                            onItemAdd: function(value, $item) {
+                                if (!value.length) return;
+
+                                BLC.ajax({
+                                    url : selectizeUrl + "/add",
+                                    type : "POST",
+                                    data : {"fields['id'].value" : value}
+                                }, function(data) {
+                                    //TODO: include saved notification
+                                })
+                            },
+                            onItemRemove: function(value) {
+                                if (!value.length) return;
+
+                                BLC.ajax({
+                                    url: selectizeUrl + "/" + value + "/delete",
+                                    type: "POST"
+                                }, function(data) {
+                                    //$(selectizeCollection)[0].selectize.close();
+                                });
+                                //$(selectizeCollection)[0].selectize.close();
+                            }
+                        });
+                    });
+                });
+            }
+
     	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
     	    if ($container == null) {
     	        $container = BLCAdmin.getActiveTab();
@@ -402,6 +450,8 @@ var BLCAdmin = (function($) {
             for (var i = 0; i < initializationHandlers.length; i++) {
                 initializationHandlers[i]($container);
             }
+
+            initializeSelectizeFields($container);
             
             // Mark this container as initialized
     	    $container.data('initialized', 'true');

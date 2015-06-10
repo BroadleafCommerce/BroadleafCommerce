@@ -83,9 +83,9 @@ $(document).ready(function(){
 
     $('table.datatable').DataTable();
 
-    $('select').selectize({
-        sortField: 'text'
-    });
+    //$('select').selectize({
+    //    sortField: 'text'
+    //});
 
 
     $('.radio-label').on("click", function(e) {

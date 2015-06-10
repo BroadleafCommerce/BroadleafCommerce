@@ -72,6 +72,8 @@ public class ListGrid {
     protected String listGridType;
     protected String selectType;
 
+    protected String selectizeUrl;
+
     // The section url that maps to this particular list grid
     protected String sectionKey;
 
@@ -100,6 +102,7 @@ public class ListGrid {
     public enum SelectType {
         SINGLE_SELECT,
         MULTI_SELECT,
+        SELECTIZE
     }
 
     /* ************** */
@@ -453,6 +456,14 @@ public class ListGrid {
     
     public void setSectionKey(String sectionKey) {
         this.sectionKey = sectionKey;
+    }
+
+    public String getSelectizeUrl() {
+        return selectizeUrl;
+    }
+
+    public void setSelectizeUrl(String selectizeUrl) {
+        this.selectizeUrl = selectizeUrl;
     }
     
     public String getExternalEntitySectionKey() {
