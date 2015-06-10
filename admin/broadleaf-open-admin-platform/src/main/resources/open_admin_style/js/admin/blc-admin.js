@@ -378,7 +378,10 @@ var BLCAdmin = (function($) {
                                     type : "POST",
                                     data : {"fields['id'].value" : value}
                                 }, function(data) {
-                                    //TODO: include saved notification
+                                    BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
+                                        alertType: 'save-alert',
+                                        autoClose: 400
+                                    });
                                 })
                             },
                             onItemRemove: function(value) {
@@ -388,6 +391,10 @@ var BLCAdmin = (function($) {
                                     url: selectizeUrl + "/" + value + "/delete",
                                     type: "POST"
                                 }, function(data) {
+                                    BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
+                                        alertType: 'save-alert',
+                                        autoClose: 400
+                                    });
                                 });
                             }
                         });

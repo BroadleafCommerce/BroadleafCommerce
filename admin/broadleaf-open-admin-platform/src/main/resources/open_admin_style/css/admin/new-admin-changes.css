@@ -259,3 +259,9 @@ div.action-popup img.ajax-loader {
     padding: 10px 10px 8px 10px;
 }
 
+.alert {
+    color: #8EAA2B;
+    border: 0;
+    text-transform: none;
+}
+
