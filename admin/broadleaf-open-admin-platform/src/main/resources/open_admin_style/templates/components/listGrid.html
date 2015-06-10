@@ -41,7 +41,7 @@
                             </div>
                         </div>
 
-                        <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                        <ul th:include="components/partials/listGridHeaderFilter"
                             class="no-hover"
                             th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
                             th:with="fieldType=${headerField.fieldType},
@@ -206,6 +206,6 @@
     </span>
 </span>
 
-<span class="listgrid-table-spinner-container" th:inline="text">
-    <i class="listgrid-table-spinner icon-spin icon-spinner" />
-</span>
+<!--<span class="listgrid-table-spinner-container" th:inline="text">-->
+    <!--<i class="listgrid-table-spinner icon-spin icon-spinner" />-->
+<!--</span>-->

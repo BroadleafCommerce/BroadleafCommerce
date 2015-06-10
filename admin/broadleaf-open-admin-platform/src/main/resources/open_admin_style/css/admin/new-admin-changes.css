@@ -163,16 +163,20 @@ div.action-popup img.ajax-loader {
     color: #94AF39;
  }
 
+.listgrid-toolbar button:disabled {
+    background-color: #999999;
+ }
+
 .listgrid-header-wrapper {
     background-color: #E1E0DD;
 }
 
 .list-grid-table tbody tr:hover {
-    background-color: #E4E2DF;
+    background-color: #F7EFDC;
 }
 
 .list-grid-table tbody tr.selected {
-    background-color: #E4E2DF;
+    background-color: #F7EFDC;
 }
 
 .listgrid-modal-actions {
