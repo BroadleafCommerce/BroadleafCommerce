@@ -1589,7 +1589,7 @@ a.show-translations {
    Static Assets
 ----------------------------------------- */
 
-button.show-asset-selector {
+button.show-asset-selector, button.clear-asset-selector {
 	vertical-align: text-bottom;
 	bottom: 4px;
 }
