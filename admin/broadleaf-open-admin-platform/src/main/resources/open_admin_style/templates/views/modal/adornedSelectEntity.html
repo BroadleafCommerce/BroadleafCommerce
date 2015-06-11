@@ -1,12 +1,10 @@
-<ul class="tabs-content">
-    <li class="adornedModalTab1Tab">
-        <blc:form th:include="components/entityForm"
-                  th:remove="tag"
-                  th:with="additionalClasses='modal-form',
-                     hideActions=${listGrid.listGridType == 'adorned'}" />
+<div class="adorned-select-wrapper">
+    <blc:form th:include="components/entityForm"
+              th:remove="tag"
+              th:with="additionalClasses='modal-form',
+                 hideActions=${listGrid.listGridType == 'adorned'}" />
 
-        <div class="listgrid-container">
-            <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
-        </div>
-    </li>
-</ul>
+    <div class="listgrid-container">
+        <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
+    </div>
+</div>

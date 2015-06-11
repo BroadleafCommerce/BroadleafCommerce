@@ -591,12 +591,7 @@ $(document).ready(function() {
                     $modal.find('dl.tabs dd').each(function(tabIndex, tab) {
                         if ($(tab).hasClass('active')) {
                             var $contentTabs;
-                            //adorned modals are slightly different as far as active tabs go and where the content actually is
-                            if (isAdornedModal) {
-                                $contentTabs = $newForm.closest('.modal-body').find('> ul.tabs-content > li');
-                            } else {
-                                $contentTabs = $newForm.find('> ul.tabs-content > li')
-                            }
+                            $contentTabs = $newForm.find('> ul.tabs-content > li');
                             $contentTabs.removeClass('active');
                             $($contentTabs[tabIndex]).addClass('active').css('display', 'block');
                         }
