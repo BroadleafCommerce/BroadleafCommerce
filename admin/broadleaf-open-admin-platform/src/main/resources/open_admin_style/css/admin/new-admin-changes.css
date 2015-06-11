@@ -278,7 +278,7 @@ button:disabled {
 
 .listgrid-container .listgrid-icon {
     color: #CAC8C4;
-}}}
+}
 
 .modal-header {
     padding: 30px 30px 0 30px;
@@ -287,6 +287,30 @@ button:disabled {
 
 .modal-body {
     padding: 15px 30px 30px 30px;
+}
+
+.modal-body .row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.modal-body .col12 {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.modal-body legend {
+    display: none;
+}
+
+.modal-body fieldset {
+    margin-bottom: 0;
+    border: 0;
+    padding: 0;
+}
+
+.modal-body textarea {
+    height: 90px;
 }
 
 .close {

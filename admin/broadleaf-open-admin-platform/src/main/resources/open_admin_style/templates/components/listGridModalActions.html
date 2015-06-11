@@ -5,7 +5,7 @@
 <div class="listgrid-modal-actions">
     <div th:each="action : ${listGrid.activeModalRowActions}">
         <button disabled="disabled"
-                class="tiny radius dark row-action button"
+                class="tiny radius dark row-action button primary"
                 type="button"
                 th:classappend="${action.buttonClass}"
                 th:attr="data-urlpostfix=${action.urlPostfix},

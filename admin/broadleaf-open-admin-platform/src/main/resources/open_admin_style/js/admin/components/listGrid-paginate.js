@@ -539,7 +539,11 @@
             } else if ($modalBody.length > 0) {
                 // If this is inside of a modal, the max height should be the size of the modal
                 
-                var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 28;
+                var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 51;
+
+                $wrapper.closest('.adorned-select-wrapper').find('fieldset').each(function(index, fieldset) {
+                    maxHeight -= $(fieldset).height();
+                });
                 
                 if ($wrapper.parent().find('label').length > 0) {
                     maxHeight -= $wrapper.parent().find('label').outerHeight();

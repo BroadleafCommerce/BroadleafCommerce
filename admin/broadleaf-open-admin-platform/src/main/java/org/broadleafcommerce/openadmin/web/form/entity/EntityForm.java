@@ -344,9 +344,7 @@ public class EntityForm {
             tab.getFieldGroups().add(fieldGroup);
         }
 
-        if (column != DEFAULT_COLUMN) {
-            tab.setIsMultiColumn(true);
-        }
+        tab.setIsMultiColumn(column != DEFAULT_COLUMN);
 
         fieldGroup.addField(field);
     }
@@ -365,9 +363,7 @@ public class EntityForm {
             tabs.add(tab);
         }
 
-        if (listGrid.getColumn() != 0) {
-            tab.setIsMultiColumn(true);
-        }
+        tab.setIsMultiColumn(listGrid.getColumn() != DEFAULT_COLUMN);
 
         tab.getListGrids().add(listGrid);
     }

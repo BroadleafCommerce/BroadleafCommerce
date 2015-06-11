@@ -5,5 +5,5 @@
     <div th:substituteby="layout/partials/headerDetailedMsg" />
 
     <div id="sectionKey" th:text="${sectionKey}" style="display: none;" />
-    <div th:substituteby="${'views/' + viewType}" />
+    <div th:include="${'views/' + viewType}" th:with="inModal='false'" th:remove="tag"/>
 </div>

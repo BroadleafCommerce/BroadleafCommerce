@@ -3,13 +3,15 @@
         <blc:form th:include="components/entityForm"
             th:remove="tag"
             th:with="additionalTabClasses='entity-form',
-                     showSingleTab='true'" />
+                     showSingleTab='true',
+                     inModal=${inModal != null and inModal}" />
     </div>
 
     <div th:remove="tag" th:unless="${entityFormTemplatePath == null}">
         <blc:form th:include="${entityFormTemplatePath}"
             th:remove="tag"
             th:with="additionalTabClasses='entity-form',
-                     showSingleTab='true'" />
+                     showSingleTab='true',
+                     inModal=${inModal != null and inModal}" />
     </div>
 </div>

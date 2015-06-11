@@ -5,7 +5,8 @@
             th:with="additionalClasses='blc-admin-ajax-update',
                      additionalTabClasses='entity-form',
                      showSingleTab='true',
-                     hideActions='true'" />
+                     hideActions='true',
+                     inModal=${inModal != null and inModal}" />
     </div>
 
     <div th:remove="tag" th:if="${entityFormTemplatePath == null and useAjaxUpdate != true}">
@@ -13,7 +14,8 @@
             th:remove="tag"
             th:with="additionalTabClasses='entity-form',
                      showSingleTab='true',
-                     hideActions='true'" />
+                     hideActions='true',
+                     inModal=${inModal != null and inModal}" />
     </div>
 
     <div th:remove="tag" th:unless="${entityFormTemplatePath == null}">
@@ -21,6 +23,7 @@
             th:remove="tag"
             th:with="additionalTabClasses='entity-form',
                      showSingleTab='true',
-                     hideActions='true'" />
+                     hideActions='true',
+                     inModal=${inModal != null and inModal}" />
     </div>
 </div>
