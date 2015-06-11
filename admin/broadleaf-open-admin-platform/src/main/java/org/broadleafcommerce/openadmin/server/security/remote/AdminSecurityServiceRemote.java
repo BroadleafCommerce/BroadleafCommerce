@@ -25,10 +25,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.web.SandBoxContext;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
+import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
@@ -139,6 +141,19 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
         }
         
         Entity entity = persistencePackage.getEntity();
+
+        if (persistencePackage.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST)) {
+            if (persistencePackage.getEntity() != null) {
+                for (Property property : persistencePackage.getProperties()) {
+                    if (property.getName() != null && property.getName().endsWith(".id")
+                            && property.getValue() == null) {
+                        entity.addGlobalValidationError("adornedTargetRequired");
+                        throw new ValidationException(entity);
+                    }
+                }
+            }
+        }
+
         GlobalValidationResult globalValidationResult = null;
         if (operationType.equals(EntityOperationType.UPDATE)) {
             globalValidationResult = rowLevelSecurityService.validateUpdateRequest(getPersistentAdminUser(), entity, persistencePackage);

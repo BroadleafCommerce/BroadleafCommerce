@@ -297,3 +297,12 @@ button:disabled {
 .modal-header h3 {
     font-weight: 500;
 }
+
+textarea, input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"], textarea {
+    margin: 5px 0 10px 0;
+}
+
+.errors {
+    margin-bottom: 5px;
+    color: red;
+}

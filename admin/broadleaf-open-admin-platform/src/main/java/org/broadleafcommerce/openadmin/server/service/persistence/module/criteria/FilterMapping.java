@@ -149,7 +149,9 @@ public class FilterMapping {
         //when there is nothing on one side of the delimiter. We want to have two array members (one empty)
         //in this case.
         String[] vals;
-        if (filterValue.contains(RANGE_SPECIFIER_REGEX)) {
+        if (filterValue == null) {
+            vals = new String[0];
+        } else if (filterValue.contains(RANGE_SPECIFIER_REGEX)) {
             vals = new String[]{filterValue.substring(0, filterValue.indexOf(RANGE_SPECIFIER_REGEX)),
                 filterValue.substring(filterValue.indexOf(RANGE_SPECIFIER_REGEX) + RANGE_SPECIFIER_REGEX.length(),
                 filterValue.length())};

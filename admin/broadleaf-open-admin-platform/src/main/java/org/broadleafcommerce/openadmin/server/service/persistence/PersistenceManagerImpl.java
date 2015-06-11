@@ -376,6 +376,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
                 response = myModule.add(persistencePackage);
             }
+        }  catch (ValidationException e) {
+            response = e.getEntity();
         } catch (ServiceException e) {
             if (e.getCause() instanceof ValidationException) {
                 response = ((ValidationException) e.getCause()).getEntity();
