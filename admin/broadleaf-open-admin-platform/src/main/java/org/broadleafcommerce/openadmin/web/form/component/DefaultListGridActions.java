@@ -40,30 +40,30 @@ public class DefaultListGridActions {
     public static final ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
         .withButtonClass("sub-list-grid-add")
         .withUrlPostfix("/add")
-        .withIconClass("icon-plus")
+        .withIconClass("fa fa-plus-square-o fa-lg")
         .withDisplayText("Add");
     
     public static final ListGridAction REORDER = new ListGridAction(ListGridAction.REORDER)
         .withButtonClass("sub-list-grid-reorder")
         .withUrlPostfix("/update")
-        .withIconClass("icon-move")
+        .withIconClass("fa fa-arrows fa-lg")
         .withDisplayText("Reorder");
 
     // Actions for row-level
     public static final ListGridAction REMOVE = new ListGridAction(ListGridAction.REMOVE)
         .withButtonClass("sub-list-grid-remove")
         .withUrlPostfix("/delete")
-        .withIconClass("icon-remove")
+        .withIconClass("fa fa-times fa-lg")
         .withDisplayText("Delete");
     
     public static final ListGridAction UPDATE = new ListGridAction(ListGridAction.UPDATE)
         .withButtonClass("sub-list-grid-update")
-        .withIconClass("icon-pencil")
+        .withIconClass("fa fa-edit fa-lg")
         .withDisplayText("Edit");
 
     public static final ListGridAction VIEW = new ListGridAction(ListGridAction.VIEW)
         .withButtonClass("sub-list-grid-view")
-        .withIconClass("icon-book")
+        .withIconClass("fa fa-eye fa-lg")
         .withDisplayText("View")
         .withUrlPostfix("/view")
         .withForListGridReadOnly(true);

@@ -26,7 +26,7 @@ public class DefaultMainActions {
     public static final EntityFormAction ADD = new EntityFormAction(EntityFormAction.ADD)
         .withButtonClass("add-main-entity")
         .withUrlPostfix("/add")
-        .withIconClass("icon-plus")
+        .withIconClass("fa fa-plus-square-o fa-lg")
         .withDisplayText("Add");
 
 }
