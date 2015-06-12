@@ -172,6 +172,11 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         
         return SupportedFieldType.valueOf(fieldType);
     }
+
+    @Override
+    public String getFieldTypeVal() {
+        return fieldType;
+    }
     
     @Override
     public String getAdditionalForeignKeyClass() {
