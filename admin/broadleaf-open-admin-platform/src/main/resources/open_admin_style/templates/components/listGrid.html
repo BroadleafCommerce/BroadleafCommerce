@@ -51,7 +51,7 @@
                         </ul>
                     </div>
                 </th>
-                <th th:if="${listGrid.listGridType} == 'main'">
+                <th th:if="${listGrid.listGridType} == 'main'" th:unless="${#lists.isEmpty(listGrid.records)}">
                     <th:comment th:remove="all">
                         This entry acting as placeholder for Edit links
                     </th:comment>
