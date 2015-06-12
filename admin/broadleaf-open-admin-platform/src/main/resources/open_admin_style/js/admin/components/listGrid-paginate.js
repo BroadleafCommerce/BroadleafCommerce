@@ -455,9 +455,14 @@
             var botIndex = this.getBottomVisibleIndex($tbody) + 1;
             var totalRecords = this.getTotalRecords($tbody);
             var $footer = $tbody.closest('.listgrid-container').find('.listgrid-table-footer');
-            
-            $footer.find('.low-index').text(topIndex);
-            $footer.find('.high-index').text(botIndex);
+
+            if (totalRecords > 0){
+                $footer.find('.low-index').text(topIndex);
+                $footer.find('.high-index').text(botIndex);
+            } else {
+                $footer.find('.low-index').text("0");
+                $footer.find('.high-index').text("0");
+            }
             $footer.find('.total-records').text(totalRecords);
         },
         
