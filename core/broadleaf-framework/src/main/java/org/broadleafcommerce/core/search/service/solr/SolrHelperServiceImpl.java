@@ -17,7 +17,24 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.search.service.solr;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.jms.IllegalStateException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -62,22 +79,6 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.Resource;
-import javax.jms.IllegalStateException;
 
 /**
  * Provides utility methods that are used by other Solr service classes
@@ -187,7 +188,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 .append(field.getAbbreviation()).append("_").append(field.getFacetFieldType().getType())
                 .toString();
     }
-    
+
     @Override
     public List<FieldType> getSearchableFieldTypes(Field field) {
         // We will index all configured searchable field types
@@ -195,12 +196,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         if (CollectionUtils.isNotEmpty(field.getSearchableFieldTypes())) {
             typesToConsider.addAll(field.getSearchableFieldTypes());
         }
-        
+
         // If there were no searchable field types configured, we will use TEXT as a default one
         if (CollectionUtils.isEmpty(typesToConsider)) {
             typesToConsider.add(FieldType.TEXT);
         }
-        
+
         return typesToConsider;
     }
 
@@ -236,7 +237,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
         return prefixString.toString();
     }
-    
+
     @Override
     public Long getCategoryId(Category category) {
         Long[] returnId = new Long[1];
@@ -286,7 +287,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
         return String.valueOf(product.getId());
     }
-    
+
     @Override
     public String getSolrDocumentId(SolrInputDocument document, Sku sku) {
         return String.valueOf(sku.getId());
@@ -301,7 +302,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public String getIdFieldName() {
         return "id";
     }
-    
+
     @Override
     public String getProductIdFieldName() {
         return "productId";
@@ -321,7 +322,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public String getExplicitCategoryFieldName() {
         return "explicitCategory";
     }
-    
+
     @Override
     public String getCatalogFieldName() {
         return "catalog_s";
@@ -346,7 +347,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public String getSandBoxChangeTypeFieldName() {
         return "sandboxChangeType_s";
     }
-    
+
     @Override
     public String getCategorySortFieldName(Category category) {
         Long categoryId = getCategoryId(category);
@@ -665,8 +666,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 if (solrFieldKeyMap.containsKey(field)) {
                     field = solrFieldKeyMap.get(field);
                 }
-                ORDER order = "desc".equals(sortField.split(" ")[1]) ? ORDER.desc : ORDER.asc;
-
+                ORDER order = ORDER.asc;
+                String[] sortFieldsSegments = sortField.split(" ");
+                if (sortFieldsSegments.length > 0 && "desc".equals(sortFieldsSegments[0])) {
+                    order = ORDER.desc;
+                }
                 if (field != null) {
                     query.addSort(new SortClause(field, order));
                 }
