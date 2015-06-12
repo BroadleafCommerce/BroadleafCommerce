@@ -346,9 +346,14 @@ textarea, input[type="text"], input[type="email"], input[type="password"], input
     color: red;
 }
 
+.dropdown-menu {
+    min-width: 100%;
+}
+
 .dropdown-menu>li>a.alert {
     margin: 0;
     text-align: left;
+    padding-left: 30px;
 }
 
 .dropdown-menu>li>a {
