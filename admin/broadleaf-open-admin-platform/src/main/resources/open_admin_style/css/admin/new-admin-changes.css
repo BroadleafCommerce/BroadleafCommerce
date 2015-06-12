@@ -330,3 +330,8 @@ textarea, input[type="text"], input[type="email"], input[type="password"], input
     margin-bottom: 5px;
     color: red;
 }
+
+.dropdown-menu>li>a.alert {
+    margin: 0;
+    text-align: left;
+}

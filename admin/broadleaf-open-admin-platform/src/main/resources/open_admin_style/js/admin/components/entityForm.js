@@ -33,8 +33,9 @@ $(document).ready(function() {
     
     // When the delete button is clicked, we can change the desired action for the
     // form and submit it normally (not via AJAX).
-    $('body').on('click', 'button.delete-button', function(event) {
+    $('body').on('click', 'button.delete-button, a.delete-button', function(event) {
         var $form = BLCAdmin.getForm($(this));
+
         var currentAction = $form.attr('action');
         var deleteUrl = currentAction + '/delete'
 
@@ -62,7 +63,7 @@ $(document).ready(function() {
         event.preventDefault();
     });
 
-    $('body').on('click', 'button.submit-button', function(event) {
+    $('body').on('click', 'button.submit-button, a.submit-button', function(event) {
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
         var $form = BLCAdmin.getForm($(this));
 

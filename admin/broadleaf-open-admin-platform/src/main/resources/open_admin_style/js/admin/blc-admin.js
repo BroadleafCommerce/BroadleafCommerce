@@ -488,6 +488,11 @@ var BLCAdmin = (function($) {
     		if (!$form.length) {
     		    $form = $('.entity-edit form');
     		}
+
+			// If form is still empty, grab the form from the main content
+			if (!$form.length) {
+				$form = $('.content-yield form');
+			}
     	    
     		return $form;
     	},
