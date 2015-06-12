@@ -25,6 +25,10 @@
 .app-content .content .header .button { line-height:14px; }
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
 
+.selectize-control {
+    width: 260px;
+}
+
 .dataTables_wrapper .dataTables_length {
     margin-top: 0;
     margin-left: 30px;
@@ -259,6 +263,17 @@ button:disabled {
     padding: 10px 10px 8px 10px;
 }
 
+
+.selectize-input.dropdown-active, .sandbox-bar .selectize-control.single .selectize-input {
+    -webkit-border-radius: 0;
+    -moz-border-radius:0;
+    border-radius:0;
+}
+
+.selectize-input.dropdown-active:before {
+    height: 0;
+}
+
 .alert {
     color: #8EAA2B;
     border: 0;
@@ -334,4 +349,8 @@ textarea, input[type="text"], input[type="email"], input[type="password"], input
 .dropdown-menu>li>a.alert {
     margin: 0;
     text-align: left;
+}
+
+.dropdown-menu>li>a {
+    cursor: pointer;
 }
