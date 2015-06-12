@@ -496,7 +496,12 @@ $(document).ready(function() {
         $('body').find('.custom-entity-search a').click();
         return false;
     });
-    
+
+    $('body').on('click', '.custom-entity-search button.clear-search', function(event) {
+        $(this).closest('form').find('input').val('');
+        $(this).siblings(".search-button").click();
+    });
+
     /**
      * Intercepts the button click for the main entity search. This will look at the first field in the main list grid (of
      * which there is only 1 on the page) and replace the criteria value for that field with whatever was typed into the
