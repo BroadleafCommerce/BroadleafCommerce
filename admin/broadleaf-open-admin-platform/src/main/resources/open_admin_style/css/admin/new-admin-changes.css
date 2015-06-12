@@ -346,7 +346,7 @@ textarea, input[type="text"], input[type="email"], input[type="password"], input
     color: red;
 }
 
-.dropdown-menu {
+.dropdown-menu-right {
     min-width: 100%;
 }
 
