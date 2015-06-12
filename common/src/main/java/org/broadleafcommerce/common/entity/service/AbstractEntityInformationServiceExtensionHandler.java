@@ -39,6 +39,11 @@ public class AbstractEntityInformationServiceExtensionHandler extends AbstractEx
     }
 
     @Override
+    public ExtensionResultStatusType getParentSiteForProfile(Site profile, ExtensionResultHolder<Site> erh) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
     public ExtensionResultStatusType getOkayToUseSiteDiscriminator(Object o, ExtensionResultHolder<Boolean> erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
