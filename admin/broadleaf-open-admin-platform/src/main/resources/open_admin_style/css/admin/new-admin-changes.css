@@ -405,3 +405,8 @@ input[disabled], input[readonly], fieldset[disabled] input {
 #back-button i:hover {
     color: #F2B95A;
 }
+
+/* added to stop listgrid flicker */
+.table-striped>tbody>tr:nth-of-type(even) {
+    background-color: #F9F7F3;
+}
