@@ -158,7 +158,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
         if (requestParams.containsKey("headerFlash")) {
             model.addAttribute("headerFlash", requestParams.get("headerFlash").get(0));
         }
-        
+
+        List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
+        String requestUri = request.getRequestURI();
+        if (!request.getContextPath().equals("/") && requestUri.startsWith(request.getContextPath())) {
+            requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
+        }
+
+        model.addAttribute("currentUri", requestUri);
+        model.addAttribute("entityTypes", entityTypes);
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("listGrid", listGrid);
