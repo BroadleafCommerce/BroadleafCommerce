@@ -395,3 +395,13 @@ input[disabled], input[readonly], fieldset[disabled] input {
     cursor: not-allowed;
     background-color: #eeeeee;
 }
+
+#back-button {
+    margin-right: 10px;
+    vertical-align: middle;
+    color: #B3B3B3;
+}
+
+#back-button i:hover {
+    color: #F2B95A;
+}
