@@ -668,7 +668,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 }
                 ORDER order = ORDER.asc;
                 String[] sortFieldsSegments = sortField.split(" ");
-                if (sortFieldsSegments.length > 0 && "desc".equals(sortFieldsSegments[0])) {
+                if (sortFieldsSegments.length < 2) {
+                    StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
+                    msg.append("\nDefaulting to ASCending");
+                    LOG.warn(msg.toString());
+                } else if ("desc".equals(sortFieldsSegments[1])) {
                     order = ORDER.desc;
                 }
                 if (field != null) {
