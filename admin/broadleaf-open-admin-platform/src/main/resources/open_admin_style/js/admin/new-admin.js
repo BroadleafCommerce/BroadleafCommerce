@@ -59,33 +59,6 @@ $(document).ready(function(){
         equalheight('.equals .equal');
     });
 
-    $('.datetimepicker').datetimepicker({
-        format:'l, F d, Y \@ g:ia',
-        step: 10
-    });
-
-    $(".datetimepicker").each(function() {
-        if ($(this).val().length) {
-            var d = new Date($(this).val())
-            $(this).datetimepicker({value: d.dateFormat("l, F d, Y \@ g:ia")});
-        }
-    });
-
-    $('.help-tip').tipr({
-        'speed': 300,
-        'mode': 'top'
-    });
-
-    $('.datepicker').pickadate({
-        format: 'yyyy-mm-dd'
-    });
-
-    $('.timepicker').pickatime({
-        format: 'h:i A',
-        formatSubmit: 'H:i:s',
-        interval: 15
-    });
-
     $('table.datatable').DataTable();
 
     $('select:not(".selectize-collection")').selectize({
