@@ -60,7 +60,7 @@ $(document).ready(function() {
     });
 
     $('body').on('change', "input[name=\"fields['defaultCategory'].value\"]", function(event, fields) {
-        var $fieldBox = $(event.target).closest('.field-box');
+        var $fieldBox = $(event.target).closest('.field-group');
         var $prefix = $fieldBox.find('input.generated-url-prefix');
 
         if (!$prefix.length) {
@@ -69,7 +69,7 @@ $(document).ready(function() {
                 'class' : "generated-url-prefix"
             })).find('input.generated-url-prefix');
         }
-        
+
         $prefix.val(fields['url']);
     });
 });
