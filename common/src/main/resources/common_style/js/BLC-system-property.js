@@ -18,7 +18,7 @@
  * #L%
  */
 (function($, BLC) {
-    
+
     BLC.systemProperty = {
         urlFragmentSeparator : "BLC_PROP:url.fragment.separator"
     }
@@ -26,40 +26,41 @@
 })(jQuery, BLC);
 
 $(document).ready(function() {
-	
-	/**
-	 * This function is updating the value input field for system properties so that if the property is a boolean then
-	 * the user has radio buttons instead of just a normal text field.
-	 */
-	function updateValueInput(event) {
-		var $this = $(this).is('select') ? $(this) : $('select');
-		var $boolean = $('.system-property-value-boolean');
-		var $string = $('.system-property-value-string');
-		if ($string !== undefined && $boolean !== undefined) {
-			
-			var value = $this.val()
-			if (value === undefined) {
-				return;
-			}
-			value = value.toLowerCase();
 
-			if (value === "boolean_type") {
-				$string.hide();
-				$boolean.show();
-				$string.find('input').attr('disabled', 'disabled');
-				$boolean.find('input').removeAttr('disabled');
-			} else {
-				$boolean.hide()
-				$string.show();
-				$boolean.find('input').attr('disabled', 'disabled');
-				$string.find('input').removeAttr('disabled');
-			}
-		}
-	}
-	
-	updateValueInput();
-	
-	// Sets onchange listener so that the input is updated at the right time.
-	$('body').on('change', 'select', updateValueInput);
-	
+    /**
+     * This function is updating the value input field for system properties so
+     * that if the property is a boolean then the user has radio buttons instead
+     * of just a normal text field.
+     */
+    function updateValueInput(event) {
+        var $this = $(this).is('select') ? $(this) : $('select');
+        var $boolean = $('.system-property-value-boolean');
+        var $string = $('.system-property-value-string');
+        if ($string.is('div') && $boolean.is('div')) {
+
+            var value = $this.val()
+            if (value === undefined) {
+                return;
+            }
+            value = value.toLowerCase();
+
+            if (value === "boolean_type") {
+                $string.hide();
+                $boolean.show();
+                $string.find('input').attr('disabled', 'disabled');
+                $boolean.find('input').removeAttr('disabled');
+            } else {
+                $boolean.hide()
+                $string.show();
+                $boolean.find('input').attr('disabled', 'disabled');
+                $string.find('input').removeAttr('disabled');
+            }
+        }
+    }
+
+    updateValueInput();
+
+    // Sets onchange listener so that the input is updated at the right time.
+    $('body').on('change', 'select', updateValueInput);
+
 });
