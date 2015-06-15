@@ -257,35 +257,22 @@ public class AdminBasicEntityController extends AdminAbstractController {
             entityType = URLDecoder.decode(entityType, "UTF-8");
         }
 
-        // If we still don't have a type selected, that means that there were indeed multiple possible types and we 
-        // will be allowing the user to pick his desired type.
-        if (StringUtils.isBlank(entityType)) {
-            List<ClassTree> entityTypes = getAddEntityTypes(cmd.getPolymorphicEntities());
-            model.addAttribute("entityTypes", entityTypes);
-            model.addAttribute("viewType", "modal/entityTypeSelection");
-            String requestUri = request.getRequestURI();
-            if (!request.getContextPath().equals("/") && requestUri.startsWith(request.getContextPath())) {
-                requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
-            }
-            model.addAttribute("currentUri", requestUri);
-        } else {
-            EntityForm entityForm = formService.createEntityForm(cmd, sectionCrumbs);
-            
-            // We need to make sure that the ceiling entity is set to the interface and the specific entity type
-            // is set to the type we're going to be creating.
-            entityForm.setCeilingEntityClassname(cmd.getCeilingType());
-            entityForm.setEntityType(entityType);
-            
-            // When we initially build the class metadata (and thus, the entity form), we had all of the possible
-            // polymorphic fields built out. Now that we have a concrete entity type to render, we can remove the
-            // fields that are not applicable for this given entity type.
-            formService.removeNonApplicableFields(cmd, entityForm, entityType);
+        EntityForm entityForm = formService.createEntityForm(cmd, sectionCrumbs);
 
-            modifyAddEntityForm(entityForm, pathVars);
+        // We need to make sure that the ceiling entity is set to the interface and the specific entity type
+        // is set to the type we're going to be creating.
+        entityForm.setCeilingEntityClassname(cmd.getCeilingType());
+        entityForm.setEntityType(entityType);
 
-            model.addAttribute("entityForm", entityForm);
-            model.addAttribute("viewType", "modal/entityAdd");
-        }
+        // When we initially build the class metadata (and thus, the entity form), we had all of the possible
+        // polymorphic fields built out. Now that we have a concrete entity type to render, we can remove the
+        // fields that are not applicable for this given entity type.
+        formService.removeNonApplicableFields(cmd, entityForm, entityType);
+
+        modifyAddEntityForm(entityForm, pathVars);
+
+        model.addAttribute("entityForm", entityForm);
+        model.addAttribute("viewType", "modal/entityAdd");
 
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());

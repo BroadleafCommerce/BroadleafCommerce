@@ -152,16 +152,6 @@ $(document).ready(function() {
         return submit;
     });
     
-    $('body').on('click', 'button.add-main-entity', function(event) {
-        BLCAdmin.showLinkAsModal($(this).data('url'));
-        return false;
-    });
-    
-    $('body').on('click', 'a.add-main-entity-select-type', function(event) {
-        BLCAdmin.modalNavigateTo($(this).attr('href'));
-        return false;
-    });
-    
     $('body').on('submit', 'form.modal-add-entity-form', function(event) {
         var submit = BLCAdmin.runSubmitHandlers($(this));
         
