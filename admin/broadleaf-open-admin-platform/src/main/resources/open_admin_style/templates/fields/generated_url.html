@@ -23,7 +23,7 @@
                  data-disabled-text=${'(__#{Override_Generated_Path-disabled}__)'}" />
     <br/>
 
-    <input type="text" class="twelve target-field" 
+    <input type="text" class="target-field"
         th:required="${field.required}" 
         th:placeholder="${field.hint}"
         th:field="*{fields['__${field.name}__'].value}"
