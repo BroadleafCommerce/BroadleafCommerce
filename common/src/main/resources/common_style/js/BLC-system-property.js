@@ -37,7 +37,11 @@ $(document).ready(function() {
 		var $string = $('.system-property-value-string');
 		if ($string !== undefined && $boolean !== undefined) {
 			
-			var value = $this.val().toLowerCase();
+			var value = $this.val()
+			if (value === undefined) {
+				return;
+			}
+			value = value.toLowerCase();
 
 			if (value === "boolean_type") {
 				$string.hide();
