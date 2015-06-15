@@ -606,6 +606,10 @@
                 // shrink the size of the grid by just enough so that scrolling is activated
                 maxHeight = visibleRowsHeight + paddedRowsHeight - 3;
             }
+
+            if (maxHeight < rowHeight) {
+                maxHeight = rowHeight;
+            }
             
             return maxHeight;
         },
