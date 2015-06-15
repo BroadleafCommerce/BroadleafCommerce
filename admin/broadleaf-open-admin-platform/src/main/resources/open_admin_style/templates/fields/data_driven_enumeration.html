@@ -3,9 +3,8 @@
 </label>
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
-<div class="select-style">
-    <select th:field="*{fields['__${field.name}__'].value}"
-            th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">
+<div class="select-style" th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">
+    <select th:field="*{fields['__${field.name}__'].value}">
         <option th:each="entry : *{fields['__${field.name}__'].options}"
                 th:value="${entry.key}"
                 th:text="#{${entry.value}}" />
