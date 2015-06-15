@@ -354,6 +354,13 @@ var BLCAdmin = (function($) {
 
         initializeFields : function($container) {
 
+			function initializeRadioFields($container) {
+				$container.find('.radio-label').on("click", function(e) {
+					e.preventDefault();
+					$(this).prev('input').prop("checked", true).change();
+				});
+			}
+
             function initializeSelectizeFields ($container) {
                 $container.find('.selectize-collection').each(function(index, selectizeCollection) {
                     var selectizeUrl = $(selectizeCollection).data("selectizeurl");
@@ -455,7 +462,8 @@ var BLCAdmin = (function($) {
             }
 
             initializeSelectizeFields($container);
-            
+            initializeRadioFields($container);
+
             // Mark this container as initialized
     	    $container.data('initialized', 'true');
 

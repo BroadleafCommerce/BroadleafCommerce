@@ -359,3 +359,10 @@ textarea, input[type="text"], input[type="email"], input[type="password"], input
 .dropdown-menu>li>a {
     cursor: pointer;
 }
+
+input[type="radio"].radio {
+    position: absolute;
+    z-index: -1000;
+    top: 0;
+    visibility: hidden;
+}
