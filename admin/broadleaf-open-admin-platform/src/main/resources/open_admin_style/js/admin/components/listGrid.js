@@ -427,13 +427,13 @@ $(document).ready(function() {
             }
             
             $valueField.trigger('change', fields);
-            $valueField.closest('.field-box').trigger('change');
+            $valueField.closest('.field-group').trigger('change');
             BLCAdmin.hideCurrentModal();
         });
         
         var url = $(this).data('select-url');
         var thisClass = $container.closest('form').find('input[name="ceilingEntityClassname"]').val();
-        var thisField = $(this).closest('.field-box').attr('id');
+        var thisField = $(this).closest('.field-group').attr('id');
         var handler = BLCAdmin.getDependentFieldFilterHandler(thisClass, thisField);
         if (handler != null) {
             var $parentField = $container.closest('form').find(handler['parentFieldSelector']);

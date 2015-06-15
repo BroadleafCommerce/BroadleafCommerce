@@ -133,7 +133,7 @@
                 //      likely depends on the value of some other field and is not currently applicable
                 //   2. This field is optional and currently set to off
 
-                var explicitlyHidden = $(builder.element).closest('.field-box').hasClass('hidden');
+                var explicitlyHidden = $(builder.element).closest('.field-group').hasClass('hidden');
                 var onOffRadios = $(builder.element).parent().find('input[type="radio"]');
                 var setToOff = onOffRadios.length < 1 ? false : onOffRadios.filter(function() {
                     return this.id.endsWith('false');

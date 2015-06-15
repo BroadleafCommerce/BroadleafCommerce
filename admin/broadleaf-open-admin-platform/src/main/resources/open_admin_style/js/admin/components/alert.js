@@ -32,10 +32,10 @@
             $alert.append($closeLink);
             
             if (options.clearOtherAlerts) {
-                $container.closest('.field-box').find('.alert-wrapper').find('.alert-box').remove();
+                $container.closest('.field-group').find('.alert-wrapper').find('.alert-box').remove();
             }
 
-            $container.closest('.field-box').find('.alert-wrapper').append($alert);
+            $container.closest('.field-group').find('.alert-wrapper').append($alert);
             
             if (options.autoClose) {
                 setTimeout(function() {

@@ -1,6 +1,6 @@
 <form th:object="${entityForm}">
     <div th:if="${field.name}" 
-         th:class="${'field-box' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}" 
+         th:class="${'field-group' + (field.isDirty ? ' dirty' : '') + (field.disabled ? ' disabled' : '')}"
          blc_admin:component_id="${field}"
          th:classappend="${!field.isVisible}? 'hidden'">
 
