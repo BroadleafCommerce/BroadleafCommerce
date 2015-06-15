@@ -64,6 +64,13 @@ $(document).ready(function(){
         step: 10
     });
 
+    $(".datetimepicker").each(function() {
+        if ($(this).val().length) {
+            var d = new Date($(this).val())
+            $(this).datetimepicker({value: d.dateFormat("l, F d, Y \@ g:ia")});
+        }
+    });
+
     $('.help-tip').tipr({
         'speed': 300,
         'mode': 'top'
@@ -84,7 +91,6 @@ $(document).ready(function(){
     $('select:not(".selectize-collection")').selectize({
         sortField: 'text'
     });
-
 
     $('.radio-label').on("click", function(e) {
         e.preventDefault();

@@ -354,6 +354,35 @@ var BLCAdmin = (function($) {
 
         initializeFields : function($container) {
 
+			function initializeDateFields($container) {
+				$container.find('.datetimepicker').datetimepicker({
+					format:'l, F d, Y \@ g:ia',
+					step: 10
+				});
+
+				$container.find(".datetimepicker").each(function() {
+					if ($(this).val().length) {
+						var d = new Date($(this).val())
+						$(this).datetimepicker({value: d.dateFormat("l, F d, Y \@ g:ia")});
+					}
+				});
+
+				$container.find('.help-tip').tipr({
+					'speed': 300,
+					'mode': 'top'
+				});
+
+				$container.find('.datepicker').pickadate({
+					format: 'yyyy-mm-dd'
+				});
+
+				$container.find('.timepicker').pickatime({
+					format: 'h:i A',
+					formatSubmit: 'H:i:s',
+					interval: 15
+				});
+			}
+
 			function initializeRadioFields($container) {
 				$container.find('.radio-label').on("click", function(e) {
 					e.preventDefault();
@@ -362,6 +391,10 @@ var BLCAdmin = (function($) {
 			}
 
             function initializeSelectizeFields ($container) {
+				$container.find('select:not(".selectize-collection")').selectize({
+					sortField: 'text'
+				});
+
                 $container.find('.selectize-collection').each(function(index, selectizeCollection) {
                     var selectizeUrl = $(selectizeCollection).data("selectizeurl");
                     BLC.ajax({
@@ -441,10 +474,10 @@ var BLCAdmin = (function($) {
                 showButtons: false,
                 preferredFormat: "hex6",
                 change: function(color) {
-                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
+                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
                 },
                 move: function(color) {
-                    $(this).closest('.field-box').find('input.color-picker-value').val(color);
+                    $(this).closest('.field-group').find('input.color-picker-value').val(color);
                 }
             });
             
@@ -463,6 +496,8 @@ var BLCAdmin = (function($) {
 
             initializeSelectizeFields($container);
             initializeRadioFields($container);
+			initializeDateFields($container);
+			$.fn.broadleafTabs();
 
             // Mark this container as initialized
     	    $container.data('initialized', 'true');
@@ -740,7 +775,7 @@ $('body').on('click', '.disabled', function(e) {
         
 $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
-    $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
+    $this.closest('.field-group').find('input.color-picker').spectrum('set', $this.val());
 });
 
 /**
