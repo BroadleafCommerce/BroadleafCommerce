@@ -5,4 +5,5 @@
 <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
        th:required="${field.required}"
        th:placeholder="${field.hint}"
-       th:field="*{fields['__${field.name}__'].value}" />
+       th:field="*{fields['__${field.name}__'].value}"
+       th:classappend="${field.column == 0} ? 'numeric-field'"/>
