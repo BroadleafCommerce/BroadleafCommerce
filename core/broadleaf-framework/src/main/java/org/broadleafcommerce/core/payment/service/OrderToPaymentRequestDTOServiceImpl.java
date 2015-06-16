@@ -83,6 +83,13 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
             .orderCurrencyCode(paymentTransaction.getOrderPayment().getCurrency().getCurrencyCode())
             .orderId(paymentTransaction.getOrderPayment().getOrder().getId().toString());
         
+        Order order = paymentTransaction.getOrderPayment().getOrder();
+        populateCustomerInfo(order, requestDTO);
+        populateShipTo(order, requestDTO);
+        populateBillTo(order, requestDTO);
+        populateTotals(order, requestDTO);
+        populateDefaultLineItemsAndSubtotal(order, requestDTO);
+        
         //Copy Additional Fields from PaymentTransaction into the Request DTO.
         //This will contain any gateway specific information needed to perform actions on this transaction
         Map<String, String> additionalFields = paymentTransaction.getAdditionalFields();
@@ -196,7 +203,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     @Override
     public void populateBillTo(Order order, PaymentRequestDTO requestDTO) {
         for (OrderPayment payment : order.getPayments()) {
-            if (payment.isActive() && PaymentType.CREDIT_CARD.equals(payment.getType())) {
+            if (payment.isActive()) {
                 Address billAddress = payment.getBillingAddress();
                 if (billAddress != null) {
                     String stateAbbr = null;
