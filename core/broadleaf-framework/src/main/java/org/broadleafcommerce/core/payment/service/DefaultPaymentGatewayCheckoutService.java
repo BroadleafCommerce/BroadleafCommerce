@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.GatewayCustomerDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
@@ -171,8 +170,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
                     paymentsToInvalidate.add(p);
 
-                    if (PaymentType.CREDIT_CARD.equals(p.getType()) &&
-                            PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ) {
+                    if (PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ) {
                         tempBillingAddress = p.getBillingAddress();
                     }
                 }
@@ -201,8 +199,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         }
 
         //Set the Credit Card Info on the Additional Fields Map
-        if (PaymentType.CREDIT_CARD.equals(responseDTO.getPaymentType()) &&
-                responseDTO.getCreditCard() != null && responseDTO.getCreditCard().creditCardPopulated()) {
+        if (responseDTO.getCreditCard() != null && responseDTO.getCreditCard().creditCardPopulated()) {
 
             transaction.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(),
                     responseDTO.getCreditCard().getCreditCardHolderName());
