@@ -199,6 +199,7 @@
             <list>
                 <ref bean="blRequiredPropertyValidator"/>
                 <ref bean="blFieldLengthValidator"/>
+                <ref bean="blAdornedTargetMaintainedFieldPropertyValidator"/>
             </list>
         </property>
     </bean>
