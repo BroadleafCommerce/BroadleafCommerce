@@ -45,8 +45,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNotNullPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNullPredicateProvider;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension
-        .BasicFieldPersistenceProviderExtensionManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension.BasicFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -157,10 +156,11 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             switch (populateValueRequest.getMetadata().getFieldType()) {
                 case BOOLEAN:
                     boolean v = Boolean.valueOf(populateValueRequest.getRequestedValue());
-                    prop.setOriginalValue(String.valueOf(origValue));
+                    boolean origBoolean = Boolean.valueOf(String.valueOf(origValue));
+                    prop.setOriginalValue(String.valueOf(origBoolean));
                     prop.setOriginalDisplayValue(prop.getOriginalValue());
                     try {
-                        dirty = checkDirtyState(populateValueRequest, instance, v);
+                        dirty = origBoolean != v;
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), v);
                     } catch (IllegalArgumentException e) {
