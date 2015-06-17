@@ -54,14 +54,17 @@ public interface AdornedTargetAutoPopulateExtensionHandler extends ExtensionHand
                                    String id, String collectionField, String collectionItemId, Map<String, Object> managedFields);
 
     /**
+     * Provide validation during persistence. The implementation is responsible for determining suitability based
+     * on the property information passed in.
      *
-     * @param entity
-     * @param instance
-     * @param entityFieldMetadata
-     * @param propertyMetadata
-     * @param propertyName
-     * @param value
-     * @return
+     * @param entity all the values passed from the client for persistence
+     * @param instance the entity instance that is being populated
+     * @param entityFieldMetadata the {@link FieldMetadata} for all the fields
+     * @param propertyMetadata the {@link FieldMetadata} for the property
+     * @param propertyName the name of the field
+     * @param value the value being assigned to the property
+     * @param validationResult whether or not the property passes validation
+     * @return the final status of the operation
      */
     public ExtensionResultStatusType validateSubmittedAdornedTargetManagedFields(Entity entity, Serializable instance,
                                 Map<String, FieldMetadata> entityFieldMetadata, BasicFieldMetadata propertyMetadata,

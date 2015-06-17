@@ -34,6 +34,8 @@ import javax.annotation.Resource;
 
 
 /**
+ * A basic entity persistence validation hook into validation provided by instances of
+ * {@link org.broadleafcommerce.openadmin.server.service.persistence.extension.AdornedTargetAutoPopulateExtensionHandler}
  *
  * @author Jeff Fischer
  */
