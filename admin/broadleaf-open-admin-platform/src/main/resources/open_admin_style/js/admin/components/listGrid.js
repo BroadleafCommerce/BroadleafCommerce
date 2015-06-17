@@ -371,7 +371,6 @@ $(document).ready(function() {
                     } else {
                         var inputField = $('input[name="fields[\'' + fixedKey + '\'].value"]');
                         inputField.val(value);
-                        autoSubmit = true;
                     }
                 }
             }
