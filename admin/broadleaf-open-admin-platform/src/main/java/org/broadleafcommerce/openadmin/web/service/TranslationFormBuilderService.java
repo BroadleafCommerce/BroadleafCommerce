@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.i18n.domain.Translation;
@@ -41,9 +42,9 @@ public interface TranslationFormBuilderService {
      * Builds an EntityForm used to create or edit a translation value
      * 
      * @param formProperties
+     * @param action (values "add", "update" or "other")
      * @return the entity form
      */
-    public EntityForm buildTranslationForm(TranslationForm formProperties);
-
+    public EntityForm buildTranslationForm(TranslationForm formProperties, TranslationFormAction action);
 
 }
