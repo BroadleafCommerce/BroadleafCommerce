@@ -156,11 +156,10 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             switch (populateValueRequest.getMetadata().getFieldType()) {
                 case BOOLEAN:
                     boolean v = Boolean.valueOf(populateValueRequest.getRequestedValue());
-                    boolean origBoolean = Boolean.valueOf(String.valueOf(origValue));
-                    prop.setOriginalValue(String.valueOf(origBoolean));
+                    prop.setOriginalValue(String.valueOf(origValue));
                     prop.setOriginalDisplayValue(prop.getOriginalValue());
                     try {
-                        dirty = origBoolean != v;
+                        dirty = checkDirtyState(populateValueRequest, instance, v);
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), v);
                     } catch (IllegalArgumentException e) {

@@ -331,12 +331,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     Boolean mutable = metadata.getMutable();
                     Boolean readOnly = metadata.getReadOnly();
 
-                    if (metadata.getFieldType().equals(SupportedFieldType.BOOLEAN)) {
-                        if (value == null) {
-                            value = "false";
-                        }
-                    }
-
                     if ((mutable == null || mutable) && (readOnly == null || !readOnly)) {
                         if (value != null) {
                             handled = false;
