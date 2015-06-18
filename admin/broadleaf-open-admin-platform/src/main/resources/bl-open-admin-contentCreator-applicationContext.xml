@@ -40,7 +40,6 @@
         <property name="sourceList">
             <list>
                 <ref bean="blArchiveStatusPersistenceEventHandler" />
-                <ref bean="blStaticAssetPersistenceEventHandler"  />
             </list>
         </property>
     </bean>

@@ -161,6 +161,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             fileName = originalFilename;
         }
 
+        String[] splitBits = fileName.replace(".", "/").split("/");
+        String imageName = splitBits[splitBits.length - 2];
+        String imageTypeExt = splitBits[splitBits.length - 1];
+        fileName = imageName + '-' + 1 + '.' + imageTypeExt;
+
         return path.append(fileName).toString();
     }
 
@@ -186,7 +191,11 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         int count = 0;
         while (newAsset != null) {
             count++;
-            
+            //removing the default count 1, from fullUrl for count logic
+            if (fullUrl.contains("-1")) {
+                fullUrl = fullUrl.replace("-1", "");
+                count++;
+            }
             //try the new format first, then the old
             newAsset = staticAssetDao.readStaticAssetByFullUrl(getCountUrl(fullUrl, count, false));
             if (newAsset == null) {
