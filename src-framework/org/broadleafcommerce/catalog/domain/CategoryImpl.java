@@ -116,13 +116,13 @@ public class CategoryImpl implements Category {
     protected String displayTemplate;
 
     /** The all child categories. */
-    @OneToMany(targetEntity = CategoryXref.class, mappedBy = "categoryXrefPK.category")
+    @OneToMany(targetEntity = CategoryXref.class, mappedBy = "category")
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
     protected List<CategoryXref> allChildCategories = new ArrayList<CategoryXref>();
 
-    @OneToMany(targetEntity = CategoryXref.class, mappedBy = "categoryXrefPK.subCategory")
+    @OneToMany(targetEntity = CategoryXref.class, mappedBy = "subCategory")
     @OrderBy(value="displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
