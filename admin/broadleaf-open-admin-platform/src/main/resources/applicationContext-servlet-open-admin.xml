@@ -125,6 +125,7 @@
         <property name="dialects">
             <set>
                 <ref bean="thymeleafSpringStandardDialect" />
+                <ref bean="thymeleafSpringSecurityDialect" />
                 <ref bean="blAdminDialect" />
                 <ref bean="blDialect" />
             </set>

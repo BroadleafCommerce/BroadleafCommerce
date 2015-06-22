@@ -20,15 +20,28 @@
     </ul>
 
     <div th:if="${entityForm}" class="entity-form-actions">
-        <button th:each="action : ${entityForm.actions}" 
-            class="small button radius dark" 
-            th:attr="data-url=@{${(#strings.isEmpty(action.urlOverride)) ? ('/' + sectionKey + action.urlPostfix) : action.urlOverride}},
-                     data-action=${action.urlPostfix}"
-            th:type="${action.buttonType}"
-            th:classappend="${action.buttonClass}">
-            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
-        </button>   
-        <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />                 
+    	<th:block th:each="action : ${entityForm.actions}">
+	       	<th:block th:if="${(#strings.contains(action.buttonClass, 'reject') or #strings.contains(action.buttonClass, 'approve')) and #strings.contains(sectionKey, 'workflow/approvals')}">
+		        <button sec:authorize="hasRole('PERMISSION_ALL_APPROVER_SANDBOX')"
+		            class="small button radius dark" 
+		            th:attr="data-url=@{${(#strings.isEmpty(action.urlOverride)) ? ('/' + sectionKey + action.urlPostfix) : action.urlOverride}},
+		                     data-action=${action.urlPostfix}"
+		            th:type="${action.buttonType}"
+		            th:classappend="${action.buttonClass}">
+		            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+		        </button>  
+	        </th:block>  
+  	       	<th:block th:unless="${(#strings.contains(action.buttonClass, 'reject') or #strings.contains(action.buttonClass, 'approve')) and #strings.contains(sectionKey, 'workflow/approvals')}">
+		        <button class="small button radius dark" 
+		            th:attr="data-url=@{${(#strings.isEmpty(action.urlOverride)) ? ('/' + sectionKey + action.urlPostfix) : action.urlOverride}},
+		                     data-action=${action.urlPostfix}"
+		            th:type="${action.buttonType}"
+		            th:classappend="${action.buttonClass}">
+		            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+		        </button>  
+	        </th:block>              
+        </th:block>
+        <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />   
     </div>
 
     <div class="clear"></div>
