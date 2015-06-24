@@ -48,6 +48,7 @@ import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.exception.EntityNotFoundException;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
@@ -123,7 +124,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         PersistenceResponse response = fetch(request);
         Entity[] entities = response.getDynamicResultSet().getRecords();
-        Assert.isTrue(entities != null && entities.length == 1, "Entity not found");
+        if (entities == null || entities.length != 1) throw new EntityNotFoundException();
 
         return response;
     }
@@ -266,7 +267,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
             response = fetch(ppr);
             Entity[] entities = response.getDynamicResultSet().getRecords();
-            Assert.isTrue(entities != null && entities.length == 1, "Entity not found");
+            if (entities == null || entities.length != 1) throw new EntityNotFoundException();
         } else if (md instanceof MapMetadata) {
             MapMetadata mmd = (MapMetadata) md;
             FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getForeignKey().getManyToField());
