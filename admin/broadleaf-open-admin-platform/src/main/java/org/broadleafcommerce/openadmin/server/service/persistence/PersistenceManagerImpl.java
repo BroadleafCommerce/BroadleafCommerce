@@ -165,11 +165,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective);
     }
 
-    @Override
-    public ClassMetadata getMergedClassMetadata(final Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) {
-        ClassMetadata classMetadata = new ClassMetadata();
-        classMetadata.setPolymorphicEntities(dynamicEntityDao.getClassTree(entities));
-
+    public Property[] processMergedProperties(Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) {
         List<Property> propertiesList = new ArrayList<Property>();
         for (PersistenceModule module : modules) {
             module.extractProperties(entities, mergedProperties, propertiesList);
@@ -207,18 +203,29 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 String name2 = o2.getName() == null ? "zzzzz" : o2.getName();
 
                 return new CompareToBuilder()
-                        .append(tabOrder1, tabOrder2)
-                        .append(groupOrder1, groupOrder2)
-                        .append(fieldOrder1, fieldOrder2)
-                        .append(friendlyName1, friendlyName2)
-                        .append(name1, name2)
-                        .toComparison();
+                    .append(tabOrder1, tabOrder2)
+                    .append(groupOrder1, groupOrder2)
+                    .append(fieldOrder1, fieldOrder2)
+                    .append(friendlyName1, friendlyName2)
+                    .append(name1, name2)
+                    .toComparison();
             }
         });
-        classMetadata.setProperties(properties);
-        classMetadata.setCurrencyCode(Money.defaultCurrency().getCurrencyCode());
+        return properties;
+    }
 
-        return classMetadata;
+    @Override
+    public ClassMetadata buildClassMetadata(Class<?>[] entities, PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) {
+        ClassMetadata cmd = new ClassMetadata();
+        cmd.setCeilingType(persistencePackage.getCeilingEntityFullyQualifiedClassname());
+        cmd.setSecurityCeilingType(persistencePackage.getSecurityCeilingEntityFullyQualifiedClassname());
+        cmd.setPolymorphicEntities(dynamicEntityDao.getClassTree(entities));
+        cmd.setCurrencyCode(Money.defaultCurrency().getCurrencyCode());
+
+        cmd.setProperties(processMergedProperties(entities, mergedProperties));
+        cmd.setTabAndGroupMetadata(dynamicEntityDao.getTabAndGroupMetadata(entities));
+
+        return cmd;
     }
 
     @Override
@@ -247,8 +254,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         for (PersistenceModule module : modules) {
             module.updateMergedProperties(persistencePackage, allMergedProperties);
         }
-        ClassMetadata mergedMetadata = getMergedClassMetadata(entities, allMergedProperties);
-        DynamicResultSet results = new DynamicResultSet(mergedMetadata);
+        ClassMetadata classMetadata = buildClassMetadata(entities, persistencePackage, allMergedProperties);
+        DynamicResultSet results = new DynamicResultSet(classMetadata);
 
         return executePostInspectHandlers(persistencePackage, new PersistenceResponse().withDynamicResultSet(results));
     }

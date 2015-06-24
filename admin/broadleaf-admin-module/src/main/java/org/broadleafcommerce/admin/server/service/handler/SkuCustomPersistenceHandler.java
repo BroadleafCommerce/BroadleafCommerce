@@ -76,7 +76,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -260,7 +259,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 filterOutProductMetadata(entry.getValue());
             }
 
-            ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entityClasses, allMergedProperties);
+            ClassMetadata mergedMetadata = helper.buildClassMetadata(entityClasses, persistencePackage, allMergedProperties);
             DynamicResultSet results = new DynamicResultSet(mergedMetadata, null, null);
 
             return results;

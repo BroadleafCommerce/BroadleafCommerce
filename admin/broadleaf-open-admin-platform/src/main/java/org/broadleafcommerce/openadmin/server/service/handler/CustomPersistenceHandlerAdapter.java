@@ -127,7 +127,7 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
                 Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = 
                         new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
                 allMergedProperties.put(MergedPropertyType.PRIMARY, metadata);
-                ClassMetadata mergedMetadata = helper.getMergedClassMetadata(entities, allMergedProperties);
+                ClassMetadata mergedMetadata = helper.buildClassMetadata(entities, persistencePackage, allMergedProperties);
                 DynamicResultSet results = new DynamicResultSet(mergedMetadata);
                 return results;
             }
