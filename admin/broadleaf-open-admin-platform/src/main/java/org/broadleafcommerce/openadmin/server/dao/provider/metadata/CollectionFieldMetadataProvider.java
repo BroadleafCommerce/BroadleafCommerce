@@ -40,6 +40,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
@@ -158,40 +159,43 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
     }
 
     @Override
-        Map<String, FieldMetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getDynamicEntityDao(), overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
     public MetadataProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+        Map<String, MetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getDynamicEntityDao(), overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
-                final FieldMetadataOverride localMetadata = overrides.get(propertyName);
-                for (String key : metadata.keySet()) {
-                    if (key.equals(propertyName)) {
-                        try {
-                            if (metadata.get(key) instanceof BasicCollectionMetadata) {
-                                BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) metadata.get(key);
-                                if (serverMetadata.getTargetClass() != null)  {
-                                    Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
-                                    Class<?> parentClass = null;
-                                    if (serverMetadata.getOwningClass() != null) {
-                                        parentClass = Class.forName(serverMetadata.getOwningClass());
-                                    }
-                                    String fieldName = serverMetadata.getFieldName();
-                                    Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager().getField(targetClass, fieldName);
-                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
-                                    temp.put(field.getName(), serverMetadata);
-                                    FieldInfo info = buildFieldInfo(field);
-                                    buildCollectionMetadata(parentClass, targetClass, temp, info, localMetadata, overrideViaXmlRequest.getPrefix());
-                                    serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
-                                    metadata.put(key, serverMetadata);
-                                    if (overrideViaXmlRequest.getParentExcluded()) {
-                                        if (LOG.isDebugEnabled()) {
-                                            LOG.debug("applyCollectionMetadataOverrides:Excluding " + key + "because parent is marked as excluded.");
+                MetadataOverride localMetadata = overrides.get(propertyName);
+                if (localMetadata instanceof FieldMetadataOverride) {
+                    FieldMetadataOverride localFieldMetadata = (FieldMetadataOverride) localMetadata;
+                    for (String key : metadata.keySet()) {
+                        if (key.equals(propertyName)) {
+                            try {
+                                if (metadata.get(key) instanceof BasicCollectionMetadata) {
+                                    BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) metadata.get(key);
+                                    if (serverMetadata.getTargetClass() != null) {
+                                        Class<?> targetClass = Class.forName(serverMetadata.getTargetClass());
+                                        Class<?> parentClass = null;
+                                        if (serverMetadata.getOwningClass() != null) {
+                                            parentClass = Class.forName(serverMetadata.getOwningClass());
                                         }
-                                        serverMetadata.setExcluded(true);
+                                        String fieldName = serverMetadata.getFieldName();
+                                        Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager().getField(targetClass, fieldName);
+                                        Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                        temp.put(field.getName(), serverMetadata);
+                                        FieldInfo info = buildFieldInfo(field);
+                                        buildCollectionMetadata(parentClass, targetClass, temp, info, localFieldMetadata, overrideViaXmlRequest.getPrefix());
+                                        serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
+                                        metadata.put(key, serverMetadata);
+                                        if (overrideViaXmlRequest.getParentExcluded()) {
+                                            if (LOG.isDebugEnabled()) {
+                                                LOG.debug("applyCollectionMetadataOverrides:Excluding " + key + "because parent is marked as excluded.");
+                                            }
+                                            serverMetadata.setExcluded(true);
+                                        }
                                     }
                                 }
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
                             }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
                         }
                     }
                 }

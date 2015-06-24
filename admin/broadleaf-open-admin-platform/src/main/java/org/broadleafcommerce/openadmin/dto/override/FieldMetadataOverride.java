@@ -33,13 +33,12 @@ import java.util.Map;
 /**
  * @author Jeff Fischer
  */
-public class FieldMetadataOverride {
+public class FieldMetadataOverride extends MetadataOverride {
 
     //fields everyone depends on
     private Boolean excluded;
     private String friendlyName;
     private String securityLevel;
-    private Integer order;
 
     public Boolean getExcluded() {
         return excluded;
@@ -65,14 +64,6 @@ public class FieldMetadataOverride {
         this.securityLevel = securityLevel;
     }
 
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(Integer order) {
-        this.order = order;
-    }
-
     //basic fields
     private SupportedFieldType fieldType;
     private SupportedFieldType secondaryType = SupportedFieldType.INTEGER;
@@ -91,7 +82,6 @@ public class FieldMetadataOverride {
     protected Boolean isDerived;
 
     //@AdminPresentation derived fields
-    private String name;
     private VisibilityEnum visibility;
     private String group;
     private Boolean isBorderlessGroup;
@@ -258,14 +248,6 @@ public class FieldMetadataOverride {
 
     public void setDerived(Boolean isDerived) {
         this.isDerived = isDerived;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public SupportedFieldType getExplicitFieldType() {

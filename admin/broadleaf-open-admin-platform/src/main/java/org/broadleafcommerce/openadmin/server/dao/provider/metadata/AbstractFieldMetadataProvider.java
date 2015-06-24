@@ -28,7 +28,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
 
@@ -49,7 +49,7 @@ import javax.persistence.OneToMany;
  */
 public abstract class AbstractFieldMetadataProvider implements FieldMetadataProvider {
 
-    protected Map<String, Map<String, FieldMetadataOverride>> metadataOverrides;
+    protected Map<String, Map<String, MetadataOverride>> metadataOverrides;
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
@@ -117,14 +117,14 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
      * @return override value
      */
     @Deprecated
-    protected Map<String, FieldMetadataOverride> getTargetedOverride(String configurationKey, String ceilingEntityFullyQualifiedClassname) {
+    protected Map<String, MetadataOverride> getTargetedOverride(String configurationKey, String ceilingEntityFullyQualifiedClassname) {
         if (metadataOverrides != null && (configurationKey != null || ceilingEntityFullyQualifiedClassname != null)) {
             return metadataOverrides.containsKey(configurationKey)?metadataOverrides.get(configurationKey):metadataOverrides.get(ceilingEntityFullyQualifiedClassname);
         }
         return null;
     }
 
-    protected Map<String, FieldMetadataOverride> getTargetedOverride(DynamicEntityDao dynamicEntityDao, String configurationKey, String ceilingEntityFullyQualifiedClassname) {
+    protected Map<String, MetadataOverride> getTargetedOverride(DynamicEntityDao dynamicEntityDao, String configurationKey, String ceilingEntityFullyQualifiedClassname) {
         if (metadataOverrides != null && (configurationKey != null || ceilingEntityFullyQualifiedClassname != null)) {
             if (metadataOverrides.containsKey(configurationKey)) {
                 return metadataOverrides.get(configurationKey);
