@@ -106,6 +106,7 @@ public @interface AdminPresentationMap {
      * 
      * @return the tab for this field
      */
+    @Deprecated
     String tab() default "General";
 
     /**
@@ -118,6 +119,7 @@ public @interface AdminPresentationMap {
      * 
      * @return the order for this tab
      */
+    @Deprecated
     int tabOrder() default 100;
 
     /**

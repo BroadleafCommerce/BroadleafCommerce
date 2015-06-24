@@ -238,6 +238,7 @@ public @interface AdminPresentationAdornedTargetCollection {
      * 
      * @return the tab for this field
      */
+    @Deprecated
     String tab() default "General";
 
     /**
@@ -250,6 +251,7 @@ public @interface AdminPresentationAdornedTargetCollection {
      * 
      * @return the order for this tab
      */
+    @Deprecated
     int tabOrder() default 100;
 
     /**

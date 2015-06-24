@@ -43,7 +43,9 @@ public abstract class FieldMetadata implements Serializable {
     private Integer order;
     private String owningClassFriendlyName;
 
+    @Deprecated
     private String tab;
+    @Deprecated
     private Integer tabOrder;
 
     //temporary fields
@@ -203,18 +205,22 @@ public abstract class FieldMetadata implements Serializable {
         this.childrenExcluded = childrenExcluded;
     }
 
+    @Deprecated
     public String getTab() {
         return tab;
     }
 
+    @Deprecated
     public void setTab(String tab) {
         this.tab = tab;
     }
 
+    @Deprecated
     public Integer getTabOrder() {
         return tabOrder;
     }
 
+    @Deprecated
     public void setTabOrder(Integer tabOrder) {
         this.tabOrder = tabOrder;
     }

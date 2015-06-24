@@ -140,6 +140,7 @@ public @interface AdminPresentationCollection {
      * 
      * @return the tab for this field
      */
+    @Deprecated
     String tab() default "General";
 
     /**
@@ -152,6 +153,7 @@ public @interface AdminPresentationCollection {
      * 
      * @return the order for this tab
      */
+    @Deprecated
     int tabOrder() default 100;
 
     /**

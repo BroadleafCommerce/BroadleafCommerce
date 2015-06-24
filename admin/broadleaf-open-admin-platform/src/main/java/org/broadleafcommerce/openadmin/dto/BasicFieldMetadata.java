@@ -56,7 +56,9 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String name;
     protected VisibilityEnum visibility;
     protected String group;
+    @Deprecated
     protected Integer groupOrder;
+    @Deprecated
     protected Boolean groupCollapsed;
     protected SupportedFieldType explicitFieldType;
     protected Boolean largeEntry;
@@ -290,10 +292,12 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.readOnly = readOnly;
     }
 
+    @Deprecated
     public Integer getGroupOrder() {
         return groupOrder;
     }
 
+    @Deprecated
     public void setGroupOrder(Integer groupOrder) {
         this.groupOrder = groupOrder;
     }
@@ -326,10 +330,12 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.requiredOverride = requiredOverride;
     }
 
+    @Deprecated
     public Boolean getGroupCollapsed() {
         return groupCollapsed;
     }
 
+    @Deprecated
     public void setGroupCollapsed(Boolean groupCollapsed) {
         this.groupCollapsed = groupCollapsed;
     }
