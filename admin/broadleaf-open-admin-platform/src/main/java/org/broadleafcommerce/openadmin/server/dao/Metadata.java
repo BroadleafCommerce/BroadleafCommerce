@@ -54,7 +54,7 @@ public class Metadata {
 
     private static final Log LOG = LogFactory.getLog(Metadata.class);
 
-    @Resource(name="blMetadataProviders")
+    @Resource(name="blFieldMetadataProviders")
     protected List<FieldMetadataProvider> fieldMetadataProviders = new ArrayList<FieldMetadataProvider>();
 
     @Resource(name= "blDefaultFieldMetadataProvider")

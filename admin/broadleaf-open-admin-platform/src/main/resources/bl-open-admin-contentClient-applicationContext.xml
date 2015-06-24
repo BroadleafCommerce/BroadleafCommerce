@@ -99,7 +99,7 @@
         <property name="subject" value="${adminResetPassword.subject}"/>
     </bean>
 
-    <bean id="blMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
+    <bean id="blFieldMetadataProviders" class="org.broadleafcommerce.common.util.SortedListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
                 <ref bean="blBasicFieldMetadataProvider"/>
