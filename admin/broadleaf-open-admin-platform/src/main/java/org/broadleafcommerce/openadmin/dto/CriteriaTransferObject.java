@@ -17,14 +17,14 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.openadmin.dto;
 
+package org.broadleafcommerce.openadmin.dto;
 
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,12 +38,12 @@ public class CriteriaTransferObject {
 
     private Integer firstResult;
     private Integer maxResults;
-    
-    private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
+
+    private Map<String, FilterAndSortCriteria> criteriaMap = new LinkedHashMap<String, FilterAndSortCriteria>();
 
     private List<FilterMapping> additionalFilterMappings = new ArrayList<FilterMapping>();
     private List<FilterMapping> nonCountAdditionalFilterMappings = new ArrayList<FilterMapping>();
-    
+
     /**
      * The index of records in the database for which a fetch will start.
      *
@@ -52,7 +52,7 @@ public class CriteriaTransferObject {
     public Integer getFirstResult() {
         return firstResult;
     }
-    
+
     /**
      * The index of records in the datastore for which a fetch will start.
      *
@@ -61,7 +61,7 @@ public class CriteriaTransferObject {
     public void setFirstResult(Integer firstResult) {
         this.firstResult = firstResult;
     }
-    
+
     /**
      * The max number of records from the datastore to return.
      *
@@ -70,7 +70,7 @@ public class CriteriaTransferObject {
     public Integer getMaxResults() {
         return maxResults;
     }
-    
+
     /**
      * The max number of records from the datastore to return.
      *
@@ -79,7 +79,7 @@ public class CriteriaTransferObject {
     public void setMaxResults(Integer maxResults) {
         this.maxResults = maxResults;
     }
-    
+
     /**
      * Add a {@link FilterAndSortCriteria} instance. Contains information about which records are retrieved
      * and in what direction they're sorted.
@@ -89,7 +89,7 @@ public class CriteriaTransferObject {
     public void add(FilterAndSortCriteria criteria) {
         criteriaMap.put(criteria.getPropertyId(), criteria);
     }
-    
+
     /**
      * Add all {@link FilterAndSortCriteria} instances. Contains information about which records are retrieved
      * and in what direction they're sorted.
@@ -110,7 +110,7 @@ public class CriteriaTransferObject {
     public Map<String, FilterAndSortCriteria> getCriteriaMap() {
         return criteriaMap;
     }
-    
+
     public void setCriteriaMap(Map<String, FilterAndSortCriteria> criteriaMap) {
         this.criteriaMap = criteriaMap;
     }
@@ -138,7 +138,7 @@ public class CriteriaTransferObject {
     public List<FilterMapping> getAdditionalFilterMappings() {
         return additionalFilterMappings;
     }
-    
+
     public void setAdditionalFilterMappings(List<FilterMapping> additionalFilterMappings) {
         this.additionalFilterMappings = additionalFilterMappings;
     }
