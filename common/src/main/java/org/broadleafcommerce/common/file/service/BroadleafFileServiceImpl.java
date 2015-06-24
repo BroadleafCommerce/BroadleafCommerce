@@ -38,7 +38,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -124,20 +123,15 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     @Override
     public void closeWorkArea(FileWorkArea fwArea) {
         File tempDirectory = new File(fwArea.getFilePathLocation());
-        try {
-            if (tempDirectory.exists()) {
-                FileUtils.deleteDirectory(tempDirectory);
-            }
+        if (tempDirectory.exists()) {
+            FileUtils.deleteQuietly(tempDirectory);
+        }
 
-            for (int i = 1; i < maxGeneratedDirectoryDepth; i++) {
-                tempDirectory = tempDirectory.getParentFile();
-                if (tempDirectory.list().length == 0 && tempDirectory.exists()) {
-                    FileUtils.deleteDirectory(tempDirectory);
-                }
+        for (int i = 0; i < maxGeneratedDirectoryDepth; i++) {
+            tempDirectory = tempDirectory.getParentFile();
+            if (!tempDirectory.delete()) {
+                break;
             }
-
-        } catch (IOException ioe) {
-            throw new FileServiceException("Unable to delete temporary working directory for " + tempDirectory, ioe);
         }
     }
 
@@ -358,14 +352,19 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         for (int i = 0; i < maxGeneratedDirectoryDepth; i++) {
             if (i == 4) {
                 LOG.warn("Property asset.server.max.generated.file.system.directories set to high, currently set to " +
-                        maxGeneratedDirectoryDepth);
+                        maxGeneratedDirectoryDepth + " ignoring and only creating 4 levels.");
                 break;
             }
             // check next int value
             int num = random.nextInt(256);
             baseDirectory = FilenameUtils.concat(baseDirectory, Integer.toHexString(num));
         }
-        return baseDirectory;
+
+        return FilenameUtils.concat(baseDirectory, buildThreadIdString());
+    }
+
+    protected String buildThreadIdString() {
+        return Long.toHexString(Thread.currentThread().getId());
     }
 
     /**
