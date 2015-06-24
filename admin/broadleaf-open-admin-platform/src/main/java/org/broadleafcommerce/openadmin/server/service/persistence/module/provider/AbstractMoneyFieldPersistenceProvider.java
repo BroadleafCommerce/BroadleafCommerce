@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -38,19 +38,19 @@ import java.util.Locale;
 public abstract class AbstractMoneyFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
     
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         
         if (extractValueRequest.getRequestedValue() == null) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         
         property.setValue(formatValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
         property.setDisplayValue(formatDisplayValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
         
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
     
     protected String formatValue(BigDecimal value, ExtractValueRequest extractValueRequest, Property property) {

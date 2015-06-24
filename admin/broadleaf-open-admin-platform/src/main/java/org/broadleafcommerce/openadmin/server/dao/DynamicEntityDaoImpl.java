@@ -45,7 +45,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.Late
 import org.broadleafcommerce.openadmin.server.service.AppConfigurationService;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.FieldNamePropertyValidator;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.Criteria;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
@@ -351,16 +351,16 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     if (!Modifier.isStatic(field.getModifiers())) {
                         boolean handled = false;
                         for (FieldMetadataProvider provider : fieldMetadataProviders) {
-                            FieldProviderResponse response = provider.addMetadataFromFieldType(
+                            MetadataProviderResponse response = provider.addMetadataFromFieldType(
                                     new AddMetadataFromFieldTypeRequest(field, targetClass, null, new ForeignKey[]{},
                                             MergedPropertyType.PRIMARY, null, null, "",
                                             property, null, false, 0, attributesMap, presentationAttribute,
                                             ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this),
                                             mergedProperties);
-                            if (FieldProviderResponse.NOT_HANDLED != response) {
+                            if (MetadataProviderResponse.NOT_HANDLED != response) {
                                 handled = true;
                             }
-                            if (FieldProviderResponse.HANDLED_BREAK == response) {
+                            if (MetadataProviderResponse.HANDLED_BREAK == response) {
                                 break;
                             }
                         }
@@ -451,11 +451,11 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 
                 boolean foundOneOrMoreHandlers = false;
                 for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
-                    FieldProviderResponse response = fieldMetadataProvider.lateStageAddMetadata(amr, mergedProperties);
-                    if (FieldProviderResponse.NOT_HANDLED != response) {
+                    MetadataProviderResponse response = fieldMetadataProvider.lateStageAddMetadata(amr, mergedProperties);
+                    if (MetadataProviderResponse.NOT_HANDLED != response) {
                         foundOneOrMoreHandlers = true;
                     }
-                    if (FieldProviderResponse.HANDLED_BREAK == response) {
+                    if (MetadataProviderResponse.HANDLED_BREAK == response) {
                         break;
                     }
                 }
@@ -952,15 +952,15 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         if (presentationAttribute != null) {
                             setExcludedBasedOnShowIfProperty(presentationAttribute);
                         }
-                        FieldProviderResponse response = provider.addMetadataFromFieldType(
+                        MetadataProviderResponse response = provider.addMetadataFromFieldType(
                                 new AddMetadataFromFieldTypeRequest(myField, targetClass, foreignField, additionalForeignFields,
                                         mergedPropertyType, componentProperties, idProperty, prefix,
                                         propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition,
                                         presentationAttributes, presentationAttribute, null, type.getReturnedClass(), this), fields);
-                        if (FieldProviderResponse.NOT_HANDLED != response) {
+                        if (MetadataProviderResponse.NOT_HANDLED != response) {
                             handled = true;
                         }
-                        if (FieldProviderResponse.HANDLED_BREAK == response) {
+                        if (MetadataProviderResponse.HANDLED_BREAK == response) {
                             break;
                         }
                     }

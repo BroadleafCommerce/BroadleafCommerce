@@ -32,7 +32,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -61,9 +61,9 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
     }
 
     @Override
-    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
+    public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) {
         if (!canHandlePersistence(populateValueRequest, instance)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         boolean dirty = false;
         try {
@@ -97,22 +97,22 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 }
             } else {
                 //handle the map value set itself
-                if (FieldProviderResponse.NOT_HANDLED==super.populateValue(populateValueRequest, instance)) {
-                    return FieldProviderResponse.NOT_HANDLED;
+                if (MetadataProviderResponse.NOT_HANDLED==super.populateValue(populateValueRequest, instance)) {
+                    return MetadataProviderResponse.NOT_HANDLED;
                 }
             }
         } catch (Exception e) {
             throw new PersistenceException(e);
         }
         populateValueRequest.getProperty().setIsDirty(dirty);
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
 
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property)
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property)
             throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         checkValue:{
             if (extractValueRequest.getRequestedValue() != null) {
@@ -135,17 +135,17 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                     break checkValue;
                 }
             }
-            if (FieldProviderResponse.NOT_HANDLED==super.extractValue(extractValueRequest, property)) {
-                return FieldProviderResponse.NOT_HANDLED;
+            if (MetadataProviderResponse.NOT_HANDLED==super.extractValue(extractValueRequest, property)) {
+                return MetadataProviderResponse.NOT_HANDLED;
             }
         }
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest,
+    public MetadataProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest,
                                                   List<FilterMapping> filterMappings) {
-        return FieldProviderResponse.NOT_HANDLED;
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override

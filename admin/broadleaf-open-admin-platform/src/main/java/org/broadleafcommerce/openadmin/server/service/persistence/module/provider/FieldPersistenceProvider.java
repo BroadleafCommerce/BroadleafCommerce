@@ -26,7 +26,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -73,7 +73,7 @@ public interface FieldPersistenceProvider extends Ordered {
      * @param instance the persistence entity instance on which to set the value harvested from the request
      * @return whether or not the implementation handled the persistence request
      */
-    FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance);
+    MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance);
 
     /**
      * Retrieve the property value from the requestedValue field from the request. Implementations should translate the requestedValue
@@ -85,7 +85,7 @@ public interface FieldPersistenceProvider extends Ordered {
      * @param property the property for the admin that will contain the information harvested from the persistence value
      * @return whether or not the implementation handled the persistence request
      */
-    FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property);
+    MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property);
 
     /**
      * Add {@link FilterMapping} instances. The FilterMappings are used by the system to refine the fetch criteria
@@ -96,7 +96,7 @@ public interface FieldPersistenceProvider extends Ordered {
      * @param filterMappings filter criteria should be added here. It is used to generate the final search criteria.
      * @return whether or not the implementation handled the persistence request
      */
-    FieldProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, List<FilterMapping> filterMappings);
+    MetadataProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, List<FilterMapping> filterMappings);
 
     /**
      * Filter the list of properties posted by the admin during and add or update. This is the property list
@@ -106,7 +106,7 @@ public interface FieldPersistenceProvider extends Ordered {
      * @param properties the collection of properties to filter
      * @return whether or not the implementation handled the persistence request
      */
-    FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties);
+    MetadataProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties);
 
     /**
      * If the provider should always run, regardless if a previous provider returned a response of HANDLED_BREAK

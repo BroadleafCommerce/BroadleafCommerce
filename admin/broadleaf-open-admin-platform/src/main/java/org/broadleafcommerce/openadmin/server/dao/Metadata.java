@@ -32,7 +32,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.mapping.Property;
 import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
@@ -66,12 +66,12 @@ public class Metadata {
         for (Field field : fields) {
             boolean foundOneOrMoreHandlers = false;
             for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
-                FieldProviderResponse response = fieldMetadataProvider.addMetadata(new AddMetadataRequest(field, parentClass, targetClass,
-                        dynamicEntityDao, prefix), attributes);
-                if (FieldProviderResponse.NOT_HANDLED != response) {
+                MetadataProviderResponse response = fieldMetadataProvider.addMetadata(new AddFieldMetadataRequest(field, parentClass, targetClass,
+                        dynamicEntityDao, prefix), metadata);
+                if (MetadataProviderResponse.NOT_HANDLED != response) {
                     foundOneOrMoreHandlers = true;
                 }
-                if (FieldProviderResponse.HANDLED_BREAK == response) {
+                if (MetadataProviderResponse.HANDLED_BREAK == response) {
                     break;
                 }
             }
@@ -98,12 +98,12 @@ public class Metadata {
         for (int i = entities.length-1;i >= 0; i--) {
             boolean handled = false;
             for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
-                FieldProviderResponse response = fieldMetadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
+                MetadataProviderResponse response = fieldMetadataProvider.overrideViaAnnotation(new OverrideViaAnnotationRequest(entities[i],
                             isParentExcluded, dynamicEntityDao, prefix), mergedProperties);
-                if (FieldProviderResponse.NOT_HANDLED != response) {
+                if (MetadataProviderResponse.NOT_HANDLED != response) {
                     handled = true;
                 }
-                if (FieldProviderResponse.HANDLED_BREAK == response) {
+                if (MetadataProviderResponse.HANDLED_BREAK == response) {
                     break;
                 }
             }
@@ -117,13 +117,13 @@ public class Metadata {
 
         boolean handled = false;
         for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
-            FieldProviderResponse response = fieldMetadataProvider.overrideViaXml(
+            MetadataProviderResponse response = fieldMetadataProvider.overrideViaXml(
                     new OverrideViaXmlRequest(configurationKey, ceilingEntityFullyQualifiedClassname, prefix,
                             isParentExcluded, dynamicEntityDao), mergedProperties);
-            if (FieldProviderResponse.NOT_HANDLED != response) {
+            if (MetadataProviderResponse.NOT_HANDLED != response) {
                 handled = true;
             }
-            if (FieldProviderResponse.HANDLED_BREAK == response) {
+            if (MetadataProviderResponse.HANDLED_BREAK == response) {
                 break;
             }
         }
@@ -170,12 +170,12 @@ public class Metadata {
         presentationAttribute.setAvailableToTypes(new String[]{targetClass.getName()});
         boolean handled = false;
         for (FieldMetadataProvider fieldMetadataProvider : fieldMetadataProviders) {
-            FieldProviderResponse response = fieldMetadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(
+            MetadataProviderResponse response = fieldMetadataProvider.addMetadataFromMappingData(new AddMetadataFromMappingDataRequest(
                 componentProperties, type, secondaryType, entityType, propertyName, mergedPropertyType, dynamicEntityDao), presentationAttribute);
-            if (FieldProviderResponse.NOT_HANDLED != response) {
+            if (MetadataProviderResponse.NOT_HANDLED != response) {
                 handled = true;
             }
-            if (FieldProviderResponse.HANDLED_BREAK == response) {
+            if (MetadataProviderResponse.HANDLED_BREAK == response) {
                 break;
             }
         }

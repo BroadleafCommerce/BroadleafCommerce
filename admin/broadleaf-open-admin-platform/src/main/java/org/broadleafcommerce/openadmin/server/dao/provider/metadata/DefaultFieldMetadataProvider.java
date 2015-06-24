@@ -41,7 +41,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
@@ -59,7 +59,7 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
     private static final Log LOG = LogFactory.getLog(DefaultFieldMetadataProvider.class);
 
     @Override
-    public FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
         Map<String, Object> idMetadata = addMetadataRequest.getDynamicEntityDao().getIdMetadata(addMetadataRequest.getTargetClass());
         if (idMetadata != null) {
             String idField = (String) idMetadata.get("name");
@@ -88,10 +88,10 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
                 basicMetadata.setExcluded(false);
                 metadata.put(addMetadataRequest.getRequestedField().getName(), basicMetadata);
                 setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
-                return FieldProviderResponse.HANDLED;
+                return MetadataProviderResponse.HANDLED;
             }
         }
-        return FieldProviderResponse.NOT_HANDLED;
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
     public void overrideExclusionsFromXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
@@ -131,7 +131,7 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
     }
 
     @Override
-    public FieldProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest,
+    public MetadataProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest,
                                                             FieldMetadata metadata) {
         BasicFieldMetadata fieldMetadata = (BasicFieldMetadata) metadata;
         fieldMetadata.setFieldType(addMetadataFromMappingDataRequest.getType());
@@ -169,11 +169,11 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
                 throw new RuntimeException(e);
             }
         }
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest,
+    public MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest,
                                                           Map<String, FieldMetadata> metadata) {
         if (addMetadataFromFieldTypeRequest.getPresentationAttribute() != null) {
             if (
@@ -493,9 +493,9 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
                         setForeignKeyDisplayValueProperty(lookupDisplayProperty);
             }
             //return type not supported - just skip this property
-            return FieldProviderResponse.HANDLED;
+            return MetadataProviderResponse.HANDLED;
         }
-        return FieldProviderResponse.NOT_HANDLED;
+        return MetadataProviderResponse.NOT_HANDLED;
     }
 
 }

@@ -26,7 +26,7 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddM
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.core.Ordered;
 
 import java.util.Map;
@@ -55,8 +55,8 @@ public interface FieldMetadataProvider extends Ordered {
      * @param metadata implementations should add metadata for the requested field here
      * @return whether or not this implementation adjusted metadata
      */
-    FieldProviderResponse addMetadata(AddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata);
-    
+    MetadataProviderResponse addMetadata(AddFieldMetadataRequest addFieldMetadataRequest, Map<String, FieldMetadata> metadata);
+
     /**
      * Contribute to metadata inspection for the {@link java.lang.reflect.Field} instance in the request. Implementations should
      * add values to the metadata parameter.
@@ -69,7 +69,7 @@ public interface FieldMetadataProvider extends Ordered {
      * @param metadata implementations should add metadata for the requested field here
      * @return whether or not this implementation adjusted metadata
      */
-    FieldProviderResponse lateStageAddMetadata(LateStageAddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata);
+    MetadataProviderResponse lateStageAddMetadata(LateStageAddMetadataRequest lateStageAddMetadataRequest, Map<String, FieldMetadata> metadata);
 
     /**
      * Contribute to metadata inspection for the entity in the request. Implementations should override values
@@ -79,7 +79,7 @@ public interface FieldMetadataProvider extends Ordered {
      * @param metadata implementations should override metadata here
      * @return whether or not this implementation adjusted metadata
      */
-    FieldProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata);
+    MetadataProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata);
 
     /**
      * Contribute to metadata inspection for the ceiling entity and config key. Implementations should override
@@ -89,7 +89,7 @@ public interface FieldMetadataProvider extends Ordered {
      * @param metadata implementations should override metadata here
      * @return whether or not this implementation adjusted metadata
      */
-    FieldProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata);
+    MetadataProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata);
 
     /**
      * Contribute to metadata inspection using Hibernate column information. Implementations should impact values
@@ -99,7 +99,7 @@ public interface FieldMetadataProvider extends Ordered {
      * @param metadata implementations should impact values for the metadata for the field here
      * @return whether or not this implementation adjusted metadata
      */
-    FieldProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata);
+    MetadataProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata);
 
     /**
      * Contribute to metadata inspection for the {@link java.lang.reflect.Field} instance in the request. Implementations should
@@ -109,6 +109,6 @@ public interface FieldMetadataProvider extends Ordered {
      * @param metadata implementations should add values for the field here
      * @return whether or not this implementation adjusted metadata
      */
-    FieldProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata);
+    MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata);
 
 }

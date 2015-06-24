@@ -80,7 +80,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.EntityValidatorService;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PopulateValueRequestValidator;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidationResult;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.springframework.beans.BeansException;
@@ -266,11 +266,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         FieldManager fieldManager = getFieldManager();
         boolean handled = false;
         for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-            FieldProviderResponse response = fieldPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity), unfilteredProperties);
-            if (FieldProviderResponse.NOT_HANDLED != response) {
+            MetadataProviderResponse response = fieldPersistenceProvider.filterProperties(new AddFilterPropertiesRequest(entity), unfilteredProperties);
+            if (MetadataProviderResponse.NOT_HANDLED != response) {
                 handled = true;
             }
-            if (FieldProviderResponse.HANDLED_BREAK == response) {
+            if (MetadataProviderResponse.HANDLED_BREAK == response) {
                 break;
             }
         }
@@ -357,11 +357,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     boolean isBreakDetected = false;
                                     for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
                                         if (!isBreakDetected || fieldPersistenceProvider.alwaysRun()) {
-                                            FieldProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
-                                            if (FieldProviderResponse.NOT_HANDLED != response) {
+                                            MetadataProviderResponse response = fieldPersistenceProvider.populateValue(request, instance);
+                                            if (MetadataProviderResponse.NOT_HANDLED != response) {
                                                 handled = true;
                                             }
-                                            if (FieldProviderResponse.HANDLED_BREAK == response) {
+                                            if (MetadataProviderResponse.HANDLED_BREAK == response) {
                                                 isBreakDetected = true;
                                             }
                                         }
@@ -607,13 +607,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             String displayVal = propertyItem.getDisplayValue();
                             boolean handled = false;
                             for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                                FieldProviderResponse response = fieldPersistenceProvider.extractValue(
+                                MetadataProviderResponse response = fieldPersistenceProvider.extractValue(
                                         new ExtractValueRequest(props, fieldManager, metadata, value, displayVal, 
                                                 persistenceManager, this, entity), propertyItem);
-                                if (FieldProviderResponse.NOT_HANDLED != response) {
+                                if (MetadataProviderResponse.NOT_HANDLED != response) {
                                     handled = true;
                                 }
-                                if (FieldProviderResponse.HANDLED_BREAK == response) {
+                                if (MetadataProviderResponse.HANDLED_BREAK == response) {
                                     break;
                                 }
                             }
@@ -829,15 +829,15 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (mergedProperties.containsKey(propertyId)) {
                 boolean handled = false;
                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
-                    FieldProviderResponse response = fieldPersistenceProvider.addSearchMapping(
+                    MetadataProviderResponse response = fieldPersistenceProvider.addSearchMapping(
                             new AddSearchMappingRequest(persistencePerspective, cto,
                                     ceilingEntityFullyQualifiedClassname, mergedProperties,
                                     propertyId, getFieldManager(), this, this, customRestrictionFactory==null?restrictionFactory
                                     :customRestrictionFactory), filterMappings);
-                    if (FieldProviderResponse.NOT_HANDLED != response) {
+                    if (MetadataProviderResponse.NOT_HANDLED != response) {
                         handled = true;
                     }
-                    if (FieldProviderResponse.HANDLED_BREAK == response) {
+                    if (MetadataProviderResponse.HANDLED_BREAK == response) {
                         break;
                     }
                 }

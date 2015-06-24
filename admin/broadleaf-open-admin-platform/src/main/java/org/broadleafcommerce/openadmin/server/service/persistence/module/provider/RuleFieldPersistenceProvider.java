@@ -42,7 +42,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTOToMVELTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELToDataWrapperTranslator;
 import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
@@ -102,9 +102,9 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     protected RuleFieldPersistenceProviderExtensionManager extensionManager;
 
     @Override
-    public FieldProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
+    public MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance) throws PersistenceException {
         if (!canHandlePersistence(populateValueRequest, instance)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         boolean dirty = false;
         try {
@@ -124,13 +124,13 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         }
         populateValueRequest.getProperty().setIsDirty(dirty);
 
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
 
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         ObjectMapper mapper = new ObjectMapper();
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
@@ -140,11 +140,11 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         if (extractValueRequest.getMetadata().getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
             extractQuantityRule(extractValueRequest, mapper, translator);
         }
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
 
     @Override
-    public FieldProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
+    public MetadataProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
         //This may contain rule Json fields - convert and filter out
         List<Property> propertyList = new ArrayList<Property>();
         propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
@@ -176,7 +176,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         }
         propertyList.addAll(additionalProperties);
         addFilterPropertiesRequest.getEntity().setProperties(propertyList.toArray(new Property[propertyList.size()]));
-        return FieldProviderResponse.HANDLED;
+        return MetadataProviderResponse.HANDLED;
     }
 
     protected void extractSimpleRule(ExtractValueRequest extractValueRequest, Property property, ObjectMapper mapper, MVELToDataWrapperTranslator translator) {

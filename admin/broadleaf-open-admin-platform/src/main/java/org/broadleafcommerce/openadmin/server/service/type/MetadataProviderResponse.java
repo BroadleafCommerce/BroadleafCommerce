@@ -33,6 +33,6 @@ package org.broadleafcommerce.openadmin.server.service.type;
  *
  * @author Jeff Fischer
  */
-public enum FieldProviderResponse {
+public enum MetadataProviderResponse {
     HANDLED,NOT_HANDLED,HANDLED_BREAK
 }

@@ -34,7 +34,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldMa
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.AbstractMoneyFieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.FieldPersistenceProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
-import org.broadleafcommerce.openadmin.server.service.type.FieldProviderResponse;
+import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -59,9 +59,9 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
     }
 
     @Override
-    public FieldProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
-            return FieldProviderResponse.NOT_HANDLED;
+            return MetadataProviderResponse.NOT_HANDLED;
         }
         
         Object displayValue = extractValueRequest.getRequestedValue();
@@ -78,7 +78,7 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
         property.setValue(formatValue(actualValue, extractValueRequest, property));
         property.setDisplayValue(formatDisplayValue(displayValue, extractValueRequest, property));
 
-        return FieldProviderResponse.HANDLED_BREAK;
+        return MetadataProviderResponse.HANDLED_BREAK;
     }
     
     protected String formatValue(Object value, ExtractValueRequest extractValueRequest, Property property) {
