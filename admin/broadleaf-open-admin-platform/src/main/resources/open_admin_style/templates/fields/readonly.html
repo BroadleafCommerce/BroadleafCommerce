@@ -3,8 +3,8 @@
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;" th:switch="*{fields['__${field.name}__'].fieldType}">
 
     <span th:case="'MEDIA'" th:remove="tag">
-        <a th:if="*{fields['__${field.name}__'].media != null and fields['__${field.name}__'].media.url != null}"
-           th:href="@{*{fields['__${field.name}__'].media.url}}" target="_blank">
+        <a th:if="*{fields['__${field.name}__'].media != null and fields['__${field.name}__'].media.url != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}" 
+            th:href="@{*{fields['__${field.name}__'].media.url}}" target="_blank">
             <img class="thumbnail"
                 th:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}" />
         </a>
