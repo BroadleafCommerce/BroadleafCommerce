@@ -20,9 +20,9 @@
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromMappingDataRequest;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
@@ -51,7 +51,7 @@ public interface FieldMetadataProvider extends Ordered {
      * Contribute to metadata inspection for the {@link java.lang.reflect.Field} instance in the request. Implementations should
      * add values to the metadata parameter.
      *
-     * @param addMetadataRequest contains the requested field and support classes.
+     * @param addFieldMetadataRequest contains the requested field and support classes.
      * @param metadata implementations should add metadata for the requested field here
      * @return whether or not this implementation adjusted metadata
      */
@@ -60,9 +60,9 @@ public interface FieldMetadataProvider extends Ordered {
     /**
      * Contribute to metadata inspection for the {@link java.lang.reflect.Field} instance in the request. Implementations should
      * add values to the metadata parameter.
-     * 
-     * This method differs from {@link #addMetadata(AddMetadataRequest, Map)} in that it will be invoked after the cacheable
-     * properties are assembled. It is therefore useful in scenarios where you may want to contribute properties to 
+     *
+     * This method differs from {@link #addMetadata(AddFieldMetadataRequest, Map)} in that it will be invoked after the cacheable
+     * properties are assembled. It is therefore useful in scenarios where you may want to contribute properties to
      * metadata that are dynamic and should not be cached normally.
      *
      * @param lateStageAddMetadataRequest contains the requested field name and support classes.

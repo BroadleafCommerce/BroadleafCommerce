@@ -21,38 +21,23 @@ package org.broadleafcommerce.openadmin.server.dao.provider.metadata.request;
 
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 
+import java.lang.reflect.Field;
+
 /**
- * Contains the metadata and support classes.
+ * Contains the requested field, metadata and support classes.
  *
- * @author Jeff Fischer
+ * @author Chris Kittrell
  */
-public class AddMetadataRequest {
+public class AddFieldMetadataRequest extends AddMetadataRequest{
 
-    private final Class<?> parentClass;
-    private final Class<?> targetClass;
-    private final DynamicEntityDao dynamicEntityDao;
-    private final String prefix;
+    private final Field requestedField;
 
-    public AddMetadataRequest(Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao, String prefix) {
-        this.parentClass = parentClass;
-        this.targetClass = targetClass;
-        this.dynamicEntityDao = dynamicEntityDao;
-        this.prefix = prefix;
+    public AddFieldMetadataRequest(Field requestedField, Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao, String prefix) {
+        super(parentClass, targetClass, dynamicEntityDao, prefix);
+        this.requestedField = requestedField;
     }
 
-    public Class<?> getParentClass() {
-        return parentClass;
-    }
-
-    public Class<?> getTargetClass() {
-        return targetClass;
-    }
-
-    public DynamicEntityDao getDynamicEntityDao() {
-        return dynamicEntityDao;
-    }
-
-    public String getPrefix() {
-        return prefix;
+    public Field getRequestedField() {
+        return requestedField;
     }
 }
