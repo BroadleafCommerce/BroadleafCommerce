@@ -287,5 +287,4 @@ public @interface AdminPresentationAdornedTargetCollection {
     /**
      *
      */
-    int column() default 0;
 }

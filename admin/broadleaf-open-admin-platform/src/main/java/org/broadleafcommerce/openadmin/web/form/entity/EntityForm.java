@@ -52,7 +52,6 @@ public class EntityForm {
     public static final Boolean DEFAULT_IS_BORDERLESS_GROUP = false;
     public static final String DEFAULT_TAB_NAME = "General";
     public static final Integer DEFAULT_TAB_ORDER = 100;
-    public static final Integer DEFAULT_COLUMN = 0;
 
     protected String id;
     protected String parentId;
@@ -292,27 +291,26 @@ public class EntityForm {
         if (StringUtils.isBlank(field.getFieldType())) {
             field.setFieldType(SupportedFieldType.HIDDEN.toString());
         }
-        addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_IS_BORDERLESS_GROUP, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
+        addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_IS_BORDERLESS_GROUP, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
     public void addField(Field field) {
-        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_IS_BORDERLESS_GROUP, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
+        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_IS_BORDERLESS_GROUP, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
     public void addMapKeyField(Field field) {
-        addField(field, MAP_KEY_GROUP, 0, DEFAULT_IS_BORDERLESS_GROUP, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER, DEFAULT_COLUMN);
+        addField(field, MAP_KEY_GROUP, 0, DEFAULT_IS_BORDERLESS_GROUP, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
     public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
-        addField(field, groupName, groupOrder, DEFAULT_IS_BORDERLESS_GROUP, tabName, tabOrder, DEFAULT_COLUMN);
+        addField(field, groupName, groupOrder, DEFAULT_IS_BORDERLESS_GROUP, tabName, tabOrder);
     }
 
-    public void addField(Field field, String groupName, Integer groupOrder, Boolean isBorderlessGroup, String tabName, Integer tabOrder, Integer column) {
+    public void addField(Field field, String groupName, Integer groupOrder, Boolean isBorderlessGroup, String tabName, Integer tabOrder) {
         groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
         groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
         tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
-        column = column == null ? DEFAULT_COLUMN : column;
         isBorderlessGroup = isBorderlessGroup == null ? DEFAULT_IS_BORDERLESS_GROUP : isBorderlessGroup;
 
         // Tabs and groups should be looked up by their display, translated name since 2 unique strings can display the same
@@ -337,14 +335,8 @@ public class EntityForm {
             fieldGroup = new FieldGroup();
             fieldGroup.setTitle(groupName);
             fieldGroup.setOrder(groupOrder);
-            fieldGroup.setColumn(column);
-            if (column == DEFAULT_COLUMN) {
-                fieldGroup.setIsBorderless(isBorderlessGroup);
-            }
             tab.getFieldGroups().add(fieldGroup);
         }
-
-        tab.setIsMultiColumn(column != DEFAULT_COLUMN);
 
         fieldGroup.addField(field);
     }
@@ -362,8 +354,6 @@ public class EntityForm {
             tab.setOrder(tabOrder);
             tabs.add(tab);
         }
-
-        tab.setIsMultiColumn(listGrid.getColumn() != DEFAULT_COLUMN);
 
         tab.getListGrids().add(listGrid);
     }

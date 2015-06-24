@@ -218,5 +218,4 @@ public @interface AdminPresentationCollection {
     /**
      *
      */
-    int column() default 0;
 }

@@ -423,9 +423,6 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.TABORDER)) {
                 fieldMetadataOverride.setTabOrder(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():
                                         Integer.parseInt(stringValue));
-            } else if (entry.getKey().equals(PropertyType.AdminPresentation.COLUMN)) {
-                fieldMetadataOverride.setColumn(StringUtils.isEmpty(stringValue)?entry.getValue().intOverrideValue():
-                                        Integer.parseInt(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.LARGEENTRY)) {
                 fieldMetadataOverride.setLargeEntry(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
                                         Boolean.parseBoolean(stringValue));
@@ -499,7 +496,6 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setExplicitFieldType(annot.fieldType());
             override.setFieldType(annot.fieldType());
             override.setGroup(annot.group());
-            override.setIsBorderlessGroup(annot.isBorderlessGroup());
             override.setGroupCollapsed(annot.groupCollapsed());
             override.setGroupOrder(annot.groupOrder());
             override.setTab(annot.tab());
@@ -520,7 +516,6 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             override.setRuleIdentifier(annot.ruleIdentifier());
             override.setTranslatable(annot.translatable());
             override.setDefaultValue(annot.defaultValue());
-            override.setColumn(annot.column());
 
             if (annot.validationConfigurations().length != 0) {
                 processValidationAnnotations(annot.validationConfigurations(), override);
@@ -766,9 +761,6 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (basicFieldMetadata.getDefaultValue() != null) {
             metadata.setDefaultValue(basicFieldMetadata.getDefaultValue());
-        }
-        if (basicFieldMetadata.getColumn() != null) {
-            metadata.setColumn(basicFieldMetadata.getColumn());
         }
 
         attributes.put(field.getName(), metadata);

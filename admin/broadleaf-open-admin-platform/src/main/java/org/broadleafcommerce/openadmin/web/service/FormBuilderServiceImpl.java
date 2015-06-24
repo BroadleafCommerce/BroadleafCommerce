@@ -391,7 +391,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
             listGrid.setFriendlyName(field.getName());
         }
-        listGrid.setColumn(field.getMetadata().getColumn());
+//        listGrid.setColumn(field.getMetadata().getColumn());
         listGrid.setContainingEntityId(containingEntityId);
         listGrid.setReadOnly(readOnly);
         listGrid.setHideIdColumn(hideIdColumn);
@@ -651,8 +651,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withHint(fmd.getHint())
                          .withTooltip(fmd.getTooltip())
                          .withHelp(fmd.getHelpText())
-                         .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup())
-                         .withColumn(fmd.getColumn());
+                         .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup());
 
                     String defaultValue = fmd.getDefaultValue();
                     if (StringUtils.isNotEmpty(defaultValue)) {
@@ -665,7 +664,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     // Add the field to the appropriate FieldGroup
-                    ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getIsBorderlessGroup(), fmd.getTab(), fmd.getTabOrder(), fmd.getColumn());
+                    ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getIsBorderlessGroup(), fmd.getTab(), fmd.getTabOrder());
                 }
             }
         }

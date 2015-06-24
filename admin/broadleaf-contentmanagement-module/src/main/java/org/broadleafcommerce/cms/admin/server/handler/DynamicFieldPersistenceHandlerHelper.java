@@ -79,7 +79,6 @@ public class DynamicFieldPersistenceHandlerHelper {
         fieldMetadata.setVisibility(definition.getHiddenFlag()?VisibilityEnum.HIDDEN_ALL:VisibilityEnum.VISIBLE_ALL);
         fieldMetadata.setTab("General");
         fieldMetadata.setTabOrder(100);
-        fieldMetadata.setColumn(0);
         fieldMetadata.setExplicitFieldType(SupportedFieldType.UNKNOWN);
         fieldMetadata.setLargeEntry(definition.getTextAreaFlag());
         fieldMetadata.setProminent(false);

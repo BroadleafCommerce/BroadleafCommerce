@@ -149,7 +149,6 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.SELECTIZE_LOOKUP, friendlyName = "roleListTitle", manyToField = "allUsers",
-            column = 1,
             operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
@@ -158,7 +157,6 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.SELECTIZE_LOOKUP,
-            column = 1,
             friendlyName = "permissionListTitle",
             customCriteria = "includeFriendlyOnly",
             manyToField = "allUsers",

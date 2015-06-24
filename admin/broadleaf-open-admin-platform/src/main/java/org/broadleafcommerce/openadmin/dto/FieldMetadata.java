@@ -41,7 +41,6 @@ public abstract class FieldMetadata implements Serializable {
     private String friendlyName;
     private String securityLevel;
     private Integer order;
-    private Integer column;
     private String owningClassFriendlyName;
 
     private String tab;
@@ -110,7 +109,6 @@ public abstract class FieldMetadata implements Serializable {
         metadata.fieldName = fieldName;
         metadata.showIfProperty = showIfProperty;
         metadata.currencyCodeField = currencyCodeField;
-        metadata.column = column;
         for (Map.Entry<String, Object> entry : additionalMetadata.entrySet()) {
             metadata.additionalMetadata.put(entry.getKey(), entry.getValue());
         }
@@ -221,14 +219,6 @@ public abstract class FieldMetadata implements Serializable {
         this.tabOrder = tabOrder;
     }
 
-    public Integer getColumn() {
-        return column;
-    }
-
-    public void setColumn(Integer column) {
-        this.column = column;
-    }
-
     public abstract FieldMetadata cloneFieldMetadata();
 
     public abstract void accept(MetadataVisitor visitor);
@@ -257,7 +247,6 @@ public abstract class FieldMetadata implements Serializable {
                 null)
             return false;
         if (order != null ? !order.equals(that.order) : that.order != null) return false;
-        if (column != null ? !column.equals(that.column) : that.column != null) return false;
         if (owningClass != null ? !owningClass.equals(that.owningClass) : that.owningClass != null) return false;
         if (owningClassFriendlyName != null ? !owningClassFriendlyName.equals(that.owningClassFriendlyName) : that
                 .owningClassFriendlyName != null)
@@ -282,7 +271,6 @@ public abstract class FieldMetadata implements Serializable {
         result = 31 * result + (friendlyName != null ? friendlyName.hashCode() : 0);
         result = 31 * result + (securityLevel != null ? securityLevel.hashCode() : 0);
         result = 31 * result + (order != null ? order.hashCode() : 0);
-        result = 31 * result + (column != null ? column.hashCode() : 0);
         result = 31 * result + (owningClassFriendlyName != null ? owningClassFriendlyName.hashCode() : 0);
         result = 31 * result + (tab != null ? tab.hashCode() : 0);
         result = 31 * result + (tabOrder != null ? tabOrder.hashCode() : 0);

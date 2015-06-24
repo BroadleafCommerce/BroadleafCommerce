@@ -320,14 +320,4 @@ public @interface AdminPresentation {
      * @return the defaultValue set for the field.
      */
     String defaultValue() default "";
-
-    /**
-     *
-     */
-    int column() default 0;
-
-    /**
-     *
-     */
-    boolean isBorderlessGroup() default false;
 }

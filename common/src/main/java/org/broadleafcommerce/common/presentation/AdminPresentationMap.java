@@ -343,6 +343,5 @@ public @interface AdminPresentationMap {
     /**
      *
      */
-    int column() default 0;
 
 }

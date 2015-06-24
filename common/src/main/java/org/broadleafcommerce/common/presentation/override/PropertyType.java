@@ -51,7 +51,6 @@ public class PropertyType {
         public static final String READONLY = "readOnly";
         public static final String VALIDATIONCONFIGURATIONS = "validationConfigurations";
         public static final String DEFAULTVALUE = "defaultValue";
-        public static final String COLUMN = "column";
     }
 
     public static class AdminPresentationToOneLookup {
@@ -94,7 +93,6 @@ public class PropertyType {
         public static final String CUSTOMCRITERIA = "customCriteria";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
         public static final String OPERATIONTYPES = "operationTypes";
-        public static final String COLUMN = "column";
     }
 
     public static class AdminPresentationCollection {
@@ -114,7 +112,6 @@ public class PropertyType {
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
-        public static final String COLUMN = "column";
     }
 
     public static class AdminPresentationMap {
@@ -144,6 +141,5 @@ public class PropertyType {
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
-        public static final String COLUMN = "column";
     }
 }
