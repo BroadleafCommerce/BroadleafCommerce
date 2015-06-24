@@ -729,16 +729,41 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             document.addField(shs.getProductIdFieldName(), shs.getProductId(product));
             extensionManager.getProxy().attachAdditionalBasicFields(product, document, shs);
             
+            Long productId = product.getId();
             Long originalId = sandBoxHelper.getOriginalId(product);
-            originalId = (originalId == null) ? product.getId() : originalId;
+            Long chosenId = null;
+            Long otherId = null;
+
+            Set<Long> categories = null;
+
+            // if the cache contains the product id, we will use that, or else we will use the original id
+            if (cache.getParentCategoriesByProduct().containsKey(productId)) {
+                categories = cache.getParentCategoriesByProduct().get(productId);
+                chosenId = productId;
+                otherId = originalId;
+            } else if (cache.getParentCategoriesByProduct().containsKey(originalId)) {
+                categories = cache.getParentCategoriesByProduct().get(originalId);
+                chosenId = originalId;
+                otherId = productId;
+            }
 
             // The explicit categories are the ones defined by the product itself
-            if (cache.getParentCategoriesByProduct().containsKey(originalId)) {
-                for (Long categoryId : cache.getParentCategoriesByProduct().get(originalId)) {
+            if (categories != null && chosenId != null) {
+                for (Long categoryId : categories) {
                     document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + originalId;
+                    String chosenDisplayOrderKey = categoryId + "-" + chosenId;
+                    String otherDisplayOrderKey = categoryId + "-" + otherId;
+                    String displayOrderKey = null;
+
+                    // if the display order key exists for our chosen id, we will choose that, or else we will choose the other id key
+                    if (cache.getDisplayOrdersByCategoryProduct().containsKey(chosenDisplayOrderKey)) {
+                        displayOrderKey = chosenDisplayOrderKey;
+                    } else if (cache.getDisplayOrdersByCategoryProduct().containsKey(otherDisplayOrderKey)) {
+                        displayOrderKey = otherDisplayOrderKey;
+                    }
+
                     BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
 
                     if (document.getField(categorySortFieldName) == null) {
