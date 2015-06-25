@@ -39,6 +39,7 @@ public class ClassMetadata implements Serializable {
     private String securityCeilingType;
     private ClassTree polymorphicEntities;
     private Property[] properties;
+    private Map<String, TabMetadata> tabAndGroupMetadata;
     private String currencyCode = "USD";
     
     private Map<String, Property> pMap = null;
@@ -91,8 +92,16 @@ public class ClassMetadata implements Serializable {
         return properties;
     }
     
-    public void setProperties(Property[] property) {
-        this.properties = property;
+    public void setProperties(Property[] properties) {
+        this.properties = properties;
+    }
+
+    public Map<String, TabMetadata> getTabAndGroupMetadata() {
+        return tabAndGroupMetadata;
+    }
+
+    public void setTabAndGroupMetadata(Map<String, TabMetadata> tabAndGroupMetadata) {
+        this.tabAndGroupMetadata = tabAndGroupMetadata;
     }
 
     public String getCurrencyCode() {

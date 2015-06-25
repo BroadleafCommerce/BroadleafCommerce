@@ -19,6 +19,9 @@
  */
 package org.broadleafcommerce.common.presentation;
 
+import org.broadleafcommerce.common.presentation.override.AdminGroupPresentationOverride;
+import org.broadleafcommerce.common.presentation.override.AdminTabPresentationOverride;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -73,5 +76,32 @@ public @interface AdminPresentationClass {
      * @return Whether or not the admin should ignore this entity as a valid polymorphic type
      */
     boolean excludeFromPolymorphism() default false;
+
+    /**
+     * Members of this map can be displayed as form fields, rather than in a standard grid. When populated,
+     * mapDisplayFields informs the form building process to create the fields described here and persist those fields
+     * in this map structure.
+     *
+     * @return the fields to display that represent the members of this map
+     */
+    AdminTabPresentation[] tabs() default {};
+
+    /**
+     * Members of this map can be displayed as form fields, rather than in a standard grid. When populated,
+     * mapDisplayFields informs the form building process to create the fields described here and persist those fields
+     * in this map structure.
+     *
+     * @return the fields to display that represent the members of this map
+     */
+    AdminTabPresentationOverride[] tabOverrides() default {};
+
+    /**
+     * Members of this map can be displayed as form fields, rather than in a standard grid. When populated,
+     * mapDisplayFields informs the form building process to create the fields described here and persist those fields
+     * in this map structure.
+     *
+     * @return the fields to display that represent the members of this map
+     */
+    AdminGroupPresentationOverride[] groupOverrides() default {};
 
 }

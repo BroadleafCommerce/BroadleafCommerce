@@ -287,6 +287,18 @@ public @interface AdminPresentationAdornedTargetCollection {
     String currencyCodeField() default "";
 
     /**
+     * Used to map the collection to a group defined in AdminPresentationClass using AdminGroupPresentation.
      *
+     * If the group cannot be found in AdminPresentationClass, then the tab specified in
+     * AdminPresentationAdornedTargetCollection is used to map the collection to a tab defined in AdminPresentationClass
+     * using AdminTabPresentation. If the tab cannot be found, then the collection will be placed in a tab created using
+     * the information specified in AdminPresentationAdornedTargetCollection.
+     *
+     * Optional - only required if you want the field to appear under a specific group
+     *
+     * Specify a GUI group for this collection
+     *
+     * @return the group for this collection
      */
+    String group() default "General";
 }

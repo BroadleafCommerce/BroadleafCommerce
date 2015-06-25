@@ -24,6 +24,21 @@ package org.broadleafcommerce.common.presentation.override;
  */
 public class PropertyType {
 
+
+    public static class AdminTabPresentation {
+        public static final String NAME = "name";
+        public static final String ORDER = "order";
+    }
+
+    public static class AdminGroupPresentation {
+        public static final String NAME = "name";
+        public static final String ORDER = "order";
+        public static final String COLUMN = "column";
+        public static final String BORDERLESS = "borderless";
+        public static final String TOOLTIP = "tooltip";
+        public static final String COLLAPSED = "collapsed";
+    }
+
     public static class AdminPresentation {
         public static final String FRIENDLYNAME = "friendlyName";
         public static final String SECURITYLEVEL = "securityLevel";
@@ -153,6 +168,7 @@ public class PropertyType {
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String SHOWIFPROPERTY = "showIfProperty";
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
+        public static final String GROUP = "group";
 
         @Deprecated
         public static final String TAB = "tab";
