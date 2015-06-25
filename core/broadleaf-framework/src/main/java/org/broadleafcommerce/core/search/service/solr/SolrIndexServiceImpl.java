@@ -294,6 +294,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         StopWatch s = new StopWatch();
         boolean cacheOperationManaged = false;
         try {
+            extensionManager.getProxy().endProductBatch(products);
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             List<Locale> locales = getAllLocales();
 
@@ -349,6 +350,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             if (!cacheOperationManaged) {
                 SolrIndexCachedOperation.clearCache();
             }
+            extensionManager.getProxy().closeContexts();
         }
 
         if (LOG.isDebugEnabled()) {
