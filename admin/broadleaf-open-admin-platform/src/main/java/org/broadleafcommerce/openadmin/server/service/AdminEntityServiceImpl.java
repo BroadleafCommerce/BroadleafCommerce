@@ -101,9 +101,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     public PersistenceResponse getClassMetadata(PersistencePackageRequest request)
             throws ServiceException {
         PersistenceResponse response = inspect(request);
-        ClassMetadata cmd = response.getDynamicResultSet().getClassMetaData();
-        cmd.setCeilingType(request.getCeilingEntityClassname());
-        cmd.setSecurityCeilingType(request.getSecurityCeilingEntityClassname());
         return response;
     }
 
