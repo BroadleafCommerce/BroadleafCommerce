@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
+import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
@@ -44,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -142,6 +144,7 @@ public class AdminTranslationController extends AdminAbstractController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String addTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
             @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+
         final TranslationForm form = getTranslationForm(entityForm);
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
         SectionCrumb sectionCrumb = new SectionCrumb();
@@ -162,14 +165,33 @@ public class AdminTranslationController extends AdminAbstractController {
             translatedEntity = TranslatedEntity.getInstance(ceilingEntity);
         }
         entityType.setValue(translatedEntity.getFriendlyType());
+
         Field fieldName = new Field();
         fieldName.setName("fieldName");
         fieldName.setValue(form.getPropertyName());
+
         entityForm.getFields().put("entityType", entityType);
         entityForm.getFields().put("fieldName", fieldName);
 
-        service.addEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
-        return viewTranslation(request, response, model, form, result);
+        Entity entity = service.addEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
+
+        for (Map.Entry<String, Field> entry : entityForm.getFields().entrySet()) {
+            String key = entry.getKey();
+            Field value = entry.getValue();
+            System.out.println("key=" + key + " value=" + value);
+        }
+
+        entityFormValidator.validate(entityForm, entity, result);
+        if (result.hasErrors()) {
+            model.addAttribute("entity", entity);
+            model.addAttribute("entityForm", entityForm);
+            model.addAttribute("viewType", "modal/translationAdd");
+            model.addAttribute("currentUrl", request.getRequestURL().toString());
+            model.addAttribute("modalHeaderType", "addTranslation");
+            return "modules/modalContainer";
+        } else {
+            return viewTranslation(request, response, model, form, result);
+        }
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.GET)
