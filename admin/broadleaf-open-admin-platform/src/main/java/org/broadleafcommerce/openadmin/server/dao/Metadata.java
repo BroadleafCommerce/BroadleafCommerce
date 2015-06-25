@@ -61,8 +61,8 @@ public class Metadata {
     @Resource(name= "blDefaultFieldMetadataProvider")
     protected FieldMetadataProvider defaultFieldMetadataProvider;
 
-    public Map<String, FieldMetadata> getFieldPresentationAttributes(Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao, String prefix) {
-        Map<String, FieldMetadata> attributes = new HashMap<String, FieldMetadata>();
+    public Map<String, FieldMetadata> getFieldMetadataForTargetClass(Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao, String prefix) {
+        Map<String, FieldMetadata> metadata = new HashMap<String, FieldMetadata>();
         Field[] fields = dynamicEntityDao.getAllFields(targetClass);
         for (Field field : fields) {
             boolean foundOneOrMoreHandlers = false;
@@ -81,7 +81,8 @@ public class Metadata {
                         dynamicEntityDao, prefix), metadata);
             }
         }
-        return attributes;
+        return metadata;
+    }
     }
 
     public Map<String, FieldMetadata> overrideMetadata(Class<?>[] entities, PropertyBuilder propertyBuilder, String prefix, Boolean isParentExcluded, String ceilingEntityFullyQualifiedClassname, String configurationKey, DynamicEntityDao dynamicEntityDao) {

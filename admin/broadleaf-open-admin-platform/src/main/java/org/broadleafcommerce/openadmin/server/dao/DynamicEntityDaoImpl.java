@@ -343,7 +343,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            Map<String, FieldMetadata> attributesMap = metadata.getFieldPresentationAttributes(null, targetClass, this, "");
+            Map<String, FieldMetadata> attributesMap = metadata.getFieldMetadataForTargetClass(null, targetClass, this, "");
             for (String property : attributesMap.keySet()) {
                 FieldMetadata presentationAttribute = attributesMap.get(property);
                 if (!presentationAttribute.getExcluded()) {
@@ -800,7 +800,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         String prefix,
         Boolean isParentExcluded
     ) {
-        Map<String, FieldMetadata> presentationAttributes = metadata.getFieldPresentationAttributes(null, targetClass, this, "");
+        Map<String, FieldMetadata> presentationAttributes = metadata.getFieldMetadataForTargetClass(null, targetClass, this, "");
         if (isParentExcluded) {
             for (String key : presentationAttributes.keySet()) {
                 LOG.debug("getPropertiesForEntityClass:Excluding " + key + " because parent is excluded.");
@@ -1263,7 +1263,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             //only use part of the prefix if it's more than one layer deep
             tempPrefix = prefix.substring(pos + 1, prefix.length());
         }
-        Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldPresentationAttributes(targetClass, returnedClass, this, tempPrefix + propertyName + ".");
+        Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldMetadataForTargetClass(targetClass, returnedClass, this, tempPrefix + propertyName + ".");
         if (isParentExcluded) {
             for (String key : componentPresentationAttributes.keySet()) {
                 LOG.debug("buildComponentProperties:Excluding " + key + " because the parent was excluded");
