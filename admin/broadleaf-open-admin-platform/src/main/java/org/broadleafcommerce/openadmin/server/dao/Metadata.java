@@ -26,6 +26,8 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.BasicEntityMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.DefaultFieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
@@ -39,12 +41,13 @@ import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @author Jeff Fischer
@@ -60,6 +63,9 @@ public class Metadata {
 
     @Resource(name= "blDefaultFieldMetadataProvider")
     protected FieldMetadataProvider defaultFieldMetadataProvider;
+
+    @Resource(name= "blBasicEntityMetadataProvider")
+    protected BasicEntityMetadataProvider basicEntityMetadataProvider;
 
     public Map<String, FieldMetadata> getFieldMetadataForTargetClass(Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao, String prefix) {
         Map<String, FieldMetadata> metadata = new HashMap<String, FieldMetadata>();
@@ -83,6 +89,33 @@ public class Metadata {
         }
         return metadata;
     }
+
+    public Map<String, TabMetadata> getBaseTabAndGroupMetadata(Class<?>[] entities) {
+        Map<String, TabMetadata> baseTabAndGroupMetadata = new HashMap<>();
+
+        // Go in reverse order since we want the lowest subclass to come last to guarantee that it takes effect
+        for (int i = entities.length-1;i >= 0; i--) {
+            basicEntityMetadataProvider.addTabAndGroupMetadata(new AddMetadataRequest(null, entities[i], null, ""),
+                baseTabAndGroupMetadata);
+        }
+
+        return baseTabAndGroupMetadata;
+    }
+
+    public void applyTabAndGroupAnnotationMetadataOverrides(Class<?>[] entities, Map<String, TabMetadata> mergedTabAndGroupMetadata) {
+        // Go in reverse order since we want the lowest subclass to come last to guarantee that it takes effect
+        for (int i = entities.length-2;i >= 0; i--) {
+            basicEntityMetadataProvider.overrideMetadataViaAnnotation(new OverrideViaAnnotationRequest(entities[i], true, null, ""),
+                mergedTabAndGroupMetadata);
+        }
+    }
+
+    public void applyTabAndGroupXmlMetadataOverrides(Class<?>[] entities, Map<String, TabMetadata> mergedTabAndGroupMetadata) {
+        // Go in reverse order since we want the lowest subclass to come last to guarantee that it takes effect
+        for (int i = entities.length-1;i >= 0; i--) {
+            basicEntityMetadataProvider.overrideMetadataViaXml(new OverrideViaXmlRequest("", entities[i].getCanonicalName(), "", true, null),
+                mergedTabAndGroupMetadata);
+        }
     }
 
     public Map<String, FieldMetadata> overrideMetadata(Class<?>[] entities, PropertyBuilder propertyBuilder, String prefix, Boolean isParentExcluded, String ceilingEntityFullyQualifiedClassname, String configurationKey, DynamicEntityDao dynamicEntityDao) {

@@ -39,6 +39,7 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.FieldMetadataProvider;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.LateStageAddMetadataRequest;
@@ -783,6 +784,14 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     @Override
     public List<Type> getPropertyTypes(Class<?> entityClass) {
         return dynamicDaoHelper.getPropertyTypes(entityClass, (HibernateEntityManager) standardEntityManager);
+    }
+
+    public Map<String, TabMetadata> getTabAndGroupMetadata(Class<?>[] entities) {
+        Map<String, TabMetadata> mergedTabAndGroupMetadata = metadata.getBaseTabAndGroupMetadata(entities);
+        metadata.applyTabAndGroupAnnotationMetadataOverrides(entities, mergedTabAndGroupMetadata);
+        metadata.applyTabAndGroupXmlMetadataOverrides(entities, mergedTabAndGroupMetadata);
+
+        return mergedTabAndGroupMetadata;
     }
 
     protected Map<String, FieldMetadata> getPropertiesForEntityClass(

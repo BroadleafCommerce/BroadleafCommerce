@@ -22,6 +22,8 @@ package org.broadleafcommerce.openadmin.server.util;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
+import org.broadleafcommerce.openadmin.dto.override.GroupMetadataOverride;
+import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -53,13 +55,13 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 throw new IllegalArgumentException("Must specify either a configurationKey or a ceilingEntity attribute for the overrideItem element");
             }
 
-            BeanDefinitionBuilder fieldMapBuilder = BeanDefinitionBuilder.rootBeanDefinition(MapFactoryBean.class);
-            Map<String, BeanDefinition> fieldMap = new ManagedMap<String, BeanDefinition>();
+            BeanDefinitionBuilder mapBuilder = BeanDefinitionBuilder.rootBeanDefinition(MapFactoryBean.class);
+            Map<String, BeanDefinition> overrideItemMap = new ManagedMap<String, BeanDefinition>();
             List<Element> fieldElements = DomUtils.getChildElementsByTagName(overrideItem, "field");
             for (Element fieldElement : fieldElements) {
                 String fieldName = fieldElement.getAttribute("name");
                 BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(FieldMetadataOverride.class);
-                fieldMap.put(fieldName, metadataBuilder.getBeanDefinition());
+                overrideItemMap.put(fieldName, metadataBuilder.getBeanDefinition());
                 {
                     List<Element> propElements = DomUtils.getChildElementsByTagName(fieldElement, "property");
                     for (Element propElement : propElements) {
@@ -156,9 +158,40 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                     }
                 }
             }
-            fieldMapBuilder.addPropertyValue("sourceMap", fieldMap);
 
-            overallMap.put(StringUtils.isEmpty(configKey)?ceilingEntity:configKey, fieldMapBuilder.getBeanDefinition());
+            List<Element> tabElements = DomUtils.getChildElementsByTagName(overrideItem, "tab");
+            for (Element tabElement : tabElements) {
+                String overrideName = tabElement.getAttribute("tabName");
+                BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(MetadataOverride.class);
+                overrideItemMap.put(overrideName, metadataBuilder.getBeanDefinition());
+                {
+                    List<Element> propElements = DomUtils.getChildElementsByTagName(tabElement, "property");
+                    for (Element propElement : propElements) {
+                        String propName = propElement.getAttribute("property");
+                        String propValue = propElement.getAttribute("value");
+                        metadataBuilder.addPropertyValue(propName, propValue);
+                    }
+                }
+            }
+
+            List<Element> groupElements = DomUtils.getChildElementsByTagName(overrideItem, "group");
+            for (Element groupElement : groupElements) {
+                String overrideName = groupElement.getAttribute("tabName");
+                overrideName += "-@-" + groupElement.getAttribute("groupName");
+                BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(GroupMetadataOverride.class);
+                overrideItemMap.put(overrideName, metadataBuilder.getBeanDefinition());
+                {
+                    List<Element> propElements = DomUtils.getChildElementsByTagName(groupElement, "property");
+                    for (Element propElement : propElements) {
+                        String propName = propElement.getAttribute("property");
+                        String propValue = propElement.getAttribute("value");
+                        metadataBuilder.addPropertyValue(propName, propValue);
+                    }
+                }
+            }
+            mapBuilder.addPropertyValue("sourceMap", overrideItemMap);
+
+            overallMap.put(StringUtils.isEmpty(configKey) ? ceilingEntity : configKey, mapBuilder.getBeanDefinition());
         }
 
         overallMapBuilder.addPropertyValue("sourceMap", overallMap);
