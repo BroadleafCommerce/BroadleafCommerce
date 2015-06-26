@@ -21,8 +21,8 @@ package org.broadleafcommerce.openadmin.server.dao;
 
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -787,11 +787,26 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     public Map<String, TabMetadata> getTabAndGroupMetadata(Class<?>[] entities) {
-        Map<String, TabMetadata> mergedTabAndGroupMetadata = metadata.getBaseTabAndGroupMetadata(entities);
-        metadata.applyTabAndGroupAnnotationMetadataOverrides(entities, mergedTabAndGroupMetadata);
-        metadata.applyTabAndGroupXmlMetadataOverrides(entities, mergedTabAndGroupMetadata);
+        Class<?>[] superClassEntities = getSuperClassHierarchy(entities[entities.length-1]);
+
+        Map<String, TabMetadata> mergedTabAndGroupMetadata = metadata.getBaseTabAndGroupMetadata(superClassEntities);
+        metadata.applyTabAndGroupAnnotationMetadataOverrides(superClassEntities, mergedTabAndGroupMetadata);
+        metadata.applyTabAndGroupXmlMetadataOverrides(superClassEntities, mergedTabAndGroupMetadata);
 
         return mergedTabAndGroupMetadata;
+    }
+
+    public Class<?>[] getSuperClassHierarchy(Class<?> ceilingEntity) {
+        Class<?>[] entities = new Class<?>[]{};
+
+        if (ceilingEntity != null) {
+            entities = ArrayUtils.add(entities, ceilingEntity);
+            while (!ceilingEntity.getSuperclass().equals(Object.class)) {
+                entities = ArrayUtils.add(entities, ceilingEntity.getSuperclass());
+                ceilingEntity = ceilingEntity.getSuperclass();
+            }
+        }
+        return entities;
     }
 
     protected Map<String, FieldMetadata> getPropertiesForEntityClass(
