@@ -30,7 +30,7 @@ public class GroupMetadata implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected String ceilingEntity;
+    protected String owningClass;
 
     protected String groupName;
     protected Integer groupOrder;
@@ -87,18 +87,18 @@ public class GroupMetadata implements Serializable {
         this.collapsed = collapsed;
     }
 
-    public String getCeilingEntity() {
-        return ceilingEntity;
+    public String getOwningClass() {
+        return owningClass;
     }
 
-    public void setCeilingEntity(String ceilingEntity) {
-        this.ceilingEntity = ceilingEntity;
+    public void setOwningClass(String owningClass) {
+        this.owningClass = owningClass;
     }
 
     public GroupMetadata cloneFieldMetadata() {
         GroupMetadata metadata = new GroupMetadata();
 
-        metadata.ceilingEntity = ceilingEntity;
+        metadata.owningClass = owningClass;
 
         metadata.groupName = groupName;
         metadata.groupOrder = groupOrder;
@@ -131,7 +131,7 @@ public class GroupMetadata implements Serializable {
 
         GroupMetadata metadata = (GroupMetadata) o;
 
-        if (ceilingEntity != null ? !ceilingEntity.equals(metadata.ceilingEntity) : metadata.ceilingEntity != null) {
+        if (owningClass != null ? !owningClass.equals(metadata.owningClass) : metadata.owningClass != null) {
             return false;
         }
         if (groupName != null ? !groupName.equals(metadata.groupName) : metadata.groupName != null) {
@@ -159,7 +159,7 @@ public class GroupMetadata implements Serializable {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (ceilingEntity != null ? ceilingEntity.hashCode() : 0);
+        result = 31 * result + (owningClass != null ? owningClass.hashCode() : 0);
         result = 31 * result + (groupName != null ? groupName.hashCode() : 0);
         result = 31 * result + (groupOrder != null ? groupOrder.hashCode() : 0);
         result = 31 * result + (column != null ? column.hashCode() : 0);

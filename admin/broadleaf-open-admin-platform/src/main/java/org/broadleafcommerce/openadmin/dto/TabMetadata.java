@@ -31,7 +31,7 @@ public class TabMetadata implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected String ceilingEntity;
+    protected String owningClass;
 
     protected Map<String, GroupMetadata> groupMetadata;
     protected String tabName;
@@ -53,12 +53,12 @@ public class TabMetadata implements Serializable {
         this.tabOrder = tabOrder;
     }
 
-    public String getCeilingEntity() {
-        return ceilingEntity;
+    public String getOwningClass() {
+        return owningClass;
     }
 
-    public void setCeilingEntity(String ceilingEntity) {
-        this.ceilingEntity = ceilingEntity;
+    public void setOwningClass(String owningClass) {
+        this.owningClass = owningClass;
     }
 
     public Map<String, GroupMetadata> getGroupMetadata() {
@@ -72,7 +72,7 @@ public class TabMetadata implements Serializable {
     public TabMetadata cloneFieldMetadata() {
         TabMetadata metadata = new TabMetadata();
 
-        metadata.ceilingEntity = ceilingEntity;
+        metadata.owningClass = owningClass;
         metadata.setGroupMetadata(groupMetadata);
         metadata.tabName = tabName;
         metadata.tabOrder = tabOrder;
@@ -101,7 +101,7 @@ public class TabMetadata implements Serializable {
 
         TabMetadata metadata = (TabMetadata) o;
 
-        if (ceilingEntity != null ? !ceilingEntity.equals(metadata.ceilingEntity) : metadata.ceilingEntity != null) {
+        if (owningClass != null ? !owningClass.equals(metadata.owningClass) : metadata.owningClass != null) {
             return false;
         }
         if (tabName != null ? !tabName.equals(metadata.tabName) : metadata.tabName != null) {
@@ -117,7 +117,7 @@ public class TabMetadata implements Serializable {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (ceilingEntity != null ? ceilingEntity.hashCode() : 0);
+        result = 31 * result + (owningClass != null ? owningClass.hashCode() : 0);
         result = 31 * result + (tabName != null ? tabName.hashCode() : 0);
         result = 31 * result + (tabOrder != null ? tabOrder.hashCode() : 0);
         return result;

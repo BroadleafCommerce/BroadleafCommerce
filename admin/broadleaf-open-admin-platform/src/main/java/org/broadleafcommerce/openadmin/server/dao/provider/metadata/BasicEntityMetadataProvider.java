@@ -197,7 +197,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
             groupMetadataMap = new HashMap<>();
             tab.setTabName(tabPresentation.name());
             tab.setTabOrder(tabPresentation.order());
-            tab.setCeilingEntity(owningClass.getCanonicalName());
+            tab.setOwningClass(owningClass.getCanonicalName());
         }
 
         for (AdminGroupPresentation groupPresentation : tabPresentation.groups()) {
@@ -213,7 +213,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
     protected GroupMetadata addGroupMetadata(AdminGroupPresentation groupPresentation, Class<?> owningClass, Map<String, TabMetadata> metadata) {
         GroupMetadata group = new GroupMetadata();
 
-        group.setCeilingEntity(owningClass.getCanonicalName());
+        group.setOwningClass(owningClass.getCanonicalName());
         group.setGroupName(groupPresentation.name());
         group.setGroupOrder(groupPresentation.order());
         group.setColumn(groupPresentation.column());
