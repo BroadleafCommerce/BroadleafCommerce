@@ -231,5 +231,5 @@ public @interface AdminPresentationCollection {
      *
      * @return the group for this collection
      */
-    String group() default "General";
+    String group() default "";
 }
