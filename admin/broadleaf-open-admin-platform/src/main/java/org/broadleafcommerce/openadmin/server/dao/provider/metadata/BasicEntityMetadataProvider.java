@@ -71,6 +71,10 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
     public MetadataProviderResponse overrideMetadataViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, TabMetadata> metadata) {
         AdminPresentationClass annot = (AdminPresentationClass) getAnnotationFromEntityOrInterface(AdminPresentationClass.class, overrideViaAnnotationRequest.getRequestedEntity());
 
+        if (annot == null) {
+            return MetadataProviderResponse.NOT_HANDLED;
+        }
+
         for (AdminTabPresentationOverride tabOverride : annot.tabOverrides()) {
             TabMetadata tab = getTabFromMetadata(tabOverride.tabName(), metadata);
             if (tab != null) {
