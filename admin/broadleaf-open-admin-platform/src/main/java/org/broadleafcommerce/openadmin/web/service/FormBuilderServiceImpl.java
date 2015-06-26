@@ -664,7 +664,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     // Add the field to the appropriate FieldGroup
-                    ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getIsBorderlessGroup(), fmd.getTab(), fmd.getTabOrder());
+                    ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
                 }
             }
         }

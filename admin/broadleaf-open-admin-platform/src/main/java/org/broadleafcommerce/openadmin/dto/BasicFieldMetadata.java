@@ -87,7 +87,6 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected LookupType lookupType;
     protected Boolean translatable;
     protected String defaultValue;
-    protected Boolean isBorderlessGroup;
 
     //for MapFields
     protected String mapFieldValueClass;
@@ -539,14 +538,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.defaultValue = defaultValue;
     }
 
-    public Boolean getIsBorderlessGroup() {
-        return isBorderlessGroup;
-    }
-
-    public void setIsBorderlessGroup(Boolean isBorderlessGroup) {
-        this.isBorderlessGroup = isBorderlessGroup;
-    }
-
     @Override
     public FieldMetadata cloneFieldMetadata() {
         BasicFieldMetadata metadata = new BasicFieldMetadata();
@@ -625,7 +616,6 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.translatable = translatable;
         metadata.isDerived = isDerived;
         metadata.defaultValue = defaultValue;
-        metadata.isBorderlessGroup = isBorderlessGroup;
 
         metadata = (BasicFieldMetadata) populate(metadata);
 

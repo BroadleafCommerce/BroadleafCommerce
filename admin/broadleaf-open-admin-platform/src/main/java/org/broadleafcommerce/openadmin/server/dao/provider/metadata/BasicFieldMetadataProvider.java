@@ -639,9 +639,6 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (basicFieldMetadata.getGroup()!=null) {
             metadata.setGroup(basicFieldMetadata.getGroup());
         }
-        if (basicFieldMetadata.getIsBorderlessGroup()!=null) {
-            metadata.setIsBorderlessGroup(basicFieldMetadata.getIsBorderlessGroup());
-        }
         if (basicFieldMetadata.getGroupOrder()!=null) {
             metadata.setGroupOrder(basicFieldMetadata.getGroupOrder());
         }

@@ -84,7 +84,6 @@ public class FieldMetadataOverride extends MetadataOverride {
     //@AdminPresentation derived fields
     private VisibilityEnum visibility;
     private String group;
-    private Boolean isBorderlessGroup;
     private Integer groupOrder;
     protected Integer gridOrder;
     private String tab;
@@ -264,14 +263,6 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setGroup(String group) {
         this.group = group;
-    }
-
-    public Boolean getIsBorderlessGroup() {
-        return isBorderlessGroup;
-    }
-
-    public void setIsBorderlessGroup(Boolean isBorderlessGroup) {
-        this.isBorderlessGroup = isBorderlessGroup;
     }
 
     public Boolean isLargeEntry() {
