@@ -31,10 +31,12 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 
 import java.util.ArrayList;
@@ -100,7 +102,7 @@ public class PersistencePackageRequest {
     }
 
     /**
-     * Creates a semi-populate PersistencePacakageRequest based on the specified FieldMetadata. This initializer
+     * Creates a semi-populate PersistencePacakageRequest based on the specified Metadata. This initializer
      * will copy over persistence perspective items from the metadata as well as set the appropriate OperationTypes
      * as specified in the annotation/xml configuration for the field.
      * 
@@ -157,6 +159,18 @@ public class PersistencePackageRequest {
                 request.setMapStructure(mapStructure);
                 request.setForeignKey(foreignKey);
                 request.setCustomCriteria(fmd.getCustomCriteria());
+            }
+
+            @Override
+            public void visit(GroupMetadata gmd) {
+                request.setType(Type.STANDARD);
+                request.setCeilingEntityClassname(gmd.getOwningClass());
+            }
+
+            @Override
+            public void visit(TabMetadata tmd) {
+                request.setType(Type.STANDARD);
+                request.setCeilingEntityClassname(tmd.getOwningClass());
             }
         });
         

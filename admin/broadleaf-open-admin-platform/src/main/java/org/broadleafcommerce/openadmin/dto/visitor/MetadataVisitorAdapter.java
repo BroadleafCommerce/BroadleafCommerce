@@ -22,7 +22,9 @@ package org.broadleafcommerce.openadmin.dto.visitor;
 import org.broadleafcommerce.openadmin.dto.AdornedTargetCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicCollectionMetadata;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
+import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 
 import java.io.Serializable;
 
@@ -48,6 +50,16 @@ public class MetadataVisitorAdapter implements MetadataVisitor, Serializable {
 
     @Override
     public void visit(MapMetadata metadata) {
+        throw new IllegalArgumentException("Not supported in this context");
+    }
+
+    @Override
+    public void visit(GroupMetadata metadata) {
+        throw new IllegalArgumentException("Not supported in this context");
+    }
+
+    @Override
+    public void visit(TabMetadata metadata) {
         throw new IllegalArgumentException("Not supported in this context");
     }
 }
