@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>4.0.0-PATCHSOLR1</version>
+        <version>4.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>broadleaf-contentmanagement-module</artifactId>
     <packaging>jar</packaging>
