@@ -28,15 +28,25 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Table;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
-import javax.persistence.Entity;
 import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -45,10 +55,10 @@ import java.io.Serializable;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "TranslationImpl_baseTranslation")
 //multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
 @Table(appliesTo = "BLC_TRANSLATION", indexes = {
-        @Index(name = "TRANSLATION_INDEX", columnNames = {"ENTITY_TYPE","ENTITY_ID","FIELD_NAME","LOCALE_CODE"})
+        @Index(name = "TRANSLATION_INDEX", columnNames = { "ENTITY_TYPE", "ENTITY_ID", "FIELD_NAME", "LOCALE_CODE" })
 })
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
@@ -59,13 +69,12 @@ public class TranslationImpl implements Serializable, Translation {
     @Id
     @GeneratedValue(generator = "TranslationId")
     @GenericGenerator(
-        name = "TranslationId",
-        strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-                @Parameter(name = "segment_value", value = "TranslationImpl"),
-                @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.i18n.domain.TranslationImpl")
-        }
-    )
+            name = "TranslationId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "TranslationImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.i18n.domain.TranslationImpl")
+            })
     @Column(name = "TRANSLATION_ID")
     protected Long id;
 
@@ -88,7 +97,7 @@ public class TranslationImpl implements Serializable, Translation {
     @Column(name = "TRANSLATED_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
-    @AdminPresentation(friendlyName = "TranslationImpl_TranslatedValue", prominent = true)
+    @AdminPresentation(friendlyName = "TranslationImpl_TranslatedValue", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String translatedValue;
 
     /* ************************ */
@@ -108,7 +117,7 @@ public class TranslationImpl implements Serializable, Translation {
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
     /* ************************** */
-    
+
     @Override
     public Long getId() {
         return id;
@@ -118,7 +127,7 @@ public class TranslationImpl implements Serializable, Translation {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public String getEntityId() {
         return entityId;
