@@ -35,13 +35,9 @@ import java.lang.annotation.Target;
 public @interface AdminGroupPresentation {
 
     /**
-     * Specify a GUI grouping for this field
-     * Fields in the same group will be visually grouped together in the GUI
-     * <br />
-     * <br />
-     * Note: for support I18N, this can also be a key to retrieve a localized String
+     * Specify a GUI group name
      *
-     * @return the group for this field
+     * @return the group name
      */
     String name() default "General";
 
@@ -56,12 +52,22 @@ public @interface AdminGroupPresentation {
     int order() default 99999;
 
     /**
+     * Optional - only required if you want to place a group in a column other than the "main" column
      *
+     * Specify which column that the group should be placed into.
+     * By default, groups are placed in the "main" column (0). To place in the right-side "sidebar" column,
+     * set column to 1.
+     *
+     * @return the containing column of the group
      */
     int column() default 0;
 
     /**
+     * Optional - only required if you want to remove the group's border
      *
+     * This only applies to groups that are in the "main" column.
+     *
+     * @return whether or not the group is borderless
      */
     boolean borderless() default false;
 

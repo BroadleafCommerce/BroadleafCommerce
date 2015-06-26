@@ -34,19 +34,25 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface AdminTabPresentation {
 
+    /**
+     * These AdminGroupPresentation items define each group that will be displayed within the tab
+     * of the entity's EntityForm.
+     *
+     * @return the tabs for the entity's EntityForm
+     */
     AdminGroupPresentation[] groups() default {};
 
     /**
-     * Specify a GUI tab for this field
+     * Specify a GUI tab name
      *
-     * @return the tab for this field
+     * @return the tab name
      */
     String name() default "General";
 
     /**
-     * Optional - only required if you want to order the appearance of the tabs in the UI
+     * Optional - only required if you want to order the appearance of tabs in the UI
      *
-     * Specify an order for this tab. Tabs will be sorted int he resulting form in
+     * Specify an order for this tab. Tabs will be sorted in the resulting form in
      * ascending order based on this parameter.
      *
      * The default tab will render with an order of 100.

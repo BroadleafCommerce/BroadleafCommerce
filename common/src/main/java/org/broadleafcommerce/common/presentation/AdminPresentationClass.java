@@ -78,29 +78,25 @@ public @interface AdminPresentationClass {
     boolean excludeFromPolymorphism() default false;
 
     /**
-     * Members of this map can be displayed as form fields, rather than in a standard grid. When populated,
-     * mapDisplayFields informs the form building process to create the fields described here and persist those fields
-     * in this map structure.
+     * These AdminTabPresentation items define each tab that will be displayed in the entity's EntityForm.
      *
-     * @return the fields to display that represent the members of this map
+     * @return the tabs for the entity's EntityForm
      */
     AdminTabPresentation[] tabs() default {};
 
     /**
-     * Members of this map can be displayed as form fields, rather than in a standard grid. When populated,
-     * mapDisplayFields informs the form building process to create the fields described here and persist those fields
-     * in this map structure.
+     * These AdminTabPresentationOverride items override a superclass's tab information by targeting the
+     * superclass's tab and the property to be overridden
      *
-     * @return the fields to display that represent the members of this map
+     * @return the tab overrides for the entity's EntityForm
      */
     AdminTabPresentationOverride[] tabOverrides() default {};
 
     /**
-     * Members of this map can be displayed as form fields, rather than in a standard grid. When populated,
-     * mapDisplayFields informs the form building process to create the fields described here and persist those fields
-     * in this map structure.
+     * These AdminGroupPresentationOverride items override a superclass's group information by targeting the
+     * superclass's tab, group, and the property to be overridden
      *
-     * @return the fields to display that represent the members of this map
+     * @return the group overrides for the entity's EntityForm
      */
     AdminGroupPresentationOverride[] groupOverrides() default {};
 
