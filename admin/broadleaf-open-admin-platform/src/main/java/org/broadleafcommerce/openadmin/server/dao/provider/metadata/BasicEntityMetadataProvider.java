@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.presentation.AdminTabPresentation;
 import org.broadleafcommerce.common.presentation.override.AdminGroupPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminTabPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
@@ -39,7 +40,6 @@ import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderRespo
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +54,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
 
     @Override
     public MetadataProviderResponse addTabAndGroupMetadata(AddMetadataRequest addMetadataRequest, Map<String, TabMetadata> metadata) {
-        AdminPresentationClass annot = (AdminPresentationClass) getAnnotationFromEntityOrInterface(AdminPresentationClass.class, addMetadataRequest.getTargetClass());
+        AdminPresentationClass annot = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, addMetadataRequest.getTargetClass());
 
         if (annot == null) {
             return MetadataProviderResponse.NOT_HANDLED;
@@ -69,7 +69,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
 
     @Override
     public MetadataProviderResponse overrideMetadataViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, TabMetadata> metadata) {
-        AdminPresentationClass annot = (AdminPresentationClass) getAnnotationFromEntityOrInterface(AdminPresentationClass.class, overrideViaAnnotationRequest.getRequestedEntity());
+        AdminPresentationClass annot = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, overrideViaAnnotationRequest.getRequestedEntity());
 
         if (annot == null) {
             return MetadataProviderResponse.NOT_HANDLED;
@@ -173,19 +173,6 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
                 tab.setTabOrder(override.getOrder());
             }
         }
-    }
-
-    private Annotation getAnnotationFromEntityOrInterface(Class annotationType, Class entity) {
-        Annotation result = entity.getAnnotation(annotationType);
-        if (result == null) {
-            for (Class inter : entity.getInterfaces()) {
-                result = inter.getAnnotation(annotationType);
-                if (result != null) {
-                    break;
-                }
-            }
-        }
-        return result;
     }
 
     protected TabMetadata addTabMetadata(AdminTabPresentation tabPresentation, Class<?> owningClass, Map<String, TabMetadata> metadata) {

@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.OptionFilterParamType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.util.BLCAnnotationUtils;
 import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -76,9 +77,9 @@ public abstract class AbstractFieldMetadataProvider implements FieldMetadataProv
             AdminPresentationClass adminPresentationClass;
             if (parentClass != null) {
                 metadata.setOwningClass(parentClass.getName());
-                adminPresentationClass = parentClass.getAnnotation(AdminPresentationClass.class);
+                adminPresentationClass = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, parentClass);
             } else {
-                adminPresentationClass = targetClass.getAnnotation(AdminPresentationClass.class);
+                adminPresentationClass = (AdminPresentationClass) BLCAnnotationUtils.getAnnotationFromEntityOrInterface(AdminPresentationClass.class, targetClass);
             }
             if (adminPresentationClass != null) {
                 String friendlyName = adminPresentationClass.friendlyName();
