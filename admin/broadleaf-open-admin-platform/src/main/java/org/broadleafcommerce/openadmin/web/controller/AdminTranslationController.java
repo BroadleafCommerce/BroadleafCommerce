@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -119,7 +118,6 @@ public class AdminTranslationController extends AdminAbstractController {
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
 
         EntityForm entityForm = formService.buildTranslationForm(form, TranslationFormAction.ADD);
-
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/translationAdd");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -175,14 +173,9 @@ public class AdminTranslationController extends AdminAbstractController {
 
         Entity entity = service.addEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
 
-        for (Map.Entry<String, Field> entry : entityForm.getFields().entrySet()) {
-            String key = entry.getKey();
-            Field value = entry.getValue();
-            System.out.println("key=" + key + " value=" + value);
-        }
-
         entityFormValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
+            entityForm.setPreventSubmit();
             model.addAttribute("entity", entity);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/translationAdd");

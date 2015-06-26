@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.openadmin.web.processor;
 
 import org.apache.commons.logging.Log;
@@ -42,7 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Processor that returns all the errors within an {@link EntityForm} organized by tab, according to the expression passed
  * in as an argument.
@@ -56,16 +56,16 @@ import java.util.Map;
  */
 @Component("blErrorsProcessor")
 public class ErrorsProcessor extends AbstractAttrProcessor {
-    
+
     protected static final Log LOG = LogFactory.getLog(ErrorsProcessor.class);
 
     public static final String GENERAL_ERRORS_TAB_KEY = "generalErrors";
     public static final String GENERAL_ERROR_FIELD_KEY = "generalError";
-    
+
     public ErrorsProcessor() {
         super("errors");
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10000;
@@ -74,12 +74,12 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
     @Override
     protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
         String attributeValue = element.getAttributeValue(attributeName);
-        
+
         BindStatus bindStatus = FieldUtils.getBindStatus(arguments.getConfiguration(), arguments, attributeValue);
-        
+
         if (bindStatus.isError()) {
-            EntityForm form = (EntityForm) ((BindingResult)bindStatus.getErrors()).getTarget();
-            
+            EntityForm form = (EntityForm) ((BindingResult) bindStatus.getErrors()).getTarget();
+
             // Map of tab name -> (Map field Name -> list of error messages)
             Map<String, Map<String, List<String>>> result = new HashMap<String, Map<String, List<String>>>();
             for (FieldError err : bindStatus.getErrors().getFieldErrors()) {
@@ -90,7 +90,7 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                 if (tab != null) {
                     tabName = tab.getTitle();
                 }
-                
+
                 Map<String, List<String>> tabErrors = result.get(tabName);
                 if (tabErrors == null) {
                     tabErrors = new HashMap<String, List<String>>();
@@ -98,10 +98,10 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                 }
                 if (err.getField().contains(DynamicEntityFormInfo.FIELD_SEPARATOR)) {
                     //at this point the field name actually occurs within some array syntax
-                    String fieldName = err.getField().substring(err.getField().indexOf('[') + 1, err.getField().lastIndexOf(']'));
+                    String fieldName = extractFieldName(err);
                     String[] fieldInfo = fieldName.split("\\" + DynamicEntityFormInfo.FIELD_SEPARATOR);
                     Field formField = form.getDynamicForm(fieldInfo[0]).getFields().get(fieldName);
-                    
+
                     if (formField != null) {
                         addFieldError(formField.getFriendlyName(), err.getCode(), tabErrors);
                     } else {
@@ -109,22 +109,31 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                         addFieldError(fieldName, err.getCode(), tabErrors);
                     }
                 } else {
-                    Field formField = form.findField(err.getField());
-                    if (formField != null) {
-                        addFieldError(formField.getFriendlyName(), err.getCode(), tabErrors);
+                    if (form.getTabs().size() > 0) {
+                        Field formField = form.findField(err.getField());
+                        if (formField != null) {
+                            addFieldError(formField.getFriendlyName(), err.getCode(), tabErrors);
+                        } else {
+                            LOG.warn("Could not find field " + err.getField() + " within the main form");
+                            addFieldError(err.getField(), err.getCode(), tabErrors);
+                        }
                     } else {
-                        LOG.warn("Could not field field " + err.getField() + " within the main form");
-                        addFieldError(err.getField(), err.getCode(), tabErrors);
+                        //this is the code that is executed when a Translations add action contains errors
+                        //TODO: research what else can be sent from this stage
+                        String fieldName = extractFieldName(err);
+                        Map<String, Object> localVariables = new HashMap<String, Object>();
+                        localVariables.put("tabErrors", tabErrors);
+                        return ProcessorResult.setLocalVariables(localVariables);
                     }
                 }
             }
-            
+
             String translatedGeneralTab = GENERAL_ERRORS_TAB_KEY;
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             if (context != null && context.getMessageSource() != null) {
                 translatedGeneralTab = context.getMessageSource().getMessage(translatedGeneralTab, null, translatedGeneralTab, context.getJavaLocale());
             }
-            
+
             for (ObjectError err : bindStatus.getErrors().getGlobalErrors()) {
                 Map<String, List<String>> tabErrors = result.get(GENERAL_ERRORS_TAB_KEY);
                 if (tabErrors == null) {
@@ -133,15 +142,21 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                 }
                 addFieldError(GENERAL_ERROR_FIELD_KEY, err.getCode(), tabErrors);
             }
-            
-            Map<String,Object> localVariables = new HashMap<String,Object>();
+
+            Map<String, Object> localVariables = new HashMap<String, Object>();
             localVariables.put("tabErrors", result);
             return ProcessorResult.setLocalVariables(localVariables);
         }
         return ProcessorResult.OK;
-        
+
     }
-    
+
+    private String extractFieldName(FieldError err) {
+        String fieldExpression = err.getField();
+        String fieldName = fieldExpression.substring(fieldExpression.indexOf('[') + 1, fieldExpression.lastIndexOf(']'));
+        return fieldName;
+    }
+
     protected void addFieldError(String fieldName, String message, Map<String, List<String>> tabErrors) {
         List<String> messages = tabErrors.get(fieldName);
         if (messages == null) {

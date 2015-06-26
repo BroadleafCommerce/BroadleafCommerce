@@ -49,8 +49,13 @@ $(document).ready(function() {
 			type: "POST",
 			data: $form.serialize()
 		}, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data));
-            BLCAdmin.hideCurrentModal();
+			//prevenSubmit is a hidden field whose value is sent from the translations controller, when there are errors
+			//"data" contains the new copy of the form, validated 
+			var preventSubmit = $(data).find(".modal-body").find("input[name=preventSubmit]").attr("value");
+			if (!preventSubmit){
+              BLCAdmin.listGrid.replaceRelatedListGrid($(data));
+              BLCAdmin.hideCurrentModal();
+			}
 	    });
 		
 		return false;
