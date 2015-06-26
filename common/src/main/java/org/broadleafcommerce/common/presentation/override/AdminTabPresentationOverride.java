@@ -35,17 +35,23 @@ import java.lang.annotation.Target;
 public @interface AdminTabPresentationOverride {
 
     /**
+     * Target the tab that you wish to override
      *
+     * @return the tab name
      */
     String tabName();
 
     /**
+     * Target the property which you wish to override
      *
+     * @return the property name
      */
     String property();
 
     /**
+     * Set the new value of the property
      *
+     * @return the new value
      */
     String value();
 }

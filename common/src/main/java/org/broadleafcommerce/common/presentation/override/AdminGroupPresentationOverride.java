@@ -35,22 +35,30 @@ import java.lang.annotation.Target;
 public @interface AdminGroupPresentationOverride {
 
     /**
+     * Target the tab which contains the group that you wish to override
      *
+     * @return the tab name
      */
     String tabName();
 
     /**
+     * Target the group that you wish to override
      *
+     * @return the group name
      */
     String groupName();
 
     /**
+     * Target the property which you wish to override
      *
+     * @return the property name
      */
     String property();
 
     /**
+     * Set the new value of the property
      *
+     * @return the new value
      */
     String value();
 }
