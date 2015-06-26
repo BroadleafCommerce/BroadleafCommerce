@@ -410,3 +410,11 @@ input[disabled], input[readonly], fieldset[disabled] input {
 #back-button i:hover {
     color: #F2B95A;
 }
+
+.app-content .sidebar .sidebar-content label{
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #B3B3B3;
+    font-weight: normal;
+}
