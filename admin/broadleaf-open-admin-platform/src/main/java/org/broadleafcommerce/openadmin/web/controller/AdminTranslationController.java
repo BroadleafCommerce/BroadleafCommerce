@@ -39,6 +39,8 @@ import org.broadleafcommerce.openadmin.web.service.TranslationFormBuilderService
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -176,6 +178,8 @@ public class AdminTranslationController extends AdminAbstractController {
         entityFormValidator.validate(entityForm, entity, result);
         if (result.hasErrors()) {
             entityForm.setPreventSubmit();
+            String jsErrorMap = resultToJS(result);
+            entityForm.setJsErrorMap(jsErrorMap);
             model.addAttribute("entity", entity);
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/translationAdd");
@@ -185,6 +189,30 @@ public class AdminTranslationController extends AdminAbstractController {
         } else {
             return viewTranslation(request, response, model, form, result);
         }
+    }
+
+    /**
+     * analyzes the error information, and converts it into a Javascript object  string, which can be passed to to the HTML form through the entityForm
+     * @param result
+     * @return
+     */
+    private String resultToJS(BindingResult result) {
+        StringBuffer sb = new StringBuffer("[");
+        List<ObjectError> errors = result.getAllErrors();
+        for (ObjectError objectError : errors) {
+            if (objectError instanceof FieldError) {
+                FieldError ferr = (FieldError) objectError;
+                sb.append("{");
+                sb.append("\"").append(ferr.getField()).append("\":");
+                sb.append("\"").append(ferr.getDefaultMessage()).append("\"");
+                sb.append("},");
+            }
+        }
+        if (sb.length() > 1) {
+            sb.deleteCharAt(sb.length() - 1); //the last comma
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.GET)

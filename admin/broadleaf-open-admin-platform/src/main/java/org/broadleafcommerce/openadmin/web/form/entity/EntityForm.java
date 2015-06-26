@@ -67,6 +67,12 @@ public class EntityForm {
      */
     protected Boolean preventSubmit = false;
 
+    /**
+     * a string representation of a Javascript object containing a map of fields => errors
+     * Useful when filling a translation form, as the (only) way to determine to which fields error messaging needs to be attached
+     */
+    protected String jsErrorMap;
+
     protected String translationCeilingEntity;
     protected String translationId;
 
@@ -619,6 +625,14 @@ public class EntityForm {
 
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
+    }
+
+    public String getJsErrorMap() {
+        return jsErrorMap;
+    }
+
+    public void setJsErrorMap(String jsErrorMap) {
+        this.jsErrorMap = jsErrorMap;
     }
 
 }

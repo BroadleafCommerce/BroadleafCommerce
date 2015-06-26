@@ -55,6 +55,15 @@ $(document).ready(function() {
 			if (!preventSubmit){
               BLCAdmin.listGrid.replaceRelatedListGrid($(data));
               BLCAdmin.hideCurrentModal();
+			}else{
+				var errorMapString = $(data).find(".modal-body").find("input[name=jsErrorMapString]").attr("value");
+				var errorMap = JSON.parse(errorMapString);
+				errorMap.forEach(function(item){
+					for (var name in item){
+						var value = item[name];
+                        console.log('field ' + name + ' has error ' + value);						
+					}
+				});
 			}
 	    });
 		

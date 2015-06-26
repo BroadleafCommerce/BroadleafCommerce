@@ -25,8 +25,7 @@
     <input type="hidden" th:field="*{sectionCrumbs}"  />
     <input type="hidden" th:field="*{mainEntityName}" />
     <input type="hidden" name="preventSubmit" th:value="*{preventSubmit}" />
-
-
+    <input type="hidden" name="jsErrorMapString" th:value="*{jsErrorMap}" />
 
     <div th:unless="${hideTopLevelErrors}" class="errors" blc_admin:errors="*{*}" th:if="${#fields.hasErrors('*')}">
           <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
