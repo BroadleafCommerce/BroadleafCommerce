@@ -994,7 +994,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 ListGrid listGrid = buildCollectionListGrid(containingEntityId, subCollectionEntities, p, ef.getSectionKey(), sectionCrumbs);
 
                 CollectionMetadata md = ((CollectionMetadata) p.getMetadata());
-                ef.addListGrid(listGrid, md.getTab(), md.getTabOrder(), md.getGroup(), md.getGroupOrder());
+                ef.addListGrid(listGrid, md.getTab(), md.getTabOrder(), md.getGroup());
             }
         }
         

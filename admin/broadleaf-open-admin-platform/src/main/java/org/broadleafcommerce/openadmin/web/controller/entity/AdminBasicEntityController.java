@@ -1197,7 +1197,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     ListGrid listGrid = formService.buildCollectionListGrid(alternateIdProperty.getValue(), drs, p,
                             ppr.getAdornedList().getAdornedTargetEntityClassname(), sectionCrumbs);
                     listGrid.getToolbarActions().add(DefaultListGridActions.ADD);
-                    entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), fmd.getGroupOrder());
+                    entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup());
                 } else if (p != null && p.getMetadata() instanceof MapMetadata) {
                     // See above comment for AdornedTargetCollectionMetadata
                     MapMetadata mmd = (MapMetadata) p.getMetadata();
@@ -1209,7 +1209,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     ListGrid listGrid = formService.buildCollectionListGrid(alternateIdProperty.getValue(), drs, p,
                             mmd.getTargetClass(), sectionCrumbs);
                     listGrid.getToolbarActions().add(DefaultListGridActions.ADD);
-                    entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), fmd.getGroupOrder());
+                    entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup());
                 }
             }
             
