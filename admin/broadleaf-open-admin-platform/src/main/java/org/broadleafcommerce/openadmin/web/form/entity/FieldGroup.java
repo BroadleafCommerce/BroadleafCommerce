@@ -21,6 +21,7 @@
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class FieldGroup {
 
@@ -42,6 +44,27 @@ public class FieldGroup {
     protected Boolean collapsed;
     protected String toolTip;
 
+    Set<ListGrid> listGrids = new TreeSet<ListGrid>(new Comparator<ListGrid>() {
+        @Override
+        public int compare(ListGrid o1, ListGrid o2) {
+            return new CompareToBuilder()
+                .append(o1.getOrder(), o2.getOrder())
+                .append(o1.getSubCollectionFieldName(), o2.getSubCollectionFieldName())
+                .toComparison();
+        }
+    });
+
+    public void removeListGrid(ListGrid listGrid) {
+        listGrids.remove(listGrid);
+    }
+
+    public Set<ListGrid> getListGrids() {
+        return listGrids;
+    }
+
+    public void setListGrids(Set<ListGrid> listGrids) {
+        this.listGrids = listGrids;
+    }
 
     public Boolean getIsVisible() {
         if (isVisible != null) {
@@ -51,6 +74,9 @@ public class FieldGroup {
             if (f.getIsVisible()) {
                 return true;
             }
+        }
+        if (listGrids.size() > 0) {
+            return true;
         }
         return false;
     }

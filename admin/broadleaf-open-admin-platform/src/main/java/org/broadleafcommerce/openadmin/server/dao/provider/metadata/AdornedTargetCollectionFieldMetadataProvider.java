@@ -383,6 +383,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
             override.setOrder(adornedTargetCollection.order());
             override.setTab(adornedTargetCollection.tab());
             override.setTabOrder(adornedTargetCollection.tabOrder());
+            override.setGroup(adornedTargetCollection.group());
             override.setSecurityLevel(adornedTargetCollection.securityLevel());
             override.setAddType(adornedTargetCollection.operationTypes().addType());
             override.setFetchType(adornedTargetCollection.operationTypes().fetchType());
@@ -607,6 +608,10 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
         }
         if (adornedTargetCollectionMetadata.getTabOrder() != null) {
             metadata.setTabOrder(adornedTargetCollectionMetadata.getTabOrder());
+        }
+
+        if (adornedTargetCollectionMetadata.getGroup() != null) {
+            metadata.setGroup(adornedTargetCollectionMetadata.getGroup());
         }
 
         if (adornedTargetCollectionMetadata.getCustomCriteria() != null) {

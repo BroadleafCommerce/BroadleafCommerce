@@ -21,7 +21,6 @@ package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,7 +56,6 @@ import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.editor.NonNullBooleanEditor;
 import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
-import org.broadleafcommerce.openadmin.web.form.entity.ComboField;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -1199,7 +1197,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     ListGrid listGrid = formService.buildCollectionListGrid(alternateIdProperty.getValue(), drs, p,
                             ppr.getAdornedList().getAdornedTargetEntityClassname(), sectionCrumbs);
                     listGrid.getToolbarActions().add(DefaultListGridActions.ADD);
-                    entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER);
+                    entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), fmd.getGroupOrder());
                 } else if (p != null && p.getMetadata() instanceof MapMetadata) {
                     // See above comment for AdornedTargetCollectionMetadata
                     MapMetadata mmd = (MapMetadata) p.getMetadata();
@@ -1211,7 +1209,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     ListGrid listGrid = formService.buildCollectionListGrid(alternateIdProperty.getValue(), drs, p,
                             mmd.getTargetClass(), sectionCrumbs);
                     listGrid.getToolbarActions().add(DefaultListGridActions.ADD);
-                    entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER);
+                    entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), fmd.getGroupOrder());
                 }
             }
             

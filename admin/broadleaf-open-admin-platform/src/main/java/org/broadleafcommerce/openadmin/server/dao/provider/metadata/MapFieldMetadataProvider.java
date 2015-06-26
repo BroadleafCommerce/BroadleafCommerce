@@ -393,6 +393,7 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
             override.setOrder(map.order());
             override.setTab(map.tab());
             override.setTabOrder(map.tabOrder());
+            override.setGroup(map.group());
             override.setSecurityLevel(map.securityLevel());
             override.setAddType(map.operationTypes().addType());
             override.setFetchType(map.operationTypes().fetchType());
@@ -688,6 +689,10 @@ public class MapFieldMetadataProvider extends AdvancedCollectionFieldMetadataPro
         }
         if (map.getTabOrder() != null) {
             metadata.setTabOrder(map.getTabOrder());
+        }
+
+        if (map.getGroup() != null) {
+            metadata.setGroup(map.getGroup());
         }
 
         if (map.getCustomCriteria() != null) {

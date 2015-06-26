@@ -343,6 +343,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             override.setOrder(annotColl.order());
             override.setTab(annotColl.tab());
             override.setTabOrder(annotColl.tabOrder());
+            override.setGroup(annotColl.group());
             override.setSecurityLevel(annotColl.securityLevel());
             override.setAddType(annotColl.operationTypes().addType());
             override.setFetchType(annotColl.operationTypes().fetchType());
@@ -518,6 +519,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         }
         if (collectionMetadata.getTabOrder() != null) {
             metadata.setTabOrder(collectionMetadata.getTabOrder());
+        }
+
+        if (collectionMetadata.getGroup() != null) {
+            metadata.setGroup(collectionMetadata.getGroup());
         }
 
         if (collectionMetadata.getSortProperty() != null) {
