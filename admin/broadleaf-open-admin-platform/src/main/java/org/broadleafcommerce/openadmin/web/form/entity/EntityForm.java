@@ -26,7 +26,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ public class EntityForm {
     public static final String MAP_KEY_GROUP = "keyGroup";
     public static final String DEFAULT_GROUP_NAME = "Default";
     public static final Integer DEFAULT_GROUP_ORDER = 99999;
+    public static final Integer DEFAULT_COLUMN = 0;
     public static final String DEFAULT_TAB_NAME = "General";
     public static final Integer DEFAULT_TAB_ORDER = 100;
 
@@ -315,41 +318,62 @@ public class EntityForm {
             groupName = context.getMessageSource().getMessage(groupName, null, groupName, context.getJavaLocale());
             tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
         }
-        
-        Tab tab = findTab(tabName);
-        if (tab == null) {
-            tab = new Tab();
-            tab.setTitle(tabName);
-            tab.setOrder(tabOrder);
-            tabs.add(tab);
-        }
 
-        FieldGroup fieldGroup = tab.findGroup(groupName);
+        FieldGroup fieldGroup = findGroup(groupName);
         if (fieldGroup == null) {
-            fieldGroup = new FieldGroup();
-            fieldGroup.setTitle(groupName);
-            fieldGroup.setOrder(groupOrder);
-            tab.getFieldGroups().add(fieldGroup);
+            Tab tab = findTab(tabName);
+            if (tab == null) {
+                tab = new Tab();
+                tab.setTitle(tabName);
+                tab.setOrder(tabOrder);
+                tabs.add(tab);
+            }
+
+            fieldGroup = tab.findGroup(groupName);
+            if (fieldGroup == null) {
+                fieldGroup = new FieldGroup();
+                fieldGroup.setTitle(groupName);
+                fieldGroup.setOrder(groupOrder);
+                tab.getFieldGroups().add(fieldGroup);
+            }
         }
 
         fieldGroup.addField(field);
     }
 
-    public void addListGrid(ListGrid listGrid, String tabName, Integer tabOrder) {
+    private FieldGroup findGroup(String groupName) {
+        FieldGroup fieldGroup = null;
+        for (Tab tab : tabs) {
+            fieldGroup = tab.findGroup(groupName);
+            if (fieldGroup != null) {
+                break;
+            }
+        }
+        return fieldGroup;
+    }
+
+    public void addListGrid(ListGrid listGrid, String tabName, Integer tabOrder, String groupName, Integer groupOrder) {
         // Tabs should be looked up and referenced by their display name
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getMessageSource() != null) {
             tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
+            groupName = context.getMessageSource().getMessage(groupName, null, groupName, context.getJavaLocale());
         }
+
+        FieldGroup fieldGroup = findGroup(groupName);
         Tab tab = findTab(tabName);
-        if (tab == null) {
+        if (fieldGroup != null) {
+            fieldGroup.getListGrids().add(listGrid);
+        } else if (fieldGroup == null && tab != null){
+            tab.getListGrids().add(listGrid);
+        } else {
             tab = new Tab();
             tab.setTitle(tabName);
             tab.setOrder(tabOrder);
             tabs.add(tab);
+            tab.getListGrids().add(listGrid);
         }
 
-        tab.getListGrids().add(listGrid);
     }
 
     /**
@@ -604,5 +628,40 @@ public class EntityForm {
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
-    
+
+    public String addTabFromTabMetadata(TabMetadata tabMetadata) {
+        Tab newTab = new Tab();
+        newTab.setTitle(tabMetadata.getTabName());
+        newTab.setOrder(tabMetadata.getTabOrder());
+
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            newTab.setTitle(context.getMessageSource().getMessage(tabMetadata.getTabName(), null, tabMetadata.getTabName(), context.getJavaLocale()));
+        }
+
+        tabs.add(newTab);
+        return newTab.getTitle();
+    }
+
+    public void addGroupFromGroupMetadata(GroupMetadata groupMetadata, String processedTabName) {
+        FieldGroup newGroup = new FieldGroup();
+        newGroup.setTitle(groupMetadata.getGroupName());
+        newGroup.setOrder(groupMetadata.getGroupOrder());
+        newGroup.setColumn(groupMetadata.getColumn());
+        newGroup.setIsBorderless(groupMetadata.getBorderless());
+        newGroup.setToolTip(groupMetadata.getTooltip());
+        newGroup.setCollapsed(groupMetadata.getCollapsed());
+
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            newGroup.setTitle(context.getMessageSource().getMessage(groupMetadata.getGroupName(), null, groupMetadata.getGroupName(), context.getJavaLocale()));
+            newGroup.setToolTip(context.getMessageSource().getMessage(groupMetadata.getTooltip(), null, groupMetadata.getTooltip(), context.getJavaLocale()));
+        }
+
+        Tab tab = findTab(processedTabName);
+        if (groupMetadata.getColumn() != DEFAULT_COLUMN) {
+            tab.setIsMultiColumn(true);
+        }
+        tab.getFieldGroups().add(newGroup);
+    }
 }

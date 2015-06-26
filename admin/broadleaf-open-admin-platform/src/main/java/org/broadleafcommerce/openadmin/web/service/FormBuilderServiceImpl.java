@@ -51,10 +51,12 @@ import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -77,6 +79,7 @@ import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
@@ -97,6 +100,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.ManyToOne;
@@ -670,6 +674,18 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
     }
 
+    protected void setEntityFormTabsAndGroups(EntityForm ef, Map<String, TabMetadata> tabMetadataMap) {
+        Set<String> tabMetadataKeySet = tabMetadataMap.keySet();
+        for (String tabKey : tabMetadataKeySet) {
+            TabMetadata tabMetadata = tabMetadataMap.get(tabKey);
+            String processedTabName = ef.addTabFromTabMetadata(tabMetadata);
+            Set<String> groupMetadataKeySet = tabMetadata.getGroupMetadata().keySet();
+            for (String groupKey : groupMetadataKeySet) {
+                ef.addGroupFromGroupMetadata(tabMetadata.getGroupMetadata().get(groupKey), processedTabName);
+            }
+        }
+    }
+
     @Override
     public String extractDefaultValueFromFieldData(String fieldType, BasicFieldMetadata fmd) {
         String defaultValue = fmd.getDefaultValue();
@@ -761,6 +777,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ef.setSectionKey(cmd.getCeilingType());
         }
         ef.setSectionCrumbsImpl(sectionCrumbs);
+
+        setEntityFormTabsAndGroups(ef, cmd.getTabAndGroupMetadata());
 
         setEntityFormFields(ef, Arrays.asList(cmd.getProperties()));
         

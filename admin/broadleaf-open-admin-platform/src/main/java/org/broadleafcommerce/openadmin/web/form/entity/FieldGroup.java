@@ -39,6 +39,9 @@ public class FieldGroup {
     protected Boolean isVisible;
     protected Integer column;
     protected Boolean isBorderless;
+    protected Boolean collapsed;
+    protected String toolTip;
+
 
     public Boolean getIsVisible() {
         if (isVisible != null) {
@@ -67,6 +70,17 @@ public class FieldGroup {
         this.isBorderless = isBorderless;
     }
 
+    public Boolean getCollapsed() {
+        if (collapsed != null) {
+            return collapsed;
+        }
+        return false;
+    }
+
+    public void setCollapsed(Boolean collapsed) {
+        this.collapsed = collapsed;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -89,6 +103,14 @@ public class FieldGroup {
 
     public void setColumn(Integer column) {
         this.column = column;
+    }
+
+    public String getToolTip() {
+        return toolTip;
+    }
+
+    public void setToolTip(String toolTip) {
+        this.toolTip = toolTip;
     }
     
     public FieldGroup withTitle(String title) {

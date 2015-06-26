@@ -35,6 +35,7 @@ public class Tab {
     protected String title;
     protected Integer order;
     protected String tabClass;
+    protected Boolean isMultiColumn;
 
     Set<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
         @Override
@@ -129,6 +130,14 @@ public class Tab {
 
     public void setTabClass(String tabClass) {
         this.tabClass = tabClass;
+    }
+
+    public Boolean getIsMultiColumn() {
+        return isMultiColumn == null ? false : isMultiColumn;
+    }
+
+    public void setIsMultiColumn(Boolean isMultiColumn) {
+        this.isMultiColumn = isMultiColumn;
     }
 }
 
