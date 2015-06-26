@@ -25,6 +25,8 @@ import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
 import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.broadleafcommerce.common.i18n.service.TranslationService;
+import org.broadleafcommerce.common.util.BLCMessageUtils;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -203,8 +205,10 @@ public class AdminTranslationController extends AdminAbstractController {
             if (objectError instanceof FieldError) {
                 FieldError ferr = (FieldError) objectError;
                 sb.append("{");
-                sb.append("\"").append(ferr.getField()).append("\":");
-                sb.append("\"").append(ferr.getDefaultMessage()).append("\"");
+                String fieldOnly = StringUtil.extractFieldNameFromExpression(ferr.getField());
+                sb.append("\"").append(fieldOnly).append("\":");
+                String localizedMessage = BLCMessageUtils.getMessage(ferr.getDefaultMessage());
+                sb.append("\"").append(localizedMessage).append("\"");
                 sb.append("},");
             }
         }

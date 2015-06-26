@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.common.util;
 
 import org.codehaus.jettison.json.JSONObject;
@@ -57,12 +58,12 @@ public class StringUtil {
         calc.enter(myChecksum);
         return calc.getStandardDeviation();
     }
-    
+
     /**
      * Protect against HTTP Response Splitting
      * @return
      */
-    public static String cleanseUrlString(String input){
+    public static String cleanseUrlString(String input) {
         return removeSpecialCharacters(decodeUrl(input));
     }
 
@@ -81,6 +82,16 @@ public class StringUtil {
             input = input.replaceAll("[ \\r\\n]", "");
         }
         return input;
+    }
+
+    /**
+     * given a string with the format "fields[someFieldName].value" (very common in error validation), returns
+     * only "someFieldName
+     * @param expression
+     * @return
+     */
+    public static String extractFieldNameFromExpression(String expression) {
+        return expression.substring(expression.indexOf('[') + 1, expression.lastIndexOf(']'));
     }
 
     public static String getMapAsJson(Map<String, Object> objectMap) {

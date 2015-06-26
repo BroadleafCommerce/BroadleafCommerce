@@ -58,10 +58,15 @@ $(document).ready(function() {
 			}else{
 				var errorMapString = $(data).find(".modal-body").find("input[name=jsErrorMapString]").attr("value");
 				var errorMap = JSON.parse(errorMapString);
+				//clear all previous error spans
+				$form.find("span.error").remove();
 				errorMap.forEach(function(item){
 					for (var name in item){
 						var value = item[name];
-                        console.log('field ' + name + ' has error ' + value);						
+						//"name" and "value" are the field name and the internationalized error message, respectively
+						//now, build the jQuery search string to pinpoint the field's box, and add the error message right after the label
+						var searchString = ".field-box[id=field-" + name + "]";
+						$form.find(searchString).find(".field-label").append("<span class='error'>" + value + "</span>");
 					}
 				});
 			}

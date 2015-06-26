@@ -22,6 +22,7 @@ package org.broadleafcommerce.openadmin.web.processor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -119,8 +120,8 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
                         }
                     } else {
                         //this is the code that is executed when a Translations add action contains errors
-                        //TODO: research what else can be sent from this stage
-                        String fieldName = extractFieldName(err);
+                        //this branch of the code just puts a placeholder "tabErrors", to avoid errprProcessor parsing errors, and
+                        //avoids checking on tabs, fieldGroups or fields (which for translations are empty), thus skipping any warning
                         Map<String, Object> localVariables = new HashMap<String, Object>();
                         localVariables.put("tabErrors", tabErrors);
                         return ProcessorResult.setLocalVariables(localVariables);
@@ -153,7 +154,7 @@ public class ErrorsProcessor extends AbstractAttrProcessor {
 
     private String extractFieldName(FieldError err) {
         String fieldExpression = err.getField();
-        String fieldName = fieldExpression.substring(fieldExpression.indexOf('[') + 1, fieldExpression.lastIndexOf(']'));
+        String fieldName = StringUtil.extractFieldNameFromExpression(fieldExpression);
         return fieldName;
     }
 
