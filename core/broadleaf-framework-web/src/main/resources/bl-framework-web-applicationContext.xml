@@ -165,6 +165,8 @@
     </bean>  
     
     <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring4.dialect.SpringStandardDialect" />
+    <bean id="thymeleafSpringSecurityDialect" class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect"/>
+    
     
     <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
 

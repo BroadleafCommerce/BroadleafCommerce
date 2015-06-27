@@ -12,14 +12,27 @@
         
         <ul class="inline-list small-spacing">
             <li th:each="action : ${listGrid.activeToolbarActions}">
-                <button class="tiny radius dark button" 
-                    type="button"
-                    th:classappend="${action.buttonClass}"
-                    th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-urlpostfix=${action.urlPostfix},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
-                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
-                </button>
+            	<th:block th:if="${(#strings.contains(action.buttonClass, 'reject') or #strings.contains(action.buttonClass, 'approve')) and #strings.contains(sectionKey, 'workflow/approvals')}">
+	                <button sec:authorize="hasRole('PERMISSION_ALL_APPROVER_SANDBOX')"
+	                	class="tiny radius dark button" 
+	                    type="button"
+	                    th:classappend="${action.buttonClass}"
+	                    th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+	                             data-urlpostfix=${action.urlPostfix},
+	                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
+	                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+	                </button>
+              	</th:block>
+                <th:block th:unless="${(#strings.contains(action.buttonClass, 'reject') or #strings.contains(action.buttonClass, 'approve')) and #strings.contains(sectionKey, 'workflow/approvals')}">
+	                <button class="tiny radius dark button" 
+	                    type="button"
+	                    th:classappend="${action.buttonClass}"
+	                    th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+	                             data-urlpostfix=${action.urlPostfix},
+	                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
+	                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+	                </button>
+                </th:block>
             </li>
             
             <li style="color: #8495A5" 
@@ -27,15 +40,29 @@
                 th:text="'|'" />
 
             <li th:each="action : ${listGrid.activeRowActions}">
-                <button disabled="disabled" 
-                    class="tiny radius dark row-action button" 
-                    type="button"
-                    th:classappend="${action.buttonClass}"
-                    th:attr="data-urlpostfix=${action.urlPostfix},
-                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
-                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
-                </button>
+            	<th:block th:if="${#strings.contains(action.buttonClass, 'reject') or #strings.contains(action.buttonClass, 'approve')}">
+	                <button sec:authorize="hasRole('PERMISSION_ALL_APPROVER_SANDBOX')"
+	                	disabled="disabled" 
+	                    class="tiny radius dark row-action button" 
+	                    type="button"
+	                    th:classappend="${action.buttonClass}"
+	                    th:attr="data-urlpostfix=${action.urlPostfix},
+	                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+	                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
+	                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+	                </button>
+	            </th:block> 
+	            <th:block th:unless="${#strings.contains(action.buttonClass, 'workflow-reject') or #strings.contains(action.buttonClass, 'workflow-approve')}">
+	            	<button disabled="disabled" 
+	                    class="tiny radius dark row-action button" 
+	                    type="button"
+	                    th:classappend="${action.buttonClass}"
+	                    th:attr="data-urlpostfix=${action.urlPostfix},
+	                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+	                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
+	                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+	                </button>
+	            </th:block>
             </li>
 
         </ul>
