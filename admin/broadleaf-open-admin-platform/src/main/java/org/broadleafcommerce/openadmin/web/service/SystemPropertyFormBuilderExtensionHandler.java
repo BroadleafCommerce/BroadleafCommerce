@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
-@Component
+@Component("blSystemPropertyFormBuilderExtensionHandler")
 public class SystemPropertyFormBuilderExtensionHandler extends AbstractFormBuilderExtensionHandler {
     
     protected static final Log LOG = LogFactory.getLog(SystemPropertyFormBuilderExtensionHandler.class);
