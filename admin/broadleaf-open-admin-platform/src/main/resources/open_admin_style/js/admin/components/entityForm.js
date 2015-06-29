@@ -98,17 +98,6 @@ $(document).ready(function() {
                     showErrors(data, BLCAdmin.messages.problemSaving);
                 }
                 
-                if (data.dirty) {
-                    for (var i = 0; i < data.dirty.length; i++) {
-                        var field = String(data.dirty[i]);
-                        field = field.replace(".", "--");
-                        var fieldLabel = $("#field-" + field);
-                        fieldLabel.addClass("dirty");
-                        BLCAdmin.workflow.initializeDirtyStates(fieldLabel.closest("form"));
-                    }
-
-                }
-                
                 BLCAdmin.runPostFormSubmitHandlers($form, data);
             });
         }

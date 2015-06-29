@@ -417,14 +417,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
             populateJsonValidationErrors(entityForm, result, json);
         }
         List<String> dirtyList = buildDirtyList(pathVars, request, id);
-        if (!dirtyList.isEmpty()) {
+        if (CollectionUtils.isNotEmpty(dirtyList)) {
             json.with("dirty", dirtyList);
         }
 
         return json.done();
     }
     
-    public List<String> buildDirtyList(Map<String, String> pathVars, HttpServletRequest request, String id) {
+    public List<String> buildDirtyList(Map<String, String> pathVars, HttpServletRequest request, String id) throws ServiceException {
         List<String> dirtyList = new ArrayList<>();
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
@@ -432,13 +432,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars);
         ClassMetadata cmd = null;
         Entity entity = null;
-        try {
-            cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
-            entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
-
-        } catch (ServiceException e) {
-            return null;
-        }
+        cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
         
         for (Property p: entity.getProperties()) {
             if (p.getIsDirty()) {
