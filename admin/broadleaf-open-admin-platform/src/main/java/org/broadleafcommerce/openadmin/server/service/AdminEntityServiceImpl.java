@@ -58,7 +58,6 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +69,6 @@ import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 /**
@@ -124,7 +122,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
         PersistenceResponse response = fetch(request);
         Entity[] entities = response.getDynamicResultSet().getRecords();
-        if (entities == null || entities.length != 1) throw new EntityNotFoundException();
+        if (ArrayUtils.isEmpty(entities)) {
+            throw new EntityNotFoundException();
+        }
 
         return response;
     }
@@ -267,7 +267,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
 
             response = fetch(ppr);
             Entity[] entities = response.getDynamicResultSet().getRecords();
-            if (entities == null || entities.length != 1) throw new EntityNotFoundException();
+            if (ArrayUtils.isEmpty(entities)) {
+                throw new EntityNotFoundException();
+            }
         } else if (md instanceof MapMetadata) {
             MapMetadata mmd = (MapMetadata) md;
             FilterAndSortCriteria fasc = new FilterAndSortCriteria(ppr.getForeignKey().getManyToField());
@@ -290,12 +292,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         } else {
             throw new IllegalArgumentException(String.format("The specified field [%s] for class [%s] was not an " +
                     "advanced collection field.", collectionProperty.getName(), containingClassMetadata.getCeilingType()));
-        }
-
-        if (response == null) {
-            throw new NoResultException(String.format("Could not find record for class [%s], field [%s], main entity id " +
-                    "[%s], collection entity id [%s]", containingClassMetadata.getCeilingType(),
-                    collectionProperty.getName(), containingEntityId, collectionItemId));
         }
 
         return response;
