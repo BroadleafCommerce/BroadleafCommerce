@@ -618,7 +618,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     query.addFacetQuery(getSolrTaggedFieldString(entry.getKey(), "key", range));
                 }
             } else {
-                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "key", null));
+                query.addFacetField(getSolrTaggedFieldString(entry.getKey(), "ex", null));
             }
         }
     }
@@ -710,8 +710,10 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
                 if (solrKey != null) {
                     String[] selectedValues = entry.getValue().clone();
+                    boolean rangeQuery = false;
                     for (int i = 0; i < selectedValues.length; i++) {
                         if (selectedValues[i].contains("range[")) {
+                            rangeQuery = true;
                             String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
                                     selectedValues[i].indexOf(']'));
                             String[] rangeValues = StringUtils.split(rangeValue, ':');
@@ -722,12 +724,22 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                             }
                             selectedValues[i] = getSolrRangeString(solrKey, minValue, maxValue);
                         } else {
-                            selectedValues[i] = solrKey + ":\"" + scrubFacetValue(selectedValues[i]) + "\"";
+                            selectedValues[i] = "\"" + scrubFacetValue(selectedValues[i]) + "\"";
                         }
                     }
-                    String valueString = StringUtils.join(selectedValues, " OR ");
+                    StringBuilder valueString = new StringBuilder();
+                    if (rangeQuery) {
+                        valueString.append(solrKey).append(":(");
+                        valueString.append(StringUtils.join(selectedValues, " OR "));
+                        valueString.append(")");
+                    } else {
+                        valueString.append("{!tag=").append(solrKey).append("}");
+                        valueString.append(solrKey).append(":(");
+                        valueString.append(StringUtils.join(selectedValues, " OR "));
+                        valueString.append(")");
+                    }
 
-                    query.addFilterQuery(valueString);
+                    query.addFilterQuery(valueString.toString());
                 }
             }
         }
