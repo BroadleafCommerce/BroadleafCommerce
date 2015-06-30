@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -36,7 +37,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PHONE")
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 public class PhoneImpl implements Phone {
 
     private static final long serialVersionUID = 1L;
@@ -44,34 +45,33 @@ public class PhoneImpl implements Phone {
     @Id
     @GeneratedValue(generator = "PhoneId")
     @GenericGenerator(
-        name="PhoneId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="PhoneImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.profile.core.domain.PhoneImpl")
-        }
-    )
+            name = "PhoneId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PhoneImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.PhoneImpl")
+            })
     @Column(name = "PHONE_ID")
     protected Long id;
 
     @Column(name = "COUNTRY_CODE")
-    @AdminPresentation(friendlyName = "PhoneImpl_Country_Code", order=1, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Country_Code", order = 1, group = "PhoneImpl_Phone")
     protected String countryCode;
 
-    @Column(name = "PHONE_NUMBER", nullable=false)
-    @AdminPresentation(friendlyName = "PhoneImpl_Phone_Number", order=2, group = "PhoneImpl_Phone")
+    @Column(name = "PHONE_NUMBER", nullable = true)
+    @AdminPresentation(friendlyName = "PhoneImpl_Phone_Number", order = 2, group = "PhoneImpl_Phone")
     protected String phoneNumber;
 
     @Column(name = "EXTENSION")
-    @AdminPresentation(friendlyName = "PhoneImpl_Extension", order=3, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Extension", order = 3, group = "PhoneImpl_Phone")
     protected String extension;
 
     @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName = "PhoneImpl_Default_Phone", order=4, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Default_Phone", order = 4, group = "PhoneImpl_Phone")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order=5, group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order = 5, group = "PhoneImpl_Phone")
     protected boolean isActive = true;
 
     @Override
