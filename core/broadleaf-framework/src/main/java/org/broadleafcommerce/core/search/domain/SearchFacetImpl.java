@@ -86,7 +86,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
             groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000)
     protected String label;
 
-    @ManyToOne(optional=false, targetEntity = FieldImpl.class)
+    @ManyToOne(targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
     @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = "SearchFacetImpl_description",
             prominent = true, gridOrder = 2000)

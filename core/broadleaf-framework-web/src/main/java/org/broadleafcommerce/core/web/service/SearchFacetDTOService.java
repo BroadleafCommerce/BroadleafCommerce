@@ -81,4 +81,6 @@ public interface SearchFacetDTOService {
     public String getValue(SearchFacetResultDTO result);
 
 
+    public String getUrlKey(SearchFacetDTO result);
+
 }
