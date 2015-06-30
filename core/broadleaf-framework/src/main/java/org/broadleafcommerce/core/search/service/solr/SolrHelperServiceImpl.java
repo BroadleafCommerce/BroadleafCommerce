@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -187,7 +188,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 .append(field.getAbbreviation()).append("_").append(field.getFacetFieldType().getType())
                 .toString();
     }
-    
+
     @Override
     public List<FieldType> getSearchableFieldTypes(Field field) {
         // We will index all configured searchable field types
@@ -195,12 +196,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         if (CollectionUtils.isNotEmpty(field.getSearchableFieldTypes())) {
             typesToConsider.addAll(field.getSearchableFieldTypes());
         }
-        
+
         // If there were no searchable field types configured, we will use TEXT as a default one
         if (CollectionUtils.isEmpty(typesToConsider)) {
             typesToConsider.add(FieldType.TEXT);
         }
-        
+
         return typesToConsider;
     }
 
@@ -236,7 +237,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
         return prefixString.toString();
     }
-    
+
     @Override
     public Long getCategoryId(Category category) {
         Long[] returnId = new Long[1];
@@ -286,7 +287,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         }
         return String.valueOf(product.getId());
     }
-    
+
     @Override
     public String getSolrDocumentId(SolrInputDocument document, Sku sku) {
         return String.valueOf(sku.getId());
@@ -301,7 +302,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public String getIdFieldName() {
         return "id";
     }
-    
+
     @Override
     public String getProductIdFieldName() {
         return "productId";
@@ -321,7 +322,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public String getExplicitCategoryFieldName() {
         return "explicitCategory";
     }
-    
+
     @Override
     public String getCatalogFieldName() {
         return "catalog_s";
@@ -346,7 +347,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public String getSandBoxChangeTypeFieldName() {
         return "sandboxChangeType_s";
     }
-    
+
     @Override
     public String getCategorySortFieldName(Category category) {
         Long categoryId = getCategoryId(category);
@@ -665,8 +666,15 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 if (solrFieldKeyMap.containsKey(field)) {
                     field = solrFieldKeyMap.get(field);
                 }
-                ORDER order = "desc".equals(sortField.split(" ")[1]) ? ORDER.desc : ORDER.asc;
-
+                ORDER order = ORDER.asc;
+                String[] sortFieldsSegments = sortField.split(" ");
+                if (sortFieldsSegments.length < 2) {
+                    StringBuilder msg = new StringBuilder().append("Solr sortquery received was " + sortQuery + ", but no sorting tokens could be extracted.");
+                    msg.append("\nDefaulting to ASCending");
+                    LOG.warn(msg.toString());
+                } else if ("desc".equals(sortFieldsSegments[1])) {
+                    order = ORDER.desc;
+                }
                 if (field != null) {
                     query.addSort(new SortClause(field, order));
                 }
