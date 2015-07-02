@@ -71,10 +71,11 @@ public class SearchFacetRangeCustomPersistenceHandler extends CustomPersistenceH
         }
 
         if (!userSort) {
-            for (String string : sortFields) {
+            for (int i = 0; i < sortFields.length; i++) {
+                String string = sortFields[i];
                 FilterAndSortCriteria fsc = cto.getCriteriaMap().get(string);
                 if (fsc == null) {
-                    fsc = new FilterAndSortCriteria(string);
+                    fsc = new FilterAndSortCriteria(string, i);
                     cto.add(fsc);
                 }
                 fsc.setSortAscending(true);
