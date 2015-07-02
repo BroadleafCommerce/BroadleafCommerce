@@ -24,7 +24,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public class CriteriaTransferObject {
     private Integer firstResult;
     private Integer maxResults;
 
-    private Map<String, FilterAndSortCriteria> criteriaMap = new LinkedHashMap<String, FilterAndSortCriteria>();
+    private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
 
     private List<FilterMapping> additionalFilterMappings = new ArrayList<FilterMapping>();
     private List<FilterMapping> nonCountAdditionalFilterMappings = new ArrayList<FilterMapping>();
