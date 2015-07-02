@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -237,8 +238,17 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
      * Removes the resource matching the passed in file name from the FileProvider
      */
     @Override
-    public boolean removeResource(String resourceName) {
-        return selectFileServiceProvider().removeResource(resourceName);
+    public boolean removeResource(final String resourceName) {
+        boolean response = selectFileServiceProvider().removeResource(resourceName);
+        //First, try to remove any matching files in the shared local directory. There is an edge case where you could
+        //remove a different asset from a different site that had the same name, but this would be rare and the system
+        //would automatically re-generate those extra deleted assets the next time they're requested.
+        String baseDirectory = getBaseDirectory(true);
+        removeLocalCacheFiles(resourceName, baseDirectory);
+        //Second, try to remove any matching assets that are cached in a site specific directory
+        baseDirectory = getBaseDirectory(false);
+        removeLocalCacheFiles(resourceName, baseDirectory);
+        return response;
     }
 
     /**
@@ -285,6 +295,31 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     public List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea) {
         checkFiles(workArea, files);
         return selectFileServiceProvider().addOrUpdateResourcesForPaths(workArea, files, removeFilesFromWorkArea);
+    }
+
+    protected void removeLocalCacheFiles(final String resourceName, String baseDirectory) {
+        String systemResourcePath = FilenameUtils.separatorsToSystem(resourceName);
+        String filePath = FilenameUtils.normalize(baseDirectory + File.separator + systemResourcePath);
+        if (filePath.contains(".")) {
+            filePath = filePath.substring(0, filePath.lastIndexOf("."));
+        }
+        filePath += "---";
+        final String checkPath = filePath;
+        File dir = new File(baseDirectory);
+        File[] children = dir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                String name = pathname.getAbsolutePath();
+                return name.startsWith(checkPath);
+            }
+        });
+        for (File cache : children) {
+            try {
+                cache.delete();
+            } catch (Exception e) {
+                LOG.warn(String.format("Unable to delete an asset cache file from the local filesystem (%s)", cache.getAbsolutePath()), e);
+            }
+        }
     }
 
     /**
