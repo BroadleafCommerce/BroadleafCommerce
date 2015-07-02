@@ -1058,8 +1058,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
         // Add in parent facets unless they are excluded
         List<CategorySearchFacet> parentFacets = null;
-        if (defaultParentCategory != null) {
-            parentFacets = defaultParentCategory.getCumulativeSearchFacets();   
+        if (getDefaultParentCategory() != null) {
+            parentFacets = getDefaultParentCategory().getCumulativeSearchFacets();   
             CollectionUtils.filter(parentFacets, new Predicate() {
                 @Override
                 public boolean evaluate(Object arg) {
@@ -1257,8 +1257,8 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getAllParentCategoryXrefs().add(clonedEntry);
         }
-        if (defaultParentCategory != null) {
-            cloned.setDefaultParentCategory(defaultParentCategory.createOrRetrieveCopyInstance(context).getClone());
+        if (getDefaultParentCategory() != null) {
+            cloned.setDefaultParentCategory(getDefaultParentCategory().createOrRetrieveCopyInstance(context).getClone());
         }
         for(CategoryXref entry : allChildCategoryXrefs){
             CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
