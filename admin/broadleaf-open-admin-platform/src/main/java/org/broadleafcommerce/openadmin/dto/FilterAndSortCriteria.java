@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.openadmin.dto;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,38 +37,74 @@ public class FilterAndSortCriteria {
     public static final String SORT_DIRECTION_PARAMETER = "sortDirection";
     public static final String START_INDEX_PARAMETER = "startIndex";
     public static final String MAX_INDEX_PARAMETER = "maxIndex";
-    
+
     public static final String IS_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NULL").intern();
     public static final String IS_NOT_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NOT_NULL").intern();
 
     protected String propertyId;
     protected List<String> filterValues = new ArrayList<String>();
     protected RestrictionType restrictionType;
+    protected int order;
 
     protected SortDirection sortDirection;
 
+    public FilterAndSortCriteria(String propertyId, int order) {
+        this.propertyId = propertyId;
+        this.order = order;
+    }
+
     public FilterAndSortCriteria(String propertyId) {
+        this.order = 0;
         this.propertyId = propertyId;
     }
-    
+
     public FilterAndSortCriteria(String propertyId, String filterValue) {
         this.propertyId = propertyId;
+        this.order = 0;
         setFilterValue(filterValue);
     }
-    
-    public FilterAndSortCriteria(String propertyId, List<String> filterValues) {
+
+    public FilterAndSortCriteria(String propertyId, String filterValue, int order) {
+        this.propertyId = propertyId;
+        this.order = order;
+        setFilterValue(filterValue);
+    }
+
+    public FilterAndSortCriteria(String propertyId, List<String> filterValues, int order) {
         setPropertyId(propertyId);
+        this.order = order;
         setFilterValues(filterValues);
     }
-    
-    public FilterAndSortCriteria(String propertyId, List<String> filterValues, SortDirection sortDirection) {
+
+    public FilterAndSortCriteria(String propertyId, List<String> filterValues) {
+        setPropertyId(propertyId);
+        this.order = 0;
+        setFilterValues(filterValues);
+    }
+
+    public FilterAndSortCriteria(String propertyId, List<String> filterValues, SortDirection sortDirection, int order) {
+        this.order = order;
         setPropertyId(propertyId);
         setFilterValues(filterValues);
         setSortDirection(sortDirection);
     }
-    
+
+    public FilterAndSortCriteria(String propertyId, List<String> filterValues, SortDirection sortDirection) {
+        this.order = 0;
+        setPropertyId(propertyId);
+        setFilterValues(filterValues);
+        setSortDirection(sortDirection);
+    }
+
+    public FilterAndSortCriteria(String propertyId, String[] filterValues, int order) {
+        this.propertyId = propertyId;
+        this.order = order;
+        setFilterValues(Arrays.asList(filterValues));
+    }
+
     public FilterAndSortCriteria(String propertyId, String[] filterValues) {
         this.propertyId = propertyId;
+        this.order = 0;
         setFilterValues(Arrays.asList(filterValues));
     }
 
@@ -143,6 +180,7 @@ public class FilterAndSortCriteria {
 
     protected TypedPredicate<String> getPredicateForSpecialValues(final boolean inclusive) {
         return new TypedPredicate<String>() {
+
             @Override
             public boolean eval(String value) {
                 // Note that this static String is the result of a call to String.intern(). This means that we are
@@ -155,6 +193,14 @@ public class FilterAndSortCriteria {
                 }
             }
         };
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
     }
 
 }
