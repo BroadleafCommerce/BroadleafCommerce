@@ -27,6 +27,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class FilterAndSortCriteria {
@@ -201,6 +202,17 @@ public class FilterAndSortCriteria {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public static class ComparatorByOrder implements Comparator<FilterAndSortCriteria> {
+
+        @Override
+        public int compare(FilterAndSortCriteria o1, FilterAndSortCriteria o2) {
+            Integer firstValue = o1.getOrder();
+            Integer secondValue = o2.getOrder();
+            return firstValue.compareTo(secondValue);
+        }
+
     }
 
 }
