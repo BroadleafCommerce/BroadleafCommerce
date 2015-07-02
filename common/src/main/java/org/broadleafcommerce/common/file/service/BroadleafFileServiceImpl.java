@@ -314,11 +314,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
             }
         });
         for (File cache : children) {
-            try {
-                cache.delete();
-            } catch (Exception e) {
-                LOG.warn(String.format("Unable to delete an asset cache file from the local filesystem (%s)", cache.getAbsolutePath()), e);
-            }
+            FileUtils.deleteQuietly(cache);
         }
     }
 
