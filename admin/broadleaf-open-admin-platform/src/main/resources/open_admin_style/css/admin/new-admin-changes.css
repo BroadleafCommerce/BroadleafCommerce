@@ -418,3 +418,7 @@ input[disabled], input[readonly], fieldset[disabled] input {
     color: #B3B3B3;
     font-weight: normal;
 }
+
+fieldset legend i.help-tip {
+    margin-left: 5px;
+}
