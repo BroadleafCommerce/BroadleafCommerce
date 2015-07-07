@@ -29,6 +29,7 @@ public class ListGridRecordIcon {
     
     protected String cssClass;
     protected String message;
+    protected Boolean hasDetails;
     
     public ListGridRecordIcon withCssClass(String cssClass) {
         setCssClass(cssClass);
@@ -37,6 +38,11 @@ public class ListGridRecordIcon {
 
     public ListGridRecordIcon withMessage(String message) {
         setMessage(message);
+        return this;
+    }
+    
+    public ListGridRecordIcon withHasDetails(Boolean hasDetails) {
+        setHasDetails(hasDetails);
         return this;
     }
 
@@ -56,4 +62,11 @@ public class ListGridRecordIcon {
         this.message = message;
     }
     
+    public Boolean getHasDetails() {
+        return hasDetails;
+    }
+    
+    public void setHasDetails(Boolean hasDetails) {
+        this.hasDetails = hasDetails;
+    }
 }
