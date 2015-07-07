@@ -92,9 +92,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -114,7 +111,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -834,8 +830,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         List<FilterMapping> filterMappings = new ArrayList<FilterMapping>();
 
-        processCtoMap(cto);
-
         for (String propertyId : cto.getCriteriaMap().keySet()) {
             if (mergedProperties.containsKey(propertyId)) {
                 boolean handled = false;
@@ -862,23 +856,6 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
         }
         return filterMappings;
-    }
-
-    /**
-     * rearranges the inner map of FilterAndSortCriterias of this object, sorting its values by their "order" field
-     * @param cto
-     */
-    protected void processCtoMap(CriteriaTransferObject cto) {
-        BiMap<String, FilterAndSortCriteria> bidiMap = HashBiMap.create(cto.getCriteriaMap());
-        List<FilterAndSortCriteria> sortedFsc = new ArrayList<FilterAndSortCriteria>(bidiMap.values());
-        Collections.sort(sortedFsc, new FilterAndSortCriteria.ComparatorByOrder());
-        Map<String, FilterAndSortCriteria> sortedMap = new LinkedHashMap<String, FilterAndSortCriteria>();
-        BiMap<FilterAndSortCriteria, String> inverse = bidiMap.inverse();
-        for (FilterAndSortCriteria filterAndSortCriteria : sortedFsc) {
-            String key = inverse.get(filterAndSortCriteria);
-            sortedMap.put(key, filterAndSortCriteria);
-        }
-        cto.setCriteriaMap(sortedMap);
     }
 
     @Override
