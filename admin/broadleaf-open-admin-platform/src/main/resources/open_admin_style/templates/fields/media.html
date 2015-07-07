@@ -1,0 +1,34 @@
+<div class="asset-selector-container"
+     th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
+
+    <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+    </label>
+    <br />
+    <input type="hidden" class="mediaItem" th:field="*{fields['__${field.name}__'].value}" />
+    
+    <span th:if="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
+        <img class="thumbnail" th:attrappend="data-fullurl=@{*{fields['__${field.name}__'].media.url}}"
+            th:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}" />
+    </span>
+    
+    <span th:unless="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
+        <img class="thumbnail placeholder-image" th:src="@{/img/admin/placeholder-60x60.gif}" />
+    </span>
+
+    <button class="show-asset-selector tiny radius secondary button hover-cursor"
+        type="button" th:inline="text"
+        th:if="${overrideAssetSectionKey}"
+        th:attr="data-select-url=@{${'/'+overrideAssetSectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
+        <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
+    </button>
+
+    <button class="show-asset-selector tiny radius secondary button hover-cursor"
+        type="button" th:inline="text"
+        th:unless="${overrideAssetSectionKey}"
+        th:attr="data-select-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
+        <i class="icon-camera"></i>&nbsp;[[#{Select_Upload_Image}]]
+    </button>
+
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+</div>

@@ -1,0 +1,121 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+ 
+#lightbox {
+    /** Default lightbox to hidden */
+    display: none;
+    z-index: 1030;
+}
+
+#lightbox #expire-message {
+    height: 300px;
+    text-align: center;
+    top: 50%;
+    width: 500px;
+    margin-left: -250px;
+    margin-top: -150px;
+}
+
+#lightbox #expire-message #expire-header {
+    text-align: left;
+    background: linear-gradient(to bottom, #525252 0%,#424242 100%);
+    border: 1px solid #464646;
+    
+}
+
+#lightbox #expire-message #expire-header #expire-header-message {
+    color: #F0F0F0;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+#lightbox #expire-message #expire-header span {
+    margin-left: 10px;
+}
+
+#lightbox #expire-message .expire-button {
+    background: linear-gradient(to bottom, #525252 0%,#424242 100%);
+    border: 1px solid #464646;
+    color: #F0F0F0;
+    margin-top: 25px;
+    
+}
+
+#lightbox #expire-message #expire-text {
+    color: #333;
+    font-size: 16px;
+}
+
+#lightbox #expire-message #expire-text span {
+    color: #8EAA2B;
+    font-weight: bold;
+}
+
+ul.entity-type-selection {
+	list-style-type: none;
+}
+
+.hover-cursor:hover {
+	cursor: pointer;
+}
+
+form.custom div.custom.dropdown { 
+	margin-bottom: 2px !important;
+}
+
+div.additional-foreign-key-container {
+}
+
+input.datepicker {
+	display: inline-block;
+}
+
+.datepicker-container {
+	display: block;
+    white-space: nowrap;
+}
+
+.datepicker-container:hover, input.datepicker:hover {
+	cursor: pointer;
+}
+
+.ui-datepicker-title,
+.ui-datepicker-calendar th,
+.ui-datepicker-calendar td {
+	font-size: 11px;
+}
+
+.ui-datepicker {
+	width: 14em !important;
+}
+
+.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
+.ui-timepicker-div dl { text-align: left; }
+.ui-timepicker-div dl dt { height: 25px; margin-bottom: -20px; font-size: 11px; }
+.ui-timepicker-div dl dt.ui_tpicker_time_label { margin-bottom: -25px; }
+.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; font-size: 11px; }
+.ui-timepicker-div td { font-size: 90%; }
+.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; font-size: 11px; }
+
+.ui-timepicker-rtl{ direction: rtl; }
+.ui-timepicker-rtl dl { text-align: right; }
+.ui-timepicker-rtl dl dd { margin: 0 65px 10px 10px; }
+
+.ui-datepicker-buttonpane button { font-size: 11px; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Integration
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+        <non-jta-data-source>jdbc/test</non-jta-data-source>
+        <exclude-unlisted-classes/>
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
+        </properties>
+    </persistence-unit>
+    
+    <persistence-unit name="blCMSStorage" transaction-type="RESOURCE_LOCAL">
+        <non-jta-data-source>jdbc/testCMS</non-jta-data-source>
+        <exclude-unlisted-classes/>
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
+        </properties>
+    </persistence-unit>
+    
+    <persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
+        <non-jta-data-source>jdbc/testSecure</non-jta-data-source>
+        <exclude-unlisted-classes/>
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>

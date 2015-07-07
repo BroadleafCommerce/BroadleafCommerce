@@ -1,0 +1,28 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head th:substituteby="layout/partials/head" />
+
+<body>
+<div class="app-content">
+
+    <div class="side-nav" th:substituteby="layout/partials/leftNav" />
+
+    <div class="content">
+        <div th:substituteby="layout/partials/header" />
+
+        <div class="section-content" th:classappend="${sandboxable != null} ? 'sandboxed'">
+            <div th:substituteby="layout/partials/secondLeftNav" />
+            <div th:substituteby="${templateName}" />
+        </div>
+    </div>
+
+    <footer th:substituteby="layout/partials/footer" />
+
+</div>
+    
+</body>
+</html>

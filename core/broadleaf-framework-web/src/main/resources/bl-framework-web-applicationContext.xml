@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework Web
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
+             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+    <!-- Scan Broadleaf defined web utility classes -->
+    <context:component-scan base-package="org.broadleafcommerce.core.web"/>
+
+    <bean id="blOrderState"
+          class="org.broadleafcommerce.core.web.order.OrderState" scope="request"/>
+
+    <bean id="orderStateAOP"
+          class="org.broadleafcommerce.core.web.order.OrderStateAOP"/>
+
+    <aop:config>
+        <aop:aspect id="orderStateAspect" ref="orderStateAOP">
+            <aop:pointcut id="orderRetrievalMethod"
+                          expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.readCartForCustomer(org.broadleafcommerce.profile.core.domain.Customer))"/>
+            <aop:around method="processOrderRetrieval" pointcut-ref="orderRetrievalMethod"/>
+        </aop:aspect>
+    </aop:config>
+
+    <bean id="blOrderLockManager" class="org.broadleafcommerce.core.web.order.DatabaseOrderLockManager"/>
+
+    <bean id="blAddSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.AddSortLinkProcessor" />
+    <bean id="blCategoriesProcessor" class="org.broadleafcommerce.core.web.processor.CategoriesProcessor" />
+    <bean id="blFormProcessor" class="org.broadleafcommerce.core.web.processor.FormProcessor" />
+    <bean id="blGoogleAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleAnalyticsProcessor" />
+    <bean id="blHeadProcessor" class="org.broadleafcommerce.core.web.processor.HeadProcessor" />
+    <bean id="blNamedOrderProcessor" class="org.broadleafcommerce.core.web.processor.NamedOrderProcessor" />
+    <bean id="blProductOptionDisplayProcessor" class="org.broadleafcommerce.core.web.processor.ProductOptionDisplayProcessor" />
+    <bean id="blProductOptionValueProcessor" class="org.broadleafcommerce.core.web.processor.ProductOptionValueProcessor" />
+    <bean id="blProductOptionsProcessor" class="org.broadleafcommerce.core.web.processor.ProductOptionsProcessor" />
+    <bean id="blPaginationPageLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationPageLinkProcessor" />
+    <bean id="blPaginationSizeLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationSizeLinkProcessor" />
+    <bean id="blPaginationSortLinkProcessor" class="org.broadleafcommerce.core.web.processor.PaginationSortLinkProcessor" />    
+    <bean id="blBroadleafCacheProcessor" class="org.broadleafcommerce.core.web.processor.BroadleafCacheProcessor" />    
+    <bean id="blPriceTextDisplayProcessor" class="org.broadleafcommerce.core.web.processor.PriceTextDisplayProcessor" />
+    <bean id="blRatingsProcessor" class="org.broadleafcommerce.core.web.processor.RatingsProcessor" />
+    <bean id="blRelatedProductProcessor" class="org.broadleafcommerce.core.web.processor.RelatedProductProcessor" />
+    <bean id="blRemoveFacetValuesLinkProcessor" class="org.broadleafcommerce.core.web.processor.RemoveFacetValuesLinkProcessor" />
+    <bean id="blToggleFacetLinkProcessor" class="org.broadleafcommerce.core.web.processor.ToggleFacetLinkProcessor" />
+    <bean id="blHeadProcessorExtensionManager" class="org.broadleafcommerce.core.web.processor.extension.HeadProcessorExtensionManager" />
+    <bean id="blOnePageCheckoutProcessor" class="org.broadleafcommerce.core.web.processor.OnePageCheckoutProcessor"/>
+    <bean id="blUncacheableDataProcessor" class="org.broadleafcommerce.core.web.processor.UncacheableDataProcessor"/>
+    <bean id="blGoogleUniversalAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleUniversalAnalyticsProcessor" />
+
+    <bean id="blDialectFrameworkProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blAddSortLinkProcessor" />
+                <ref bean="blCategoriesProcessor" />
+                <ref bean="blFormProcessor" />
+                <ref bean="blGoogleAnalyticsProcessor" />
+                <ref bean="blHeadProcessor" />
+                <ref bean="blNamedOrderProcessor" />
+                <ref bean="blPaginationPageLinkProcessor" />
+                <ref bean="blPaginationSizeLinkProcessor" />
+                <ref bean="blPaginationSortLinkProcessor" />                
+                <ref bean="blBroadleafCacheProcessor" />
+                <ref bean="blPriceTextDisplayProcessor" />
+                <ref bean="blProductOptionValueProcessor" />
+                <ref bean="blProductOptionsProcessor" />
+                <ref bean="blProductOptionDisplayProcessor" />
+                <ref bean="blRatingsProcessor" />
+                <ref bean="blRelatedProductProcessor" />
+                <ref bean="blRemoveFacetValuesLinkProcessor" />
+                <ref bean="blToggleFacetLinkProcessor" />
+                <ref bean="blOnePageCheckoutProcessor" />
+                <ref bean="blTransparentRedirectCreditCardFormProcessor" />
+                <ref bean="blCreditCardTypesProcessor" />
+                <ref bean="blUncacheableDataProcessor" />
+                <ref bean="blGoogleUniversalAnalyticsProcessor" />
+            </set>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blDialectFrameworkProcessors" />
+        <property name="targetRef" value="blDialectProcessors" />
+    </bean>
+    <bean id="blDialect" class="org.broadleafcommerce.common.web.dialect.BLCDialect">
+        <property name="processors" ref="blDialectProcessors" />
+    </bean> 
+    
+    <!-- This list factory bean will accept classes that implment the BroadleafVariableExpression interface. -->
+    <!-- This provides the ability to inject custom expression evaluators into Thymeleaf. -->
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression"/>
+                <bean class="org.broadleafcommerce.profile.web.core.expression.CustomerVariableExpression"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blWebDatabaseTemplateResolver" class="org.broadleafcommerce.core.web.resolver.DatabaseTemplateResolver">
+        <property name="resourceResolver" ref="blDatabaseResourceResolver" />
+        <property name="templateMode" value="HTML5" />
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="order" value="100"/>         
+    </bean>  
+    
+    <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
+    <bean id="blWebCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
+    
+    <bean id="blWebTemplateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+        <property name="prefix" value="/WEB-INF/templates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="order" value="200"/>         
+    </bean>  
+    
+    <bean id="blWebClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <property name="prefix" value="webTemplates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />        
+        <property name="characterEncoding" value="UTF-8" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="order" value="300"/> 
+    </bean>  
+    
+    <!-- This component should be overridden to provide templates outside of the WAR or CLASSPATH   -->    
+    <bean id="blEmailCustomTemplateResolver" class="org.broadleafcommerce.common.web.NullBroadleafTemplateResolver" />
+    
+    <bean id="blEmailClasspathTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+        <property name="prefix" value="emailTemplates/" />
+        <property name="suffix" value=".html" />
+        <property name="templateMode" value="HTML5" />
+        <property name="cacheable" value="${cache.page.templates}"/>
+        <property name="cacheTTLMs" value="${cache.page.templates.ttl}" />
+        <property name="characterEncoding" value="UTF-8" />
+    </bean>  
+    
+    <bean id="thymeleafSpringStandardDialect" class="org.thymeleaf.spring4.dialect.SpringStandardDialect" />
+    
+    <bean id="blMessageResolver" class="org.broadleafcommerce.common.web.BroadleafThymeleafMessageResolver" />
+
+    <bean id="blWebTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blWebDatabaseTemplateResolver" />
+                <ref bean="blWebTemplateResolver" />
+                <ref bean="blWebClasspathTemplateResolver" />
+                <ref bean="blWebCustomTemplateResolver" />
+                <ref bean="blWebCommonClasspathTemplateResolver" />
+            </set>
+        </property>
+    </bean>
+    
+    <bean id="blThymeleafStandardTemplateModeHandlers" 
+        class="org.broadleafcommerce.common.web.BroadleafThymeleafStandardTemplateModeHandlers" />
+        
+    <bean id="thymeleafLayoutDialect" class="nz.net.ultraq.thymeleaf.LayoutDialect" />
+    
+    <bean id="blWebTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+        <property name="messageResolvers">
+            <set>
+                <ref bean="blMessageResolver" />
+                <bean class="org.thymeleaf.spring4.messageresolver.SpringMessageResolver" />
+            </set>
+        </property>
+        <property name="templateResolvers" ref="blWebTemplateResolvers" />
+        <property name="templateModeHandlers" value="#{blThymeleafStandardTemplateModeHandlers.standardTemplateModeHandlers}" />
+        <property name="dialects">
+            <set>
+                <ref bean="thymeleafSpringStandardDialect" />
+                <ref bean="thymeleafLayoutDialect" />
+                <ref bean="blDialect" />
+            </set>
+        </property>
+    </bean> 
+    
+    <bean id="blEmailTemplateResolvers" class="org.springframework.beans.factory.config.SetFactoryBean">
+        <property name="sourceSet">
+            <set>
+                <ref bean="blEmailClasspathTemplateResolver" />                
+                <ref bean="blEmailCustomTemplateResolver" />
+            </set>
+        </property>
+    </bean>
+    
+    <bean id="blEmailTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
+        <property name="templateResolvers" ref="blEmailTemplateResolvers" />
+        <property name="dialects">
+            <set>
+                <ref bean="thymeleafSpringStandardDialect" />
+                <ref bean="blDialect" />
+            </set>
+        </property>
+    </bean> 
+</beans>

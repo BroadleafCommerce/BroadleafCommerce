@@ -1,0 +1,28 @@
+<comment th:remove="all" xmlns:th="http://www.w3.org/1999/html">
+    <!-- Selectize Collection is used in place of a ListGrid if
+        the collection's @AdminPresentation AddType is AddMethodType.SELECTIZE_LOOKUP -->
+</comment>
+
+<div class="selectize-wrapper">
+    <select th:id="'selectize-' + ${listGrid.friendlyName}"
+            class="selectize-collection"
+            multiple="multiple"
+            th:name="${listGrid.friendlyName} + '[]'"
+            th:attr="data-selectizeurl=${listGrid.selectizeUrl}"
+            th:placeholder="'Select ' + #{${listGrid.friendlyName}} + '...'"
+            tabindex="-1">
+        <div th:each="record : ${listGrid.records}"
+            th:unless="${#lists.isEmpty(listGrid.records)}"
+            th:remove="tag">
+
+            <div th:each="headerField : ${record.listGrid.headerFields}"
+                th:if="${headerField.isVisible}"
+                th:with="field=${record.getField(headerField.name)}"
+                th:remove="tag">
+
+                <option th:value="${record.id}" selected="selected" th:text="${field.displayValue}"/>
+
+            </div>
+        </div>
+    </select>
+</div>

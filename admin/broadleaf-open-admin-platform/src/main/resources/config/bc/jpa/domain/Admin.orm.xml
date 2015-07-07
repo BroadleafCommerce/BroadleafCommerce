@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Open Admin Platform
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+
+    <named-query name="BC_READ_ADMIN_USER_BY_USERNAME" >
+        <query>SELECT adminUser FROM org.broadleafcommerce.openadmin.server.security.domain.AdminUser adminUser
+               WHERE  adminUser.login = :userName
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_ALL_ADMIN_USERS">
+        <query>SELECT adminUser FROM org.broadleafcommerce.openadmin.server.security.domain.AdminUser adminUser</query>
+    </named-query>
+
+    <named-query name="BC_READ_ADMIN_USER_BY_EMAIL">
+        <query>SELECT adminUser FROM org.broadleafcommerce.openadmin.server.security.domain.AdminUser adminUser
+               WHERE  adminUser.email = :email
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_ALL_ADMIN_PERMISSIONS">
+        <query>SELECT adminPermission FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission</query>
+    </named-query>
+
+    <named-query name="BC_READ_ALL_ADMIN_ROLES">
+        <query>SELECT adminRole FROM org.broadleafcommerce.openadmin.server.security.domain.AdminRole adminRole</query>
+    </named-query>
+
+    <named-query name="BC_READ_ALL_ADMIN_MODULES">
+        <query>SELECT adminModule FROM org.broadleafcommerce.openadmin.server.security.domain.AdminModule adminModule</query>
+    </named-query>
+
+    <named-query name="BC_READ_ALL_ADMIN_SECTIONS">
+        <query>SELECT adminSection FROM org.broadleafcommerce.openadmin.server.security.domain.AdminSection adminSection</query>
+    </named-query>
+
+    <named-query name="BC_READ_ADMIN_SECTION_BY_URI">
+        <query>SELECT adminSection FROM org.broadleafcommerce.openadmin.server.security.domain.AdminSection adminSection
+                WHERE adminSection.url = :uri
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_ADMIN_SECTION_BY_SECTION_KEY">
+        <query>SELECT adminSection FROM org.broadleafcommerce.openadmin.server.security.domain.AdminSection adminSection
+            WHERE adminSection.sectionKey = :sectionKey
+        </query>
+    </named-query>
+
+    <named-query name="BC_COUNT_PERMISSIONS_FOR_USER_BY_TYPE_AND_CEILING_ENTITY" >
+        <query>SELECT COUNT(adminPermission)
+               FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
+               LEFT OUTER JOIN adminPermission.allChildPermissions childPermission
+               LEFT OUTER JOIN childPermission.qualifiedEntities childQualifiedEntity
+               LEFT OUTER JOIN adminPermission.qualifiedEntities qualifiedEntity
+               LEFT OUTER JOIN adminPermission.allRoles role
+               LEFT OUTER JOIN role.allUsers roleUser
+               LEFT OUTER JOIN adminPermission.allUsers permissionUser
+               WHERE (roleUser = :adminUser OR permissionUser = :adminUser) AND
+                     (adminPermission.type = :type OR adminPermission.type = 'ALL' OR 
+                     childPermission.type = :type OR childPermission.type = 'ALL') AND
+                     (qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity OR childQualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity)
+        </query>
+    </named-query>
+
+    <named-query name="BC_COUNT_BY_PERMISSION_AND_CEILING_ENTITY" >
+        <query>SELECT COUNT(adminPermission)
+               FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
+               LEFT OUTER JOIN adminPermission.allChildPermissions childPermission
+               LEFT OUTER JOIN childPermission.qualifiedEntities childQualifiedEntity
+               LEFT OUTER JOIN adminPermission.qualifiedEntities qualifiedEntity
+               WHERE adminPermission.name IN (:permissionNames) AND
+                     (qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity OR childQualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity)
+        </query>
+    </named-query>
+
+    <named-query name="BC_COUNT_PERMISSIONS_BY_TYPE_AND_CEILING_ENTITY" >
+        <query>SELECT COUNT(adminPermission)
+               FROM org.broadleafcommerce.openadmin.server.security.domain.AdminPermission adminPermission
+               LEFT OUTER JOIN adminPermission.allChildPermissions childPermission
+               LEFT OUTER JOIN childPermission.qualifiedEntities childQualifiedEntity
+               JOIN adminPermission.qualifiedEntities qualifiedEntity
+               WHERE (adminPermission.type = :type OR adminPermission.type = 'ALL' OR
+                     childPermission.type = :type OR childPermission.type = 'ALL') AND
+                     (qualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity OR childQualifiedEntity.ceilingEntityFullyQualifiedName = :ceilingEntity)
+        </query>
+    </named-query>
+
+</entity-mappings>

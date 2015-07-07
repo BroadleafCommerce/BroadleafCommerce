@@ -1,0 +1,183 @@
+/*
+ * #%L
+ * BroadleafCommerce Common Libraries
+ * %%
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+package org.broadleafcommerce.common.security.service;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.security.RandomGenerator;
+import org.broadleafcommerce.common.util.BLCRequestUtils;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.CleanResults;
+import org.owasp.validator.html.Policy;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
+
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
+import java.security.NoSuchAlgorithmException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+/**
+ * @author jfischer
+ */
+@Service("blExploitProtectionService")
+public class ExploitProtectionServiceImpl implements ExploitProtectionService {
+
+    private static final String CSRFTOKEN = "csrfToken";
+    private static final String CSRFTOKENPARAMETER = "csrfToken";
+    private static final Log LOG = LogFactory.getLog(ExploitProtectionServiceImpl.class);
+
+    private static class Handler extends URLStreamHandler {
+        @Override
+        protected URLConnection openConnection(URL u) throws IOException {
+            URL resourceUrl = getClass().getClassLoader().getResource(u.getPath());
+            return resourceUrl.openConnection();
+        }
+    }
+
+    private static Policy getAntiSamyPolicy(String policyFileLocation) {
+        try {
+            URL url = new URL(null, policyFileLocation, new Handler());
+            return Policy.getInstance(url);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to create URL", e);
+        }
+    }
+
+    private static final String DEFAULTANTISAMYPOLICYFILELOCATION = "classpath:antisamy-myspace.xml";
+
+    protected String antiSamyPolicyFileLocation = DEFAULTANTISAMYPOLICYFILELOCATION;
+    //this is thread safe
+    private Policy antiSamyPolicy = getAntiSamyPolicy(antiSamyPolicyFileLocation);
+    //this is thread safe for the usage of scan()
+    private final AntiSamy as = new AntiSamy();
+
+    protected boolean xsrfProtectionEnabled = true;
+    protected boolean xssProtectionEnabled = true;
+
+    @Override
+    public String cleanString(String string) throws ServiceException {
+        if (!xssProtectionEnabled || StringUtils.isEmpty(string)) {
+            return string;
+        }
+        try {
+            CleanResults results = as.scan(string, antiSamyPolicy);
+            return results.getCleanHTML();
+        } catch (Exception e) {
+            LOG.error("Unable to clean the passed in entity values", e);
+            throw new ServiceException("Unable to clean the passed in entity values", e);
+        }
+    }
+
+    @Override
+    public String cleanStringWithResults(String string) throws ServiceException {
+        if (!xssProtectionEnabled || StringUtils.isEmpty(string)) {
+            return string;
+        }
+        try {
+            CleanResults results = as.scan(string, antiSamyPolicy);
+            if (results.getNumberOfErrors() > 0) {
+                throw new CleanStringException(results);
+            }
+            return results.getCleanHTML();
+        } catch (CleanStringException e) {
+            throw e;
+        } catch (Exception e) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Unable to clean the passed in entity values");
+            sb.append("\nNote - ");
+            sb.append(getAntiSamyPolicyFileLocation());
+            sb.append(" policy in effect. Set a new policy file to modify validation behavior/strictness.");
+            LOG.error(sb.toString(), e);
+            throw new ServiceException(sb.toString(), e);
+        }
+    }
+
+    @Override
+    public void compareToken(String passedToken) throws ServiceException {
+        if (xsrfProtectionEnabled) {
+            if (!getCSRFToken().equals(passedToken)) {
+                throw new ServiceException("XSRF token mismatch (" + passedToken + "). Session may be expired.");
+            } else {
+                LOG.debug("Validated CSRF token");
+            }
+        }
+    }
+
+    @Override
+    public String getCSRFToken() throws ServiceException {
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
+            HttpSession session = request.getSession();
+            String token = (String) session.getAttribute(CSRFTOKEN);
+            if (StringUtils.isEmpty(token)) {
+                try {
+                    token = RandomGenerator.generateRandomId("SHA1PRNG", 32);
+                } catch (NoSuchAlgorithmException e) {
+                    LOG.error("Unable to generate random number", e);
+                    throw new ServiceException("Unable to generate random number", e);
+                }
+                session.setAttribute(CSRFTOKEN, token);
+            }
+            return token;
+        }
+        return null;
+    }
+
+    @Override
+    public String getAntiSamyPolicyFileLocation() {
+        return antiSamyPolicyFileLocation;
+    }
+
+    @Override
+    public void setAntiSamyPolicyFileLocation(String antiSamyPolicyFileLocation) {
+        this.antiSamyPolicyFileLocation = antiSamyPolicyFileLocation;
+        antiSamyPolicy = getAntiSamyPolicy(antiSamyPolicyFileLocation);
+    }
+
+    public boolean isXsrfProtectionEnabled() {
+        return xsrfProtectionEnabled;
+    }
+
+    public void setXsrfProtectionEnabled(boolean xsrfProtectionEnabled) {
+        this.xsrfProtectionEnabled = xsrfProtectionEnabled;
+    }
+
+    public boolean isXssProtectionEnabled() {
+        return xssProtectionEnabled;
+    }
+
+    public void setXssProtectionEnabled(boolean xssProtectionEnabled) {
+        this.xssProtectionEnabled = xssProtectionEnabled;
+    }
+    
+    @Override
+    public String getCsrfTokenParameter() {
+        return CSRFTOKENPARAMETER;
+    }
+}

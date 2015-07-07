@@ -1,0 +1,73 @@
+<blc_admin:admin_field_builder fieldBuilder="${field.fieldBuilder}">
+
+    <div class="field-label inline" th:if="${!field.required}" th:text="#{${field.friendlyName + '_Question'}}" />
+    <br />
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+    <div th:substituteby="components/fieldTooltip" />
+ 
+    <div th:classappend="${field.styleClass}">
+    
+        <input type="hidden"
+               th:id="${field.jsonFieldName}"
+               th:name="'fields[\&#39;'+${field.jsonFieldName}+'\&#39;].value'"
+               th:value="${field.json}"/>
+               
+        <div class="rule-builder-required-field" 
+            th:if="${field.required}"
+            th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" />
+               
+        <div class="custom-checkbox rule-builder-checkbox" th:if="${!field.required}">
+            <input type="radio"
+                   th:name="${field.name}"
+                   th:id="${field.name + '-true'}"
+                   th:class="${field.styleClass == 'rule-builder-simple' ? 'radio add-main-rule' : 'radio add-main-item-rule'}"
+                   th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}"
+                   th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
+            <label th:for="${field.name + '-true'}" class="radio-label">
+                <span style="margin-right: 10px;" th:text="#{Yes}" />
+            </label>
+
+            <input type="radio" class="radio clear-rules"
+                   th:name="${field.name}"
+                   th:id="${field.name + '-false'}"
+                   th:checked="${#arrays.isEmpty(field.dataWrapper.data) and field.dataWrapper.error == null }" />
+            <label th:for="${field.name + '-false'}" class="radio-label">
+                <span style="margin-right: 10px;" th:text="#{No}" />
+            </label>
+        </div>
+        
+        <!-- Normal display -->
+        <h4 class="field-label" th:text="#{${field.friendlyName}}"
+            th:classappend="${!field.required ? 'conditional-rules-header' : 'required'}"
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}" />
+    
+        <div class="conditional-rules-container"
+            th:classappend="${field.required ? 'required-conditional' : ''}"
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}"
+            th:id="${field.name}"/>
+        
+        <!-- Rule parsing error display -->
+        <div class="field-label conditional-rules-header error"
+            th:if="${field.dataWrapper.error != null}"
+            th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}"
+            th:inline="text">
+            [[#{'ruleErrorTitle'}]] [[${field.dataWrapper.error}]]
+            <a href="#" class="rule-reset" th:inline="text">[[#{Reset_Rule}]] <i class="icon-undo"></i></a>
+        </div>
+
+        <div class="conditional-rules-container-mvel"
+            th:if="${field.dataWrapper.error != null}"
+            th:classappend="${field.required ? 'required-conditional' : ''}"
+            th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}">
+                <textarea disabled="disabled" style="width: 98%;" th:text="${field.dataWrapper.rawMvel}"/>
+        </div>
+            
+        <div class="rule-builder-data" 
+            th:attr="data-hiddenid=${field.jsonFieldName},
+                     data-containerid=${field.name},
+                     data-fields=${fieldWrapper.serialize()},
+                     data-data=${field.dataWrapper.serialize()},
+                     data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" />
+    
+    </div>
+</blc_admin:admin_field_builder>

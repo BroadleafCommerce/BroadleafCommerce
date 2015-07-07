@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+    
+    <bean id="blTaxProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list />
+        </property>
+    </bean>
+    
+    <bean id="blFulfillmentLocationResolver" class="org.broadleafcommerce.core.pricing.service.fulfillment.SimpleFulfillmentLocationResolver" />
+
+    <bean id="blFixedPriceFulfillmentPricingProvider"
+            class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider" />
+    <bean id="blBandedFulfillmentPricingProvider"
+            class="org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFulfillmentPricingProvider" />
+    <bean id="blFulfillmentPricingProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+               <ref bean="blFixedPriceFulfillmentPricingProvider" />
+               <ref bean="blBandedFulfillmentPricingProvider" />
+            </list>
+        </property>
+    </bean>
+    
+    <!-- Pricing Workflow configuration -->
+    <bean p:order="1000" id="blOfferActivity" class="org.broadleafcommerce.core.pricing.service.workflow.OfferActivity" />
+    <bean p:order="2000" id="blConsolidateFulfillmentFeesActivity" class="org.broadleafcommerce.core.pricing.service.workflow.ConsolidateFulfillmentFeesActivity" />
+    <bean p:order="3000" id="blFulfillmentItemPricingActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentItemPricingActivity" />
+    <bean p:order="4000" id="blFulfillmentGroupMerchandiseTotalActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupMerchandiseTotalActivity" />
+    <bean p:order="5000" id="blFulfillmentGroupPricingActivity" class="org.broadleafcommerce.core.pricing.service.workflow.FulfillmentGroupPricingActivity" />
+    <bean p:order="6000" id="blShippingOfferActivity" class="org.broadleafcommerce.core.pricing.service.workflow.ShippingOfferActivity" />
+    <bean p:order="7000" id="blTaxActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TaxActivity" />
+    <bean p:order="8000" id="blTotalActivity" class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity" />
+    <bean p:order="9000" id="blAdjustOrderPaymentsActivity" class="org.broadleafcommerce.core.pricing.service.workflow.AdjustOrderPaymentsActivity" />
+
+
+    <bean id="blPricingWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.pricing.service.workflow.PricingProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blOfferActivity" />                
+                <ref bean="blConsolidateFulfillmentFeesActivity" />
+                <ref bean="blFulfillmentItemPricingActivity" />                                       
+                <ref bean="blFulfillmentGroupMerchandiseTotalActivity" />
+                <ref bean="blFulfillmentGroupPricingActivity" />
+                <ref bean="blShippingOfferActivity" />
+                <ref bean="blTaxActivity" />
+                <ref bean="blTotalActivity"/>
+                <ref bean="blAdjustOrderPaymentsActivity"/>
+            </list>
+        </property>
+        <property name="defaultErrorHandler">
+            <bean class="org.broadleafcommerce.core.workflow.DefaultErrorHandler">
+                <property name="unloggedExceptionClasses">
+                    <list>
+                        <value>org.hibernate.exception.LockAcquisitionException</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- Add Item Workflow Configuration -->
+    <bean p:order="1000" id="blValidateAddRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.add.ValidateAddRequestActivity"/>
+    <bean p:order="2000" id="blCheckAddAvailabilityActivity" class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
+    <bean p:order="3000" id="blAddOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddOrderItemActivity"/>
+    <bean p:order="4000" id="blAddFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.add.AddFulfillmentGroupItemActivity"/>
+    <bean p:order="5000" id="blAddWorkflowPriceOrderIfNecessaryActivity" class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
+    <bean p:order="6000" id="blAddWorkflowVerifyFulfillmentGroupItemsActivity" class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
+    
+    <bean id="blAddItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blValidateAddRequestActivity" />
+                <ref bean="blCheckAddAvailabilityActivity" />
+                <ref bean="blAddOrderItemActivity" />
+                <ref bean="blAddFulfillmentGroupItemActivity" />
+                <ref bean="blAddWorkflowPriceOrderIfNecessaryActivity" />
+                <ref bean="blAddWorkflowVerifyFulfillmentGroupItemsActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler">
+            <bean class="org.broadleafcommerce.core.workflow.DefaultErrorHandler">
+                <property name="unloggedExceptionClasses">
+                    <list>
+                        <value>org.broadleafcommerce.core.inventory.service.InventoryUnavailableException</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <!-- Update Item Workflow Configuration -->
+    <bean p:order="1000" id="blValidateUpdateRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.update.ValidateUpdateRequestActivity"/>
+    <bean p:order="2000" id="blCheckUpdateAvailabilityActivity" class="org.broadleafcommerce.core.order.service.workflow.CheckAvailabilityActivity"/>
+    <bean p:order="3000" id="blUpdateOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderItemActivity"/>
+    <bean p:order="4000" id="blUdateOrderMultishipOptionActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateOrderMultishipOptionActivity"/>
+    <bean p:order="5000" id="blUpdateFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.UpdateFulfillmentGroupItemActivity"/>
+    <bean p:order="6000" id="blUpdateWorkflowPriceOrderIfNecessaryActivity" class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
+    <bean p:order="7000" id="blUpdateWorkflowVerifyFulfillmentGroupItemsActivity" class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
+    
+    <bean id="blUpdateItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blValidateUpdateRequestActivity" />
+                <ref bean="blCheckUpdateAvailabilityActivity" />
+                <ref bean="blUpdateOrderItemActivity" />
+                <ref bean="blUdateOrderMultishipOptionActivity" />
+                <ref bean="blUpdateFulfillmentGroupItemActivity" />
+                <ref bean="blUpdateWorkflowPriceOrderIfNecessaryActivity" />
+                <ref bean="blUpdateWorkflowVerifyFulfillmentGroupItemsActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler">
+            <bean class="org.broadleafcommerce.core.workflow.DefaultErrorHandler">
+                <property name="unloggedExceptionClasses">
+                    <list>
+                        <value>org.broadleafcommerce.core.inventory.service.InventoryUnavailableException</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    
+    <!-- Update Item Workflow Configuration -->
+    <bean p:order="1000" id="blValidateUpdateProductOptionsRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.update.options.ValidateUpdateProductOptionsRequestActivity"/>
+    <bean p:order="2000" id="blUpdateProductOptionsOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.update.options.UpdateProductOptionsOrderItemActivity"/>
+ 
+    <bean id="blUpdateProductOptionsForItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blValidateUpdateProductOptionsRequestActivity" />
+                <ref bean="blUpdateProductOptionsOrderItemActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+    
+    <!-- Remove Item Workflow Configuration -->
+    <bean p:order="1000" id="blValidateRemoveRequestActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.ValidateRemoveRequestActivity"/>
+    <bean p:order="2000" id="blRemoveOrderMultishipOptionActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderMultishipOptionActivity"/>
+    <bean p:order="3000" id="blRemoveFulfillmentGroupItemActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveFulfillmentGroupItemActivity"/>
+    <bean p:order="4000" id="blRemoveOrderItemActivity" class="org.broadleafcommerce.core.order.service.workflow.remove.RemoveOrderItemActivity"/>
+    <bean p:order="5000" id="blRemoveWorkflowPriceOrderIfNecessaryActivity" class="org.broadleafcommerce.core.order.service.workflow.PriceOrderIfNecessaryActivity"/>
+    <bean p:order="6000" id="blRemoveWorkflowVerifyFulfillmentGroupItemsActivity" class="org.broadleafcommerce.core.order.service.workflow.VerifyFulfillmentGroupItemsActivity"/>
+    
+    <bean id="blRemoveItemWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.order.service.workflow.CartOperationProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blValidateRemoveRequestActivity" />
+                <ref bean="blRemoveOrderMultishipOptionActivity" />
+                <ref bean="blRemoveFulfillmentGroupItemActivity" />
+                <ref bean="blRemoveOrderItemActivity" />
+                <ref bean="blRemoveWorkflowPriceOrderIfNecessaryActivity" />
+                <ref bean="blRemoveWorkflowVerifyFulfillmentGroupItemsActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+    <!-- Checkout Workflow Configuration -->
+    <bean p:order="1000" id="blVerifyCustomerMaxOfferUsesActivity" class="org.broadleafcommerce.core.offer.service.workflow.VerifyCustomerMaxOfferUsesActivity"/>
+    <bean p:order="2000" id="blValidateProductOptionsActivity" class="org.broadleafcommerce.core.checkout.service.workflow.ValidateProductOptionsActivity"/>
+    <bean p:order="3000" id="blValidateAndConfirmPaymentActivity" class="org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity">
+        <property name="rollbackHandler" ref="blConfirmPaymentsRollbackHandler" />
+    </bean>
+    <bean p:order="4000" id="blRecordOfferUsageActivity" class="org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity">
+        <property name="rollbackHandler" ref="blRecordOfferUsageRollbackHandler" />
+    </bean>
+    <bean p:order="5000" id="blCommitTaxActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CommitTaxActivity">
+        <property name="rollbackHandler" ref="blCommitTaxRollbackHandler" />
+    </bean>
+    <bean p:order="6000" id="blDecrementInventoryActivity" class="org.broadleafcommerce.core.checkout.service.workflow.DecrementInventoryActivity">
+        <property name="rollbackHandler" ref="blDecrementInventoryRollbackHandler" />
+    </bean>
+    <bean p:order="7000" id="blCompleteOrderActivity" class="org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity">
+        <property name="rollbackHandler" ref="blCompleteOrderRollbackHandler" />
+    </bean>
+
+    <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <ref bean="blVerifyCustomerMaxOfferUsesActivity" />
+                <ref bean="blValidateProductOptionsActivity" />
+                <ref bean="blValidateAndConfirmPaymentActivity" />
+                <ref bean="blRecordOfferUsageActivity" />
+                <ref bean="blCommitTaxActivity" />
+                <ref bean="blDecrementInventoryActivity" />
+                <ref bean="blCompleteOrderActivity" />
+            </list>
+        </property>
+        <property name="defaultErrorHandler">
+            <bean class="org.broadleafcommerce.core.workflow.DefaultErrorHandler">
+                <property name="unloggedExceptionClasses">
+                    <list>
+                        <value>org.broadleafcommerce.core.inventory.service.InventoryUnavailableException</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <aop:config>
+        <aop:aspect id="qosAspect" ref="blServiceMonitor">
+            <aop:pointcut id="qosMethod" expression="execution(* org.broadleafcommerce.common.vendor.service.monitor.ServiceStatusDetectable.process(..))"/>
+            <aop:around method="checkServiceAOP" pointcut-ref="qosMethod"/>
+        </aop:aspect>
+    </aop:config>
+       
+</beans>

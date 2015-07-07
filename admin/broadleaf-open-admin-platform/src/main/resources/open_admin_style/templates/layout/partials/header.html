@@ -1,0 +1,52 @@
+<header class="site-bar">
+
+    <li th:substituteby="layout/partials/additionalHeaderMenu" />
+
+    <div class="alert-box">
+        <div class="dropdown">
+            <div class="dropdown-toggle" id="notifications" data-toggle="dropdown" aria-expanded="true">
+                <i class="fa fa-bell"></i>
+            </div>
+            <!--<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="notifications">-->
+                <!--<li class="notification new">Your change to Hot Sauce Name was approved <div class="time-ago">2 hours ago</div> </li>-->
+                <!--<li class="notification new alt">A change was assigned to you to approve <div class="time-ago">10 hours ago</div> </li>-->
+                <!--<li class="notification new">A comment was left on your change to Hot Sauce Name <div class="time-ago">Yesterday</div> </li>-->
+                <!--<li class="notification">The deployment named Winter Closeout Changes deployed without errors <div class="time-ago">A week ago</div> </li>-->
+                <!--<li class="notification">All your changes were grouped into the Winter Closeout Changes deployment <div class="time-ago">Two weeks ago</div> </li>-->
+                <!--<li class="see-all"><a href="">See All Updates</a></li>-->
+            <!--</ul>-->
+        </div> <!-- /account-info -->
+    </div>
+
+    <div class="account-info dropdown">
+        <blc_admin:admin_user resultVar="adminUser" />
+        <div class="dropdown-toggle" id="accountdrop" data-toggle="dropdown" aria-expanded="true">
+            <span th:text="'Welcome ' + ${adminUser.name} + '!'"></span>
+            <span class="caret"></span>
+        </div>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="accountdrop">
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a th:href="@{/adminLogout.htm}" th:utext="#{header.logout}">Logout</a></li>
+        </ul>
+    </div>
+
+    <!--<div id="lightbox">-->
+
+        <!--<div id="expire-message" class="modal in">-->
+            <!--<div id="expire-header" class="brand">-->
+            <!--<div id="expire-header-message" th:text="#{header.session.expire}"></div>-->
+            <!--</div>-->
+            <!--<div id="expire-content">-->
+                <!--<a id="stay-logged-in" class="expire-button button medium dark radius" href="#" th:text="#{header.stay.logged.in}"></a>-->
+                <!--<a id="session-logout" class="expire-button button medium dark radius" th:href="@{/adminLogout.htm}" th:text="#{header.logout}"></a>-->
+                <!--<div id="expire-text">-->
+
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div  class="modal-backdrop"></div>-->
+    <!--</div>-->
+
+    <div th:substituteby="layout/partials/sandboxRibbon" />
+</header>

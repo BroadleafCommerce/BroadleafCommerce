@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN"
+    "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd"
+>
+<taglib>
+    <tlib-version>3.0</tlib-version>
+    <jsp-version>2.1</jsp-version>
+    <short-name>bc</short-name>
+    <uri>/broadleaf-layout</uri>
+
+    <tag>
+        <name>productLookup</name>
+        <tag-class>org.broadleafcommerce.core.web.layout.tags.ProductLookupTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Looks up a product by productId</description>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the result is set to</description>
+        </attribute>
+        <attribute>
+            <name>productId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>skuLookup</name>
+        <tag-class>org.broadleafcommerce.core.web.layout.tags.SkuLookupTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Looks up a sku by skuId</description>
+        <attribute>
+            <name>var</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the result is set to</description>
+        </attribute>
+        <attribute>
+            <name>skuId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>orderLookup</name>
+        <tag-class>org.broadleafcommerce.core.web.layout.tags.OrderLookupTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Looks up an order by customerId, orderId, or orderName.  Can also provide the total quantity of items in the cart.</description>
+        <attribute>
+            <name>customerId</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Customer to lookup order for.  If no customerId is provided, the currently logged in user's customerId is used.</description>
+        </attribute>
+        <attribute>
+            <name>orderId</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Specifies a specific order to lookup.  orderName attribute cannot be used if orderId is provided. If no orderName or orderId is provided, the current cart is looked up.</description>
+        </attribute>
+        <attribute>
+            <name>orderName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Named order to lookup.  orderId attribute cannot be used if orderName is provided.  If no orderName or orderId is provided, the current cart is looked up.</description>
+        </attribute>
+        <attribute>
+            <name>orderVar</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the order is set to</description>
+        </attribute>
+        <attribute>
+            <name>totalQuantityVar</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <description>Page scoped variable that the order items count is set to. The order items count is a sum of the quantity of each item in the order.</description>
+        </attribute>
+    </tag>
+</taglib>

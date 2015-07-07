@@ -1,0 +1,25 @@
+<label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+</label>
+<div class="twelve" style="margin-left: 20px; margin-bottom: 10px;" th:switch="*{fields['__${field.name}__'].fieldType}">
+
+    <span th:case="'MEDIA'" th:remove="tag">
+        <a th:if="*{fields['__${field.name}__'].media != null and fields['__${field.name}__'].media.url != null}"
+           th:href="@{*{fields['__${field.name}__'].media.url}}" target="_blank">
+            <img class="thumbnail"
+                th:src="@{*{fields['__${field.name}__'].media.url + '?largeAdminThumbnail'}}" />
+        </a>
+        <input type="hidden" th:field="*{fields['__${field.name}__'].value}" />
+    </span>
+    
+    <span th:case="*" th:remove="tag">
+        <span th:text="*{fields['__${field.name}__'].displayValue}"/>
+        <span th:style="${!field.canLinkToExternalEntity or #strings.isEmpty(field.value)}? 'display: none;'">
+           <a th:href="@{${'/' + field.entityViewPath}}" class="modal-view">
+                <i class="icon-external-link"></i>
+           </a>
+        </span>
+        <input type="hidden" th:field="*{fields['__${field.name}__'].value}" />
+    </span>
+    
+</div>

@@ -1,0 +1,211 @@
+<comment th:remove="all" xmlns:th="http://www.w3.org/1999/html">
+<!-- This component represents a list grid toolbar -->
+</comment>
+
+<div class="listgrid-header-wrapper">
+    <table class="list-grid-table table table-striped"
+           th:classappend="${listGrid.className}"
+           th:attr="data-listgridtype=${listGrid.listGridType},
+                    data-listgridselecttype=${listGrid.selectType},
+                    data-currenturl=${currentUrl},
+                    data-path=@{${listGrid.path}},
+                    data-currentparams=${currentParams}"
+           blc_admin:component_id="${listGrid}">
+        <thead>
+            <tr>
+                <th th:each="headerField : ${listGrid.headerFields}"
+                    th:if="${headerField.isVisible}"
+                    th:inline="text"
+                    th:classappend="${#strings.isEmpty(headerField.columnWidth) ? '' : 'explicit-size'}"
+                    th:attr="data-columnwidth=${#strings.isEmpty(headerField.columnWidth) ? '' : headerField.columnWidth}"
+                    th:style="${(#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';') 
+                              + ' ' + 
+                              (headerFieldStat.first ? 'padding-right: 20px;' : '')}"
+                    scope="col">
+
+                    <!--<span th:if="${headerFieldStat.first}" class="listgrid-icon" />-->
+                    
+                    <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
+                        <div class="listgrid-title">
+                            <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
+                            <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
+                        </div>
+                    </div>
+    
+                    <div href="#" class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort and !headerField.filterSortDisabled}">
+                        <div class="listgrid-title">
+                            <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
+                            <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
+                            <div class="listgrid-filter-sort-container">
+                                <i class="sort-icon icon-sort"></i>
+                            </div>
+                        </div>
+
+                        <ul th:include="components/partials/listGridHeaderFilter"
+                            class="no-hover"
+                            th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
+                            th:with="fieldType=${headerField.fieldType},
+                                     fieldName=${headerField.name},
+                                     fieldFriendlyName=${headerField.friendlyName},
+                                     index=${headerFieldStat.index}">
+                        </ul>
+                    </div>
+                </th>
+                <th th:if="${listGrid.listGridType} == 'main'" th:unless="${#lists.isEmpty(listGrid.records)}">
+                    <th:comment th:remove="all">
+                        This entry acting as placeholder for Edit links
+                    </th:comment>
+                </th>
+                
+                <th width="75" th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}">
+                    <div class="listgrid-headerBtn split dropdown" th:unless="${listGrid.canFilterAndSort}">
+                        <div class="listgrid-title">
+                        Id
+                        </div>
+                    </div>
+                    
+                    <div class="listgrid-headerBtn split dropdown" th:if="${listGrid.canFilterAndSort}">
+                        <div class="listgrid-title">
+                            Id
+                            <div class="listgrid-filter-sort-container">
+                                <i class="sort-icon icon-sort"></i>
+                            </div>
+                        </div>
+
+                        <ul th:include="${'components/partials/listGridHeaderFilter'}"
+                            class="no-hover end"
+                            th:with="fieldType=${'id'},
+                                     fieldName=${listGrid.idProperty},
+                                     fieldFriendlyName=${listGrid.idProperty},
+                                     index=${#lists.size(listGrid.headerFields) - 1}">
+                        </ul>
+                   </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody th:attr="data-recordranges=${listGrid.startIndex + '-' + (listGrid.startIndex + #lists.size(listGrid.records) - 1)},
+                        data-totalrecords=${listGrid.totalRecords},
+                        data-pagesize=${listGrid.pageSize}">
+                        
+            <tr th:if="${#lists.isEmpty(listGrid.records)}">
+                <div th:remove="tag" th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
+                    <td th:if="${index.count == 1}" class="list-grid-no-results">
+                        (No records found)
+                    </td>
+
+                    <td th:unless="${index.count == 1}"></td>
+                </div>
+            </tr>
+            
+            <tr th:each="record : ${listGrid.records}"
+                th:unless="${#lists.isEmpty(listGrid.records)}"
+                th:class="${record.isDirty? 'dirty' : record.isError? 'error' : ''}"
+                th:classappend="${listGrid.clickable}? 'clickable'"
+                th:attr="data-link=@{${record.path}},
+                         data-index=${record.index},
+                         data-rowid=${record.id},
+                         data-hiddenfields=${record.getHiddenFieldsJson()}">
+                
+                <td th:each="headerField : ${record.listGrid.headerFields}"
+                    th:if="${headerField.isVisible}"
+                    th:switch="${listGrid.listGridType}"
+                    th:with="field=${record.getField(headerField.name)}"
+                    th:attr="data-fieldname=${field.name},data-fieldvalue=${field.value}"
+                    th:class="${field.isDerived ? 'derived' : ''}">
+                    
+                    <span th:case="'main'" th:remove="tag">
+                        <span th:substituteby="components/partials/listGridIcon" />
+                    
+                        <span th:if="${headerField.mainEntityLink}"
+                            th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}" />
+                            
+                        <span th:if="${headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">
+                           <span th:remove="tag" th:text="${field.displayValue}" />
+                           <!--<a th:href="@{${headerField.foreignKeyClass + '/' + field.value}}" class="modal-view">-->
+                                <!--<i class="icon-external-link"></i>-->
+                           <!--</a>-->
+                        </span>
+                        
+                        <span th:if="${field.fieldType == 'IMAGE'}">
+                            <img class="thumbnail" th:style="${'height: ' + field.height + 'px;'}"
+                                th:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                th:attr="data-fullurl=@{${field.value}}" />
+                        </span>
+
+                        <span th:if="${field.fieldType == 'COLOR'}">
+                            <span class="sandbox-color-square" 
+                                th:style="${'background-color: ' + field.value + ';'}" />
+                        </span>
+                            
+                        <span th:unless="${headerField.mainEntityLink 
+                                or headerField.canLinkToExternalEntity 
+                                or field.fieldType == 'IMAGE'
+                                or field.fieldType == 'COLOR'}"
+                              th:text="${field.displayValue}" th:remove="tag"/>
+                    </span>
+                    
+                    <span th:case="*" th:remove="tag">
+                        <span th:substituteby="components/partials/listGridIcon" />
+                        
+                        <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
+                           <span th:remove="tag" th:text="${field.displayValue}" />
+                        </span>
+
+                        <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity}" th:remove="tag">
+                           <span th:remove="tag" th:text="${field.displayValue}" />
+                           <!--<a th:href="@{${record.externalEntityPath}}" class="modal-view">-->
+                                 <!--<i class="icon-external-link"></i>-->
+                           <!--</a>-->
+                        </span>
+                        
+                        <span th:if="${field.fieldType == 'IMAGE'}">
+                            <img class="thumbnail" th:style="${'height: ' + field.height + 'px;'}"
+                                th:src="@{${field.value + record.getField('thumbnailKey').value}}"
+                                th:attr="data-fullurl=@{${field.value}}" />
+                        </span>
+
+                        <span th:if="${field.fieldType == 'COLOR'}">
+                            <span class="sandbox-color-square" 
+                                th:style="${'background-color: ' + field.value + ';'}" />
+                        </span>
+                        
+                        <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
+                                or headerField.canLinkToExternalEntity
+                                or field.fieldType == 'IMAGE'
+                                or field.fieldType == 'COLOR'}"
+                              th:remove="tag" th:text="${field.displayValue}" />
+                    </span>
+                </td>
+
+                <td th:if="${listGrid.listGridType} == 'main'">
+                    <span>
+                        <a th:href="@{${record.path}}" th:text="#{Edit}"
+                           th:attr="data-link=@{${record.path}},
+                                     data-index=${record.index},
+                                     data-rowid=${record.id},
+                                     data-hiddenfields=${record.getHiddenFieldsJson()}">Edit</a>
+                    </span>
+                </td>
+                
+                <td th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}" data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
+            </tr>
+            
+        </tbody>
+    </table>
+</div>
+
+<span class="listgrid-table-footer" th:inline="text">
+    <span class="listgrid-table-footer-message" th:inline="text">
+        <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}" />
+        <span class="low-index" th:unless="${records}">0</span>
+        -
+        <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
+        <span th:text="${'of'}" />
+        <span class="total-records" th:text="${#lists.size(listGrid.records)}" />
+        <span th:text="${'records'}" />
+    </span>
+</span>
+
+<!--<span class="listgrid-table-spinner-container" th:inline="text">-->
+    <!--<i class="listgrid-table-spinner icon-spin icon-spinner" />-->
+<!--</span>-->

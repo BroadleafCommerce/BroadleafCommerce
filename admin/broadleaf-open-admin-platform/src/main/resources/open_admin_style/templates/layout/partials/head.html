@@ -1,0 +1,33 @@
+<head>
+    
+    <div th:substituteby="layout/partials/preHeadContent" />
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta http-equiv="Content-Author" content="Broadleaf Commerce" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title th:text="#{Admin_Title}" />
+    
+    <!--[if IE 7]>
+    <link rel="stylesheet" th:href="@{/css/font-awesome-ie7.min.css}" />
+    <![endif]-->
+    
+    <blc:bundle name="admin/admin.css" 
+                mapping-prefix="/css/"
+                files="admin/bootstrap.css,
+                       admin/new-admin.css,
+                       admin/font-awesome.min.css,
+                       admin/new-admin-changes.css,
+                       admin/jquery-ui-1.10.2.custom.css,
+                       admin/jquery.mCustomScrollbar.css" />
+
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+
+    <script type="text/javascript" th:src="@{/js/admin/lib/modernizr.foundation.js}"></script>
+    
+    <!--[if IE]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    
+    <div th:substituteby="layout/partials/postHeadContent" />
+    
+</head>

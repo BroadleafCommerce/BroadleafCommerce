@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema xmlns="http://schema.broadleafcommerce.org/mo"
+            targetNamespace="http://schema.broadleafcommerce.org/mo"
+            elementFormDefault="qualified" attributeFormDefault="unqualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="field">
+        <xsd:complexType>
+            <xsd:group ref="basicGroup"/>
+            <xsd:attribute name="name" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:group name="basicGroup">
+      <xsd:sequence>
+          <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                  <xsd:attribute name="name" use="required" type="basic-props"/>
+                  <xsd:attribute name="value" use="required"/>
+              </xsd:complexType>
+          </xsd:element>
+          <xsd:element ref="validation" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="optionFilterValue" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="mapKey" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="customCriteria" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="maintainedAdornedTargetField" minOccurs="0" maxOccurs="unbounded"/>
+          <xsd:element ref="gridVisibleField" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:group>
+
+    <xsd:element name="optionFilterValue">
+        <xsd:complexType>
+            <xsd:attribute name="name" use="required"/>
+            <xsd:attribute name="value" use="required"/>
+            <xsd:attribute name="type" type="field-type" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="customCriteria">
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="maintainedAdornedTargetField">
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="gridVisibleField">
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="mapKey">
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required"/>
+            <xsd:attribute name="displayValue" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="validation">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="property" minOccurs="0" maxOccurs="unbounded">
+                  <xsd:complexType>
+                      <xsd:attribute name="name" use="required"/>
+                      <xsd:attribute name="value" use="required"/>
+                  </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="className" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="overrideItem">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="field" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+            <xsd:attribute name="configurationKey"/>
+            <xsd:attribute name="ceilingEntity"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="override">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="overrideItem" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+            <xsd:attribute name="id" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:simpleType name="field-type">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="BOOLEAN"/>
+            <xsd:enumeration value="STRING"/>
+            <xsd:enumeration value="INTEGER"/>
+            <xsd:enumeration value="LONG"/>
+            <xsd:enumeration value="DOUBLE"/>
+            <xsd:enumeration value="FLOAT"/>
+            <xsd:enumeration value="BIGDECIMAL"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="basic-props">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="friendlyName"/>
+            <xsd:enumeration value="securityLevel"/>
+            <xsd:enumeration value="visibility"/>
+            <xsd:enumeration value="order"/>
+            <xsd:enumeration value="explicitFieldType"/>
+            <xsd:enumeration value="excluded"/>
+            <xsd:enumeration value="group"/>
+            <xsd:enumeration value="groupOrder"/>
+            <xsd:enumeration value="groupCollapsed"/>
+            <xsd:enumeration value="largeEntry"/>
+            <xsd:enumeration value="prominent"/>
+            <xsd:enumeration value="columnWidth"/>
+            <xsd:enumeration value="broadleafEnumeration"/>
+            <xsd:enumeration value="readOnly"/>
+            <xsd:enumeration value="toolTip"/>
+            <xsd:enumeration value="helpText"/>
+            <xsd:enumeration value="hint"/>
+            <xsd:enumeration value="lookupDisplayProperty"/>
+            <xsd:enumeration value="lookupParentDataSourceName"/>
+            <xsd:enumeration value="targetDynamicFormDisplayId"/>
+            <xsd:enumeration value="optionListEntity"/>
+            <xsd:enumeration value="optionValueFieldName"/>
+            <xsd:enumeration value="optionDisplayFieldName"/>
+            <xsd:enumeration value="requiredOverride"/>
+            <xsd:enumeration value="addType"/>
+            <xsd:enumeration value="removeType"/>
+            <xsd:enumeration value="fetchType"/>
+            <xsd:enumeration value="inspectType"/>
+            <xsd:enumeration value="updateType"/>
+            <xsd:enumeration value="keyClass"/>
+            <xsd:enumeration value="keyPropertyFriendlyName"/>
+            <xsd:enumeration value="valueClass"/>
+            <xsd:enumeration value="deleteEntityUponRemove"/>
+            <xsd:enumeration value="valuePropertyFriendlyName"/>
+            <xsd:enumeration value="isSimpleValue"/>
+            <xsd:enumeration value="mediaField"/>
+            <xsd:enumeration value="mapKeyOptionEntityClass"/>
+            <xsd:enumeration value="mapKeyOptionEntityDisplayField"/>
+            <xsd:enumeration value="mapKeyOptionEntityValueField"/>
+            <xsd:enumeration value="parentObjectProperty"/>
+            <xsd:enumeration value="parentObjectIdProperty"/>
+            <xsd:enumeration value="targetObjectProperty"/>
+            <xsd:enumeration value="sortProperty"/>
+            <xsd:enumeration value="sortAscending"/>
+            <xsd:enumeration value="ignoreAdornedProperties"/>
+            <xsd:enumeration value="addMethodType"/>
+            <xsd:enumeration value="targetElementId"/>
+            <xsd:enumeration value="dataSourceName"/>
+            <xsd:enumeration value="manyToField"/>
+            <xsd:enumeration value="useServerSideInspectionCache"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

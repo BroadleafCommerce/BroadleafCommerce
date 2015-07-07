@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>broadleaf</artifactId>
+        <groupId>org.broadleafcommerce</groupId>
+        <version>4.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>admin</artifactId>
+    <packaging>pom</packaging>
+    <name>BroadleafCommerce Admin</name>
+    <description>BroadleafCommerce Admin Mid Level Project</description>
+    <url>http://www.broadleafcommerce.org</url>
+    <properties>
+        <project.uri>${project.baseUri}/../</project.uri>
+    </properties>
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>jeff</id>
+            <name>Jeff Fischer</name>
+            <email>jfischer@broadleafcommerce.org</email>
+            <organization>Broadleaf Commerce</organization>
+            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
+            <roles>
+                <role>cto</role>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+        <developer>
+            <id>brian</id>
+            <name>Brian Polster</name>
+            <email>bpolster@broadleafcommerce.org</email>
+            <organization>Broadleaf Commerce</organization>
+            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
+            <roles>
+                <role>president</role>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>-6</timezone>
+        </developer>
+    </developers>
+    <modules>
+        <module>broadleaf-admin-module</module>
+        <module>broadleaf-open-admin-platform</module>
+        <module>broadleaf-contentmanagement-module</module>
+        <module>broadleaf-admin-functional-tests</module>
+    </modules>
+</project>

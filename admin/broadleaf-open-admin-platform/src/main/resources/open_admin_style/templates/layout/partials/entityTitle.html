@@ -1,0 +1,88 @@
+<div class="content-area-title-bar entity-form-actions">
+    <div th:if="${entityFriendlyName}" th:remove="tag">
+        <h3 th:text="#{${entityFriendlyName}}"></h3>
+        <h4 class="main-count">
+            <span th:remove="tag" th:text="${#lists.size(listGrid.records)}" />
+            <span th:remove="tag" th:text="#{${entityFriendlyName}}" />
+        </h4>
+
+        <!-- Dropdown button if more than one action -->
+        <div th:if="${#lists.size(mainActions) > 1 or #lists.size(entityTypes) > 1}" class="button-group">
+            <button type="button" class="button primary large dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <span th:text="'Add ' + #{${entityFriendlyName}}" th:remove="tag" />
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <div th:each="action,iterStat : ${mainActions}" th:remove="tag">
+                    <li th:each="type,iterStat : ${entityTypes}" th:if="${action.id == 'ADD'}" th:object="${type}">
+                        <a th:attr="data-action=${action.urlPostfix}"
+                           th:href="@{'/' + ${sectionKey + action.urlPostfix}(entityType=*{fullyQualifiedClassname})}"
+                           th:classappend="${action.buttonClass}">
+                            <span th:text="#{${action.displayText}}" th:remove="tag" />
+                            <span th:if="${action.displayText == 'Add'}" th:text="#{*{friendlyName}}" th:remove="tag" />
+                        </a>
+                    </li>
+                    <li th:unless="${action.id == 'ADD'}">
+                        <a th:attr="data-action=${action.urlPostfix}"
+                           th:href="@{'/' + ${sectionKey + action.urlPostfix}}"
+                           th:classappend="${action.buttonClass}">
+                            <span th:text="#{${action.displayText}}" th:remove="tag" />
+                            <span th:if="${action.displayText == 'Add'}" th:text="#{*{friendlyName}}" th:remove="tag" />
+                        </a>
+                    </li>
+                </div>
+            </ul>
+        </div>
+
+        <!-- Otherwise normal button if one action -->
+        <div th:unless="${#lists.size(mainActions) > 1 or #lists.size(entityTypes) > 1}" th:remove="tag">
+            <a th:each="action,iterStat : ${mainActions}"
+               class="button primary large"
+               th:type="${action.buttonType}"
+               th:href="@{'/' + ${sectionKey + action.urlPostfix}}"
+               th:attr="data-action=${action.urlPostfix}"
+               th:classappend="${action.buttonClass}">
+                <span th:text="#{${action.displayText}}" th:remove="tag" />
+                <span th:if="${action.displayText == 'Add'}" th:text="#{${entityFriendlyName}}" th:remove="tag" />
+            </a>
+        </div>
+
+    </div>
+
+    <div th:if="${entityForm}" th:remove="tag">
+        <a id="back-button" th:href="@{'/' + ${sectionKey}}"><i class="fa icon-angle-left fa-2x"></i></a>
+        <h3 th:text="${entityForm.mainEntityName}"></h3>
+
+        <!-- Dropdown button if more than one action -->
+        <div th:if="${#lists.size(entityForm.actions) > 1}" class="button-group">
+            <button type="button" class="button primary large"
+                    th:classappend="${action.buttonClass}"
+                    th:each="action,iterStat : ${entityForm.actions}"
+                    th:if="${iterStat.index == #lists.size(entityForm.actions) - 1}"
+                    th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}">
+                <span th:text="#{${action.displayText}}" th:remove="tag" />
+            </button>
+            <button type="button" class="button primary large dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <li th:each="action,iterStat : ${entityForm.actions}" th:if="${iterStat.index != #lists.size(entityForm.actions) - 1}">
+                <a th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}"
+                   th:classappend="${action.buttonClass}">
+                        <span th:text="#{${action.displayText}}" th:remove="tag" />
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Otherwise normal button if one action -->
+        <div th:unless="${#lists.size(entityForm.actions) > 1}" th:remove="tag">
+            <button type="button" class="button primary large"
+                    th:each="action,iterStat : ${entityForm.actions}" th:if="${iterStat.index == #lists.size(entityForm.actions) - 1}"
+                    th:attr="data-url=@{'/' + ${sectionKey + action.urlPostfix}},data-action=${action.urlPostfix}">
+                <span th:text="#{${action.displayText}}" th:remove="tag" />
+            </button>
+        </div>
+        <img th:src="@{/img/admin/ajax-loader.gif}" class="ajax-loader" />
+    </div>
+</div>

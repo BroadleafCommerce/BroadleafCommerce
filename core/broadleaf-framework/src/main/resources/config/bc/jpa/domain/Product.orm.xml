@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+
+    <named-query name="BC_READ_ALL_PRODUCTS" >
+        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product ORDER BY product.id</query>
+    </named-query>
+
+    <named-query name="BC_READ_PRODUCTS_BY_NAME" >
+        <query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product
+        WHERE product.defaultSku.name LIKE :name ORDER BY product.id</query>
+    </named-query>
+    
+    <named-query name="BC_READ_AUTOMATIC_PRODUCT_BUNDLES" >
+        <query>SELECT productBundle FROM org.broadleafcommerce.core.catalog.domain.ProductBundle productBundle
+        WHERE productBundle.autoBundle = :autoBundle
+        AND productBundle.defaultSku.activeStartDate &lt;= :currentDate
+        AND (productBundle.defaultSku.activeEndDate &gt; :currentDate OR productBundle.defaultSku.activeEndDate IS NULL)
+                AND (productBundle.archiveStatus.archived IS NULL OR productBundle.archiveStatus.archived = 'N')</query>
+    </named-query>
+
+    <named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
+        <query>SELECT categoryProduct.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
+        WHERE categoryProduct.category.id = :categoryId
+        AND categoryProduct.product.defaultSku.activeStartDate &lt;= :currentDate
+        AND (categoryProduct.product.defaultSku.activeEndDate &gt; :currentDate OR categoryProduct.product.defaultSku.activeEndDate IS NULL)
+                AND (categoryProduct.product.archiveStatus.archived IS NULL OR categoryProduct.product.archiveStatus.archived = 'N')
+        ORDER BY COALESCE (categoryProduct.displayOrder,999999)
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_PRODUCTS_BY_CATEGORY" >
+        <query>SELECT categoryProduct.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl categoryProduct
+        WHERE categoryProduct.category.id = :categoryId
+        ORDER BY COALESCE (categoryProduct.displayOrder,999999)
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_PRODUCTS_BY_OUTGOING_URL" >
+        <query>SELECT product
+               FROM org.broadleafcommerce.core.catalog.domain.Product product
+               WHERE (product.url = :url OR product.urlKey = :urlKey)
+               AND (product.defaultSku.activeEndDate &gt; :currentDate OR product.defaultSku.activeEndDate IS NULL)
+               AND (product.archiveStatus.archived IS NULL OR product.archiveStatus.archived = 'N')
+        </query>
+    </named-query>
+    
+</entity-mappings>

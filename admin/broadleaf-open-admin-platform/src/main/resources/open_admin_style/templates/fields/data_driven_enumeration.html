@@ -1,0 +1,26 @@
+<label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+</label>
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+
+<div class="select-style" th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">
+    <select th:field="*{fields['__${field.name}__'].value}">
+        <option th:each="entry : *{fields['__${field.name}__'].options}"
+                th:value="${entry.key}"
+                th:text="#{${entry.value}}" />
+    </select>
+</div>
+
+<div th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) lt #props.getAsInt('admin.enum.minCountForDropDown')}"
+     th:each="entry : *{fields['__${field.name}__'].options}">
+    <label th:inline="text" class="inline-radio-label">
+        <input th:field="*{fields['__${field.name}__'].value}"
+               type="radio"
+               th:value="${entry.key}" />
+        [[${entry.value}]]
+    </label>
+</div>
+            
+<span th:if="${#maps.isEmpty(field.options)}" class="indented-form-value" th:inline="text">
+    &lt;[[#{No_Records_Found_Enum}]]&gt;
+</span>

@@ -1,0 +1,16 @@
+<label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+</label>
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+
+<div>
+    <input type="radio" class="radio" th:id="${field.name + '-true'}" th:value="${true}" th:field="*{fields['__${field.name}__'].value}" />
+    <label th:for="${field.name + '-true'}" th:inline="text" class="radio-label">
+        <span th:text="#{Yes}" />
+    </label>
+
+    <input type="radio" class="radio" th:id="${field.name + '-false'}" th:value="${false}" th:field="*{fields['__${field.name}__'].value}" />
+    <label th:for="${field.name + '-false'}" th:inline="text" class="radio-label">
+        <span style="margin-right: 10px;" th:text="#{No}" />
+    </label>
+</div>

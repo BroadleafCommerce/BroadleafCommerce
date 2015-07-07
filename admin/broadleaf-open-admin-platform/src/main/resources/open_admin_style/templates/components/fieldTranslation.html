@@ -1,0 +1,16 @@
+<div th:if="${field.translatable and hideTranslations != 'true'}" th:remove="tag">
+    <a class="show-translations" th:unless="${df}"
+       th:href="@{/translation(ceilingEntity=${entityForm.translationCeilingEntity},
+                               entityId=${entityForm.translationId},
+                               propertyName=${field.translationFieldName},
+                               isRte=${field.fieldType == 'HTML' || field.fieldType == 'HTML_BASIC'})}">
+        <img th:src="@{/img/admin/button/translate.png}" />&nbsp;translate
+    </a>
+    <a class="show-translations" th:if="${df}"
+       th:href="@{/translation(ceilingEntity=${df.translationCeilingEntity},
+                               entityId=${df.translationId},
+                               propertyName=${field.translationFieldName},
+                               isRte=${field.fieldType == 'HTML' || field.fieldType == 'HTML_BASIC'})}">
+        <img th:src="@{/img/admin/button/translate.png}" />&nbsp;translate
+    </a>
+</div>

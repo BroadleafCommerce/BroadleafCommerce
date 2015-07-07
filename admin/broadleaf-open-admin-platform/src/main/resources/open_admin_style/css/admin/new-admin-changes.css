@@ -1,0 +1,432 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+.hidden {
+    display: none;
+}
+
+.app-content .content .header .button { line-height:14px; }
+.app-content .side-nav ul li a.active.logo { background-position-y: -90px }
+
+.sandbox-bar .selectize-control.single .selectize-input {
+    width: 260px;
+}
+
+.dataTables_wrapper .dataTables_length {
+    margin-top: 0;
+    margin-left: 30px;
+}
+
+.dataTables_wrapper .dataTables_length .selectize-control {
+    display: inline-block;
+    background: white;
+    width: 80px;
+    height: 40px;
+    vertical-align: middle;
+    border: 1px solid #D8D5D0
+}
+
+.dataTables_wrapper .dataTables_length .selectize-control.single .selectize-input {
+    padding: 10px;
+}
+
+
+.button{
+    font-size: 11px;
+    line-height: 15px;
+}
+
+.table-actions > button.button {
+    float: left;
+}
+
+.modal form {
+    margin: 0;
+}
+
+.modal .tabs-container {
+    margin: 0 -15px;
+    padding: 0 15px;
+}
+
+.modal dl.tabs {
+    margin-top: 10px;
+}
+
+.modal .modal-header {
+    padding-bottom: 0;
+}
+
+.sandbox-bar .row {
+    margin: 0;
+}
+
+.sandbox-bar .row .col3 {
+    margin-left: -15px;
+}
+
+.sandbox-bar .row .col9 {
+    float:right;
+    padding-right: 0;
+}
+
+.secondary-nav {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* temporary until new css */
+input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.radio-label.clr, .radio>input[type="radio"]+label {
+    padding-left: 25px;
+    padding-right: 15px;
+}
+
+/* added for rule builder button */
+.add-and-button {
+    height: 45px;
+}
+
+/* add nowrap to listgrids */
+.table tbody>tr>td {
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.borderlessGroup {
+    border: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* change .site-bar to .header */
+.header{background-color:#2a2a2a;color:white;height:50px;left:0;padding:0 20px;position:absolute;top:0;width:100%;z-index:100}.app-content .content .header .button{background-color:#404040;padding:7px 15px;font-size:10px;text-transform:uppercase;color:#B3B3B3;letter-spacing:0.2em;display:inline-block;cursor:pointer;margin:10px 20px}.app-content .content .header h1{font-size:14px;font-weight:300;line-height:50px;margin:0;padding:0;display:inline-block;float:left;width:auto}.app-content .content .header .account-info{display:inline-block;float:right;font-size:14px}.app-content .content .header .account-info ul{margin:0;padding:0;list-style:none;color:white;display:inline}.app-content .content .header .account-info ul li{margin:0;height:50px;line-height:50px;display:inline-block;font-weight:300;float:left}.app-content .content .header .account-info ul li a{width:100%;height:50px;line-height:50px;color:white;font-size:1.25em;font-weight:300;padding:0 30px;float:left}.app-content .content .header .account-info ul li a:hover{background-color:#F1EFEB}.app-content .content .header .account-info .logout{float:left;display:inline-block;margin-right:0}
+
+.redactor-toolbar {
+    z-index: 1039 !important;
+}
+
+.content-area-title-bar .ajax-loader, .entity-form-actions .ajax-loader {
+    vertical-align: middle;
+    display: none;
+    padding: 10px 0 9px;
+}
+
+div.action-popup img.ajax-loader {
+    float: right;
+    margin-right: 10px;
+    display: none;
+}
+
+
+.select-site {
+    display: none;
+}
+
+.mCS_no_scrollbar + .mCSB_scrollTools .mCSB_draggerContainer .mCSB_dragger {
+    display: none;
+}
+
+.entityform-listgrid {
+    margin: 20px 0;
+}
+
+.listgrid-toolbar ul {
+    list-style-type: none;
+    padding-left: 15px;
+    margin-bottom: 3px;
+    display: inline-block;
+}
+
+.listgrid-toolbar li {
+    float: left;
+    padding: 0 2px;
+ }
+
+.listgrid-toolbar li.alert-box {
+    padding-top: 8px;
+    padding-left: 10px;
+    color: #94AF39;
+ }
+
+button:disabled {
+    background-color: #999999 !important;
+ }
+
+.listgrid-header-wrapper {
+    background-color: #E1E0DD;
+    border-bottom: 3px solid #D4D2CF;
+    margin-bottom: -1px;
+}
+
+/* added to stop listgrid flicker */
+.table-striped>tbody>tr:nth-of-type(even) {
+    background-color: #F9F7F3;
+}
+
+.list-grid-table tbody tr:hover {
+    background-color: #F7EFDC;
+}
+
+.list-grid-table tbody tr.selected {
+    background-color: #F7EFDC;
+}
+
+.listgrid-modal-actions {
+    padding-top: 10px;
+}
+
+.listgrid-search {
+    margin-bottom: 25px;
+}
+
+.listgrid-search-actions {
+    padding-top: 6px;
+}
+
+.table {
+    margin-bottom: 0 !important;
+}
+
+.table thead>tr>th {
+    border-bottom: none;
+}
+
+.listgrid-filter-sort-container {
+    display: inline-block;
+    padding: 0 5px;
+    float: right;
+}
+
+.listgrid-filter-sort-container i {
+    color: #B9B9B9;
+    margin: 0px 0px 0px 4px;
+    cursor: pointer;
+}
+
+.listgrid-filter-sort-container i.active {
+    color: #8EAA2B;
+}
+
+.selectize-input{
+    -webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,0.15);
+    box-shadow:inset 0 1px 2px rgba(0,0,0,0.15);
+    border-radius: 3px;
+}
+
+.selectize-control.multi .selectize-input [data-value] {
+    background-color: #8EAA2B;
+}
+
+.selectize-control.plugin-remove_button [data-value] .remove {
+    border-left: 1px solid #ffffff;
+}
+
+.selectize-control.multi .selectize-input>div {
+    background: #8EAA2B;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+}
+
+.selectize-dropdown [data-selectable] {
+    padding: 5px 10px;
+}
+
+.selectize-control.multi .selectize-input [data-value].active{
+    background-color:#EB7F4C;
+}
+
+.selectize-control.multi .selectize-input>div.active{
+    background:#F2B95A;
+    color:#ffffff;
+    border:1px solid #F2B95A;
+}
+
+.selectize-control.plugin-remove_button [data-value] .active {
+    border-left: 1px solid #EB7F4C;
+}
+
+.selectize-control.multi .selectize-input.has-items {
+    padding: 10px 10px 8px 10px;
+}
+
+
+.selectize-input.dropdown-active, .sandbox-bar .selectize-control.single .selectize-input {
+    -webkit-border-radius: 0;
+    -moz-border-radius:0;
+    border-radius:0;
+}
+
+.selectize-input.dropdown-active:before {
+    height: 0;
+}
+
+.selectize-control.single .selectize-input {
+    font-size: 13px;
+    height: 40px;
+    padding: 0 15px;
+    line-height: 40px;
+}
+
+.select-style {
+    overflow: visible;
+    background: #fff;
+}
+
+.alert {
+    color: #8EAA2B;
+    border: 0;
+    text-transform: none;
+}
+
+.no-hover {
+    margin-bottom: 0;
+}
+
+
+.table.list-grid-table, .table>tbody>tr.selected>td:first-child, .table>tbody>tr.selected>td:last-child {
+    -moz-box-shadow: none;
+     -webkit-box-shadow: none;
+     box-shadow: none;
+}
+
+.listgrid-container .listgrid-icon {
+    color: #CAC8C4;
+}
+
+.modal-header {
+    padding: 30px 30px 0 30px;
+    border-bottom: 0;
+}
+
+.modal-body {
+    padding: 15px 30px 30px 30px;
+}
+
+.modal-body .row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.modal-body .col12 {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.modal-body legend {
+    display: none;
+}
+
+.modal-body fieldset {
+    margin-bottom: 0;
+    border: 0;
+    padding: 0;
+}
+
+.modal-body textarea {
+    height: 90px;
+}
+
+.close {
+    font-size: 30px;
+    line-height: 30px;
+}
+
+.modal-header h3 {
+    font-weight: 500;
+}
+
+textarea, input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"], textarea {
+    margin: 5px 0 10px 0;
+}
+
+.errors {
+    margin-bottom: 5px;
+    color: red;
+}
+
+.dropdown-menu-right {
+    min-width: 100%;
+}
+
+.dropdown-menu>li>a.alert {
+    margin: 0;
+    text-align: left;
+    padding-left: 30px;
+}
+
+.dropdown-menu>li>a {
+    cursor: pointer;
+}
+
+input[type="radio"].radio {
+    top: 0;
+    visibility: hidden;
+}
+
+label {
+    display: block;
+}
+
+.numeric-field {
+    min-width: 200px;
+    width: 16.6667% !important;
+}
+
+.date-field {
+    min-width: 350px;
+    width: 25% !important;
+}
+
+input[disabled], input[readonly], fieldset[disabled] input {
+    cursor: not-allowed;
+    background-color: #eeeeee;
+}
+
+#back-button {
+    margin-right: 10px;
+    vertical-align: middle;
+    color: #B3B3B3;
+}
+
+#back-button i:hover {
+    color: #F2B95A;
+}
+
+.app-content .sidebar .sidebar-content label{
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #B3B3B3;
+    font-weight: normal;
+}
+
+fieldset legend i.help-tip {
+    margin-left: 5px;
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group .dropdown-toggle{
+    border-left: 1px solid #ffffff;
+}
+
+.button.primary:hover{
+    border-right: 1px solid #ffffff;
+}

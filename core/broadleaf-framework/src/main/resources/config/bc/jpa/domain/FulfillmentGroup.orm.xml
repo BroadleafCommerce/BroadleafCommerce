@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+<!--
+    <named-query name="BC_READ_FULFILLMENT_GROUPS_BY_ORDER_ID" >
+        <query>SELECT fulfillmentGroup FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fulfillmentGroup
+        WHERE fulfillmentGroup.orderId = :orderId</query>
+    </named-query>
+ -->
+    <named-query name="BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg
+             WHERE fg.order.id = :orderId
+             AND fg.primary = TRUE
+        </query>
+    </named-query>
+    
+         <named-query name="BC_READ_FULFILLMENT_GROUP_BY_STATUS_ASC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE fg.status = :status ORDER BY fg.order.auditable.dateCreated ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_FULFILLMENT_GROUP_BY_STATUS_DESC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE fg.status = :status ORDER BY fg.order.auditable.dateCreated DESC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_UNFULFILLED_FULFILLMENT_GROUP_ASC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE (fg.status &lt;&gt; 'FULFILLED' AND fg.status &lt;&gt; 'DELIVERED') 
+            ORDER BY fg.order.auditable.dateCreated ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_PARTIALLY_FULFILLED_FULFILLMENT_GROUP_ASC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE (fg.status = 'PARTIALLY_FULFILLED' OR fg.status = 'PARTIALLY_DELIVERED') 
+            ORDER BY fg.order.auditable.dateCreated ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_UNPROCESSED_FULFILLMENT_GROUP_ASC">
+        <query>
+            SELECT fg FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE (fg.status IS NULL) 
+            ORDER BY fg.order.auditable.dateCreated ASC
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_MAX_FULFILLMENT_GROUP_SEQUENCE">
+        <query>
+            SELECT MAX(fg.sequence) FROM org.broadleafcommerce.core.order.domain.FulfillmentGroup fg 
+            WHERE fg.order.id = :orderId 
+        </query>
+    </named-query>
+
+</entity-mappings>

@@ -1,0 +1,18 @@
+<comment th:remove="all" xmlns:th="http://www.w3.org/1999/html">
+<!-- This component represents a list grid toolbar -->
+</comment>
+
+<div class="listgrid-modal-actions">
+    <div th:each="action : ${listGrid.activeModalRowActions}">
+        <button disabled="disabled"
+                class="tiny radius dark row-action button primary"
+                type="button"
+                th:classappend="${action.buttonClass}"
+                th:attr="data-urlpostfix=${action.urlPostfix},
+                             data-listgridtype=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
+            <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
+        </button>
+    </div>
+</div>

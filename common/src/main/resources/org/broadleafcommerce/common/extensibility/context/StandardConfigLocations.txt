@@ -1,0 +1,24 @@
+#specify fully qualified resource path. e.g.: /org/broadleafcommerce/profile/extensibility/applicationContext.xml
+#separate each entry with a new line
+#comments may be added by placing a pound symbol '#' in front of the line
+bl-common-applicationContext-persistence.xml
+bl-profile-applicationContext-persistence.xml
+bl-framework-applicationContext-persistence.xml
+#persistence xml files should appear first to ensure that entity managers are loaded first
+bl-common-applicationContext.xml
+bl-profile-applicationContext.xml
+bl-profile-web-applicationContext.xml
+bl-framework-applicationContext.xml
+bl-framework-applicationContext-workflow.xml
+bl-framework-applicationContext-workflow-payment.xml
+bl-framework-web-applicationContext.xml
+bl-framework-web-applicationContext-api-wrapper.xml
+#The application context files below are not added by default to the BLC runtime
+#Instead, these items must be explicitly declared for import in web.xml, if desired
+bl-open-admin-contentClient-applicationContext.xml
+bl-open-admin-contentCreator-applicationContext.xml
+bl-admin-applicationContext.xml
+#testing application context files
+bl-framework-applicationContext-test.xml
+#bl-applicationContext-test.xml
+bl-applicationContext-test-security.xml

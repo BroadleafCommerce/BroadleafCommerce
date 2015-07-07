@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+
+    <named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID" >
+        <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
+        WHERE order.customer.id = :customerId</query>
+    </named-query>
+    
+    <named-query name="BC_READ_ORDER_BY_ORDER_NUMBER" >
+        <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
+        WHERE order.orderNumber = :orderNumber</query>
+    </named-query>
+    
+    <named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS">
+        <query>
+            SELECT order 
+               FROM org.broadleafcommerce.core.order.domain.Order order
+            WHERE order.customer.id = :customerId
+                 AND order.status = :orderStatus  
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_ORDER_BY_CUSTOMER_ID" >
+        <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
+        WHERE order.customer.id = :customerId
+        AND order.id = :orderId</query>
+    </named-query>
+
+    <named-query name="BC_READ_ORDERS_BY_CUSTOMER_NAME_AND_STATUS">
+        <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
+        WHERE order.customer.id = :customerId            
+        AND order.status = :orderStatus
+        AND order.name = :orderName</query>
+    </named-query>
+
+    <named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL">
+        <query>SELECT order FROM org.broadleafcommerce.core.order.domain.Order order
+        WHERE order.customer.id = :customerId            
+        AND order.status = :orderStatus
+        AND order.name is null
+        ORDER BY order.id desc</query>
+    </named-query>
+
+    <named-query name="BC_READ_NAMED_ORDER_FOR_CUSTOMER">
+        <query>
+            SELECT order 
+            FROM  org.broadleafcommerce.core.order.domain.Order order
+            WHERE order.customer.id = :customerId
+                 AND order.name = :orderName
+                 AND order.status = :orderStatus
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_READ">
+        <query>
+            SELECT COUNT(*) FROM org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            WHERE  orderLock.orderLockPK.orderId = :orderId
+            AND orderLock.orderLockPK.key = :key
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_ACQUIRE">
+        <query>
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            SET orderLock.locked = 'Y', orderLock.lastUpdated = :currentTime
+            WHERE orderLock.orderLockPK.orderId = :orderId
+              AND (orderLock.locked = 'N' OR orderLock.lastUpdated &lt; :timeout)
+              AND orderLock.orderLockPK.key = :key
+        </query>
+    </named-query>
+
+    <named-query name="BC_ORDER_LOCK_RELEASE">
+        <query>
+            UPDATE org.broadleafcommerce.core.order.domain.OrderLock orderLock
+            SET orderLock.locked = 'N'
+            WHERE orderLock.orderLockPK.orderId = :orderId
+               AND orderLock.orderLockPK.key = :key
+        </query>
+    </named-query>
+
+</entity-mappings>

@@ -1,0 +1,9 @@
+<label th:for="*{fields['__${field.name}__'].value}">
+       <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+</label>
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+<input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
+       th:required="${field.required}"
+       th:placeholder="${field.hint}"
+       th:field="*{fields['__${field.name}__'].value}"
+       th:classappend="${field.column == 0} ? 'numeric-field'"/>

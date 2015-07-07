@@ -1,0 +1,70 @@
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.offer.service.type.*;
+
+def orderContains(quantity) {
+    count = 0;
+    foreach (itemInList : order.orderItems) {
+        if (evalItemForOrderContains(itemInList)) {
+            itemQty = itemInList.quantity;
+            foreach (x : itemQty) {
+                count++;
+            }
+        }
+    }
+    
+    return (count >= quantity);
+}
+
+def orderContainsPlusMark(quantity) {
+    count = 0;
+    foreach (itemInList : order.orderItems) {
+        if (itemInList != currentItem) {
+            if (! itemInList.allQuantityMarkedForOffer) {
+                if (itemInList.salePrice.amount >= currentItem.salePrice.amount) {
+                    if (evalItemForOrderContains(itemInList)) {
+                        itemQty = itemInList.quantity;
+                        markedQty = itemInList.markedForOffer;
+                        quantityToCount = itemQty - markedQty;
+                        foreach (x : quantityToCount) {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    result = (count >= quantity);
+    count = 0;
+    
+    if (result && doMark) {
+        foreach (itemInList : order.orderItems) {
+            if (itemInList != currentItem) {
+                if (count < quantity) {
+                    if (! itemInList.allQuantityMarkedForOffer) {
+                        if (itemInList.salePrice.amount >= currentItem.salePrice.amount) {
+                            if (evalItemForOrderContains(itemInList)) {
+                                itemQty = itemInList.quantity;
+                                markedQty = itemInList.markedForOffer;
+                                quantityToCount = itemQty - markedQty;
+                                foreach (x : quantityToCount) {
+                                    if (count < quantity){                              
+                                        if (itemInList.markForOffer()) {  
+                                            count++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
+}

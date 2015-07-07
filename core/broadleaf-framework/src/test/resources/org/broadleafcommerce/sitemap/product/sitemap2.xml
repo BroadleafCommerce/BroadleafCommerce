@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>http://www.heatclinic.com/hot-sauces/hoppin_hot_sauce</loc>
+        <lastmod>2013-11-04T13:06:12-06:00</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>http://www.heatclinic.com/hot-sauces/day_of_the_dead_chipotle_hot_sauce</loc>
+        <lastmod>2013-11-04T13:06:12-06:00</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.5</priority>
+    </url>
+</urlset>

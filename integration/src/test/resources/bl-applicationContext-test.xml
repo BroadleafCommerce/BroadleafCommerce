@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Integration
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-4.1.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+
+    <context:component-scan base-package="org.broadleafcommerce.common.web"/>
+    <context:component-scan base-package="org.broadleafcommerce.core.web"/>
+    <context:component-scan base-package="org.broadleafcommerce.cms.file"/>
+    
+    <!-- Explicitly scan these packages since they are usually scanned in the servlet and not by default -->
+    <context:component-scan base-package="org.broadleafcommerce.profile.web.controller" />
+    <context:component-scan base-package="org.broadleafcommerce.profile.web.core.service.login" />
+    
+    <bean id="blVariableExpressions" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blDefaultErrorHandler" class="org.broadleafcommerce.core.workflow.SilentErrorHandler"/>
+
+    <bean id="blTestRollbackHandler" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackHandler"/>
+    
+    <bean id="blTestPaymentConfigurationServices" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blNullPaymentGatewayConfigurationService"/>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blTestPaymentConfigurationServices"/>
+        <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
+    </bean>
+    
+    <!-- Test pricing with the simple tax provider -->
+    <bean id="blSimpleTaxProvider" class="org.broadleafcommerce.core.pricing.service.tax.provider.SimpleTaxProvider"
+          p:defaultItemTaxRate="0.05" />
+          
+    <bean id="testTaxProviders" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blSimpleTaxProvider" />
+            </list>
+        </property>
+    </bean>
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="testTaxProviders"/>
+        <property name="targetRef" value="blTaxProviders"/>
+    </bean>
+    
+    <!-- Configuration used in WorkflowTests -->
+    <bean p:order="8080" id="blTotalActivity"
+          class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
+          
+    <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
+        </property>
+        <property name="activities">
+            <list>
+                <!-- The order properties defined here matter; these are used in WorkflowTest and could also be added to
+                     by bean definitions in bl-applicationContext-test-module.xml -->
+                <!-- 
+                    The final configuration of this workflow should be:
+                    0 100 - PassThroughActivity
+                    1 1000 - framework activity
+                    2 2000 - framework activity
+                    3 3000 - framework activity
+                    4 3000 - PassThroughActivity
+                    5 4000 - framework activity
+                    6 5000 - TestRollbackActivity
+                -->
+                <bean p:order="100" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
+                <bean p:order="5000" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity">
+                    <property name="errorHandler">
+                        <bean class="org.broadleafcommerce.core.workflow.state.test.TestPassThroughRollbackErrorHandler"/>
+                    </property>
+                </bean>
+                <bean p:order="3000" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
+            </list>
+        </property>
+        <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
+    </bean>
+
+    <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-override-ehcache.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath*:/META-INF/persistence-test.xml</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="blEntityManagerFactoryAssetStorageInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
+        <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
+        <property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
+        <property name="persistenceUnitName" value="blCMSStorage"/>
+    </bean>
+
+    <bean id="blMergedDataSources" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="jdbc/test" value-ref="blDS"/>
+                <entry key="jdbc/testCMS" value-ref="blDS"/>
+                <entry key="jdbc/testSecure" value-ref="blDS"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="blDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
+        <property name="url" value="jdbc:hsqldb:mem:broadleaf"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+
+    <bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host">
+            <value>localhost</value>
+        </property>
+        <property name="port">
+            <value>30000</value>
+        </property>
+        <property name="protocol">
+            <value>smtp</value>
+        </property>
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.timeout">25000</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="blConfiguration" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesConfigurer"/>
+
+    <bean id="blConfigurationManager" class="org.broadleafcommerce.common.config.RuntimeEnvironmentPropertiesManager"/>
+
+    <bean id="baseEmailInfo" abstract="true">
+        <property name="sendEmailReliableAsync" value="false"/>
+        <property name="fromAddress" value="test@broadleafcommerce.org"/>
+        <property name="sendAsyncPriority" value="8"/>
+    </bean>
+
+    <bean id="blMessageCreator" class="org.broadleafcommerce.common.email.service.message.NullMessageCreator">
+        <constructor-arg ref="blMailSender"/>
+    </bean>
+
+    <bean id="serviceStatusEmail"
+          class="org.broadleafcommerce.common.email.service.info.EmailInfo"
+          parent="baseEmailInfo">
+    </bean>
+
+    <bean id="compositeStatusHandler"
+          class="org.broadleafcommerce.common.vendor.service.monitor.handler.CompositeStatusHandler">
+        <property name="handlers">
+            <list>
+                <bean class="org.broadleafcommerce.common.vendor.service.monitor.handler.LogStatusHandler"/>
+                <bean class="org.broadleafcommerce.common.vendor.service.monitor.handler.EmailStatusHandler">
+                    <property name="emailInfo" ref="serviceStatusEmail"/>
+                    <property name="emailTarget">
+                        <bean class="org.broadleafcommerce.common.email.domain.EmailTargetImpl">
+                            <property name="emailAddress" value="test@broadleafcommerce.org"/>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <bean id="blOfferTimeZoneProcessor" class="org.broadleafcommerce.core.offer.TestOfferTimeZoneProcessorImpl"/>
+    
+    <bean id="blNamedOperationManager" class="org.broadleafcommerce.cms.file.service.operation.NamedOperationManagerImpl">
+        <property name="namedOperationComponents">
+            <list>
+                <ref bean="blStaticMapNamedOperationComponent"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="blStaticMapNamedOperationComponent" class="org.broadleafcommerce.cms.file.service.operation.StaticMapNamedOperationComponent">
+        <property name="namedOperations">
+            <map>                                          
+                <entry key="smallAdminThumbnail">
+                    <map>
+                        <entry key="resize-width-amount" value="30"/>
+                        <entry key="resize-height-amount" value="30"/>
+                        <entry key="resize-high-quality" value="false"/>
+                        <entry key="resize-maintain-aspect-ratio" value="true"/>
+                        <entry key="resize-reduce-only" value="true"/>
+                    </map>
+                </entry>
+                <entry key="largeAdminThumbnail">
+                    <map>
+                        <entry key="resize-width-amount" value="60"/>
+                        <entry key="resize-height-amount" value="60"/>
+                        <entry key="resize-high-quality" value="false"/>
+                        <entry key="resize-maintain-aspect-ratio" value="true"/>
+                        <entry key="resize-reduce-only" value="true"/>
+                    </map>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+</beans>

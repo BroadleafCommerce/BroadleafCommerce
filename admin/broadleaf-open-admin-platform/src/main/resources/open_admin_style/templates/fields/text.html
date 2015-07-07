@@ -1,0 +1,8 @@
+<label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+    <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+</label>
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+<div th:if="*{fields['__${field.name}__'].isLargeEntry}" class="twelve indented-form-value">
+    <textarea class="autosize" style="width: 100%;" th:field="*{fields['__${field.name}__'].value}"/>
+</div>
+<input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text" class="twelve" th:field="*{fields['__${field.name}__'].value}" />

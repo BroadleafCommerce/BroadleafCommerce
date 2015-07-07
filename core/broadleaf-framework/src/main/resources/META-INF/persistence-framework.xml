@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/Category.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CategoryXref.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Product.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ProductOption.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Sku.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Availability.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ShippingRate.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CodeType.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Order.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/OrderItem.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/OrderMultishipOption.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/OrderPayment.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Offer.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/FulfillmentGroup.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/FulfillmentGroupItem.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/FulfillmentOption.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
+        <mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/SearchRedirect.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Solr.orm.xml</mapping-file>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryAttributeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategoryMediaXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CrossSaleProductImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.FeaturedProductImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductBundleImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.SkuFeeImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.UpSaleProductImpl</class>
+        <class>org.broadleafcommerce.core.util.domain.CodeTypeImpl</class>
+        <class>org.broadleafcommerce.core.inventory.domain.SkuAvailabilityImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.CandidateItemOfferImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.CustomerOfferImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferAuditImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferCodeImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferRuleImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferOfferRuleXrefImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferQualifyingCriteriaXrefImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXrefImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferInfoImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.BundleOrderItemImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItemImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl</class>
+        <class>org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl</class>
+        <class>org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOptionImpl</class>
+        <class>org.broadleafcommerce.core.order.fulfillment.domain.BandedWeightFulfillmentOptionImpl</class>
+        <class>org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentBandImpl</class>
+        <class>org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl</class>
+        <class>org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.GiftWrapOrderItemImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderLockImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderAttributeImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderItemImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustmentImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.OrderItemAttributeImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.BundleOrderItemFeePriceImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.PersonalMessageImpl</class>
+        <class>org.broadleafcommerce.core.order.domain.TaxDetailImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.OrderPaymentImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.PaymentLogImpl</class>
+        <class>org.broadleafcommerce.core.pricing.domain.ShippingRateImpl</class>
+        <class>org.broadleafcommerce.core.store.domain.StoreImpl</class>
+        <class>org.broadleafcommerce.core.store.domain.ZipCodeImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.FieldImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.SearchSynonymImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.SearchFacetImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.RequiredFacetImpl</class>
+        <class>org.broadleafcommerce.core.rating.domain.RatingSummaryImpl</class>
+        <class>org.broadleafcommerce.core.rating.domain.RatingDetailImpl</class>
+        <class>org.broadleafcommerce.core.rating.domain.ReviewDetailImpl</class>
+        <class>org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl</class>
+        <class>org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl</class>
+        <class>org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl</class>
+        <class>org.broadleafcommerce.core.social.domain.UserConnectionImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.ProductOptionXrefImpl</class>
+        <class>org.broadleafcommerce.core.catalog.domain.CategorySiteMapGeneratorConfigurationImpl</class>
+        <exclude-unlisted-classes/>
+        <!-- JPA properties are inherited from persistence-common.xml -->
+    </persistence-unit>
+    
+    <persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>config/bc/jpa/domain/GiftCardPayment.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CreditCardPayment.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/BankAccountPayment.orm.xml</mapping-file>
+        <class>org.broadleafcommerce.core.payment.domain.secure.BankAccountPaymentImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.secure.CreditCardPaymentInfoImpl</class>
+        <class>org.broadleafcommerce.core.payment.domain.secure.GiftCardPaymentImpl</class>
+    
+        <exclude-unlisted-classes/>
+        <properties>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.transaction.flush_before_completion" value="false"/>
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.cache.use_query_cache" value="false"/>
+            <property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>

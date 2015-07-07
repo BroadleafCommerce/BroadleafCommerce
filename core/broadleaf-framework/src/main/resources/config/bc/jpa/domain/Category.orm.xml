@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  BroadleafCommerce Framework
+  %%
+  Copyright (C) 2009 - 2013 Broadleaf Commerce
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+        http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+    version="2.0">
+
+    <named-query name="BC_READ_ALL_CATEGORIES">
+        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category 
+        ORDER BY category.id</query>
+    </named-query>
+
+    <named-query name="BC_READ_CATEGORY_BY_NAME">
+        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
+        WHERE category.name = :categoryName 
+        ORDER BY category.id</query>
+    </named-query>
+
+    <named-query name="BC_READ_ALL_SUBCATEGORIES">
+        <query>SELECT xref.subCategory FROM org.broadleafcommerce.core.catalog.domain.CategoryXref xref
+                WHERE xref.category.id IN :parentCategoryId
+                ORDER BY COALESCE (xref.displayOrder,999999)
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_CATEGORY_BY_URL_KEY">
+        <query>SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
+                WHERE category.urlKey = :urlKey
+                AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N')
+                AND (category.activeStartDate &lt; :currentDate)
+                AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; :currentDate)
+        </query>
+    </named-query>
+
+    <named-query name="BC_READ_ACTIVE_SUBCATEGORIES_BY_CATEGORY" >
+        <query>SELECT xref.subCategory FROM org.broadleafcommerce.core.catalog.domain.CategoryXref xref
+                WHERE xref.category.id IN :parentCategoryId
+                AND (xref.subCategory.archiveStatus.archived IS NULL OR xref.subCategory.archiveStatus.archived = 'N')
+                AND (xref.subCategory.activeStartDate &lt; :currentDate)
+                AND (xref.subCategory.activeEndDate IS NULL OR xref.subCategory.activeEndDate &gt; :currentDate)
+                ORDER BY COALESCE (xref.displayOrder,999999)
+        </query>
+    </named-query>
+    
+    <named-query name="BC_READ_CATEGORY_OUTGOING_URL">
+        <query>SELECT category
+               FROM org.broadleafcommerce.core.catalog.domain.Category category
+               WHERE category.url = :url
+               AND (category.archiveStatus.archived IS NULL OR category.archiveStatus.archived = 'N')
+               AND (category.activeStartDate &lt; :currentDate)
+               AND (category.activeEndDate IS NULL OR category.activeEndDate &gt; :currentDate)
+        </query>
+    </named-query>
+
+</entity-mappings>
