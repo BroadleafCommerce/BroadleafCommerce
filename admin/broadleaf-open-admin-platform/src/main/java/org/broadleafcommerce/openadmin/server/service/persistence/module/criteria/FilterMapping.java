@@ -25,6 +25,7 @@ import org.broadleafcommerce.openadmin.dto.SortDirection;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -183,5 +184,16 @@ public class FilterMapping {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public static class ComparatorByOrder implements Comparator<FilterMapping> {
+
+        @Override
+        public int compare(FilterMapping o1, FilterMapping o2) {
+            Integer firstValue = o1.getOrder();
+            Integer secondValue = o2.getOrder();
+            return firstValue.compareTo(secondValue);
+        }
+
     }
 }
