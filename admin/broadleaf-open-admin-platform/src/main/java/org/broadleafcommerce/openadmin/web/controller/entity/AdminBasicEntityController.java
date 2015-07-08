@@ -50,6 +50,7 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
+import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.extension.AdornedTargetAutoPopulateExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.BasicPersistenceModule;
@@ -102,6 +103,7 @@ import javax.servlet.http.HttpServletResponse;
  * entity that is not explicitly customized by its own controller.
  * 
  * @author Andre Azzolini (apazzolini)
+ * @author Jeff Fischer
  */
 @Controller("blAdminBasicEntityController")
 @RequestMapping("/{sectionKey:.+}")
@@ -117,6 +119,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
     @Resource(name = "blAdornedTargetAutoPopulateExtensionManager")
     protected AdornedTargetAutoPopulateExtensionManager adornedTargetAutoPopulateExtensionManager;
+
+    @Resource(name = "blRowLevelSecurityService")
+    protected RowLevelSecurityService rowLevelSecurityService;
 
     // ******************************************
     // REQUEST-MAPPING BOUND CONTROLLER METHODS *
@@ -212,6 +217,10 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 }
                 canCreate = false;
             }
+        }
+
+        if (canCreate) {
+            canCreate = rowLevelSecurityService.canAdd(adminRemoteSecurityService.getPersistentAdminUser(), sectionClassName, cmd);
         }
         
         return canCreate;
