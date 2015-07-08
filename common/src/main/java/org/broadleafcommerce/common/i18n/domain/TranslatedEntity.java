@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.common.i18n.domain;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
@@ -59,18 +60,19 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     public static final TranslatedEntity COUNTRY = new TranslatedEntity("org.broadleafcommerce.profile.core.domain.Country", "Country");
     public static final TranslatedEntity COUNTRY_SUBDIVISION = new TranslatedEntity("org.broadleafcommerce.profile.core.domain.CountrySubdivision", "CountrySubdivision");
     public static final TranslatedEntity COUNTRY_SUBDIVISION_CATEGORY = new TranslatedEntity("org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategory", "CountrySubdivisionCategory");
+    public static final TranslatedEntity CATALOG = new TranslatedEntity("org.broadleafcommerce.common.site.domain.Catalog", "Catalog");
 
     public static TranslatedEntity getInstance(final String type) {
         return TYPES.get(type);
     }
-    
+
     public static TranslatedEntity getInstanceFromFriendlyType(final String friendlyType) {
         for (Entry<String, TranslatedEntity> entry : TYPES.entrySet()) {
             if (entry.getValue().getFriendlyType().equals(friendlyType)) {
                 return entry.getValue();
             }
         }
-        
+
         return null;
     }
 
@@ -99,7 +101,7 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     public static Map<String, TranslatedEntity> getTypes() {
         return TYPES;
     }
-    
+
     private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
