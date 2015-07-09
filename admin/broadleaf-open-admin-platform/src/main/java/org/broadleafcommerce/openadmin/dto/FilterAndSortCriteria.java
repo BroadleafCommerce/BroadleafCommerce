@@ -44,7 +44,11 @@ public class FilterAndSortCriteria {
     protected String propertyId;
     protected List<String> filterValues = new ArrayList<String>();
     protected RestrictionType restrictionType;
-    protected int order;
+    /**
+     * for "order", a null value is relevant, meaning that this field moves to the end of any sort order consideration
+     * (this is the opposite of what we would achieve, by having an uninitialized int variable set to 0)
+     */
+    protected Integer order;
 
     protected SortDirection sortDirection;
 
@@ -54,13 +58,11 @@ public class FilterAndSortCriteria {
     }
 
     public FilterAndSortCriteria(String propertyId) {
-        this.order = 0;
         this.propertyId = propertyId;
     }
 
     public FilterAndSortCriteria(String propertyId, String filterValue) {
         this.propertyId = propertyId;
-        this.order = 0;
         setFilterValue(filterValue);
     }
 
@@ -78,7 +80,6 @@ public class FilterAndSortCriteria {
 
     public FilterAndSortCriteria(String propertyId, List<String> filterValues) {
         setPropertyId(propertyId);
-        this.order = 0;
         setFilterValues(filterValues);
     }
 
@@ -90,7 +91,6 @@ public class FilterAndSortCriteria {
     }
 
     public FilterAndSortCriteria(String propertyId, List<String> filterValues, SortDirection sortDirection) {
-        this.order = 0;
         setPropertyId(propertyId);
         setFilterValues(filterValues);
         setSortDirection(sortDirection);
@@ -104,7 +104,6 @@ public class FilterAndSortCriteria {
 
     public FilterAndSortCriteria(String propertyId, String[] filterValues) {
         this.propertyId = propertyId;
-        this.order = 0;
         setFilterValues(Arrays.asList(filterValues));
     }
 
@@ -195,11 +194,11 @@ public class FilterAndSortCriteria {
         };
     }
 
-    public int getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
-    public void setOrder(int order) {
+    public void setOrder(Integer order) {
         this.order = order;
     }
 

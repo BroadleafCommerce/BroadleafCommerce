@@ -43,9 +43,9 @@ public class FilterMapping {
     protected FieldPath fieldPath;
     protected Class<?> inheritedFromClass;
     protected Boolean nullsLast = true;
-    protected int order;
+    protected Integer order;
 
-    public FilterMapping withOrder(int order) {
+    public FilterMapping withOrder(Integer order) {
         setOrder(order);
         return this;
     }
@@ -178,11 +178,11 @@ public class FilterMapping {
         this.nullsLast = nullsLast;
     }
 
-    public int getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
-    public void setOrder(int order) {
+    public void setOrder(Integer order) {
         this.order = order;
     }
 
@@ -192,7 +192,16 @@ public class FilterMapping {
         public int compare(FilterMapping o1, FilterMapping o2) {
             Integer firstValue = o1.getOrder();
             Integer secondValue = o2.getOrder();
-            return firstValue.compareTo(secondValue);
+            //a null value is considered to be a "bigger" than any other sort order
+            if (firstValue == null && secondValue == null) {
+                return 0;
+            } else if (firstValue == null) {
+                return 1;
+            } else if (secondValue == null) {
+                return -1;
+            } else {
+                return firstValue.compareTo(secondValue);
+            }
         }
 
     }
