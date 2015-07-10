@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -45,8 +46,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNotNullPredicateProvider;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.IsNullPredicateProvider;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension
-        .BasicFieldPersistenceProviderExtensionManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension.BasicFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddSearchMappingRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -114,9 +114,9 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 metadata.getFieldType() == SupportedFieldType.ASSET_URL ||
                 metadata.getFieldType() == SupportedFieldType.ID) &&
                 (property == null ||
-                        !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
+                !property.getName().contains(FieldManager.MAPFIELDSEPARATOR));
     }
-    
+
     protected boolean detectAdditionalSearchTypes(FieldMetadata md, Property property) {
         if (!(md instanceof BasicFieldMetadata)) {
             return false;
@@ -135,7 +135,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     protected boolean canHandleSearchMapping(AddSearchMappingRequest addSearchMappingRequest,
-                                             List<FilterMapping> filterMappings) {
+            List<FilterMapping> filterMappings) {
         FieldMetadata metadata = addSearchMappingRequest.getMergedProperties().get
                 (addSearchMappingRequest.getPropertyName());
         Property property = null;
@@ -181,7 +181,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     dirty = !StringUtils.equals(oldValue, populateValueRequest.getRequestedValue());
                     populateValueRequest.getFieldManager().setFieldValue(instance,
                             populateValueRequest.getProperty().getName(), populateValueRequest.getDataFormatProvider().
-                            getSimpleDateFormatter().parse(populateValueRequest.getRequestedValue()));
+                                    getSimpleDateFormatter().parse(populateValueRequest.getRequestedValue()));
                     break;
                 case DECIMAL:
                     if (origValue != null) {
@@ -214,14 +214,14 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         BigDecimal val = (BigDecimal) format.parse(populateValueRequest.getRequestedValue());
                         dirty = checkDirtyState(populateValueRequest, instance, val);
                         populateValueRequest.getFieldManager()
-                            .setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
+                                .setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
                         format.setParseBigDecimal(true);
                     } else if (Double.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         Double val = populateValueRequest.getDataFormatProvider().getDecimalFormatter().parse(populateValueRequest.getRequestedValue()).doubleValue();
                         dirty = checkDirtyState(populateValueRequest, instance, val);
                         LOG.warn("The requested Money field is of type double and could result in a loss of precision." +
-                        		" Broadleaf recommends that the type of all Money fields are 'BigDecimal' in order to avoid" +
-                        		" this loss of precision that could occur.");
+                                " Broadleaf recommends that the type of all Money fields be 'BigDecimal' in order to avoid" +
+                                " this loss of precision that could occur.");
                         populateValueRequest.getFieldManager().setFieldValue(instance, populateValueRequest.getProperty().getName(), val);
                     } else {
                         DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
@@ -242,25 +242,25 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         dirty = checkDirtyState(populateValueRequest, instance, Integer.valueOf(populateValueRequest.getRequestedValue()));
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), Integer.valueOf(populateValueRequest
-                                .getRequestedValue()));
+                                        .getRequestedValue()));
                     } else if (byte.class.isAssignableFrom(populateValueRequest.getReturnType()) || Byte.class
                             .isAssignableFrom(populateValueRequest.getReturnType())) {
                         dirty = checkDirtyState(populateValueRequest, instance, Byte.valueOf(populateValueRequest.getRequestedValue()));
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), Byte.valueOf(populateValueRequest
-                                .getRequestedValue()));
+                                        .getRequestedValue()));
                     } else if (short.class.isAssignableFrom(populateValueRequest.getReturnType()) || Short.class
                             .isAssignableFrom(populateValueRequest.getReturnType())) {
                         dirty = checkDirtyState(populateValueRequest, instance, Short.valueOf(populateValueRequest.getRequestedValue()));
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), Short.valueOf(populateValueRequest
-                                .getRequestedValue()));
+                                        .getRequestedValue()));
                     } else if (long.class.isAssignableFrom(populateValueRequest.getReturnType()) || Long.class
                             .isAssignableFrom(populateValueRequest.getReturnType())) {
                         dirty = checkDirtyState(populateValueRequest, instance, Long.valueOf(populateValueRequest.getRequestedValue()));
                         populateValueRequest.getFieldManager().setFieldValue(instance,
                                 populateValueRequest.getProperty().getName(), Long.valueOf(populateValueRequest
-                                .getRequestedValue()));
+                                        .getRequestedValue()));
                     }
                     break;
                 case CODE:
@@ -436,7 +436,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     sb.append("0");
                     if (decimal.scale() > 0) {
                         sb.append(".");
-                        for (int j=0;j<decimal.scale();j++) {
+                        for (int j = 0; j < decimal.scale(); j++) {
                             sb.append("0");
                         }
                     }
@@ -537,32 +537,33 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
         BasicFieldMetadata metadata = (BasicFieldMetadata) addSearchMappingRequest.getMergedProperties().get
                 (addSearchMappingRequest.getPropertyName());
-        
+
         FilterAndSortCriteria fasc = addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName());
 
         FilterMapping filterMapping = new FilterMapping()
                 .withInheritedFromClass(clazz)
                 .withFullPropertyName(addSearchMappingRequest.getPropertyName())
                 .withFilterValues(fasc.getFilterValues())
-                .withSortDirection(fasc.getSortDirection());
+                .withSortDirection(fasc.getSortDirection())
+                .withOrder(fasc.getOrder());
         filterMappings.add(filterMapping);
-        
+
         if (fasc.hasSpecialFilterValue()) {
             filterMapping.setDirectFilterValues(new EmptyFilterValues());
-            
+
             // Handle special values on a case by case basis
             List<String> specialValues = fasc.getSpecialFilterValues();
             if (specialValues.contains(FilterAndSortCriteria.IS_NULL_FILTER_VALUE)) {
                 filterMapping.setRestriction(new Restriction().withPredicateProvider(new IsNullPredicateProvider()));
-            } 
+            }
             if (specialValues.contains(FilterAndSortCriteria.IS_NOT_NULL_FILTER_VALUE)) {
                 filterMapping.setRestriction(new Restriction().withPredicateProvider(new IsNotNullPredicateProvider()));
-            } 
+            }
         } else {
             if (fasc.getRestrictionType() != null) {
                 filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().
-                                                getRestriction(fasc.getRestrictionType().getType(),
-                                                        addSearchMappingRequest.getPropertyName()));
+                        getRestriction(fasc.getRestrictionType().getType(),
+                                addSearchMappingRequest.getPropertyName()));
             } else {
                 switch (metadata.getFieldType()) {
                     case BOOLEAN:
@@ -600,7 +601,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                                 .getFilterValues().isEmpty()) {
                             ForeignKey foreignKey = (ForeignKey) addSearchMappingRequest.getPersistencePerspective()
                                     .getPersistencePerspectiveItems().get
-                                            (PersistencePerspectiveItemType.FOREIGNKEY);
+                                    (PersistencePerspectiveItemType.FOREIGNKEY);
                             if (metadata.getForeignKeyCollection()) {
                                 if (ForeignKeyRestrictionType.COLLECTION_SIZE_EQ.toString().equals(foreignKey
                                         .getRestrictionType().toString())) {
@@ -614,12 +615,12 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                                                     addSearchMappingRequest.getPropertyName()));
                                     filterMapping.setFieldPath(new FieldPath().withTargetProperty
                                             (addSearchMappingRequest
-                                            .getPropertyName() + "." + metadata.getForeignKeyProperty()));
+                                                    .getPropertyName() + "." + metadata.getForeignKeyProperty()));
                                 }
                             } else if (addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName())
                                     .getFilterValues().get(0) == null || "null".equals(addSearchMappingRequest
                                     .getRequestedCto().get
-                                            (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
+                                    (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
                                 filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction
                                         (RestrictionType.IS_NULL_LONG.getType(), addSearchMappingRequest.getPropertyName()));
                             } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
@@ -637,11 +638,12 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         break;
                     case ADDITIONAL_FOREIGN_KEY:
                         int additionalForeignKeyIndexPosition = Arrays.binarySearch(addSearchMappingRequest
-                                        .getPersistencePerspective()
-                                        .getAdditionalForeignKeys(), new ForeignKey(addSearchMappingRequest
-                                        .getPropertyName(),
-                                        null, null),
+                                .getPersistencePerspective()
+                                .getAdditionalForeignKeys(), new ForeignKey(addSearchMappingRequest
+                                .getPropertyName(),
+                                null, null),
                                 new Comparator<ForeignKey>() {
+
                                     @Override
                                     public int compare(ForeignKey o1, ForeignKey o2) {
                                         return o1.getManyToField().compareTo(o2.getManyToField());
@@ -667,7 +669,7 @@ public class BasicFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         } else if (CollectionUtils.isEmpty(addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName()).getFilterValues()) ||
                                 addSearchMappingRequest.getRequestedCto().get(addSearchMappingRequest.getPropertyName
                                         ()).getFilterValues().get(0) == null || "null".equals(addSearchMappingRequest.getRequestedCto().get
-                                (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
+                                        (addSearchMappingRequest.getPropertyName()).getFilterValues().get(0))) {
                             filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.IS_NULL_LONG.getType(), addSearchMappingRequest.getPropertyName()));
                         } else if (metadata.getSecondaryType() == SupportedFieldType.STRING) {
                             filterMapping.setRestriction(addSearchMappingRequest.getRestrictionFactory().getRestriction(RestrictionType.STRING_EQUAL.getType(), addSearchMappingRequest.getPropertyName()));

@@ -36,8 +36,11 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapFields;
+import org.broadleafcommerce.common.presentation.ConfigurationItem;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
+import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -175,7 +178,14 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "END_DATE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_End_Date", order = 2,
-        group = OfferAdminPresentation.GroupName.ActivityRange)
+        group = OfferAdminPresentation.GroupName.ActivityRange,
+        validationConfigurations = { 
+            @ValidationConfiguration(
+                validationImplementation = "blAfterStartDateValidator",
+                configurationItems = {
+                        @ConfigurationItem(itemName = "otherField", itemValue = "startDate")
+                }) 
+        })
     protected Date endDate;
 
     @Column(name = "STACKABLE")

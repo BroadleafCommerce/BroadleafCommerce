@@ -307,7 +307,7 @@
     </bean>
     
     <bean id="siteImageResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
-        <property name="locations" ref="blCssLocations" />
+        <property name="locations" ref="blImageLocations" />
         <property name="resourceTransformers" ref="blCssResourceTransformers" />    
     </bean> 
     

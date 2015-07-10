@@ -512,6 +512,11 @@ $(document).ready(function() {
         var search = $(this).closest('form').find('input').val();
         var $firstInput = $($('body').find('#listGrid-main-header th input.listgrid-criteria-input')[0]);
         
+        if ($firstInput.length == 0) {
+           // if there wasn't a primary list grid, check for an inline list grid.
+           $firstInput = $($('body').find('.list-grid-table th input.listgrid-criteria-input')[0]);
+        }
+        
         $firstInput.val(search);
         
         var submitData = {};

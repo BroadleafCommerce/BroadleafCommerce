@@ -441,8 +441,10 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         
         List<FilterAndSortCriteria> result = new ArrayList<FilterAndSortCriteria>();
         for (Entry<String, List<String>> entry : requestParams.entrySet()) {
-            if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER) &&
-                    !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)) {
+            if (!entry.getKey().equals(FilterAndSortCriteria.SORT_PROPERTY_PARAMETER)
+                    && !entry.getKey().equals(FilterAndSortCriteria.SORT_DIRECTION_PARAMETER)
+                    && !entry.getKey().equals(FilterAndSortCriteria.MAX_INDEX_PARAMETER)
+                    && !entry.getKey().equals(FilterAndSortCriteria.START_INDEX_PARAMETER)) {
                 List<String> values = entry.getValue();
                 List<String> collapsedValues = new ArrayList<String>();
                 for (String value : values) {
@@ -572,6 +574,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     /**
      * @deprecated in favor of {@link #attachSectionSpecificInfo(PersistencePackageRequest, Map)}
      */
+    @Deprecated
     protected void attachSectionSpecificInfo(PersistencePackageRequest ppr) {
         
     }
@@ -661,6 +664,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     /**
      * @deprecated in favor of {@link #getSectionPersistencePackageRequest(String, List, Map)}
      */
+    @Deprecated
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, List<SectionCrumb> sectionCrumbs) {
         return getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, null);
     }
@@ -690,6 +694,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     /**
      * @deprecated in favor of {@link #getSectionPersistencePackageRequest(String, MultiValueMap, List, Map)}
      */
+    @Deprecated
     protected PersistencePackageRequest getSectionPersistencePackageRequest(String sectionClassName, 
             MultiValueMap<String, String> requestParams, List<SectionCrumb> sectionCrumbs) {
         return getSectionPersistencePackageRequest(sectionClassName, requestParams, sectionCrumbs, null);
