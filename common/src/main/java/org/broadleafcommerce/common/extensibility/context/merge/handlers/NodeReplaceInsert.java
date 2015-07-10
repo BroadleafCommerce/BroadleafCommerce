@@ -17,17 +17,18 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.NodeUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -42,10 +43,11 @@ import java.util.List;
  *
  */
 public class NodeReplaceInsert extends BaseHandler {
-    
+
     private static final Log LOG = LogFactory.getLog(NodeReplaceInsert.class);
 
     private static final Comparator<Node> NODE_COMPARATOR = new Comparator<Node>() {
+
         public int compare(Node arg0, Node arg1) {
             int response = -1;
             if (arg0.isSameNode(arg1)) {
@@ -74,12 +76,12 @@ public class NodeReplaceInsert extends BaseHandler {
             return null;
         }
         Node[] primaryNodes = new Node[nodeList1.size()];
-        for (int j=0;j<primaryNodes.length;j++){
+        for (int j = 0; j < primaryNodes.length; j++) {
             primaryNodes[j] = nodeList1.get(j);
         }
 
         ArrayList<Node> list = new ArrayList<Node>();
-        for (int j=0;j<nodeList2.size();j++){
+        for (int j = 0; j < nodeList2.size(); j++) {
             list.add(nodeList2.get(j));
         }
 
@@ -107,16 +109,16 @@ public class NodeReplaceInsert extends BaseHandler {
         Iterator<Node> itr = list.iterator();
         Node parentNode = primaryNodes[0].getParentNode();
         Document ownerDocument = parentNode.getOwnerDocument();
-        while(itr.hasNext()) {
+        while (itr.hasNext()) {
             Node node = itr.next();
             if (Element.class.isAssignableFrom(node.getClass()) && !exhaustedNodesContains(exhaustedNodes, node)) {
-                
-                if(LOG.isDebugEnabled()) {
+
+                if (LOG.isDebugEnabled()) {
                     StringBuffer sb = new StringBuffer();
                     sb.append("matching node for replacement: ");
                     sb.append(node.getNodeName());
                     int attrLength = node.getAttributes().getLength();
-                    for (int j=0;j<attrLength;j++){
+                    for (int j = 0; j < attrLength; j++) {
                         sb.append(" : (");
                         sb.append(node.getAttributes().item(j).getNodeName());
                         sb.append("/");
@@ -135,7 +137,7 @@ public class NodeReplaceInsert extends BaseHandler {
         }
         return usedNodes;
     }
-    
+
     protected boolean checkNode(List<Node> usedNodes, Node[] primaryNodes, Node node) {
         //find matching nodes based on id
         if (replaceNode(primaryNodes, node, "id", usedNodes)) {
@@ -153,7 +155,7 @@ public class NodeReplaceInsert extends BaseHandler {
     }
 
     protected boolean exactNodeExists(Node[] primaryNodes, Node testNode, List<Node> usedNodes) {
-        for (int j=0;j<primaryNodes.length;j++){
+        for (int j = 0; j < primaryNodes.length; j++) {
             if (primaryNodes[j].isEqualNode(testNode)) {
                 usedNodes.add(primaryNodes[j]);
                 return true;
@@ -168,7 +170,7 @@ public class NodeReplaceInsert extends BaseHandler {
         }
         //filter out primary nodes that don't have the attribute
         ArrayList<Node> filterList = new ArrayList<Node>();
-        for (int j=0;j<primaryNodes.length;j++){
+        for (int j = 0; j < primaryNodes.length; j++) {
             if (primaryNodes[j].getAttributes().getNamedItem(attribute) != null) {
                 filterList.add(primaryNodes[j]);
             }
@@ -176,17 +178,8 @@ public class NodeReplaceInsert extends BaseHandler {
         Node[] filtered = {};
         filtered = filterList.toArray(filtered);
 
-        Comparator<Node> idCompare = new Comparator<Node>() {
-            public int compare(Node arg0, Node arg1) {
-                Node id1 = arg0.getAttributes().getNamedItem(attribute);
-                Node id2 = arg1.getAttributes().getNamedItem(attribute);
-                String idVal1 = id1.getNodeValue();
-                String idVal2 = id2.getNodeValue();
-                return idVal1.compareTo(idVal2);
-            }
-        };
-        Arrays.sort(filtered, idCompare);
-        int pos = Arrays.binarySearch(filtered, testNode, idCompare);
+        int pos = NodeUtil.findNode(filtered, testNode, attribute, true);
+
         if (pos >= 0) {
             Node newNode = filtered[pos].getOwnerDocument().importNode(testNode.cloneNode(true), true);
             filtered[pos].getParentNode().replaceChild(newNode, filtered[pos]);
@@ -194,6 +187,41 @@ public class NodeReplaceInsert extends BaseHandler {
             return true;
         }
         return false;
+
+    }
+
+    private static String CEILING_ENTITY = "ceilingEntity";
+
+    protected boolean replaceCeilingEntityNode(Node[] primaryNodes, Node testNode, List<Node> usedNodes) {
+
+        if (testNode.getAttributes().getNamedItem(CEILING_ENTITY) == null) {
+            return false;
+        }
+        //filter out primary nodes that don't have the attribute
+        ArrayList<Node> filterList = new ArrayList<Node>();
+        for (int j = 0; j < primaryNodes.length; j++) {
+            if (primaryNodes[j].getAttributes().getNamedItem(CEILING_ENTITY) != null) {
+                filterList.add(primaryNodes[j]);
+            }
+        }
+        Node[] filtered = {};
+        filtered = filterList.toArray(filtered);
+
+        int pos = NodeUtil.findNode(filtered, testNode, CEILING_ENTITY, true);
+
+        if (pos >= 0) {
+            Node foundNode = filtered[pos];
+
+            Node targetNode = foundNode.getOwnerDocument().importNode(foundNode.cloneNode(false), false);
+            Node newTestNode = foundNode.getOwnerDocument().importNode(testNode.cloneNode(true), true);
+            NodeUtil.mergeNodeLists(targetNode, foundNode.getChildNodes(), newTestNode.getChildNodes(), "name");
+            foundNode.getParentNode().replaceChild(targetNode, foundNode);
+            usedNodes.add(testNode);
+            return true;
+
+        }
+        return false;
+
     }
 
 }
