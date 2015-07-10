@@ -168,21 +168,16 @@ public class NodeReplaceInsert extends BaseHandler {
         if (testNode.getAttributes().getNamedItem(attribute) == null) {
             return false;
         }
-        //filter out primary nodes that don't have the attribute
-        ArrayList<Node> filterList = new ArrayList<Node>();
-        for (int j = 0; j < primaryNodes.length; j++) {
-            if (primaryNodes[j].getAttributes().getNamedItem(attribute) != null) {
-                filterList.add(primaryNodes[j]);
-            }
-        }
-        Node[] filtered = {};
-        filtered = filterList.toArray(filtered);
+
+        Node[] filtered = NodeUtil.filterByAttribute(primaryNodes, attribute);
 
         int pos = NodeUtil.findNode(filtered, testNode, attribute, true);
 
         if (pos >= 0) {
-            Node newNode = filtered[pos].getOwnerDocument().importNode(testNode.cloneNode(true), true);
-            filtered[pos].getParentNode().replaceChild(newNode, filtered[pos]);
+            Node foundNode = filtered[pos];
+
+            Node newNode = foundNode.getOwnerDocument().importNode(testNode.cloneNode(true), true);
+            foundNode.getParentNode().replaceChild(newNode, foundNode);
             usedNodes.add(testNode);
             return true;
         }
@@ -192,20 +187,22 @@ public class NodeReplaceInsert extends BaseHandler {
 
     private static String CEILING_ENTITY = "ceilingEntity";
 
+    /**
+     * special "replace" method for metatataOverride items having the "ceilingEntity" attribute specified. 
+     * Instead of just overwriting a previously specified item, successive overrideItems with the same ceilingEntity are "merged" into 
+     * the previous one; the resulting node contains the logical union of both old and new children  
+     * @param primaryNodes
+     * @param testNode
+     * @param usedNodes
+     * @return
+     */
     protected boolean replaceCeilingEntityNode(Node[] primaryNodes, Node testNode, List<Node> usedNodes) {
 
         if (testNode.getAttributes().getNamedItem(CEILING_ENTITY) == null) {
             return false;
         }
-        //filter out primary nodes that don't have the attribute
-        ArrayList<Node> filterList = new ArrayList<Node>();
-        for (int j = 0; j < primaryNodes.length; j++) {
-            if (primaryNodes[j].getAttributes().getNamedItem(CEILING_ENTITY) != null) {
-                filterList.add(primaryNodes[j]);
-            }
-        }
-        Node[] filtered = {};
-        filtered = filterList.toArray(filtered);
+
+        Node[] filtered = NodeUtil.filterByAttribute(primaryNodes, CEILING_ENTITY);
 
         int pos = NodeUtil.findNode(filtered, testNode, CEILING_ENTITY, true);
 
@@ -223,5 +220,4 @@ public class NodeReplaceInsert extends BaseHandler {
         return false;
 
     }
-
 }

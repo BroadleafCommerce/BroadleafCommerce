@@ -24,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.TreeSet;
@@ -75,6 +76,24 @@ public class NodeUtil {
             String idVal2 = id2.getNodeValue();
             return idVal1.compareTo(idVal2);
         }
+    }
+
+    /**
+     * given an array of nodes, returns a subarray containing only those nodes having a non-null specified attribute
+     * @param primaryNodes     the original array of nodes. All nodes are assumed to at least have attributes
+     * @param attributeName    the attribute name
+     * @return
+     */
+    public static Node[] filterByAttribute(Node[] primaryNodes, String attributeName) {
+        //filter out primary nodes that don't have the attribute
+        ArrayList<Node> filterList = new ArrayList<Node>();
+        for (int j = 0; j < primaryNodes.length; j++) {
+            if (primaryNodes[j].getAttributes().getNamedItem(attributeName) != null) {
+                filterList.add(primaryNodes[j]);
+            }
+        }
+        Node[] filtered = filterList.toArray(new Node[] {});
+        return filtered;
     }
 
     /**
