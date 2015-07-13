@@ -81,15 +81,15 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     protected Long id;
 
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1,
-            helpText = "urlHandlerIncoming_help")
+            helpText = "urlHandlerIncoming_help", defaultValue = "/incoming/url")
     @Column(name = "INCOMING_URL", nullable = false)
     @Index(name="INCOMING_URL_INDEX", columnNames={"INCOMING_URL"})
-    protected String incomingURL;
+    protected String incomingURL = "/incoming/url";
 
     @Column(name = "NEW_URL", nullable = false)
     @AdminPresentation(friendlyName = "URLHandlerImpl_newURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1,
-            helpText = "urlHandlerNew_help")
-    protected String newURL;
+            helpText = "urlHandlerNew_help", defaultValue = "/new/url")
+    protected String newURL = "/new/url";
 
     @Column(name = "URL_REDIRECT_TYPE")
     @AdminPresentation(friendlyName = "URLHandlerImpl_redirectType", order = 4, group = "URLHandlerImpl_friendyName", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.cms.url.type.URLRedirectType", groupOrder = 2, prominent = true)
