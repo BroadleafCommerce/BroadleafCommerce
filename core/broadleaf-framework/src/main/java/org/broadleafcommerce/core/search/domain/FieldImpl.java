@@ -233,12 +233,6 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
         throw new UnsupportedOperationException("The default Field implementation does not support search configs");
     }
 
-    public static final Field getNoneField() {
-        Field noneField = new FieldImpl();
-        noneField.setAbbreviation("NONE");
-        return noneField;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
