@@ -107,10 +107,19 @@ public interface AdminEntityService {
             throws ServiceException;
 
     /**
+     * Gets the PersistencePackageRequest for the passed in EntityForm
+     *
+     * @param entityForm
+     * @param customCriteria
+     * @param sectionCrumbs
+     */
+    public PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm, String[] customCriteria, List<SectionCrumb> sectionCrumbs);
+
+    /**
      * Thin layer on top of {@link DynamicEntityService#add(org.broadleafcommerce.openadmin.dto.PersistencePackage)} that
      * swallows all {@link ValidationException}s that could be thrown and still just returns a {@link PersistenceResponse}
      * with the {@link Entity} that failed validation.
-     * 
+     *
      * @param request
      * @return
      * @throws ServiceException if there were exceptions other than a {@link ValidationException} that was thrown as a

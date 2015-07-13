@@ -54,6 +54,7 @@ public class Entity implements Serializable {
     protected Boolean isActive = false;
     protected boolean multiPartAvailableOnThread = false;
     protected boolean isValidationFailure = false;
+    protected boolean isPreAdd = false;
     protected Map<String, List<String>> validationErrors = new HashMap<String, List<String>>();
     protected List<String> globalValidationErrors = new ArrayList<String>();
     
@@ -246,6 +247,14 @@ public class Entity implements Serializable {
 
     public void setValidationFailure(boolean validationFailure) {
         isValidationFailure = validationFailure;
+    }
+
+    public boolean isPreAdd() {
+        return isPreAdd;
+    }
+
+    public void setPreAdd(boolean isPreAdd) {
+        this.isPreAdd = isPreAdd;
     }
 
     /**

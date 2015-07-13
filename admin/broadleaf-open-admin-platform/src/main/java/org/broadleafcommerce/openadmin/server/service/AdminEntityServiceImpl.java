@@ -116,7 +116,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         FilterAndSortCriteria fasc = new FilterAndSortCriteria(idProperty);
         fasc.setFilterValue(id);
         request.addFilterAndSortCriteria(fasc);
-
+        
         PersistenceResponse response = fetch(request);
         Entity[] entities = response.getDynamicResultSet().getRecords();
         if (ArrayUtils.isEmpty(entities)) {
@@ -201,7 +201,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return properties;
     }
 
-    protected PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm, String[] customCriteria, List<SectionCrumb> sectionCrumbs) {
+    public PersistencePackageRequest getRequestForEntityForm(EntityForm entityForm, String[] customCriteria, List<SectionCrumb> sectionCrumbs) {
         // Ensure the ID property is on the form
         Field idField = entityForm.getFields().get(entityForm.getIdProperty());
         if (idField == null) {

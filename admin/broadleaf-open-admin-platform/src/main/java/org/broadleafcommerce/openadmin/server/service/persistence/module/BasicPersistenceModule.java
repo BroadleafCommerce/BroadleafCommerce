@@ -35,6 +35,7 @@ import org.broadleafcommerce.common.exception.SecurityServiceException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -386,7 +387,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     if (fieldManager.getFieldValue(instance, property.getName()) != null) {
                                         property.setIsDirty(true);
                                     }
-                                    fieldManager.setFieldValue(instance, property.getName(), null);
+                                    fieldManager.setFieldValue(instance, property.getName(), metadata.getDefaultValue());
                                 }
                             } catch (FieldNotAvailableException e) {
                                 throw new IllegalArgumentException(e);
@@ -395,7 +396,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     }
                 }
             }
-            validate(entity, instance, mergedProperties, validateUnsubmittedProperties);
+            // Only check validation if not the initial add
+            if (!entity.isPreAdd()) {
+                validate(entity, instance, mergedProperties, validateUnsubmittedProperties);
+            }
             //if validation failed, refresh the current instance so that none of the changes will be persisted
             if (entity.isValidationFailure()) {
                 //only refresh the instance if it was managed to begin with
@@ -990,8 +994,16 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 //don't do anything - this is a valid case
             }
             if (primaryKey == null) {
+
                 Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();
+
                 instance = createPopulatedInstance(instance, entity, mergedProperties, false);
+
+                if (entity.isPreAdd()) {
+                    if (Status.class.isAssignableFrom(instance.getClass())) {
+                        ((Status) instance).setArchived('Y');
+                    }
+                }
 
                 if (foreignKey != null && foreignKey.getSortField() != null) {
                     ExtensionResultHolder<Serializable> result = new ExtensionResultHolder<Serializable>();
@@ -1151,6 +1163,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             if (CollectionUtils.isNotEmpty(cto.getAdditionalFilterMappings())) {
                 countFilterMappings.addAll(cto.getAdditionalFilterMappings());
             }
+//            persistencePackage.getPersistencePerspective().setShowArchivedFields(true);
             totalRecords = getTotalRecords(persistencePackage.getFetchTypeFullyQualifiedClassname(), countFilterMappings);
 
             payload = getRecords(mergedProperties, records, null, null);
