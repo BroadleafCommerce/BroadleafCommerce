@@ -20,6 +20,7 @@
 package org.broadleafcommerce.openadmin.dto.override;
 
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.AdornedTargetAddMethodType;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -593,6 +594,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private String sortProperty;
     private Boolean sortAscending;
     private Boolean ignoreAdornedProperties;
+    private AdornedTargetAddMethodType adornedTargetAddMethodType;
 
     public String[] getGridVisibleFields() {
         return gridVisibleFields;
@@ -672,6 +674,14 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setTargetObjectProperty(String targetObjectProperty) {
         this.targetObjectProperty = targetObjectProperty;
+    }
+
+    public AdornedTargetAddMethodType getAdornedTargetAddMethodType() {
+        return adornedTargetAddMethodType;
+    }
+
+    public void setAdornedTargetAddMethodType(AdornedTargetAddMethodType adornedTargetAddMethodType) {
+        this.adornedTargetAddMethodType = adornedTargetAddMethodType;
     }
 
     //Map fields

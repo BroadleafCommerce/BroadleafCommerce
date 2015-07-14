@@ -113,6 +113,7 @@ public class PropertyType {
         public static final String CURRENCYCODEFIELD = "currencyCodeField";
         public static final String OPERATIONTYPES = "operationTypes";
         public static final String GROUP = "group";
+        public static final String ADORNEDTARGETADDTYPE = "adornedTargetAddType";
 
         @Deprecated
         public static final String TAB = "tab";

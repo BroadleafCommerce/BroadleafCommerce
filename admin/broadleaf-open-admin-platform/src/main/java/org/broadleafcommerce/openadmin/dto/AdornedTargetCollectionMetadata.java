@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.broadleafcommerce.common.presentation.client.AdornedTargetAddMethodType;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 
 import java.util.Arrays;
@@ -32,6 +33,15 @@ public class AdornedTargetCollectionMetadata extends CollectionMetadata {
     private String parentObjectClass;
     private String[] maintainedAdornedTargetFields = {};
     private String[] gridVisibleFields = {};
+    private AdornedTargetAddMethodType adornedTargetAddMethodType;
+
+    public AdornedTargetAddMethodType getAdornedTargetAddMethodType() {
+        return adornedTargetAddMethodType;
+    }
+
+    public void setAdornedTargetAddMethodType(AdornedTargetAddMethodType adornedTargetAddMethodType) {
+        this.adornedTargetAddMethodType = adornedTargetAddMethodType;
+    }
 
     public boolean isIgnoreAdornedProperties() {
         return ignoreAdornedProperties;
@@ -76,6 +86,7 @@ public class AdornedTargetCollectionMetadata extends CollectionMetadata {
         ((AdornedTargetCollectionMetadata) metadata).parentObjectClass = parentObjectClass;
         ((AdornedTargetCollectionMetadata) metadata).maintainedAdornedTargetFields = maintainedAdornedTargetFields;
         ((AdornedTargetCollectionMetadata) metadata).gridVisibleFields = gridVisibleFields;
+        ((AdornedTargetCollectionMetadata) metadata).adornedTargetAddMethodType = adornedTargetAddMethodType;
 
         return super.populate(metadata);
     }

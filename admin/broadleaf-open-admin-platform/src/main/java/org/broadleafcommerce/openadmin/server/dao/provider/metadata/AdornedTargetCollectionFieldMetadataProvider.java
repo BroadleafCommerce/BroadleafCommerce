@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
+import org.broadleafcommerce.common.presentation.client.AdornedTargetAddMethodType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationAdornedTargetCollectionOverride;
@@ -248,6 +249,8 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
             } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.IGNOREADORNEDPROPERTIES)) {
                 fieldMetadataOverride.setIgnoreAdornedProperties(StringUtils.isEmpty(stringValue)?entry.getValue().booleanOverrideValue():
                                     Boolean.parseBoolean(stringValue));
+            }else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.ADORNEDTARGETADDTYPE)) {
+                fieldMetadataOverride.setAdornedTargetAddMethodType(AdornedTargetAddMethodType.valueOf(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.JOINENTITYCLASS)) {
                 fieldMetadataOverride.setJoinEntityClass(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationAdornedTargetCollection.MAINTAINEDADORNEDTARGETFIELDS)) {
@@ -392,6 +395,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
             override.setInspectType(adornedTargetCollection.operationTypes().inspectType());
             override.setShowIfProperty(adornedTargetCollection.showIfProperty());
             override.setCurrencyCodeField(adornedTargetCollection.currencyCodeField());
+            override.setAdornedTargetAddMethodType(adornedTargetCollection.addType());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationAdornedTargetCollection annotation not found on field.");
@@ -624,6 +628,9 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
 
         if (adornedTargetCollectionMetadata.isIgnoreAdornedProperties() != null) {
             metadata.setIgnoreAdornedProperties(adornedTargetCollectionMetadata.isIgnoreAdornedProperties());
+        }
+        if (adornedTargetCollectionMetadata.getAdornedTargetAddMethodType()!= null) {
+            metadata.setAdornedTargetAddMethodType(adornedTargetCollectionMetadata.getAdornedTargetAddMethodType());
         }
         if (adornedTargetCollectionMetadata.getCurrencyCodeField()!=null) {
             metadata.setCurrencyCodeField(adornedTargetCollectionMetadata.getCurrencyCodeField());
