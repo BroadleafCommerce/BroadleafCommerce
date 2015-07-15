@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.dto.GroupMetadata;
@@ -147,6 +148,11 @@ public class EntityForm {
         for (Tab tab : tabs) {
             for (ListGrid lg : tab.getListGrids()) {
                 list.add(lg);
+            }
+            for (FieldGroup group : tab.getFieldGroups()){
+                for (ListGrid lg : group.getListGrids()) {
+                    list.add(lg);
+                }
             }
         }
         return list;
