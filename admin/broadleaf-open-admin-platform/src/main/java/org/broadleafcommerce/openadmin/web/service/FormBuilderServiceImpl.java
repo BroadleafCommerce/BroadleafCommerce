@@ -604,7 +604,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     } else if (fieldType.equals(SupportedFieldType.CODE.toString())) {
                         f = new CodeField();
                     } else if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
-                            || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
+                            || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())
+                            || fieldType.equals(SupportedFieldType.RULE_WITHOUT_QUESTION.toString())) {
                         // We're dealing with rule builders, so we'll create those specialized fields
                         f = new RuleBuilderField();
                         ((RuleBuilderField) f).setJsonFieldName(property.getName() + "Json");
@@ -622,6 +623,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             ((RuleBuilderField) f).setStyleClass("rule-builder-simple");
                         } else if (fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
                             ((RuleBuilderField) f).setStyleClass("rule-builder-complex");
+                        } else if (fieldType.equals(SupportedFieldType.RULE_WITHOUT_QUESTION.toString())) {
+                            ((RuleBuilderField) f).setStyleClass("rule-builder-without-question");
                         }
                     } else if (LookupType.DROPDOWN.equals(fmd.getLookupType())) {
                         // We're dealing with a to-one field that wants to be rendered as a dropdown instead of in a 
@@ -690,7 +693,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public String extractDefaultValueFromFieldData(String fieldType, BasicFieldMetadata fmd) {
         String defaultValue = fmd.getDefaultValue();
         if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())
-                || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
+                || fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())
+                || fieldType.equals(SupportedFieldType.RULE_WITHOUT_QUESTION.toString())) {
             return null;
         } else if (fieldType.equals(SupportedFieldType.INTEGER.toString())) {
             try {
@@ -857,7 +861,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                             field.setDirty(entityProp.getIsDirty());
                         }
                         if (basicFM.getFieldType()==SupportedFieldType.RULE_SIMPLE
-                                || basicFM.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
+                                || basicFM.getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY
+                                || basicFM.getFieldType()==SupportedFieldType.RULE_WITHOUT_QUESTION) {
                             RuleBuilderField rbf = (RuleBuilderField) field;
                             if (entity.getPMap().containsKey(rbf.getJsonFieldName())) {
                                 String json = entity.getPMap().get(rbf.getJsonFieldName()).getValue();

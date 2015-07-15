@@ -20,13 +20,6 @@
 
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -58,15 +51,22 @@ import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -746,9 +746,10 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             metadata.setValidationConfigurations(basicFieldMetadata.getValidationConfigurations());
         }
         if ((basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
-                basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY)
+                basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
+                basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_WITHOUT_QUESTION)
                 && basicFieldMetadata.getRuleIdentifier() == null) {
-            throw new IllegalArgumentException("ruleIdentifier property must be set on AdminPresentation when the fieldType is RULE_SIMPLE or RULE_WITH_QUANTITY");
+            throw new IllegalArgumentException("ruleIdentifier property must be set on AdminPresentation when the fieldType is RULE_SIMPLE,  RULE_WITH_QUANTITY, RULE_WITHOUT_QUESTION");
         }
         if (basicFieldMetadata.getRuleIdentifier() != null) {
             metadata.setRuleIdentifier(basicFieldMetadata.getRuleIdentifier());

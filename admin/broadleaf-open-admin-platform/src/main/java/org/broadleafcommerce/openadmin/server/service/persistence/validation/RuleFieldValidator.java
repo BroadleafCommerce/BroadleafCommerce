@@ -60,7 +60,8 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
         if (canHandleValidation(populateValueRequest)) {
             DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
             EntityManager em = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
-            if (SupportedFieldType.RULE_SIMPLE.equals(populateValueRequest.getMetadata().getFieldType())) {
+            if (SupportedFieldType.RULE_SIMPLE.equals(populateValueRequest.getMetadata().getFieldType()) ||
+                SupportedFieldType.RULE_WITHOUT_QUESTION.equals(populateValueRequest.getMetadata().getFieldType())) {
                 
                 //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
                 DataWrapper dw = ruleFieldExtractionUtility.convertJsonToDataWrapper(populateValueRequest.getProperty().getUnHtmlEncodedValue());
@@ -144,7 +145,8 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
     
     protected boolean canHandleValidation(PopulateValueRequest populateValueRequest) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
+            populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITHOUT_QUESTION ||
+            populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
     }
 
     @Override

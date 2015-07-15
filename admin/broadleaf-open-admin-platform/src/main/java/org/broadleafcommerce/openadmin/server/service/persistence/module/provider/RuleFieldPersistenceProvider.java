@@ -81,12 +81,14 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
+            populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITHOUT_QUESTION ||
+            populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
     }
 
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
         return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
+            extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITHOUT_QUESTION ||
+            extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE;
     }
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
@@ -114,6 +116,10 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     dirty = populateQuantityRule(populateValueRequest, instance);
                     break;
                 }
+                case RULE_WITHOUT_QUESTION:{
+                    dirty = populateSimpleRule(populateValueRequest, instance);
+                    break;
+                }
                 case RULE_SIMPLE:{
                     dirty = populateSimpleRule(populateValueRequest, instance);
                     break;
@@ -134,7 +140,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
         }
         ObjectMapper mapper = new ObjectMapper();
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
-        if (extractValueRequest.getMetadata().getFieldType()== SupportedFieldType.RULE_SIMPLE) {
+        if (extractValueRequest.getMetadata().getFieldType()== SupportedFieldType.RULE_SIMPLE ||
+            extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITHOUT_QUESTION) {
             extractSimpleRule(extractValueRequest, property, mapper, translator);
         }
         if (extractValueRequest.getMetadata().getFieldType()==SupportedFieldType.RULE_WITH_QUANTITY) {
@@ -157,7 +164,8 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                     if (prop.getName().startsWith(entry.getKey())) {
                         BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
                         if (originalFM.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
-                                originalFM.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY) {
+                                originalFM.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
+                                originalFM.getFieldType() == SupportedFieldType.RULE_WITHOUT_QUESTION) {
                             Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(entry.getKey());
                             if (originalProp == null) {
                                 originalProp = new Property();

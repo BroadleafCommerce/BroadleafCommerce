@@ -1,6 +1,6 @@
 <blc_admin:admin_field_builder fieldBuilder="${field.fieldBuilder}">
 
-    <div class="field-label inline" th:if="${!field.required}" th:text="#{${field.friendlyName + '_Question'}}" />
+    <div class="field-label inline" th:if="${(withQuestion == null) ? !field.required : withQuestion}" th:text="#{${field.friendlyName + '_Question'}}" />
     <br />
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     <div th:substituteby="components/fieldTooltip" />
@@ -13,10 +13,10 @@
                th:value="${field.json}"/>
                
         <div class="rule-builder-required-field" 
-            th:if="${field.required}"
+            th:if="${(withQuestion == null) ? field.required : withQuestion}"
             th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" />
                
-        <div class="custom-checkbox rule-builder-checkbox" th:if="${!field.required}">
+        <div class="custom-checkbox rule-builder-checkbox" th:if="${(withQuestion == null) ? !field.required : withQuestion}">
             <input type="radio"
                    th:name="${field.name}"
                    th:id="${field.name + '-true'}"
