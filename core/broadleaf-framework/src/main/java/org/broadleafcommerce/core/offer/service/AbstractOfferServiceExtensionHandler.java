@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandidateItemOffer;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
+import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
@@ -40,7 +41,7 @@ import java.util.Map;
 public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandler implements OfferServiceExtensionHandler {
     
     @Override
-    public ExtensionResultStatusType applyAdditionalFilters(List<Offer> offers) {
+    public ExtensionResultStatusType applyAdditionalFilters(List<Offer> offers, Order order) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

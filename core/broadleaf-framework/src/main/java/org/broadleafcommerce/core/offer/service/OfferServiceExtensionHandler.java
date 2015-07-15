@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public interface OfferServiceExtensionHandler extends ExtensionHandler {
     
-    public ExtensionResultStatusType applyAdditionalFilters(List<Offer> offers);
+    public ExtensionResultStatusType applyAdditionalFilters(List<Offer> offers, Order order);
 
     /**
      * Allows module extension to add additional offer codes to the list, given the customer
