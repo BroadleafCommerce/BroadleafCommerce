@@ -90,7 +90,8 @@ $(document).ready(function() {
                 complete: hideActionSpinner
             }, function (data) {
                 $("#headerFlashAlertBoxContainer").removeClass("hidden");
-                $(".errors, .error").remove();
+                $(".errors, .error, .tab-error-indicator").remove();
+                $('.has-error').removeClass('has-error');
 
                 if (!data.errors) {
                     $(".alert-box").removeClass("alert").addClass("success");
@@ -119,32 +120,28 @@ $(document).ready(function() {
     }
     
     function showErrors(data, alertMessage) {
-        var errorBlock = "<div class='errors'></div>";
-        $(errorBlock).insertBefore("form.entity-form div.tabs-container");
         $.each( data.errors , function( idx, error ){
             if (error.errorType == "field") {
-                var fieldLabel = $("#field-" + error.field).find(".field-label");
+                var fieldGroup = $("#field-" + error.field);
 
-                var fieldHtml = "<span class='fieldError error'>SUBSTITUTE</span>";
-                if ($(".tabError:contains(" + error.tab + ")").length) {
-                    var labeledError = fieldHtml.replace('SUBSTITUTE', (fieldLabel.length > 0 ? fieldLabel[0].innerHTML + ': ' : '') + error.message);
-                    $(".tabError:contains(" + error.tab + ")").append(labeledError);
-                } else {
-                    var labeledError = "<div class='tabError'><b>" + error.tab +
-                        "</b>" + fieldHtml.replace('SUBSTITUTE', (fieldLabel.length > 0 ? fieldLabel[0].innerHTML + ': ' : '') + error.message) + "</div>";
-                    $(".errors").append(labeledError);
-                }
+                // Add an error indicator to the fields tab
+                // this can happen more than once because the indicator is absolute positioning
+                var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0,4);
+                var tab = $('a[href=' + tabId + ']');
+                tab.prepend('<span class="tab-error-indicator danger"></span>');
 
-                var fieldError = "<span class='error'>" + error.message + "</span>";
-                $(fieldError).insertAfter(fieldLabel);
+                // Mark the field as an error
+                var fieldError = "<div class='error'>" + error.message + "</div>";
+                $(fieldGroup).append(fieldError);
+                $(fieldGroup).addClass("has-error");
             } else if (error.errorType == 'global'){
                 var globalError = "<div class='tabError'><b>" + BLCAdmin.messages.globalErrors + "</b><span class='error'>"
                     + error.message + "</span></div>";
                 $(".errors").append(globalError);
             }
         });
-        $(".alert-box").removeClass("success").addClass("alert");
-        $(".alert-box-message").text(alertMessage);
+        $("#headerFlashAlertBoxContainer .alert-box").removeClass("success").addClass("alert");
+        $("#headerFlashAlertBoxContainer .alert-box-message").text(alertMessage);
     }
     
     $('body').on('submit', 'form.entity-form', function(event) {

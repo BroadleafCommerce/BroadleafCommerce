@@ -46,8 +46,8 @@
         sessionCountdown: 'Your session expires in <span>',
         sessionCountdownEnd: '</span> seconds',
 
-        problemSaving : 'There was a problem saving. See errors below',
-        problemDeleting : 'There was a problem deleting this record. See errors below',
+        problemSaving : 'There was a problem saving. See errors below.',
+        problemDeleting : 'There was a problem deleting this record. See errors below.',
         globalErrors : 'Global Errors'
 
     };
