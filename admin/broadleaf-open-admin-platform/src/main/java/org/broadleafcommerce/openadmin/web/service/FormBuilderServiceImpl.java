@@ -292,6 +292,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
             sortable = StringUtils.isNotBlank(bcm.getSortProperty());
         } else if (fmd instanceof AdornedTargetCollectionMetadata) {
+            modalSingleSelectable = true;
             readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
 

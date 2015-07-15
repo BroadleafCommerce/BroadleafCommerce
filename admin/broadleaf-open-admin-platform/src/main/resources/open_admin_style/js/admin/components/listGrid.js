@@ -346,16 +346,6 @@ $(document).ready(function() {
      */
     $('body').on('listGrid-adorned-rowSelected', function(event, link, fields, currentUrl) {
         $(this).find('input#adornedTargetIdProperty').val(fields['id']);
-        var $modal = BLCAdmin.currentModal();
-        
-	    var $actions = $modal.find('.entity-form-actions');
-	    var $ajaxLoader = $actions.find('img.ajax-loader');
-	    
-	    if (!$ajaxLoader.is(':visible')) {
-    	    $actions.find('button').hide();
-    	    $actions.find('img.ajax-loader').show();
-    	    $modal.find('form.modal-form').submit();
-	    }
     });
     
     /**

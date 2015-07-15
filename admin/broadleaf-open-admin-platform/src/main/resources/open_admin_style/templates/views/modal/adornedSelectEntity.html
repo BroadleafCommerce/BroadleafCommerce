@@ -1,8 +1,7 @@
 <div class="adorned-select-wrapper">
     <blc:form th:include="components/entityForm"
               th:remove="tag"
-              th:with="additionalClasses='modal-form',
-                 hideActions=${listGrid.listGridType == 'adorned'}" />
+              th:with="additionalClasses='modal-form'" />
 
     <div class="listgrid-container">
         <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
