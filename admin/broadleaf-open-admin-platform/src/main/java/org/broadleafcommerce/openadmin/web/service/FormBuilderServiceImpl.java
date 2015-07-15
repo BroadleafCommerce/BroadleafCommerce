@@ -695,13 +695,15 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     protected void setEntityFormTabsAndGroups(EntityForm ef, Map<String, TabMetadata> tabMetadataMap) {
-        Set<String> tabMetadataKeySet = tabMetadataMap.keySet();
-        for (String tabKey : tabMetadataKeySet) {
-            TabMetadata tabMetadata = tabMetadataMap.get(tabKey);
-            String processedTabName = ef.addTabFromTabMetadata(tabMetadata);
-            Set<String> groupMetadataKeySet = tabMetadata.getGroupMetadata().keySet();
-            for (String groupKey : groupMetadataKeySet) {
-                ef.addGroupFromGroupMetadata(tabMetadata.getGroupMetadata().get(groupKey), processedTabName);
+        if (tabMetadataMap != null) {
+            Set<String> tabMetadataKeySet = tabMetadataMap.keySet();
+            for (String tabKey : tabMetadataKeySet) {
+                TabMetadata tabMetadata = tabMetadataMap.get(tabKey);
+                String processedTabName = ef.addTabFromTabMetadata(tabMetadata);
+                Set<String> groupMetadataKeySet = tabMetadata.getGroupMetadata().keySet();
+                for (String groupKey : groupMetadataKeySet) {
+                    ef.addGroupFromGroupMetadata(tabMetadata.getGroupMetadata().get(groupKey), processedTabName);
+                }
             }
         }
     }
