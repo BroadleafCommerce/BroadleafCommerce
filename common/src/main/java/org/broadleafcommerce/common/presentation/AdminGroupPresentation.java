@@ -55,7 +55,7 @@ public @interface AdminGroupPresentation {
      * Optional - only required if you want to place a group in a column other than the "main" column
      *
      * Specify which column that the group should be placed into.
-     * By default, groups are placed in the "main" column (0). To place in the right-side "sidebar" column,
+     * By default, groups are placed in the "main" column (0). To place in the right-side ("sidebar") column,
      * set column to 1.
      *
      * @return the containing column of the group

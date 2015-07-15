@@ -85,16 +85,16 @@ public @interface AdminPresentationClass {
     AdminTabPresentation[] tabs() default {};
 
     /**
-     * These AdminTabPresentationOverride items override a superclass's tab information by targeting the
-     * superclass's tab and the property to be overridden
+     * These AdminTabPresentationOverride items override a superclass' tab information by targeting the
+     * superclass' tab and the property to be overridden
      *
      * @return the tab overrides for the entity's EntityForm
      */
     AdminTabPresentationOverride[] tabOverrides() default {};
 
     /**
-     * These AdminGroupPresentationOverride items override a superclass's group information by targeting the
-     * superclass's tab, group, and the property to be overridden
+     * These AdminGroupPresentationOverride items override a superclass' group information by targeting the
+     * superclass' tab, group, and the property to be overridden
      *
      * @return the group overrides for the entity's EntityForm
      */
