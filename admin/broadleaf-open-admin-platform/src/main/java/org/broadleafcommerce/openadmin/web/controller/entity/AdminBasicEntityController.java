@@ -836,7 +836,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
      * @throws Exception
      */
     @RequestMapping(value = "/{id}/{collectionField:.*}/selectize", method = RequestMethod.GET)
-    public @ResponseBody List<Map<String, String>> getSelectizeCollectionOptions(HttpServletRequest request, HttpServletResponse response, Model model,
+    public @ResponseBody Map<String, Object> getSelectizeCollectionOptions(HttpServletRequest request, HttpServletResponse response, Model model,
             @PathVariable Map<String, String> pathVars,
             @PathVariable(value = "id") String id,
             @PathVariable(value = "collectionField") String collectionField,
@@ -856,7 +856,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
 
-        return formService.buildSelectizeCollectionOptions(id, drs, collectionProperty, sectionKey, sectionCrumbs);
+        return formService.buildSelectizeCollectionInfo(id, drs, collectionProperty, sectionKey, sectionCrumbs);
     }
     
     /**

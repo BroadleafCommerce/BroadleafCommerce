@@ -20,7 +20,8 @@
                 th:with="field=${record.getField(headerField.name)}"
                 th:remove="tag">
 
-                <option th:value="${record.id}" selected="selected" th:text="${field.displayValue}"/>
+                <option th:if="${record.altId}" th:value="${record.id}" th:attr="data-alternate_id=${record.altId}" selected="selected" th:text="${field.displayValue}"/>
+                <option th:unless="${record.altId}" th:value="${record.id}" selected="selected" th:text="${field.displayValue}"/>
 
             </div>
         </div>

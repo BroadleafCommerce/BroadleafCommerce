@@ -82,7 +82,7 @@ public interface FormBuilderService {
      * @return the ListGrid
      * @throws ServiceException
      */
-    public List<Map<String, String>> buildSelectizeCollectionOptions(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey, List<SectionCrumb> sectionCrumbs)
+    public Map<String, Object> buildSelectizeCollectionInfo(String containingEntityId, DynamicResultSet drs, Property field, String sectionKey, List<SectionCrumb> sectionCrumbs)
             throws ServiceException;
 
     /**

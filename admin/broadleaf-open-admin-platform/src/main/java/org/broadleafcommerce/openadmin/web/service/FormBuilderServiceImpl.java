@@ -112,6 +112,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
     private static final Log LOG = LogFactory.getLog(FormBuilderServiceImpl.class);
 
+    public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
+
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
     
@@ -432,10 +434,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     }
 
     @Override
-    public List<Map<String, String>> buildSelectizeCollectionOptions(String containingEntityId, DynamicResultSet drs, Property field,
-            String sectionKey, List<SectionCrumb> sectionCrumbs)
+    public Map<String, Object> buildSelectizeCollectionInfo(String containingEntityId, DynamicResultSet drs, Property field,
+        String sectionKey, List<SectionCrumb> sectionCrumbs)
             throws ServiceException {
-        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String, String>> options = new ArrayList<>();
 
         FieldMetadata fmd = field.getMetadata();
         // Get the class metadata for this particular field
@@ -469,7 +472,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             if (e.findProperty("id") != null) {
                 selectizeOption.put("id", e.findProperty("id").getValue());
             }
-            result.add(selectizeOption);
+            if (e.findProperty(ALTERNATE_ID_PROPERTY) != null) {
+                selectizeOption.put("alternateId", e.findProperty(ALTERNATE_ID_PROPERTY).getValue());
+            }
+            options.add(selectizeOption);
+        }
+        result.put("options", options);
+
+        AdornedTargetList adornedList = ppr.getAdornedList();
+        if (adornedList != null && adornedList.getLinkedObjectPath() != null
+            && adornedList.getTargetObjectPath() != null && adornedList.getLinkedIdProperty() != null
+            && adornedList.getTargetIdProperty() != null) {
+            result.put("linkedObjectPath", adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty());
+            result.put("linkedObjectId", containingEntityId);
+            result.put("targetObjectPath", adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
         }
 
         return result;

@@ -402,21 +402,50 @@ var BLCAdmin = (function($) {
                         type : "GET"
                     }, function(data) {
 
-                        $.each(data, function (index, value) {
-                            $(selectizeCollection).append($("<option></option>").attr("value", value.id).text(value.name));
+                        $.each(data.options, function (index, value) {
+                            if ($(selectizeCollection).find("option[value="+value.id+"]").length === 0) {
+                                $(selectizeCollection).append($("<option></option>")
+                                    .attr("value", value.id).attr("data-alternate_id", value.alternateId)
+                                    .text(value.name));
+                            }
                         });
+
+                        if (typeof data.targetObjectPath !== 'undefined' && typeof data.linkedObjectPath !== 'undefined'
+                            && typeof data.linkedObjectId !== 'undefined') {
+                            $(selectizeCollection).attr("data-target_path", data.targetObjectPath);
+                            $(selectizeCollection).attr("data-linked_path", data.linkedObjectPath);
+                            $(selectizeCollection).attr("data-linked_id", data.linkedObjectId);
+                        }
 
                         $(selectizeCollection).selectize({
                             plugins: ['remove_button', 'silent_remove'],
                             maxItems: null,
                             persist: false,
+                            onInitialize: function () {
+                                var s = this;
+                                this.revertSettings.$children.each(function () {
+                                    $.extend(s.options[this.value], $(this).data());
+                                });
+                            },
                             onItemAdd: function(value, $item) {
                                 if (!value.length) return;
+
+                                var data = {"fields['id'].value" : value};
+
+                                var targetPath = $(selectizeCollection).data("target_path");
+                                var linkedPath = $(selectizeCollection).data("linked_path");
+                                var linkedId = $(selectizeCollection).data("linked_id");
+                                if (typeof targetPath !== 'undefined' && typeof linkedPath !== 'undefined'
+                                    && typeof linkedId !== 'undefined') {
+                                    data = {};
+                                    data["fields['" + targetPath + "'].value"] = value;
+                                    data["fields['" + linkedPath + "'].value"] = linkedId;
+                                }
 
                                 BLC.ajax({
                                     url : selectizeUrl + "/add",
                                     type : "POST",
-                                    data : {"fields['id'].value" : value}
+                                    data : data
                                 }, function(data) {
                                     BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
                                         alertType: 'save-alert',
@@ -428,8 +457,16 @@ var BLCAdmin = (function($) {
                             onItemRemove: function(value) {
                                 if (!value.length) return;
 
+                                var alternateId = this.options[value].alternate_id;
+                                var url;
+                                if (typeof alternateId !== 'undefined') {
+                                    url = selectizeUrl + "/" + value + "/" + alternateId + "/delete";
+                                } else {
+                                    url = selectizeUrl + "/" + value + "/delete";
+                                }
+
                                 BLC.ajax({
-                                    url: selectizeUrl + "/" + value + "/delete",
+                                    url: url,
                                     type: "POST"
                                 }, function(data) {
                                     BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
