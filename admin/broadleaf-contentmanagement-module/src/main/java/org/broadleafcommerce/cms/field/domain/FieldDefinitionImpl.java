@@ -114,8 +114,8 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     protected Boolean textAreaFlag = false;
     
     @Column(name = "REQUIRED_FLAG")
-    @AdminPresentation(friendlyName = "FieldDefinitionImpl_requiredFlag", order = 4000,gridOrder = 4000,defaultValue = "false")
-    protected Boolean requiredFlag;
+    @AdminPresentation(friendlyName = "FieldDefinitionImpl_requiredFlag", order = 4000,gridOrder = 4000, defaultValue = "false")
+    protected Boolean requiredFlag = false;
 
     @ManyToOne(targetEntity = DataDrivenEnumerationImpl.class)
     @JoinColumn(name = "ENUM_ID")
