@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.web.processor;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
+import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.core.web.util.ProcessorUtils;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -32,6 +33,7 @@ import org.thymeleaf.standard.expression.StandardExpressions;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -42,6 +44,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author apazzolini
  */
 public class RemoveFacetValuesLinkProcessor extends AbstractAttributeModifierAttrProcessor {
+    
+    @Resource(name = "blSearchFacetDTOService")
+    protected SearchFacetDTOService searchFacetDTOService;
 
     /**
      * Sets the name of this processor to be used in Thymeleaf template
@@ -70,7 +75,7 @@ public class RemoveFacetValuesLinkProcessor extends AbstractAttributeModifierAtt
                 .parseExpression(arguments.getConfiguration(), arguments, element.getAttributeValue(attributeName));
         SearchFacetDTO facet = (SearchFacetDTO) expression.execute(arguments.getConfiguration(), arguments);
         
-        String key = facet.getFacet().getField().getAbbreviation();
+        String key = searchFacetDTOService.getUrlKey(facet);
         params.remove(key);
         params.remove(SearchCriteria.PAGE_NUMBER);
         
