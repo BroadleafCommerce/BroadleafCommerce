@@ -107,6 +107,8 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminBasicEntityController extends AdminAbstractController {
     protected static final Log LOG = LogFactory.getLog(AdminBasicEntityController.class);
 
+    public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
+
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
@@ -854,9 +856,65 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 .withStartIndex(getStartIndex(requestParams))
                 .withMaxIndex(getMaxIndex(requestParams));
 
+        if (md instanceof AdornedTargetCollectionMetadata) {
+            ppr.setOperationTypesOverride(null);
+            ppr.setType(PersistencePackageRequest.Type.STANDARD);
+            ppr.setSectionEntityField(collectionField);
+        }
+
         DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
 
         return formService.buildSelectizeCollectionInfo(id, drs, collectionProperty, sectionKey, sectionCrumbs);
+    }
+
+    /**
+     * Adds the requested collection item via Selectize
+     *
+     * @param request
+     * @param response
+     * @param model
+     * @param pathVars
+     * @param id
+     * @param collectionField
+     * @param entityForm
+     * @return the return view path
+     * @throws Exception
+     */
+    @RequestMapping(value = "/{id}/{collectionField:.*}/selectize-add", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> addSelectizeCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value="id") String id,
+            @PathVariable(value="collectionField") String collectionField,
+            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+        Map<String, Object> returnVal = new HashMap<>();
+        String sectionKey = getSectionKey(pathVars);
+        String mainClassName = getClassNameForSection(sectionKey);
+        List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
+        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+        Property collectionProperty = mainMetadata.getPMap().get(collectionField);
+
+        if (StringUtils.isBlank(entityForm.getEntityType())) {
+            FieldMetadata fmd = collectionProperty.getMetadata();
+            if (fmd instanceof BasicCollectionMetadata) {
+                entityForm.setEntityType(((BasicCollectionMetadata) fmd).getCollectionCeilingEntity());
+            }
+        }
+
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        Entity entity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
+
+        // First, we must save the collection entity
+        PersistenceResponse persistenceResponse = service.addSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, sectionCrumbs);
+        Entity savedEntity = persistenceResponse.getEntity();
+        entityFormValidator.validate(entityForm, savedEntity, result);
+
+        if (result.hasErrors()) {
+            returnVal.put("error", result.getFieldError());
+            return returnVal;
+        }
+
+        returnVal.put("alternateId", savedEntity.findProperty(ALTERNATE_ID_PROPERTY).getValue());
+        return returnVal;
     }
     
     /**

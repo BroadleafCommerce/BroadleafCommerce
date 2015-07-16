@@ -430,6 +430,8 @@ var BLCAdmin = (function($) {
                             onItemAdd: function(value, $item) {
                                 if (!value.length) return;
 
+                                var $selectize = this;
+
                                 var data = {"fields['id'].value" : value};
 
                                 var targetPath = $(selectizeCollection).data("target_path");
@@ -443,10 +445,13 @@ var BLCAdmin = (function($) {
                                 }
 
                                 BLC.ajax({
-                                    url : selectizeUrl + "/add",
+                                    url : selectizeUrl + "/selectize-add",
                                     type : "POST",
                                     data : data
                                 }, function(data) {
+                                    if (typeof data.alternateId !== 'undefined') {
+                                        $selectize.options[value].alternate_id = data.alternateId;
+                                    }
                                     BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
                                         alertType: 'save-alert',
                                         autoClose: 400,
