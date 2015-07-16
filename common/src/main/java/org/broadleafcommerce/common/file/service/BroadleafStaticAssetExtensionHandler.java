@@ -25,10 +25,19 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.ui.Model;
 
 /**
+ * 
  * @author Chris Kittrell (ckittrell)
  */
 public interface BroadleafStaticAssetExtensionHandler extends ExtensionHandler {
 
     public ExtensionResultStatusType removeShareOptionsForMTStandardSite(Model model, Site currentSite);
+
+    /**
+     * Provide an extension point to modify the url for a StaticAsset in the case
+     * where multiple assets have the same url.
+     * @param urlBuilder
+     * @return
+     */
+    public ExtensionResultStatusType modifyDuplicateAssetURL(StringBuilder urlBuilder);
 
 }
