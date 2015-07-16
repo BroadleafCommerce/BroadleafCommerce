@@ -31,6 +31,7 @@ public class SearchFacetDTO {
     protected boolean showQuantity;
     protected List<SearchFacetResultDTO> facetValues = new ArrayList<SearchFacetResultDTO>();
     protected boolean active;
+    protected String abbreviation;
     
     public SearchFacet getFacet() {
         return facet;
@@ -62,6 +63,18 @@ public class SearchFacetDTO {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+    
+    public String getAbbreviation() {
+        if (abbreviation != null) {
+            return abbreviation;
+        }
+        
+        return this.getFacet().getField().getAbbreviation();
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
     }
     
 }

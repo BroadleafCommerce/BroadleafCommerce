@@ -17,10 +17,12 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.catalog.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.media.domain.Media;
+import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 
@@ -183,7 +185,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @return a boolean indicates if the product is active.
      */
     public boolean isActive();
-    
+
     /**
      * Gets the default {@link Sku} associated with this Product. A Product is
      * required to have a default Sku which holds specific information about the Product
@@ -210,7 +212,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @param defaultSku - the Sku that should be the default for this Product
      */
     public void setDefaultSku(Sku defaultSku);
-    
+
     /**
      * @return whether or not the default sku can be used for a multi-sku product in the case that no 
      * product options are set. Defaults to false if not specified. Note that this only affects multi-sku
@@ -273,7 +275,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @return all the Skus associated to this Product
      */
     public List<Sku> getAllSkus();
-    
+
     /**
      * Gets the media for this product. This serves as a pass-through to
      * the {@link getDefaultSku()} media
@@ -314,7 +316,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @param category
      */
     public void setCategory(Category category);
-     
+
     /**
      * Returns the default {@link Category} this product is associated with. This method will delegate to
      * {@link #getCategory()} by default, unless the "use.legacy.default.category.mode" property is set to
@@ -361,7 +363,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @param manufacturer
      */
     public void setManufacturer(String manufacturer);
-    
+
     /**
      * Returns the {@link Dimension} for this product
      * <br />
@@ -456,7 +458,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @param depth
      */
     public void setDepth(BigDecimal depth);
-    
+
     /**
      * Gets the dimension girth
      * <br />
@@ -467,7 +469,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @return the dimension girth
      */
     public BigDecimal getGirth();
-    
+
     /**
      * Sets the dimension girth
      * <br />
@@ -687,12 +689,12 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @param overrideGeneratedUrl
      */
     public void setOverrideGeneratedUrl(Boolean overrideGeneratedUrl);
-    
+
     /**
      * Sets a url-fragment.  By default, the system will attempt to create a unique url-fragment for 
      * this product by taking the {@link Product.getName()} and removing special characters and replacing
      * dashes with spaces.
-     */ 
+     */
     public String getUrlKey();
 
     /**
@@ -716,13 +718,13 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @param displayTemplate
      */
     public void setDisplayTemplate(String displayTemplate);
-    
+
     /**
      * Generates a URL that can be used to access the product.  
      * Builds the url by combining the url of the default category with the getUrlKey() of this product.
      */
     public String getGeneratedUrl();
-    
+
     /** 
      * Returns a list of the cross sale products for this product as well
      * all cross sale products in all parent categories of this product.
@@ -730,7 +732,7 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @return the cumulative cross sale products
      */
     public List<RelatedProduct> getCumulativeCrossSaleProducts();
-    
+
     /** 
      * Returns a list of the upsale products for this product as well as
      * all upsale products in all parent categories of this product.
@@ -783,4 +785,17 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @param taxCode
      */
     public void setTaxCode(String taxCode);
+
+    /**
+     * added just for convenience, references to defaultSku.retailPrice 
+     * @return
+     */
+    public Money getRetailPrice();
+
+    /**
+     * added just for convenience, references defaultSku.retailPrice 
+     * @return
+     */
+    public Money getSalePrice();
+
 }

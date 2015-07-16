@@ -126,7 +126,7 @@
             <xsd:enumeration value="columnWidth"/>
             <xsd:enumeration value="broadleafEnumeration"/>
             <xsd:enumeration value="readOnly"/>
-            <xsd:enumeration value="toolTip"/>
+            <xsd:enumeration value="tooltip"/>
             <xsd:enumeration value="helpText"/>
             <xsd:enumeration value="hint"/>
             <xsd:enumeration value="lookupDisplayProperty"/>

@@ -126,4 +126,14 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    @Override
+    public ExtensionResultStatusType startBatchEvent(List<Product> products) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType endBatchEvent() {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
 }
