@@ -99,4 +99,20 @@ $(document).ready(function(){
         $(".secondary-nav").hide();
         $(".nav-section").removeClass("active");
     });
+
+    $(document).find(".color-picker").spectrum({
+        showButtons: false,
+        preferredFormat: "hex6",
+        change: function(color) {
+            $(this).closest('.field-box').find('input.color-picker-value').val(color);
+        },
+        move: function(color) {
+            $(this).closest('.field-box').find('input.color-picker-value').val(color);
+        }
+    });
+});
+
+$('body').on('change', 'input.color-picker-value', function() {
+    var $this = $(this);
+    $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
 });

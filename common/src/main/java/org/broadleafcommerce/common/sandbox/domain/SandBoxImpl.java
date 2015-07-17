@@ -80,18 +80,18 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     
     @Column(name = "SANDBOX_NAME")
     @Index(name="SANDBOX_NAME_INDEX", columnNames={"SANDBOX_NAME"})
-    @AdminPresentation(friendlyName = "SandBoxImpl_Name", group = "SandBoxImpl_Description", prominent = true, 
+    @AdminPresentation(friendlyName = "SandBoxImpl_Name", group = SandboxAdminPresentation.GroupName.Description, prominent = true, 
             gridOrder = 2000, order = 1000,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blSandBoxNameValidator") })
     protected String name;
     
     @Column(name="AUTHOR")
-    @AdminPresentation(friendlyName = "SandBoxImpl_Author", group = "SandBoxImpl_Description", prominent = true, 
+    @AdminPresentation(friendlyName = "SandBoxImpl_Author", group = SandboxAdminPresentation.GroupName.Description, prominent = true, 
         gridOrder = 3000, order = 3000, visibility = VisibilityEnum.FORM_HIDDEN)
     protected Long author;
 
     @Column(name = "SANDBOX_TYPE")
-    @AdminPresentation(friendlyName = "SandBoxImpl_SandBox_Type", group = "SandBoxImpl_Description",
+    @AdminPresentation(friendlyName = "SandBoxImpl_SandBox_Type", group = SandboxAdminPresentation.GroupName.Description,
         visibility = VisibilityEnum.HIDDEN_ALL, readOnly = true,
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration="org.broadleafcommerce.common.sandbox.domain.SandBoxType")
@@ -106,19 +106,19 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     protected List<SandBox> childSandBoxes;
 
     @Column(name = "COLOR")
-    @AdminPresentation(friendlyName = "SandBoxImpl_Color", group = "SandBoxImpl_Description", 
+    @AdminPresentation(friendlyName = "SandBoxImpl_Color", group = SandboxAdminPresentation.GroupName.Description, 
         prominent = true, gridOrder = 1000, fieldType = SupportedFieldType.COLOR, order = 2000)
     protected String color;
 
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "SandBoxImpl_Description", group = "SandBoxImpl_Description",
+    @AdminPresentation(friendlyName = SandboxAdminPresentation.GroupName.Description, group = SandboxAdminPresentation.GroupName.Description,
         prominent = true, gridOrder = 4000, order = 4000)
     protected String description;
 
     /*
      * This field should not be used until logic for it is implemented.
      * 
-     * @AdminPresentation(friendlyName = "SandBoxImpl_Go_Live_Date", group = "SandBoxImpl_Description",
+     * @AdminPresentation(friendlyName = "SandBoxImpl_Go_Live_Date", group = SandboxAdminPresentation.GroupName.Description,
      *   prominent = true, gridOrder = 5000, order = 3000)
     */
     @Column(name = "GO_LIVE_DATE")

@@ -536,3 +536,7 @@ body.login .account-actions {
 .account-actions .button {
     float: right;
 }
+
+input.color-picker-value {
+    width: 16.66667%;
+}
