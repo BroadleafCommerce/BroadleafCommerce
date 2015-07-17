@@ -156,7 +156,29 @@ $(document).ready(function() {
     	});
     	
 		return false;
-    });    
+    });
+
+    /**
+     *
+     */
+    $('body').on('click', 'button.asset-clear', function(event) {
+        var imagePlaceHolderSrc = "/admin/img/admin/placeholder-60x60.gif"
+
+        var mediaItem =  $('.mediaItem');
+        var image = $('.thumbnail');
+        image.removeClass();
+        image.addClass('placeholder-image');
+        image.attr("src", imagePlaceHolderSrc);
+
+        if (mediaItem.length > 0) {
+            var mediaJson = {};
+            mediaJson.url = "";
+            mediaItem.val(JSON.stringify(mediaJson));
+        }
+        return false;
+    });
+
+
     
     // When we detect that a user has selected a file from his file system, we will trigger an event
     $('body').on('change', 'input.ajaxUploadFile[type="file"]', function() {
