@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -51,6 +52,7 @@ public class FieldData {
     }
 
     public static class Builder {
+
         protected String fieldLabel = null;
         protected String fieldName = null;
         protected String operators = null;
@@ -63,7 +65,8 @@ public class FieldData {
             return new FieldData(this);
         }
 
-        public Builder() {}
+        public Builder() {
+        }
 
         public Builder label(String fieldLabel) {
             this.fieldLabel = fieldLabel;
@@ -94,10 +97,10 @@ public class FieldData {
             this.secondaryFieldType = fieldType;
             return this;
         }
-        
+
         public Builder skipValidation(boolean skipValidation) {
-        	this.skipValidation = skipValidation;
-        	return this;
+            this.skipValidation = skipValidation;
+            return this;
         }
     }
 
@@ -125,13 +128,12 @@ public class FieldData {
         return secondaryFieldType;
     }
 
-	public boolean getSkipValidation() {
-		return skipValidation;
-	}
+    public boolean getSkipValidation() {
+        return skipValidation;
+    }
 
-	public void setSkipValidation(boolean skipValidation) {
-		this.skipValidation = skipValidation;
-	}
-    
-    
+    public void setSkipValidation(boolean skipValidation) {
+        this.skipValidation = skipValidation;
+    }
+
 }
