@@ -50,8 +50,14 @@
     </div>
 
     <div th:if="${entityForm}" th:remove="tag">
-        <a id="back-button" th:href="@{'/' + ${sectionKey}}"><i class="fa icon-angle-left fa-2x"></i></a>
-        <h3 th:text="${entityForm.mainEntityName}"></h3>
+        <a class="back-button" th:href="@{'/' + ${sectionKey}}">
+            <i class="fa icon-angle-left fa-2x"></i>&nbsp;&nbsp;&nbsp;
+            <h3>
+                <span blc_admin:admin_section_href="${currentAdminSection}" th:inline="text">
+                    [[#{${currentAdminSection.sectionKey}}]]
+                </span>
+            </h3>
+        </a>
 
         <!-- Dropdown button if more than one action -->
         <div th:if="${#lists.size(entityForm.actions) > 1}" class="button-group">

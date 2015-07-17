@@ -401,14 +401,23 @@ input[disabled], input[readonly], fieldset[disabled] input {
     background-color: #eeeeee;
 }
 
-#back-button {
-    margin-right: 10px;
-    vertical-align: middle;
+.back-button {
+    /*margin-right: 10px;*/
+    /*vertical-align: middle;*/
     color: #B3B3B3;
 }
 
-#back-button i:hover {
+.back-button:hover {
     color: #F2B95A;
+}
+
+.breadcrumb-back a:hover {
+    color: #F2B95A;
+}
+
+.breadcrumb-divider {
+    font-size: 29px;
+    vertical-align: top;
 }
 
 .app-content .sidebar .sidebar-content label{
