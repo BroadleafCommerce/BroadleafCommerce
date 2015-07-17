@@ -461,12 +461,48 @@ fieldset legend i.help-tip {
     position: absolute;
     left: 16px;
     top: 20px;
+    animation: pulse 1s ease infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1.0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
 }
 
 .sidebar.borderlessGroup .titlebar{
     display: none;
 }
 
+.tabError {
+    padding: 15px;
+    text-align: center;
+    color: #DE3A2E;
+}
+
+.tabError span {
+    display: block;
+}
+
+.entity-errors {
+    margin-top: -35px;
+}
+
+img.ajax-loader {
+    display: inline;
+    float: right;
+    margin-top: 20px;
+    padding-right: 15px !important;
+}
 .section-tabs {
     padding-top: 10px;
 }

@@ -49,7 +49,8 @@ $(document).ready(function() {
             complete: hideActionSpinner
         }, function (data) {
             $("#headerFlashAlertBoxContainer").removeClass("hidden");
-            $(".errors, .error").remove();
+            $(".errors, .error, .tab-error-indicator, .tabError").remove();
+            $('.has-error').removeClass('has-error');
 
             if (!data.errors) {
                 $(".alert-box").removeClass("alert").addClass("success");
@@ -90,7 +91,7 @@ $(document).ready(function() {
                 complete: hideActionSpinner
             }, function (data) {
                 $("#headerFlashAlertBoxContainer").removeClass("hidden");
-                $(".errors, .error, .tab-error-indicator").remove();
+                $(".errors, .error, .tab-error-indicator, .tabError").remove();
                 $('.has-error').removeClass('has-error');
 
                 if (!data.errors) {
@@ -106,7 +107,8 @@ $(document).ready(function() {
     }
     
     function showActionSpinner($actions) {
-        $actions.find('button').hide();
+        $("#headerFlashAlertBoxContainer").addClass("hidden");
+        $actions.find('button').prop("disabled",true);
         $actions.find('img.ajax-loader').show();
     }
     
@@ -115,7 +117,7 @@ $(document).ready(function() {
      */
     function hideActionSpinner () {
         var $actions = $('.entity-form-actions');
-        $actions.find('button').show();
+        $actions.find('button').prop("disabled",false);
         $actions.find('img.ajax-loader').hide();
     }
     
@@ -137,7 +139,7 @@ $(document).ready(function() {
             } else if (error.errorType == 'global'){
                 var globalError = "<div class='tabError'><b>" + BLCAdmin.messages.globalErrors + "</b><span class='error'>"
                     + error.message + "</span></div>";
-                $(".errors").append(globalError);
+                $(".entity-errors").append(globalError);
             }
         });
         $("#headerFlashAlertBoxContainer .alert-box").removeClass("success").addClass("alert");
