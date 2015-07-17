@@ -913,7 +913,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
             return returnVal;
         }
 
-        returnVal.put("alternateId", savedEntity.findProperty(ALTERNATE_ID_PROPERTY).getValue());
+        if (savedEntity.findProperty(ALTERNATE_ID_PROPERTY) != null) {
+            returnVal.put("alternateId", savedEntity.findProperty(ALTERNATE_ID_PROPERTY).getValue());
+        }
         return returnVal;
     }
     
