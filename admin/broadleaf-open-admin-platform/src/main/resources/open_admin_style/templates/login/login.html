@@ -4,7 +4,7 @@
             <div th:unless="${#strings.isEmpty(param.login_error)}" th:text="#{password.invalidCombo}" />
         </div>
         <div class="alert alert-danger" th:unless="${#strings.isEmpty(param.sessionTimeout)}" th:text="#{password.timeout}" />
-        <div class="alert alert-success" th:unless="${#strings.isEmpty(param.messageCode)}">            
+        <div class="alert alert-success" th:unless="${#strings.isEmpty(param.messageCode)}">
             <div th:if="${param.messageCode[0] == 'usernameSent'}" th:text="#{password.usernameSent}" />
             <div th:if="${param.messageCode[0] == 'passwordReset'}" th:text="#{password.passwordReset}" />
         </div>
@@ -12,21 +12,32 @@
 
     <blc:form method="POST" th:fragment="form" th:action="@{/login_admin_post}" action="#">
 
-        <label th:text="#{password.username}" />
-        <input type="text" id="username" name="j_username" autofocus="autofocus" class="twelve" />
+        <div class="field-group">
+            <label th:text="#{password.username}" />
+            <input type="text" id="username" name="j_username" autofocus="autofocus" class="twelve" />
+        </div>
 
-        <label th:text="#{password.password}" />
-        <input type="password" id="password" name="j_password" class="twelve" />
+        <div class="field-group">
+            <label th:text="#{password.password}" />
+            <input type="password" id="password" name="j_password" class="twelve" />
+        </div>
 
-        <input type="submit" class="button right" th:value="#{password.signIn}"/>
+        <div class="account-actions">
+            <ul>
+                <li><a href="#" th:href="@{/forgotUsername}" th:text="#{password.forgotUsername}" /></li>
+                <li><a href="#" th:href="@{/forgotPassword}" th:text="#{password.forgotPassword}" /></li>
+            </ul>
+            <input type="submit" class="button primary large" th:value="#{password.signIn}"/>
+        </div>
 
     </blc:form>
 
     <div th:fragment="options">
-        <ul class="inline-list">
-            <li><a href="#" th:href="@{/forgotUsername}" th:text="#{password.forgotUsername}" /></li>
-            <li class="divider">&nbsp;</li>
-            <li><a href="#" th:href="@{/forgotPassword}" th:text="#{password.forgotPassword}" /></li>
-        </ul>
+        <div class="account-actions">
+            <ul>
+                <li><a href="#" th:href="@{/forgotUsername}" th:text="#{password.forgotUsername}" /></li>
+                <li><a href="#" th:href="@{/forgotPassword}" th:text="#{password.forgotPassword}" /></li>
+            </ul>
+        </div>
     </div>
 </div>

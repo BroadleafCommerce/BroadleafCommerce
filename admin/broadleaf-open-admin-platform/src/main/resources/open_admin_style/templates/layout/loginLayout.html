@@ -6,10 +6,9 @@
 
 <head th:include="layout/partials/head" />
 
-<body>
+<body class="login">
 
-	<div class="login-container">
-	
+    <div class="login-box">
         <div class="logo">
             <img th:src="@{/img/admin/blc-logo-150.png}" />
         </div>
@@ -22,7 +21,6 @@
 
         <div id="js-visible" style="display: none;">
             <div th:substituteby="${templateName}::form" />
-            <div id="options" class="basic-links" th:include="${templateName}::options" />
         </div>
 
         <script type="text/javascript">
@@ -30,7 +28,6 @@
             document.getElementById('js-warning').setAttribute('style', 'display: none;');
             document.getElementById('js-visible').setAttribute('style', 'display: block;');
         </script>
-	
     </div> <!--  /login-container -->
 
 </body>

@@ -466,3 +466,26 @@ fieldset legend i.help-tip {
 .sidebar.borderlessGroup .titlebar{
     display: none;
 }
+
+.login-box img {
+    width: 140px;
+}
+
+body.login .login-box {
+    padding: 40px 40px 40px 40px;
+}
+
+body.login .account-actions {
+    display: inline-block;
+    padding: 0;
+    width: 100%;
+}
+
+.account-actions ul {
+    width: 130px;
+    float: left;
+}
+
+.account-actions .button {
+    float: right;
+}
