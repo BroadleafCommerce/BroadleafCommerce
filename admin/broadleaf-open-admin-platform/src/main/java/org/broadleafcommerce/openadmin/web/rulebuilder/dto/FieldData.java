@@ -38,6 +38,7 @@ public class FieldData {
     protected String options;
     protected SupportedFieldType fieldType;
     protected SupportedFieldType secondaryFieldType;
+    protected boolean skipValidation;
 
     private FieldData(Builder builder) {
         this.fieldLabel = builder.fieldLabel;
@@ -46,6 +47,7 @@ public class FieldData {
         this.options = builder.options;
         this.fieldType = builder.fieldType;
         this.secondaryFieldType = builder.secondaryFieldType;
+        this.skipValidation = builder.skipValidation;
     }
 
     public static class Builder {
@@ -55,6 +57,7 @@ public class FieldData {
         protected String options = null;
         protected SupportedFieldType fieldType = null;
         protected SupportedFieldType secondaryFieldType = null;
+        protected boolean skipValidation;
 
         public FieldData build() {
             return new FieldData(this);
@@ -91,6 +94,11 @@ public class FieldData {
             this.secondaryFieldType = fieldType;
             return this;
         }
+        
+        public Builder skipValidation(boolean skipValidation) {
+        	this.skipValidation = skipValidation;
+        	return this;
+        }
     }
 
     public String getFieldLabel() {
@@ -116,4 +124,14 @@ public class FieldData {
     public SupportedFieldType getSecondaryFieldType() {
         return secondaryFieldType;
     }
+
+	public boolean getSkipValidation() {
+		return skipValidation;
+	}
+
+	public void setSkipValidation(boolean skipValidation) {
+		this.skipValidation = skipValidation;
+	}
+    
+    
 }

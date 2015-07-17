@@ -174,22 +174,24 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
             }
 
             private void testFieldName(FieldData fieldData) throws ClassNotFoundException {
-                if (!StringUtils.isEmpty(fieldData.getFieldName()) && dynamicEntityDao != null) {
-                    Class<?>[] dtos = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(getDtoClassName()));
-                    if (ArrayUtils.isEmpty(dtos)) {
-                        dtos = new Class<?>[]{Class.forName(getDtoClassName())};
-                    }
-                    Field field = null;
-                    for (Class<?> dto : dtos) {
-                        field = dynamicEntityDao.getFieldManager().getField(dto, fieldData.getFieldName());
-                        if (field != null) {
-                            break;
-                        }
-                    }
-                    if (field == null) {
-                        throw new IllegalArgumentException("Unable to find the field declared in FieldData (" + fieldData.getFieldName() + ") on the target class (" + getDtoClassName() + "), or any registered entity class that derives from it.");
-                    }
-                }
+            	if (! fieldData.getSkipValidation()) {
+	                if (!StringUtils.isEmpty(fieldData.getFieldName()) && dynamicEntityDao != null) {
+	                    Class<?>[] dtos = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(getDtoClassName()));
+	                    if (ArrayUtils.isEmpty(dtos)) {
+	                        dtos = new Class<?>[]{Class.forName(getDtoClassName())};
+	                    }
+	                    Field field = null;
+	                    for (Class<?> dto : dtos) {
+	                        field = dynamicEntityDao.getFieldManager().getField(dto, fieldData.getFieldName());
+	                        if (field != null) {
+	                            break;
+	                        }
+	                    }
+	                    if (field == null) {
+	                        throw new IllegalArgumentException("Unable to find the field declared in FieldData (" + fieldData.getFieldName() + ") on the target class (" + getDtoClassName() + "), or any registered entity class that derives from it.");
+	                    }
+	                }
+            	}
             }
         });
         this.fields = proxyFields;
