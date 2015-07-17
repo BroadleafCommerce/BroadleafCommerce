@@ -467,6 +467,17 @@ fieldset legend i.help-tip {
     display: none;
 }
 
+.section-tabs {
+    padding-top: 10px;
+}
+
+.empty-section-tabs {
+    padding-top: 5px;
+    background-color: rgba(0,0,0,0.06);
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+}
+
 .login-box img {
     width: 140px;
 }
