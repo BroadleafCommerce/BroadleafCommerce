@@ -17,10 +17,12 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.common.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.SiteDefaultsDTO;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafRequestedCurrencyDto;
 import org.broadleafcommerce.common.currency.service.BroadleafCurrencyService;
@@ -59,6 +61,9 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
     @Resource(name = "blCurrencyService")
     private BroadleafCurrencyService broadleafCurrencyService;
 
+    @Resource(name = "blSiteDefaultsExtensionManager")
+    private SiteDefaultsExtensionManager siteDefaultsExtensionManager;
+
     /**
      * Responsible for returning the currency to use for the current request.
      */
@@ -96,6 +101,13 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
             }
         }
 
+        // 4.5) Check the a runtime-weaved extension manager, with access to Enterprise MutiTenant site
+        SiteDefaultsDTO siteDefaultsDTO = new SiteDefaultsDTO();
+        siteDefaultsExtensionManager.getProxy().retrieveDefautls(siteDefaultsDTO);
+        if (siteDefaultsDTO.getDefaultCurrency() != null) {
+            desiredCurrency = siteDefaultsDTO.getDefaultCurrency();
+        }
+
         // 5) Lookup default currency from DB
         BroadleafCurrency defaultCurrency = broadleafCurrencyService.findDefaultBroadleafCurrency();
         if (desiredCurrency == null) {
@@ -113,7 +125,4 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
         BroadleafRequestedCurrencyDto dto = new BroadleafRequestedCurrencyDto(currencyToUse, desiredCurrency);
         return dto;
     }
-
-
-
 }
