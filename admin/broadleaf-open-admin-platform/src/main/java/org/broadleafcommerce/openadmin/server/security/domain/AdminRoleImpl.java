@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
@@ -63,11 +62,10 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_ROLE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-@AdminPresentationClass(friendlyName = "AdminRoleImpl_baseAdminRole")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_ADMINROLE)
 })
-public class AdminRoleImpl implements AdminRole, AdminMainEntity {
+public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, AdminMainEntity {
 
     private static final Log LOG = LogFactory.getLog(AdminRoleImpl.class);
     private static final long serialVersionUID = 1L;
@@ -83,16 +81,19 @@ public class AdminRoleImpl implements AdminRole, AdminMainEntity {
         }
     )
     @Column(name = "ADMIN_ROLE_ID")
-    @AdminPresentation(friendlyName = "AdminRoleImpl_Admin_Role_ID", group = "AdminRoleImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "AdminRoleImpl_Admin_Role_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order = 1, group = "AdminRoleImpl_Role")
-    protected String name;
+    @AdminPresentation(friendlyName = "AdminRoleImpl_Name", order = 1,
+            group = AdminRoleAdminPresentation.GroupName.Role, defaultValue = "New Admin Role")
+    protected String name = "New Admin Role";
 
     @Column(name = "DESCRIPTION", nullable=false)
-    @AdminPresentation(friendlyName = "AdminRoleImpl_Description", order=2, group = "AdminRoleImpl_Role", prominent=true)
-    protected String description;
+    @AdminPresentation(friendlyName = "AdminRoleImpl_Description", order=2,
+            group = AdminRoleAdminPresentation.GroupName.Role, defaultValue = "New Admin Role",
+            prominent=true)
+    protected String description = "New Admin Role";
 
     /** All users that have this role */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminUserImpl.class)
@@ -105,7 +106,8 @@ public class AdminRoleImpl implements AdminRole, AdminMainEntity {
     @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.LOOKUP,
+    @AdminPresentationCollection(addType = AddMethodType.SELECTIZE_LOOKUP,
+            group = AdminRoleAdminPresentation.GroupName.Permissions,
             friendlyName = "permissionListTitle",
             manyToField = "allRoles",
             customCriteria = "includeFriendlyOnly",

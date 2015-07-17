@@ -23,38 +23,35 @@ import org.broadleafcommerce.common.presentation.AdminGroupPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminTabPresentation;
 
-@AdminPresentationClass(friendlyName = "AdminUserImpl_baseAdminUser",
+@AdminPresentationClass(friendlyName = "AdminRoleImpl_baseAdminRole",
     tabs = {
-        @AdminTabPresentation(name = AdminUserAdminPresentation.TabName.General,
-            order = AdminUserAdminPresentation.TabOrder.General,
+        @AdminTabPresentation(
             groups = {
-                @AdminGroupPresentation(name = AdminUserAdminPresentation.GroupName.User,
-                    order = AdminUserAdminPresentation.GroupOrder.User),
-                @AdminGroupPresentation(name = AdminUserAdminPresentation.GroupName.PermissionsAndRoles,
-                    order = AdminUserAdminPresentation.GroupOrder.PermissionsAndRoles,
-                    column = 1)
+                @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.Role,
+                    order = AdminRoleAdminPresentation.GroupOrder.Role),
+                @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.Permissions,
+                    order = AdminRoleAdminPresentation.GroupOrder.Permissions,
+                    column = 1, borderless = true)
             }
         )
     }
 )
-public interface AdminUserAdminPresentation {
+public interface AdminRoleAdminPresentation {
 
     public static class TabName {
-        public static final String General = "General_Tab";
     }
 
     public static class TabOrder {
-        public static final int General = 1000;
     }
 
     public static class GroupName {
-        public static final String User = "AdminUserImpl_User";
-        public static final String PermissionsAndRoles = "AdminUserImpl_PermissionsAndRoles";
+        public static final String Role = "AdminRoleImpl_Role";
+        public static final String Permissions = "AdminRoleImpl_Permissions";
     }
 
     public static class GroupOrder {
-        public static final int User = 1000;
-        public static final int PermissionsAndRoles = 2000;
+        public static final int Role = 1000;
+        public static final int Permissions = 1000;
     }
 
 }

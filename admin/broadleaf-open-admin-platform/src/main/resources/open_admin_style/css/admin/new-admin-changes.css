@@ -462,3 +462,7 @@ fieldset legend i.help-tip {
     left: 16px;
     top: 20px;
 }
+
+.sidebar.borderlessGroup .titlebar{
+    display: none;
+}
