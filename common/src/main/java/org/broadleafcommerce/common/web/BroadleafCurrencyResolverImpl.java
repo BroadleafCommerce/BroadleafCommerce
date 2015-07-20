@@ -103,7 +103,7 @@ public class BroadleafCurrencyResolverImpl implements BroadleafCurrencyResolver 
 
         // 4.5) Check the a runtime-weaved extension manager, with access to Enterprise MutiTenant site
         SiteDefaultsDTO siteDefaultsDTO = new SiteDefaultsDTO();
-        siteDefaultsExtensionManager.getProxy().retrieveDefautls(siteDefaultsDTO);
+        siteDefaultsExtensionManager.getProxy().retrieveDefaults(siteDefaultsDTO);
         if (siteDefaultsDTO.getDefaultCurrency() != null) {
             desiredCurrency = siteDefaultsDTO.getDefaultCurrency();
         }

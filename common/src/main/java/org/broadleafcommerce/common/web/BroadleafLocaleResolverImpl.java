@@ -105,7 +105,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
 
         //  Fourth, use the a runtime-weaved extension manager, with access to Enterprise MutiTenant site
         SiteDefaultsDTO siteDefaultsDTO = new SiteDefaultsDTO();
-        siteDefaultsExtensionManager.getProxy().retrieveDefautls(siteDefaultsDTO);
+        siteDefaultsExtensionManager.getProxy().retrieveDefaults(siteDefaultsDTO);
 
         Locale managedLocale = siteDefaultsDTO.getDefaultLocale(); //not good to repeatedly call the DTO. 
         if (managedLocale != null) {
