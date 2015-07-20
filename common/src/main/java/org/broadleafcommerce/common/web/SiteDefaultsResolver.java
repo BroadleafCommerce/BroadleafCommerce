@@ -21,6 +21,7 @@
 package org.broadleafcommerce.common.web;
 
 import org.broadleafcommerce.common.SiteDefaultsDTO;
+import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 /**
@@ -29,7 +30,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
  * @author gdiaz
  *
  */
-public interface SiteDefaultsResolver {
+public interface SiteDefaultsResolver extends ExtensionHandler {
 
     public ExtensionResultStatusType retrieveDefautls(SiteDefaultsDTO defautlsDTO);
 

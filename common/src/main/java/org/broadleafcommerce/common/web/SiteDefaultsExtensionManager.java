@@ -27,10 +27,10 @@ import org.springframework.stereotype.Service;
  * @author gonzalo díaz
  */
 @Service("blSiteDefaultsExtensionManager")
-public class SiteDefaultsExtensionManager extends ExtensionManager<SiteDefaultsAbstractHandler> {
+public class SiteDefaultsExtensionManager extends ExtensionManager<SiteDefaultsResolver> {
 
     public SiteDefaultsExtensionManager() {
-        super(SiteDefaultsAbstractHandler.class);
+        super(SiteDefaultsResolver.class);
     }
 
 }

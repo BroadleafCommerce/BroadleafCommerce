@@ -17,10 +17,12 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.common.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.SiteDefaultsDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
@@ -39,8 +41,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component("blLocaleResolver")
 public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
+
     private final Log LOG = LogFactory.getLog(BroadleafLocaleResolverImpl.class);
-    
+
     /**
      * Parameter/Attribute name for the current language
      */
@@ -50,6 +53,9 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
      * Parameter/Attribute name for the current language
      */
     public static String LOCALE_CODE_PARAM = "blLocaleCode";
+
+    @Resource(name = "blSiteDefaultsExtensionManager")
+    private SiteDefaultsExtensionManager siteDefaultsExtensionManager;
 
     /**
      * Attribute indicating that the LOCALE was pulled from session.   Other filters may want to 
@@ -97,6 +103,16 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
 
         }
 
+        //  Fourth, use the a runtime-weaved extension manager, with access to Enterprise MutiTenant site
+        SiteDefaultsDTO siteDefaultsDTO = new SiteDefaultsDTO();
+        siteDefaultsExtensionManager.getProxy().retrieveDefautls(siteDefaultsDTO);
+
+        Locale managedLocale = siteDefaultsDTO.getDefaultLocale(); //not good to repeatedly call the DTO. 
+        if (managedLocale != null) {
+            locale = managedLocale;
+            request.setAttribute(managedLocale.toString(), Boolean.TRUE, WebRequest.SCOPE_REQUEST);
+        }
+
         // Finally, use the default
         if (locale == null) {
             locale = localeService.findDefaultLocale();
@@ -107,7 +123,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
                 LOG.trace("Locale set to default locale " + locale);
             }
         }
-        
+
         // Set the default locale to override Spring's cookie resolver
         request.setAttribute(LOCALE_VAR, locale, WebRequest.SCOPE_REQUEST);
         java.util.Locale javaLocale = BroadleafRequestContext.convertLocaleToJavaLocale(locale);
