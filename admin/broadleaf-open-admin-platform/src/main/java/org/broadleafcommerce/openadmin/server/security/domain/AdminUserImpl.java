@@ -114,7 +114,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @Column(name = "PASSWORD")
     @AdminPresentation(
             friendlyName = "AdminUserImpl_Admin_Password", order = 6000,
-            visibility = VisibilityEnum.HIDDEN_ALL,
+            excluded = true,
             group = AdminUserAdminPresentation.GroupName.User,
             fieldType = SupportedFieldType.PASSWORD,
             validationConfigurations = { @ValidationConfiguration(
