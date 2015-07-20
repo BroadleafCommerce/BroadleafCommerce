@@ -32,6 +32,6 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
  */
 public interface SiteDefaultsResolver extends ExtensionHandler {
 
-    public ExtensionResultStatusType retrieveDefautls(SiteDefaultsDTO defautlsDTO);
+    public ExtensionResultStatusType retrieveDefaults(SiteDefaultsDTO defautlsDTO);
 
 }

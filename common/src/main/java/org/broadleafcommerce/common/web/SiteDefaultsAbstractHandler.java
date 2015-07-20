@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 public class SiteDefaultsAbstractHandler extends AbstractExtensionHandler implements SiteDefaultsResolver {
 
     @Override
-    public ExtensionResultStatusType retrieveDefautls(SiteDefaultsDTO defautlsDTO) {
+    public ExtensionResultStatusType retrieveDefaults(SiteDefaultsDTO defautlsDTO) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
