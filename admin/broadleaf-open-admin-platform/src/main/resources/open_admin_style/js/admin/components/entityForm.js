@@ -133,7 +133,12 @@ $(document).ready(function() {
                 tab.prepend('<span class="tab-error-indicator danger"></span>');
 
                 // Mark the field as an error
-                var fieldError = "<div class='error'>" + error.message + "</div>";
+                var fieldError = "<div class='error'";
+                if (fieldGroup.find(".field-help").length !== 0) {
+                    fieldError += " style='margin-top:-5px;'";
+                }
+                fieldError += ">" + error.message + "</div>";
+
                 $(fieldGroup).append(fieldError);
                 $(fieldGroup).addClass("has-error");
             } else if (error.errorType == 'global'){
