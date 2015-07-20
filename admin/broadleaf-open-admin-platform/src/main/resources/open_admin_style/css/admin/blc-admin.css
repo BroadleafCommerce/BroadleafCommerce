@@ -1641,8 +1641,8 @@ div#thumbnail-zoom {
 
 .basic-links {
     margin: 0 auto;
-    padding-top: 20px;
-    clear:both;
+    padding-top: 5px;
+    /*clear:both;*/
 }
 
 .basic-links > ul > li.divider {
