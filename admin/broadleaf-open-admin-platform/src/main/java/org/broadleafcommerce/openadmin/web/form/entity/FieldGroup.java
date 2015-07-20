@@ -227,4 +227,16 @@ public class FieldGroup {
         this.fields = fields;
     }
 
+    public boolean isMasterFieldGroup() {
+        if (getTitle() != null && getTitle().toLowerCase().contains("master")) {
+            return true;
+        }
+        for (Field field : fields) {
+            if (field.isMasterField() && field.getValue() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
