@@ -162,8 +162,12 @@ public class FieldGroup {
         if (getTitle() != null && getTitle().toLowerCase().contains("master")) {
             return true;
         }
+        return false;
+    }
+
+    public boolean containsFieldData() {
         for (Field field : fields) {
-            if (field.isMasterField() && field.getValue() != null) {
+            if (field.getValue() != null) {
                 return true;
             }
         }
