@@ -73,15 +73,6 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         ModelAndView model = new ModelAndView();
         Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
         assert(product != null);
-        String cmsPrefix = staticAssetPathService.getStaticAssetUrlPrefix();
-        String originalValue = product.getDefaultSku().getLongDescription();
-        if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
-            //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
-            //If there is an environment prefix configured (e.g. a CDN), then we must replace the cmsPrefix with this one.
-            String fldValue = staticAssetPathService.convertAllAssetPathsInContent(originalValue, request.isSecure());
-                product.setLongDescription(fldValue);
-
-        }
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
         Set<Product> allProductsSet = new HashSet<Product>();
         allProductsSet.add(product);
