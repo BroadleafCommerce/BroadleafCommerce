@@ -427,11 +427,8 @@ public class TranslationServiceImpl implements TranslationService {
     public String getDefaultTranslationValue(Object entity, String property, Locale locale,
             String requestedDefaultValue) {
 
-        if (returnBlankTranslationForNotDefaultLocale) {
-            if (localeMatchesDefaultLocale(locale)) {
-            } else if (!propertyInDefaultLocaleExceptionList(entity, property)) {
-                return "";
-            }
+        if (returnBlankTranslationForNotDefaultLocale && !localeMatchesDefaultLocale(locale) && !propertyInDefaultLocaleExceptionList(entity, property)) {
+            return "";
         }
 
         return requestedDefaultValue;
