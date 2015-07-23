@@ -3,5 +3,5 @@
 </label>
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <input type="text"
-       th:classappend="${field.column == 0} ? 'numeric-field'"
+       th:classappend="${group.column == 0} ? 'numeric-field'"
        th:field="*{fields['__${field.name}__'].value}" />

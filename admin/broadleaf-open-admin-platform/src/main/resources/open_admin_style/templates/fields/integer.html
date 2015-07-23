@@ -6,4 +6,4 @@
        th:required="${field.required}"
        th:placeholder="${field.hint}"
        th:field="*{fields['__${field.name}__'].value}"
-       th:classappend="${field.column == 0} ? 'numeric-field'"/>
+       th:classappend="${group.column == 0} ? 'numeric-field'"/>

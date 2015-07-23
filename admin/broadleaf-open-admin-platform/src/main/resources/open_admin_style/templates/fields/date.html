@@ -3,4 +3,4 @@
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
 <input class="datetimepicker" type="text" th:field="*{fields['__${field.name}__'].value}"
-       th:classappend="${field.column == 0} ? 'date-field'"/>
+       th:classappend="${group.column == 0} ? 'date-field'"/>
