@@ -110,8 +110,14 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 boolean noPrimary = false;
                 Media media;
                 try {
-                    media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
-                            populateValueRequest.getProperty().getName());
+                    if (extensionManager != null) {
+                        ExtensionResultHolder<Media> result = new ExtensionResultHolder<Media>();
+                        extensionManager.getProxy().retrieveMedia(instance, populateValueRequest, result);
+                        media = result.getResult();
+                    } else {
+                        media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
+                                populateValueRequest.getProperty().getName());
+                    }
                     if (newMedia == null && media != null) {
                         noPrimary = true;
                         dirty = true;
