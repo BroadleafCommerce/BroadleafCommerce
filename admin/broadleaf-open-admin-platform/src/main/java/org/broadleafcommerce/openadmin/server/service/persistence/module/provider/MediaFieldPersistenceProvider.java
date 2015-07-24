@@ -98,7 +98,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             }
         }
         FieldProviderResponse response = FieldProviderResponse.HANDLED;
-        boolean dirty;
+        boolean dirty = false;
         try {
             setNonDisplayableValues(populateValueRequest);
             Class<?> valueType = getStartingValueType(populateValueRequest);
@@ -107,11 +107,28 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 Media newMedia = mediaBuilderService.convertJsonToMedia(populateValueRequest
                         .getProperty().getUnHtmlEncodedValue(), valueType);
                 boolean persist = false;
+                boolean noPrimary = false;
                 Media media;
                 try {
-                    media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
-                            populateValueRequest.getProperty().getName());
-                    if (media == null) {
+                    if (extensionManager != null) {
+                        ExtensionResultHolder<Media> result = new ExtensionResultHolder<Media>();
+                        extensionManager.getProxy().retrieveMedia(instance, populateValueRequest, result);
+                        media = result.getResult();
+                    } else {
+                        media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
+                                populateValueRequest.getProperty().getName());
+                    }
+                    if (newMedia == null && media != null) {
+                        noPrimary = true;
+                        dirty = true;
+
+                        // remove entry in sku to media map
+                        populateValueRequest.getFieldManager().setFieldValue(instance,
+                            populateValueRequest.getProperty().getName(), null);
+                        populateValueRequest.getPersistenceManager().getDynamicEntityDao().remove(media);
+
+
+                    } else if (media == null) {
                         media = (Media) valueType.newInstance();
 
                         Object parent = extractParent(populateValueRequest, instance);
@@ -128,10 +145,12 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     throw new IllegalArgumentException(e);
                 }
                 populateValueRequest.getProperty().setOriginalValue(convertMediaToJson(media));
-                dirty = establishDirtyState(newMedia, media);
-                if (dirty) {
+                if (!noPrimary) {
+                    dirty = establishDirtyState(newMedia, media);
                     updateMedia(populateValueRequest, newMedia, persist, media);
-		            response = FieldProviderResponse.HANDLED_BREAK;
+                }
+                if (dirty) {
+                    response = FieldProviderResponse.HANDLED_BREAK;
                 }
             } else {
                 throw new UnsupportedOperationException("MediaFields only work with Media types.");
@@ -254,7 +273,13 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     protected boolean establishDirtyState(Media newMedia, Media media) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        boolean dirty = !checkEquality(newMedia.getAltText(), media.getAltText());
+        boolean dirty = (newMedia == null && media != null) || (newMedia != null && media == null);
+        if (newMedia == null && media == null) {
+            return false;
+        }
+        if (!dirty) {
+            dirty = !checkEquality(newMedia.getAltText(), media.getAltText());
+        }
         if (!dirty) {
             dirty = !checkEquality(newMedia.getTags(), media.getTags());
         }
@@ -307,6 +332,10 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     protected void updateMediaFields(Media oldMedia, Media newMedia) {
+        if (newMedia == null) {
+            return;
+        }
+
         oldMedia.setAltText(newMedia.getAltText());
         oldMedia.setTags(newMedia.getTags());
         oldMedia.setTitle(newMedia.getTitle());
