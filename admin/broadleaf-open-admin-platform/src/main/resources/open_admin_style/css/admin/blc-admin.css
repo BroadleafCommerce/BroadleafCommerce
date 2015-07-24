@@ -1639,6 +1639,21 @@ div#thumbnail-zoom {
     max-width: 500px;
 }
 
+.blc-login-link {
+    margin: 0 auto;
+    padding-top: 5px;
+}
+
+.blc-login-link > ul > li.divider {
+    background: #ccc;
+    -webkit-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    -moz-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    height: 100%;
+    margin-right: 1px;
+    width: 1px;
+}
+
 .basic-links {
     margin: 0 auto;
     padding-top: 20px;
