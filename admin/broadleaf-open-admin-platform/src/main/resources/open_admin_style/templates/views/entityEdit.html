@@ -4,7 +4,7 @@
             th:remove="tag"
             th:with="additionalClasses='blc-admin-ajax-update',
                      additionalTabClasses='entity-form',
-                     showSingleTab='true',
+                     showSingleTab='false',
                      hideActions='true',
                      inModal=${inModal != null and inModal}" />
     </div>
@@ -13,7 +13,7 @@
         <blc:form th:include="components/entityForm"
             th:remove="tag"
             th:with="additionalTabClasses='entity-form',
-                     showSingleTab='true',
+                     showSingleTab='false',
                      hideActions='true',
                      inModal=${inModal != null and inModal}" />
     </div>
@@ -22,7 +22,7 @@
         <blc:form th:include="${entityFormTemplatePath}"
             th:remove="tag"
             th:with="additionalTabClasses='entity-form',
-                     showSingleTab='true',
+                     showSingleTab='false',
                      hideActions='true',
                      inModal=${inModal != null and inModal}" />
     </div>
