@@ -167,17 +167,16 @@
 
             /*
              * default behavior for modals will be that the only way to escape them
-             * is to click "escape" key or press the close button. To change this,
-             * simply uncomment or change the code below what handles what happens
-             * to modals once the user clicks a space on the backdrop
+             * is to click the "escape" key or press the close button. It should be noted that
+             * This is a deviation from the default behavior of bootstrap modals; Implementers are
+             * welcome and encouraged to change this code in order to suit their needs.
+             *
              */
 
-          //  this.$backdrop.click(function() {
-          //          BLCAdmin.hideCurrentModal();
-          //      }
-          //  //this.options.backdrop == 'static' ?
-          //    //$.proxy(this.$element[0].focus, this.$element[0])
-          //  //: $.proxy(this.hide, this)
+
+            //this.options.backdrop == 'static' ?
+              //$.proxy(this.$element[0].focus, this.$element[0])
+            //: $.proxy(this.hide, this)
           //)
 
           if (doAnimate) this.$backdrop[0].offsetWidth // force reflow
