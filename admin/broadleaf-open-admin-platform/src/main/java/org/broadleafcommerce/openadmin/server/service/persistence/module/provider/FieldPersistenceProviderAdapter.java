@@ -78,7 +78,14 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
                 value = ((String) value).trim();
             }
             if (value instanceof BigDecimal) {
-                checkValue = ((BigDecimal) checkValue).setScale(((BigDecimal) value).scale(), RoundingMode.HALF_UP);
+                BigDecimal origValue = (BigDecimal) value;
+                BigDecimal newValue = (BigDecimal) checkValue;
+                //set the scale of one of the BigDecimal values to the larger of the two scales
+                if (newValue.scale() < origValue.scale()) {
+                    checkValue = newValue.setScale(origValue.scale(), RoundingMode.UNNECESSARY);
+                } else if (origValue.scale() < newValue.scale()) {
+                    value = origValue.setScale(newValue.scale(), RoundingMode.UNNECESSARY);
+                }
             }
             dirty = value == null || !value.equals(checkValue);
         }

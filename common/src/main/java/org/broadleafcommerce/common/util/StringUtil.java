@@ -113,6 +113,16 @@ public class StringUtil {
         return input;
     }
 
+    /**
+     * given a string with the format "fields[someFieldName].value" (very common in error validation), returns
+     * only "someFieldName
+     * @param expression
+     * @return
+     */
+    public static String extractFieldNameFromExpression(String expression) {
+        return expression.substring(expression.indexOf('[') + 1, expression.lastIndexOf(']'));
+    }
+
     public static String getMapAsJson(Map<String, Object> objectMap) {
         String nullString = "null";
         StringBuffer sb = new StringBuffer("{");

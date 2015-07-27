@@ -78,6 +78,7 @@
                 <ref bean="blAdminUserCustomPersistenceHandler" />
                 <ref bean="blAdminPermissionCustomPersistenceHandler" />
                 <ref bean="blSystemPropertyCustomPersistenceHandler" />
+                <ref bean="blTranslationCustomPersistenceHandler" />
             </list>
         </property>
     </bean>
