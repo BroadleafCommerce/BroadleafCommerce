@@ -758,7 +758,7 @@ BLC.addPreAjaxCallbackHandler(function($data) {
     }
     
     var $loginForm = $data.find('form').filter(function() {
-        return $(this).attr('action').indexOf('login_admin_post') >= 0;
+        return $(this).attr('action') === undefined ? false : $(this).attr('action').indexOf('login_admin_post') >= 0;
     });
     
     if ($loginForm.length > 0) {
