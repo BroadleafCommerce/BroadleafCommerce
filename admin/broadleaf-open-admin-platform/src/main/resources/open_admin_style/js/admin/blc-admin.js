@@ -38,33 +38,6 @@ var BLCAdmin = (function($) {
     var fieldSelectors = 'input, .custom-checkbox, .foreign-key-value-container span.display-value, .redactor_box, ' + 
                          '.asset-selector-container img, select, div.custom-checkbox, div.small-enum-container, ' + 
                          'textarea';
-	
-    function getModalSkeleton() {
-        var $modal = $('<div>', { 'class' : 'modal' });
-        
-        var $modalHeader = $('<div>', {
-            'class' : 'modal-header'
-        });
-        $modalHeader.append($('<h3>'));
-        $modalHeader.append($('<button>', {
-            'class' : 'close',
-            'data-dismiss' : 'modal',
-            'html' : '&times;'
-        }));
-        $modal.append($modalHeader);
-        
-        var $modalBody = $('<div>', { 
-            'class' : 'modal-body'
-        });
-        $modal.append($modalBody);
-        
-        var $modalFooter = $('<div>', {
-            'class' : 'modal-footer'
-        });
-        $modal.append($modalFooter);
-        
-        return $modal;
-    }
     
 	function showModal($data, onModalHide, onModalHideArgs) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals
@@ -218,6 +191,33 @@ var BLCAdmin = (function($) {
     		
     		$modal.find('.modal-body').css('max-height', availableHeight);
     	},
+
+        getModalSkeleton : function getModalSkeleton() {
+            var $modal = $('<div>', { 'class' : 'modal' });
+
+            var $modalHeader = $('<div>', {
+                'class' : 'modal-header'
+            });
+            $modalHeader.append($('<h3>'));
+            $modalHeader.append($('<button>', {
+                'class' : 'close',
+                'data-dismiss' : 'modal',
+                'html' : '&times;'
+            }));
+            $modal.append($modalHeader);
+
+            var $modalBody = $('<div>', {
+                'class' : 'modal-body'
+            });
+            $modal.append($modalBody);
+
+            var $modalFooter = $('<div>', {
+                'class' : 'modal-footer'
+            });
+            $modal.append($modalFooter);
+
+            return $modal;
+        },
     	
     	initializeModalTabs : function($data) {
     		var $tabs = $data.find('dl.tabs');
@@ -255,7 +255,7 @@ var BLCAdmin = (function($) {
 			    BLCAdmin.hideCurrentModal();
 			}
 			
-    	    var $modal = getModalSkeleton();
+    	    var $modal = BLCAdmin.getModalSkeleton();
     	    
     	    $modal.find('.modal-header h3').text(header);
     	    $modal.find('.modal-body').text(message);
@@ -275,7 +275,7 @@ var BLCAdmin = (function($) {
     	
     	showLinkAsModal : function(link, onModalHide, onModalHideArgs) {
     	    // Show a loading message
-    	    var $modal = getModalSkeleton();
+    	    var $modal = BLCAdmin.getModalSkeleton();
     	    $modal.addClass('loading-modal');
     	    $modal.find('.modal-header h3').text(BLCAdmin.messages.loading);
     	    $modal.find('.modal-body').append($('<i>', { 'class' : 'icon-spin icon-spinner' }));
