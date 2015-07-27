@@ -13,6 +13,12 @@
            blc_admin:component_id="${listGrid}">
         <thead>
             <tr>
+                <th class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select' and not ${#lists.isEmpty(listGrid.records)}">
+                    <th:comment th:remove="all">
+                        This entry acting as placeholder for Edit links
+                    </th:comment>
+                    <input type="checkbox" class="multiselect-checkbox"/>
+                </th>
                 <th th:each="headerField : ${listGrid.headerFields}"
                     th:if="${headerField.isVisible}"
                     th:inline="text"
@@ -51,10 +57,16 @@
                         </ul>
                     </div>
                 </th>
-                <th th:if="${listGrid.listGridType} == 'main'" th:unless="${#lists.isEmpty(listGrid.records)}">
+                <th th:if="${listGrid.listGridType} == 'main'">
                     <th:comment th:remove="all">
                         This entry acting as placeholder for Edit links
                     </th:comment>
+                </th>
+                <th th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (__${listGrid.listGridType}__ == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}">
+                    <th:comment th:remove="all">
+                        This entry is acting as placeholder for Workflow Action links
+                    </th:comment>
+                    Row Actions
                 </th>
                 
                 <th width="75" th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}">
@@ -95,6 +107,8 @@
 
                     <td th:unless="${index.count == 1}"></td>
                 </div>
+                <td th:if="${listGrid.listGridType} == 'main'"/>
+                <td th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (__${listGrid.listGridType}__ == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}"/>
             </tr>
             
             <tr th:each="record : ${listGrid.records}"
@@ -105,6 +119,10 @@
                          data-index=${record.index},
                          data-rowid=${record.id},
                          data-hiddenfields=${record.getHiddenFieldsJson()}">
+
+                <td class="listgrid-checkbox" th:if="${listGrid.selectType} == 'multi_select'">
+                    <input type="checkbox" class="listgrid-checkbox"/>
+                </td>
                 
                 <td th:each="headerField : ${record.listGrid.headerFields}"
                     th:if="${headerField.isVisible}"
@@ -177,13 +195,36 @@
                     </span>
                 </td>
 
-                <td th:if="${listGrid.listGridType} == 'main'">
+                <td th:if="${listGrid.listGridType} == 'main'" th:unless="${#lists.isEmpty(listGrid.records)}">
                     <span>
                         <a th:href="@{${record.path}}" th:text="#{Edit}"
                            th:attr="data-link=@{${record.path}},
                                      data-index=${record.index},
                                      data-rowid=${record.id},
                                      data-hiddenfields=${record.getHiddenFieldsJson()}">Edit</a>
+                    </span>
+                </td>
+
+                <td class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (__${listGrid.listGridType}__ == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}">
+                    <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${listGrid.listGridType} == 'workflow' and ${action.actionId} != 'SPLIT'">
+                        <a th:classappend="${action.buttonClass}"
+                           href="#"
+                           th:attr="data-urlpostfix=${action.urlPostfix},
+                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                           th:title="#{${action.displayText}}">
+                            <i th:class="${action.iconClass}"/>
+                        </a>
+                    </span>
+                    <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}">
+                        <a th:classappend="${action.buttonClass}"
+                           href="#"
+                           th:attr="data-urlpostfix=${action.urlPostfix},
+                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                            th:title="#{${action.displayText}}">
+                            <i th:class="${action.iconClass}"/>
+                        </a>
                     </span>
                 </td>
                 

@@ -149,6 +149,10 @@ div.action-popup img.ajax-loader {
     margin: 20px 0;
 }
 
+.fieldgroup-listgrid {
+    margin-bottom: 20px;
+}
+
 .listgrid-toolbar ul {
     list-style-type: none;
     padding-left: 15px;
@@ -332,13 +336,11 @@ button:disabled {
 }
 
 .modal-body legend {
-    display: none;
+    /*display: none;*/
 }
 
 .modal-body fieldset {
-    margin-bottom: 0;
-    border: 0;
-    padding: 0;
+    padding: 10px;
 }
 
 .modal-body textarea {
@@ -522,6 +524,10 @@ img.ajax-loader {
     border-bottom: 1px solid #ddd;
 }
 
+.empty-section-tabs ul {
+    display: none;
+}
+
 .login-box img {
     width: 140px;
 }
@@ -585,4 +591,57 @@ input.color-picker-value {
     color: #B3B3B3;
     font-family: 'Open Sans', sans-serif;
     line-height: 1.5em;
+}
+
+div.action-popup span.submit-error.success {
+    color: #8EAA2B;
+    font-weight: bold;
+}
+
+div.action-popup span.submit-error,
+div.action-popup span.sync-ok {
+    line-height: 27px;
+    color: #890923;
+    display: none;
+}
+
+div.action-popup span.sync-ok {
+    color: green !important;
+}
+
+div.action-popup span.sync-error {
+    line-height: 30px;
+    clear: both;
+    color: #890923;
+    display: none;
+}
+
+div.action-popup span.sync-error button {
+    float: right;
+    margin-top: 5px;
+}
+
+div.action-popup span.deploy-error {
+    line-height: 30px;
+    clear: both;
+    color: #890923;
+    display: none;
+}
+
+div.action-popup span.deploy-error button {
+    float: right;
+    margin-top: 5px;
+}
+
+span.workflow-action {
+    padding-right: 8px;
+    font-size: 16px;
+}
+
+fieldset {
+    margin: 10px 0 0 0;
+}
+
+.modal-body .actions {
+    margin-top: 10px;
 }

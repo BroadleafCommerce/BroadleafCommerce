@@ -644,7 +644,7 @@
         
         initialize : function($container) {
             var $table = $container.find('table.list-grid-table');
-            var $tbody = $table.find('tbody');
+            var $tbody = $table.children('tbody');
             var thWidths = [];
             var $modalBody = $container.closest('.modal-body');
             

@@ -19,22 +19,23 @@
                         th:classappend="${action.buttonClass}"
                         th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-urlpostfix=${action.urlPostfix},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
+                             data-queryparams=${listGrid.sectionCrumbRepresentation},
+                             disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
                     <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
                 </button>
             </li>
 
-            <li th:each="action : ${listGrid.activeRowActions}">
-                <button disabled="disabled"
-                        class="tiny radius dark row-action button"
-                        type="button"
-                        th:classappend="${action.buttonClass}"
-                        th:attr="data-urlpostfix=${action.urlPostfix},
-                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}">
-                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
-                </button>
-            </li>
+            <!--<li th:if="${listGrid.listGridType} != 'workflow'" th:each="action : ${listGrid.activeRowActions}">-->
+                <!--<button disabled="disabled"-->
+                        <!--class="tiny radius dark row-action button"-->
+                        <!--type="button"-->
+                        <!--th:classappend="${action.buttonClass}"-->
+                        <!--th:attr="data-urlpostfix=${action.urlPostfix},-->
+                             <!--data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},-->
+                             <!--data-queryparams=${listGrid.sectionCrumbRepresentation}">-->
+                    <!--<i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />-->
+                <!--</button>-->
+            <!--</li>-->
 
         </ul>
 

@@ -510,28 +510,40 @@ $(document).ready(function() {
     $('body').on('click', '.custom-entity-search button.search-button', function(event) {
         //this takes place on the main list grid screen so there should be a single list grid
         var search = $(this).closest('form').find('input').val();
-        var $firstInput = $($('body').find('#listGrid-main-header th input.listgrid-criteria-input')[0]);
+        var $container = $(this).closest('.listgrid-container');
+        var tableId = $container.find('table').last().attr('id');
+        var $firstInput = $($container.find('#listGrid-main-header th .listgrid-criteria-input')[0]);
         
         if ($firstInput.length == 0) {
            // if there wasn't a primary list grid, check for an inline list grid.
-           $firstInput = $($('body').find('.list-grid-table th input.listgrid-criteria-input')[0]);
+           $firstInput = $($container.find('.list-grid-table th .listgrid-criteria-input')[0]);
         }
-        
+
         $firstInput.val(search);
-        
+
         var submitData = {};
-        submitData[$firstInput.data('name')] =  $firstInput.val();
+        if (search.length > 0) {
+            submitData[$firstInput.data('name')] = search;
+        }
         
         BLC.ajax({
             url: $(this).closest('form').attr('action'),
             type: "GET",
             data: submitData
         }, function(data) {
-            BLCAdmin.history.replaceUrlParameter('startIndex');
-            for (key in submitData) {
-                BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
+            if ($(data).find('table').length === 1 && (BLCAdmin.currentModal() === undefined || BLCAdmin.currentModal().length === 0)) {
+                BLCAdmin.history.replaceUrlParameter('startIndex');
+                for (key in submitData) {
+                    BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
+                }
             }
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data), null, { isRefresh : false});
+            var $relatedListGrid;
+            if ($(data).find('table').length > 1) {
+                $relatedListGrid = $(data).find("div.listgrid-container:has(table#" + tableId +")");
+            } else {
+                $relatedListGrid = $(data);
+            }
+            BLCAdmin.listGrid.replaceRelatedListGrid($relatedListGrid, null, { isRefresh : false});
             $firstInput.trigger('input');
         });
         return false;

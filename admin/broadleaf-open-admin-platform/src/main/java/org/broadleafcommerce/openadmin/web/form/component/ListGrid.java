@@ -95,7 +95,8 @@ public class ListGrid {
         ADORNED_WITH_FORM,
         MAP,
         TRANSLATION,
-        ASSET
+        ASSET,
+        WORKFLOW
     }
 
     public enum SelectType {
