@@ -165,12 +165,10 @@
           this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
             .appendTo(document.body)
 
-            /*
-             * We want the default behavior for modals to be that the only way to close them,
-             * is to click the "escape" key or press the close button. It should be noted that
-             * this is a deviation from the default behavior of bootstrap modals; The original code
-             * in bootstrap.js for modals has been left and commented out below.
-             *
+            /**
+             * The only way that a BLC Admin modal can be closed is to click the "escape" key or press the close button.
+             * It should be noted that this is a deviation from the default behavior of bootstrap modals in order to allow multiple stacked open modals;
+             * The original code in bootstrap.js for modals has been left and commented out below.
              */
 
             //this.$backdrop.click(function() {
