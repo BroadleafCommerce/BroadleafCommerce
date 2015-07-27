@@ -166,18 +166,18 @@
             .appendTo(document.body)
 
             /*
-             * default behavior for modals will be that the only way to escape them
+             * We want the default behavior for modals to be that the only way to close them,
              * is to click the "escape" key or press the close button. It should be noted that
-             * This is a deviation from the default behavior of bootstrap modals; Implementers are
-             * welcome and encouraged to change this code in order to suit their needs.
+             * this is a deviation from the default behavior of bootstrap modals; The original code
+             * in bootstrap.js for modals has been left and commented out below.
              *
              */
 
-
+            //this.$backdrop.click(function() {
             //this.options.backdrop == 'static' ?
-              //$.proxy(this.$element[0].focus, this.$element[0])
+            //$.proxy(this.$element[0].focus, this.$element[0])
             //: $.proxy(this.hide, this)
-          //)
+            //})
 
           if (doAnimate) this.$backdrop[0].offsetWidth // force reflow
 
