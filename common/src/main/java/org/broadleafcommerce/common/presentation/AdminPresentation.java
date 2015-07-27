@@ -195,11 +195,20 @@ public @interface AdminPresentation {
      * @return Broadleaf enumeration class name
      */
     String broadleafEnumeration() default "";
-    
+
+    /**
+     * Optional - drives the component that renders the UI
+     *
+     * When not specified, will default to the fieldType
+     * 
+     * @return the component name responsible for rendering this field
+     */
+    String fieldComponentRenderer() default "";
+
     /**
      * Optional - only required if you want to make the field immutable
      *
-     * Explicityly specify whether or not this field is mutable.
+     * Explicitly specify whether or not this field is mutable.
      * 
      * @return whether or not this field is read only
      */

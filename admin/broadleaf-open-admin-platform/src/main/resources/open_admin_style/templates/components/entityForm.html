@@ -76,7 +76,7 @@
                         <div th:substituteby="fields/readonly" />
                     </div>
                     <div th:unless="${field.readOnly}" th:remove="tag">
-                        <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldType)}" />
+                        <div th:substituteby="${'fields/' + #strings.toLowerCase(field.fieldComponentRenderer)}" />
                     </div>
 
                     <span th:if="${field.help}" class="field-help" th:utext="#{${field.help}}" />
