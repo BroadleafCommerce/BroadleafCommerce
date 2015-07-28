@@ -360,14 +360,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
 
         setModelAttributes(model, sectionKey);
-        
-        if (sandBoxHelper.isSandBoxable(entityForm.getEntityType())) {
-            Tab auditTab = new Tab();
-            auditTab.setTitle("Audit");
-            auditTab.setOrder(Integer.MAX_VALUE);
-            auditTab.setTabClass("audit-tab");
-            entityForm.getTabs().add(auditTab);
-        }
 
         if (isAjaxRequest(request)) {
             entityForm.setReadOnly();

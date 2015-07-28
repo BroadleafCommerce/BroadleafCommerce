@@ -37,7 +37,9 @@ public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, A
 
     @Column(name = "DATE_CREATED", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @AdminPresentation(friendlyName = "AdminAuditable_Date_Created", group = "AdminAuditable_Audit", readOnly = true)
+    @AdminPresentation(friendlyName = "AdminAuditable_Date_Created", group = "AdminAuditable_Audit",
+            tab="AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE,
+            readOnly = true)
     protected Date dateCreated;
 
     @Column(name = "CREATED_BY", updatable = false)
@@ -45,7 +47,9 @@ public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, A
 
     @Column(name = "DATE_UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
-    @AdminPresentation(friendlyName = "AdminAuditable_Date_Updated", group = "AdminAuditable_Audit", readOnly = true)
+    @AdminPresentation(friendlyName = "AdminAuditable_Date_Updated", group = "AdminAuditable_Audit",
+            tab="AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE,
+            readOnly = true)
     protected Date dateUpdated;
 
     @Column(name = "UPDATED_BY")
