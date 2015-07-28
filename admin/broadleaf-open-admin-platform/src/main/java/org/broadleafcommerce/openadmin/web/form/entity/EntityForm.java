@@ -50,7 +50,7 @@ public class EntityForm {
 
     public static final String HIDDEN_GROUP = "hiddenGroup";
     public static final String MAP_KEY_GROUP = "keyGroup";
-    public static final String DEFAULT_GROUP_NAME = "Default";
+    public static final String DEFAULT_GROUP_NAME = "General";
     public static final Integer DEFAULT_GROUP_ORDER = 99999;
     public static final Integer DEFAULT_COLUMN = 0;
     public static final String DEFAULT_TAB_NAME = "General";
