@@ -297,8 +297,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                 editable = true;
             } else if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
                 selectize = true;
+                modalSingleSelectable = true;
             } else {
-                modalMultiSelectable = true;
+                modalSingleSelectable = true;
             }
 
             sortable = StringUtils.isNotBlank(bcm.getSortProperty());

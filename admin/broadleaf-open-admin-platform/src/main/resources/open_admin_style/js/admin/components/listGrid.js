@@ -349,7 +349,7 @@ $(document).ready(function() {
         
         BLCAdmin.listGrid.updateRowActionButtons($listGridContainer);
     }
-    $('body').on('listGrid-single_select-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-single_select-rowSelected, listGrid-selectize-rowSelected', function(event, link, fields, currentUrl) {
         inlineRowSelected(event, link, fields, currentUrl, false);
     });
     $('body').on('listGrid-translation-rowSelected', function(event, link, fields, currentUrl) {
@@ -494,7 +494,7 @@ $(document).ready(function() {
         return false;
     });
     
-    $('body').on('click', 'button.sub-list-grid-add', function() {
+    $('body').on('click', 'button.sub-list-grid-add, a.sub-list-grid-add', function() {
         BLCAdmin.showLinkAsModal($(this).attr('data-actionurl'));
         return false;
     });

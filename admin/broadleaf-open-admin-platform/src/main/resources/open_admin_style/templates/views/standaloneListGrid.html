@@ -1,1 +1,2 @@
-<div th:include="components/listGrid" th:object="${listGrid}" />
+<div th:unless="${listGrid.selectType} == 'selectize'" th:include="components/listGrid" th:object="${listGrid}" />
+<div th:if="${listGrid.selectType} == 'selectize'" th:include="components/selectizeCollection" th:with="listGrid=${listGrid}" />
