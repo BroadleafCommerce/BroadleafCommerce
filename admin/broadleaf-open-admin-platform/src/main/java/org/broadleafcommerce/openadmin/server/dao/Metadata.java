@@ -102,17 +102,11 @@ public class Metadata {
         return baseTabAndGroupMetadata;
     }
 
-    public void applyTabAndGroupAnnotationMetadataOverrides(Class<?>[] entities, Map<String, TabMetadata> mergedTabAndGroupMetadata) {
-        // Go in reverse order since we want the lowest subclass to come last to guarantee that it takes effect
-        for (int i = entities.length-2;i >= 0; i--) {
-            basicEntityMetadataProvider.overrideMetadataViaAnnotation(new OverrideViaAnnotationRequest(entities[i], true, null, ""),
-                mergedTabAndGroupMetadata);
-        }
-    }
-
-    public void applyTabAndGroupXmlMetadataOverrides(Class<?>[] entities, Map<String, TabMetadata> mergedTabAndGroupMetadata) {
+    public void applyTabAndGroupMetadataOverrides(Class<?>[] entities, Map<String, TabMetadata> mergedTabAndGroupMetadata) {
         // Go in reverse order since we want the lowest subclass to come last to guarantee that it takes effect
         for (int i = entities.length-1;i >= 0; i--) {
+            basicEntityMetadataProvider.overrideMetadataViaAnnotation(new OverrideViaAnnotationRequest(entities[i], true, null, ""),
+                    mergedTabAndGroupMetadata);
             basicEntityMetadataProvider.overrideMetadataViaXml(new OverrideViaXmlRequest("", entities[i].getCanonicalName(), "", true, null),
                 mergedTabAndGroupMetadata);
         }
