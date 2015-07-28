@@ -47,4 +47,12 @@ public interface ProductCustomPersistenceHandlerExtensionHandler extends Extensi
      * @return
      */
     ExtensionResultStatusType manageParentCategoryForUpdate(PersistencePackage persistencePackage, Product product) throws ServiceException;
+
+    /**
+     * Perform any special handling for the remove
+     *
+     * @param product
+     * @return
+     */
+    ExtensionResultStatusType manageRemove(PersistencePackage persistencePackage, Product product) throws ServiceException;
 }

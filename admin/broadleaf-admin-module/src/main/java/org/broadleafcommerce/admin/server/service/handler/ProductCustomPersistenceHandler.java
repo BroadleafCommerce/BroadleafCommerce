@@ -235,7 +235,19 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Override
     public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        helper.getCompatibleModule(OperationType.BASIC).remove(persistencePackage);
+        Entity entity = persistencePackage.getEntity();
+        try {
+            PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
+            Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
+            Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            if (extensionManager != null) {
+                extensionManager.getProxy().manageRemove(persistencePackage, adminInstance);
+            }
+            helper.getCompatibleModule(OperationType.BASIC).remove(persistencePackage);
+        } catch (ClassNotFoundException e) {
+            throw new ServiceException("Unable to remove entity for " + entity.getType()[0], e);
+        }
     }
 
     /**
