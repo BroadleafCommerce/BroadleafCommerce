@@ -422,7 +422,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (StringUtils.isEmpty(listGrid.getFriendlyName())) {
             listGrid.setFriendlyName(field.getName());
         }
-//        listGrid.setColumn(field.getMetadata().getColumn());
         listGrid.setContainingEntityId(containingEntityId);
         listGrid.setReadOnly(readOnly);
         listGrid.setHideIdColumn(hideIdColumn);
