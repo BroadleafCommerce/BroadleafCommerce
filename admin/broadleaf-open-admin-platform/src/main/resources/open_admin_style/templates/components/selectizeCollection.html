@@ -3,13 +3,11 @@
         the collection's @AdminPresentation AddType is AddMethodType.SELECTIZE_LOOKUP -->
 </comment>
 
-<div class="selectize-wrapper">
+<div class="selectize-wrapper" blc_admin:component_id="${listGrid}">
     <select th:id="'selectize-' + ${listGrid.friendlyName}"
             class="selectize-collection"
             multiple="multiple"
             th:name="${listGrid.friendlyName} + '[]'"
-            th:attr="data-selectizeurl=${listGrid.selectizeUrl}"
-            th:placeholder="'Select ' + #{${listGrid.friendlyName}} + '...'"
             tabindex="-1">
         <div th:each="record : ${listGrid.records}"
             th:unless="${#lists.isEmpty(listGrid.records)}"
@@ -19,6 +17,31 @@
                 th:if="${headerField.isVisible}"
                 th:with="field=${record.getField(headerField.name)}"
                 th:remove="tag">
+
+                <option th:if="${record.altId}" th:value="${record.id}" th:attr="data-alternate_id=${record.altId}" selected="selected" th:text="${field.displayValue}"/>
+                <option th:unless="${record.altId}" th:value="${record.id}" selected="selected" th:text="${field.displayValue}"/>
+
+            </div>
+        </div>
+    </select>
+
+    <select th:id="'selectize-' + ${listGrid.friendlyName}"
+            class="selectize-adder"
+            multiple="multiple"
+            th:name="${listGrid.friendlyName} + '[]'"
+            th:attr="data-selectizeurl=${listGrid.selectizeUrl},
+                    data-selectizesearch=${listGrid.headerFields[0].name},
+                    data-selectizeplaceholder=#{${listGrid.friendlyName}}"
+            th:placeholder="'Select ' + #{${listGrid.friendlyName}} + '...'"
+            tabindex="-1">
+        <div th:each="record : ${listGrid.records}"
+             th:unless="${#lists.isEmpty(listGrid.records)}"
+             th:remove="tag">
+
+            <div th:each="headerField : ${record.listGrid.headerFields}"
+                 th:if="${headerField.isVisible}"
+                 th:with="field=${record.getField(headerField.name)}"
+                 th:remove="tag">
 
                 <option th:if="${record.altId}" th:value="${record.id}" th:attr="data-alternate_id=${record.altId}" selected="selected" th:text="${field.displayValue}"/>
                 <option th:unless="${record.altId}" th:value="${record.id}" selected="selected" th:text="${field.displayValue}"/>

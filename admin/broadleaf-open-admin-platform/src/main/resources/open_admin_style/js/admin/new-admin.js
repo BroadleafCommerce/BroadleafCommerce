@@ -61,7 +61,7 @@ $(document).ready(function(){
 
     $('table.datatable').DataTable();
 
-    $('select:not(".selectize-collection")').selectize({
+    $('select:not(".selectize-collection")').find('select:not(".selectize-adder")').selectize({
         sortField: 'text'
     });
 

@@ -390,126 +390,30 @@ var BLCAdmin = (function($) {
 				});
 			}
 
-            function initializeSelectizeFields ($container) {
-				$container.find('select:not(".selectize-collection")').selectize({
-					sortField: 'text'
-				});
+            // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
+            if ($container == null) {
+                $container = BLCAdmin.getActiveTab();
+            }
 
-                $container.find('.selectize-collection').each(function(index, selectizeCollection) {
-                    var selectizeUrl = $(selectizeCollection).data("selectizeurl");
-                    BLC.ajax({
-                        url : selectizeUrl + "/selectize",
-                        type : "GET"
-                    }, function(data) {
+            // If we've already initialized this container, we'll skip it.
+            if ($container.data('initialized') == 'true') {
+                return;
+            }
 
-                        $.each(data.options, function (index, value) {
-                            if ($(selectizeCollection).find("option[value="+value.id+"]").length === 0) {
-                                $(selectizeCollection).append($("<option></option>")
-                                    .attr("value", value.id).attr("data-alternate_id", value.alternateId)
-                                    .text(value.name));
-                            }
-                        });
-
-                        if (typeof data.targetObjectPath !== 'undefined' && typeof data.linkedObjectPath !== 'undefined'
-                            && typeof data.linkedObjectId !== 'undefined') {
-                            $(selectizeCollection).attr("data-target_path", data.targetObjectPath);
-                            $(selectizeCollection).attr("data-linked_path", data.linkedObjectPath);
-                            $(selectizeCollection).attr("data-linked_id", data.linkedObjectId);
-                        }
-
-                        $(selectizeCollection).selectize({
-                            plugins: ['remove_button', 'silent_remove'],
-                            maxItems: null,
-                            persist: false,
-                            onInitialize: function () {
-                                var s = this;
-                                this.revertSettings.$children.each(function () {
-                                    $.extend(s.options[this.value], $(this).data());
-                                });
-                            },
-                            onItemAdd: function(value, $item) {
-                                if (!value.length) return;
-
-                                var $selectize = this;
-
-                                var data = {"fields['id'].value" : value};
-
-                                var targetPath = $(selectizeCollection).data("target_path");
-                                var linkedPath = $(selectizeCollection).data("linked_path");
-                                var linkedId = $(selectizeCollection).data("linked_id");
-                                if (typeof targetPath !== 'undefined' && typeof linkedPath !== 'undefined'
-                                    && typeof linkedId !== 'undefined') {
-                                    data = {};
-                                    data["fields['" + targetPath + "'].value"] = value;
-                                    data["fields['" + linkedPath + "'].value"] = linkedId;
-                                }
-
-                                BLC.ajax({
-                                    url : selectizeUrl + "/selectize-add",
-                                    type : "POST",
-                                    data : data
-                                }, function(data) {
-                                    if (typeof data.alternateId !== 'undefined') {
-                                        $selectize.options[value].alternate_id = data.alternateId;
-                                    }
-                                    BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
-                                        alertType: 'save-alert',
-                                        autoClose: 400,
-                                        clearOtherAlerts: true
-                                    });
-                                })
-                            },
-                            onItemRemove: function(value) {
-                                if (!value.length) return;
-
-                                var alternateId = this.options[value].alternate_id;
-                                var url;
-                                if (typeof alternateId !== 'undefined') {
-                                    url = selectizeUrl + "/" + value + "/" + alternateId + "/delete";
-                                } else {
-                                    url = selectizeUrl + "/" + value + "/delete";
-                                }
-
-                                BLC.ajax({
-                                    url: url,
-                                    type: "POST"
-                                }, function(data) {
-                                    BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
-                                        alertType: 'save-alert',
-                                        autoClose: 400,
-                                        clearOtherAlerts: true
-                                    });
-                                });
-                            }
-                        });
-                    });
+            // Set up rich-text HTML editors
+            if($.fn.redactor) {
+                $container.find('.redactor').redactor({
+                    plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize', 'video', 'table'],
+                    replaceDivs : false,
+                    buttonSource: true,
+                    paragraphize: false,
+                    minHeight: 140,
+                    tabKey: true,
+                    tabsAsSpaces: 4,
+                    deniedTags: []
                 });
             }
 
-    	    // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
-    	    if ($container == null) {
-    	        $container = BLCAdmin.getActiveTab();
-    	    }
-    	    
-    	    // If we've already initialized this container, we'll skip it.
-    	    if ($container.data('initialized') == 'true') {
-    	        return;
-    	    }
-    	    
-    	    // Set up rich-text HTML editors
-    	    if($.fn.redactor) {
-	            $container.find('.redactor').redactor({
-	                plugins: ['selectasset', 'fontfamily', 'fontcolor', 'fontsize', 'video', 'table'],
-	                replaceDivs : false,
-	                buttonSource: true,
-	                paragraphize: false,
-	                minHeight: 140,
-	                tabKey: true,
-	                tabsAsSpaces: 4,
-	                deniedTags: []
-	            });
-    	    }
-            
             $container.find('textarea.autosize').autosize();
             
             $container.find(".color-picker").spectrum({
@@ -536,7 +440,7 @@ var BLCAdmin = (function($) {
                 initializationHandlers[i]($container);
             }
 
-            initializeSelectizeFields($container);
+            BLCAdmin.initializeSelectizeFields($container);
             initializeRadioFields($container);
 			initializeDateFields($container);
 			$.fn.broadleafTabs();
@@ -544,7 +448,155 @@ var BLCAdmin = (function($) {
             // Mark this container as initialized
     	    $container.data('initialized', 'true');
 
-    	    return false;
+            return false;
+        },
+
+        initializeSelectizeFields : function($container) {
+            $('select:not(".selectize-collection")').find('select:not(".selectize-adder")').selectize({
+                sortField: 'text'
+            });
+
+            $container.find('.selectize-wrapper').each(function(index, selectizeWrapper) {
+                var selectizeAdder = $(selectizeWrapper).find(".selectize-adder");
+                var selectizeCollection = $(selectizeWrapper).find(".selectize-collection");
+
+                var selectizeUrl = $(selectizeAdder).data("selectizeurl");
+                var selectizeSearchField = $(selectizeAdder).data("selectizesearch");
+                var placeholder = 'Add ' + $(selectizeAdder).data("selectizeplaceholder") + ' +';
+
+                var select_adder, $select_adder;
+                var select_collection, $select_collection;
+
+                $select_adder = $(selectizeAdder).selectize({
+                    maxItems: null,
+                    persist: false,
+                    loadThrottle: 100,
+                    preload: 'focus',
+                    hideSelected: true,
+                    placeholder: placeholder,
+                    onInitialize: function () {
+                        var $selectize = this;
+                        this.revertSettings.$children.each(function () {
+                            $.extend($selectize.options[this.value], $(this).data());
+                        });
+                    },
+                    load: function(query, callback) {
+                        var queryData = {};
+                        queryData[selectizeSearchField] = query;
+
+                        BLC.ajax({
+                            url: selectizeUrl + "/selectize",
+                            type: 'GET',
+                            data: queryData,
+                        }, function(data) {
+                            $.each(data.options, function (index, value) {
+                                if (select_adder.getOption(value.id).length === 0 && select_adder.getItem(value.id).length === 0) {
+                                    select_adder.addOption({value: value.id, text: value.name});
+                                    if (typeof value.alternateId !== 'undefined') {
+                                        select_adder.options[value.name].alternate_id = data.alternateId;
+                                    }
+
+                                }
+                            });
+
+                            if (typeof $(selectizeCollection).attr("data-target_path") === 'undefined' ||
+                                typeof $(selectizeCollection).attr("data-linked_path") === 'undefined' ||
+                                typeof $(selectizeCollection).attr("data-linked_id") === 'undefined') {
+                                $(selectizeCollection).attr("data-target_path", data.targetObjectPath);
+                                $(selectizeCollection).attr("data-linked_path", data.linkedObjectPath);
+                                $(selectizeCollection).attr("data-linked_id", data.linkedObjectId);
+                            }
+
+                            select_adder.open();
+                        });
+                    },
+                    onItemAdd: function(value, $item) {
+                        if (!value.length) return;
+
+                        $item.closest('.selectize-input').find('input').attr("placeholder", placeholder);
+
+                        var data = {"fields['id'].value" : value};
+
+                        var targetPath = $(selectizeCollection).data("target_path");
+                        var linkedPath = $(selectizeCollection).data("linked_path");
+                        var linkedId = $(selectizeCollection).data("linked_id");
+                        if (typeof targetPath !== 'undefined' && typeof linkedPath !== 'undefined'
+                            && typeof linkedId !== 'undefined') {
+                            data = {};
+                            data["fields['" + targetPath + "'].value"] = value;
+                            data["fields['" + linkedPath + "'].value"] = linkedId;
+                        }
+
+                        BLC.ajax({
+                            url : selectizeUrl + "/selectize-add",
+                            type : "POST",
+                            data : data
+                        }, function(data) {
+                            BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
+                                alertType: 'save-alert',
+                                autoClose: 400,
+                                clearOtherAlerts: true
+                            });
+
+                            select_collection.addOption({value: $item.data('value'), text: $item.html()});
+                            select_collection.addItem($item.data('value'));
+                            if (typeof data.alternateId !== 'undefined') {
+                                select_adder.options[value].alternate_id = data.alternateId;
+                            }
+                        });
+                    },
+                    onItemRemove: function () {
+                        $select_adder.siblings('.selectize-control.selectize-adder').find('.selectize-input input').attr('placeholder', placeholder);
+                    }
+                });
+
+                $select_collection = $(selectizeCollection).selectize({
+                    plugins: ['remove_button', 'silent_remove'],
+                    maxItems: null,
+                    persist: false,
+                    onInitialize: function () {
+                        var $selectize = this;
+                        this.revertSettings.$children.each(function () {
+                            $.extend($selectize.options[this.value], $(this).data());
+                        });
+                    },
+                    onFocus: function () {
+                        this.close();
+                    },
+                    onType: function () {
+                        this.close();
+                    },
+                    onItemRemove: function(value) {
+                        if (!value.length) return;
+
+                        var alternateId = select_adder.options[value].alternate_id;
+                        var url;
+                        if (typeof alternateId !== 'undefined') {
+                            url = selectizeUrl + "/" + value + "/" + alternateId + "/delete";
+                        } else {
+                            url = selectizeUrl + "/" + value + "/delete";
+                        }
+
+                        BLC.ajax({
+                            url: url,
+                            type: "POST"
+                        }, function(data) {
+                            BLCAdmin.alert.showAlert($(selectizeCollection), BLCAdmin.messages.saved + '!', {
+                                alertType: 'save-alert',
+                                autoClose: 400,
+                                clearOtherAlerts: true
+                            });
+
+                            select_adder.removeItem(value);
+                        });
+                    }
+                });
+
+                select_collection  = $select_collection[0].selectize;
+                select_adder = $select_adder[0].selectize;
+
+                $select_adder.siblings('.selectize-control.selectize-adder').find('.selectize-input input').attr('placeholder', placeholder);
+            });
     	},
     	
     	updateFields : function($container) {

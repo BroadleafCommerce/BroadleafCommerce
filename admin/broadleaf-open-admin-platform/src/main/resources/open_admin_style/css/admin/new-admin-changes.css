@@ -272,13 +272,6 @@ button:disabled {
     padding: 10px 10px 8px 10px;
 }
 
-
-.selectize-input.dropdown-active, .sandbox-bar .selectize-control.single .selectize-input {
-    -webkit-border-radius: 0;
-    -moz-border-radius:0;
-    border-radius:0;
-}
-
 .selectize-input.dropdown-active:before {
     height: 0;
 }
@@ -422,12 +415,22 @@ input[disabled], input[readonly], fieldset[disabled] input {
     vertical-align: top;
 }
 
-.app-content .sidebar .sidebar-content label{
+.app-content .sidebar .sidebar-content label {
     font-size: 12px;
-    text-transform: uppercase;
     letter-spacing: .05em;
     color: #B3B3B3;
     font-weight: normal;
+}
+.app-content .sidebar .sidebar-content label span.label{
+    text-transform: uppercase;
+}
+
+.app-content .sidebar .sidebar-content label .selectize-toolbar-action {
+    font-size: 12px;
+    letter-spacing: .05em;
+    color: #B3B3B3;
+    font-weight: normal;
+    float: right;
 }
 
 fieldset legend i.help-tip {
@@ -491,6 +494,10 @@ fieldset legend i.help-tip {
 
 .sidebar.borderlessGroup .titlebar{
     display: none;
+}
+
+.sidebar {
+    margin-top: 22px;
 }
 
 .tabError {
@@ -644,4 +651,24 @@ fieldset {
 
 .modal-body .actions {
     margin-top: 10px;
+}
+
+.selectize-control.selectize-adder {
+    height: 40px !important;
+}
+
+.selectize-control.selectize-adder .selectize-input {
+    padding: 10px 10px 8px 10px;
+}
+
+.selectize-control.selectize-adder .item {
+    display: none;
+}
+
+.selectize-control.selectize-adder input {
+    width: 100% !important;
+}
+
+.selectize-control.selectize-collection input {
+    display: none !important;
 }
