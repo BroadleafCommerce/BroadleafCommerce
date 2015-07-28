@@ -21,6 +21,14 @@
     
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid = {
+        replaceRelatedCollection : function($wrapper, alert, opts) {
+            if ($wrapper.find('.selectize-wrapper').length) {
+                BLCAdmin.listGrid.replaceSelectizeCollection($wrapper, alert, opts);
+            } else {
+                BLCAdmin.listGrid.replaceRelatedListGrid($wrapper, alert, opts);
+            }
+        },
+
         replaceRelatedListGrid : function($headerWrapper, alert, opts) {
             var $table = $headerWrapper.find('table');
             var tableId = $table.attr('id');
@@ -88,6 +96,42 @@
 
                 $listGridContainer.trigger('blc-listgrid-replaced', $listGridContainer);
             });
+        },
+
+        replaceSelectizeCollection : function($wrapper, alert, opts) {
+            var $newCollection = $wrapper.find('.selectize-wrapper');
+            var collectionId = $newCollection.attr('id');
+            var $oldCollection = null;
+            var $container = null;
+
+            // Go through the modals from top to bottom looking for the replacement list grid
+            var modals = BLCAdmin.getModals();
+            if (modals.length > 1) {
+                for (var i = modals.length - 1; i > 0; i--) {
+                    $oldCollection = $(modals[i]).find('#' + collectionId);
+                    if ($oldCollection != null && $oldCollection.length > 0) {
+                        break;
+                    }
+                }
+            }
+
+            // If we didn't find it in a modal, use the element from the body
+            if ($oldCollection == null || $oldCollection.length == 0) {
+               $oldCollection = $('#' + collectionId);
+            }
+
+            $container = $oldCollection.closest('.field-group');
+
+            $oldCollection.after($newCollection);
+            $oldCollection.remove();
+
+            BLCAdmin.initializeSelectizeFields($container);
+
+            if (alert) {
+                BLCAdmin.listGrid.showAlert($container, alert.message, alert);
+            }
+
+            $container.trigger('blc-listgrid-replaced', $container);
         },
         
         getActionLink : function($trigger) {
@@ -340,7 +384,7 @@ $(document).ready(function() {
             type : "POST",
             data : postData
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
+            BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                 message: BLCAdmin.messages.saved + '!', 
                 alertType: 'save-alert', 
                 autoClose: 1000 
@@ -526,7 +570,7 @@ $(document).ready(function() {
             if (data.status == 'error') {
                 BLCAdmin.listGrid.showAlert($container, data.message);
             } else {
-                BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
+                BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                     message: BLCAdmin.messages.saved + '!', 
                     alertType: 'save-alert', 
                     autoClose: 1000 
@@ -614,7 +658,7 @@ $(document).ready(function() {
             	    $actions.find('button').show();
             	    $actions.find('img.ajax-loader').hide();
                 } else {
-                    BLCAdmin.listGrid.replaceRelatedListGrid($(data), { 
+                    BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                         message: BLCAdmin.messages.saved + '!', 
                         alertType: 'save-alert', 
                         autoClose: 1000 

@@ -473,7 +473,7 @@ $(document).ready(function() {
                 });
             }
             BLCAdmin.listGrid.hideLoadingSpinner($tbody);
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data).find('div.listgrid-header-wrapper'), null, { isRefresh : false });
+            BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, { isRefresh : false });
             $inputs.each(function(index, input) {
                 $(input).removeAttr('name');
             });
@@ -543,7 +543,7 @@ $(document).ready(function() {
             } else {
                 $relatedListGrid = $(data);
             }
-            BLCAdmin.listGrid.replaceRelatedListGrid($relatedListGrid, null, { isRefresh : false});
+            BLCAdmin.listGrid.replaceRelatedCollection($relatedListGrid, null, { isRefresh : false});
             $firstInput.trigger('input');
         });
         return false;

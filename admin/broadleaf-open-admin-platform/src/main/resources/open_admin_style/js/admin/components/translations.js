@@ -53,7 +53,7 @@ $(document).ready(function() {
 			//"data" contains the new copy of the form, validated 
 			var preventSubmit = $(data).find(".modal-body").find("input[name=preventSubmit]").attr("value");
 			if (!preventSubmit){
-              BLCAdmin.listGrid.replaceRelatedListGrid($(data));
+              BLCAdmin.listGrid.replaceRelatedCollection($(data));
               BLCAdmin.hideCurrentModal();
 			}else{
 				var errorMapString = $(data).find(".modal-body").find("input[name=jsErrorMapString]").attr("value");
@@ -112,7 +112,7 @@ $(document).ready(function() {
             data: properties,
             type: "POST"
         }, function(data) {
-            BLCAdmin.listGrid.replaceRelatedListGrid($(data));
+            BLCAdmin.listGrid.replaceRelatedCollection($(data));
         });
         
         return false;

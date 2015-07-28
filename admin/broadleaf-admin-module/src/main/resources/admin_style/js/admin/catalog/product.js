@@ -27,7 +27,7 @@
                 url : listGridUrl,
                 type : "GET"
             }, function(data) {
-                BLCAdmin.listGrid.replaceRelatedListGrid($(data));
+                BLCAdmin.listGrid.replaceRelatedCollection($(data));
             });
         }
 
