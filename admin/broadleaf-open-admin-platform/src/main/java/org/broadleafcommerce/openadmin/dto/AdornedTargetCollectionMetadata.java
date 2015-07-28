@@ -33,6 +33,7 @@ public class AdornedTargetCollectionMetadata extends CollectionMetadata {
     private String parentObjectClass;
     private String[] maintainedAdornedTargetFields = {};
     private String[] gridVisibleFields = {};
+    private String selectizeVisibleField;
     private AdornedTargetAddMethodType adornedTargetAddMethodType;
 
     public AdornedTargetAddMethodType getAdornedTargetAddMethodType() {
@@ -67,6 +68,14 @@ public class AdornedTargetCollectionMetadata extends CollectionMetadata {
         this.gridVisibleFields = gridVisibleFields;
     }
 
+    public String getSelectizeVisibleField() {
+        return selectizeVisibleField;
+    }
+
+    public void setSelectizeVisibleField(String selectizeVisibleField) {
+        this.selectizeVisibleField = selectizeVisibleField;
+    }
+
     public String[] getMaintainedAdornedTargetFields() {
         return maintainedAdornedTargetFields;
     }
@@ -86,6 +95,7 @@ public class AdornedTargetCollectionMetadata extends CollectionMetadata {
         ((AdornedTargetCollectionMetadata) metadata).parentObjectClass = parentObjectClass;
         ((AdornedTargetCollectionMetadata) metadata).maintainedAdornedTargetFields = maintainedAdornedTargetFields;
         ((AdornedTargetCollectionMetadata) metadata).gridVisibleFields = gridVisibleFields;
+        ((AdornedTargetCollectionMetadata) metadata).selectizeVisibleField = selectizeVisibleField;
         ((AdornedTargetCollectionMetadata) metadata).adornedTargetAddMethodType = adornedTargetAddMethodType;
 
         return super.populate(metadata);
@@ -111,6 +121,8 @@ public class AdornedTargetCollectionMetadata extends CollectionMetadata {
         if (!Arrays.equals(maintainedAdornedTargetFields, metadata.maintainedAdornedTargetFields)) return false;
         if (parentObjectClass != null ? !parentObjectClass.equals(metadata.parentObjectClass) : metadata.parentObjectClass != null)
             return false;
+        if (selectizeVisibleField != null ? !selectizeVisibleField.equals(metadata.selectizeVisibleField) : metadata.selectizeVisibleField != null)
+            return false;
 
         return true;
     }
@@ -122,6 +134,7 @@ public class AdornedTargetCollectionMetadata extends CollectionMetadata {
         result = 31 * result + (parentObjectClass != null ? parentObjectClass.hashCode() : 0);
         result = 31 * result + (maintainedAdornedTargetFields != null ? Arrays.hashCode(maintainedAdornedTargetFields) : 0);
         result = 31 * result + (gridVisibleFields != null ? Arrays.hashCode(gridVisibleFields) : 0);
+        result = 31 * result + (selectizeVisibleField != null ? selectizeVisibleField.hashCode() : 0);
         return result;
     }
 }

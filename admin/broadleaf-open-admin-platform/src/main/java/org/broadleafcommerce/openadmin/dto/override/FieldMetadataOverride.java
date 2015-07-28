@@ -506,6 +506,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private OperationType fetchType;
     private OperationType inspectType;
     private Boolean useServerSideInspectionCache;
+    private String selectizeVisibleField;
 
     public String[] getCustomCriteria() {
         return customCriteria;
@@ -561,6 +562,14 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setUpdateType(OperationType updateType) {
         this.updateType = updateType;
+    }
+
+    public String getSelectizeVisibleField() {
+        return selectizeVisibleField;
+    }
+
+    public void setSelectizeVisibleField(String selectizeVisibleField) {
+        this.selectizeVisibleField = selectizeVisibleField;
     }
 
     //basic collection fields

@@ -270,6 +270,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             String stringValue = entry.getValue().overrideValue();
             if (entry.getKey().equals(PropertyType.AdminPresentationCollection.ADDTYPE)) {
                 fieldMetadataOverride.setAddType(OperationType.valueOf(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SELECTIZEVISIBLEFIELD)) {
+                fieldMetadataOverride.setSelectizeVisibleField(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.CURRENCYCODEFIELD)) {
                 fieldMetadataOverride.setCurrencyCodeField(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.CUSTOMCRITERIA)) {
@@ -332,6 +334,7 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         if (annotColl != null) {
             FieldMetadataOverride override = new FieldMetadataOverride();
             override.setAddMethodType(annotColl.addType());
+            override.setSelectizeVisibleField(annotColl.selectizeVisibleField());
             override.setManyToField(annotColl.manyToField());
             override.setCustomCriteria(annotColl.customCriteria());
             override.setUseServerSideInspectionCache(annotColl.useServerSideInspectionCache());
@@ -539,6 +542,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
 
         if (collectionMetadata.getCurrencyCodeField()!=null) {
             metadata.setCurrencyCodeField(collectionMetadata.getCurrencyCodeField());
+        }
+
+        if (collectionMetadata.getSelectizeVisibleField()!=null) {
+            metadata.setSelectizeVisibleField(collectionMetadata.getSelectizeVisibleField());
         }
 
         attributes.put(field.getName(), metadata);

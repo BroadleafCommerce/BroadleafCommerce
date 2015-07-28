@@ -103,6 +103,7 @@ public class PropertyType {
         public static final String TARGETOBJECTPROPERTY = "targetObjectProperty";
         public static final String MAINTAINEDADORNEDTARGETFIELDS = "maintainedAdornedTargetFields";
         public static final String GRIDVISIBLEFIELDS = "gridVisibleFields";
+        public static final String SELECTIZEVISIBLEFIELD = "selectizeVisibleField";
         public static final String TARGETOBJECTIDPROPERTY = "targetObjectIdProperty";
         public static final String JOINENTITYCLASS = "joinEntityClass";
         public static final String SORTPROPERTY = "sortProperty";
@@ -128,6 +129,7 @@ public class PropertyType {
         public static final String READONLY = "readOnly";
         public static final String USESERVERSIDEINSPECTIONCACHE = "useServerSideInspectionCache";
         public static final String ADDTYPE = "addType";
+        public static final String SELECTIZEVISIBLEFIELD = "selectizeVisibleField";
         public static final String MANYTOFIELD = "manyToField";
         public static final String ORDER = "order";
         public static final String SORTPROPERTY = "sortProperty";

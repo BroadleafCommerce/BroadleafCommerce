@@ -31,6 +31,8 @@ public class BasicCollectionMetadata extends CollectionMetadata {
 
     private String sortProperty;
 
+    private String selectizeVisibleField;
+
     public AddMethodType getAddMethodType() {
         return addMethodType;
     }
@@ -47,6 +49,14 @@ public class BasicCollectionMetadata extends CollectionMetadata {
         this.sortProperty = sortProperty;
     }
 
+    public String getSelectizeVisibleField() {
+        return selectizeVisibleField;
+    }
+
+    public void setSelectizeVisibleField(String selectizeVisibleField) {
+        this.selectizeVisibleField = selectizeVisibleField;
+    }
+
     @Override
     public void accept(MetadataVisitor visitor) {
         visitor.visit(this);
@@ -56,6 +66,7 @@ public class BasicCollectionMetadata extends CollectionMetadata {
     protected FieldMetadata populate(FieldMetadata metadata) {
         ((BasicCollectionMetadata) metadata).addMethodType = addMethodType;
         ((BasicCollectionMetadata) metadata).sortProperty = sortProperty;
+        ((BasicCollectionMetadata) metadata).selectizeVisibleField = selectizeVisibleField;
         return super.populate(metadata);
     }
 
@@ -75,6 +86,7 @@ public class BasicCollectionMetadata extends CollectionMetadata {
         BasicCollectionMetadata that = (BasicCollectionMetadata) o;
 
         if (addMethodType != that.addMethodType) return false;
+        if (selectizeVisibleField != that.selectizeVisibleField) return false;
 
         return true;
     }
@@ -83,6 +95,7 @@ public class BasicCollectionMetadata extends CollectionMetadata {
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (addMethodType != null ? addMethodType.hashCode() : 0);
+        result = 31 * result + (selectizeVisibleField != null ? selectizeVisibleField.hashCode() : 0);
         return result;
     }
 }

@@ -157,6 +157,14 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         metadataBuilder.addPropertyValue("gridVisibleFields", values);
                     }
                 }
+
+                {
+                    List<Element> propElements = DomUtils.getChildElementsByTagName(fieldElement, "selectizeVisibleField");
+                    for (Element propElement : propElements) {
+                        String propValue = propElement.getAttribute("value");
+                        metadataBuilder.addPropertyValue("selectizeVisibleField", propValue);
+                    }
+                }
             }
 
             List<Element> tabElements = DomUtils.getChildElementsByTagName(overrideItem, "tab");

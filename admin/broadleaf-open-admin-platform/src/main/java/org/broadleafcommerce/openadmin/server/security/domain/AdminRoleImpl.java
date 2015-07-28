@@ -107,6 +107,7 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.SELECTIZE_LOOKUP,
+            selectizeVisibleField = "description",
             group = AdminRoleAdminPresentation.GroupName.Permissions,
             friendlyName = "permissionListTitle",
             manyToField = "allRoles",

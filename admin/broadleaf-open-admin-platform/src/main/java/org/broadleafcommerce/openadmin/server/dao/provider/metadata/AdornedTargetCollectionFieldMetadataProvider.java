@@ -369,6 +369,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
         if (adornedTargetCollection != null) {
             FieldMetadataOverride override = new FieldMetadataOverride();
             override.setGridVisibleFields(adornedTargetCollection.gridVisibleFields());
+            override.setSelectizeVisibleField(adornedTargetCollection.selectizeVisibleField());
             override.setIgnoreAdornedProperties(adornedTargetCollection.ignoreAdornedProperties());
             override.setMaintainedAdornedTargetFields(adornedTargetCollection.maintainedAdornedTargetFields());
             override.setParentObjectIdProperty(adornedTargetCollection.parentObjectIdProperty());
@@ -479,6 +480,9 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
         }
         if (adornedTargetCollectionMetadata.getGridVisibleFields() != null) {
             metadata.setGridVisibleFields(adornedTargetCollectionMetadata.getGridVisibleFields());
+        }
+        if (adornedTargetCollectionMetadata.getSelectizeVisibleField() != null) {
+            metadata.setSelectizeVisibleField(adornedTargetCollectionMetadata.getSelectizeVisibleField());
         }
         String parentObjectIdProperty = null;
         if (serverMetadata != null) {

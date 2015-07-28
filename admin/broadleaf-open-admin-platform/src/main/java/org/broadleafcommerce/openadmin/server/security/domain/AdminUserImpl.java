@@ -147,7 +147,8 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @JoinTable(name = "BLC_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(addType = AddMethodType.SELECTIZE_LOOKUP, friendlyName = "roleListTitle", manyToField = "allUsers",
+    @AdminPresentationCollection(addType = AddMethodType.SELECTIZE_LOOKUP, selectizeVisibleField = "description",
+        friendlyName = "roleListTitle", manyToField = "allUsers",
         group = GroupName.PermissionsAndRoles, operationTypes = @AdminPresentationOperationTypes(removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
@@ -156,6 +157,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(addType = AddMethodType.SELECTIZE_LOOKUP,
+        selectizeVisibleField = "description",
         group = GroupName.PermissionsAndRoles,
         friendlyName = "permissionListTitle",
         customCriteria = "includeFriendlyOnly",

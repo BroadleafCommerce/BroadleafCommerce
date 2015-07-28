@@ -322,4 +322,15 @@ public @interface AdminPresentationAdornedTargetCollection {
      * @return the item is acquired via lookup or construction
      */
     AdornedTargetAddMethodType addType() default AdornedTargetAddMethodType.LOOKUP;
+
+    /**
+     * <p>Optional - only required when using the "SELECTIZE_LOOKUP" addType for a collection </p>
+     *
+     * <p>Field visible in the selectize collection UI in the admin tool.
+     * Fields are referenced relative to the the target entity. For example, in CrossSaleProductImpl,
+     * to show the product name field, the selectizeVisibleField value would be : "name"</p>
+     *
+     * @return Field visible in the selectize collection UI in the admin tool
+     */
+    String selectizeVisibleField() default "";
 }

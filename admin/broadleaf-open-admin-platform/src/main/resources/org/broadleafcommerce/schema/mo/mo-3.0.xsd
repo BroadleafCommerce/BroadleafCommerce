@@ -92,6 +92,12 @@
         </xsd:complexType>
     </xsd:element>
 
+    <xsd:element name="selectizeVisibleField">
+        <xsd:complexType>
+            <xsd:attribute name="value" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
     <xsd:element name="mapKey">
         <xsd:complexType>
             <xsd:attribute name="value" use="required"/>
@@ -207,6 +213,7 @@
             <xsd:enumeration value="forceFreeFormKeys"/>
             <xsd:enumeration value="translatable"/>
             <xsd:enumeration value="defaultValue"/>
+            <xsd:enumeration value="selectizeVisibleField"/>
         </xsd:restriction>
     </xsd:simpleType>
 

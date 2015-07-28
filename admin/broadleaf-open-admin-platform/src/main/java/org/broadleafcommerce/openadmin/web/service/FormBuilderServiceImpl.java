@@ -269,13 +269,24 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         } else if (fmd instanceof BasicCollectionMetadata) {
             BasicCollectionMetadata bcm = (BasicCollectionMetadata) fmd;
             readOnly = !bcm.isMutable();
-            for (Property p : cmd.getProperties()) {
-                if (p.getMetadata() instanceof BasicFieldMetadata) {
+
+            if (bcm.getAddMethodType().equals(AddMethodType.SELECTIZE_LOOKUP)) {
+                Property p = cmd.getPMap().get(bcm.getSelectizeVisibleField());
+                if (p != null) {
                     BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                    if (md.isProminent() != null && md.isProminent() 
-                            && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
-                        Field hf = createHeaderField(p, md);
-                        headerFields.add(hf);
+
+                    Field hf = createHeaderField(p, md);
+                    headerFields.add(hf);
+                }
+            } else {
+                for (Property p : cmd.getProperties()) {
+                    if (p.getMetadata() instanceof BasicFieldMetadata) {
+                        BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+                        if (md.isProminent() != null && md.isProminent()
+                                && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
+                            Field hf = createHeaderField(p, md);
+                            headerFields.add(hf);
+                        }
                     }
                 }
             }
@@ -296,22 +307,30 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             readOnly = !((AdornedTargetCollectionMetadata) fmd).isMutable();
             AdornedTargetCollectionMetadata atcmd = (AdornedTargetCollectionMetadata) fmd;
 
-            for (String fieldName : atcmd.getGridVisibleFields()) {
-                Property p = cmd.getPMap().get(fieldName);
-                BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
-                
-                Field hf = createHeaderField(p, md);
-                headerFields.add(hf);
+            if (atcmd.getAdornedTargetAddMethodType().equals(AdornedTargetAddMethodType.SELECTIZE_LOOKUP)) {
+                selectize = true;
+
+                Property p = cmd.getPMap().get(atcmd.getSelectizeVisibleField());
+                if (p != null) {
+                    BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+
+                    Field hf = createHeaderField(p, md);
+                    headerFields.add(hf);
+                }
+            } else {
+                for (String fieldName : atcmd.getGridVisibleFields()) {
+                    Property p = cmd.getPMap().get(fieldName);
+                    BasicFieldMetadata md = (BasicFieldMetadata) p.getMetadata();
+
+                    Field hf = createHeaderField(p, md);
+                    headerFields.add(hf);
+                }
             }
 
             type = ListGrid.Type.ADORNED;
 
             if (atcmd.getMaintainedAdornedTargetFields().length > 0) {
                 editable = true;
-            }
-
-            if (atcmd.getAdornedTargetAddMethodType().equals(AdornedTargetAddMethodType.SELECTIZE_LOOKUP)) {
-                selectize = true;
             }
             
             AdornedTargetList adornedList = (AdornedTargetList) atcmd.getPersistencePerspective()
@@ -384,8 +403,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         if (CollectionUtils.isEmpty(headerFields)) {
             String message = "There are no listgrid header fields configured for the class " + ceilingType + " and property '" +
             	field.getName() + "'.";
-            if (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM) {
+            if (selectize && (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM)) {
+                message += " Please configure 'selectizeVisibleField' in your @AdminPresentationAdornedTargetCollection configuration";
+            } else if (type == ListGrid.Type.ADORNED || type == ListGrid.Type.ADORNED_WITH_FORM) {
                 message += " Please configure 'gridVisibleFields' in your @AdminPresentationAdornedTargetCollection configuration";
+            } else if (selectize && type == ListGrid.Type.BASIC) {
+                message += " Please configure 'selectizeVisibleField' in your @AdminPresentationCollection configuration";
             } else {
                 message += " Please mark some @AdminPresentation fields with 'prominent = true'";
             }
