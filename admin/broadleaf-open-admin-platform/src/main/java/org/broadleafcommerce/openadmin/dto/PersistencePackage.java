@@ -45,7 +45,6 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     protected Map<String, PersistencePackage> subPackages = new LinkedHashMap<String, PersistencePackage>();
     protected boolean validateUnsubmittedProperties = true;
     protected SectionCrumb[] sectionCrumbs;
-    protected boolean shouldUpdateSolr = true;
 
     //internalUsage
     protected boolean isProcessedInternal = false;
@@ -246,14 +245,6 @@ public class PersistencePackage implements Serializable, StateDescriptor {
             return new SectionCrumb();
         }
         return sectionCrumbs[0];
-    }
-
-    public boolean isShouldUpdateSolr() {
-        return shouldUpdateSolr;
-    }
-
-    public void setShouldUpdateSolr(boolean shouldUpdateSolr) {
-        this.shouldUpdateSolr = shouldUpdateSolr;
     }
 
     /**
