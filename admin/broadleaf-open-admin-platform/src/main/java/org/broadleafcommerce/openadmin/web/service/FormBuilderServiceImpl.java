@@ -518,7 +518,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     private String buildSelectizeUrl(ListGrid listGrid) {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         String url = request.getContextPath();
-        url += listGrid.getSectionKey();
+        url += url.endsWith("/") || listGrid.getSectionKey().startsWith("/") ? listGrid.getSectionKey() : "/" + listGrid.getSectionKey();
         url += "/" + listGrid.getContainingEntityId();
         url += "/" + listGrid.getSubCollectionFieldName();
         return url;
