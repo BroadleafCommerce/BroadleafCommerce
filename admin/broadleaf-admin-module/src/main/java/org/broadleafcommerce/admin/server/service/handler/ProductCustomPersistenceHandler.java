@@ -48,7 +48,6 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
@@ -59,10 +58,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -221,6 +217,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForUpdate
                         (persistencePackage, adminInstance);
                 handled = ExtensionResultStatusType.NOT_HANDLED != result;
+
+                extensionManager.getProxy().manageFields(persistencePackage, adminInstance);
             }
             if (!handled) {
                 setupXref(adminInstance);
