@@ -70,6 +70,10 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
             statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANTRUEMATCH, "," + TRUE);
             statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANFALSEMATCH, "," + FALSE);
             statements[j] = statements[j].replaceAll("[,]\\s*" + TIMESTAMPMATCH, "," + CURRENT_TIMESTAMP);
+
+            //try matches for updates
+            statements[j] = statements[j].replaceAll("[=]\\s*" + BOOLEANTRUEMATCH, "=" + TRUE);
+            statements[j] = statements[j].replaceAll("[=]\\s*" + BOOLEANFALSEMATCH, "=" + FALSE);
         }
 
         return statements;

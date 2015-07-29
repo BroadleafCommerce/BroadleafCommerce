@@ -19,16 +19,16 @@
  */
 package org.broadleafcommerce.common.util.sql.importsql;
 
+import org.broadleafcommerce.common.logging.SupportLogManager;
+import org.broadleafcommerce.common.logging.SupportLogger;
+import org.hibernate.tool.hbm2ddl.SingleLineSqlCommandExtractor;
+
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.broadleafcommerce.common.logging.SupportLogManager;
-import org.broadleafcommerce.common.logging.SupportLogger;
-import org.hibernate.tool.hbm2ddl.SingleLineSqlCommandExtractor;
 
 /**
  * This is a utility class that is only meant to be used for testing the BLC demo on Oracle. In our current
@@ -57,19 +57,7 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlComman
         }
 
         String[] statements = super.extractCommands(reader);
-        for (int j=0; j<statements.length; j++) {
-            //try start matches
-            statements[j] = statements[j].replaceAll(BOOLEANTRUEMATCH + "\\s*[,]", TRUE + ",");
-            statements[j] = statements[j].replaceAll(BOOLEANFALSEMATCH + "\\s*[,]", FALSE + ",");
-
-            //try middle matches
-            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANTRUEMATCH + "\\s*[,]", "," + TRUE + ",");
-            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANFALSEMATCH + "\\s*[,]", "," + FALSE + ",");
-
-            //try end matches
-            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANTRUEMATCH, "," + TRUE);
-            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANFALSEMATCH, "," + FALSE);
-        }
+        handleBooleans(statements);
 
         //remove Oracle incompatible - multi-row inserts
         List<String> stringList = new ArrayList<String>(Arrays.asList(statements)); //Arrays.asList is immutable
@@ -113,5 +101,32 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlComman
         }
 
         return statements;
+    }
+
+    protected void handleBooleans(String[] statements) {
+        for (int j=0; j<statements.length; j++) {
+            //try start matches
+            statements[j] = statements[j].replaceAll(BOOLEANTRUEMATCH + "\\s*[,]", TRUE + ",");
+            statements[j] = statements[j].replaceAll(BOOLEANFALSEMATCH + "\\s*[,]", FALSE + ",");
+
+            //try middle matches
+            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANTRUEMATCH + "\\s*[,]", "," + TRUE + ",");
+            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANFALSEMATCH + "\\s*[,]", "," + FALSE + ",");
+
+            //try end matches
+            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANTRUEMATCH, "," + TRUE);
+            statements[j] = statements[j].replaceAll("[,]\\s*" + BOOLEANFALSEMATCH, "," + FALSE);
+
+            //try matches for updates
+            statements[j] = statements[j].replaceAll("[=]\\s*" + BOOLEANTRUEMATCH, "=" + TRUE);
+            statements[j] = statements[j].replaceAll("[=]\\s*" + BOOLEANFALSEMATCH, "=" + FALSE);
+        }
+    }
+
+    public static void main(String[] items) {
+        DemoOracleSingleLineSqlCommandExtractor extractor = new DemoOracleSingleLineSqlCommandExtractor();
+        String[] temp = new String[]{"UPDATE BLC_PRODUCT SET OVERRIDE_GENERATED_URL = FALSE"};
+        extractor.handleBooleans(temp);
+        System.out.println(temp[0]);
     }
 }
