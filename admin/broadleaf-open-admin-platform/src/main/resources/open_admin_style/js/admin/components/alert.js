@@ -25,7 +25,7 @@
             options = options || {};
             var alertType = options.alertType || '';
             
-            var $alert = $('<span>').addClass('alert-box alert').addClass(alertType);
+            var $alert = $('<span>').addClass('alert-box').addClass(alertType);
             var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;').css("display","none");
             
             $alert.append(message);

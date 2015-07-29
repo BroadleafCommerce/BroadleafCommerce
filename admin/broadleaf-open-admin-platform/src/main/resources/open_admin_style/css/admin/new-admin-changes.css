@@ -421,11 +421,20 @@ input[disabled], input[readonly], fieldset[disabled] input {
     color: #B3B3B3;
     font-weight: normal;
 }
-.app-content .sidebar .sidebar-content label span.label{
+
+.app-content .field-group label span.label{
     text-transform: uppercase;
 }
 
-.app-content .sidebar .sidebar-content label .selectize-toolbar-action {
+.app-content .field-group label span.alert-wrapper{
+    font-size: 12px;
+    letter-spacing: .05em;
+    color: #8EAA2B !important;
+    font-weight: normal;
+    margin-left: 10px;
+}
+
+.app-content .field-group label .selectize-toolbar-action {
     font-size: 12px;
     letter-spacing: .05em;
     color: #B3B3B3;

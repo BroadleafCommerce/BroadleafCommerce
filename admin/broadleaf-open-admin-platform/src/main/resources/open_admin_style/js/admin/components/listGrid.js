@@ -128,7 +128,7 @@
             BLCAdmin.initializeSelectizeFields($container);
 
             if (alert) {
-                BLCAdmin.listGrid.showAlert($container, alert.message, alert);
+                BLCAdmin.alert.showAlert($container, alert.message, alert);
             }
 
             $container.trigger('blc-listgrid-replaced', $container);
@@ -386,8 +386,9 @@ $(document).ready(function() {
         }, function(data) {
             BLCAdmin.listGrid.replaceRelatedCollection($(data), {
                 message: BLCAdmin.messages.saved + '!', 
-                alertType: 'save-alert', 
-                autoClose: 1000 
+                alertType: 'save-alert',
+                autoClose: 1000,
+                clearOtherAlerts: true
             });
             BLCAdmin.hideCurrentModal();
         })
