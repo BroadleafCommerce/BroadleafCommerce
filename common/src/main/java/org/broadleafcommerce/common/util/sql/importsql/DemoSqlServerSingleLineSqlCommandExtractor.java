@@ -55,6 +55,12 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
         }
 
         String[] statements = super.extractCommands(reader);
+        handleBooleans(statements);
+
+        return statements;
+    }
+
+    protected void handleBooleans(String[] statements) {
         for (int j=0; j<statements.length; j++) {
             //try start matches
             statements[j] = statements[j].replaceAll(BOOLEANTRUEMATCH + "\\s*[,]", TRUE + ",");
@@ -75,7 +81,5 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
             statements[j] = statements[j].replaceAll("[=]\\s*" + BOOLEANTRUEMATCH, "=" + TRUE);
             statements[j] = statements[j].replaceAll("[=]\\s*" + BOOLEANFALSEMATCH, "=" + FALSE);
         }
-
-        return statements;
     }
 }

@@ -123,10 +123,4 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlComman
         }
     }
 
-    public static void main(String[] items) {
-        DemoOracleSingleLineSqlCommandExtractor extractor = new DemoOracleSingleLineSqlCommandExtractor();
-        String[] temp = new String[]{"UPDATE BLC_PRODUCT SET OVERRIDE_GENERATED_URL = FALSE"};
-        extractor.handleBooleans(temp);
-        System.out.println(temp[0]);
-    }
 }
