@@ -179,9 +179,9 @@ public class ResourceBundlingServiceImpl implements ResourceBundlingService {
                         if (bundleResource != null) {
                             saveBundle(bundleResource);
                         }
+                        Resource savedResource = readBundle(versionedBundleName);
+                        createdBundles.put(versionedBundleName, savedResource);
                     }
-                    Resource savedResource = readBundle(versionedBundleName);
-                    createdBundles.put(versionedBundleName, savedResource);
                 }
             });
         }

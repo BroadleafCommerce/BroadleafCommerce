@@ -115,4 +115,9 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
         return result.getValueKey();
     }
 
+    @Override
+    public String getUrlKey(SearchFacetDTO result) {
+        return result.getFacet().getField().getAbbreviation();
+    }
+
 }

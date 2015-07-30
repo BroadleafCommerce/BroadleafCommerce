@@ -307,7 +307,7 @@
     </bean>
     
     <bean id="siteImageResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
-        <property name="locations" ref="blCssLocations" />
+        <property name="locations" ref="blImageLocations" />
         <property name="resourceTransformers" ref="blCssResourceTransformers" />    
     </bean> 
     
@@ -377,4 +377,12 @@
             </map>
         </property>
     </bean>
+    
+    <bean id="blTranslationExceptionProperties" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>pageTemplate.*</value>
+            </list>
+        </property>
+    </bean>    
 </beans>

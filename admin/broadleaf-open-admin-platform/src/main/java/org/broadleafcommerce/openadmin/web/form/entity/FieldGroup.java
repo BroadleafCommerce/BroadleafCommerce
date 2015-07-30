@@ -158,4 +158,20 @@ public class FieldGroup {
         this.fields = fields;
     }
 
+    public boolean isMasterFieldGroup() {
+        if (getTitle() != null && getTitle().toLowerCase().contains("master")) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean containsFieldData() {
+        for (Field field : fields) {
+            if (field.getValue() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

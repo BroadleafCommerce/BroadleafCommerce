@@ -138,6 +138,7 @@ public class BroadleafSandBoxResolverImpl implements BroadleafSandBoxResolver  {
                     request.removeAttribute(SANDBOX_DATE_TIME_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
                     request.removeAttribute(SANDBOX_ID_VAR, WebRequest.SCOPE_GLOBAL_SESSION);
                 }
+                SystemTime.resetLocalTimeSource();
             }
             if (sandboxId != null) {
                 if (previousSandBoxId != null && !previousSandBoxId.equals(sandboxId)) {

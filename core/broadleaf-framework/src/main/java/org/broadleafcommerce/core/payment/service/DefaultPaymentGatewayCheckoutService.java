@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.i18n.domain.ISOCountry;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.AddressDTO;
 import org.broadleafcommerce.common.payment.dto.GatewayCustomerDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
@@ -178,8 +177,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
                     paymentsToInvalidate.add(p);
 
-                    if (PaymentType.CREDIT_CARD.equals(p.getType()) &&
-                            PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ) {
+                    if (PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ) {
                         tempBillingAddress = p.getBillingAddress();
                         savePayment = p.isSavePayment();
                         paymentName = p.getPaymentName();
@@ -210,8 +208,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         }
 
         //Set the Credit Card Info on the Additional Fields Map
-        if (PaymentType.CREDIT_CARD.equals(responseDTO.getPaymentType()) &&
-                responseDTO.getCreditCard() != null && responseDTO.getCreditCard().creditCardPopulated()) {
+        if (responseDTO.getCreditCard() != null && responseDTO.getCreditCard().creditCardPopulated()) {
 
             transaction.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(),
                     responseDTO.getCreditCard().getCreditCardHolderName());
@@ -259,110 +256,70 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         if (responseDTO.getBillTo() != null && isUseBillingAddressFromGateway()) {
             billingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
-            billingAddress.setFirstName(billToDTO.getAddressFirstName());
-            billingAddress.setLastName(billToDTO.getAddressLastName());
-            billingAddress.setFullName(billToDTO.getAddressFullName());
-            billingAddress.setAddressLine1(billToDTO.getAddressLine1());
-            billingAddress.setAddressLine2(billToDTO.getAddressLine2());
-            billingAddress.setCity(billToDTO.getAddressCityLocality());
-//            billingAddress.setPhonePrimary();
-
-            State state = null;
-            if(billToDTO.getAddressStateRegion() != null) {
-                state = stateService.findStateByAbbreviation(billToDTO.getAddressStateRegion());
-            }
-            if (state == null) {
-                LOG.warn("The given state from the response: " + billToDTO.getAddressStateRegion() + " could not be found"
-                        + " as a state abbreviation in BLC_STATE");
-            }
-            billingAddress.setState(state);
-            billingAddress.setStateProvinceRegion(billToDTO.getAddressStateRegion());
-
-            billingAddress.setPostalCode(billToDTO.getAddressPostalCode());
-
-            Country country = null;
-            ISOCountry isoCountry = null;
-            if (billToDTO.getAddressCountryCode() != null) {
-                country = countryService.findCountryByAbbreviation(billToDTO.getAddressCountryCode());
-                isoCountry = isoService.findISOCountryByAlpha2Code(billToDTO.getAddressCountryCode());
-            }
-            if (country == null) {
-                LOG.warn("The given country from the response: " + billToDTO.getAddressCountryCode() + " could not be found"
-                        + " as a country abbreviation in BLC_COUNTRY");
-            } else if (isoCountry == null) {
-                LOG.error("The given country from the response: " + billToDTO.getAddressCountryCode() + " could not be found"
-                        + " as a country alpha-2 code in BLC_ISO_COUNTRY");
-            }
-
-            billingAddress.setCountry(country);
-            billingAddress.setIsoCountryAlpha2(isoCountry);
-
-            if (billToDTO.getAddressPhone() != null) {
-                Phone billingPhone = phoneService.create();
-                billingPhone.setPhoneNumber(billToDTO.getAddressPhone());
-                billingAddress.setPhonePrimary(billingPhone);
-            }
+            populateAddressInfo(billingAddress, billToDTO);
         }
 
         payment.setBillingAddress(billingAddress);
-
     }
-
+    
     protected void populateShippingInfo(PaymentResponseDTO responseDTO, Order order) {
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
         Address shippingAddress = null;
         if (responseDTO.getShipTo() != null && shippableFulfillmentGroup != null) {
             shippingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> shipToDTO = responseDTO.getShipTo();
-            shippingAddress.setFirstName(shipToDTO.getAddressFirstName());
-            shippingAddress.setLastName(shipToDTO.getAddressLastName());
-            shippingAddress.setFullName(shipToDTO.getAddressFullName());
-            shippingAddress.setAddressLine1(shipToDTO.getAddressLine1());
-            shippingAddress.setAddressLine2(shipToDTO.getAddressLine2());
-            shippingAddress.setCity(shipToDTO.getAddressCityLocality());
+            populateAddressInfo(shippingAddress, shipToDTO);
             
-            State state = null;
-            if(shipToDTO.getAddressStateRegion() != null) {
-                state = stateService.findStateByAbbreviation(shipToDTO.getAddressStateRegion());
-            }
-            if (state == null) {
-                LOG.warn("The given state from the response: " + shipToDTO.getAddressStateRegion() + " could not be found"
-                        + " as a state abbreviation in BLC_STATE");
-            }
-            shippingAddress.setState(state);
-            shippingAddress.setStateProvinceRegion(shipToDTO.getAddressStateRegion());
-
-            shippingAddress.setPostalCode(shipToDTO.getAddressPostalCode());
-
-            Country country = null;
-            ISOCountry isoCountry = null;
-            if (shipToDTO.getAddressCountryCode() != null) {
-                country = countryService.findCountryByAbbreviation(shipToDTO.getAddressCountryCode());
-                isoCountry = isoService.findISOCountryByAlpha2Code(shipToDTO.getAddressCountryCode());
-            }
-
-            if (country == null) {
-                LOG.warn("The given country from the response: " + shipToDTO.getAddressCountryCode() + " could not be found"
-                        + " as a country abbreviation in BLC_COUNTRY");
-            } else if (isoCountry == null) {
-                LOG.error("The given country from the response: " + shipToDTO.getAddressCountryCode() + " could not be found"
-                        + " as a country alpha-2 code in BLC_ISO_COUNTRY");
-            }
-
-            shippingAddress.setCountry(country);
-            shippingAddress.setIsoCountryAlpha2(isoCountry);
-
-            if (shipToDTO.getAddressPhone() != null) {
-                Phone shippingPhone = phoneService.create();
-                shippingPhone.setPhoneNumber(shipToDTO.getAddressPhone());
-                shippingAddress.setPhonePrimary(shippingPhone);
-            }
-
             shippableFulfillmentGroup = fulfillmentGroupService.findFulfillmentGroupById(shippableFulfillmentGroup.getId());
             if (shippableFulfillmentGroup != null) {
                 shippableFulfillmentGroup.setAddress(shippingAddress);
                 fulfillmentGroupService.save(shippableFulfillmentGroup);
             }
+        }
+    }
+    
+    protected void populateAddressInfo(Address address, AddressDTO<PaymentResponseDTO> dto) {
+        address.setFirstName(dto.getAddressFirstName());
+        address.setLastName(dto.getAddressLastName());
+        address.setFullName(dto.getAddressFirstName() + " " + dto.getAddressLastName());
+        address.setAddressLine1(dto.getAddressLine1());
+        address.setAddressLine2(dto.getAddressLine2());
+        address.setCity(dto.getAddressCityLocality());
+
+        State state = null;
+        if(dto.getAddressStateRegion() != null) {
+            state = stateService.findStateByAbbreviation(dto.getAddressStateRegion());
+        }
+        if (state == null) {
+            LOG.warn("The given state from the response: " + dto.getAddressStateRegion() + " could not be found"
+                    + " as a state abbreviation in BLC_STATE");
+        }
+        address.setState(state);
+        address.setStateProvinceRegion(dto.getAddressStateRegion());
+
+        address.setPostalCode(dto.getAddressPostalCode());
+
+        Country country = null;
+        ISOCountry isoCountry = null;
+        if (dto.getAddressCountryCode() != null) {
+            country = countryService.findCountryByAbbreviation(dto.getAddressCountryCode());
+            isoCountry = isoService.findISOCountryByAlpha2Code(dto.getAddressCountryCode());
+        }
+        if (country == null) {
+            LOG.warn("The given country from the response: " + dto.getAddressCountryCode() + " could not be found"
+                    + " as a country abbreviation in BLC_COUNTRY");
+        } else if (isoCountry == null) {
+            LOG.error("The given country from the response: " + dto.getAddressCountryCode() + " could not be found"
+                    + " as a country alpha-2 code in BLC_ISO_COUNTRY");
+        }
+
+        address.setCountry(country);
+        address.setIsoCountryAlpha2(isoCountry);
+
+        if (dto.getAddressPhone() != null) {
+            Phone billingPhone = phoneService.create();
+            billingPhone.setPhoneNumber(dto.getAddressPhone());
+            address.setPhonePrimary(billingPhone);
         }
     }
 

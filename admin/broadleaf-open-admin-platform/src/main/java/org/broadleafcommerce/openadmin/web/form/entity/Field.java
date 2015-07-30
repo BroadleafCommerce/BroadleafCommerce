@@ -479,5 +479,13 @@ public class Field {
     public void setTranslationFieldName(String translationFieldName) {
         this.translationFieldName = translationFieldName;
     }
+
+    public boolean isMasterField() {
+        return checkForMasterField(getName()) || checkForMasterField(getFriendlyName());
+    }
+
+    private boolean checkForMasterField(String field) {
+        return field != null && field.toLowerCase().contains("master");
+    }
     
 }

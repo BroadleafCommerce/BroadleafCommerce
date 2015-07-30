@@ -145,29 +145,29 @@ public class ValidateAndConfirmPaymentActivity extends BaseActivity<ProcessConte
                         PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
                         PaymentResponseDTO responseDTO = null;
 
+                        PaymentRequestDTO confirmationRequest = orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx);
+                        populateBillingAddressOnRequest(confirmationRequest, payment);
+                        populateCustomerOnRequest(confirmationRequest, payment);
+                        populateShippingAddressOnRequest(confirmationRequest, payment);
+
                         if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
                             // Handles the PCI-Compliant Scenario where you have an UNCONFIRMED CREDIT_CARD payment on the order.
                             // This can happen if you send the Credit Card directly to Broadleaf or you use a Digital Wallet solution like MasterPass.
                             // The Actual Credit Card PAN is stored in blSecurePU and will need to be sent to the Payment Gateway for processing.
 
-                            PaymentRequestDTO s2sRequest = orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx);
-                            populateCreditCardOnRequest(s2sRequest, payment);
-                            populateBillingAddressOnRequest(s2sRequest, payment);
-                            populateCustomerOnRequest(s2sRequest, payment);
-                            populateShippingAddressOnRequest(s2sRequest, payment);
+                            populateCreditCardOnRequest(confirmationRequest, payment);
 
                             if (cfg.getConfiguration().isPerformAuthorizeAndCapture()) {
-                                responseDTO = cfg.getTransactionService().authorizeAndCapture(s2sRequest);
+                                responseDTO = cfg.getTransactionService().authorizeAndCapture(confirmationRequest);
                             } else {
-                                responseDTO = cfg.getTransactionService().authorize(s2sRequest);
+                                responseDTO = cfg.getTransactionService().authorize(confirmationRequest);
                             }
 
                         } else {
                             // This handles the THIRD_PARTY_ACCOUNT scenario (like PayPal Express Checkout) where
                             // the transaction just needs to be confirmed with the Gateway
 
-                            responseDTO = cfg.getTransactionConfirmationService()
-                                .confirmTransaction(orderToPaymentRequestService.translatePaymentTransaction(payment.getAmount(), tx));
+                            responseDTO = cfg.getTransactionConfirmationService().confirmTransaction(confirmationRequest);
                         }
 
                         if (responseDTO == null) {
