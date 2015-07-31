@@ -348,9 +348,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         Entity entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
-        
-        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, crumbs);
-
+   
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, "General");
+     
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
         
         modifyEntityForm(entityForm, pathVars);
@@ -371,6 +371,62 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("viewType", "entityEdit");
             return "modules/defaultContainer";
         }
+    }
+
+    /**
+     * Attempts to get the List Grid for the selected tab.
+     * 
+     * @param request
+     * @param response
+     * @param model
+     * @param pathVars
+     * @param ModelAttributes
+     * @return the return view path
+     * @throws Exception
+     */
+    @RequestMapping(value = "/{id}/{tab:[0-9]+}/{tabName}", method = RequestMethod.POST)
+    public String viewEntityTab(HttpServletRequest request, HttpServletResponse response, Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id,
+            @PathVariable(value = "tabName") String tabName,
+            @ModelAttribute(value = "entityForm") EntityForm entityForm,
+            @ModelAttribute(value = "entity") Entity entity) throws Exception {
+        String sectionKey = getSectionKey(pathVars);
+        String sectionClassName = getClassNameForSection(sectionKey);
+        List<SectionCrumb> crumbs = getSectionCrumbs(request, sectionKey, id);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, crumbs, pathVars);
+        ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        entity = service.getRecord(ppr, id, cmd, false).getDynamicResultSet().getRecords()[0];
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(cmd, entity, crumbs, tabName);
+        entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
+
+        modifyEntityForm(entityForm, pathVars);
+
+        model.addAttribute("entity", entity);
+        model.addAttribute("entityForm", entityForm);
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
+
+        setModelAttributes(model, sectionKey);
+
+        if (sandBoxHelper.isSandBoxable(entityForm.getEntityType())) {
+            Tab auditTab = new Tab();
+            auditTab.setTitle("Audit");
+            auditTab.setOrder(Integer.MAX_VALUE);
+            auditTab.setTabClass("audit-tab");
+            entityForm.getTabs().add(auditTab);
+        }
+        
+        if (isAjaxRequest(request)) {
+            entityForm.setReadOnly();
+            model.addAttribute("viewType", "modal/entityView");
+            model.addAttribute("modalHeaderType", "viewEntity");
+            return "modules/modalContainer";
+        } else {
+            model.addAttribute("useAjaxUpdate", true);
+            model.addAttribute("viewType", "entityEdit");
+            return "modules/defaultContainer";
+        }
+
     }
 
     /**

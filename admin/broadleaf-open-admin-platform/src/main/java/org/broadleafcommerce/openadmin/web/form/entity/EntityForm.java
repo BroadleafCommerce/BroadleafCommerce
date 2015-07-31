@@ -372,7 +372,7 @@ public class EntityForm {
         return fieldGroup;
     }
 
-    public void addListGrid(ListGrid listGrid, String tabName, Integer tabOrder, String groupName) {
+    public void addListGrid(ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
         // Tabs should be looked up and referenced by their display name
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getMessageSource() != null) {
@@ -390,6 +390,7 @@ public class EntityForm {
             tab = new Tab();
             tab.setTitle(tabName);
             tab.setOrder(tabOrder);
+            tab.setTabsPresent(isTabPresent);
             tabs.add(tab);
             tab.getListGrids().add(listGrid);
         }

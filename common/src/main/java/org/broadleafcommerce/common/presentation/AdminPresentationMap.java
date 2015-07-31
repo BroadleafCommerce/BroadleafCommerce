@@ -343,6 +343,15 @@ public @interface AdminPresentationMap {
     String currencyCodeField() default "";
 
     /**
+     * <p>Optional - fields are eagerly fetched by default</p>
+     *
+     * <p>Specify true if this field should be lazily fetched</p>
+     *
+     * @return whether or not the field should be fetched eagerly
+     */
+    boolean lazyFetch() default true;
+
+    /**
      * Used to map the collection to a group defined in AdminPresentationClass using AdminGroupPresentation.
      *
      * If the group cannot be found in AdminPresentationClass, then the tab specified in AdminPresentationMap

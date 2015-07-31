@@ -397,6 +397,7 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
             override.setShowIfProperty(adornedTargetCollection.showIfProperty());
             override.setCurrencyCodeField(adornedTargetCollection.currencyCodeField());
             override.setAdornedTargetAddMethodType(adornedTargetCollection.addType());
+            override.setLazyFetch(adornedTargetCollection.lazyFetch());
             return override;
         }
         throw new IllegalArgumentException("AdminPresentationAdornedTargetCollection annotation not found on field.");
@@ -600,6 +601,10 @@ public class AdornedTargetCollectionFieldMetadataProvider extends AdvancedCollec
                 }
             }
             metadata.setExcluded(adornedTargetCollectionMetadata.getExcluded());
+        }
+
+        if (adornedTargetCollectionMetadata.getLazyFetch() != null) {
+            metadata.setLazyFetch(adornedTargetCollectionMetadata.getLazyFetch());
         }
         if (adornedTargetCollectionMetadata.getFriendlyName() != null) {
             metadata.setFriendlyName(adornedTargetCollectionMetadata.getFriendlyName());

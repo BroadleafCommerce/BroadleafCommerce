@@ -20,6 +20,10 @@
 package org.broadleafcommerce.openadmin.dto;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 
 /**
  * 
@@ -36,7 +40,7 @@ public class DynamicResultSet implements Serializable {
     private Integer startIndex;
     private Integer totalRecords;
     private Integer batchId;
-
+    private Map<String, Tab> unselectedTabMetadata = new HashMap<String, Tab>();
     public DynamicResultSet() {
         //do nothing
     }
@@ -103,5 +107,17 @@ public class DynamicResultSet implements Serializable {
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
+
+    
+    public Map<String, Tab> getUnselectedTabMetadata() {
+        return unselectedTabMetadata;
+    }
+
+    
+    public void setUnselectedTabMetadata(Map<String, Tab> unselectedTabMetadata) {
+        this.unselectedTabMetadata = unselectedTabMetadata;
+    }
+    
+    
 
 }

@@ -40,6 +40,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private Boolean excluded;
     private String friendlyName;
     private String securityLevel;
+    private Boolean lazyFetch;
 
     public Boolean getExcluded() {
         return excluded;
@@ -83,6 +84,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     protected Boolean isDerived;
 
     //@AdminPresentation derived fields
+    private String name;
     private VisibilityEnum visibility;
     private String group;
     private Integer groupOrder;
@@ -248,6 +250,14 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setDerived(Boolean isDerived) {
         this.isDerived = isDerived;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public SupportedFieldType getExplicitFieldType() {
@@ -854,6 +864,14 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setMapKeyValueProperty(String mapKeyValueProperty) {
         this.mapKeyValueProperty = mapKeyValueProperty;
+    }
+
+    public Boolean getLazyFetch() {
+        return lazyFetch;
+    }
+
+    public void setLazyFetch(Boolean lazyFetch) {
+        this.lazyFetch = lazyFetch;
     }
     
 }
