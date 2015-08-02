@@ -123,12 +123,13 @@ public class PageTemplateCustomPersistenceHandler extends CustomPersistenceHandl
         List<PageTemplateFieldGroupXref> fieldGroupXrefs = null;
 
         List<FieldGroup> fieldGroups = new ArrayList<FieldGroup>();
-        if (template != null) {
-            fieldGroupXrefs = template.getFieldGroupXrefs();
-        }
-
+        
         if (page.getPageTemplate() != null) {
             fieldGroupXrefs = page.getPageTemplate().getFieldGroupXrefs();
+        }
+
+        if (template != null) {
+            fieldGroupXrefs = template.getFieldGroupXrefs();
         }
 
         if (fieldGroupXrefs != null) {
