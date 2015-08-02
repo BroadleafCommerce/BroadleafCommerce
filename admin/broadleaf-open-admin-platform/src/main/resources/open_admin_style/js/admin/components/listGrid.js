@@ -407,6 +407,11 @@ $(document).ready(function() {
                     var $dynamicContainer = $("div.dynamic-form-container[data-dynamicpropertyname='" + trigger[1] + "']");
                     var url = $dynamicContainer.data('currenturl') + '?propertyTypeId=' + fields['id'];
                     
+                    if ($('div.dynamic-form-container').attr("data-dynamicpropertyname")=="pageTemplate"){
+                    	var pagesId = "&pagesId="+$("input#id").val();
+                        url = url + pagesId;
+                    }
+                    
                     BLC.ajax({
                         url : url,
                         type : "GET"
