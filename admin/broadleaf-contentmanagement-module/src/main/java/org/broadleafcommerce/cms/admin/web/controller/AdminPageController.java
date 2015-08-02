@@ -160,6 +160,11 @@ public class AdminPageController extends AdminBasicEntityController {
                 .withCriteriaName("constructForm")
                 .withPropertyName(propertyName)
                 .withPropertyValue(propertyTypeId);
+                
+        if (propertyName.equals("pageTemplate")){
+    		String[] customCriteriaForPageTemplate = {request.getParameter("pagesId")};
+    		info.setCustomCriteriaOverride(customCriteriaForPageTemplate);
+    	}
         
         return super.getDynamicForm(request, response, model, pathVars, info);
     }
@@ -167,5 +172,63 @@ public class AdminPageController extends AdminBasicEntityController {
     @Override
     protected void attachSectionSpecificInfo(PersistencePackageRequest ppr, Map<String, String> pathVars) {
         ppr.setSecurityCeilingEntityClassname(Page.class.getName());
+    }
+    
+    /**
+     * override method and add some code.
+     * Added by Kunner, 2015/08/01, kunner@kunner.com
+     * only 197~203 line added.
+    */
+    @Override
+	protected EntityForm getBlankDynamicFieldTemplateForm(DynamicEntityFormInfo info, EntityForm dynamicFormOverride) 
+            throws ServiceException {
+        // We need to inspect with the second custom criteria set to the id of
+        // the desired structured content type
+    	/*  Original Source code
+        PersistencePackageRequest ppr = PersistencePackageRequest.standard()
+                .withCeilingEntityClassname(info.getCeilingClassName())
+                .withSecurityCeilingEntityClassname(info.getSecurityCeilingClassName())
+                .withCustomCriteria(new String[] { info.getCriteriaName(), null, info.getPropertyName(), info.getPropertyValue() });
+        */
+        PersistencePackageRequest ppr = PersistencePackageRequest.standard()
+                .withCeilingEntityClassname(info.getCeilingClassName())
+                .withSecurityCeilingEntityClassname(info.getSecurityCeilingClassName());
+        
+        // code added
+        if (info.getPropertyName().equals("pageTemplate")&& info.getCustomCriteriaOverride()!=null){
+        	ppr.setCustomCriteria(new String[] { info.getCriteriaName(), info.getCustomCriteriaOverride()[0], info.getPropertyName(), info.getPropertyValue() });
+        }else{
+        	ppr.setCustomCriteria(new String[] { info.getCriteriaName(), null, info.getPropertyName(), info.getPropertyValue() });
+        }
+        // end of added code.
+        
+        ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        
+        EntityForm dynamicForm = formService.createEntityForm(cmd, null);
+        dynamicForm.clearFieldsMap();
+
+        if (dynamicFormOverride != null) {
+            dynamicFormOverride.clearFieldsMap();
+            Map<String, Field> fieldOverrides = dynamicFormOverride.getFields();
+            for (Entry<String, Field> override : fieldOverrides.entrySet()) {
+                if (dynamicForm.getFields().containsKey(override.getKey())) {
+                    dynamicForm.getFields().get(override.getKey()).setValue(override.getValue().getValue());
+                }
+            }
+        }
+        
+        // Set the specialized name for these fields - we need to handle them separately
+        dynamicForm.clearFieldsMap();
+        for (Tab tab : dynamicForm.getTabs()) {
+            for (FieldGroup group : tab.getFieldGroups()) {
+                for (Field field : group.getFields()) {
+                    field.setName(info.getPropertyName() + DynamicEntityFormInfo.FIELD_SEPARATOR + field.getName());
+                }
+            }
+        }
+
+        //extensionManager.getProxy().modifyDynamicForm(dynamicForm, );
+
+        return dynamicForm;
     }
 }
