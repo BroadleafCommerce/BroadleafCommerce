@@ -278,7 +278,7 @@
             BLCAdmin.listGrid.initialize($(element));
         });
 
-        $container.on('click', '.side-nav ul li a', function() {
+        $('body').on('click', '.side-nav ul li a', function() {
             $container.find('.listgrid-container').each(function(index, element) {
                 $(element).find('tbody').each(function (index, element) {
                     if ($(element).is(':visible')) {
