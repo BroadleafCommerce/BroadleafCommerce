@@ -677,14 +677,16 @@
                         
                         // Fetch records if necessary
                         $.doTimeout('fetch', fetchDebounce, function() {
+                        	var url = null;
                             if (singleGrid) {
-                                var url = null;
+                            	if ($tbody.closest('table').data('listgridtype') == 'inline'){
+                            		url = $tbody.closest('table').data('path');
+                            	}
                             } else if (isAssetGrid) {
-                                var url = $tbody.closest('table').data('currenturl');
+                              url = $tbody.closest('table').data('currenturl');
                             } else {
-                                var url = $tbody.closest('table').data('path');
+                              url = $tbody.closest('table').data('path');
                             }
-                            
                             BLCAdmin.listGrid.paginate.loadRecords($tbody, url);
                         });
                         
