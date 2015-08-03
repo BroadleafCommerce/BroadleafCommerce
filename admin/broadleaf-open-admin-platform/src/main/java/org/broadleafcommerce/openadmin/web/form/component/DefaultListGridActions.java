@@ -68,6 +68,12 @@ public class DefaultListGridActions {
         .withUrlPostfix("/view")
         .withForListGridReadOnly(true);
 
+    public static final ListGridAction EDIT = new ListGridAction(ListGridAction.EDIT)
+        .withButtonClass("sub-list-grid-edit")
+        .withIconClass("fa fa-edit fa-lg")
+        .withDisplayText("Edit");
+
+
     public static final ListGridAction SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
         .withButtonClass("list-grid-single-select")
         .withDisplayText("Select")
@@ -79,8 +85,8 @@ public class DefaultListGridActions {
 
 
     public static final ListGridAction PREVIEW = new ListGridAction("PREVIEW")
-            .withButtonClass("workflow-preview")
-            .withIconClass("icon-eye-open")
+        .withButtonClass("workflow-preview")
+        .withIconClass("fa fa-eye fa-fw")
             .withDisplayText("Workflow_button_preview");
     
 }

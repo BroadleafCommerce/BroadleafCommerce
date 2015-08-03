@@ -654,6 +654,18 @@ span.workflow-action {
     font-size: 16px;
 }
 
+span.workflow-action a {
+    color: #999999;
+}
+
+span.workflow-action a:hover {
+    color: #EB7F4C;
+}
+
+.listgrid-row-actions {
+    text-align: right;
+}
+
 fieldset {
     margin: 10px 0 0 0;
 }

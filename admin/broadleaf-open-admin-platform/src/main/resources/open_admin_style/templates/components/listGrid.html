@@ -57,12 +57,12 @@
                         </ul>
                     </div>
                 </th>
-                <th th:if="${listGrid.listGridType} == 'main'">
-                    <th:comment th:remove="all">
-                        This entry acting as placeholder for Edit links
-                    </th:comment>
-                </th>
-                <th th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (__${listGrid.listGridType}__ == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}">
+                <!--<th th:if="${listGrid.listGridType} == 'main'">-->
+                    <!--<th:comment th:remove="all">-->
+                        <!--This entry acting as placeholder for Edit links-->
+                    <!--</th:comment>-->
+                <!--</th>-->
+                <th class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (__${listGrid.listGridType}__ == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}">
                     <th:comment th:remove="all">
                         This entry is acting as placeholder for Workflow Action links
                     </th:comment>
@@ -195,18 +195,18 @@
                     </span>
                 </td>
 
-                <td th:if="${listGrid.listGridType} == 'main'" th:unless="${#lists.isEmpty(listGrid.records)}">
-                    <span>
-                        <a th:href="@{${record.path}}" th:text="#{Edit}"
-                           th:attr="data-link=@{${record.path}},
-                                     data-index=${record.index},
-                                     data-rowid=${record.id},
-                                     data-hiddenfields=${record.getHiddenFieldsJson()}">Edit</a>
-                    </span>
-                </td>
+                <!--<td th:if="${listGrid.listGridType} == 'main'" th:unless="${#lists.isEmpty(listGrid.records)}">-->
+                    <!--<span>-->
+                        <!--<a th:href="@{${record.path}}" th:text="#{Edit}"-->
+                           <!--th:attr="data-link=@{${record.path}},-->
+                                     <!--data-index=${record.index},-->
+                                     <!--data-rowid=${record.id},-->
+                                     <!--data-hiddenfields=${record.getHiddenFieldsJson()}">Edit</a>-->
+                    <!--</span>-->
+                <!--</td>-->
 
-                <td class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (__${listGrid.listGridType}__ == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}">
-                    <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${listGrid.listGridType} == 'workflow' and ${action.actionId} != 'SPLIT'">
+                <td class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}">
+                    <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${action.actionId} != 'SPLIT'">
                         <a th:classappend="${action.buttonClass}"
                            href="#"
                            th:attr="data-urlpostfix=${action.urlPostfix},
