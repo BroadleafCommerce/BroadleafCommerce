@@ -277,6 +277,18 @@
         $container.find('.listgrid-container').each(function(index, element) {
             BLCAdmin.listGrid.initialize($(element));
         });
+
+        $container.on('click', '.side-nav ul li a', function() {
+            $container.find('.listgrid-container').each(function(index, element) {
+                $(element).find('tbody').each(function (index, element) {
+                    if ($(element).is(':visible')) {
+                        BLCAdmin.listGrid.paginate.updateGridSize($(element));
+                    } else {
+                        $(element).addClass('needsupdate');
+                    }
+                });
+            });
+        });
     });
     
     
@@ -595,6 +607,13 @@ $(document).ready(function() {
 
         BLCAdmin.showLinkAsModal(link);
 
+        return false;
+    });
+
+    $('body').on('click', 'a.sub-list-grid-edit, button.sub-list-grid-edit', function() {
+        var link = BLCAdmin.listGrid.getActionLink($(this));
+
+        window.location.replace(link);
         return false;
     });
 
