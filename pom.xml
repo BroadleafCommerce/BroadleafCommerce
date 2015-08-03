@@ -58,8 +58,8 @@
         <project.uri>${project.baseUri}</project.uri>
     </properties>
     <scm>
-        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
-        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
+        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
+        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
     </scm>
     <build>

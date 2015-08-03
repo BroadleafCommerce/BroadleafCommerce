@@ -125,6 +125,9 @@ public class UpdateExecutor {
             } else {
                 arraySize = 800;
                 test -= arraySize;
+                if (test == 0) {
+                    eof = true;
+                }
             }
             Long[] temp = new Long[arraySize];
             System.arraycopy(all, pos, temp, 0, arraySize);

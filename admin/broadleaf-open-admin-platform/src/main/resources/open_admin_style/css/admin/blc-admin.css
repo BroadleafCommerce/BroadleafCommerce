@@ -1589,7 +1589,7 @@ a.show-translations {
    Static Assets
 ----------------------------------------- */
 
-button.show-asset-selector {
+button.show-asset-selector, button.clear-asset-selector {
 	vertical-align: text-bottom;
 	bottom: 4px;
 }
@@ -1637,6 +1637,21 @@ div#thumbnail-zoom {
     margin: 50px auto 20px auto;
     padding: 30px 30px 10px 30px;
     max-width: 500px;
+}
+
+.blc-login-link {
+    margin: 0 auto;
+    padding-top: 5px;
+}
+
+.blc-login-link > ul > li.divider {
+    background: #ccc;
+    -webkit-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    -moz-box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 1px 0 0 rgba(255, 255, 255, 0.1);
+    height: 100%;
+    margin-right: 1px;
+    width: 1px;
 }
 
 .basic-links {

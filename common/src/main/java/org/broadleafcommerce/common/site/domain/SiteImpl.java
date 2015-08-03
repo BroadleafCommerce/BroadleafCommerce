@@ -270,12 +270,22 @@ public class SiteImpl implements Site, AdminMainEntity {
             clone.setSiteIdentifierValue(getSiteIdentifierValue());
             ((Status) clone).setArchived(getArchived());
 
-            for (Catalog catalog : getCatalogs()) {
-                Catalog cloneCatalog = new CatalogImpl();
+            if (getCatalogs() != null) {
+                for (Catalog catalog : getCatalogs()) {
+                    if (catalog != null) {
+                        Catalog cloneCatalog = new CatalogImpl();
 
-                cloneCatalog.setId(catalog.getId());
-                cloneCatalog.setName(catalog.getName());
-                clone.getCatalogs().add(cloneCatalog);
+                        cloneCatalog.setId(catalog.getId());
+                        cloneCatalog.setName(catalog.getName());
+                        if (clone.getCatalogs() != null) {
+                            clone.getCatalogs().add(cloneCatalog);
+                        } else {
+                            List<Catalog> cloneCatalogs = new ArrayList<Catalog>();
+                            cloneCatalogs.add(cloneCatalog);
+                            clone.setCatalogs(cloneCatalogs);
+                        }
+                    }
+                }
             }
 
         } catch (Exception e) {
