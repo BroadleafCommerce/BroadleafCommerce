@@ -44,11 +44,13 @@ import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
+import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.dto.TabMetadata;
 import org.broadleafcommerce.openadmin.exception.EntityNotFoundException;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.factory.PersistencePackageFactory;
@@ -374,7 +376,8 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         for (Property p : cmd.getProperties()) {
             if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0])
                     && p.getMetadata() instanceof CollectionMetadata) {
-                if (p.getMetadata().getLazyFetch() != null && p.getMetadata().getLazyFetch() && getTabName(p.getMetadata().getTab()).equalsIgnoreCase(currentTabName)) {
+                if (p.getMetadata().getLazyFetch() != null && p.getMetadata().getLazyFetch()
+                        && getTabName((CollectionMetadata) p.getMetadata(), cmd).toUpperCase().startsWith(currentTabName.toUpperCase())) {
                     PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                     map.put(p.getName(), response2.getDynamicResultSet());
                 } else if (p.getMetadata().getLazyFetch() != null && !p.getMetadata().getLazyFetch()) {
@@ -402,7 +405,20 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return map;
     }
 
-    protected String getTabName(String tabName) throws ServiceException {
+    protected String getTabName(CollectionMetadata fmd, ClassMetadata cmd) {
+        String tabName = fmd.getTab();
+
+        Map<String, TabMetadata> tabMetadataMap = cmd.getTabAndGroupMetadata();
+        for (String tabKey : tabMetadataMap.keySet()) {
+            Map<String, GroupMetadata> groupMetadataMap = tabMetadataMap.get(tabKey).getGroupMetadata();
+            for (String groupKey : groupMetadataMap.keySet()) {
+                if (groupMetadataMap.get(groupKey).getGroupName().equals(fmd.getGroup())) {
+                    tabName = tabMetadataMap.get(tabKey).getTabName();
+                    break;
+                }
+            }
+        }
+
         // Tabs should be looked up and referenced by their display name
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getMessageSource() != null) {
