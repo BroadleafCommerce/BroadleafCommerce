@@ -538,7 +538,7 @@
                 $wrapper.mCustomScrollbar('update');
                 
                 // If we are showing all records from the single grid page, ensure the url is updated
-                if ($wrapper.find('.mCS_no_scrollbar').length > 0) {
+                if ($wrapper.find('.mCS_no_scrollbar').length > 0 && $modalBody.length === 0) {
                     BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
                 }
             } else if ($modalBody.length > 0) {
@@ -686,6 +686,7 @@
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
+                        var inModal = $tbody.closest('.modal-body').length === 1;
                         var isAssetGrid = $tbody.closest('table').data('listgridtype') == 'asset';
             
                         // Update the currently visible range
@@ -705,7 +706,7 @@
                         });
                         
                         // Also update the URL if this is the only grid on the page
-                        if (singleGrid) {
+                        if (singleGrid && !inModal) {
                             $.doTimeout('updateurl', updateUrlDebounce, function(){
                                 BLCAdmin.listGrid.paginate.updateUrlFromScroll($tbody);
                             });
