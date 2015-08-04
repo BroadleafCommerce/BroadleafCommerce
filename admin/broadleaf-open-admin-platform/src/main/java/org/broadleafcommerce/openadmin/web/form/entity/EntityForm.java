@@ -24,9 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
@@ -349,13 +349,12 @@ public class EntityForm {
                 tabs.add(tab);
             }
 
-            fieldGroup = tab.findGroup(groupName);
-            if (fieldGroup == null) {
-                fieldGroup = new FieldGroup();
-                fieldGroup.setTitle(groupName);
-                fieldGroup.setOrder(groupOrder);
-                tab.getFieldGroups().add(fieldGroup);
-            }
+            // Add new group for the field to be placed into
+            // If group exists, this code will not run
+            fieldGroup = new FieldGroup();
+            fieldGroup.setTitle(groupName);
+            fieldGroup.setOrder(groupOrder);
+            tab.getFieldGroups().add(fieldGroup);
         }
 
         fieldGroup.addField(field);
@@ -372,8 +371,23 @@ public class EntityForm {
         return fieldGroup;
     }
 
-    public void addListGrid(ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
-        // Tabs should be looked up and referenced by their display name
+    public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
+        // Check CMD for Tab/Group name overrides so that Tabs/Groups can be properly found by their display names
+        Map<String, TabMetadata> tabMetadataMap = cmd.getTabAndGroupMetadata();
+        for (String tabKey : tabMetadataMap.keySet()) {
+            if (tabKey.equals(tabName)) {
+                tabName = tabMetadataMap.get(tabKey).getTabName();
+            }
+            Map<String, GroupMetadata> groupMetadataMap = tabMetadataMap.get(tabKey).getGroupMetadata();
+            for (String groupKey : groupMetadataMap.keySet()) {
+                if (groupKey.equals(groupName)) {
+                    groupName = groupMetadataMap.get(groupKey).getGroupName();
+                    break;
+                }
+            }
+        }
+
+        // Tabs/Groups should be looked up and referenced by their display name
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getMessageSource() != null) {
             tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
@@ -384,7 +398,7 @@ public class EntityForm {
         Tab tab = findTab(tabName);
         if (fieldGroup != null) {
             fieldGroup.getListGrids().add(listGrid);
-        } else if (fieldGroup == null && tab != null){
+        } else if (fieldGroup == null && tab != null) {
             tab.getListGrids().add(listGrid);
         } else {
             tab = new Tab();
@@ -394,7 +408,6 @@ public class EntityForm {
             tabs.add(tab);
             tab.getListGrids().add(listGrid);
         }
-
     }
 
     /**

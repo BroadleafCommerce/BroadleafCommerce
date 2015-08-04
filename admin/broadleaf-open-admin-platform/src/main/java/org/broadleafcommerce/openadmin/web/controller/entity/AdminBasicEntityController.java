@@ -1332,9 +1332,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     listGrid.getToolbarActions().add(DefaultListGridActions.ADD);
 
                     if (drs.getUnselectedTabMetadata().get(EntityForm.DEFAULT_TAB_NAME) != null) {
-                        entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), true);
+                        entityForm.addListGrid(cmd, listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), true);
                     } else {
-                        entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), false);
+                        entityForm.addListGrid(cmd, listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), false);
                     }
                 } else if (p != null && p.getMetadata() instanceof MapMetadata) {
                     // See above comment for AdornedTargetCollectionMetadata
@@ -1349,9 +1349,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     listGrid.getToolbarActions().add(DefaultListGridActions.ADD);
 
                     if (drs.getUnselectedTabMetadata().get(EntityForm.DEFAULT_TAB_NAME) != null) {
-                        entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), true);
+                        entityForm.addListGrid(cmd, listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), true);
                     } else {
-                        entityForm.addListGrid(listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), false);
+                        entityForm.addListGrid(cmd, listGrid, EntityForm.DEFAULT_TAB_NAME, EntityForm.DEFAULT_TAB_ORDER, fmd.getGroup(), false);
                     }
                 }
             }
