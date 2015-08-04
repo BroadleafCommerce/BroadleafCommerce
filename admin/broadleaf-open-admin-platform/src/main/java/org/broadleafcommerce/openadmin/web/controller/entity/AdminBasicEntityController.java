@@ -418,17 +418,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
             entityForm.getTabs().add(auditTab);
         }
         
-        if (isAjaxRequest(request)) {
-            entityForm.setReadOnly();
-            model.addAttribute("viewType", "modal/entityView");
-            model.addAttribute("modalHeaderType", "viewEntity");
-            return "modules/modalContainer";
-        } else {
-            model.addAttribute("useAjaxUpdate", true);
-            model.addAttribute("viewType", "entityEdit");
-            return "modules/defaultContainer";
-        }
-
+        model.addAttribute("useAjaxUpdate", true);
+        model.addAttribute("viewType", "entityEdit");
+        return "modules/defaultContainer";
     }
 
     /**
