@@ -22,7 +22,7 @@
     // Add utility functions for list grids to the BLCAdmin object
     BLCAdmin.listGrid = {
         replaceRelatedCollection : function($wrapper, alert, opts) {
-            if ($wrapper.find('.selectize-wrapper').length) {
+            if ($wrapper.hasClass('selectize-wrapper')) {
                 BLCAdmin.listGrid.replaceSelectizeCollection($wrapper, alert, opts);
             } else {
                 BLCAdmin.listGrid.replaceRelatedListGrid($wrapper, alert, opts);
@@ -50,80 +50,57 @@
                $oldTable = $('#' + tableId);
             }
 
-            var oldParams = $oldTable.closest('.listgrid-container').find('.listgrid-header-wrapper table').data('currentparams');
-            var newParams = $table.data('currentparams');
-            var secondaryFetch = new $.Deferred();
+            var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
 
-            if (oldParams != undefined && oldParams != newParams && (opts == undefined || opts.isRefresh)) {
-                var url = $table.data('path');
-                for (var param in oldParams) {
-                    url = BLCAdmin.history.getUrlWithParameter(param, oldParams[param], null, url);
-                }
-                
-                BLC.ajax({
-                    url: url,
-                    type: "GET"
-                }, function(data) {
-                    $table = $(data).find('table');
-                    secondaryFetch.resolve("retrieved");
-                })
-            } else {
-                secondaryFetch.resolve("skipping");
+            var $oldBodyWrapper = $oldTable.closest('.listgrid-body-wrapper');
+            var $oldHeaderWrapper = $oldBodyWrapper.prev();
+
+            $oldHeaderWrapper.find('table.list-grid-table>thead').after($table.find('tbody'));
+            $oldBodyWrapper.remove();
+
+            var $listGridContainer = $oldHeaderWrapper.closest('.listgrid-container');
+
+            // We'll update the current params with what we were returned in this request
+            $listGridContainer.find('.listgrid-header-wrapper table').data('currentparams', $table.data('currentparams'));
+
+            BLCAdmin.listGrid.initialize($listGridContainer);
+
+            BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
+            $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
+
+            if (alert) {
+                BLCAdmin.listGrid.showAlert($listGridContainer, alert.message, alert);
             }
-            
-            $.when(secondaryFetch.promise()).then(function(status) {
-                var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
-                
-                var $oldBodyWrapper = $oldTable.closest('.listgrid-body-wrapper');
-                var $oldHeaderWrapper = $oldBodyWrapper.prev();
-                
-                $oldHeaderWrapper.find('thead').after($table.find('tbody'));
-                $oldBodyWrapper.remove();
-                
-                var $listGridContainer = $oldHeaderWrapper.closest('.listgrid-container');
-    
-                // We'll update the current params with what we were returned in this request
-                $listGridContainer.find('.listgrid-header-wrapper table').data('currentparams', $table.data('currentparams'));
-    
-                BLCAdmin.listGrid.initialize($listGridContainer);
-                
-                BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
-                $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
 
-                if (alert) {
-                    BLCAdmin.listGrid.showAlert($listGridContainer, alert.message, alert);
-                }
+            BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
 
-                $listGridContainer.trigger('blc-listgrid-replaced', $listGridContainer);
-            });
+            $listGridContainer.trigger('blc-listgrid-replaced', $listGridContainer);
         },
 
-        replaceSelectizeCollection : function($wrapper, alert, opts) {
-            var $newCollection = $wrapper.find('.selectize-wrapper');
-            var collectionId = $newCollection.attr('id');
-            var $oldCollection = null;
-            var $container = null;
+        replaceSelectizeCollection : function($newWrapper, alert, opts) {
+            var collectionId = $newWrapper.attr('id');
+            var $oldWrapper = null;
 
             // Go through the modals from top to bottom looking for the replacement list grid
             var modals = BLCAdmin.getModals();
             if (modals.length > 1) {
                 for (var i = modals.length - 1; i > 0; i--) {
-                    $oldCollection = $(modals[i]).find('#' + collectionId);
-                    if ($oldCollection != null && $oldCollection.length > 0) {
+                    $oldWrapper = $(modals[i]).find('#' + collectionId);
+                    if ($oldWrapper != null && $oldWrapper.length > 0) {
                         break;
                     }
                 }
             }
 
             // If we didn't find it in a modal, use the element from the body
-            if ($oldCollection == null || $oldCollection.length == 0) {
-               $oldCollection = $('#' + collectionId);
+            if ($oldWrapper == null || $oldWrapper.length == 0) {
+               $oldWrapper = $('#' + collectionId);
             }
 
-            $container = $oldCollection.closest('.field-group');
+            var $container = $oldWrapper.parent();
 
-            $oldCollection.after($newCollection);
-            $oldCollection.remove();
+            $oldWrapper.after($newWrapper);
+            $oldWrapper.remove();
 
             BLCAdmin.initializeSelectizeFields($container);
 
