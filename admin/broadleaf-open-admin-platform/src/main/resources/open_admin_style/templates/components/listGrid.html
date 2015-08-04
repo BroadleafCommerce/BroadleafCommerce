@@ -13,10 +13,7 @@
            blc_admin:component_id="${listGrid}">
         <thead>
             <tr>
-                <th class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select' and not ${#lists.isEmpty(listGrid.records)}">
-                    <th:comment th:remove="all">
-                        This entry acting as placeholder for Edit links
-                    </th:comment>
+                <th class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select'">
                     <input type="checkbox" class="multiselect-checkbox"/>
                 </th>
                 <th th:each="headerField : ${listGrid.headerFields}"
@@ -100,6 +97,7 @@
                         data-pagesize=${listGrid.pageSize}">
                         
             <tr th:if="${#lists.isEmpty(listGrid.records)}">
+                <td class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select'"/>
                 <div th:remove="tag" th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
                     <td th:if="${index.count == 1}" class="list-grid-no-results">
                         (No records found)
