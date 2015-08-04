@@ -338,7 +338,7 @@ $(document).ready(function() {
         
         BLCAdmin.listGrid.updateRowActionButtons($listGridContainer);
     }
-    $('body').on('listGrid-single_select-rowSelected, listGrid-selectize-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-single_select-rowSelected', function(event, link, fields, currentUrl) {
         inlineRowSelected(event, link, fields, currentUrl, false);
     });
     $('body').on('listGrid-translation-rowSelected', function(event, link, fields, currentUrl) {
@@ -346,6 +346,9 @@ $(document).ready(function() {
     });
     $('body').on('listGrid-multi_select-rowSelected', function(event, link, fields, currentUrl) {
         inlineRowSelected(event, link, fields, currentUrl, true);
+    });
+    $('body').on('listGrid-selectize-rowSelected', function(event, link, fields, currentUrl) {
+        inlineRowSelected(event, link, fields, currentUrl, false);
     });
     
     /**
