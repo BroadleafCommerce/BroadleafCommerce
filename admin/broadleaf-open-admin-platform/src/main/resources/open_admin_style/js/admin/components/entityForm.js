@@ -31,13 +31,13 @@ $(document).ready(function() {
             });
         }
     }
-    
-    $('body div.tabs-container dl.tabs.entity-form').find('a').click(function(event) {
-     	var text = $(this).text();
+
+    $('body div.section-tabs:not(.workflow-tabs) li').find('a').click(function(event) {
+     	var text = getTabText($(this));
      	var $form = BLCAdmin.getForm($(this));
      	var href = $(this).attr('href').replace('#', '');
      	var currentAction = $form.attr('action');
-     	var tabUrl = currentAction + '/1/' + text;
+     	var tabUrl = encodeURI(currentAction + '/1/' + text);
 
      	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
      		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
@@ -55,41 +55,15 @@ $(document).ready(function() {
      			data: $form.serializeArray(),
      			complete: hideActionSpinner
      		}, function(data) {
-     			$('li.' + href + 'Tab div.listgrid-container div.listgrid-header-wrapper table').each(function() {
+     			$('div.' + href + 'Tab div.listgrid-container div.listgrid-header-wrapper table.list-grid-table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
-     				var $table = data.find('table#' + tableId);
-     				var $oldTable = null;
-     				// Go through the modals from top to bottom looking for the replacement list grid
-     				var modals = BLCAdmin.getModals();
-     				if (modals.length > 0) {
-     					for (var i = modals.length - 1; i >= 0; i--) {
-     						$oldTable = $(modals[i]).find('#' + tableId);
-     						if ($oldTable != null && $oldTable.length > 0) {
-     							break;
-     						}
-     					}
-     				}
-     				// If we didn't find it in a modal, use the element from the body
-     				if ($oldTable == null || $oldTable.length == 0) {
-     					$oldTable = $('#' + tableId);
-     				}
-     				var currentIndex = BLCAdmin.listGrid.paginate.getTopVisibleIndex($oldTable.find('tbody'));
-     				var $oldBodyWrapper = $oldTable.closest('.listgrid-body-wrapper');
-     				var $oldHeaderWrapper = $oldBodyWrapper.prev();
-     				$(this).find('thead').after($table.find('tbody'));
-     				$oldBodyWrapper.remove();
-
-     				var $listGridContainer = $oldHeaderWrapper.closest('.listgrid-container');
-
-     				// We'll update the current params with what we were returned in this request
-     				$listGridContainer.find('.listgrid-header-wrapper table').data('currentparams', $table.data('currentparams'));
-
-     				BLCAdmin.listGrid.initialize($listGridContainer);
-
-     				BLCAdmin.listGrid.paginate.scrollToIndex($listGridContainer.find('tbody'), currentIndex);
-     				$listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update');
-
-     				BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
+                    var $tableWrapper = data.find('div.listgrid-header-wrapper:has(table#' + tableId + ')');
+     				BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
+     			});
+     			$('div.' + href + 'Tab div.selectize-wrapper').each(function() {
+     				var tableId = $(this).attr('id');
+                    var $selectizeWrapper = data.find('div.selectize-wrapper#' + tableId);
+     				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
      		});
 
@@ -146,6 +120,15 @@ $(document).ready(function() {
 
         event.preventDefault();
     });
+
+    function getTabText($tab) {
+        return $tab.clone()    //clone the element
+            .children() //select all the children
+            .remove()   //remove all the children
+            .end()  //again go back to selected element
+            .text()
+            .trim();
+    }
 
     function submitFormViaAjax($form) {
         var submit = BLCAdmin.runSubmitHandlers($form);
