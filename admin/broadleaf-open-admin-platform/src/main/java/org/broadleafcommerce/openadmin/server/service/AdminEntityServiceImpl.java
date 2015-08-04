@@ -245,7 +245,7 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(collectionProperty.getMetadata(), sectionCrumbs);
 
         FieldMetadata md = collectionProperty.getMetadata();
-        String containingEntityId = getContextSpecificRelationshipId(containingClassMetadata, containingEntity, 
+        String containingEntityId = getContextSpecificRelationshipId(containingClassMetadata, containingEntity,
                 collectionProperty.getName());
         ppr.setSectionEntityField(collectionProperty.getName());
 
@@ -376,19 +376,25 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         for (Property p : cmd.getProperties()) {
             if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0])
                     && p.getMetadata() instanceof CollectionMetadata) {
-                if (p.getMetadata().getLazyFetch() != null && p.getMetadata().getLazyFetch()
-                        && getTabName((CollectionMetadata) p.getMetadata(), cmd).toUpperCase().startsWith(currentTabName.toUpperCase())) {
+
+                CollectionMetadata collectionMetadata = (CollectionMetadata) p.getMetadata();
+                String tabName = collectionMetadata.getTab();
+                int tabOrder = collectionMetadata.getTabOrder();
+                updateTabInfo(collectionMetadata, cmd, tabName, tabOrder);
+
+                if (collectionMetadata.getLazyFetch() != null && collectionMetadata.getLazyFetch()
+                        && getTabNameDisplayValue(tabName).toUpperCase().startsWith(currentTabName.toUpperCase())) {
                     PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                     map.put(p.getName(), response2.getDynamicResultSet());
-                } else if (p.getMetadata().getLazyFetch() != null && !p.getMetadata().getLazyFetch()) {
+                } else if (collectionMetadata.getLazyFetch() != null && !collectionMetadata.getLazyFetch()) {
                     PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
                     map.put(p.getName(), response2.getDynamicResultSet());
                 } else {
                     DynamicResultSet drs = new DynamicResultSet();
                     Map<String, Tab> tabMap = new HashMap<String, Tab>();
                     Tab tab = new Tab();
-                    tab.setTitle(p.getMetadata().getTab());
-                    tab.setOrder(p.getMetadata().getTabOrder());
+                    tab.setTitle(tabName);
+                    tab.setOrder(tabOrder);
                     tabMap.put(tab.getTitle(), tab);
                     drs.setUnselectedTabMetadata(tabMap);
                     drs.setTotalRecords(1);
@@ -405,21 +411,30 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return map;
     }
 
-    protected String getTabName(CollectionMetadata fmd, ClassMetadata cmd) {
-        String tabName = fmd.getTab();
-
+    protected void updateTabInfo(CollectionMetadata fmd, ClassMetadata cmd, String tabName, int tabOrder) {
+        boolean tabInfoFound = false;
         Map<String, TabMetadata> tabMetadataMap = cmd.getTabAndGroupMetadata();
         for (String tabKey : tabMetadataMap.keySet()) {
             Map<String, GroupMetadata> groupMetadataMap = tabMetadataMap.get(tabKey).getGroupMetadata();
             for (String groupKey : groupMetadataMap.keySet()) {
-                if (groupMetadataMap.get(groupKey).getGroupName().equals(fmd.getGroup())) {
+                if (groupKey.equals(fmd.getGroup()) || groupMetadataMap.get(groupKey).getGroupName().equals(fmd.getGroup())) {
                     tabName = tabMetadataMap.get(tabKey).getTabName();
+                    tabOrder = tabMetadataMap.get(tabKey).getTabOrder();
+                    tabInfoFound = true;
                     break;
                 }
             }
+            if (tabInfoFound) {
+                break;
+            }
+            if (tabKey.equals(tabName) || tabMetadataMap.get(tabKey).getTabName().equals(tabName)) {
+                tabName = tabMetadataMap.get(tabKey).getTabName();
+                tabOrder = tabMetadataMap.get(tabKey).getTabOrder();
+            }
         }
+    }
 
-        // Tabs should be looked up and referenced by their display name
+    protected String getTabNameDisplayValue(String tabName) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getMessageSource() != null) {
             tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
