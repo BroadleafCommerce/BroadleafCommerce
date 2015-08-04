@@ -621,7 +621,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         return BooleanUtils.isTrue(((BasicFieldMetadata) p.getMetadata()).getIsDerived());
     }
 
-    protected void setEntityFormFields(EntityForm ef, List<Property> properties) {
+    protected void setEntityFormFields(ClassMetadata cmd, EntityForm ef, List<Property> properties) {
         for (Property property : properties) {
             if (property.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) property.getMetadata();
@@ -711,7 +711,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                     }
 
                     // Add the field to the appropriate FieldGroup
-                    ef.addField(f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
+                    ef.addField(cmd, f, fmd.getGroup(), fmd.getGroupOrder(), fmd.getTab(), fmd.getTabOrder());
                 }
             }
         }
@@ -826,7 +826,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
         setEntityFormTabsAndGroups(ef, cmd.getTabAndGroupMetadata());
 
-        setEntityFormFields(ef, Arrays.asList(cmd.getProperties()));
+        setEntityFormFields(cmd, ef, Arrays.asList(cmd.getProperties()));
         
         populateDropdownToOneFields(ef, cmd);
         
@@ -1272,26 +1272,26 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
 
         // Set the maintained fields on the form
-        setEntityFormFields(ef, entityFormProperties);
+        setEntityFormFields(collectionMetadata, ef, entityFormProperties);
 
         // Add these two additional hidden fields that are required for persistence
         Field f = new Field()
                 .withName(adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty())
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withValue(parentId);
-        ef.addHiddenField(f);
+        ef.addHiddenField(collectionMetadata, f);
 
         f = new Field()
                 .withName(adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty())
                 .withFieldType(SupportedFieldType.HIDDEN.toString())
                 .withIdOverride("adornedTargetIdProperty");
-        ef.addHiddenField(f);
+        ef.addHiddenField(collectionMetadata, f);
 
         if (StringUtils.isNotBlank(adornedList.getSortField())) {
             f = new Field()
                     .withName(adornedList.getSortField())
                     .withFieldType(SupportedFieldType.HIDDEN.toString());
-            ef.addHiddenField(f);
+            ef.addHiddenField(collectionMetadata, f);
         }
 
         ef.setParentId(parentId);
@@ -1344,7 +1344,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                 .withFriendlyName("Key");
         }
         keyField.setRequired(true);
-        ef.addMapKeyField(keyField);
+        ef.addMapKeyField(cmd, keyField);
         
         // Set the fields for this form
         List<Property> mapFormProperties;
@@ -1364,12 +1364,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             });
         }
 
-        setEntityFormFields(ef, mapFormProperties);
+        setEntityFormFields(cmd, ef, mapFormProperties);
 
         Field f = new Field()
                 .withName("priorKey")
                 .withFieldType(SupportedFieldType.HIDDEN.toString());
-        ef.addHiddenField(f);
+        ef.addHiddenField(cmd, f);
 
         ef.setParentId(parentId);
 

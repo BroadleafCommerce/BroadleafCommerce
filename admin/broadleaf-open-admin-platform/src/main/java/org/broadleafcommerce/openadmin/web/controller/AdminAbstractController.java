@@ -374,7 +374,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 field.setFriendlyName(bfmd.getFriendlyName());
                 field.setRequired(bfmd.getRequired());
             }
-            dynamicForm.addField(field);
+            dynamicForm.addField(cmd, field);
         }
         
         // Set the specialized name for these fields - we need to handle them separately
@@ -395,10 +395,11 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
     /**
      * This method will scan the entityForm for all dynamic form fields and pull them out
      * as appropriate.
-     * 
+     *
+     * @param cmd
      * @param entityForm
      */
-    protected void extractDynamicFormFields(EntityForm entityForm) {
+    protected void extractDynamicFormFields(ClassMetadata cmd, EntityForm entityForm) {
         Map<String, Field> dynamicFields = new HashMap<String, Field>();
         
         // Find all of the dynamic form fields
@@ -426,7 +427,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             }
             
             entry.getValue().setName(fieldName[1]);
-            dynamicForm.addField(entry.getValue());
+            dynamicForm.addField(cmd, entry.getValue());
         }
     }
 
@@ -620,7 +621,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
      * 
      * @param entityForm
      */
-    protected void modifyEntityForm(EntityForm entityForm, Map<String, String> pathVars) {
+    protected void modifyEntityForm(EntityForm entityForm, Map<String, String> pathVars) throws Exception {
         
     }
 

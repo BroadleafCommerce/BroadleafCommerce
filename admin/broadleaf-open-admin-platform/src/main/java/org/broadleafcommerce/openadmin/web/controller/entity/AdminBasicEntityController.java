@@ -300,15 +300,15 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable  Map<String, String> pathVars,
             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
         String sectionKey = getSectionKey(pathVars);
-
-        extractDynamicFormFields(entityForm);
+        String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, null, null);
+        ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+
+        extractDynamicFormFields(cmd, entityForm);
         Entity entity = service.addEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
         entityFormValidator.validate(entityForm, entity, result);
 
         if (result.hasErrors()) {
-            String sectionClassName = getClassNameForSection(sectionKey);
-            ClassMetadata cmd = service.getClassMetadata(getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, entityForm, sectionCrumbs);
 
@@ -549,8 +549,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, sectionKey, id);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, sectionCrumbs, pathVars);
+        ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
-        extractDynamicFormFields(entityForm);
+        extractDynamicFormFields(cmd, entityForm);
         
         Entity entity = service.updateEntity(entityForm, getSectionCustomCriteria(), sectionCrumbs).getEntity();
 
@@ -560,7 +561,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
             model.addAttribute("headerFlashAlert", true);
             
             Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForAllSubCollections(ppr, entity, sectionCrumbs);
-            ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
             entityForm.clearFieldsMap();
             formService.populateEntityForm(cmd, entity, subRecordsMap, entityForm, sectionCrumbs);
             
@@ -1557,7 +1557,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
                 Field f = new Field()
                         .withName(cd.getSortProperty())
                         .withFieldType(SupportedFieldType.HIDDEN.toString());
-                entityForm.addHiddenField(f);
+                entityForm.addHiddenField(mainMetadata, f);
             }
             formService.populateEntityFormFields(entityForm, entity);
 

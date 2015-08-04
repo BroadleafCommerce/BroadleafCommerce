@@ -309,26 +309,46 @@ public class EntityForm {
         return lgToRemove;
     }
 
-    public void addHiddenField(Field field) {
+    public void addHiddenField(ClassMetadata cmd, Field field) {
         if (StringUtils.isBlank(field.getFieldType())) {
             field.setFieldType(SupportedFieldType.HIDDEN.toString());
         }
-        addField(field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+        addField(cmd, field, HIDDEN_GROUP, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
-    public void addField(Field field) {
-        addField(field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+    public void addField(ClassMetadata cmd, Field field) {
+        addField(cmd, field, DEFAULT_GROUP_NAME, DEFAULT_GROUP_ORDER, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
-    public void addMapKeyField(Field field) {
-        addField(field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
+    public void addMapKeyField(ClassMetadata cmd, Field field) {
+        addField(cmd, field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
-    public void addField(Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
+    public void addField(ClassMetadata cmd, Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
         groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
         groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
         tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
+
+        // Check CMD for Tab/Group name overrides so that Tabs/Groups can be properly found by their display names
+        boolean groupFound = false;
+        Map<String, TabMetadata> tabMetadataMap = cmd.getTabAndGroupMetadata();
+        for (String tabKey : tabMetadataMap.keySet()) {
+            Map<String, GroupMetadata> groupMetadataMap = tabMetadataMap.get(tabKey).getGroupMetadata();
+            for (String groupKey : groupMetadataMap.keySet()) {
+                if (groupKey.equals(groupName) || groupMetadataMap.get(groupKey).getGroupName().equals(groupName)) {
+                    groupName = groupMetadataMap.get(groupKey).getGroupName();
+                    groupFound = true;
+                    break;
+                }
+            }
+            if (groupFound) {
+                break;
+            }
+            if (tabKey.equals(tabName) || tabMetadataMap.get(tabKey).getTabName().equals(tabName)) {
+                tabName = tabMetadataMap.get(tabKey).getTabName();
+            }
+        }
 
         // Tabs and groups should be looked up by their display, translated name since 2 unique strings can display the same
         // thing when they are looked up in message bundles after display
@@ -372,18 +392,27 @@ public class EntityForm {
     }
 
     public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
+        groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
+        tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
+        tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
+
         // Check CMD for Tab/Group name overrides so that Tabs/Groups can be properly found by their display names
+        boolean groupFound = false;
         Map<String, TabMetadata> tabMetadataMap = cmd.getTabAndGroupMetadata();
         for (String tabKey : tabMetadataMap.keySet()) {
-            if (tabKey.equals(tabName)) {
-                tabName = tabMetadataMap.get(tabKey).getTabName();
-            }
             Map<String, GroupMetadata> groupMetadataMap = tabMetadataMap.get(tabKey).getGroupMetadata();
             for (String groupKey : groupMetadataMap.keySet()) {
-                if (groupKey.equals(groupName)) {
+                if (groupKey.equals(groupName) || groupMetadataMap.get(groupKey).getGroupName().equals(groupName)) {
                     groupName = groupMetadataMap.get(groupKey).getGroupName();
+                    groupFound = true;
                     break;
                 }
+            }
+            if (groupFound) {
+                break;
+            }
+            if (tabKey.equals(tabName) || tabMetadataMap.get(tabKey).getTabName().equals(tabName)) {
+                tabName = tabMetadataMap.get(tabKey).getTabName();
             }
         }
 
