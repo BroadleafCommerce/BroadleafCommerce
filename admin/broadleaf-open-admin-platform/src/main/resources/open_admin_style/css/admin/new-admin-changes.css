@@ -113,8 +113,7 @@ input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.rad
 
 .borderlessGroup {
     border: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+    padding: 0;
 }
 
 /* change .site-bar to .header */
