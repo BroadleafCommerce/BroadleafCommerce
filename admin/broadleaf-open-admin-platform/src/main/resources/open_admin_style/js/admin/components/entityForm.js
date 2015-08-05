@@ -33,11 +33,13 @@ $(document).ready(function() {
     }
 
     $('body div.section-tabs:not(.workflow-tabs) li').find('a').click(function(event) {
-     	var text = getTabText($(this));
-     	var $form = BLCAdmin.getForm($(this));
-     	var href = $(this).attr('href').replace('#', '');
-     	var currentAction = $form.attr('action');
-     	var tabUrl = encodeURI(currentAction + '/1/' + text);
+        var $tab = $(this);
+        var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
+        var text = getTabText($tab.find('span'));
+        var $form = BLCAdmin.getForm($tab);
+        var href = $(this).attr('href').replace('#', '');
+        var currentAction = $form.attr('action');
+        var tabUrl = encodeURI(currentAction + '/1/' + text);
 
      	if (tabs_action && tabs_action.indexOf(tabUrl + '++') == -1 && tabs_action.indexOf(tabUrl) >= 0) {
      		tabs_action = tabs_action.replace(tabUrl, tabUrl + '++');
@@ -46,9 +48,10 @@ $(document).ready(function() {
      	} else if (tabs_action == null) {
      		tabs_action = tabUrl;
      	}
-     	showActionSpinner($(this).closest('.tabs.entity-form'));
 
      	if (tabs_action.indexOf(tabUrl + '++') == -1 && text != 'General') {
+            showTabSpinner($tab, $tabBody);
+
      		BLC.ajax({
      			url: tabUrl,
      			type: "POST",
@@ -65,6 +68,7 @@ $(document).ready(function() {
                     var $selectizeWrapper = data.find('div.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
+                hideTabSpinner($tab, $tabBody);
      		});
 
      		event.preventDefault();
@@ -157,6 +161,17 @@ $(document).ready(function() {
         }
     }
     
+    function showTabSpinner($tab, $tabBody) {
+        $("#headerFlashAlertBoxContainer").addClass("hidden");
+        $tabBody.find('button').prop("disabled", true);
+        $tab.find('i.icon-spinner').show();
+    }
+
+    function hideTabSpinner($tab, $tabBody) {
+        $tabBody.find('button').prop("disabled", false);
+        $tab.find('i.icon-spinner').hide();
+    }
+
     function showActionSpinner($actions) {
         $("#headerFlashAlertBoxContainer").addClass("hidden");
         $actions.find('button').prop("disabled",true);
