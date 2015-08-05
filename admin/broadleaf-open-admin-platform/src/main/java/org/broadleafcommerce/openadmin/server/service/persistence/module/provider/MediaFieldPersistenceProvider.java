@@ -98,7 +98,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             }
         }
         MetadataProviderResponse response = MetadataProviderResponse.HANDLED;
-        boolean dirty;
+        boolean dirty = false;
         try {
             setNonDisplayableValues(populateValueRequest);
             Class<?> valueType = getStartingValueType(populateValueRequest);
