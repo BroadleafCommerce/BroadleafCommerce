@@ -34,6 +34,7 @@ public class URLHandlerDTO implements URLHandler {
     protected String incomingURL = "";
     protected String newURL;
     protected String urlRedirectType;
+    protected boolean isRegex = false;
 
     public URLHandlerDTO(String newUrl, URLRedirectType redirectType) {
         setUrlRedirectType(redirectType);
@@ -63,6 +64,16 @@ public class URLHandlerDTO implements URLHandler {
     public void setNewURL(String newURL) {
         this.newURL = newURL;
     }
+    
+    @Override
+	public boolean isRegexHandler() {
+		return isRegex;
+	}
+
+	@Override
+	public void setRegexHandler(boolean regexHandler) {
+		this.isRegex = regexHandler;
+	}
 
     @Override
     public URLRedirectType getUrlRedirectType() {
@@ -84,6 +95,7 @@ public class URLHandlerDTO implements URLHandler {
         cloned.setIncomingURL(incomingURL);
         cloned.setNewURL(newURL);
         cloned.setUrlRedirectType( URLRedirectType.getInstance(urlRedirectType));
+        cloned.setRegexHandler(isRegex);
         return  createResponse;
     }
 }
