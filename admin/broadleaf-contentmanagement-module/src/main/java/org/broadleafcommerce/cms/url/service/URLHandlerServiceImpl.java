@@ -104,7 +104,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
                 //Use the NullURLHandler instance. This will be cached to indicate that 
                 //This URL does not have a match.
                 handler = NULL_URL_HANDLER;
-            } else if (!(handler.getClass().isAssignableFrom(URLHandlerDTO.class))) {
+            } else if (!(URLHandlerDTO.class.isAssignableFrom(handler.getClass()))) {
                 //Create a non-entity instance of the DTO to cache.
                 handler = new URLHandlerDTO(handler.getNewURL(), handler.getUrlRedirectType());
             }
