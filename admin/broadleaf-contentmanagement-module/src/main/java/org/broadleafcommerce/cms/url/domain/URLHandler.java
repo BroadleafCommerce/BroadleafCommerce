@@ -40,6 +40,19 @@ public interface URLHandler extends Serializable, MultiTenantCloneable<URLHandle
 
     public abstract URLRedirectType getUrlRedirectType();
 
-    public void setUrlRedirectType(URLRedirectType redirectType);
+    public abstract void setUrlRedirectType(URLRedirectType redirectType);
 
+    /**
+     * Indicates if the value returned by <code>getIncomingURL()</code> is a regex expression 
+     * rather than a concrete URI.  Default is false.
+     * @return
+     */
+    public abstract boolean isRegexHandler();
+    
+    /**
+     * Indicates if the value set by the method <code>setIncomingURL(String)</code> should be treated as a regex 
+     * expression rather than as a concrete URI.
+     * @param regexHandler
+     */
+    public abstract void setRegexHandler(boolean regexHandler);
 }

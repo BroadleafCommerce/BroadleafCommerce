@@ -39,8 +39,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -79,6 +77,12 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @Column(name = "URL_HANDLER_ID")
     @AdminPresentation(friendlyName = "URLHandlerImpl_ID", order = 1, group = "URLHandlerImpl_friendyName", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
+    
+    @AdminPresentation(friendlyName = "URLHandlerImpl_isRegexHandler", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1,
+            helpText = "urlHandlerIsRegexHandler_help")
+    @Column(name="IS_REGEX")
+    @Index(name="IS_REGEX_HANDLER_INDEX", columnNames={"IS_REGEX"})
+    protected Boolean isRegex = false;
 
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = "URLHandlerImpl_friendyName", prominent = true, groupOrder = 1,
             helpText = "urlHandlerIncoming_help")
@@ -145,12 +149,28 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
         String location = getIncomingURL();
         if (location == null) {
             return null;
-        } else if (hasRegExCharacters(location)) {
+        } else if (isRegexHandler()) {
             return getNewURL();
         } else {
             return location;
         }
     }
+    
+    @Override
+	public boolean isRegexHandler() {
+		if (isRegex == null) {
+			if (hasRegExCharacters(getIncomingURL())) {
+				return true;
+			}
+			return false;
+		}
+		return isRegex;
+	}
+
+	@Override
+	public void setRegexHandler(boolean regexHandler) {
+		this.isRegex = regexHandler;
+	}
 
     /**
      * In a preview environment, {@link #getLocation()} attempts to navigate to the 
@@ -161,6 +181,9 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
      * @return
      */
     protected boolean hasRegExCharacters(String location) {
+    	if (location == null) {
+    		return false;
+    	}
         return location.contains(".") ||
                 location.contains("(") ||
                 location.contains(")") ||
@@ -184,7 +207,8 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
         URLHandler cloned = createResponse.getClone();
         cloned.setIncomingURL(incomingURL);
         cloned.setNewURL(newURL);
-        cloned.setUrlRedirectType( URLRedirectType.getInstance(urlRedirectType));
+        cloned.setUrlRedirectType(URLRedirectType.getInstance(urlRedirectType));
+        cloned.setRegexHandler(isRegex);
 
         return createResponse;
     }

@@ -30,16 +30,18 @@ import org.broadleafcommerce.cms.url.domain.URLHandler;
 public interface URLHandlerDao {
 
 
-    URLHandler findURLHandlerByURI(String uri);
+    public URLHandler findURLHandlerByURI(String uri);
     
     /**
      * Gets all the URL handlers configured in the system
      * @return
      */
-    List<URLHandler> findAllURLHandlers();
+    public List<URLHandler> findAllURLHandlers();
 
-    URLHandler saveURLHandler(URLHandler handler);
+    public URLHandler saveURLHandler(URLHandler handler);
 
-    URLHandler findURLHandlerById(Long id);
+    public URLHandler findURLHandlerById(Long id);
+    
+    public List<URLHandler> findAllRegexURLHandlers();
 
 }

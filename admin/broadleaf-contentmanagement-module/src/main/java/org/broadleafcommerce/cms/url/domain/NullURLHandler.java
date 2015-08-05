@@ -26,5 +26,7 @@ package org.broadleafcommerce.cms.url.domain;
  * @author bpolster
  */
 public class NullURLHandler extends URLHandlerImpl {
+
+    private static final long serialVersionUID = 1L;
      
 }

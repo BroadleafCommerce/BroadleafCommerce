@@ -51,7 +51,7 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
 
     @Override
     public URLHandler findURLHandlerByURI(String uri) {
-        TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_OUTGOING_URL", URLHandler.class);
+        TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_BY_INCOMING_URL", URLHandler.class);
         query.setParameter("incomingURL", uri);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
 
@@ -62,6 +62,13 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
             return null;
         }
     }
+    
+    @Override
+	public List<URLHandler> findAllRegexURLHandlers() {
+    	TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_ALL_REGEX_HANDLERS", URLHandler.class);
+    	query.setHint(QueryHints.HINT_CACHEABLE, true);
+    	return query.getResultList();
+	}
 
     @Override
     public URLHandler findURLHandlerById(Long id) {
