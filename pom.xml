@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>4.0.2-SNAPSHOT</version>
+    <version>4.0.4-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -58,8 +58,8 @@
         <project.uri>${project.baseUri}</project.uri>
     </properties>
     <scm>
-        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
-        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
+        <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</connection>
+        <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommercePrivate.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
     </scm>
     <build>
