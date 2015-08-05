@@ -692,3 +692,7 @@ fieldset {
 .selectize-control.selectize-collection input {
     display: none !important;
 }
+
+.nav>li>a .icon-spinner {
+    padding: 3px 11px;
+}
