@@ -93,21 +93,25 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     @Column(name = "PROPERTY_NAME", nullable = false)
     @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 2)
     protected String propertyName;
-    
+
+    @Deprecated
     @Column(name = "ABBREVIATION")
     @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition", order = 3)
     protected String abbreviation;
-    
+
+    @Deprecated
     @Column(name = "SEARCHABLE")
     @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition", order = 4)
     protected Boolean searchable = false;
     
     // This is a broadleaf enumeration
+    @Deprecated
     @Column(name = "FACET_FIELD_TYPE")
     @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_descrpition", excluded = true)
     protected String facetFieldType;
 
     // This is a broadleaf enumeration
+    @Deprecated
     @ElementCollection
     @CollectionTable(name="BLC_FIELD_SEARCH_TYPES", joinColumns=@JoinColumn(name="FIELD_ID"))
     @Column(name="SEARCHABLE_FIELD_TYPE")
@@ -119,6 +123,10 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     @Column(name = "TRANSLATABLE")
     @AdminPresentation(friendlyName = "FieldImpl_translatable", group = "FieldImpl_description")
     protected Boolean translatable = false;
+
+    @Column(name = "IS_CUSTOM")
+    @AdminPresentation(friendlyName = "FieldImpl_isCustom", group = "FieldImpl_description")
+    protected Boolean isCustom = false;
     
     @Override
     public String getQualifiedFieldName() {
@@ -155,11 +163,13 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
         this.propertyName = propertyName;
     }
 
+    @Deprecated
     @Override
     public String getAbbreviation() {
         return abbreviation;
     }
 
+    @Deprecated
     @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
@@ -175,26 +185,31 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
         this.friendlyName = friendlyName;
     }
 
+    @Deprecated
     @Override
     public Boolean getSearchable() {
         return searchable;
     }
 
+    @Deprecated
     @Override
     public void setSearchable(Boolean searchable) {
         this.searchable = searchable;
     }
-    
+
+    @Deprecated
     @Override
     public FieldType getFacetFieldType() {
         return FieldType.getInstance(facetFieldType);
     }
 
+    @Deprecated
     @Override
     public void setFacetFieldType(FieldType facetFieldType) {
         this.facetFieldType = facetFieldType == null ? null : facetFieldType.getType();
     }
 
+    @Deprecated
     @Override
     public List<FieldType> getSearchableFieldTypes() {
         List<FieldType> fieldTypes = new ArrayList<FieldType>();
@@ -204,6 +219,7 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
         return fieldTypes;
     }
 
+    @Deprecated
     @Override
     public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes) {
         List<String> fieldTypes = new ArrayList<String>();
@@ -224,10 +240,22 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     }
 
     @Override
+    public Boolean getIsCustom() {
+        return translatable == null ? false : translatable;
+    }
+
+    @Override
+    public void setIsCustom(Boolean isCustom) {
+        this.isCustom = isCustom;
+    }
+
+    @Deprecated
+    @Override
     public List<SearchConfig> getSearchConfigs() {
         throw new UnsupportedOperationException("The default Field implementation does not support search configs");
     }
 
+    @Deprecated
     @Override
     public void setSearchConfigs(List<SearchConfig> searchConfigs) {
         throw new UnsupportedOperationException("The default Field implementation does not support search configs");

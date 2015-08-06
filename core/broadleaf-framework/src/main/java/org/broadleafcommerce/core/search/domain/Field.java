@@ -87,31 +87,41 @@ public interface Field extends MultiTenantCloneable<Field> {
      * Gets the abbreviation of this Field. This will be used in URL query string parameters for sorting and
      * filtering
      * @return the abbreviation
+     * @deprecated
      */
+    @Deprecated
     public String getAbbreviation();
 
     /**
      * Sets the abbreviation
      * @param abbreviation
+     * @deprecated
      */
+    @Deprecated
     public void setAbbreviation(String abbreviation);
 
     /**
      * Gets the searchable flag
      * @return whether or not this Field is searchable
+     * @deprecated this is now determined if the Field is a SearchField
      */
+    @Deprecated
     public Boolean getSearchable();
 
     /** 
      * Sets the searchable flag
      * @param searchable
+     * @deprecated this is now determined if the Field is a SearchField
      */
+    @Deprecated
     public void setSearchable(Boolean searchable);
 
     /**
      * Sets the facet field type
      * @param facetFieldType
+     * @deprecated
      */
+    @Deprecated
     public void setFacetFieldType(FieldType facetFieldType);
 
     /**
@@ -120,7 +130,9 @@ public interface Field extends MultiTenantCloneable<Field> {
      * 
      * @see #getSearchableFieldTypes()
      * @return the facet field type
+     * @deprecated
      */
+    @Deprecated
     public FieldType getFacetFieldType();
 
     /**
@@ -128,7 +140,9 @@ public interface Field extends MultiTenantCloneable<Field> {
      * 
      * @see #getSearchableFieldTypes()
      * @param searchableFieldTypes
+     * @deprecated this is now part of SearchField
      */
+    @Deprecated
     public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes);
 
     /**
@@ -136,21 +150,27 @@ public interface Field extends MultiTenantCloneable<Field> {
      * text and string, you would have two searchable field types, String and Text
      * 
      * @return the searchable types for this field
+     * @deprecated this is now part of SearchField
      */
+    @Deprecated
     public List<FieldType> getSearchableFieldTypes();
     
     /**
      * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available 
      * in the community version of Broadleaf Commerce.
      * @return the searchConfigs
+     * @deprecated
      */
+    @Deprecated
     public List<SearchConfig> getSearchConfigs();
     
     /**
      * Sets the searchConfigs. 
      * @param searchConfigs
+     * @deprecated
      */
-    public void setSearchConfigs (List<SearchConfig> searchConfigs);
+    @Deprecated
+    public void setSearchConfigs(List<SearchConfig> searchConfigs);
 
     /**
      * Returns the qualified name of this Field. The default implementation returns the entityType joined
@@ -170,4 +190,18 @@ public interface Field extends MultiTenantCloneable<Field> {
      * @param translatable
      */
     public void setTranslatable(Boolean translatable);
+
+    /**
+     * Get whether or not this field is a CustomField
+     *
+     * @return
+     */
+    public Boolean getIsCustom();
+
+    /**
+     * Set whether or not this field is a CustomField
+     *
+     * @param isCustom
+     */
+    public void setIsCustom(Boolean isCustom);
 }
