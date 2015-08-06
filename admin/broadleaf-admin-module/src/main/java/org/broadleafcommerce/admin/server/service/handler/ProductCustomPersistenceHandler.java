@@ -45,24 +45,22 @@ import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.stereotype.Component;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +82,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Resource(name = "blProductCustomPersistenceHandlerExtensionManager")
     protected ProductCustomPersistenceHandlerExtensionManager extensionManager;
+    
+    @Resource(name = "blParentCategoryLegacyModeService")
+    protected ParentCategoryLegacyModeService parentCategoryLegacyModeService;
 
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
 
@@ -131,6 +132,40 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        
+        boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
+        
+        //the following code applies when filters are present only:
+        //"legacy" means that the parent category filter still utilizes Product.defaultCategory as the field to be matched
+        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode. 
+        //This means that one of the FilterAndSortCriterias will try to match the chosen values against "defaultCategory".
+        //If "legacy" is false, we remove that FilterAndSortCriteria from the CTO, and inject a new FilterMapping in cto.additionalFilterMappings,
+        //which seeks matching values in  allParentCategoryXRefs instead
+        if (!legacy) {
+            FilterAndSortCriteria fsc = cto.getCriteriaMap().get("defaultCategory");
+            if (fsc != null) {
+                List<String> filterValues = fsc.getFilterValues();
+                cto.getCriteriaMap().remove("defaultCategory");
+                FilterMapping filterMapping = new FilterMapping()
+                        .withFieldPath(new FieldPath().withTargetProperty("allParentCategoryXrefs.category.id"))
+                        .withDirectFilterValues(filterValues)
+                        .withRestriction(new Restriction()
+                                .withPredicateProvider(new PredicateProvider() {
+
+                                    @Override
+                                    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                            From root, String ceilingEntity,
+                                            String fullPropertyName, Path explicitPath, List directValues) {
+
+                                        return explicitPath.as(Long.class).in(directValues);
+                                    }
+                                })
+                        );
+
+                cto.getAdditionalFilterMappings().add(filterMapping);
+            }
+        }
+
         cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
                 .withDirectFilterValues(new EmptyFilterValues())
                 .withRestriction(new Restriction()
