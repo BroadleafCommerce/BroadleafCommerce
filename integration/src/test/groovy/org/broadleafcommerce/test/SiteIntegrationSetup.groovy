@@ -19,14 +19,12 @@
  */
 package org.broadleafcommerce.test
 
-import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.ContextHierarchy
 import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.test.context.web.WebAppConfiguration
 
 import spock.lang.Specification
-
 /**
  * Base Integration Test Setup groovy file for Site based integration tests. This base class has all the
  * applicationContext's shared by Integration tests for Site based testing. Extend from this class on a
@@ -45,7 +43,6 @@ import spock.lang.Specification
         "classpath:/bl-cms-contentClient-applicationContext.xml"],
     loader = BroadleafGenericGroovyXmlWebContextLoader.class)
 ])
-@DirtiesContext
 @WebAppConfiguration
 class SiteIntegrationSetup extends Specification {
     /*
