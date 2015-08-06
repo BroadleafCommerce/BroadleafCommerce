@@ -27,6 +27,8 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.annotations.BatchSize;
@@ -57,7 +59,7 @@ import javax.persistence.Table;
 @Table(name = "BLC_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class FieldImpl implements Field, Serializable, AdminMainEntity {
     
@@ -77,37 +79,42 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
         }
     )
     @Column(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_descrpition",visibility=VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_general",visibility=VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     // This is a broadleaf enumeration
-    @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_descrpition", order = 2, prominent = true)
+    @AdminPresentation(friendlyName = "FieldImpl_EntityType", group = "FieldImpl_general", order = 1, prominent = true,
+            gridOrder = 1, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.search.domain.FieldEntity",
+            requiredOverride = RequiredOverride.REQUIRED)
     @Column(name = "ENTITY_TYPE", nullable = false)
     @Index(name="ENTITY_TYPE_INDEX", columnNames={"ENTITY_TYPE"})
     protected String entityType;
     
     @Column(name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "FieldImpl_friendlyName", group = "FieldImpl_descrpition", order = 1, prominent = true, translatable = true)
+    @AdminPresentation(friendlyName = "FieldImpl_friendlyName", group = "FieldImpl_general", order = 2, gridOrder = 2,
+            prominent = true, translatable = true)
     protected String friendlyName;
 
     @Column(name = "PROPERTY_NAME", nullable = false)
-    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_descrpition", order = 2)
+    @AdminPresentation(friendlyName = "FieldImpl_propertyName", group = "FieldImpl_general", order = 3, gridOrder = 3,
+            prominent = true)
     protected String propertyName;
 
     @Deprecated
     @Column(name = "ABBREVIATION")
-    @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_descrpition", order = 3)
+    @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_general", order = 3, excluded = true)
     protected String abbreviation;
 
     @Deprecated
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_descrpition", order = 4)
+    @AdminPresentation(friendlyName = "FieldImpl_searchable", group = "FieldImpl_general", order = 4, excluded = true)
     protected Boolean searchable = false;
     
     // This is a broadleaf enumeration
     @Deprecated
     @Column(name = "FACET_FIELD_TYPE")
-    @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_descrpition", excluded = true)
+    @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_general", excluded = true)
     protected String facetFieldType;
 
     // This is a broadleaf enumeration
@@ -121,11 +128,12 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     protected List<String> searchableFieldTypes = new ArrayList<String>();
     
     @Column(name = "TRANSLATABLE")
-    @AdminPresentation(friendlyName = "FieldImpl_translatable", group = "FieldImpl_description")
+    @AdminPresentation(friendlyName = "FieldImpl_translatable", group = "FieldImpl_general", excluded = true)
     protected Boolean translatable = false;
 
     @Column(name = "IS_CUSTOM")
-    @AdminPresentation(friendlyName = "FieldImpl_isCustom", group = "FieldImpl_description")
+    @AdminPresentation(friendlyName = "FieldImpl_isCustom", group = "FieldImpl_general",
+            visibility = VisibilityEnum.VISIBLE_ALL)
     protected Boolean isCustom = false;
     
     @Override
