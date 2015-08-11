@@ -122,7 +122,7 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     @ElementCollection
     @CollectionTable(name="BLC_FIELD_SEARCH_TYPES", joinColumns=@JoinColumn(name="FIELD_ID"))
     @Column(name="SEARCHABLE_FIELD_TYPE")
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected List<String> searchableFieldTypes = new ArrayList<String>();
@@ -135,6 +135,13 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     @AdminPresentation(friendlyName = "FieldImpl_isCustom", group = "FieldImpl_general",
             visibility = VisibilityEnum.VISIBLE_ALL)
     protected Boolean isCustom = false;
+
+    @Column(name = "FIELD_TYPE")
+    @AdminPresentation(friendlyName = "FieldImpl_Field_Type", order = 4, prominent = true, gridOrder = 4,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.search.service.type.SearchFieldType",
+            requiredOverride = RequiredOverride.REQUIRED)
+    protected String fieldType;
     
     @Override
     public String getQualifiedFieldName() {
@@ -255,6 +262,16 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     @Override
     public void setIsCustom(Boolean isCustom) {
         this.isCustom = isCustom;
+    }
+
+    @Override
+    public String getFieldType() {
+        return fieldType;
+    }
+
+    @Override
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
     }
 
     @Deprecated

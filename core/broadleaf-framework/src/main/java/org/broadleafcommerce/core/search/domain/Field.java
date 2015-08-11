@@ -119,7 +119,7 @@ public interface Field extends MultiTenantCloneable<Field> {
     /**
      * Sets the facet field type
      * @param facetFieldType
-     * @deprecated
+     * @deprecated this is now part of SearchFacet
      */
     @Deprecated
     public void setFacetFieldType(FieldType facetFieldType);
@@ -130,14 +130,14 @@ public interface Field extends MultiTenantCloneable<Field> {
      * 
      * @see #getSearchableFieldTypes()
      * @return the facet field type
-     * @deprecated
+     * @deprecated this is now part of SearchFacet
      */
     @Deprecated
     public FieldType getFacetFieldType();
 
     /**
      * Sets the searchableFieldTypes
-     * 
+     *
      * @see #getSearchableFieldTypes()
      * @param searchableFieldTypes
      * @deprecated this is now part of SearchField
@@ -148,13 +148,29 @@ public interface Field extends MultiTenantCloneable<Field> {
     /**
      * Gets the dynamic searchable field types. For example, in solr, if you wanted to index a field as both
      * text and string, you would have two searchable field types, String and Text
-     * 
+     *
      * @return the searchable types for this field
      * @deprecated this is now part of SearchField
      */
     @Deprecated
     public List<FieldType> getSearchableFieldTypes();
-    
+
+    /**
+     * Gets the {@org.broadleafcommerce.core.search.service.type.SearchFieldType} of this field.  This is used by
+     * SearchField and SearchFacet to determine searchableFieldTypes and facetFieldType respectively.
+     *
+     * @return
+     */
+    public String getFieldType();
+
+    /**
+     * Sets the {@org.broadleafcommerce.core.search.service.type.SearchFieldType} of this field.  This is used by
+     * SearchField and SearchFacet to determine searchableFieldTypes and facetFieldType respectively.
+     *
+     * @param fieldType
+     */
+    public void setFieldType(String fieldType);
+
     /**
      * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available 
      * in the community version of Broadleaf Commerce.

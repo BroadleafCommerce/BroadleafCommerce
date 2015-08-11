@@ -85,6 +85,8 @@
     <bean id="org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet" class="org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.search.domain.Field" class="org.broadleafcommerce.core.search.domain.FieldImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.search.domain.SearchFacet" class="org.broadleafcommerce.core.search.domain.SearchFacetImpl" scope="prototype"/>
+    <bean id="org.broadleafcommerce.core.search.domain.SearchField" class="org.broadleafcommerce.core.search.domain.SearchFieldImpl" scope="prototype"/>
+
     <bean id="org.broadleafcommerce.core.search.domain.SearchFacetRange" class="org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.search.domain.SearchSynonym" class="org.broadleafcommerce.core.search.domain.SearchSynonymImpl" scope="prototype"/>
     <bean id="org.broadleafcommerce.core.search.redirect.domain.SearchRedirect" class="org.broadleafcommerce.core.search.redirect.domain.SearchRedirectImpl" scope="prototype"/>
