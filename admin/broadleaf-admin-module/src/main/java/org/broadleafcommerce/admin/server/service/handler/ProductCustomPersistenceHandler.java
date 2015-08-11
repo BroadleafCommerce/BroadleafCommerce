@@ -53,7 +53,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
@@ -147,20 +146,17 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 List<String> filterValues = fsc.getFilterValues();
                 cto.getCriteriaMap().remove("defaultCategory");
                 FilterMapping filterMapping = new FilterMapping()
-                        .withFieldPath(new FieldPath().withTargetProperty("allParentCategoryXrefs.category.id"))
                         .withDirectFilterValues(filterValues)
                         .withRestriction(new Restriction()
                                 .withPredicateProvider(new PredicateProvider() {
-
                                     @Override
                                     public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
                                             From root, String ceilingEntity,
                                             String fullPropertyName, Path explicitPath, List directValues) {
-
-                                        return explicitPath.as(Long.class).in(directValues);
+                                        Path xRefCategoriesCategoryId = root.get("allParentCategoryXrefs").get("category").get("id");
+                                        return xRefCategoriesCategoryId.as(Long.class).in(directValues);
                                     }
-                                })
-                        );
+                                }));
 
                 cto.getAdditionalFilterMappings().add(filterMapping);
             }
