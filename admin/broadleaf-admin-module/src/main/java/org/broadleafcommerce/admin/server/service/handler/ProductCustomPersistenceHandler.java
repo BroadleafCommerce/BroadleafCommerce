@@ -170,7 +170,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                                         subRestrictions.add(builder.equal(subRoot.get("defaultReference"), Boolean.TRUE));
                                         subRestrictions.add(subRoot.get("category").get("id").in(directValues));
                                         //archived?
-                                        QueryUtils.notArchived(builder, subRestrictions, subRoot.get("category"), "archiveStatus");
+                                        QueryUtils.notArchived(builder, subRestrictions, subRoot, "archiveStatus");
 
                                         sub.where(subRestrictions.toArray(new Predicate[subRestrictions.size()]));
 
