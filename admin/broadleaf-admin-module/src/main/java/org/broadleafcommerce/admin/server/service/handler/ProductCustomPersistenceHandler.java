@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
+import org.broadleafcommerce.common.util.dao.QueryUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
@@ -168,6 +169,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                                         List<Predicate> subRestrictions = new ArrayList<Predicate>();
                                         subRestrictions.add(builder.equal(subRoot.get("defaultReference"), Boolean.TRUE));
                                         subRestrictions.add(subRoot.get("category").get("id").in(directValues));
+                                        //archived?
+                                        QueryUtils.notArchived(builder, subRestrictions, subRoot.get("category"), "archiveStatus");
+
                                         sub.where(subRestrictions.toArray(new Predicate[subRestrictions.size()]));
 
                                         return explicitPath.in(sub);
