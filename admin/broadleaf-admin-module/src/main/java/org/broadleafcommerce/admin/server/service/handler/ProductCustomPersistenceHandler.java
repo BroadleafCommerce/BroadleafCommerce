@@ -196,12 +196,13 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Product.class.getName(), persistencePerspective);
             BasicFieldMetadata defaultCategory = ((BasicFieldMetadata) adminProperties.get("defaultCategory"));
             defaultCategory.setFriendlyName("ProductImpl_Parent_Category");
-            if (entity.findProperty("defaultCategory") != null && !StringUtils.isEmpty(entity.findProperty("defaultCategory").getValue())) {
+            //TODO (qa 607) temporarily disabled condition - validation is causing exception during propagation
+            //if (entity.findProperty("defaultCategory") != null && !StringUtils.isEmpty(entity.findProperty("defaultCategory").getValue())) {
                 //Change the inherited type so that this property is disconnected from the entity and validation is temporarily skipped.
                 //This is useful when the defaultCategory was previously completely empty for whatever reason. Without this, such
                 //a case would fail the validation, even though the property was specified in the submission.
                 defaultCategory.setInheritedFromType(String.class.getName());
-            }
+            //}
 
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Product adminInstance = (Product) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
