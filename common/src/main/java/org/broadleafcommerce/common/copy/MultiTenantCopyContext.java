@@ -125,43 +125,6 @@ public class MultiTenantCopyContext {
     }
 
     /**
-     * Detects whether or not the current cloned entity is an extension of an entity in Broadleaf, and if so, if the
-     * extension itself does not implement clone.
-     *
-     * @param cloned the cloned entity instance
-     * @throws CloneNotSupportedException thrown if the entity is an extension and is does not implement clone
-     */
-    public void validateClone(Object cloned) throws CloneNotSupportedException {
-        Method cloneMethod;
-        try {
-            cloneMethod = cloned.getClass().getMethod("createOrRetrieveCopyInstance", new Class[]{MultiTenantCopyContext.class});
-        } catch (NoSuchMethodException e) {
-            throw ExceptionHelper.refineException(e);
-        }
-        boolean cloneMethodLocal = false;
-        for (String prefix : BROADLEAF_PACKAGE_PREFIXES) {
-            if (cloneMethod.getDeclaringClass().getName().startsWith(prefix)) {
-                cloneMethodLocal = true;
-                break;
-            }
-        }
-        boolean cloneClassLocal = false;
-        for (String prefix : BROADLEAF_PACKAGE_PREFIXES) {
-            if (cloned.getClass().getName().startsWith(prefix)) {
-                cloneClassLocal = true;
-                break;
-            }
-        }
-        if (cloneMethodLocal && !cloneClassLocal) {
-            //subclass is not implementing the clone method
-            throw new CloneNotSupportedException("The system is attempting to clone " + cloned.getClass().getName() +
-                    " and has determined the custom extension does not implement clone. This class should implement " +
-                    "clone, and inside first call super.clone() to get back an instance of your class (" + cloned.getClass().getName() +
-                    "), and then finish populating this instance with your custom fields before passing back the finished object.");
-        }
-    }
-
-    /**
      * Create a new instance of the polymorphic entity type - could be an extended type outside of Broadleaf.
      *
      * @param instance the object instance for the actual entity type (could be extended)
@@ -319,5 +282,42 @@ public class MultiTenantCopyContext {
             throw ExceptionHelper.refineException(e);
         }
         return response;
+    }
+
+    /**
+     * Detects whether or not the current cloned entity is an extension of an entity in Broadleaf, and if so, if the
+     * extension itself does not implement clone.
+     *
+     * @param cloned the cloned entity instance
+     * @throws CloneNotSupportedException thrown if the entity is an extension and is does not implement clone
+     */
+    protected void validateClone(Object cloned) throws CloneNotSupportedException {
+        Method cloneMethod;
+        try {
+            cloneMethod = cloned.getClass().getMethod("createOrRetrieveCopyInstance", new Class[]{MultiTenantCopyContext.class});
+        } catch (NoSuchMethodException e) {
+            throw ExceptionHelper.refineException(e);
+        }
+        boolean cloneMethodLocal = false;
+        for (String prefix : BROADLEAF_PACKAGE_PREFIXES) {
+            if (cloneMethod.getDeclaringClass().getName().startsWith(prefix)) {
+                cloneMethodLocal = true;
+                break;
+            }
+        }
+        boolean cloneClassLocal = false;
+        for (String prefix : BROADLEAF_PACKAGE_PREFIXES) {
+            if (cloned.getClass().getName().startsWith(prefix)) {
+                cloneClassLocal = true;
+                break;
+            }
+        }
+        if (cloneMethodLocal && !cloneClassLocal) {
+            //subclass is not implementing the clone method
+            throw new CloneNotSupportedException("The system is attempting to clone " + cloned.getClass().getName() +
+                    " and has determined the custom extension does not implement clone. This class should implement " +
+                    "clone, and inside first call super.clone() to get back an instance of your class (" + cloned.getClass().getName() +
+                    "), and then finish populating this instance with your custom fields before passing back the finished object.");
+        }
     }
 }
