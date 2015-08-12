@@ -355,15 +355,40 @@ var BLCAdmin = (function($) {
         initializeFields : function($container) {
 
 			function initializeDateFields($container) {
-				$container.find('.datetimepicker').datetimepicker({
-					format:'l, F d, Y \@ g:ia',
-					step: 10
+
+				$container.find('.datetimepicker').each(function (index, element) {
+					// create a hidden clone, which will contain the actual value
+					var clone = $(this).clone();
+					clone.insertAfter(this);
+					clone.hide();
+
+					// rename the original field, used to contain the display value
+					$(this).attr('id', $(this).attr('id') + '-display');
+					$(this).attr('name', $(this).attr('name') + '-display');
+
+					// create the datetimepicker with the desired display format
+					$(this).datetimepicker({
+						format: "l, F d, Y \@ g:ia",
+						onChangeDateTime: function(current_time, $input) {
+							if (current_time) {
+								var dateString = '' +
+									current_time.getFullYear() + '.' +
+									('0' + (current_time.getMonth() + 1).toString()).slice(-2) + '.' +
+									('0' + current_time.getDate().toString()).slice(-2) + ' ' +
+									('0' + current_time.getHours().toString()).slice(-2) + ':' +
+									('0' + current_time.getMinutes().toString()).slice(-2) + ':00';
+
+								// need to escape ids for entity form
+								$(jq(clone.attr("id"))).attr('value', dateString);
+							}
+						}
+					});
 				});
 
-				$container.find(".datetimepicker").each(function() {
+				// initialize datetimepicker fields
+				$container.find("[id$=display].datetimepicker").each(function() {
 					if ($(this).val().length) {
-						var d = new Date($(this).val())
-						$(this).datetimepicker({value: d.dateFormat("l, F d, Y \@ g:ia")});
+						$(this).blur();
 					}
 				});
 
@@ -372,15 +397,10 @@ var BLCAdmin = (function($) {
 					'mode': 'top'
 				});
 
-				$container.find('.datepicker').pickadate({
-					format: 'yyyy-mm-dd'
-				});
-
-				$container.find('.timepicker').pickatime({
-					format: 'h:i A',
-					formatSubmit: 'H:i:s',
-					interval: 15
-				});
+				// helpful function for escaping characters in ID string
+				function jq( myid ) {
+					return "#" + myid.replace( /(:|\.|\[|\]|,|')/g, "\\$1" );
+				}
 			}
 
 			function initializeRadioFields($container) {
