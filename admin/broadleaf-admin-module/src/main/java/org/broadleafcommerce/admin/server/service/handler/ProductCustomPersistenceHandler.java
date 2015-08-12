@@ -53,6 +53,7 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
@@ -60,6 +61,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +71,8 @@ import javax.persistence.criteria.From;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 /**
  * @author Jeff Fischer
@@ -146,6 +150,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 List<String> filterValues = fsc.getFilterValues();
                 cto.getCriteriaMap().remove("defaultCategory");
                 FilterMapping filterMapping = new FilterMapping()
+                        .withFieldPath(new FieldPath().withTargetProperty("allParentCategoryXrefs.category.id"))
                         .withDirectFilterValues(filterValues)
                         .withRestriction(new Restriction()
                                 .withPredicateProvider(new PredicateProvider() {
@@ -153,8 +158,19 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                                     public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
                                             From root, String ceilingEntity,
                                             String fullPropertyName, Path explicitPath, List directValues) {
-                                        Path xRefCategoriesCategoryId = root.get("allParentCategoryXrefs").get("category").get("id");
-                                        return xRefCategoriesCategoryId.as(Long.class).in(directValues);
+
+                                        //the property to be matched against (allParentCategoryXrefs.category.id) comes as "explicitPath"
+                                        //the specifics of what values are acceptable (those given as filter values, that in addition are defaults)
+                                        //are resolved in a sub-query
+                                        Subquery<Long> sub = fieldPathBuilder.getCriteria().subquery(Long.class);
+                                        Root<CategoryProductXrefImpl> subRoot = sub.from(CategoryProductXrefImpl.class);
+                                        sub.select(subRoot.get("category").get("id").as(Long.class));
+                                        List<Predicate> subRestrictions = new ArrayList<Predicate>();
+                                        subRestrictions.add(builder.equal(subRoot.get("defaultReference"), Boolean.TRUE));
+                                        subRestrictions.add(subRoot.get("category").get("id").in(directValues));
+                                        sub.where(subRestrictions.toArray(new Predicate[subRestrictions.size()]));
+
+                                        return explicitPath.in(sub);
                                     }
                                 }));
 
