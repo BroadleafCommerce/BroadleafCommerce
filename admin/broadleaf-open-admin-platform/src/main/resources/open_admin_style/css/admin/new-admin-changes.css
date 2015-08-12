@@ -696,3 +696,11 @@ fieldset {
 .nav>li>a .icon-spinner {
     padding: 3px 11px;
 }
+
+.xdsoft_datetimepicker .xdsoft_timepicker {
+    width: 80px;
+}
+
+.xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_prev, .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_next {
+    margin-left: 25px;
+}

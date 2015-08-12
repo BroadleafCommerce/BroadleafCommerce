@@ -359,6 +359,7 @@ var BLCAdmin = (function($) {
 				$container.find('.datetimepicker').each(function (index, element) {
 					// create a hidden clone, which will contain the actual value
 					var clone = $(this).clone();
+					var self = $(this);
 					clone.insertAfter(this);
 					clone.hide();
 
@@ -369,7 +370,7 @@ var BLCAdmin = (function($) {
 					// create the datetimepicker with the desired display format
 					$(this).datetimepicker({
 						format: "l, F d, Y \@ g:ia",
-						onChangeDateTime: function(current_time, $input) {
+						onClose: function(current_time, $input) {
 							if (current_time) {
 								var dateString = '' +
 									current_time.getFullYear() + '.' +
@@ -379,16 +380,26 @@ var BLCAdmin = (function($) {
 									('0' + current_time.getMinutes().toString()).slice(-2) + ':00';
 
 								// need to escape ids for entity form
-								$(jq(clone.attr("id"))).attr('value', dateString);
+								clone.attr('value',dateString);
 							}
 						}
+					});
+				});
+
+				$container.find('.timepicker').each(function (index, element) {
+					$(this).datetimepicker({
+						datepicker: false,
+						format:'h:i A',
+						formatTime: 'h:i A',
+						step: 15
 					});
 				});
 
 				// initialize datetimepicker fields
 				$container.find("[id$=display].datetimepicker").each(function() {
 					if ($(this).val().length) {
-						$(this).blur();
+						var d = new Date($(this).val());
+						$(this).val(d.dateFormat("l, F d, Y \@ g:ia"));
 					}
 				});
 
@@ -397,10 +408,6 @@ var BLCAdmin = (function($) {
 					'mode': 'top'
 				});
 
-				// helpful function for escaping characters in ID string
-				function jq( myid ) {
-					return "#" + myid.replace( /(:|\.|\[|\]|,|')/g, "\\$1" );
-				}
 			}
 
 			function initializeRadioFields($container) {
