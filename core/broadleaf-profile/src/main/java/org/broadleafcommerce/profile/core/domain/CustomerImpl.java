@@ -75,8 +75,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "USER_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_UserName", order = 4000, group = "CustomerImpl_Customer",
-            visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CustomerImpl_UserName", order = 4000, group = "CustomerImpl_Customer")
     protected String username;
 
     @Column(name = "PASSWORD")
