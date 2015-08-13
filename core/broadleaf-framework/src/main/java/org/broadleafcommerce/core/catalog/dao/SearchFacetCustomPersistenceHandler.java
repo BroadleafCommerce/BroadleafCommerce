@@ -73,6 +73,10 @@ public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandle
             extensionManager.getProxy().addtoSearchableFields(persistencePackage, adminInstance);
         }
 
+        if(adminInstance.getLabel() == null) {
+            adminInstance.setLabel(entity.getPMap().get("field").getDisplayValue());
+        }
+
         Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
 
         return adminEntity;
