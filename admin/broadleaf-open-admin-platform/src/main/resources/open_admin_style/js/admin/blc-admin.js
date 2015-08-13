@@ -415,6 +415,8 @@ var BLCAdmin = (function($) {
 					e.preventDefault();
 					$(this).prev('input').prop("checked", true).change();
 				});
+
+				$container.find('select:not(".selectize-collection, .selectize-adder")').selectize();
 			}
 
             // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
