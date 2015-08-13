@@ -669,6 +669,14 @@ fieldset {
     margin: 10px 0 0 0;
 }
 
+fieldset:not(.borderlessGroup) {
+    background-color: #FBFAF7;
+}
+
+legend {
+    background-color: #FBFAF7;
+}
+
 .modal-body .actions {
     margin-top: 10px;
 }
@@ -703,4 +711,14 @@ fieldset {
 
 .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_prev, .xdsoft_datetimepicker .xdsoft_timepicker .xdsoft_next {
     margin-left: 25px;
+}
+
+.input-group > input {
+    margin: 0;
+}
+
+.modal-body *.selectize-control {
+    border: 1px solid #D8D5D0;
+    height: 42px;
+    background-color: white;
 }

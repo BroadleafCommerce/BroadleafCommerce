@@ -99,7 +99,7 @@
             <tr th:if="${#lists.isEmpty(listGrid.records)}">
                 <td class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select'"/>
                 <div th:remove="tag" th:each="headerField,index : ${listGrid.headerFields}" th:if="${headerField.isVisible}">
-                    <td th:if="${index.count == 1}" class="list-grid-no-results">
+                    <td colspan="2" th:if="${index.count == 1}" class="list-grid-no-results">
                         (No records found)
                     </td>
 
