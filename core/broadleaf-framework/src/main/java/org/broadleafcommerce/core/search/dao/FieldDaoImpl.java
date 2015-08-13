@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.FieldImpl;
@@ -78,7 +79,8 @@ public class FieldDaoImpl implements FieldDao {
         
         criteria.select(root);
         criteria.where(
-            builder.equal(root.get("entityType").as(String.class), FieldEntity.PRODUCT.getType())
+            builder.or(builder.equal(root.get("entityType"), FieldEntity.PRODUCT.getType()),
+                    builder.equal(root.get("entityType").as(String.class), ProductImpl.class.getName()))
         );
 
         TypedQuery<Field> query = em.createQuery(criteria);

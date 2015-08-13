@@ -47,6 +47,7 @@
                 <ref bean="blSkuBundleItemCustomPersistenceHandler" />
                 <ref bean="blSearchFacetRangeCustomPersistenceHandler" />
                 <ref bean="blSearchFieldCustomPersistenceHandler" />
+                <ref bean="blSearchFacetCustomPersistenceHandler" />
             </list>
         </property>
     </bean>

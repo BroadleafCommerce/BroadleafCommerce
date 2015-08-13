@@ -22,9 +22,6 @@ package org.broadleafcommerce.core.search.domain;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -39,7 +36,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,10 +54,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
-})
-public class FieldImpl implements Field, Serializable, AdminMainEntity {
+public class FieldImpl implements Field, AdminMainEntity {
     
     /**
      * 
@@ -203,6 +196,9 @@ public class FieldImpl implements Field, Serializable, AdminMainEntity {
     @Deprecated
     @Override
     public Boolean getSearchable() {
+        if (searchable == null) {
+            return false;
+        }
         return searchable;
     }
 

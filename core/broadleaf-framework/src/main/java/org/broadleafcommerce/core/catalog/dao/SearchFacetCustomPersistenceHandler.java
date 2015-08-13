@@ -4,7 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.service.SearchFieldInfo;
-import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.type.SearchFieldType;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -16,8 +16,6 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -25,18 +23,18 @@ import javax.annotation.Resource;
 /**
  * @author Chad Harchar (charchar)
  */
-@Component("blSearchFieldCustomPersistenceHandler")
-public class SearchFieldCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
+@Component("blSearchFacetCustomPersistenceHandler")
+public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final Log LOG = LogFactory.getLog(SearchFacetRangeCustomPersistenceHandler.class);
 
-    @Resource(name = "blSearchFieldCustomPersistenceHandlerExtensionManager")
-    protected SearchFieldCustomPersistenceHandlerExtensionManager extensionManager;
+    @Resource(name = "blSearchFacetCustomPersistenceHandlerExtensionManager")
+    protected SearchFacetCustomPersistenceHandlerExtensionManager extensionManager;
 
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
-        return SearchField.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return SearchFacet.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
@@ -49,26 +47,27 @@ public class SearchFieldCustomPersistenceHandler extends CustomPersistenceHandle
         Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SearchField.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SearchFacet.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            SearchField adminInstance = (SearchField) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            SearchFacet adminInstance = (SearchFacet) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 
             return getEntity(persistencePackage, dynamicEntityDao, helper, entity, adminProperties, adminInstance);
         } catch (Exception e) {
-            throw new ServiceException("Unable to perform update for entity: " + SearchField.class.getName(), e);
+            throw new ServiceException("Unable to perform update for entity: " + SearchFacet.class.getName(), e);
         }
     }
 
-    protected Entity getEntity(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper, Entity entity, Map<String, FieldMetadata> adminProperties, SearchField adminInstance) throws ServiceException {
-        adminInstance = (SearchField) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+    protected Entity getEntity(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper, Entity entity, Map<String, FieldMetadata> adminProperties, SearchFacet adminInstance) throws ServiceException {
+        adminInstance = (SearchFacet) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
         adminInstance = dynamicEntityDao.merge(adminInstance);
 
         SearchFieldType fieldType = SearchFieldType.getInstance(adminInstance.getField().getFieldType());
 
-        List<FieldType> searchableFieldTypes = new ArrayList<FieldType>();
-        searchableFieldTypes.add(SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType));
-
-        adminInstance.setSearchableFieldTypes(searchableFieldTypes);
+        if (fieldType.equals(SearchFieldType.STRING)) {
+            adminInstance.setFacetFieldType(FieldType.STRING.getType());
+        } else if (SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType) != null) {
+            adminInstance.setFacetFieldType(SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType).getType());
+        }
 
         if (extensionManager != null) {
             extensionManager.getProxy().addtoSearchableFields(persistencePackage, adminInstance);
@@ -84,11 +83,11 @@ public class SearchFieldCustomPersistenceHandler extends CustomPersistenceHandle
         Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            SearchField adminInstance = (SearchField) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SearchField.class.getName(), persistencePerspective);
+            SearchFacet adminInstance = (SearchFacet) Class.forName(entity.getType()[0]).newInstance();
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SearchFacet.class.getName(), persistencePerspective);
             return getEntity(persistencePackage, dynamicEntityDao, helper, entity, adminProperties, adminInstance);
         } catch (Exception e) {
-            throw new ServiceException("Unable to perform add for entity: " + SearchField.class.getName(), e);
+            throw new ServiceException("Unable to perform add for entity: " + SearchFacet.class.getName(), e);
         }
     }
 

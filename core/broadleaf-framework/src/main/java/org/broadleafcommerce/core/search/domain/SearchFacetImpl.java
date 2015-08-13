@@ -83,7 +83,8 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     
     @Column(name = "LABEL")
     @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description",
-            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000)
+            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000,
+            tab = "SearchFacetImpl_Advanced_tab", tabOrder = 2000)
     protected String label;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
@@ -105,14 +106,18 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
             group = "SearchFacetImpl_description",
             groupOrder = 1,
             prominent = true,
-            tooltip = "SearchFacetImpl_searchPriorityTooltip")
+            tooltip = "SearchFacetImpl_searchPriorityTooltip",
+            tab = "SearchFacetImpl_Advanced_tab",
+            tabOrder = 2000)
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
     @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6000,
             group = "SearchFacetImpl_description",
             groupOrder = 1,
-            tooltip = "SearchFacetImpl_multiselectTooltip")
+            tooltip = "SearchFacetImpl_multiselectTooltip",
+            tab = "SearchFacetImpl_Advanced_tab",
+            tabOrder = 2000)
     protected Boolean canMultiselect = true;
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
@@ -135,6 +140,10 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
             groupOrder = 1,
             tooltip = "SearchFacetImpl_requiresAllDependentFacetsTooltip")
     protected Boolean requiresAllDependentFacets = false;
+
+    @Column(name = "FACET_FIELD_TYPE")
+    @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_general", excluded = true)
+    protected String facetFieldType;
     
     @Override
     public Long getId() {
@@ -224,6 +233,16 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @Override
     public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {
         this.searchFacetRanges = searchFacetRanges;
+    }
+
+    @Override
+    public String getFacetFieldType() {
+        return facetFieldType;
+    }
+
+    @Override
+    public void setFacetFieldType(String facetFieldType) {
+        this.facetFieldType = facetFieldType;
     }
 
     @Override

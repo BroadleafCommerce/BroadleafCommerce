@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
+public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFacet> {
 
     /**
      * Returns the internal id
@@ -171,4 +172,17 @@ public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
      */
     public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets);
 
+    /**
+     *
+     *
+     * @return
+     */
+    public String getFacetFieldType();
+
+    /**
+     *
+     *
+     * @param facetFieldType
+     */
+    public void setFacetFieldType(String facetFieldType);
 }
