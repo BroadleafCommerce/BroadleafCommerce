@@ -99,12 +99,12 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                     }
                     if (dw != null && StringUtils.isEmpty(dw.getError())) {
                         for (DataDTO dto : dw.getData()) {
-                            if (dto.getId() != null) {
+                            if (dto.getPk() != null) {
                                 boolean foundIdToUpdate = false;
                                 for (QuantityBasedRule quantityBasedRule : existingRules) {
-                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(quantityBasedRule.getClass(), dto.getId());
+                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(quantityBasedRule.getClass(), dto.getPk());
                                     if (sandBoxVersionId == null) {
-                                        sandBoxVersionId = dto.getId();
+                                        sandBoxVersionId = dto.getPk();
                                     }
                                     if (sandBoxVersionId.equals(quantityBasedRule.getId())) {
                                         foundIdToUpdate = true;
@@ -116,7 +116,7 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                                     }
                                 }
                                 if (!foundIdToUpdate) {
-                                    return new PropertyValidationResult(false, "Tried to update QuantityBasedReule with ID " + dto.getId() + " but that rule does not exist");
+                                    return new PropertyValidationResult(false, "Tried to update QuantityBasedReule with ID " + dto.getPk() + " but that rule does not exist");
                                 }
                             } else {
                                 // This is a new rule, just validate that it parses successfully

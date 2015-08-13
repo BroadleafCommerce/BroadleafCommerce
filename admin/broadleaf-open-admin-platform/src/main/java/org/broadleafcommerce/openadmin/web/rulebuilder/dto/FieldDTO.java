@@ -28,13 +28,27 @@ public class FieldDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    protected String id;
+
     protected String label;
 
-    protected String name;
+    protected String type;
+
+    protected String input;
 
     protected String operators;
 
-    protected String options;
+    protected String selectizeSectionKey;
+
+    protected String values;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getLabel() {
         return label;
@@ -44,12 +58,20 @@ public class FieldDTO implements Serializable {
         this.label = label;
     }
 
-    public String getName() {
-        return name;
+    public String getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getInput() {
+        return input;
+    }
+
+    public void setInput(String input) {
+        this.input = input;
     }
 
     public String getOperators() {
@@ -60,11 +82,19 @@ public class FieldDTO implements Serializable {
         this.operators = operators;
     }
 
-    public String getOptions() {
-        return options;
+    public String getSelectizeSectionKey() {
+        return selectizeSectionKey;
     }
 
-    public void setOptions(String options) {
-        this.options = options;
+    public void setSelectizeSectionKey(String selectizeSectionKey) {
+        this.selectizeSectionKey = selectizeSectionKey;
+    }
+
+    public String getValues() {
+        return values;
+    }
+
+    public void setValues(String values) {
+        this.values = values;
     }
 }

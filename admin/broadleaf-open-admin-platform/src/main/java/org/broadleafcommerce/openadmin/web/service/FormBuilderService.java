@@ -86,6 +86,14 @@ public interface FormBuilderService {
             throws ServiceException;
 
     /**
+     * constructs the selectize option map based on the dynamic result set and class metadata
+     * @param drs
+     * @param cmd
+     * @return
+     */
+    public Map<String, Object> constructSelectizeOptionMap(DynamicResultSet drs, ClassMetadata cmd);
+
+    /**
      * Extracts the DefaultValue from the FieldMetaData and parses it based on the
      * {@link org.broadleafcommerce.common.presentation.client.SupportedFieldType} that the field uses.
      *

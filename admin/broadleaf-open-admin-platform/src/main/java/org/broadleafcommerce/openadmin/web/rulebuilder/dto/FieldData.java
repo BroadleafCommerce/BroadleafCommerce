@@ -37,6 +37,7 @@ public class FieldData {
     protected String fieldName;
     protected String operators;
     protected String options;
+    protected String selectizeSectionKey;
     protected SupportedFieldType fieldType;
     protected SupportedFieldType secondaryFieldType;
     protected boolean skipValidation;
@@ -46,6 +47,7 @@ public class FieldData {
         this.fieldName = builder.fieldName;
         this.operators = builder.operators;
         this.options = builder.options;
+        this.selectizeSectionKey = builder.selectizeSectionKey;
         this.fieldType = builder.fieldType;
         this.secondaryFieldType = builder.secondaryFieldType;
         this.skipValidation = builder.skipValidation;
@@ -57,6 +59,7 @@ public class FieldData {
         protected String fieldName = null;
         protected String operators = null;
         protected String options = null;
+        protected String selectizeSectionKey = null;
         protected SupportedFieldType fieldType = null;
         protected SupportedFieldType secondaryFieldType = null;
         protected boolean skipValidation;
@@ -85,6 +88,11 @@ public class FieldData {
 
         public Builder options(String options) {
             this.options = options;
+            return this;
+        }
+
+        public Builder selectizeSectionKey(String selectizeSectionKey) {
+            this.selectizeSectionKey = selectizeSectionKey;
             return this;
         }
 
@@ -118,6 +126,10 @@ public class FieldData {
 
     public String getOptions() {
         return options;
+    }
+
+    public String getSelectizeSectionKey() {
+        return selectizeSectionKey;
     }
 
     public SupportedFieldType getFieldType() {

@@ -32,6 +32,8 @@ import java.text.ParseException;
  */
 public class PhraseTranslator {
 
+    private static final String COLLECTIONCASE = "CollectionUtils.intersection";
+
     private static final String[] SPECIALCASES = {
             ".startsWith",
             ".endsWith",
@@ -64,6 +66,10 @@ public class PhraseTranslator {
         }
 
         boolean isIgnoreCase = false;
+        boolean isCollectionCase = false;
+        if (phrase.startsWith(COLLECTIONCASE)) {
+            isCollectionCase = true;
+        }
 
         //remove null check syntax
         field = field.replaceAll("\\.\\?", ".");
@@ -92,7 +98,7 @@ public class PhraseTranslator {
                     value.substring(value.indexOf(caseInsensitivityKey) + caseInsensitivityKey.length(), value.length());
             value = value.substring(0, value.indexOf(")")) + value.substring(value.indexOf(")")+1, value.length());
         }
-        if (value.startsWith("[") && value.endsWith("]")) {
+        if (value.startsWith("[") && value.endsWith("]") && !isCollectionCase) {
             value = value.substring(1, value.length() - 1);
             String[] temps = value.split(",");
             for (int j = 0;j<temps.length;j++) {
@@ -181,6 +187,20 @@ public class PhraseTranslator {
 
     protected String[] extractComponents(String phrase) throws MVELTranslationException {
         String[] components = new String[]{};
+
+        //If the phrase is a CollectionUtils case - this will need to be evaluated first
+        //e.g. CollectionUtils.intersection(groupIds,["100","300"]).size()>0
+        if (phrase.startsWith(COLLECTIONCASE)) {
+            components = new String[3];
+            //field
+            components[0] = phrase.substring((COLLECTIONCASE+"(").length(), phrase.indexOf(","));
+            //value
+            components[2] = phrase.substring(((COLLECTIONCASE+"(")+components[0]+",").length(), phrase.indexOf(").size"));
+            //operator
+            components[1] = phrase.substring(phrase.indexOf(".size"));
+            return components;
+        }
+
         for (String operator : STANDARDOPERATORS) {
             String[] temp;
             if (phrase.contains(operator)) {
@@ -364,6 +384,10 @@ public class PhraseTranslator {
             return BLCOperator.COUNT_LESS_OR_EQUAL;
         } else if (operator.equals(".size()==")) {
             return BLCOperator.COUNT_EQUALS;
+        } else if (operator.equals(".size()>0")){
+            return BLCOperator.COLLECTION_IN;
+        } else if (operator.equals(".size()==0")){
+            return BLCOperator.COLLECTION_NOT_IN;
         }
         throw new MVELTranslationException(MVELTranslationException.OPERATOR_NOT_FOUND, "Unable to identify an operator compatible with the " +
                 "rules builder: ("+(isNegation?"!":""+field+operator+value)+")");

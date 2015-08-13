@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.LRUMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -235,6 +236,10 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @return a Boolean object containing the result of executing the MVEL expression
      */
     public Boolean executeExpression(String expression, Map<String, Object> vars) {
+        return executeExpression(expression, vars, null);
+    }
+
+    public Boolean executeExpression(String expression, Map<String, Object> vars, Map<String, Class> mvelImports) {
         try {
             Serializable exp;
             synchronized (EXPRESSION_CACHE) {
@@ -245,6 +250,13 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                     context.addImport("FulfillmentType", FulfillmentType.class);
                     context.addImport("MVEL", MVEL.class);
                     context.addImport("MvelHelper", MvelHelper.class);
+                    context.addImport("CollectionUtils", CollectionUtils.class);
+                    if (mvelImports != null) {
+                        for (String key : mvelImports.keySet()) {
+                            context.addImport(key, mvelImports.get(key));
+                        }
+                    }
+
                     //            StringBuffer completeExpression = new StringBuffer(functions.toString());
                     //            completeExpression.append(" ").append(expression);
                     exp = MVEL.compileExpression(expression, context);
@@ -254,7 +266,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             }
 
             Object test = MVEL.executeExpression(exp, vars);
-            
+
             return (Boolean) test;
         } catch (Exception e) {
             //Unable to execute the MVEL expression for some reason
@@ -263,15 +275,14 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                     "for the match expression:" + expression, e);
             return false;
         }
-
     }
-    
-    /**
-     * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
-     * marked as qualifiers or targets.  This method removes those items from being used as targets or
-     * qualifiers so they are eligible for other promotions.
-     * @param priceDetails
-     */
+
+        /**
+         * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
+         * marked as qualifiers or targets.  This method removes those items from being used as targets or
+         * qualifiers so they are eligible for other promotions.
+         * @param priceDetails
+         */
     protected void clearAllNonFinalizedQuantities(List<PromotableOrderItemPriceDetail> priceDetails) {
         for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
             priceDetail.clearAllNonFinalizedQuantities();

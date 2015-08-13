@@ -38,27 +38,29 @@ import java.util.ArrayList;
  * {'data': [
  *      {'id':'100',
  *      'quantity':'1',
- *      'groupOperator':'AND',
- *      'groups':[
+ *      'condition':'AND',
+ *      'rules':[
  *          {'id':null,
  *          'quantity':null,
- *          'groupOperator':null,
- *          'groups':null,
+ *          'condition':null,
+ *          'rules':null,
  *          'name':'name',
  *          'operator':'IEQUALS',
  *          'value':'merchandise'}]},
  *      {'id':'200',
  *      'quantity':'2',
- *      'groupOperator':'AND',
- *      'groups':[
+ *      'condition':'AND',
+ *      'rules':[
  *          {'id':null,
  *          'quantity':null,
- *          'groupOperator':null,
- *          'groups':null,
+ *          'condition':null,
+ *          'rules':null,
  *          'name':'retailPrice',
  *          'operator':'GREATER_THAN',
  *          'value':'20.00'}]}
- * ]}
+ *      ],
+ * "error":null,
+ * "rawMvel":null}
  *
  */
 public class DataWrapper implements Serializable {

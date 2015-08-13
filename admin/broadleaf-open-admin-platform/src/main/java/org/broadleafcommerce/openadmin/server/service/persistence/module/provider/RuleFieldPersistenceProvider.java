@@ -417,7 +417,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             if (dw != null && StringUtils.isEmpty(dw.getError())) {
                 List<QuantityBasedRule> updatedRules = new ArrayList<QuantityBasedRule>();
                 for (DataDTO dto : dw.getData()) {
-                    if (dto.getId() != null && !CollectionUtils.isEmpty(criteriaList)) {
+                    if (dto.getPk() != null && !CollectionUtils.isEmpty(criteriaList)) {
                         checkId: {
                             //updates are comprehensive, even data that was not changed
                             //is submitted here
@@ -425,7 +425,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             for (QuantityBasedRule quantityBasedRule : criteriaList) {
                                 //make compatible with enterprise module
                                 Long id = sandBoxHelper.getOriginalId(quantityBasedRule);
-                                boolean isMatch = dto.getId().equals(id) || dto.getId().equals(quantityBasedRule.getId());
+                                boolean isMatch = dto.getPk().equals(id) || dto.getPk().equals(quantityBasedRule.getId());
                                 if (isMatch){
                                     String mvel;
                                     //don't update if the data has not changed
@@ -458,7 +458,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                 }
                             }
                             throw new IllegalArgumentException("Unable to update the rule of type (" + memberType.getName() +
-                                    ") because an update was requested for id (" + dto.getId() + "), which does not exist.");
+                                    ") because an update was requested for id (" + dto.getPk() + "), which does not exist.");
                         }
                     } else {
                         //Create a new Criteria
@@ -475,7 +475,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                             throw new RuntimeException(e);
                         }
                         em.persist(quantityBasedRule);
-                        dto.setId(quantityBasedRule.getId());
+                        dto.setPk(quantityBasedRule.getId());
                         if (extensionManager != null) {
                             ExtensionResultHolder resultHolder = new ExtensionResultHolder();
                             extensionManager.getProxy().postAdd(quantityBasedRule, resultHolder);

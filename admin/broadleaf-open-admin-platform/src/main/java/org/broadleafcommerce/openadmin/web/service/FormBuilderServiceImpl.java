@@ -461,9 +461,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     public Map<String, Object> buildSelectizeCollectionInfo(String containingEntityId, DynamicResultSet drs, Property field,
         String sectionKey, List<SectionCrumb> sectionCrumbs)
             throws ServiceException {
-        Map<String, Object> result = new HashMap<>();
-        List<Map<String, String>> options = new ArrayList<>();
-
         FieldMetadata fmd = field.getMetadata();
         // Get the class metadata for this particular field
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(fmd, sectionCrumbs);
@@ -471,6 +468,25 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             ppr.setSectionEntityField(field.getName());
         }
         ClassMetadata cmd = adminEntityService.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+
+        Map<String, Object> result = constructSelectizeOptionMap(drs, cmd);
+
+        AdornedTargetList adornedList = ppr.getAdornedList();
+        if (adornedList != null && adornedList.getLinkedObjectPath() != null
+            && adornedList.getTargetObjectPath() != null && adornedList.getLinkedIdProperty() != null
+            && adornedList.getTargetIdProperty() != null) {
+            result.put("linkedObjectPath", adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty());
+            result.put("linkedObjectId", containingEntityId);
+            result.put("targetObjectPath", adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
+        }
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> constructSelectizeOptionMap(DynamicResultSet drs, ClassMetadata cmd) {
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String, String>> options = new ArrayList<>();
 
         List<Field> headerFields = new ArrayList<Field>();
         for (Property p : cmd.getProperties()) {
@@ -502,15 +518,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             options.add(selectizeOption);
         }
         result.put("options", options);
-
-        AdornedTargetList adornedList = ppr.getAdornedList();
-        if (adornedList != null && adornedList.getLinkedObjectPath() != null
-            && adornedList.getTargetObjectPath() != null && adornedList.getLinkedIdProperty() != null
-            && adornedList.getTargetIdProperty() != null) {
-            result.put("linkedObjectPath", adornedList.getLinkedObjectPath() + "." + adornedList.getLinkedIdProperty());
-            result.put("linkedObjectId", containingEntityId);
-            result.put("targetObjectPath", adornedList.getTargetObjectPath() + "." + adornedList.getTargetIdProperty());
-        }
 
         return result;
     }

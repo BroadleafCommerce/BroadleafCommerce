@@ -38,16 +38,16 @@
         
         <!-- Normal display -->
         <h4 class="field-label" th:text="#{${field.friendlyName}}"
-            th:classappend="${!field.required ? 'conditional-rules-header' : 'required'}"
+            th:classappend="${!field.required ? 'query-builder-rules-header' : 'required'}"
             th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}" />
-    
-        <div class="conditional-rules-container"
-            th:classappend="${field.required ? 'required-conditional' : ''}"
+
+        <div class="query-builder-rules-container"
+            th:classappend="${field.required ? 'required-query-builder' : ''}"
             th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}"
             th:id="${field.name}"/>
         
         <!-- Rule parsing error display -->
-        <div class="field-label conditional-rules-header error"
+        <div class="field-label query-builder-rules-header error"
             th:if="${field.dataWrapper.error != null}"
             th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}"
             th:inline="text">
@@ -55,9 +55,9 @@
             <a href="#" class="rule-reset" th:inline="text">[[#{Reset_Rule}]] <i class="icon-undo"></i></a>
         </div>
 
-        <div class="conditional-rules-container-mvel"
+        <div class="query-builder-rules-container-mvel"
             th:if="${field.dataWrapper.error != null}"
-            th:classappend="${field.required ? 'required-conditional' : ''}"
+            th:classappend="${field.required ? 'required-query-builder' : ''}"
             th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}">
                 <textarea disabled="disabled" style="width: 98%;" th:text="${field.dataWrapper.rawMvel}"/>
         </div>

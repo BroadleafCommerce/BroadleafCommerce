@@ -47,7 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/" + AdminOfferController.SECTION_KEY)
 public class AdminOfferController extends AdminBasicEntityController {
     
-    protected static final String SECTION_KEY = "offer";
+    public static final String SECTION_KEY = "offer";
     
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {

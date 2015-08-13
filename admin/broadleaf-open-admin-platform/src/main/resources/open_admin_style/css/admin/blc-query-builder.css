@@ -1,0 +1,233 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+/*!
+ * BLC Admin Styles adapted for:
+ * jQuery QueryBuilder 2.2.0
+ * Copyright 2014-2015 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
+ * Licensed under MIT (http://opensource.org/licenses/MIT)
+ */
+
+.query-builder .rules-group-container, .query-builder .rule-container, .query-builder .rule-placeholder {
+  position: relative;
+  margin: 4px 0;
+  border-radius: 5px;
+  padding: 5px;
+  border: 1px solid #EEE;
+  background: rgba(0,0,0,0.04);
+}
+
+.query-builder .rule-container .rule-filter-container,
+.query-builder .rule-container .rule-operator-container,
+.query-builder .rule-container .rule-value-container, .query-builder .error-container, .query-builder .drag-handle {
+  display: inline-block;
+  margin: 0 5px 0 0;
+  vertical-align: middle;
+}
+
+.query-builder .rules-group-container {
+    background-color: rgba(0,0,0,0.03);
+    padding: 20px;
+    width: 100%;
+}
+.query-builder .rules-group-container .rules-group-header {
+  margin-bottom: 10px;
+}
+
+.query-builder .rules-group-container .rules-list {
+  list-style: none;
+  padding: 0 0 0 15px;
+  margin: 0;
+}
+.query-builder .rule-container .rule-value-container {
+  border-left: 1px solid #ddd;
+  padding-left: 5px;
+  width: 275px;
+}
+.query-builder .rule-container .rule-value-container .rule-val-sep {
+  padding: 5px;
+}
+.query-builder .rule-container .rule-value-container label {
+  margin-bottom: 0;
+  font-weight: normal;
+}
+.query-builder .rule-container .rule-value-container label.block {
+  display: block;
+}
+.query-builder .rule-container select, .query-builder .rule-container input[type=text], .query-builder .rule-container input[type=number] {
+  padding: 1px;
+  margin: 0px;
+}
+.query-builder .error-container {
+  display: none;
+  cursor: help;
+  color: #F00;
+}
+.query-builder .has-error {
+  background-color: #FDD;
+  border-color: #F99;
+}
+.query-builder .has-error .error-container {
+  display: inline-block !important;
+}
+.query-builder .rules-list > *:before, .query-builder .rules-list > *:after {
+  content: '';
+  position: absolute;
+  left: -10px;
+  width: 10px;
+  height: calc(50% + 4px);
+  border-color: #CCC;
+  border-style: solid;
+}
+.query-builder .rules-list > *:before {
+  top: -4px;
+  border-width: 0 0 2px 2px;
+}
+.query-builder .rules-list > *:after {
+  top: 50%;
+  border-width: 0 0 0 2px;
+}
+.query-builder .rules-list > *:first-child:before {
+  top: -12px;
+  height: calc(50% + 14px);
+}
+.query-builder .rules-list > *:last-child:before {
+  border-radius: 0 0 0 4px;
+}
+.query-builder .rules-list > *:last-child:after {
+  display: none;
+}
+
+.query-builder .error-container + .tooltip .tooltip-inner {
+  color: #F99 !important;
+}
+
+.query-builder p.filter-description {
+  margin: 5px 0 0 0;
+  background: #D9EDF7;
+  border: 1px solid #BCE8F1;
+  color: #31708F;
+  border-radius: 5px;
+  padding: 2.5px 5px;
+  font-size: 0.8em;
+}
+
+.query-builder .drag-handle {
+  cursor: move;
+  vertical-align: middle;
+  margin-left: 5px;
+}
+.query-builder .dragged {
+  opacity: 0.5;
+}
+.query-builder .rule-placeholder {
+  border: 1px dashed #BBB;
+  opacity: 0.7;
+}
+
+.query-builder-rules {
+    width: 100%;
+}
+
+.query-builder-rules .remove-row {
+    text-align: center;
+    color: #9a9a9a;
+    font-size: 21px;
+    padding: 5px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.query-builder-rules .group-conditions label {
+    display: inline-block;
+    margin: 5px;
+}
+
+.query-builder-rules .group-actions button {
+    background-color: rgba(0,0,0,0.04);
+    color: #9a9a9a;
+    font-size: 13px;
+}
+
+.query-builder-rules .rules-group-header-span {
+    margin: 5px;
+}
+
+.query-builder-rules .rules-group-header-item-qty {
+    width: 40px;
+    margin: 5px;
+}
+
+.query-builder-rules .query-builder-selectize-input {
+    min-width: 200px;
+}
+
+.query-builder-rules .query-builder-all-any-wrapper {
+    display: inline-block;
+    margin: 5px;
+}
+
+.query-builder-rules .toggle-container {
+    color: #404040;
+    height: 2.7em;
+    width: 98px;
+    background: rgba(0,0,0,0.03);
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.query-builder-rules input[type="radio"].toggle {
+    position: absolute;
+    left: -99em;
+    margin: 20px auto;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.query-builder-rules input[type="radio"].toggle + label {
+    display:inline-block;
+    text-align:center;
+    padding:5px 0px;
+    width:3.1em;
+    line-height: 1.5em;
+    font-size: 12px;
+    color: #9a9a9a;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+/*input[type="radio"].toggle:checked + label,*/
+.query-builder-rules input[type="radio"].toggle.checked + label {
+    background-color:#404040;
+    color:#F7F7F7;
+    background: #94AF39;
+    border-radius: 4px;
+    /**background-image: -webkit-linear-gradient(top, #94AF39, #9FB92D);
+    background-image: -moz-linear-gradient(top, #94AF39, #9FB92D);
+    background-image: -o-linear-gradient(top, #94AF39, #9FB92D);
+    background-image: linear-gradient(to bottom, #94AF39, #9FB92D);
+    -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 1px rgba(0, 0, 0, 0.2);
+    **/
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 1px rgba(0, 0, 0, 0.2);
+}

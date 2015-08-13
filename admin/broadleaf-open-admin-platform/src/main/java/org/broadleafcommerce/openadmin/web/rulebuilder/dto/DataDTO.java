@@ -31,20 +31,20 @@ public class DataDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected Long id;
+    protected Long pk;
 
     protected Integer quantity;
 
-    protected String groupOperator;
+    protected String condition;
 
-    protected ArrayList<DataDTO> groups = new ArrayList<DataDTO>();
+    protected ArrayList<DataDTO> rules = new ArrayList<DataDTO>();
 
-    public Long getId() {
-        return id;
+    public Long getPk() {
+        return pk;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPk(Long pk) {
+        this.pk = pk;
     }
 
     public Integer getQuantity() {
@@ -55,20 +55,20 @@ public class DataDTO implements Serializable {
         this.quantity = quantity;
     }
 
-    public String getGroupOperator() {
-        return groupOperator;
+    public String getCondition() {
+        return condition;
     }
 
-    public void setGroupOperator(String groupOperator) {
-        this.groupOperator = groupOperator;
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
-    public ArrayList<DataDTO> getGroups() {
-        return groups;
+    public ArrayList<DataDTO> getRules() {
+        return rules;
     }
 
-    public void setGroups(ArrayList<DataDTO> groups) {
-        this.groups = groups;
+    public void setRules(ArrayList<DataDTO> rules) {
+        this.rules = rules;
     }
     
     @Override
@@ -76,10 +76,10 @@ public class DataDTO implements Serializable {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             DataDTO that = (DataDTO) obj;
             return new EqualsBuilder()
-                .append(id, that.id)
+                .append(pk, that.pk)
                 .append(quantity, that.quantity)
-                .append(groupOperator, that.groupOperator)
-                .append(groups.toArray(), that.groups.toArray())
+                .append(condition, that.condition)
+                .append(rules.toArray(), that.rules.toArray())
                 .build();
         }
         return false;

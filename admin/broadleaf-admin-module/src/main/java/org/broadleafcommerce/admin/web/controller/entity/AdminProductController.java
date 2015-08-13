@@ -71,7 +71,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/" + AdminProductController.SECTION_KEY)
 public class AdminProductController extends AdminBasicEntityController {
     
-    protected static final String SECTION_KEY = "product";
+    public static final String SECTION_KEY = "product";
     
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;

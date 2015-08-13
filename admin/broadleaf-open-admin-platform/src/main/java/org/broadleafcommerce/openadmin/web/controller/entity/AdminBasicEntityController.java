@@ -179,6 +179,25 @@ public class AdminBasicEntityController extends AdminAbstractController {
         return "modules/defaultContainer";
     }
 
+    @RequestMapping(value = "/selectize", method = RequestMethod.GET)
+    public @ResponseBody Map<String, Object> viewEntityListSelectize(HttpServletRequest request,
+             HttpServletResponse response, Model model,
+             @PathVariable Map<String, String> pathVars,
+             @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+        String sectionKey = getSectionKey(pathVars);
+        String sectionClassName = getClassNameForSection(sectionKey);
+        List<SectionCrumb> crumbs = getSectionCrumbs(request, null, null);
+        PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars)
+                .withFilterAndSortCriteria(getCriteria(requestParams))
+                .withStartIndex(getStartIndex(requestParams))
+                .withMaxIndex(getMaxIndex(requestParams));
+
+        ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+        DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
+
+        return formService.constructSelectizeOptionMap(drs, cmd);
+    }
+
     /**
      * Adds the "Add" button to the main entity form if the current user has permissions to create new instances
      * of the entity and all of the fields in the entity aren't marked as read only.

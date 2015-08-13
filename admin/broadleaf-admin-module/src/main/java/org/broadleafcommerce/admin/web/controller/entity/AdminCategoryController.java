@@ -51,7 +51,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/" + AdminCategoryController.SECTION_KEY)
 public class AdminCategoryController extends AdminBasicEntityController {
     
-    protected static final String SECTION_KEY = "category";
+    public static final String SECTION_KEY = "category";
     
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;

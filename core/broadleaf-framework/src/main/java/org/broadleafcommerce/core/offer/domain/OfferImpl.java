@@ -136,14 +136,14 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "MARKETING_MESSASGE")
     @Index(name = "OFFER_MARKETING_MESSAGE_INDEX", columnNames = { "MARKETING_MESSASGE" })
-    @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = 6000,
+    @AdminPresentation(friendlyName = "OfferImpl_marketingMessage", order = 3000,
         group = OfferAdminPresentation.GroupName.Description,
         translatable = true)
     protected String marketingMessage;
 
     @Column(name = "OFFER_TYPE", nullable=false)
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 3000, 
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 4000,
         group = OfferAdminPresentation.GroupName.Description,
         prominent =  true, gridOrder = 3,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
@@ -274,7 +274,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferQualifyingCriteriaXrefImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Rule",
-        group = OfferAdminPresentation.GroupName.Qualifiers,
+        group = OfferAdminPresentation.GroupName.ItemQualifier,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
         ruleIdentifier = RuleIdentifier.ORDERITEM)
     protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria = new HashSet<OfferQualifyingCriteriaXref>();

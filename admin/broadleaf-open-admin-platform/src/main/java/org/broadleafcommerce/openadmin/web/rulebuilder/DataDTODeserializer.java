@@ -57,31 +57,26 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
         while (elementsIterator.hasNext()) {
             Map.Entry<String, JsonNode> element=elementsIterator.next();
             String name = element.getKey();
-            if ("name".equals(name)) {
-                expressionDTO.setName(getNullAwareText(element.getValue()));
+            if ("id".equals(name)) {
+                expressionDTO.setId(getNullAwareText(element.getValue()));
                 isExpression = true;
             }
+
             if ("operator".equals(name)) {
                 expressionDTO.setOperator(getNullAwareText(element.getValue()));
                 isExpression = true;
             }
+
             if ("value".equals(name)) {
                 expressionDTO.setValue(getNullAwareText(element.getValue()));
                 isExpression = true;
             }
-            if ("start".equals(name)) {
-                expressionDTO.setStart(getNullAwareText(element.getValue()));
-                isExpression = true;
-            }
-            if ("end".equals(name)) {
-                expressionDTO.setEnd(getNullAwareText(element.getValue()));
-                isExpression = true;
-            }
-            if ("id".equals(name)) {
+
+            if ("pk".equals(name)) {
                 if (getNullAwareText(element.getValue()) == null) {
-                    dataDTO.setId(null);
+                    dataDTO.setPk(null);
                 } else {
-                    dataDTO.setId(element.getValue().asLong());
+                    dataDTO.setPk(element.getValue().asLong());
                 }
             }
             if ("quantity".equals(name)) {
@@ -91,12 +86,14 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
                     dataDTO.setQuantity(element.getValue().asInt());
                 }
             }
-            if ("groupOperator".equals(name)) {
-                dataDTO.setGroupOperator(getNullAwareText(element.getValue()));
+
+            if ("condition".equals(name)) {
+                dataDTO.setCondition(getNullAwareText(element.getValue()));
             }
-            if ("groups".equals(name)){
+
+            if ("rules".equals(name)){
                 CollectionType dtoCollectionType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, DataDTO.class);
-                dataDTO.setGroups((ArrayList<DataDTO>)mapper.readValue(element.getValue().traverse(jp.getCodec()), dtoCollectionType));
+                dataDTO.setRules((ArrayList<DataDTO>) mapper.readValue(element.getValue().traverse(jp.getCodec()), dtoCollectionType));
             }
         }
 

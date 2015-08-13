@@ -32,6 +32,7 @@ public enum SupportedFieldType {
     INTEGER,
     DECIMAL,
     STRING,
+    COLLECTION,
     PASSWORD,
     PASSWORD_CONFIRM,
     EMAIL,

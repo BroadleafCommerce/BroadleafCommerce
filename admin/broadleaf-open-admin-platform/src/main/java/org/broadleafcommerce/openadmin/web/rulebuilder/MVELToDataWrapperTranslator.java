@@ -80,7 +80,7 @@ public class MVELToDataWrapperTranslator {
                     Group group = groupingTranslator.createGroups(mvel);
                     DataDTO dataDTO = createRuleDataDTO(null, group, fieldService);
                     if (dataDTO != null) {
-                        dataDTO.setId(id);
+                        dataDTO.setPk(id);
                         dataDTO.setQuantity(qty);
                         dataWrapper.getData().add(dataDTO);
                     }
@@ -103,7 +103,7 @@ public class MVELToDataWrapperTranslator {
             group.setOperatorType(BLCOperator.AND);
         }
         BLCOperator operator = group.getOperatorType();
-        data.setGroupOperator(operator.name());
+        data.setCondition(operator.name());
         List<ExpressionDTO> myCriteriaList = new ArrayList<ExpressionDTO>();
         if (BLCOperator.NOT.equals(group.getOperatorType()) && group.getIsTopGroup()) {
             group = group.getSubGroups().get(0);
@@ -115,15 +115,15 @@ public class MVELToDataWrapperTranslator {
             j++;
         }
         if (myCriteriaList.size() > 0) {
-            data.getGroups().addAll(myCriteriaList);
+            data.getRules().addAll(myCriteriaList);
         }
         for (Group subgroup : group.getSubGroups()) {
             DataDTO subCriteria = createRuleDataDTO(data, subgroup, fieldService);
-            if (subCriteria != null && !subCriteria.getGroups().isEmpty()) {
-                data.getGroups().add(subCriteria);
+            if (subCriteria != null && !subCriteria.getRules().isEmpty()) {
+                data.getRules().add(subCriteria);
             }
         }
-        if (data.getGroups() != null && !data.getGroups().isEmpty()) {
+        if (data.getRules() != null && !data.getRules().isEmpty()) {
             return data;
         } else {
             return null;
@@ -147,7 +147,7 @@ public class MVELToDataWrapperTranslator {
 
     public ExpressionDTO createExpressionDTO(Expression expression) {
         ExpressionDTO expressionDTO = new ExpressionDTO();
-        expressionDTO.setName(expression.getField());
+        expressionDTO.setId(expression.getField());
         expressionDTO.setOperator(expression.getOperator().name());
         expressionDTO.setValue(expression.getValue());
         return expressionDTO;
@@ -162,7 +162,7 @@ public class MVELToDataWrapperTranslator {
                                        int count, ExpressionDTO temp, SupportedFieldType type) {
         if (
             count > 0 &&
-                temp.getName().equals(myCriteriaList.get(count - 1).getName()) &&
+                temp.getId().equals(myCriteriaList.get(count - 1).getId()) &&
                 myCriteriaList.get(count - 1).getOperator().equals(BLCOperator.GREATER_THAN.name()) &&
                 temp.getOperator().equals(BLCOperator.LESS_THAN.name())
             ) {
@@ -176,15 +176,13 @@ public class MVELToDataWrapperTranslator {
                 start = myCriteriaList.get(count-1).getValue();
                 end = temp.getValue();
             }
-            myCriteriaList.get(count-1).setStart(start);
-            myCriteriaList.get(count-1).setEnd(end);
-            myCriteriaList.get(count-1).setValue(null);
+            myCriteriaList.get(count-1).setValue("[" + start + "," + end + "]");
             if (parentDTO != null) {
-                parentDTO.getGroups().add(myCriteriaList.remove(count-1));
+                parentDTO.getRules().add(myCriteriaList.remove(count-1));
             }
         } else if (
             count > 0 &&
-                temp.getName().equals(myCriteriaList.get(count-1).getName()) &&
+                temp.getId().equals(myCriteriaList.get(count-1).getId()) &&
                 myCriteriaList.get(count-1).getOperator().equals(BLCOperator.GREATER_OR_EQUAL.name()) &&
                 temp.getOperator().equals(BLCOperator.LESS_OR_EQUAL.name())
             ) {
@@ -198,15 +196,13 @@ public class MVELToDataWrapperTranslator {
                 start = myCriteriaList.get(count-1).getValue();
                 end = temp.getValue();
             }
-            myCriteriaList.get(count-1).setStart(start);
-            myCriteriaList.get(count-1).setEnd(end);
-            myCriteriaList.get(count-1).setValue(null);
+            myCriteriaList.get(count-1).setValue("[" + start + "," + end + "]");
             if (parentDTO != null) {
-                parentDTO.getGroups().add(myCriteriaList.remove(count-1));
+                parentDTO.getRules().add(myCriteriaList.remove(count-1));
             }
         } else if (isProjection(temp.getValue())) {
             if (parentDTO != null) {
-                parentDTO.getGroups().add(temp);
+                parentDTO.getRules().add(temp);
             } else {
                 myCriteriaList.add(temp);
             }
