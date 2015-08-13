@@ -11,17 +11,17 @@
                th:id="${field.jsonFieldName}"
                th:name="'fields[\&#39;'+${field.jsonFieldName}+'\&#39;].value'"
                th:value="${field.json}"/>
-               
-        <div class="rule-builder-required-field" 
+
+        <div class="rule-builder-required-field"
             th:if="${(withQuestion == null) ? field.required : withQuestion}"
-            th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" />
+            th:attr="data-ruletype=${(field.styleClass == 'rule-builder-simple' OR field.styleClass == 'rule-builder-without-question') ? 'add-main-rule' : 'add-main-item-rule'}" />
                
         <div class="custom-checkbox rule-builder-checkbox" th:if="${(withQuestion == null) ? !field.required : withQuestion}">
             <input type="radio"
                    th:name="${field.name}"
                    th:id="${field.name + '-true'}"
                    th:class="${field.styleClass == 'rule-builder-simple' ? 'radio add-main-rule' : 'radio add-main-item-rule'}"
-                   th:attr="data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}"
+                   th:attr="data-ruletype=${(field.styleClass == 'rule-builder-simple' OR field.styleClass == 'rule-builder-without-question') ? 'add-main-rule' : 'add-main-item-rule'}"
                    th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
             <label th:for="${field.name + '-true'}" class="radio-label">
                 <span style="margin-right: 10px;" th:text="#{Yes}" />
@@ -67,7 +67,7 @@
                      data-containerid=${field.name},
                      data-fields=${fieldWrapper.serialize()},
                      data-data=${field.dataWrapper.serialize()},
-                     data-ruletype=${field.styleClass == 'rule-builder-simple' ? 'add-main-rule' : 'add-main-item-rule'}" />
+                     data-ruletype=${(field.styleClass == 'rule-builder-simple' OR field.styleClass == 'rule-builder-without-question') ? 'add-main-rule' : 'add-main-item-rule'}" />
     
     </div>
 </blc_admin:admin_field_builder>
