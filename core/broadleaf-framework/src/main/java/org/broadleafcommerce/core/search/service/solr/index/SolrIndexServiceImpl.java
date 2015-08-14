@@ -180,17 +180,17 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Override
     public void rebuildIndex() throws ServiceException, IOException {
         rebuildIndex(new GlobalSolrFullReIndexOperation(this, shs, errorOnConcurrentReIndex) {
-            
+
             @Override
             public List<? extends Indexable> readIndexables(int page, int pageSize) {
                 return readAllActiveIndexables(page, pageSize);
             }
-            
+
             @Override
             public Long countIndexables() {
                 return countIndexableItems();
             }
-            
+
             @Override
             public void buildPage(List<? extends Indexable> indexables) throws ServiceException {
                 buildIncrementalIndex(indexables, getSolrServerForIndexing());
@@ -339,20 +339,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             Collection<SolrInputDocument> documents = new ArrayList<SolrInputDocument>();
             List<Locale> locales = getAllLocales();
 
-            List<Long> productIds = new ArrayList<Long>();
-            if (useSku) {
-                for (Sku sku : (List<Sku>) indexables) {
-                    productIds.add(sku.getProduct().getId());
+            List<Long> productIds = BLCCollectionUtils.collectList(indexables, new TypedTransformer<Long>() {
+                @Override
+                public Long transform(Object input) {
+                    return shs.getCurrentProductId((Indexable) input);
                 }
-            } else {
-                productIds = BLCCollectionUtils.collectList(indexables, new TypedTransformer<Long>() {
-    
-                    @Override
-                    public Long transform(Object input) {
-                        return shs.getIndexableId((Product) input);
-                    }
-                });
-            }
+            });
 
             solrIndexDao.populateProductCatalogStructure(productIds, SolrIndexCachedOperation.getCache());
 
@@ -519,38 +511,33 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             } else {
                 cache = new CatalogStructure();
                 SolrIndexCachedOperation.setCache(cache);
-                if (useSku) {
-                    solrIndexDao.populateProductCatalogStructure(Arrays.asList(((Sku) indexable).getProduct().getId()), SolrIndexCachedOperation.getCache());
-                } else {
-                    solrIndexDao.populateProductCatalogStructure(Arrays.asList(indexable.getId()), SolrIndexCachedOperation.getCache());
-                }
+
+                solrIndexDao.populateProductCatalogStructure(Arrays.asList(shs.getCurrentProductId(indexable)), SolrIndexCachedOperation.getCache());
+
             }
             // Add the namespace and ID fields for this product
             document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
             document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
-            
             document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
             
             extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
-            
-            Long originalId = null;
-            if (useSku) {
-                originalId = sandBoxHelper.getOriginalId(((Sku) indexable).getProduct().getId());
-                originalId = (originalId == null) ? indexable.getId() : originalId;
-            } else {
-                originalId = sandBoxHelper.getOriginalId(indexable);
-                originalId = (originalId == null) ? indexable.getId() : originalId;
-            }
 
+            Long cacheKey = this.shs.getCurrentProductId(indexable); // current
+            if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+                cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
+                if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+                    cacheKey = shs.getIndexableId(indexable); // master
+                }
+            }
             
             // TODO: figure this out more generally; this doesn't work for CMS content
             // The explicit categories are the ones defined by the product itself
-            if (cache.getParentCategoriesByProduct().containsKey(originalId)) {
-                for (Long categoryId : cache.getParentCategoriesByProduct().get(originalId)) {
+            if (cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+                for (Long categoryId : cache.getParentCategoriesByProduct().get(cacheKey)) {
                     document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
                     String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + originalId;
+                    String displayOrderKey = categoryId + "-" + cacheKey;
                     Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
 
                     if (document.getField(categorySortFieldName) == null) {

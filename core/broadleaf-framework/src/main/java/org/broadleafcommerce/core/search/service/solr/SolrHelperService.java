@@ -479,4 +479,6 @@ public interface SolrHelperService {
      * @param searchCriteria
      */
     public void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria);
+
+    public Long getCurrentProductId(Indexable indexable);
 }
