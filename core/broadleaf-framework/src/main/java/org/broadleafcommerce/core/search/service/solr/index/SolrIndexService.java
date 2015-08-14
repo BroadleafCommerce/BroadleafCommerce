@@ -17,14 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
+package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.Field;
 
 import java.io.IOException;
@@ -34,7 +33,7 @@ import java.util.List;
 /**
  * Service exposing several methods for creating a Solr index based on catalog product data.
  *
- * @see org.broadleafcommerce.core.search.service.solr.SolrIndexCachedOperation
+ * @see org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
  */
@@ -48,6 +47,8 @@ public interface SolrIndexService {
      */
     public void rebuildIndex() throws ServiceException, IOException;
     
+    public void rebuildIndex(SolrIndexOperation process) throws ServiceException, IOException;
+    
     /**
      * Allows a query to determine if a full reindex is currently being performed. 
      * 
@@ -59,34 +60,13 @@ public interface SolrIndexService {
     public boolean isReindexInProcess();
 
     /**
-     * The internal method for building indexes. This is exposed via this interface in case someone would like to 
-     * more granularly control the indexing strategy.
-     * 
-     * @see #restoreState(Object[])
-     * @param page
-     * @param pageSize
-     * @param useReindexServer - if set to false will index directly on the primary server
-     * @throws ServiceException
-     */
-    public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException;
-
-    /**
      * This can be used in lieu of passing in page sizes,  The reason is that one might want to apply filters or only 
      * index certain skus.
      * @param skus
      * @param useReindexServer
      * @throws ServiceException
      */
-    public void buildIncrementalSkuIndex(List<Sku> skus, boolean useReindexServer) throws ServiceException;
-
-    /**
-     * This can be used in lieu of passing in page sizes,  The reason is that one might want to apply filters or only 
-     * index certain products.
-     * @param products
-     * @param useReindexServer
-     * @throws ServiceException
-     */
-    public void buildIncrementalProductIndex(List<Product> products, boolean useReindexServer) throws ServiceException;
+    public void buildIncrementalIndex(List<? extends Indexable> indexables, SolrServer solrServer) throws ServiceException;
 
     /**
      * Saves some global context that might be altered during indexing.
@@ -145,6 +125,10 @@ public interface SolrIndexService {
      */
     public void commit(SolrServer server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException;
 
+    public void deleteAllNamespaceDocuments(SolrServer server) throws ServiceException;
+    
+    public void deleteAllDocuments(SolrServer server) throws ServiceException;
+
     /**
      * Prints out the docs to the trace logger
      * 
@@ -166,22 +150,11 @@ public interface SolrIndexService {
      * @param locales
      * @return the document
      */
-    public SolrInputDocument buildDocument(Product product, List<Field> fields, List<Locale> locales);
-
-    /**
-     * Given a sku, fields that relate to that sku, and a list of locales and pricelists, builds a 
-     * SolrInputDocument to be added to the Solr index.
-     * 
-     * @param sku
-     * @param fields
-     * @param locales
-     * @return the document
-     */
-    public SolrInputDocument buildDocument(Sku sku, List<Field> fields, List<Locale> locales);
+    public SolrInputDocument buildDocument(Indexable indexable, List<Field> fields, List<Locale> locales);
 
     /**
      * SolrIndexService exposes {@link #buildIncrementalIndex(int, int, boolean)}.
-     * By wrapping the call to this method inside of a {@link org.broadleafcommerce.core.search.service.solr.SolrIndexCachedOperation.CacheOperation},
+     * By wrapping the call to this method inside of a {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation.CacheOperation},
      * a single cache will be used for all the contained calls to buildIncrementalIndex. Here's an example:
      * {@code
      *  performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
@@ -202,4 +175,5 @@ public interface SolrIndexService {
      * @throws ServiceException
      */
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
+
 }

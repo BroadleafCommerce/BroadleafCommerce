@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.search.service.solr;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl;
 
 /**
  * <p>

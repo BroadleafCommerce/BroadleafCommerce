@@ -28,8 +28,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
@@ -126,16 +125,10 @@ public interface SolrHelperService {
     public String getPropertyNameForFieldFacet(Field field);
     
     /**
-     * @param product
-     * @return the Solr id of this product
+     * @param indexable
+     * @return the Solr id of this indexable
      */
-    public String getSolrDocumentId(SolrInputDocument document, Product product);
-
-    /**
-     * @param sku
-     * @return the Solr id of this sku
-     */
-    public String getSolrDocumentId(SolrInputDocument document, Sku sku);
+    public String getSolrDocumentId(SolrInputDocument document, Indexable indexable);
 
     /**
      * @return the name of the field that keeps track what namespace this document belongs to
@@ -150,12 +143,7 @@ public interface SolrHelperService {
     /**
      * @return the productId field name
      */
-    public String getProductIdFieldName();
-
-    /**
-     * @return the skuId field name
-     */
-    public String getSkuIdFieldName();
+    public String getIndexableIdFieldName();
 
     /**
      * @return the category field name, with the global prefix as appropriate
@@ -260,7 +248,10 @@ public interface SolrHelperService {
      * 
      * @param category
      * @return the category id to use
+     * 
+     *
      */
+    // TODO: THIS NEEDS TO STAY, ACTUALLY USED IN SEARCHING NOT INDEXING
     public Long getCategoryId(Category category);
 
     /**
@@ -273,22 +264,13 @@ public interface SolrHelperService {
     public Long getCategoryId(Long category);
 
     /**
-     * In certain cases, the product id used for Solr indexing is different than the direct id on the product.
-     * This method provides a hook to substitute the product id if necessary.
-     * 
-     * @param product
-     * @return the product id to use
-     */
-    public Long getProductId(Product product);
-
-    /**
      * In certain cases, the sku id used for Solr indexing is different than the direct id on the sku.
      * This method provides a hook to substitute the sku id if necessary.
      * 
      * @param sku
      * @return the sku id to use
      */
-    public Long getSkuId(Sku sku);
+    public Long getIndexableId(Indexable indexable);
 
     /**
      * See getPropertyValue(Object, String)

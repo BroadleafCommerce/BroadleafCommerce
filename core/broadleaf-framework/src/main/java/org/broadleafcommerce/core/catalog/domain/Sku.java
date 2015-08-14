@@ -53,7 +53,7 @@ import java.util.Set;
  * @author btaylor
  *
  */
-public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
+public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable {
 
     /**
      * Returns the id of this sku
@@ -406,6 +406,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
      * @see {@link ProductOptionValue}, {@link ProductOption}
      * @deprecated use {@link #getProductOptionValueXrefs()} instead
      */
+    @Deprecated
     Set<ProductOptionValue> getProductOptionValuesCollection();
 
     /**
@@ -415,6 +416,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
      * @see {@link ProductOptionValue}, {@link ProductOption}
      * @deprecated use {@link #setProductOptionValueXrefs(Set)} instead
      */
+    @Deprecated
     void setProductOptionValuesCollection(Set<ProductOptionValue> productOptionValues);
 
     /**

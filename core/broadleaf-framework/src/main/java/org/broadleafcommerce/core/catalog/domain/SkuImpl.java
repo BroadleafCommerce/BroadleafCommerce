@@ -61,6 +61,7 @@ import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -1185,6 +1186,11 @@ public class SkuImpl implements Sku {
     @Override
     public void setUpc(String upc) {
         this.upc = upc;
+    }
+    
+    @Override
+    public FieldEntity getFieldEntityType() {
+        return FieldEntity.SKU;
     }
 
     @Override

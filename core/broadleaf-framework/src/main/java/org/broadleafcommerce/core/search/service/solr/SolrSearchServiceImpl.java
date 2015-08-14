@@ -54,6 +54,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
@@ -518,9 +519,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         StringBuilder queryBuilder = new StringBuilder();
         List<Field> fields = null;
         if (useSku) {
-            fields = fieldDao.readAllSkuFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
         } else {
-            fields = fieldDao.readAllProductFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
 
         for (Field currentField : fields) {
@@ -571,11 +572,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
         solrQuery.setParam("collection", SolrContext.PRIMARY); //This should be ignored if not using SolrCloud
 
-        if (useSku) {
-            solrQuery.setFields(shs.getSkuIdFieldName());
-        } else {
-            solrQuery.setFields(shs.getProductIdFieldName());
-        }
+        solrQuery.setFields(shs.getIndexableIdFieldName());
         if (filterQueries != null) {
             solrQuery.setFilterQueries(filterQueries);
         }
@@ -689,9 +686,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
         List<Field> fields = null;
         if (useSku) {
-            fields = fieldDao.readAllSkuFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
         } else {
-            fields = fieldDao.readAllProductFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
         shs.attachSortClause(query, searchCriteria, defaultSort, fields);
     }
@@ -775,7 +772,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected List<Product> getProducts(List<SolrDocument> responseDocuments) {
         final List<Long> productIds = new ArrayList<Long>();
         for (SolrDocument doc : responseDocuments) {
-            productIds.add((Long) doc.getFieldValue(shs.getProductIdFieldName()));
+            productIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
         }
 
         List<Product> products = productDao.readProductsByIds(productIds);
@@ -785,8 +782,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             Collections.sort(products, new Comparator<Product>() {
                 @Override
                 public int compare(Product o1, Product o2) {
-                    Long o1id = shs.getProductId(o1);
-                    Long o2id = shs.getProductId(o2);
+                    Long o1id = shs.getIndexableId(o1);
+                    Long o2id = shs.getIndexableId(o2);
                     return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
                 }
             });
@@ -806,7 +803,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected List<Sku> getSkus(List<SolrDocument> responseDocuments) {
         final List<Long> skuIds = new ArrayList<Long>();
         for (SolrDocument doc : responseDocuments) {
-            skuIds.add((Long) doc.getFieldValue(shs.getSkuIdFieldName()));
+            skuIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
         }
 
         List<Sku> skus = skuDao.readSkusByIds(skuIds);
@@ -903,9 +900,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria) {
         List<Field> fields = null;
         if (useSku) {
-            fields = fieldDao.readAllSkuFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
         } else {
-            fields = fieldDao.readAllProductFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
         return shs.getSolrFieldKeyMap(searchCriteria, fields);
     }
