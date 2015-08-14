@@ -62,11 +62,13 @@ public interface SolrIndexService {
     /**
      * This can be used in lieu of passing in page sizes,  The reason is that one might want to apply filters or only 
      * index certain skus.
-     * @param skus
-     * @param useReindexServer
+     * @param indexables the list of items to index
+     * @param solrServer if non-null, adds and commits the indexed documents to the server. If this is null, this will
+     * simply return the documents that were built from <b>indexables</b>
      * @throws ServiceException
+     * @return the {@link SolrInputDocument}s that were built from the given <b>indexables</b>
      */
-    public void buildIncrementalIndex(List<? extends Indexable> indexables, SolrServer solrServer) throws ServiceException;
+    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrServer solrServer) throws ServiceException;
 
     /**
      * Saves some global context that might be altered during indexing.

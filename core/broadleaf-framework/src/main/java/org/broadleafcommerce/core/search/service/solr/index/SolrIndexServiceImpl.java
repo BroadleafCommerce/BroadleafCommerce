@@ -321,7 +321,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
     
     @Override
-    public void buildIncrementalIndex(List<? extends Indexable> indexables, SolrServer solrServer) throws ServiceException {
+    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrServer solrServer) throws ServiceException {
         TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalProductIndex",
                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
@@ -368,11 +368,17 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
             logDocuments(documents);
 
-            if (!CollectionUtils.isEmpty(documents)) {
+            if (!CollectionUtils.isEmpty(documents) && solrServer != null) {
                 solrServer.add(documents);
                 commit(solrServer);
             }
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(String.format("Built incremental product index - pageSize: [%s] in [%s]", indexables.size(), s.toLapString()));
+            }
+            
+            return documents;
         } catch (SolrServerException e) {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw new ServiceException("Could not rebuild index", e);
@@ -384,10 +390,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             throw e;
         } finally {
             extensionManager.getProxy().endBatchEvent();
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Built incremental product index - pageSize: [%s] in [%s]", indexables.size(), s.toLapString()));
         }
     }
 
