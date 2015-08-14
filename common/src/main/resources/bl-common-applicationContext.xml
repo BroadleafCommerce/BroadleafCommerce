@@ -52,7 +52,10 @@
                     <property name="patterns">
                         <array>
                             <value>org\.apache.*</value>
+                            <value>org\.springframework.*</value>
                             <value>javassist.*</value>
+                            <value>javax.*</value>
+                            <value>org.broadleafcommerce.openadmin.web.compatibility.JSCompatibilityRequestWrapper</value>
                         </array>
                     </property>
                 </bean>
