@@ -69,7 +69,6 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -505,54 +504,44 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     protected void attachBasicDocumentFields(Indexable indexable, SolrInputDocument document) {
-        boolean cacheOperationManaged = false;
-        try {
-            CatalogStructure cache = SolrIndexCachedOperation.getCache();
-            if (cache != null) {
-                cacheOperationManaged = true;
-            } else {
-                cache = new CatalogStructure();
-                SolrIndexCachedOperation.setCache(cache);
-
-                solrIndexDao.populateProductCatalogStructure(Arrays.asList(shs.getCurrentProductId(indexable)), SolrIndexCachedOperation.getCache());
-
-            }
-            // Add the namespace and ID fields for this product
-            document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
-            document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
-            document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
-            
-            extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
-
-            Long cacheKey = this.shs.getCurrentProductId(indexable); // current
+        CatalogStructure cache = SolrIndexCachedOperation.getCache();
+        if (cache == null) {
+            LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
+                    "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
+        }
+        
+        // Add the namespace and ID fields for this product
+        document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
+        document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
+        
+        document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
+        
+        extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
+        
+        Long cacheKey = this.shs.getCurrentProductId(indexable); // current
+        if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+            cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
             if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
-                cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
-                if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
-                    cacheKey = shs.getIndexableId(indexable); // master
-                }
+                cacheKey = shs.getIndexableId(indexable); // master
             }
-            
-            // TODO: figure this out more generally; this doesn't work for CMS content
-            // The explicit categories are the ones defined by the product itself
-            if (cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
-                for (Long categoryId : cache.getParentCategoriesByProduct().get(cacheKey)) {
-                    document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
+        }
+        
+        // TODO: figure this out more generally; this doesn't work for CMS content
+        // The explicit categories are the ones defined by the product itself
+        if (cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+            for (Long categoryId : cache.getParentCategoriesByProduct().get(cacheKey)) {
+                document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
-                    String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
-                    String displayOrderKey = categoryId + "-" + cacheKey;
-                    Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
+                String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
+                String displayOrderKey = categoryId + "-" + cacheKey;
+                Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
 
-                    if (document.getField(categorySortFieldName) == null) {
-                        document.addField(categorySortFieldName, displayOrder);
-                    }
-
-                    // This is the entire tree of every category defined on the product
-                    buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
+                if (document.getField(categorySortFieldName) == null) {
+                    document.addField(categorySortFieldName, displayOrder);
                 }
-            }
-        } finally {
-            if (!cacheOperationManaged) {
-                SolrIndexCachedOperation.clearCache();
+
+                // This is the entire tree of every category defined on the product
+                buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
             }
         }
     }
