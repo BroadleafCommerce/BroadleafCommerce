@@ -53,6 +53,7 @@ import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
+import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
@@ -269,6 +270,15 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
+        return indexable.getId();
+    }
+
+    @Override
+    public Long getCurrentProductId(Indexable indexable) {
+        if (Sku.class.isAssignableFrom(indexable.getClass())) {
+            return ((Sku) indexable).getProduct().getId();
+        }
+
         return indexable.getId();
     }
 
@@ -809,5 +819,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             collection.add(o);
         }
     }
+
 
 }
