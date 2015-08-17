@@ -519,7 +519,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
         
         Long cacheKey = this.shs.getCurrentProductId(indexable); // current
-        if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+        if (cache != null && !cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
             cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
             if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
                 cacheKey = shs.getIndexableId(indexable); // master
@@ -528,7 +528,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         
         // TODO: figure this out more generally; this doesn't work for CMS content
         // The explicit categories are the ones defined by the product itself
-        if (cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+        if (cache != null && cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
             for (Long categoryId : cache.getParentCategoriesByProduct().get(cacheKey)) {
                 document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
