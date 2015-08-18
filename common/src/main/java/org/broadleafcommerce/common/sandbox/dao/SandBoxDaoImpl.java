@@ -71,8 +71,8 @@ public class SandBoxDaoImpl implements SandBoxDao {
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
         criteria.where(
-                builder.or(builder.isNull(sandbox.get("archiveStatus").get("archived").as(String.class)),
-                        builder.notEqual(sandbox.get("archiveStatus").get("archived").as(Character.class), 'Y'))
+                builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
+                        builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y'))
         );
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
         return query.getResultList();
