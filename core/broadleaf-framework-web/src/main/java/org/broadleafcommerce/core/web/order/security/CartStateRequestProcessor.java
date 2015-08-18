@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.web.order.security;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.crossapp.service.CrossAppAuthService;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.web.AbstractBroadleafWebRequestProcessor;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
@@ -74,6 +75,9 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
 
     private final String mergeCartResponseKey = "bl_merge_cart_response";
 
+    @Resource(name = "blCartStateRequestProcessorExtensionManager")
+    protected CartStateRequestProcessorExtensionManager extensionManager;
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
@@ -106,7 +110,8 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
             return;
         }
 
-        Order cart = getOverrideCart(request);
+        ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
+        extensionManager.getProxy().lookupOrCreateCart(erh);
 
         Order cart;
         if (erh.getResult() != null) {
@@ -123,10 +128,11 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
             }
             cart = mergeCart(customer, request);
 
-        if (cart == null) {
-            cart = orderService.getNullOrder();
-        } else {
-            updateCartService.updateAndValidateCart(cart);
+            if (cart == null) {
+                cart = orderService.getNullOrder();
+            } else {
+                updateCartService.updateAndValidateCart(cart);
+            }
         }
 
         request.setAttribute(cartRequestAttributeName, cart, WebRequest.SCOPE_REQUEST);
