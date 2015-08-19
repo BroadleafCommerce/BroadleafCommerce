@@ -76,6 +76,9 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @BatchSize(size = 20)
     protected List<FieldDefinition> fieldDefinitions = new ArrayList<FieldDefinition>();
 
+    @Column (name = "IS_MASTER_FIELD_GROUP")
+    protected Boolean isMasterFieldGroup = false;
+
     @Override
     public Long getId() {
         return id;
@@ -135,8 +138,12 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
 
     @Override
     public Boolean isMasterFieldGroup() {
-        return name != null && name.toLowerCase().contains("master");
+        return isMasterFieldGroup != null ? isMasterFieldGroup : Boolean.FALSE;
     }
 
+    @Override
+    public void setIsMasterFieldGroup(Boolean isMasterFieldGroup) {
+        this.isMasterFieldGroup = isMasterFieldGroup;
+    }
 }
 
