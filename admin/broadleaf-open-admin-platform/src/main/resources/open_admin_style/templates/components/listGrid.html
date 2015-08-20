@@ -164,11 +164,11 @@
                         <span th:substituteby="components/partials/listGridIcon" />
                         
                         <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
-                           <span th:remove="tag" th:text="${field.displayValue}" />
+                           <span th:remove="tag" th:utext="${field.displayValue}" />
                         </span>
 
                         <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity}" th:remove="tag">
-                           <span th:remove="tag" th:text="${field.displayValue}" />
+                           <span th:remove="tag" th:utext="${field.displayValue}" />
                            <!--<a th:href="@{${record.externalEntityPath}}" class="modal-view">-->
                                  <!--<i class="icon-external-link"></i>-->
                            <!--</a>-->
@@ -189,7 +189,7 @@
                                 or headerField.canLinkToExternalEntity
                                 or field.fieldType == 'IMAGE'
                                 or field.fieldType == 'COLOR'}"
-                              th:remove="tag" th:text="${field.displayValue}" />
+                              th:remove="tag" th:utext="${field.displayValue}" />
                     </span>
                 </td>
 

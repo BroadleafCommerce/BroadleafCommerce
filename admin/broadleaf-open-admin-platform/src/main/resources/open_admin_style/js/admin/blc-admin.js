@@ -188,7 +188,7 @@ var BLCAdmin = (function($) {
     		    - $modal.find('.modal-header').outerHeight()
     		    - $modal.find('.modal-footer').outerHeight()
     		    - ($(window).height() * .1);
-    		
+
     		$modal.find('.modal-body').css('max-height', availableHeight);
     	},
 
@@ -223,7 +223,7 @@ var BLCAdmin = (function($) {
     		var $tabs = $data.find('dl.tabs');
     		if ($tabs.length > 0) {
     		    $tabs.parent().remove().appendTo($data.find('.modal-header'));
-    		    
+
     		    var $lastTab = $tabs.find('dd:last');
     		    if ($lastTab.width() + $lastTab.position().left + 15 > $tabs.width()) {
                     $tabs.mCustomScrollbar({
@@ -280,6 +280,7 @@ var BLCAdmin = (function($) {
     	    $modal.find('.modal-header h3').text(BLCAdmin.messages.loading);
     	    $modal.find('.modal-body').append($('<i>', { 'class' : 'icon-spin icon-spinner' }));
     	    $modal.find('.modal-body').css('text-align', 'center').css('font-size', '24px').css('padding-bottom', '15px');
+
     	    BLCAdmin.showElementAsModal($modal, onModalHide, onModalHideArgs);
             
     	    // Then replace it with the actual requested link
@@ -296,8 +297,17 @@ var BLCAdmin = (function($) {
     		    }, function(data) {
         			// Create a modal out of the server response
         			var $data = $(data);
-        			
+
+					// check if the modal has any additional classes
+					var classes = $data.attr('class').split(' ');
+					if (classes.length > 2) {
+						for (var i = 2; i < classes.length; i++) {
+							BLCAdmin.currentModal().addClass(classes[i]);
+						}
+					}
+
         			$data = $data.children();
+
         		    BLCAdmin.currentModal().empty().append($data);
         		    
         			BLCAdmin.initializeModalTabs(BLCAdmin.currentModal());
@@ -400,6 +410,15 @@ var BLCAdmin = (function($) {
 					if ($(this).val().length) {
 						var d = new Date($(this).val());
 						$(this).val(d.dateFormat("l, F d, Y \@ g:ia"));
+					}
+				});
+
+				// initialize datetimepicker fields
+				$container.find(".dateFormat").each(function() {
+					if ($(this).html().length) {
+						var d = new Date($(this).html());
+						var timezone = d.toString().substring(d.toString().indexOf("("));
+						$(this).html(d.dateFormat("l, F d, Y \@ g:ia") + " " + timezone);
 					}
 				});
 

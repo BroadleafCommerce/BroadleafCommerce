@@ -243,6 +243,14 @@
             if (BLCAdmin.listGrid.filter) {
                 BLCAdmin.listGrid.filter.initialize($container);
             }
+
+            // update date fields
+            $($.find("[data-fieldname='dateLabel']")).each(function() {
+                var day = moment($(this).html());
+                if (day.isValid()) {
+                    $(this).html(day.fromNow());
+                }
+            });
         },
         
         getListGridCount : function($container) {

@@ -543,7 +543,7 @@
                 }
             } else if ($modalBody.length > 0) {
                 // If this is inside of a modal, the max height should be the size of the modal
-                
+
                 var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 51;
 
                 $wrapper.closest('.adorned-select-wrapper').find('fieldset').each(function(index, fieldset) {
@@ -683,12 +683,15 @@
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
+                scrollEasing: "linear",
+                scrollInertia: 1000,
+                snapAmount: 53,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
                         var inModal = $tbody.closest('.modal-body').length === 1;
                         var isAssetGrid = $tbody.closest('table').data('listgridtype') == 'asset';
-            
+
                         // Update the currently visible range
                         BLCAdmin.listGrid.paginate.updateTableFooter($tbody);
                         

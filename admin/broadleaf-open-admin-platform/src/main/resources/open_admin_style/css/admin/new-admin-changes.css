@@ -152,16 +152,18 @@ div.action-popup img.ajax-loader {
     margin-bottom: 20px;
 }
 
-.listgrid-toolbar ul {
-    list-style-type: none;
-    padding-left: 15px;
-    margin-bottom: 3px;
-    display: inline-block;
+.listgrid-toolbar {
+    margin-top: 10px;
+}
+
+.listgrid-toolbar .button {
+    margin-bottom: 5px;
 }
 
 .listgrid-toolbar li {
     float: left;
     padding: 0 2px;
+    width: 100%;
  }
 
 .listgrid-toolbar li.alert-box {
@@ -198,11 +200,20 @@ button:disabled {
 }
 
 .listgrid-search {
-    margin-bottom: 25px;
+    margin-bottom: 10px;
+}
+
+.listgrid-search .col6 {
+    height: 45px;
 }
 
 .listgrid-search-actions {
     padding-top: 6px;
+    display: inline-block;
+}
+
+.listgrid-search-actions .button{
+    margin-bottom: 2px;
 }
 
 .table {
@@ -449,7 +460,7 @@ fieldset legend i.help-tip {
     border-left: 1px solid #ffffff;
 }
 
-.button.primary:hover{
+button.button.primary.large.submit-button:hover{
     border-right: 1px solid #ffffff;
 }
 
@@ -737,10 +748,9 @@ a.workflow-icon.change-type {
     height: 80px;
     color: #2c2c2c;
     display: inline;
-    cursor: pointer;
-    position: absolute;
-    margin-top: -30px;
-    margin-left: -60px;
+    cursor: default;
+    float: left;
+    margin: -30px;
 }
 
 a.workflow-icon.change-type.CustomerCreditAccountImpl{background-position:-160px -160px}
@@ -786,3 +796,88 @@ a.workflow-icon.change-type.AdminPermissionImpl{background-position:-560px -160p
 a.workflow-icon.change-type.AdminRoleImpl{background-position:-560px -160px}
 a.workflow-icon.change-type.AdminUserImpl{background-position:-560px -160px}
 a.workflow-icon.change-type.CustomerImpl{background-position:-160px -160px}
+
+
+.table-holder.warning a.entity {
+    text-decoration: underline;
+    color: #EEBB69;
+}
+
+.table-holder.success a.entity {
+    text-decoration: underline;
+    color: #94AF39;
+}
+
+.table-holder.danger a.entity {
+    text-decoration: underline;
+    color: #D20A33;
+}
+
+.hidden {
+    display: none;
+}
+
+.modal {
+    -webkit-transition: 0.5s; /* Safari */
+    transition: 0.5s;
+}
+
+.modal.lg {
+    width: 1000px;
+    margin-left: -500px;
+}
+
+.modal.sm {
+    width: 600px;
+    margin-left: -300px;
+}
+
+.change-details thead tr {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #B3B3B3;
+}
+
+.change-details tbody tr th {
+    font-weight: 600;
+}
+
+.change-details tbody tr {
+    border: 1px solid #D4D2CF;
+    height: 40px;
+}
+
+.change-details th, .change-details td {
+    padding: 10px;
+}
+
+.change-details tbody td:nth-child(2) {
+    color: #B3B3B3;
+}
+
+.change-details {
+    max-width: 100%;
+    background-color: transparent;
+    border-collapse: collapse;
+    border: none;
+    border-spacing: 0;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+p.changes-made-label {
+    font-size: .85em;
+    margin-bottom: 0.5em;
+    margin-top: -5px;
+}
+
+p.deployment-summary {
+    margin-top: -5px;
+}
+
+.custom-entity-search {
+    text-align: right;
+    margin-top: 2px;
+}
