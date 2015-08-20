@@ -73,6 +73,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -616,7 +617,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
             return result;
         } catch (Exception e) {
-            throw new ServiceException("Unable to perform fetch for entity: " + Sku.class.getName(), e);
+            throw new ServiceException("Unable to perform update for entity: " + Sku.class.getName(), e);
         }
     }
 
@@ -637,6 +638,10 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
         //remove the current list of product option values from the Sku
         if (adminInstance.getProductOptionValueXrefs().size() > 0) {
+            Iterator<SkuProductOptionValueXref> iterator = adminInstance.getProductOptionValueXrefs().iterator();
+            while(iterator.hasNext()){
+                dynamicEntityDao.remove(iterator.next());
+            }
             adminInstance.getProductOptionValueXrefs().clear();
             dynamicEntityDao.merge(adminInstance);
         }
