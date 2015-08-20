@@ -91,6 +91,10 @@
             return ruleBuilder;
         },
 
+        /**
+         * Convenience method to retrieve all {ruleBuilder} objects that have been registered on the page
+         * @returns {Array}
+         */
         getAllRuleBuilders : function() {
             return ruleBuildersArray;
         },
@@ -176,6 +180,13 @@
             return outerDiv;
         },
 
+        /**
+         * Returns a "Launch Rule Builder" element
+         * @param hiddenId
+         * @param ruleType
+         * @param ruleTitleId
+         * @returns {*|jQuery|HTMLElement}
+         */
         getLaunchModalBuilderLink : function(hiddenId, ruleType, ruleTitleId)  {
             var outerDiv = $("<div>", {'class' : 'launch-modal-rule-builder button',
                                         'data-hiddenId' : hiddenId,
@@ -188,6 +199,11 @@
             return outerDiv;
         },
 
+        /**
+         * Returns a "Set Rule" button element intended to be used on a rule builder modal
+         * @param hiddenId
+         * @returns {*|jQuery|HTMLElement}
+         */
         getSaveModalRuleLink : function(hiddenId) {
             var saveBtn = $("<button>", {'class' : 'set-modal-rule-builder button',
                                          'text' : 'Set Rule',
@@ -244,21 +260,32 @@
         },
 
         /**
-         * Called in order to create a new empty Item Quantity Query Builder used primarily for
-         * org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
-         * @param $container
+         * Constructs an empty rule data object
          * @param qty
+         * @returns {{pk: null, quantity: *, condition: string, rules: Array}}
          */
-        addAdditionalQueryBuilder : function($container, qty) {
-            var containerId = $container.attr("id");
-            var ruleBuilder = this.getRuleBuilder(containerId);
+        getEmptyRuleData : function(qty) {
             var emptyData = {
                 pk:null,
                 quantity: qty,
                 condition:'AND',
                 rules: []
             }
-            this.constructQueryBuilder($container, emptyData, ruleBuilder.fields, ruleBuilder);
+            return emptyData;
+        },
+
+        /**
+         * Called in order to create a new empty Query Builder
+         * Supports:
+         * org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE
+         * org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
+         * @param $container
+         * @param qty - if null is passed in, a simple rule builder will be created. Otherwise, an item quantity builder.
+         */
+        addAdditionalQueryBuilder : function($container, qty) {
+            var containerId = $container.attr("id");
+            var ruleBuilder = this.getRuleBuilder(containerId);
+            this.constructQueryBuilder($container, this.getEmptyRuleData(qty), ruleBuilder.fields, ruleBuilder);
         },
 
         /**
@@ -648,10 +675,17 @@ $(document).ready(function() {
             var jsonVal = $.parseJSON($('#'+hiddenId).val());
             if (jsonVal.data.length > 0) {
                 for (var i=0; i<jsonVal.data.length; i++) {
-                    BLCAdmin.ruleBuilders.constructQueryBuilder($modalContainer, jsonVal.data[i], ruleBuilder.fields, ruleBuilder);
+                    BLCAdmin.ruleBuilders.constructQueryBuilder($modalContainer, jsonVal.data[i],
+                        ruleBuilder.fields, ruleBuilder);
                 }
             } else {
-                BLCAdmin.ruleBuilders.constructQueryBuilder($modalContainer, [], ruleBuilder.fields, ruleBuilder);
+                var qty = null;
+                if (ruleType === 'add-main-item-rule') {
+                    qty = 1;
+                }
+
+                BLCAdmin.ruleBuilders.constructQueryBuilder($modalContainer, BLCAdmin.ruleBuilders.getEmptyRuleData(qty),
+                ruleBuilder.fields, ruleBuilder);
             }
         }
 
@@ -666,6 +700,9 @@ $(document).ready(function() {
         return false;
     });
 
+    /**
+     * Invoked from the "Set Rule" button on a modal rule builder
+     */
     $('body').on('click', 'button.set-modal-rule-builder', function() {
         var hiddenId = $($(this)).data('hiddenid');
         var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
