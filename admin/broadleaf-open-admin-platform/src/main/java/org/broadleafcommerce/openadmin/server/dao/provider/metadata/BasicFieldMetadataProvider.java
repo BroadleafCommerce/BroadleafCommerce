@@ -746,10 +746,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
             metadata.setValidationConfigurations(basicFieldMetadata.getValidationConfigurations());
         }
         if ((basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
-                basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_WITHOUT_QUESTION)
+                basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY)
                 && basicFieldMetadata.getRuleIdentifier() == null) {
-            throw new IllegalArgumentException("ruleIdentifier property must be set on AdminPresentation when the fieldType is RULE_SIMPLE,  RULE_WITH_QUANTITY, RULE_WITHOUT_QUESTION");
+            throw new IllegalArgumentException("ruleIdentifier property must be set on AdminPresentation when the fieldType is RULE_SIMPLE,  RULE_WITH_QUANTITY");
         }
         if (basicFieldMetadata.getRuleIdentifier() != null) {
             metadata.setRuleIdentifier(basicFieldMetadata.getRuleIdentifier());

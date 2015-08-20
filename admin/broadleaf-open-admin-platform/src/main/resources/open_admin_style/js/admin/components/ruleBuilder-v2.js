@@ -41,22 +41,58 @@
          * Add a {ruleBuilder} to the ruleBuildersArray
          * A single Admin RuleBuilder may contain more than one QueryBuilder - such as in the case of complex
          * item rules (i.e. org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY)
-         * @param hiddenId
-         * @param containerId
-         * @param fields
-         * @param data
+         *
+         * @param hiddenId - the ID of the hidden JSON input element where the value is stored
+         * @param containerId - the ID of the container <div> element where the query builders are rendered
+         * @param fields - field metadata needed for this particular query builder(s)
+         * @param data - any rules (data) that need to be populated on the query builder(s)
          * @returns {{hiddenId: *, containerId: *, fields: *, data: *}}
          */
-        addRuleBuilder : function(hiddenId, containerId, fields, data) {
+        addRuleBuilder : function(hiddenId, containerId, ruleType, fields, data) {
             var ruleBuilder = {
                 hiddenId : hiddenId,
+                ruleType : ruleType,
                 containerId : containerId,
                 fields : fields.fields,
                 data : data.data,
-                builders : []
+                builders : [],
+
+                addQueryBuilder : function(builder) {
+                    var exists = false;
+                    for (var i=0; i < ruleBuilder.builders.length; i++) {
+                        if (ruleBuilder.builders[i][0].id === $(builder).attr('id')) {
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if (!exists) {
+                        ruleBuilder.builders.push(builder);
+                    }
+                },
+
+                removeQueryBuilder : function(builder) {
+                    var position = 0;
+                    for (var i=0; i < ruleBuilder.builders.length; i++) {
+                        if (ruleBuilder.builders[i][0].id === $(builder).attr('id')) {
+                            position = i;
+                            break;
+                        }
+                    }
+                    if (~position) ruleBuilder.builders.splice(position, 1);
+                },
+
+                removeAllQueryBuilders : function() {
+                    ruleBuilder.builders = [];
+                }
+
             };
             ruleBuildersArray.push(ruleBuilder)
             return ruleBuilder;
+        },
+
+        getAllRuleBuilders : function() {
+            return ruleBuildersArray;
         },
 
         /**
@@ -69,11 +105,30 @@
         },
 
         /**
+         * Get a {ruleBuilder} from the ruleBuildersArray by hiddenId
+         * @param hiddenId
+         * @returns {*}
+         */
+        getRuleBuilderByHiddenId : function(hiddenId) {
+            for (var i = 0; i < ruleBuildersArray.length; i++) {
+                if (hiddenId === ruleBuildersArray[i].hiddenId) {
+                    return ruleBuildersArray[i];
+                }
+            }
+
+            return null;
+        },
+
+        /**
          * Get a {ruleBuilder} from the ruleBuildersArray by containerId
          * @param containerId
          * @returns {*}
          */
         getRuleBuilder : function(containerId) {
+            if (containerId.indexOf('-modal', containerId.length - '-modal'.length) !== -1) {
+                containerId = containerId.slice(0, -('-modal'.length));
+            }
+
             for (var i = 0; i < ruleBuildersArray.length; i++) {
                 if (containerId === ruleBuildersArray[i].containerId) {
                     return ruleBuildersArray[i];
@@ -81,6 +136,14 @@
             }
 
             return null;
+        },
+
+        /**
+         * Get the number of rule builders that have been initialized on the page
+         * @returns {Number}
+         */
+        ruleBuilderCount : function() {
+            return ruleBuildersArray.length;
         },
 
         /**
@@ -113,6 +176,25 @@
             return outerDiv;
         },
 
+        getLaunchModalBuilderLink : function(hiddenId, ruleType, ruleTitleId)  {
+            var outerDiv = $("<div>", {'class' : 'launch-modal-rule-builder button',
+                                        'data-hiddenId' : hiddenId,
+                                        'data-ruleType' : ruleType,
+                                        'data-ruleTitleId' : ruleTitleId});
+            var addModalIcon = $("<i>", {'class': "fa fa-list-alt fa-lg"});
+            var addModalText = $("<span>", {'text': "Launch Rule Builder"});
+            outerDiv.append(addModalIcon);
+            outerDiv.append(addModalText);
+            return outerDiv;
+        },
+
+        getSaveModalRuleLink : function(hiddenId) {
+            var saveBtn = $("<button>", {'class' : 'set-modal-rule-builder button',
+                                         'text' : 'Set Rule',
+                                         'data-hiddenId' : hiddenId});
+            return saveBtn;
+        },
+
         /**
          * Returns a "Remove Condition Link" element
          * @returns {*|jQuery|HTMLElement}
@@ -128,33 +210,25 @@
         },
 
         /**
-         * Get the number of rule builders that have been initialized on the page
-         * @returns {Number}
-         */
-        ruleBuilderCount : function() {
-            return ruleBuildersArray.length;
-        },
-
-        /**
          * Rule Builders in the context of the Admin interface may be driven by a question (radio button).
          * This method is intended to show an existing rule or create a new one if one does not exist.
          *
-         * @param $container
+         * @param $container - the ".query-builder-rules-container" in which to append the builder
          * @param typeToCreate - if there is no existing rule, the method will look for the passed in typeToCreate:
          * - "add-main-item-rule" : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
          * - "add-main-rule" : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE
          */
         showOrCreateMainRuleBuilder : function($container, typeToCreate) {
             var containerId = $container.attr("id");
-            var rule = this.getRuleBuilder(containerId);
-            if (rule != null) {
+            var ruleBuilder = this.getRuleBuilder(containerId);
+            if (ruleBuilder != null) {
                 $container.show();
 
                 if ($container.children().children().length == 0) {
                     if (typeToCreate === 'add-main-rule') {
-                        this.addAdditionalItemQueryBuilder($container, null, 'add-main-rule');
+                        this.addAdditionalQueryBuilder($container, null);
                     } else if (typeToCreate === 'add-main-item-rule') {
-                        this.addAdditionalItemQueryBuilder($container, 1, 'add-main-item-rule');
+                        this.addAdditionalQueryBuilder($container, 1);
                     }
                 }
             }
@@ -174,9 +248,8 @@
          * org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
          * @param $container
          * @param qty
-         * @param ruleType
          */
-        addAdditionalItemQueryBuilder : function($container, qty, ruleType) {
+        addAdditionalQueryBuilder : function($container, qty) {
             var containerId = $container.attr("id");
             var ruleBuilder = this.getRuleBuilder(containerId);
             var emptyData = {
@@ -185,7 +258,7 @@
                 condition:'AND',
                 rules: []
             }
-            this.constructQueryBuilder($container, emptyData, ruleBuilder.fields, ruleBuilder, ruleType);
+            this.constructQueryBuilder($container, emptyData, ruleBuilder.fields, ruleBuilder);
         },
 
         /**
@@ -195,17 +268,10 @@
          * @param $container
          * @param builder
          */
-        removeAdditionalItemQueryBuilder : function($container, builder) {
+        removeAdditionalQueryBuilder : function($container, builder) {
             var containerId = $container.attr("id");
             var ruleBuilder = this.getRuleBuilder(containerId);
-            var position = 0;
-            for (var i=0; i < ruleBuilder.builders.length; i++) {
-                if (ruleBuilder.builders[i][0].id === $(builder).attr('id')) {
-                    position = i;
-                    break;
-                }
-            }
-            if (~position) ruleBuilder.builders.splice(position, 1);
+            ruleBuilder.removeQueryBuilder($(builder));
             $(builder).next('.and-divider').remove();
             $(builder).remove();
         },
@@ -218,11 +284,11 @@
          * @param ruleBuilder
          * @param ruleType
          */
-        initializeRuleBuilder : function($container, ruleBuilder, ruleType) {
+        initializeRuleBuilder : function($container, ruleBuilder) {
             var container = $container.find('#' + ruleBuilder.containerId);
 
             for (var i=0; i<ruleBuilder.data.length; i++) {
-                this.constructQueryBuilder(container, ruleBuilder.data[i], ruleBuilder.fields, ruleBuilder, ruleType);
+                this.constructQueryBuilder(container, ruleBuilder.data[i], ruleBuilder.fields, ruleBuilder);
             }
 
         },
@@ -240,8 +306,8 @@
          * @param ruleBuilder
          * @param ruleType
          */
-        constructQueryBuilder : function(container, ruleData, fields, ruleBuilder, ruleType) {
-            if (ruleType === 'add-main-item-rule') {
+        constructQueryBuilder : function(container, ruleData, fields, ruleBuilder) {
+            if (ruleBuilder.ruleType === 'add-main-item-rule') {
                 container.find('.add-and-button').remove();
             }
 
@@ -257,9 +323,9 @@
                         .find('.selectize-control').removeClass('form-control');
                 }
             });
-            ruleBuilder.builders.push($(builder));
+            ruleBuilder.addQueryBuilder($(builder));
 
-            if (ruleType === 'add-main-item-rule') {
+            if (ruleBuilder.ruleType === 'add-main-item-rule') {
                 container.append(this.getAndDivider());
                 container.append(this.getAddAnotherConditionLink());
             }
@@ -299,7 +365,7 @@
             for (var i=0; i<fields.length; i++){
                 (function(){
                     var opRef = fields[i].operators;
-                    if (opRef) {
+                    if (opRef && typeof opRef === 'string') {
                         fields[i].operators = window[opRef];
 
                         //initialize selectize plugin
@@ -373,7 +439,7 @@
                     }
 
                     var valRef = fields[i].values;
-                    if (valRef) {
+                    if (valRef && typeof valRef === 'string') {
                         fields[i].values = window[valRef];
                     }
                 })();
@@ -391,38 +457,21 @@
                 allow_groups: false,
                 inputs_separator: "<span class='rule-val-sep'>,</span>",
                 filters: fields,
-                rules: ruleData.rules.length > 0 ? ruleData : null,
+                rules: ruleData.rules && ruleData.rules.length > 0 ? ruleData : null,
                 operators: window['blcOperators']
 
             };
             return config;
-        }
+        },
 
-    };
-
-    BLCAdmin.addInitializationHandler(function($container) {
-        $container.find('.rule-builder-data').each(function(index, element) {
-            var $this = $(this),
-                hiddenId = $this.data('hiddenid'),
-                containerId = $this.data('containerid'),
-                fields = $this.data('fields'),
-                data = $this.data('data'),
-                ruleType =  $(this).data('ruletype'),
-                ruleBuilder = BLCAdmin.ruleBuilders.addRuleBuilder(hiddenId, containerId, fields, data);
-
-            BLCAdmin.ruleBuilders.initializeRuleBuilder($this.parent(), ruleBuilder, ruleType);
-        });
-
-        $container.find('.rule-builder-required-field').each(function(index, element) {
-            var $container = $($(this).next().next());
-            var ruleType = $(this).data('ruletype');
-            BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder($container, ruleType);
-        });
-    });
-
-    BLCAdmin.addPostValidationSubmitHandler(function($form) {
-        for (var i = 0; i < BLCAdmin.ruleBuilders.ruleBuilderCount(); i++) {
-            var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByIndex(i);
+        /**
+         * set the appropriate JSON value on the "hiddenId" input element for the corresponding rule builder.
+         *
+         * Performs the appropriate data transformations in order to properly bind with the backing
+         * org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper
+         * @param ruleBuilder
+         */
+        setJSONValueOnField : function (ruleBuilder) {
             var hiddenId = ruleBuilder.hiddenId;
             var container = $('#'+ruleBuilder.containerId);
             var builders = ruleBuilder.builders;
@@ -458,7 +507,7 @@
                 }).is(':checked');
 
                 if (explicitlyHidden || setToOff) {
-                    container.element.find('div.query-builder-rules').remove();
+                    collectedData.data = [];
                 }
 
                 //only send over the error if it hasn't been explicitly turned off
@@ -470,25 +519,72 @@
 
             }
         }
+
+    };
+
+    /**
+     * Initialization handler to find all rule builders on the page and initialize them with
+     * the appropriate fields and data (as specified by the container)
+     */
+    BLCAdmin.addInitializationHandler(function($container) {
+        $container.find('.rule-builder-data').each(function(index, element) {
+            var $this = $(this),
+                hiddenId = $this.data('hiddenid'),
+                containerId = $this.data('containerid'),
+                fields = $this.data('fields'),
+                data = $this.data('data'),
+                ruleType =  $(this).data('ruletype'),
+                ruleBuilder = BLCAdmin.ruleBuilders.addRuleBuilder(hiddenId, containerId, ruleType, fields, data);
+
+            BLCAdmin.ruleBuilders.initializeRuleBuilder($this.parent(), ruleBuilder);
+        });
+
+        $container.find('.rule-builder-required-field').each(function(index, element) {
+            var ruleType = $(this).data('ruletype');
+            var launchModal = $(this).data('modal');
+            if (!launchModal) {
+                BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder($($(this).next().next()), ruleType);
+            }
+        });
+    });
+
+    /**
+     * Post Validation Handler to aggregate and collect all rule builder data on the page
+     */
+    BLCAdmin.addPostValidationSubmitHandler(function() {
+        for (var i = 0; i < BLCAdmin.ruleBuilders.ruleBuilderCount(); i++) {
+            var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByIndex(i);
+            BLCAdmin.ruleBuilders.setJSONValueOnField(ruleBuilder);
+        }
     });
 
 })($, BLCAdmin);
 
 $(document).ready(function() {
 
+    /**
+     * Invoked from an "Add Another Condition" button for an Item Rule Builder
+     */
     $('body').on('click', 'div.add-main-item-rule', function() {
         var $container = $(this).parent().parent();
-        BLCAdmin.ruleBuilders.addAdditionalItemQueryBuilder($container, 1, 'add-main-item-rule');
+        BLCAdmin.ruleBuilders.addAdditionalQueryBuilder($container, 1);
         return false;
     });
 
+    /**
+     * Invoked from any additional Item Rule Builder that has been added to the page
+     */
     $('body').on('click', 'button.remove-main-item-rule', function() {
         var $container = $(this).closest('.query-builder-rules-container');
         var builder = $(this).closest('.query-builder-rules');
-        BLCAdmin.ruleBuilders.removeAdditionalItemQueryBuilder($container, builder);
+        BLCAdmin.ruleBuilders.removeAdditionalQueryBuilder($container, builder);
         return false;
     });
 
+    /**
+     * Invoked from a Rule Builder's leading question
+     * e.g. "Build a Time Rule?" (No)
+     */
     $('body').on('change', 'input.clear-rules', function(){
         var $ruleTitle = $($(this).closest('.rule-builder-checkbox').next());
         var $container = $($ruleTitle.next());
@@ -500,9 +596,15 @@ $(document).ready(function() {
         BLCAdmin.ruleBuilders.hideMainRuleBuilder($container, 'add-main-rule');
     });
 
+    /**
+     * Invoked from a Rule Builder's leading question
+     * Depending on the data attributes of the field
+     * - it will either create a new rule builder or a button to launch it in a modal
+     * e.g. "Build a Time Rule?" (Yes)
+     */
     $('body').on('change', 'input.add-main-rule, input.add-main-item-rule', function(){
-        var $ruleTitle = $($(this).closest('.rule-builder-checkbox').next());
-        var $container = $($ruleTitle.next());
+        var $ruleTitle = $($(this).parent().parent().find('.query-builder-rules-header'));
+        var $container = $($(this).parent().parent().find('.query-builder-rules-container'));
 
         //if we are going to attempt to re-show something, if the error fields are around then re-show those rather
         //than the rule input
@@ -511,9 +613,64 @@ $(document).ready(function() {
             $container.parent().find('.query-builder-rules-container-mvel').show();
         } else {
             var ruleType = $(this).data('ruletype');
-            $ruleTitle.show();
-            BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder($container, ruleType);
+            var launchModal = $(this).data('modal');
+            if (launchModal) {
+                $container.show();
+                if ($container.children().children().length == 0) {
+                    var hiddenId = $container.parent().find('.rule-builder-data').data('hiddenid');
+                    $container.append(BLCAdmin.ruleBuilders.getLaunchModalBuilderLink(hiddenId, ruleType, $ruleTitle.attr('id')));
+                }
+            } else {
+                $ruleTitle.show();
+                BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder($container, ruleType);
+            }
         }
+    });
+
+    /**
+     * Invoked from "Launch Modal Rule Builder" button
+     */
+    $('body').on('click', 'div.launch-modal-rule-builder', function() {
+        var $container = $(this).parent();
+        var hiddenId = $($(this)).data('hiddenid');
+        var ruleType = $($(this)).data('ruletype');
+        var ruleTitleId = $($(this)).data('ruletitleid');
+
+        var $modal = BLCAdmin.getModalSkeleton();
+        $modal.find('.modal-header h3').text($('#'+ruleTitleId).text());
+
+        var $modalContainer = $container.clone();
+        $modalContainer.attr('id', $modalContainer.attr('id') + '-modal');
+        $modalContainer.empty();
+
+        var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder($modalContainer.attr('id'));
+        if (ruleBuilder) {
+            var jsonVal = $.parseJSON($('#'+hiddenId).val());
+            if (jsonVal.data.length > 0) {
+                for (var i=0; i<jsonVal.data.length; i++) {
+                    BLCAdmin.ruleBuilders.constructQueryBuilder($modalContainer, jsonVal.data[i], ruleBuilder.fields, ruleBuilder);
+                }
+            } else {
+                BLCAdmin.ruleBuilders.constructQueryBuilder($modalContainer, [], ruleBuilder.fields, ruleBuilder);
+            }
+        }
+
+        $modal.find('.modal-body').append($modalContainer);
+        $modal.find('.modal-footer').append(BLCAdmin.ruleBuilders.getSaveModalRuleLink(hiddenId));
+
+        BLCAdmin.showElementAsModal($modal, function(){
+            var modalRuleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder($modalContainer.attr('id'));
+            modalRuleBuilder.removeAllQueryBuilders();
+        });
+
+        return false;
+    });
+
+    $('body').on('click', 'button.set-modal-rule-builder', function() {
+        var hiddenId = $($(this)).data('hiddenid');
+        var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
+        BLCAdmin.ruleBuilders.setJSONValueOnField(ruleBuilder);
+        BLCAdmin.hideCurrentModal();
     });
 
     /**
@@ -542,6 +699,10 @@ $(document).ready(function() {
         return false;
     });
 
+    /**
+     * Invoked when a query builder's toggle switch has changed.
+     * i.e. (All/Any)
+     */
     $('.query-builder-all-any-wrapper').on('change', 'input[type="radio"].toggle', function () {
         if (this.checked) {
             $('input[name="' + this.name + '"].checked').removeClass('checked');

@@ -41,6 +41,7 @@
         },
         
         initializeOfferTypeField : function($form) {
+            /**
             var $offerType = $form.find('#field-type');
             var offerTypeValue;
             if ($offerType.find('select').length > 0) {
@@ -70,6 +71,7 @@
                 $itemTarget.addClass('hidden');
                 $itemTargetFieldset.addClass('hidden');
             }
+             **/
         },
         
         initializeDeliveryTypeField : function($form) {

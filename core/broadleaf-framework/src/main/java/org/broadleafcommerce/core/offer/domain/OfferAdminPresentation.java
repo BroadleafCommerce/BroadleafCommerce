@@ -41,11 +41,11 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ActivityRange,
                     order = OfferAdminPresentation.GroupOrder.ActivityRange,
                     column = 1),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Qualifiers,
-                    order = OfferAdminPresentation.GroupOrder.Qualifiers,
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Usage,
+                    order = OfferAdminPresentation.GroupOrder.Usage,
                     column = 1),
-                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ItemQualifier,
-                    order = OfferAdminPresentation.GroupOrder.ItemQualifier,
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Qualifier,
+                    order = OfferAdminPresentation.GroupOrder.Qualifier,
                     borderless = true),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ItemTarget,
                     order = OfferAdminPresentation.GroupOrder.ItemTarget,
@@ -86,8 +86,8 @@ public interface OfferAdminPresentation {
         public static final String Description = "OfferImpl_Description";
         public static final String Amount = "OfferImpl_Amount";
         public static final String ActivityRange = "OfferImpl_Activity_Range";
-        public static final String Qualifiers = "OfferImpl_Qualifiers";
-        public static final String ItemQualifier = "OfferImpl_Item_Qualifier";
+        public static final String Usage = "OfferImpl_Usage";
+        public static final String Qualifier = "OfferImpl_Qualifier";
         public static final String ItemTarget = "OfferImpl_Item_Target";
         public static final String Advanced = "OfferImpl_Advanced";
         public static final String Codes = "OfferImpl_Codes_Tab";
@@ -97,8 +97,8 @@ public interface OfferAdminPresentation {
         public static final int Description = 1000;
         public static final int Amount = 2000;
         public static final int ActivityRange = 3000;
-        public static final int Qualifiers = 4000;
-        public static final int ItemQualifier = 5000;
+        public static final int Usage = 4000;
+        public static final int Qualifier = 5000;
         public static final int ItemTarget = 6000;
         public static final int Advanced = 1000;
         public static final int Codes = 1000;

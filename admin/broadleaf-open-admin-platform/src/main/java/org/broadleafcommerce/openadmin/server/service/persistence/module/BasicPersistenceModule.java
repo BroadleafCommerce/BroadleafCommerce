@@ -290,10 +290,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 BasicFieldMetadata mo1 = (BasicFieldMetadata) mergedProperties.get(o1.getName());
                 BasicFieldMetadata mo2 = (BasicFieldMetadata) mergedProperties.get(o2.getName());
                 boolean isLate1 = mo1 != null && mo1.getFieldType() != null && mo1.getName() != null && (SupportedFieldType.RULE_SIMPLE==mo1.getFieldType() ||
-                    SupportedFieldType.RULE_WITH_QUANTITY==mo1.getFieldType() || SupportedFieldType.RULE_WITHOUT_QUESTION==mo1.getFieldType() ||
+                    SupportedFieldType.RULE_WITH_QUANTITY==mo1.getFieldType() ||
                     SupportedFieldType.MEDIA==mo1.getFieldType() || o1.getName().contains(FieldManager.MAPFIELDSEPARATOR));
                 boolean isLate2 = mo2 != null && mo2.getFieldType() != null && mo2.getName() != null && (SupportedFieldType.RULE_SIMPLE==mo2.getFieldType() ||
-                    SupportedFieldType.RULE_WITH_QUANTITY==mo2.getFieldType() || SupportedFieldType.RULE_WITHOUT_QUESTION==mo2.getFieldType() ||
+                    SupportedFieldType.RULE_WITH_QUANTITY==mo2.getFieldType() ||
                     SupportedFieldType.MEDIA==mo2.getFieldType() || o2.getName().contains(FieldManager.MAPFIELDSEPARATOR));
                 if (isLate1 && !isLate2) {
                     return 1;

@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.admin.web.controller;
+package org.broadleafcommerce.admin.web.controller.extension;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

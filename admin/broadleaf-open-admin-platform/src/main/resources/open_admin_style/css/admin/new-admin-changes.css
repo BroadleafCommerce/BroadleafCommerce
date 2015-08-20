@@ -881,3 +881,17 @@ p.deployment-summary {
     text-align: right;
     margin-top: 2px;
 }
+
+.borderlessGroup .selectize-control.single .selectize-input {
+    display: inline-block;
+    background: white;
+    width: 400px;
+    height: 40px;
+    vertical-align: middle;
+    border: 1px solid #D8D5D0;
+    padding: 10px 10px 8px 10px;
+}
+
+.borderlessGroup .selectize-control.single .selectize-input.has-items {
+    padding: 0px 10px;
+}

@@ -52,7 +52,6 @@ public enum SupportedFieldType {
     MEDIA,
     RULE_SIMPLE,
     RULE_WITH_QUANTITY,
-    RULE_WITHOUT_QUESTION,
     STRING_LIST,
     IMAGE,
     COLOR,

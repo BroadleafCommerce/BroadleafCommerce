@@ -141,6 +141,14 @@
   opacity: 0.7;
 }
 
+.query-builder-rules-container .launch-modal-rule-builder {
+    margin-top: 10px;
+}
+
+.query-builder-rules-container .launch-modal-rule-builder span {
+    padding-left: 10px;
+}
+
 .query-builder-rules {
     width: 100%;
 }
@@ -187,7 +195,7 @@
 .query-builder-rules .toggle-container {
     color: #404040;
     height: 2.7em;
-    width: 98px;
+    width: 100px;
     background: rgba(0,0,0,0.03);
     border-radius: 4px;
     -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);

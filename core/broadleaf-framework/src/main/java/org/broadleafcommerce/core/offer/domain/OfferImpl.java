@@ -235,7 +235,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "AUTOMATICALLY_ADDED")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Automatically_Added", order = 5000,
-            group = OfferAdminPresentation.GroupName.Description,
+            group = OfferAdminPresentation.GroupName.Usage,
             fieldType = SupportedFieldType.BOOLEAN)
     protected Boolean automaticallyAdded = false;
 
@@ -274,7 +274,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferQualifyingCriteriaXrefImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Rule",
-        group = OfferAdminPresentation.GroupName.ItemQualifier,
+        group = OfferAdminPresentation.GroupName.Qualifier,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
         ruleIdentifier = RuleIdentifier.ORDERITEM)
     protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria = new HashSet<OfferQualifyingCriteriaXref>();
@@ -315,7 +315,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.CUSTOMER_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE,
-                    group = OfferAdminPresentation.GroupName.Qualifiers,
+                    group = OfferAdminPresentation.GroupName.Usage,
                     ruleIdentifier = RuleIdentifier.CUSTOMER, friendlyName = "OfferImpl_Customer_Rule")
             ),
             @AdminPresentationMapField(
@@ -327,13 +327,13 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.ORDER_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
-                    group = OfferAdminPresentation.GroupName.Qualifiers,
+                    group = OfferAdminPresentation.GroupName.Usage,
                     ruleIdentifier = RuleIdentifier.ORDER, friendlyName = "OfferImpl_Order_Rule")
             ),
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.FULFILLMENT_GROUP_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
-                    group = OfferAdminPresentation.GroupName.Qualifiers,
+                    group = OfferAdminPresentation.GroupName.Qualifier,
                     ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP, friendlyName = "OfferImpl_FG_Rule")
             )
         }

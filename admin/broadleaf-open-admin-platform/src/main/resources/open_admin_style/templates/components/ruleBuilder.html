@@ -1,11 +1,15 @@
 <blc_admin:admin_field_builder fieldBuilder="${field.fieldBuilder}">
 
-    <div class="field-label inline" th:if="${(withQuestion == null) ? !field.required : withQuestion}" th:text="#{${field.friendlyName + '_Question'}}" />
-    <br />
+    <div class="field-label inline" th:if="${field.attributes['leadingQuestion'] != null
+    AND field.attributes['leadingQuestion']}" th:text="#{${field.friendlyName + '_Question'}}" />
+
+    <br th:if="${field.attributes['leadingQuestion'] != null
+    AND field.attributes['leadingQuestion']}" />
+
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     <div th:substituteby="components/fieldTooltip" />
  
-    <div th:classappend="${field.styleClass}">
+    <div th:classappend="${field.ruleType}">
     
         <input type="hidden"
                th:id="${field.jsonFieldName}"
@@ -13,15 +17,18 @@
                th:value="${field.json}"/>
 
         <div class="rule-builder-required-field"
-            th:if="${(withQuestion == null) ? field.required : withQuestion}"
-            th:attr="data-ruletype=${(field.styleClass == 'rule-builder-simple' OR field.styleClass == 'rule-builder-without-question') ? 'add-main-rule' : 'add-main-item-rule'}" />
+            th:attr="data-ruletype=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
+                     data-modal=${field.attributes['launchModal'] != null AND field.attributes['launchModal']}" />
                
-        <div class="custom-checkbox rule-builder-checkbox" th:if="${(withQuestion == null) ? !field.required : withQuestion}">
+        <div class="custom-checkbox rule-builder-checkbox" th:if="${field.attributes['leadingQuestion'] != null
+            AND field.attributes['leadingQuestion']}">
+
             <input type="radio"
                    th:name="${field.name}"
                    th:id="${field.name + '-true'}"
-                   th:class="${field.styleClass == 'rule-builder-simple' ? 'radio add-main-rule' : 'radio add-main-item-rule'}"
-                   th:attr="data-ruletype=${(field.styleClass == 'rule-builder-simple' OR field.styleClass == 'rule-builder-without-question') ? 'add-main-rule' : 'add-main-item-rule'}"
+                   th:class="${field.ruleType == 'rule-builder-simple' ? 'radio add-main-rule' : 'radio add-main-item-rule'}"
+                   th:attr="data-ruletype=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
+                            data-modal=${field.attributes['launchModal'] != null AND field.attributes['launchModal']}"
                    th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
             <label th:for="${field.name + '-true'}" class="radio-label">
                 <span style="margin-right: 10px;" th:text="#{Yes}" />
@@ -37,13 +44,13 @@
         </div>
         
         <!-- Normal display -->
-        <h4 class="field-label" th:text="#{${field.friendlyName}}"
+        <h4 th:id="${field.name + '-header'}" class="field-label" th:text="#{${field.friendlyName}}"
             th:classappend="${!field.required ? 'query-builder-rules-header' : 'required'}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}" />
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) and (field.attributes['leadingQuestion'] == true)) or field.dataWrapper.error != null) ? 'display: none;' : ''}" />
 
         <div class="query-builder-rules-container"
             th:classappend="${field.required ? 'required-query-builder' : ''}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) and !field.required) or field.dataWrapper.error != null) ? 'display: none;' : ''}"
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) and (field.attributes['leadingQuestion'] == true)) or field.dataWrapper.error != null) ? 'display: none;' : ''}"
             th:id="${field.name}"/>
         
         <!-- Rule parsing error display -->
@@ -67,7 +74,7 @@
                      data-containerid=${field.name},
                      data-fields=${fieldWrapper.serialize()},
                      data-data=${field.dataWrapper.serialize()},
-                     data-ruletype=${(field.styleClass == 'rule-builder-simple' OR field.styleClass == 'rule-builder-without-question') ? 'add-main-rule' : 'add-main-item-rule'}" />
+                     data-ruletype=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'}" />
     
     </div>
 </blc_admin:admin_field_builder>
