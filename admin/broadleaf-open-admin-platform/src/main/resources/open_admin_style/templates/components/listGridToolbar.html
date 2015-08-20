@@ -4,40 +4,44 @@
 <!--    hideActionButtons - if set to true, will not render the add/update/delete buttons -->
 </comment>
 
-<div class="row listgrid-toolbar">
+<div class="listgrid-toolbar" th:if="${#lists.size(listGrid.activeToolbarActions) > 0 and
+        (hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
 
-    <div th:remove="tag"
-         th:if="${(hideActionButtons == null or hideActionButtons == 'false') and (listGrid.subCollectionFieldName != null)}">
+    <div th:remove="tag">
 
-
-
-
-        <ul class="inline-list small-spacing">
-            <li th:each="action : ${listGrid.activeToolbarActions}">
-                <button class="tiny radius dark button"
-                        type="button"
-                        th:classappend="${action.buttonClass}"
-                        th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+        <!-- Dropdown button if more than one action -->
+        <div th:if="${#lists.size(listGrid.activeToolbarActions) > 1 or #lists.size(listGrid.activeToolbarActions) > 1}" class="button-group">
+            <button type="button" class="button primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <span th:remove="tag">Choose action</span>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <div th:each="action,iterStat : ${listGrid.activeToolbarActions}" th:remove="tag">
+                    <li>
+                        <a th:classappend="${action.buttonClass}"
+                           th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-urlpostfix=${action.urlPostfix},
                              data-queryparams=${listGrid.sectionCrumbRepresentation},
                              disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
-                    <i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />
-                </button>
-            </li>
+                            <span th:text="#{${action.displayText}}" th:remove="tag" />
+                        </a>
+                    </li>
+                </div>
+            </ul>
+        </div>
 
-            <!--<li th:if="${listGrid.listGridType} != 'workflow'" th:each="action : ${listGrid.activeRowActions}">-->
-                <!--<button disabled="disabled"-->
-                        <!--class="tiny radius dark row-action button"-->
-                        <!--type="button"-->
-                        <!--th:classappend="${action.buttonClass}"-->
-                        <!--th:attr="data-urlpostfix=${action.urlPostfix},-->
-                             <!--data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},-->
-                             <!--data-queryparams=${listGrid.sectionCrumbRepresentation}">-->
-                    <!--<i th:class="${action.iconClass}"></i>&nbsp;<span th:text="#{${action.displayText}}" th:remove="tag" />-->
-                <!--</button>-->
-            <!--</li>-->
-
-        </ul>
-
+        <!-- Otherwise normal button if one action -->
+        <div th:unless="${#lists.size(listGrid.activeToolbarActions) > 1 or #lists.size(listGrid.activeToolbarActions) > 1}" th:remove="tag">
+            <a th:each="action,iterStat : ${listGrid.activeToolbarActions}"
+               class="button primary"
+               th:href="@{'/' + ${sectionKey + action.urlPostfix}}"
+               th:classappend="${action.buttonClass}"
+               th:attr="data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-urlpostfix=${action.urlPostfix},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation},
+                             disabled=${action.actionId == 'SPLIT'} ? 'disabled'">
+                <span th:text="#{${action.displayText}}" th:remove="tag" />
+            </a>
+        </div>
     </div>
 </div>
