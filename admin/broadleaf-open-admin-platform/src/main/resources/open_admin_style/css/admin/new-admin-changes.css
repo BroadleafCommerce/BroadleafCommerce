@@ -28,6 +28,9 @@
 .sandbox-bar .selectize-control.single .selectize-input {
     width: 260px;
 }
+.app-content .content .sandbox-bar .sandbox-selector-wrapper #sandboxes {
+    width:100%;
+}
 
 .dataTables_wrapper .dataTables_length {
     margin-top: 0;
@@ -80,7 +83,7 @@
 }
 
 .sandbox-bar .row .col3 {
-    margin-left: -15px;
+    padding:0px;
 }
 
 .sandbox-bar .row .col9 {
@@ -930,4 +933,40 @@ p.deployment-summary {
 
 .thumbnail {
     margin-bottom: 10px;
+}
+
+
+/* Making dropdowns rectangular */
+.rule-filter-container.admin-select,
+.rule-operator-container.admin-select,
+.sandbox-selector-wrapper {
+    position:relative;
+}
+
+.rule-filter-container.admin-select > select,
+.rule-operator-container.admin-select > select,
+.sandbox-selector-wrapper > select {
+    -webkit-appearance: none;
+    border-radius: 0px;
+
+}
+.rule-filter-container.admin-select:before,
+.rule-operator-container.admin-select:before,
+.sandbox-selector-wrapper:before {
+    content: "\e61b";
+    font-family:'broadleaf';
+    float:right;
+    font-size: 1.0em;
+    text-align: center;
+    display: block;
+    position: absolute;
+}
+.rule-filter-container.admin-select:before,
+.rule-operator-container.admin-select:before {
+    right: 4px;
+    top: 7px;
+}
+.sandbox-selector-wrapper:before {
+    right: 10px;
+    top: 10px;
 }

@@ -233,28 +233,3 @@
     border-radius: 3px;
     height:24px;
 }
-
-/* Making dropdowns rectangular */
-.rule-filter-container.admin-select,
-.rule-operator-container.admin-select {
-    position:relative;
-}
-
-.rule-filter-container.admin-select > select,
-.rule-operator-container.admin-select > select {
-    -webkit-appearance: none;
-    border-radius: 0px;
-
-}
-.rule-filter-container.admin-select:before,
-.rule-operator-container.admin-select:before {
-    content: "\e61b";
-    font-family:'broadleaf';
-    float:right;
-    font-size: 1.0em;
-    text-align: center;
-    display: block;
-    right: 4px;
-    top: 7px;
-    position: absolute;
-}
