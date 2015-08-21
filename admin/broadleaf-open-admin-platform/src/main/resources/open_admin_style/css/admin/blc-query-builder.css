@@ -233,3 +233,8 @@
     border-radius: 3px;
     height:24px;
 }
+
+/* added for rule builder button */
+.add-and-button {
+    height: 45px;
+}
