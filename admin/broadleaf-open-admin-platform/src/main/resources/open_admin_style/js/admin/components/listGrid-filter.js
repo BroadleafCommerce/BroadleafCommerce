@@ -260,7 +260,7 @@ $(document).ready(function() {
      * Handler that fires whenever a sorting link is clicked, sort ascending or descending. This will also modify the
      * sort value input for the closet sort input for this list grid header
      */
-    $('body').on('click', '.icon-sort', function() {
+    $('body').on('click', '.icon-select-arrows', function() {
         var descending = $(this).hasClass('listgrid-icon-down');
         var ascending = $(this).hasClass('listgrid-icon-up');
 

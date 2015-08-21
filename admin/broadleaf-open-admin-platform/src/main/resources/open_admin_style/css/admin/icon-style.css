@@ -1,0 +1,149 @@
+/*
+ * #%L
+ * BroadleafCommerce Open Admin Platform
+ * %%
+ * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+@font-face {
+	font-family: 'broadleaf';
+	src:url('../../fonts/broadleaf.eot?-s748z9');
+	src:url('../../fonts/broadleaf.eot?#iefix-s748z9') format('embedded-opentype'),
+		url('../../fonts/broadleaf.ttf?-s748z9') format('truetype'),
+		url('../../fonts/broadleaf.woff?-s748z9') format('woff'),
+		url('../../fonts/broadleaf.svg?-s748z9#broadleaf') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'broadleaf';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-add-category:before {
+	content: "\e600";
+}
+.icon-calendar:before {
+	content: "\e601";
+}
+.icon-catalog:before {
+	content: "\e602";
+}
+.icon-category:before {
+	content: "\e603";
+}
+.icon-checkmark:before {
+	content: "\e604";
+}
+.icon-close:before {
+	content: "\e605";
+}
+.icon-content:before {
+	content: "\e606";
+}
+.icon-customer-care:before {
+	content: "\e607";
+}
+.icon-delete:before {
+	content: "\e608";
+}
+.icon-deploy:before {
+	content: "\e609";
+}
+.icon-design:before {
+	content: "\e60a";
+}
+.icon-edit:before {
+	content: "\e60b";
+}
+.icon-globe:before {
+	content: "\e60c";
+}
+.icon-notifications:before {
+	content: "\e60d";
+}
+.icon-product-added:before {
+	content: "\e60e";
+}
+.icon-product-group:before {
+	content: "\e60f";
+}
+.icon-product-image:before {
+	content: "\e610";
+}
+.icon-reverse:before {
+	content: "\e611";
+}
+.icon-running:before {
+	content: "\e612";
+}
+.icon-security:before {
+	content: "\e613";
+}
+.icon-settings:before {
+	content: "\e614";
+}
+.icon-site-updates:before {
+	content: "\e615";
+}
+.icon-tooltip:before {
+	content: "\e616";
+}
+.icon-view:before {
+	content: "\e617";
+}
+.icon-dot-menu-horizontal:before {
+	content: "\e618";
+}
+.icon-dot-menu-vertical:before {
+	content: "\e619";
+}
+.icon-save:before {
+	content: "\e61a";
+}
+.icon-select-arrows:before {
+	content: "\e61b";
+}
+.icon-triangle-left:before {
+	content: "\e61c";
+}
+.icon-triangle-right:before {
+	content: "\e61d";
+}
+.icon-credit-card:before {
+	content: "\e61e";
+}
+.icon-folder-images:before {
+	content: "\e61f";
+}
+.icon-news:before {
+	content: "\e620";
+}
+.icon-publish:before {
+	content: "\e621";
+}
+.icon-tools:before {
+	content: "\e622";
+}

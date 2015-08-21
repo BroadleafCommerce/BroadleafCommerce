@@ -109,6 +109,7 @@ input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.rad
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    vertical-align: middle;
 }
 
 .borderlessGroup {
@@ -237,7 +238,7 @@ button:disabled {
 }
 
 .listgrid-filter-sort-container i.active {
-    color: #8EAA2B;
+    color: #2c2c2c;
 }
 
 .selectize-input{
@@ -660,12 +661,15 @@ div.action-popup span.deploy-error button {
 }
 
 span.workflow-action {
-    padding-right: 8px;
+    /*padding-right: 4px;*/
     font-size: 16px;
+    /*height: 25px;*/
+    /*line-height: 25px;*/
 }
 
 span.workflow-action a {
-    color: #494947;
+    color: #4B4C4A;
+    vertical-align: middle;
 }
 
 span.workflow-action a:hover {
@@ -742,60 +746,60 @@ legend {
     margin: 5px 0;
 }
 
-a.workflow-icon.change-type {
-    background-image: url(../img/app_icons.png);
-    width: 80px;
-    height: 80px;
-    color: #2c2c2c;
-    display: inline;
-    cursor: default;
-    float: left;
-    margin: -30px;
-}
+/*a.workflow-icon.change-type {*/
+    /*background-image: url(../img/app_icons.png);*/
+    /*width: 80px;*/
+    /*height: 80px;*/
+    /*color: #2c2c2c;*/
+    /*display: inline;*/
+    /*cursor: default;*/
+    /*float: left;*/
+    /*margin: -30px;*/
+/*}*/
 
-a.workflow-icon.change-type.CustomerCreditAccountImpl{background-position:-160px -160px}
-a.workflow-icon.change-type.GiftCardAccountImpl{background-position:-160px -160px}
-a.workflow-icon.change-type.ContentItemImpl{background-position:-80px -160px}
-a.workflow-icon.change-type.ContentZoneImpl{background-position:-240px -160px}
-a.workflow-icon.change-type.ContentZoneDefinitionImpl{background-position:-240px -160px}
-a.workflow-icon.change-type.ContentTargeterImpl{background-position:-80px -160px}
-a.workflow-icon.change-type.WidgetImpl{background-position:-240px -160px}
-a.workflow-icon.change-type.OfferCodeGenerationInfoImpl{background-position:0px -160px}
-a.workflow-icon.change-type.CustomerSegmentImpl{background-position:-160px -160px}
-a.workflow-icon.change-type.CustomFieldImpl{background-position:-640px -160px}
-a.workflow-icon.change-type.WorkflowScheduledDeploymentImpl{background-position:-480px -160px}
-a.workflow-icon.change-type.InternationalMessageImpl{background-position:-320px -160px}
-a.workflow-icon.change-type.DynamicRegionalFormImpl{background-position:-320px -160px}
-a.workflow-icon.change-type.FulfillmentLocationImpl{background-position:0px -160px}
-a.workflow-icon.change-type.ProductGroupImpl{background-position:0px -160px}
-a.workflow-icon.change-type.SkuGroupImpl{background-position:0px -160px}
-a.workflow-icon.change-type.PriceListImpl{background-position:0px -160px}
-a.workflow-icon.change-type.PageTypeImplImpl{background-position:-640px -160px}
-a.workflow-icon.change-type.ThemeConfigurationImpl{background-position:-240px -160px}
-a.workflow-icon.change-type.ThemeFileImpl{background-position:-240px -160px}
-a.workflow-icon.change-type.StaticAssetImpl{background-position:-80px -160px}
-a.workflow-icon.change-type.PageImpl{background-position:-80px -160px}
-a.workflow-icon.change-type.URLHandlerImpl{background-position:-80px -160px}
-a.workflow-icon.change-type.ModuleConfigurationImpl{background-position:-640px -160px}
-a.workflow-icon.change-type.SystemPropertyImpl{background-position:-640px -160px}
-a.workflow-icon.change-type.SystemPropertyImpl{background-position:-640px -160px}
-a.workflow-icon.change-type.TranslationImpl{background-position:-320px -160px}
-a.workflow-icon.change-type.SandBoxManagementImpl{background-position:-480px -160px}
-a.workflow-icon.change-type.CatalogImpl{background-position:0px -160px}
-a.workflow-icon.change-type.SiteImpl{background-position:-80px -160px}
-a.workflow-icon.change-type.CategoryImpl{background-position:0px -160px}
-a.workflow-icon.change-type.ProductImpl{background-position:0px -160px}
-a.workflow-icon.change-type.ProductOptionImpl{background-position:0px -160px}
-a.workflow-icon.change-type.SkuImpl{background-position:0px -160px}
-a.workflow-icon.change-type.OfferImpl{background-position:0px -160px}
-a.workflow-icon.change-type.OrderImpl{background-position:-160px -160px}
-a.workflow-icon.change-type.SearchFacetImpl{background-position:0px -160px}
-a.workflow-icon.change-type.SearchRedirectImpl{background-position:0px -160px}
-a.workflow-icon.change-type.MenuImpl{background-position:-80px -160px}
-a.workflow-icon.change-type.AdminPermissionImpl{background-position:-560px -160px}
-a.workflow-icon.change-type.AdminRoleImpl{background-position:-560px -160px}
-a.workflow-icon.change-type.AdminUserImpl{background-position:-560px -160px}
-a.workflow-icon.change-type.CustomerImpl{background-position:-160px -160px}
+/*a.workflow-icon.change-type.CustomerCreditAccountImpl{background-position:-160px -160px}*/
+/*a.workflow-icon.change-type.GiftCardAccountImpl{background-position:-160px -160px}*/
+/*a.workflow-icon.change-type.ContentItemImpl{background-position:-80px -160px}*/
+/*a.workflow-icon.change-type.ContentZoneImpl{background-position:-240px -160px}*/
+/*a.workflow-icon.change-type.ContentZoneDefinitionImpl{background-position:-240px -160px}*/
+/*a.workflow-icon.change-type.ContentTargeterImpl{background-position:-80px -160px}*/
+/*a.workflow-icon.change-type.WidgetImpl{background-position:-240px -160px}*/
+/*a.workflow-icon.change-type.OfferCodeGenerationInfoImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.CustomerSegmentImpl{background-position:-160px -160px}*/
+/*a.workflow-icon.change-type.CustomFieldImpl{background-position:-640px -160px}*/
+/*a.workflow-icon.change-type.WorkflowScheduledDeploymentImpl{background-position:-480px -160px}*/
+/*a.workflow-icon.change-type.InternationalMessageImpl{background-position:-320px -160px}*/
+/*a.workflow-icon.change-type.DynamicRegionalFormImpl{background-position:-320px -160px}*/
+/*a.workflow-icon.change-type.FulfillmentLocationImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.ProductGroupImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.SkuGroupImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.PriceListImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.PageTypeImplImpl{background-position:-640px -160px}*/
+/*a.workflow-icon.change-type.ThemeConfigurationImpl{background-position:-240px -160px}*/
+/*a.workflow-icon.change-type.ThemeFileImpl{background-position:-240px -160px}*/
+/*a.workflow-icon.change-type.StaticAssetImpl{background-position:-80px -160px}*/
+/*a.workflow-icon.change-type.PageImpl{background-position:-80px -160px}*/
+/*a.workflow-icon.change-type.URLHandlerImpl{background-position:-80px -160px}*/
+/*a.workflow-icon.change-type.ModuleConfigurationImpl{background-position:-640px -160px}*/
+/*a.workflow-icon.change-type.SystemPropertyImpl{background-position:-640px -160px}*/
+/*a.workflow-icon.change-type.SystemPropertyImpl{background-position:-640px -160px}*/
+/*a.workflow-icon.change-type.TranslationImpl{background-position:-320px -160px}*/
+/*a.workflow-icon.change-type.SandBoxManagementImpl{background-position:-480px -160px}*/
+/*a.workflow-icon.change-type.CatalogImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.SiteImpl{background-position:-80px -160px}*/
+/*a.workflow-icon.change-type.CategoryImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.ProductImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.ProductOptionImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.SkuImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.OfferImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.OrderImpl{background-position:-160px -160px}*/
+/*a.workflow-icon.change-type.SearchFacetImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.SearchRedirectImpl{background-position:0px -160px}*/
+/*a.workflow-icon.change-type.MenuImpl{background-position:-80px -160px}*/
+/*a.workflow-icon.change-type.AdminPermissionImpl{background-position:-560px -160px}*/
+/*a.workflow-icon.change-type.AdminRoleImpl{background-position:-560px -160px}*/
+/*a.workflow-icon.change-type.AdminUserImpl{background-position:-560px -160px}*/
+/*a.workflow-icon.change-type.CustomerImpl{background-position:-160px -160px}*/
 
 
 .table-holder.warning a.entity {
