@@ -30,6 +30,13 @@
 (function($, BLCAdmin) {
 
     /**
+     * As selects are created, add necessary class to convert them to our custom appearance
+     */
+    $(document).on('DOMNodeInserted', '.rule-filter-container select, .rule-operator-container select', function(e) {
+        $(e.target).parent().addClass('admin-select');
+    });
+
+    /**
      * An Admin page may contain multiple rule builders of various different types.
      * @type {Array}
      */

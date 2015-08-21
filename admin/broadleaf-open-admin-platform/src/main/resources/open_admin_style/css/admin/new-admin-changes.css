@@ -53,6 +53,11 @@
     line-height: 15px;
 }
 
+.button > i {
+    margin-right: 5px;
+
+}
+
 .table-actions > button.button {
     float: left;
 }
@@ -68,10 +73,6 @@
 
 .modal dl.tabs {
     margin-top: 10px;
-}
-
-.modal .modal-header {
-    padding-bottom: 0;
 }
 
 .sandbox-bar .row {
@@ -183,6 +184,11 @@ button:disabled {
     margin-bottom: -1px;
 }
 
+.listgrid-table-footer {
+    padding: 2px 5px;
+    display: inline-block;
+}
+
 /* added to stop listgrid flicker */
 .table-striped>tbody>tr:nth-of-type(even) {
     background-color: #F9F7F3;
@@ -249,6 +255,7 @@ button:disabled {
 
 .selectize-control.multi .selectize-input [data-value] {
     background-color: #8EAA2B;
+    border:none;
 }
 
 .selectize-control.plugin-remove_button [data-value] .remove {
@@ -323,10 +330,16 @@ button:disabled {
 .modal-header {
     padding: 30px 30px 0 30px;
     border-bottom: 0;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+    -webkit-box-shadow: inset 0 1px 0 #ffffff;
+    -moz-box-shadow: inset 0 1px 0 #ffffff;
+    box-shadow: inset 0 1px 0 #ffffff;
 }
 
 .modal-body {
     padding: 15px 30px 30px 30px;
+    background-color: rgb(249, 247, 243);
 }
 
 .modal-body .row {
@@ -358,11 +371,12 @@ button:disabled {
 
 .modal-header h3 {
     font-weight: 500;
+    margin-bottom: 15px;
 }
 
-textarea, input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"], textarea {
+textarea, .selectize-input, input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"] {
     margin: 5px 0 0 0;
-    border-radius: 5px;
+    border-radius: 0px;
 }
 /* single-line text inputs only */
 input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"] {
@@ -907,6 +921,13 @@ p.deployment-summary {
 }
 
 .form-control {
-    border-radius: 5px;
+    /*border-radius: 5px;*/
 }
 
+.foreign-key-value-container .display-value.read-only {
+    margin-right:15px;
+}
+
+.thumbnail {
+    margin-bottom: 10px;
+}

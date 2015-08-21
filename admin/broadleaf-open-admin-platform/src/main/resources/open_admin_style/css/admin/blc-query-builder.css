@@ -199,9 +199,6 @@
     height:34px;
     width: 100px;
     background: rgba(0,0,0,0.03);
-    /*border-radius: 4px;*/
-    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .query-builder-rules input[type="radio"].toggle {
@@ -233,13 +230,31 @@
     background-color:#404040;
     color:#F7F7F7;
     background: #94AF39;
-    border-radius: 5px;
+    border-radius: 3px;
     height:24px;
-    /**background-image: -webkit-linear-gradient(top, #94AF39, #9FB92D);
-    background-image: -moz-linear-gradient(top, #94AF39, #9FB92D);
-    background-image: -o-linear-gradient(top, #94AF39, #9FB92D);
-    background-image: linear-gradient(to bottom, #94AF39, #9FB92D);
-    -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 1px rgba(0, 0, 0, 0.2);
-    **/
-    /*box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 1px rgba(0, 0, 0, 0.2);*/
+}
+
+/* Making dropdowns rectangular */
+.rule-filter-container.admin-select,
+.rule-operator-container.admin-select {
+    position:relative;
+}
+
+.rule-filter-container.admin-select > select,
+.rule-operator-container.admin-select > select {
+    -webkit-appearance: none;
+    border-radius: 0px;
+
+}
+.rule-filter-container.admin-select:before,
+.rule-operator-container.admin-select:before {
+    content: "\e61b";
+    font-family:'broadleaf';
+    float:right;
+    font-size: 1.0em;
+    text-align: center;
+    display: block;
+    right: 4px;
+    top: 7px;
+    position: absolute;
 }

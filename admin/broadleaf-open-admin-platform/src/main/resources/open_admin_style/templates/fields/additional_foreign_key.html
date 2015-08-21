@@ -32,14 +32,13 @@
         
         <div th:remove="tag" th:unless="${field.isTypeaheadEnabled}">
             <span class="display-value-none-selected" style="display: none;" th:inline="text">&lt;[[#{No_Value_Selected}]]&gt;</span>
-            <span class="display-value read-only"
-                th:text="*{fields['__${field.name}__'].displayValue}" />
+            <span class="display-value read-only" th:text="*{fields['__${field.name}__'].displayValue}" />
                 
             <button class="clear-foreign-key tiny radius secondary button hover-cursor"
                 type="button" th:inline="text"
                 th:unless="${field.required}"
                 th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-                <i class="icon-remove"></i>&nbsp;[[#{Clear}]]
+                <i class="icon-delete"></i>&nbsp;[[#{Clear}]]
             </button>
             
             <button class="to-one-lookup tiny radius secondary button hover-cursor"
