@@ -97,13 +97,15 @@
 }
 
 /* temporary until new css */
-input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.radio-label.clr, .radio>input[type="radio"]+label {
+input[type="radio"].radio+label.radio-label,
+input[type="radio"].radio+label.radio-label.clr,
+.radio > input[type="radio"]+label {
     padding-left: 25px;
     padding-right: 15px;
 }
 
 /* add nowrap to listgrids */
-.table tbody>tr>td {
+.table tbody > tr > td {
     max-width: 260px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -123,10 +125,21 @@ input[type="radio"].radio+label.radio-label, input[type="radio"].radio+label.rad
     z-index: 1039 !important;
 }
 
-.content-area-title-bar .ajax-loader, .entity-form-actions .ajax-loader {
-    vertical-align: middle;
+.ajax-loader {
     display: none;
-    padding: 10px 0 9px;
+}
+
+.content-area-title-bar .ajax-loader,
+.entity-form-actions .ajax-loader {
+    float: right;
+    margin: 30px 10px;
+}
+.modal .modal-footer .entity-form-actions .button {
+    float:right;
+}
+.modal .modal-footer .entity-form-actions .ajax-loader {
+    float: right;
+    margin: 10px 10px;
 }
 
 div.action-popup img.ajax-loader {
@@ -225,7 +238,7 @@ button:disabled {
     margin-bottom: 0 !important;
 }
 
-.table thead>tr>th {
+.table thead > tr > th {
     border-bottom: none;
 }
 
@@ -263,7 +276,7 @@ button:disabled {
     border-left: 1px solid #ffffff;
 }
 
-.selectize-control.multi .selectize-input>div {
+.selectize-control.multi .selectize-input > div {
     background: #8EAA2B;
     color: #ffffff;
     border: 1px solid #ffffff;
@@ -273,11 +286,11 @@ button:disabled {
     padding: 5px 10px;
 }
 
-.selectize-control.multi .selectize-input [data-value].active{
+.selectize-control.multi .selectize-input [data-value].active {
     background-color:#EB7F4C;
 }
 
-.selectize-control.multi .selectize-input>div.active{
+.selectize-control.multi .selectize-input > div.active {
     background:#F2B95A;
     color:#ffffff;
     border:1px solid #F2B95A;
@@ -555,12 +568,6 @@ button.button.primary.large.submit-button:hover{
     margin-top: -35px;
 }
 
-img.ajax-loader {
-    display: inline;
-    float: right;
-    margin-top: 20px;
-    padding-right: 15px !important;
-}
 .section-tabs {
     padding-top: 10px;
 }
