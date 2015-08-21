@@ -27,7 +27,7 @@
 .query-builder .rules-group-container, .query-builder .rule-container, .query-builder .rule-placeholder {
   position: relative;
   margin: 4px 0;
-  border-radius: 5px;
+  /*border-radius: 5px;*/
   padding: 5px;
   border: 1px solid #EEE;
   background: rgba(0,0,0,0.04);
@@ -57,7 +57,7 @@
 }
 .query-builder .rule-container .rule-value-container {
   border-left: 1px solid #ddd;
-  padding-left: 5px;
+  padding-left: 7px;
   width: 275px;
 }
 .query-builder .rule-container .rule-value-container .rule-val-sep {
@@ -71,7 +71,7 @@
   display: block;
 }
 .query-builder .rule-container select, .query-builder .rule-container input[type=text], .query-builder .rule-container input[type=number] {
-  padding: 1px;
+  padding: 7px;
   margin: 0px;
 }
 .query-builder .error-container {
@@ -108,7 +108,7 @@
   height: calc(50% + 14px);
 }
 .query-builder .rules-list > *:last-child:before {
-  border-radius: 0 0 0 4px;
+  /*border-radius: 0 0 0 4px;*/
 }
 .query-builder .rules-list > *:last-child:after {
   display: none;
@@ -179,8 +179,9 @@
 }
 
 .query-builder-rules .rules-group-header-item-qty {
-    width: 40px;
+    width: 60px;
     margin: 5px;
+    text-align:right;
 }
 
 .query-builder-rules .query-builder-selectize-input {
@@ -194,10 +195,11 @@
 
 .query-builder-rules .toggle-container {
     color: #404040;
-    height: 2.7em;
+    /*height: 2.7em;*/
+    height:34px;
     width: 100px;
     background: rgba(0,0,0,0.03);
-    border-radius: 4px;
+    /*border-radius: 4px;*/
     -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
 }
@@ -217,12 +219,13 @@
     text-align:center;
     padding:5px 0px;
     width:3.1em;
-    line-height: 1.5em;
+    line-height: 16px;
     font-size: 12px;
     color: #9a9a9a;
     text-align: center;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    /*text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);*/
     cursor: pointer;
+    height:28px;
 }
 
 /*input[type="radio"].toggle:checked + label,*/
@@ -230,12 +233,13 @@
     background-color:#404040;
     color:#F7F7F7;
     background: #94AF39;
-    border-radius: 4px;
+    border-radius: 5px;
+    height:24px;
     /**background-image: -webkit-linear-gradient(top, #94AF39, #9FB92D);
     background-image: -moz-linear-gradient(top, #94AF39, #9FB92D);
     background-image: -o-linear-gradient(top, #94AF39, #9FB92D);
     background-image: linear-gradient(to bottom, #94AF39, #9FB92D);
     -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 1px rgba(0, 0, 0, 0.2);
     **/
-    box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 1px rgba(0, 0, 0, 0.2);
+    /*box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 1px rgba(0, 0, 0, 0.2);*/
 }

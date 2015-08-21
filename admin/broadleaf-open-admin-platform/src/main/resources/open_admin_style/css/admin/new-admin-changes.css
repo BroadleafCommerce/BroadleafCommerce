@@ -362,7 +362,13 @@ button:disabled {
 
 textarea, input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"], textarea {
     margin: 5px 0 0 0;
+    border-radius: 5px;
 }
+/* single-line text inputs only */
+input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"] {
+    height: 34px;
+}
+
 
 .errors {
     margin-bottom: 5px;
@@ -899,3 +905,8 @@ p.deployment-summary {
 .borderlessGroup .selectize-control.single .selectize-input.has-items {
     padding: 0px 10px;
 }
+
+.form-control {
+    border-radius: 5px;
+}
+
