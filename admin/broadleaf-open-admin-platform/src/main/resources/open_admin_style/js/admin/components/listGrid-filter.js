@@ -518,9 +518,10 @@ $(document).ready(function() {
         
         var submitData = {};
         submitData[$firstInput.data('name')] =  $firstInput.val();
-        
+        var oldParams = BLCAdmin.history.getUrlParameters();
+
         BLC.ajax({
-            url: $(this).closest('form').attr('action'),
+            url: $(this).closest('form').attr('action') +'?'+ oldParams,
             type: "GET",
             data: submitData
         }, function(data) {
