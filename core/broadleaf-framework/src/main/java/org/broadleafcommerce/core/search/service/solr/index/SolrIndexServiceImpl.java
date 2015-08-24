@@ -42,7 +42,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuActiveDatesService;
@@ -506,8 +505,11 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     protected void attachBasicDocumentFields(Indexable indexable, SolrInputDocument document) {
         CatalogStructure cache = SolrIndexCachedOperation.getCache();
         if (cache == null) {
-            LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
-                    "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
+            String msg = "SolrIndexService.performCachedOperation() must be used in conjuction with"
+                + " solrIndexDao.populateProductCatalogStructure() in order to correctly build catalog documents or should"
+                + " be invoked from buildIncrementalIndex()";
+            LOG.error(msg);
+            throw new IllegalStateException(msg);
         }
         
         // Add the namespace and ID fields for this product
@@ -519,7 +521,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
         
         Long cacheKey = this.shs.getCurrentProductId(indexable); // current
-        if (cache != null && !cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+        if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
             cacheKey = sandBoxHelper.getOriginalId(cacheKey); // parent
             if (!cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
                 cacheKey = shs.getIndexableId(indexable); // master
@@ -528,7 +530,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         
         // TODO: figure this out more generally; this doesn't work for CMS content
         // The explicit categories are the ones defined by the product itself
-        if (cache != null && cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
+        if (cache.getParentCategoriesByProduct().containsKey(cacheKey)) {
             for (Long categoryId : cache.getParentCategoriesByProduct().get(cacheKey)) {
                 document.addField(shs.getExplicitCategoryFieldName(), shs.getCategoryId(categoryId));
 
