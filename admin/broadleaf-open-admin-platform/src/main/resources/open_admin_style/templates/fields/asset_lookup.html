@@ -23,14 +23,14 @@
             type="button" th:inline="text"
             th:if="${overrideAssetSectionKey}"
             th:attr="data-select-url=@{${'/'+overrideAssetSectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
-        <i class="icon-product-image"></i>&nbsp;[[#{Select_Upload_Image}]]
+        <i class="blc-icon-product-image"></i>&nbsp;[[#{Select_Upload_Image}]]
     </button>
 
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
         type="button" th:inline="text"
         th:unless="${overrideAssetSectionKey}"
         th:attr="data-select-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
-        <i class="icon-product-image"></i>&nbsp;[[#{Select_Upload_Image}]]
+        <i class="blc-icon-product-image"></i>&nbsp;[[#{Select_Upload_Image}]]
     </button>
 
 </div>

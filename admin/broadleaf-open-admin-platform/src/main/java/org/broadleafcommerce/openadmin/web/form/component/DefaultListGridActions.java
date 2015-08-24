@@ -40,7 +40,7 @@ public class DefaultListGridActions {
     public static final ListGridAction ADD = new ListGridAction(ListGridAction.ADD)
         .withButtonClass("sub-list-grid-add")
         .withUrlPostfix("/add")
-        .withIconClass("icon-add-category")
+        .withIconClass("blc-icon-add-category")
         .withDisplayText("Add");
     
     public static final ListGridAction REORDER = new ListGridAction(ListGridAction.REORDER)
@@ -53,24 +53,24 @@ public class DefaultListGridActions {
     public static final ListGridAction REMOVE = new ListGridAction(ListGridAction.REMOVE)
         .withButtonClass("sub-list-grid-remove")
         .withUrlPostfix("/delete")
-        .withIconClass("icon-close")
+        .withIconClass("blc-icon-close")
         .withDisplayText("Delete");
     
     public static final ListGridAction UPDATE = new ListGridAction(ListGridAction.UPDATE)
         .withButtonClass("sub-list-grid-update")
-        .withIconClass("icon-edit")
+        .withIconClass("blc-icon-edit")
         .withDisplayText("Edit");
 
     public static final ListGridAction VIEW = new ListGridAction(ListGridAction.VIEW)
         .withButtonClass("sub-list-grid-view")
-        .withIconClass("icon-view")
+        .withIconClass("blc-icon-view")
         .withDisplayText("View")
         .withUrlPostfix("/view")
         .withForListGridReadOnly(true);
 
     public static final ListGridAction EDIT = new ListGridAction(ListGridAction.EDIT)
         .withButtonClass("sub-list-grid-edit")
-        .withIconClass("icon-edit")
+        .withIconClass("blc-icon-edit")
         .withDisplayText("Edit");
 
 
@@ -86,7 +86,7 @@ public class DefaultListGridActions {
 
     public static final ListGridAction PREVIEW = new ListGridAction("PREVIEW")
         .withButtonClass("workflow-preview")
-        .withIconClass("icon-view")
+        .withIconClass("blc-icon-view")
         .withDisplayText("Workflow_button_preview");
 
 }

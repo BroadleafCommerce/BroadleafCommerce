@@ -22,6 +22,41 @@
     display: none;
 }
 
+.button.secondary {
+    background-color: #313131;
+}
+
+.button.primary {
+    -webkit-box-shadow: 0 2px #465A0F;
+    -moz-box-shadow: 0 2px #465A0F;
+    box-shadow: 0 2px #465A0F;;
+}
+
+.button.secondary {
+    -webkit-box-shadow: 0 2px #212121;
+    -moz-box-shadow: 0 2px #212121;
+    box-shadow: 0 2px #212121;;
+}
+
+.button.primary, .button.secondary {
+    margin: 0;
+}
+
+.button.primary:active, .button.secondary:active {
+    margin-top: 4px !important;
+    margin-bottom: -4px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group .button.primary:active {
+    margin-top: 17px !important;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
 .app-content .content .header .button { line-height:14px; }
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
 
@@ -55,8 +90,8 @@
 
 
 .button {
-    font-size: 14px;
-    line-height: 15px;
+    /*font-size: 14px;*/
+    line-height: 12px;
 }
 
 .button > i {
@@ -170,11 +205,9 @@ div.action-popup img.ajax-loader {
 
 .listgrid-toolbar {
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-.listgrid-toolbar .button {
-    margin-bottom: 5px;
-}
 
 .listgrid-toolbar li {
     float: left;
@@ -234,7 +267,7 @@ button:disabled {
 }
 
 .listgrid-search-actions .button{
-    margin-bottom: 2px;
+    padding: 8px 11px;
 }
 
 .table {
@@ -494,13 +527,13 @@ fieldset legend i.help-tip {
     margin-left: 5px;
 }
 
-.app-content .content .section-content .main-content .content-area-title-bar>.button-group .dropdown-toggle{
-    border-left: 1px solid #ffffff;
-}
+/*.app-content .content .section-content .main-content .content-area-title-bar>.button-group .dropdown-toggle{*/
+    /*border-left: 1px solid #ffffff;*/
+/*}*/
 
-button.button.primary.large.submit-button:hover{
-    border-right: 1px solid #ffffff;
-}
+/*button.button.primary.large.submit-button:hover{*/
+    /*border-right: 1px solid #ffffff;*/
+/*}*/
 
 .has-error input{border-color:#D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075);box-shadow:inset 0 1px 1px rgba(0,0,0,0.075)}
 .has-error input:focus{border-color:#D20A33;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px #D20A33;box-shadow:inset 0 1px 1px rgba(0,0,0,0.075),0 0 6px #D20A33}
@@ -598,6 +631,7 @@ body.login .account-actions {
     display: inline-block;
     padding: 0;
     width: 100%;
+    height: 50px;
 }
 
 .account-actions ul {
@@ -914,7 +948,7 @@ p.deployment-summary {
 
 .custom-entity-search {
     text-align: right;
-    margin-top: 2px;
+    margin-top: 6px;
 }
 
 .borderlessGroup .selectize-control.single .selectize-input {

@@ -38,7 +38,7 @@
                 type="button" th:inline="text"
                 th:unless="${field.required}"
                 th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-                <i class="icon-delete"></i>&nbsp;[[#{Clear}]]
+                <i class="blc-icon-delete"></i>&nbsp;[[#{Clear}]]
             </button>
             
             <button class="to-one-lookup tiny radius secondary button hover-cursor"

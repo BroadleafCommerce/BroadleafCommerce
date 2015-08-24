@@ -22,21 +22,21 @@
         type="button" th:inline="text"
         th:unless="${field.required}"
         th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-        <i class="icon-delete"></i>&nbsp;[[#{Clear}]]
+        <i class="blc-icon-delete"></i>&nbsp;[[#{Clear}]]
     </button>
 
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
         type="button" th:inline="text"
         th:if="${overrideAssetSectionKey}"
         th:attr="data-select-url=@{${'/'+overrideAssetSectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
-        <i class="icon-product-image"></i>&nbsp;[[#{Select_Upload_Image}]]
+        <i class="blc-icon-product-image"></i>&nbsp;[[#{Select_Upload_Image}]]
     </button>
 
     <button class="show-asset-selector tiny radius secondary button hover-cursor"
         type="button" th:inline="text"
         th:unless="${overrideAssetSectionKey}"
         th:attr="data-select-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}">
-        <i class="icon-product-image"></i>&nbsp;[[#{Select_Upload_Image}]]
+        <i class="blc-icon-product-image"></i>&nbsp;[[#{Select_Upload_Image}]]
     </button>
 
     <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
