@@ -642,7 +642,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             while(iterator.hasNext()){
                 dynamicEntityDao.remove(iterator.next());
             }
-            adminInstance.getProductOptionValueXrefs().clear();
             dynamicEntityDao.merge(adminInstance);
         }
 
