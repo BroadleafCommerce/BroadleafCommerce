@@ -27,9 +27,12 @@
 
 .sandbox-bar .selectize-control.single .selectize-input {
     width: 260px;
+    margin: 0;
+    background-color: rgba(0,0,0,0.1);
 }
-.app-content .content .sandbox-bar .sandbox-selector-wrapper #sandboxes {
-    width:100%;
+
+.sandbox-bar .selectize-control.single .selectize-input.input-active {
+    background-color: rgba(0,0,0,0.1);
 }
 
 .dataTables_wrapper .dataTables_length {
@@ -956,8 +959,7 @@ p.deployment-summary {
 
 }
 .rule-filter-container.admin-select:before,
-.rule-operator-container.admin-select:before,
-.sandbox-selector-wrapper:before {
+.rule-operator-container.admin-select:before {
     content: "\e61b";
     font-family:'broadleaf';
     float:right;
@@ -970,8 +972,4 @@ p.deployment-summary {
 .rule-operator-container.admin-select:before {
     right: 4px;
     top: 7px;
-}
-.sandbox-selector-wrapper:before {
-    right: 10px;
-    top: 10px;
 }

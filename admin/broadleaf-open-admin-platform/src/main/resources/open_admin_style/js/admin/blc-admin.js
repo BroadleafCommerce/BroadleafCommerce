@@ -500,7 +500,7 @@ var BLCAdmin = (function($) {
         },
 
         initializeSelectizeFields : function($container) {
-            $('select:not(".selectize-collection")').find('select:not(".selectize-adder")').selectize({
+            $('select:not(".selectize-collection, .selectize-adder")').selectize({
                 sortField: 'text'
             });
 

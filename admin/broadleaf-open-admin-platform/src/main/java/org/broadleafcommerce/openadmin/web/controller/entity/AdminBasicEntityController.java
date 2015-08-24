@@ -375,10 +375,21 @@ public class AdminBasicEntityController extends AdminAbstractController {
         EntityForm entityForm = formService.createEntityForm(cmd, entity, subRecordsMap, crumbs);
         
         modifyEntityForm(entityForm, pathVars);
-        
+
+        // check if the entity is dirty and find the number of changes
+        int modifications = 0;
+        for (Property prop : entity.getProperties()) {
+            if (prop.getIsDirty() && !prop.getName().equals("id")) {
+                modifications++;
+            }
+        }
+
         model.addAttribute("entity", entity);
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("currentUrl", request.getRequestURL().toString());
+
+        // sandbox ribbon information
+        model.addAttribute("entityModifications", modifications);
 
         setModelAttributes(model, sectionKey);
 
