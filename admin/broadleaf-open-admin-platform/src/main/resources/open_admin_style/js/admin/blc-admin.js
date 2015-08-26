@@ -28,6 +28,7 @@ var BLCAdmin = (function($) {
 	var postFormSubmitHandlers = [];
 	var dependentFieldFilterHandlers = {};
 	var initializationHandlers = [];
+    var excludedSelectizeSelectors = [];
 	var updateHandlers = [];
 	var stackedModalOptions = {
 	    left: 20,
@@ -136,6 +137,10 @@ var BLCAdmin = (function($) {
 	    addUpdateHandler : function(fn) {
 	        updateHandlers.push(fn);
 	    },
+
+        addExcludedSelectizeSelector : function(selector) {
+            excludedSelectizeSelectors.push(selector);
+        },
 
     	runPreValidationSubmitHandlers : function($form) {
             for (var i = 0; i < preValidationFormSubmitHandlers.length; i++) {
@@ -434,8 +439,6 @@ var BLCAdmin = (function($) {
 					e.preventDefault();
 					$(this).prev('input').prop("checked", true).change();
 				});
-
-				$container.find('select:not(".selectize-collection, .selectize-adder, .query-builder-rules-container select")').selectize();
 			}
 
             // If there is no container specified, we'll initialize the active tab (or the body if there are no tabs)
@@ -500,9 +503,13 @@ var BLCAdmin = (function($) {
         },
 
         initializeSelectizeFields : function($container) {
-            $('select:not(".selectize-collection, .selectize-adder, .query-builder-rules-container select")').selectize({
-                sortField: 'text'
-            });
+            var excludedSelectors = '';
+            for (var i=0;i<excludedSelectizeSelectors.length;i++){
+                excludedSelectors += ', ' + excludedSelectizeSelectors[i];
+            }
+
+            $('select:not(".selectize-collection, .selectize-adder' + excludedSelectors + '")')
+                .selectize({sortField: 'text'});
 
             $container.find('.selectize-wrapper').each(function(index, selectizeWrapper) {
                 var selectizeAdder = $(selectizeWrapper).find(".selectize-adder");

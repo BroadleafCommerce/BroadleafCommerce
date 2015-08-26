@@ -238,3 +238,26 @@
 .add-and-button {
     height: 45px;
 }
+
+.query-builder-rules-header {
+    font-size: 1em;
+}
+
+.read-only-rule {
+    margin: 10px 0px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.07);
+}
+
+.read-only-rule span {
+    font-size: 12px;
+    padding-right: 4px;
+}
+
+.read-only-rule span.readable-rule-field, .read-only-rule span.readable-rule-value {
+    font-weight: bold;
+}
+
+.read-only-rule span.readable-no-rule {
+    font-style: italic;
+}

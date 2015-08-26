@@ -49,20 +49,34 @@
          * A single Admin RuleBuilder may contain more than one QueryBuilder - such as in the case of complex
          * item rules (i.e. org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY)
          *
-         * @param hiddenId - the ID of the hidden JSON input element where the value is stored
+         * @param hiddenId - the ID of the hidden JSON input element where the constructed value is stored
          * @param containerId - the ID of the container <div> element where the query builders are rendered
          * @param fields - field metadata needed for this particular query builder(s)
          * @param data - any rules (data) that need to be populated on the query builder(s)
          * @returns {{hiddenId: *, containerId: *, fields: *, data: *}}
          */
-        addRuleBuilder : function(hiddenId, containerId, ruleType, fields, data) {
+        addRuleBuilder : function(hiddenId, containerId, ruleType, fields, data, modal) {
             var ruleBuilder = {
+                modal: modal,
                 hiddenId : hiddenId,
                 ruleType : ruleType,
                 containerId : containerId,
                 fields : fields.fields,
                 data : data.data,
                 builders : [],
+
+                getFieldLabelById : function(fieldId) {
+                    for (var i=0; i<this.fields.length; i++) {
+                        if (this.fields[i].id === fieldId) {
+                            return this.fields[i].label;
+                        }
+                    }
+                    return null;
+                },
+
+                getOperatorLabelByOperatorType : function(operatorType)  {
+                    return this.builders[0].queryBuilder('getOperatorLabelByType', operatorType);
+                },
 
                 addQueryBuilder : function(builder) {
                     var exists = false;
@@ -94,6 +108,7 @@
                 }
 
             };
+
             ruleBuildersArray.push(ruleBuilder)
             return ruleBuilder;
         },
@@ -188,25 +203,6 @@
         },
 
         /**
-         * Returns a "Launch Rule Builder" element
-         * @param hiddenId
-         * @param ruleType
-         * @param ruleTitleId
-         * @returns {*|jQuery|HTMLElement}
-         */
-        getLaunchModalBuilderLink : function(hiddenId, ruleType, ruleTitleId)  {
-            var outerDiv = $("<div>", {'class' : 'launch-modal-rule-builder button',
-                                        'data-hiddenId' : hiddenId,
-                                        'data-ruleType' : ruleType,
-                                        'data-ruleTitleId' : ruleTitleId});
-            var addModalIcon = $("<i>", {'class': "fa fa-list-alt fa-lg"});
-            var addModalText = $("<span>", {'text': "Launch Rule Builder"});
-            outerDiv.append(addModalIcon);
-            outerDiv.append(addModalText);
-            return outerDiv;
-        },
-
-        /**
          * Returns a "Set Rule" button element intended to be used on a rule builder modal
          * @param hiddenId
          * @returns {*|jQuery|HTMLElement}
@@ -233,7 +229,6 @@
         },
 
         /**
-         * Rule Builders in the context of the Admin interface may be driven by a question (radio button).
          * This method is intended to show an existing rule or create a new one if one does not exist.
          *
          * @param $container - the ".query-builder-rules-container" in which to append the builder
@@ -247,6 +242,7 @@
             if (ruleBuilder != null) {
                 $container.show();
 
+                //If invoked from a "RADIO" - create new query builder for the container
                 if ($container.children().children().length == 0) {
                     if (typeToCreate === 'add-main-rule') {
                         this.addAdditionalQueryBuilder($container, null);
@@ -499,10 +495,14 @@
         },
 
         /**
-         * set the appropriate JSON value on the "hiddenId" input element for the corresponding rule builder.
+         * Set the appropriate JSON value on the "hiddenId" input element for the corresponding rule builder.
          *
          * Performs the appropriate data transformations in order to properly bind with the backing
          * org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper
+         *
+         * NOTE: this will not collect and set every rule builder passed in. It determines whether or not
+         * to collect the data based on its state (i.e. if there is a RADIO and it is off, it will not collect data)
+         *
          * @param ruleBuilder
          */
         setJSONValueOnField : function (ruleBuilder) {
@@ -510,7 +510,7 @@
             var container = $('#'+ruleBuilder.containerId);
             var builders = ruleBuilder.builders;
 
-            if (builders != null) {
+            if (builders != null && ruleBuilder) {
                 var collectedData = {};
                 collectedData.data = [];
                 for (var j = 0; j < builders.length; j++) {
@@ -550,8 +550,61 @@
                 }
 
                 $("#"+hiddenId).val(JSON.stringify(collectedData));
+                this.setReadableJSONValueOnField(ruleBuilder, collectedData.data);
 
             }
+        },
+
+        setReadableJSONValueOnField : function (ruleBuilder, data) {
+            var hiddenId = ruleBuilder.hiddenId;
+            var readableElement = $('#'+hiddenId+'-readable');
+
+            //If the element exists set the value
+            if (readableElement) {
+                //clear out existing content
+                $(readableElement).empty();
+
+                for (var i=0; i<data.length; i++) {
+                    var dataDTO = data[i];
+                    var prefix = $("<span>", {'class' : 'readable-rule-prefix',
+                                              'text' : dataDTO.quantity ?
+                                                  'Match ' + dataDTO.quantity + ' items where: ' :
+                                                  'Rule where: '});
+
+                    $(readableElement).append(prefix);
+                    var condition = dataDTO.condition;
+                    for (var k = 0; k < dataDTO.rules.length; k++) {
+                        var ruleDTO = dataDTO.rules[k];
+
+                        var name = $("<span>", {'class' : 'readable-rule-field',
+                            'text' : ruleBuilder.getFieldLabelById(ruleDTO.id)});
+                        var operator = $("<span>", {'class' : 'readable-rule-operator',
+                            'text' : ruleBuilder.getOperatorLabelByOperatorType(ruleDTO.operator)});
+                        var value = $("<span>", {'class' : 'readable-rule-value',
+                            'text' : ruleDTO.value});
+
+                        $(readableElement).append(name);
+                        $(readableElement).append(operator);
+                        $(readableElement).append(value);
+
+                        if (k != dataDTO.rules.length-1) {
+                            var additional = $("<span>", {'text' : condition});
+                            $(readableElement).append(additional);
+                        }
+                    }
+
+                    if (i != data.length-1) {
+                        var and = $("<span>", {'text' : 'and'});
+                        $(readableElement).append(and);
+                    }
+                }
+            }
+
+            if (data == null || data.length == 0) {
+                var noRules = $("<span>", {'class': 'readable-no-rule', 'text' : 'No rules applied yet.'});
+                $(readableElement).append(noRules);
+            }
+
         }
 
     };
@@ -567,28 +620,41 @@
                 containerId = $this.data('containerid'),
                 fields = $this.data('fields'),
                 data = $this.data('data'),
+                modal = $this.data('modal'),
                 ruleType =  $(this).data('ruletype'),
-                ruleBuilder = BLCAdmin.ruleBuilders.addRuleBuilder(hiddenId, containerId, ruleType, fields, data);
+                ruleBuilder = BLCAdmin.ruleBuilders.addRuleBuilder(hiddenId, containerId, ruleType, fields, data, modal);
 
+            //Create QueryBuilder Instances for all rule builders on the page
             BLCAdmin.ruleBuilders.initializeRuleBuilder($this.parent(), ruleBuilder);
         });
 
+        //Once all the query builders have been initialized - show or render the component based on its display type
         $container.find('.rule-builder-required-field').each(function(index, element) {
             var ruleType = $(this).data('ruletype');
             var launchModal = $(this).data('modal');
-            if (!launchModal) {
-                BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder($($(this).next().next()), ruleType);
+            var rulesContainer = $($(this)).siblings('.query-builder-rules-container');
+            if (launchModal) {
+                var rulesContainerID = rulesContainer.attr('id');
+                var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilder(rulesContainerID);
+                var data = ruleBuilder.data;
+                BLCAdmin.ruleBuilders.setReadableJSONValueOnField(ruleBuilder, data);
+            } else {
+                BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder(rulesContainer, ruleType);
             }
         });
     });
 
     /**
-     * Post Validation Handler to aggregate and collect all rule builder data on the page
+     * Post Validation Handler to aggregate and collect all rule builder data on the page before form submission
+     * NOTE: this will only collect non-modal rule builders since modals are responsible for setting their own
+     * data and have already set it appropriately.
      */
     BLCAdmin.addPostValidationSubmitHandler(function() {
         for (var i = 0; i < BLCAdmin.ruleBuilders.ruleBuilderCount(); i++) {
             var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByIndex(i);
-            BLCAdmin.ruleBuilders.setJSONValueOnField(ruleBuilder);
+            if (!ruleBuilder.modal) {
+                BLCAdmin.ruleBuilders.setJSONValueOnField(ruleBuilder);
+            }
         }
     });
 
@@ -616,7 +682,7 @@ $(document).ready(function() {
     });
 
     /**
-     * Invoked from a Rule Builder's leading question
+     * Invoked from a Rule Builder with display type : "RADIO"
      * e.g. "Build a Time Rule?" (No)
      */
     $('body').on('change', 'input.clear-rules', function(){
@@ -631,10 +697,7 @@ $(document).ready(function() {
     });
 
     /**
-     * Invoked from a Rule Builder's leading question
-     * Depending on the data attributes of the field
-     * - it will either create a new rule builder or a button to launch it in a modal
-     * e.g. "Build a Time Rule?" (Yes)
+     * Invoked from a Rule Builder with display type : "RADIO"
      */
     $('body').on('change', 'input.add-main-rule, input.add-main-item-rule', function(){
         var $ruleTitle = $($(this).parent().parent().find('.query-builder-rules-header'));
@@ -647,25 +710,16 @@ $(document).ready(function() {
             $container.parent().find('.query-builder-rules-container-mvel').show();
         } else {
             var ruleType = $(this).data('ruletype');
-            var launchModal = $(this).data('modal');
-            if (launchModal) {
-                $container.show();
-                if ($container.children().children().length == 0) {
-                    var hiddenId = $container.parent().find('.rule-builder-data').data('hiddenid');
-                    $container.append(BLCAdmin.ruleBuilders.getLaunchModalBuilderLink(hiddenId, ruleType, $ruleTitle.attr('id')));
-                }
-            } else {
-                $ruleTitle.show();
-                BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder($container, ruleType);
-            }
+            $ruleTitle.show();
+            BLCAdmin.ruleBuilders.showOrCreateMainRuleBuilder($container, ruleType);
         }
     });
 
     /**
-     * Invoked from "Launch Modal Rule Builder" button
+     * Invoked from a Rule Builder with display type : "MODAL"
      */
     $('body').on('click', 'div.launch-modal-rule-builder', function() {
-        var $container = $(this).parent();
+        var $container = $($(this)).siblings('.query-builder-rules-container');
         var hiddenId = $($(this)).data('hiddenid');
         var ruleType = $($(this)).data('ruletype');
         var ruleTitleId = $($(this)).data('ruletitleid');
@@ -696,6 +750,7 @@ $(document).ready(function() {
             }
         }
 
+        $modalContainer.show();
         $modal.find('.modal-body').append($modalContainer);
         $modal.find('.modal-footer').append(BLCAdmin.ruleBuilders.getSaveModalRuleLink(hiddenId));
 
@@ -708,6 +763,7 @@ $(document).ready(function() {
     });
 
     /**
+     * Invoked from a Rule Builder with display type : "MODAL"
      * Invoked from the "Set Rule" button on a modal rule builder
      */
     $('body').on('click', 'button.set-modal-rule-builder', function() {

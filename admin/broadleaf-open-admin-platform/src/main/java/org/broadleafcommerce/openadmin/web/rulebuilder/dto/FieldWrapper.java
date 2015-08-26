@@ -34,25 +34,25 @@ import java.util.ArrayList;
  *
  * {'fields': [
  *      {'label':'Order Item - name',
- *      'name':'name',
+ *      'id':'name',
  *      'operators':blcOperators_Text,
- *      'options':[]},
+ *      'values':[]},
  *      {'label':'Order Item - Retail Price',
- *      'name':'retailPrice',
+ *      'id':'retailPrice',
  *      'operators':blcOperators_Numeric,
- *      'options':[]},
+ *      'values':[]},
  *      {'label':'Product - is Featured Product',
- *      'name':'sku.product.isFeaturedProduct',
+ *      'id':'sku.product.isFeaturedProduct',
  *      'operators':blcOperators_Boolean,
- *      'options':[]},
+ *      'values':[]},
  *      {'label':'Sku - Active End Date',
- *      'name':'sku.activeEndDate',
+ *      'id':'sku.activeEndDate',
  *      'operators':blcOperators_Date,
- *      'options':[]},
+ *      'values':[]},
  *      {'label':'Category - Fulfillment Type',
- *      'name':'category.fulfillmentType',
+ *      'id':'category.fulfillmentType',
  *      'operators':blcOperators_Enumeration,
- *      'options':blcOptions_FulfillmentType}
+ *      'values':blcOptions_FulfillmentType}
  * ]}
  *
  */

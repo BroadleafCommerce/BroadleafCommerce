@@ -21,6 +21,14 @@
     
     // Add utility functions for offers to the BLCAdmin object
     BLCAdmin.offer = {
+
+        initValueFieldStyle : function ($form) {
+            var inputGroup = $("<div>", {'class' : 'input-group'});
+            var inputGroupIcon = $("<i>", {'class' : 'blc-icon-percent'});
+            var inputGroupAddon = $("<span>", {'class' : 'input-group-addon'});
+            inputGroupAddon.append(inputGroupIcon);
+            $form.find("#fields\\'value\\'\\.value").wrap(inputGroup).before(inputGroupAddon);
+        },
     
         addOnChangeTriggers : function($form) {
             $form.find('#field-type').on('change', function() {
@@ -30,6 +38,10 @@
             $form.find('#field-deliveryType').on('change', function() {
                 BLCAdmin.offer.initializeDeliveryTypeField($form);
             });
+
+            $form.find('#field-discountType').on('change', function() {
+                BLCAdmin.offer.initializeDiscountTypeField($form);
+            });
         },
         
         /**
@@ -38,10 +50,28 @@
         initializeOfferFormFields : function($form) {
             this.initializeOfferTypeField($form);
             this.initializeDeliveryTypeField($form);
+            this.initializeDiscountTypeField($form);
+        },
+
+        initializeDiscountTypeField : function($form) {
+            var $offerDiscountType = $form.find('#field-discountType');
+            var offerDiscountType;
+            if ($offerDiscountType.find('select').length > 0) {
+                offerDiscountType = $offerDiscountType.find('select').val();
+            } else {
+                offerDiscountType = $offerDiscountType.find('input[type="radio"]:checked').val();
+            }
+
+            $form.find("#fields\\'value\\'\\.value").siblings().find('i').removeClass();
+            if (offerDiscountType == "PERCENT_OFF") {
+                $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass("blc-icon-percent");
+            } else {
+                $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass("fa fa-dollar");
+            }
         },
         
         initializeOfferTypeField : function($form) {
-            /**
+
             var $offerType = $form.find('#field-type');
             var offerTypeValue;
             if ($offerType.find('select').length > 0) {
@@ -71,7 +101,7 @@
                 $itemTarget.addClass('hidden');
                 $itemTargetFieldset.addClass('hidden');
             }
-             **/
+
         },
         
         initializeDeliveryTypeField : function($form) {
@@ -87,10 +117,13 @@
         
     };
 
+    BLCAdmin.addExcludedSelectizeSelector(".query-builder-rules-container select");
+
     BLCAdmin.addInitializationHandler(function($container) {
         var $form = $container.closest('form.offer-form');
         BLCAdmin.offer.addOnChangeTriggers($form);
         BLCAdmin.offer.initializeOfferFormFields($form);
+        BLCAdmin.offer.initValueFieldStyle($form);
     });
     
 })(jQuery, BLCAdmin);

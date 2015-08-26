@@ -127,3 +127,11 @@ $.fn.queryBuilder.define('blc-admin-query-builder', function(options) {
     removeConditionsLink: {}
 });
 
+$.fn.queryBuilder.extend({
+
+    getOperatorLabelByType: function(type) {
+        return this.lang.operators[type] || type;
+    }
+
+});
+

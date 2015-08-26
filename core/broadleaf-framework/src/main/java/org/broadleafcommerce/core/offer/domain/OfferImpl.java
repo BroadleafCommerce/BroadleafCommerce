@@ -124,7 +124,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Name", order = 1000, 
         group = OfferAdminPresentation.GroupName.Description,
-        prominent = true, gridOrder = 1)
+        prominent = true, gridOrder = 1,
+        defaultValue = "New Offer")
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
@@ -147,7 +148,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
         group = OfferAdminPresentation.GroupName.Description,
         prominent =  true, gridOrder = 3,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType")
+        broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType",
+        defaultValue = "ORDER")
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
@@ -162,7 +164,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "OFFER_VALUE", nullable=false, precision=19, scale=5)
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order = 2000, 
         group = OfferAdminPresentation.GroupName.Amount,
-        prominent = true, gridOrder = 4)
+        prominent = true, gridOrder = 4,
+        defaultValue = "0")
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")

@@ -147,3 +147,6 @@
 .blc-icon-tools:before {
 	content: "\e622";
 }
+.blc-icon-percent:before {
+    content: '%';
+}

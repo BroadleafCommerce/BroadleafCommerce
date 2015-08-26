@@ -36,26 +36,26 @@ import java.util.ArrayList;
  * (This is an example of a complex Item Rule)
  *
  * {'data': [
- *      {'id':'100',
+ *      {'pk':'100',
  *      'quantity':'1',
  *      'condition':'AND',
  *      'rules':[
- *          {'id':null,
+ *          {'pk':null,
  *          'quantity':null,
  *          'condition':null,
  *          'rules':null,
- *          'name':'name',
+ *          'id':'name',
  *          'operator':'IEQUALS',
  *          'value':'merchandise'}]},
- *      {'id':'200',
+ *      {'pk':'200',
  *      'quantity':'2',
  *      'condition':'AND',
  *      'rules':[
- *          {'id':null,
+ *          {'pk':null,
  *          'quantity':null,
  *          'condition':null,
  *          'rules':null,
- *          'name':'retailPrice',
+ *          'id':'retailPrice',
  *          'operator':'GREATER_THAN',
  *          'value':'20.00'}]}
  *      ],

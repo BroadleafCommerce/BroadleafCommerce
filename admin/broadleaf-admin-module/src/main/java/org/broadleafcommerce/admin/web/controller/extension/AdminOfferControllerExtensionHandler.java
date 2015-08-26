@@ -19,8 +19,10 @@
  */
 package org.broadleafcommerce.admin.web.controller.extension;
 
+import org.apache.batik.css.engine.Rule;
 import org.broadleafcommerce.admin.web.controller.entity.AdminOfferController;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
 import org.broadleafcommerce.openadmin.web.controller.AbstractAdminAbstractControllerExtensionHandler;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionManager;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -56,40 +58,34 @@ public class AdminOfferControllerExtensionHandler extends AbstractAdminAbstractC
                 // Qualifier Builders
                 Field qualField = form.findField("qualifyingItemCriteria");
                 if (qualField != null) {
-                    qualField.withAttribute("leadingQuestion", false);
-                    qualField.withAttribute("launchModal", false);
+                    qualField.withAttribute("displayType", RuleBuilderDisplayType.NORMAL.name());
                 }
                 Field fgField = form.findField("offerMatchRules---FULFILLMENT_GROUP");
                 if (fgField != null) {
-                    fgField.withAttribute("leadingQuestion", false);
-                    fgField.withAttribute("launchModal", false);
+                    fgField.withAttribute("displayType", RuleBuilderDisplayType.NORMAL.name());
                 }
 
                 //Target Item Builder
                 Field tarField = form.findField("targetItemCriteria");
                 if (tarField != null) {
-                    tarField.withAttribute("leadingQuestion", false);
-                    tarField.withAttribute("launchModal", false);
+                    tarField.withAttribute("displayType", RuleBuilderDisplayType.NORMAL.name());
                 }
 
                 //Activity Range Builder
                 Field timeField = form.findField("offerMatchRules---TIME");
                 if (timeField != null) {
-                    timeField.withAttribute("leadingQuestion", true);
-                    timeField.withAttribute("launchModal", true);
+                    timeField.withAttribute("displayType", RuleBuilderDisplayType.MODAL.name());
                 }
 
                 //Usage Builders
                 Field custField = form.findField("offerMatchRules---CUSTOMER");
                 if (custField != null) {
-                    custField.withAttribute("leadingQuestion", true);
-                    custField.withAttribute("launchModal", true);
+                    custField.withAttribute("displayType", RuleBuilderDisplayType.MODAL.name());
                 }
 
                 Field orderField = form.findField("offerMatchRules---ORDER");
                 if (orderField != null) {
-                    orderField.withAttribute("leadingQuestion", true);
-                    orderField.withAttribute("launchModal", true);
+                    orderField.withAttribute("displayType", RuleBuilderDisplayType.MODAL.name());
                 }
             }
         }

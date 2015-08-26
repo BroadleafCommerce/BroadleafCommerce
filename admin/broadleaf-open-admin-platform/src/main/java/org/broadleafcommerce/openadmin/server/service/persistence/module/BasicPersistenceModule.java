@@ -387,7 +387,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                     if (fieldManager.getFieldValue(instance, property.getName()) != null) {
                                         property.setIsDirty(true);
                                     }
-                                    fieldManager.setFieldValue(instance, property.getName(), metadata.getDefaultValue());
+                                    fieldManager.setFieldValue(instance, property.getName(), null);
                                 }
                             } catch (FieldNotAvailableException e) {
                                 throw new IllegalArgumentException(e);
