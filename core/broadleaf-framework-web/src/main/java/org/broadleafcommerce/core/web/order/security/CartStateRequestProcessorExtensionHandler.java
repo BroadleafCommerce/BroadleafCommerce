@@ -24,6 +24,8 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.web.context.request.WebRequest;
 
 
 /**
@@ -35,9 +37,10 @@ public interface CartStateRequestProcessorExtensionHandler extends ExtensionHand
      * Throws an exception if cart is invalid.
      * 
      * @param cart
+     * @param customer (the current customer)
      * @param resultHolder
      * @return
      */
-    public ExtensionResultStatusType lookupOrCreateCart(ExtensionResultHolder<Order> resultHolder);
+    public ExtensionResultStatusType lookupOrCreateCart(WebRequest request, Customer customer, ExtensionResultHolder<Order> resultHolder);
 
 }
