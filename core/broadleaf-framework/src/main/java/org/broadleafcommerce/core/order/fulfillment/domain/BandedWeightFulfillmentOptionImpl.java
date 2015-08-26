@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.order.fulfillment.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
@@ -49,6 +50,7 @@ public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl imp
 
     @OneToMany(mappedBy="option", targetEntity=FulfillmentWeightBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @IgnoreEnterpriseBehavior
     protected List<FulfillmentWeightBand> bands;
 
     @Override
