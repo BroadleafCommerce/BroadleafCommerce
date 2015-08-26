@@ -20,23 +20,24 @@
   -->
 
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+                 version="2.0">
 
 
-    <named-query name="BC_READ_BY_INCOMING_URL" >
+    <named-query name="BC_READ_BY_INCOMING_URL">
         <query>SELECT handler
-               FROM org.broadleafcommerce.cms.url.domain.URLHandler handler
-               WHERE
-                 handler.incomingURL = :incomingURL 
+            FROM org.broadleafcommerce.cms.url.domain.URLHandler handler
+            WHERE
+            handler.incomingURL = :incomingURL
         </query>
     </named-query>
-    
-    <named-query name="BC_READ_ALL_REGEX_HANDLERS" >
+
+    <named-query name="BC_READ_ALL_REGEX_HANDLERS">
         <query>SELECT handler
-               FROM org.broadleafcommerce.cms.url.domain.URLHandler handler
-               WHERE
-                 handler.isRegex = true 
+            FROM org.broadleafcommerce.cms.url.domain.URLHandler handler
+            WHERE
+            handler.isRegex = true
         </query>
     </named-query>
 

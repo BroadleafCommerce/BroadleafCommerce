@@ -62,19 +62,19 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
             return null;
         }
     }
-    
+
     @Override
-	public List<URLHandler> findAllRegexURLHandlers() {
-    	TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_ALL_REGEX_HANDLERS", URLHandler.class);
-    	query.setHint(QueryHints.HINT_CACHEABLE, true);
-    	return query.getResultList();
-	}
+    public List<URLHandler> findAllRegexURLHandlers() {
+        TypedQuery<URLHandler> query = em.createNamedQuery("BC_READ_ALL_REGEX_HANDLERS", URLHandler.class);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
+    }
 
     @Override
     public URLHandler findURLHandlerById(Long id) {
         return em.find(URLHandlerImpl.class, id);
     }
-    
+
     @Override
     public List<URLHandler> findAllURLHandlers() {
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -89,7 +89,7 @@ public class URlHandlerDaoImpl implements URLHandlerDao {
             return new ArrayList<URLHandler>();
         }
     }
-    
+
     public URLHandler saveURLHandler(URLHandler handler) {
         return em.merge(handler);
     }

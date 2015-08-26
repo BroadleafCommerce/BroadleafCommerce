@@ -19,9 +19,9 @@
  */
 package org.broadleafcommerce.cms.url.service;
 
-import java.util.List;
-
 import org.broadleafcommerce.cms.url.domain.URLHandler;
+
+import java.util.List;
 
 /**
  * Created by bpolster.
@@ -31,22 +31,23 @@ public interface URLHandlerService {
     /**
      * Checks the passed in URL to determine if there is a matching URLHandler.
      * Returns null if no handler was found.
-     * 
+     *
      * @param uri
      * @return
      */
     public URLHandler findURLHandlerByURI(String uri);
-    
+
     /**
-     * Be cautious when calling this.  If there are a large number of records, this can cause performance and 
+     * Be cautious when calling this.  If there are a large number of records, this can cause performance and
      * memory issues.
-     * 
+     *
      * @return
      */
     public List<URLHandler> findAllURLHandlers();
-    
+
     /**
      * Persists the URLHandler to the DB.
+     *
      * @param handler
      * @return
      */
@@ -54,17 +55,17 @@ public interface URLHandlerService {
 
     /**
      * Finds a URLHandler by its ID.
-     * 
+     *
      * @param id
      * @return
      */
     public URLHandler findURLHandlerById(Long id);
-    
+
     /**
-     * This is assumed to be a relatively small list of regex URLHandlers (perhaps in the dozens or hundreds of 
-     * records at a maximum).  Having large number of records here (more 1000, for example) 
+     * This is assumed to be a relatively small list of regex URLHandlers (perhaps in the dozens or hundreds of
+     * records at a maximum).  Having large number of records here (more 1000, for example)
      * is not likely necessary to accomplish the desired goal, and can cause performance problems.
-     * 
+     *
      * @return
      */
     public List<URLHandler> findAllRegexURLHandlers();
