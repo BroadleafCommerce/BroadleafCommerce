@@ -25,12 +25,9 @@ package org.broadleafcommerce.core.search.service.solr.index;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
-import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.service.solr.SolrContext;
-
-import java.io.IOException;
 import java.util.HashSet;
 
 
@@ -101,12 +98,32 @@ public abstract class SiteSolrIndexOperation implements SolrIndexOperation {
     }
 
     @Override
-    public void beforeIndexOperation() {
-        // unimplemented
+    public void beforeCount() {
+        // By default we want to do nothing here
     }
 
     @Override
-    public void afterIndexOperation() throws ServiceException, IOException {
-        indexService.optimizeIndex(getSolrServerForIndexing());
+    public void afterCount() {
+        // By default we want to do nothing here
+    }
+
+    @Override
+    public void beforeRead() {
+        // By default we want to do nothing here
+    }
+
+    @Override
+    public void afterRead() {
+        // By default we want to do nothing here
+    }
+
+    @Override
+    public void beforeBuild() {
+        // By default we want to do nothing here
+    }
+
+    @Override
+    public void afterBuild() {
+        // By default we want to do nothing here
     }
 }

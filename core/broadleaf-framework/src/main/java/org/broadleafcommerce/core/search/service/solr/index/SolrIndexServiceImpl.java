@@ -173,11 +173,43 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     public boolean isReindexInProcess() {
         return false;
     }
-    
-    
+
     @Override
     public void rebuildIndex() throws ServiceException, IOException {
-        rebuildIndex(new GlobalSolrFullReIndexOperation(this, shs, errorOnConcurrentReIndex) {
+        LOG.info("Rebuilding the solr index...");
+        StopWatch s = new StopWatch();
+
+        try{
+            preIndexing();
+            doIndexing();
+        } finally {
+            postIndexing();
+        }
+
+        LOG.info(String.format("Finished building index in %s", s.toLapString()));
+    }
+
+    @Override
+    public void preIndexing() throws ServiceException {
+        deleteAllNamespaceDocuments(SolrContext.getReindexServer());
+    }
+
+    @Override
+    public void doIndexing() throws IOException, ServiceException {
+        executeSolrIndexOperation(getCoreIndexOperation());
+    }
+
+    @Override
+    public void postIndexing() throws IOException, ServiceException {
+        // this is required to be at the very very very end after rebuilding the whole index
+        optimizeIndex(SolrContext.getReindexServer());
+        // Swap the active and the reindex cores
+        shs.swapActiveCores();
+    }
+
+    @Override
+    public SolrIndexOperation getCoreIndexOperation() {
+        return new GlobalSolrFullReIndexOperation(this, shs, errorOnConcurrentReIndex) {
 
             @Override
             public List<? extends Indexable> readIndexables(int page, int pageSize) {
@@ -193,27 +225,34 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             public void buildPage(List<? extends Indexable> indexables) throws ServiceException {
                 buildIncrementalIndex(indexables, getSolrServerForIndexing());
             }
-        });
+        };
     }
-    
+
     @Override
-    public void rebuildIndex(final SolrIndexOperation operation) throws ServiceException, IOException {
+    public void executeSolrIndexOperation(final SolrIndexOperation operation) throws ServiceException, IOException {
         operation.obtainLock();
         
         try {
             LOG.info("Rebuilding the solr index...");
             StopWatch s = new StopWatch();
-            
-            operation.beforeIndexOperation();
+
             Object[] pack = saveState();
             try {
                 // TODO: allow specification of types, loop through types I'm indexing
-                final Long numItemsToIndex = operation.countIndexables();
-            
+                final Long numItemsToIndex;
+                try {
+                    operation.beforeCount();
+
+                    numItemsToIndex = operation.countIndexables();
+                } finally {
+                    operation.afterCount();
+                }
+
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("There are at most " + numItemsToIndex + " items to index");
                 }
                 performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
+
                     @Override
                     public void execute() throws ServiceException {
                         int page = 0;
@@ -224,7 +263,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                     }
                 });
 
-                operation.afterIndexOperation();
             } finally {
                 restoreState(pack);
             }
@@ -306,9 +344,22 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
         
         try {
-            
-            List<? extends Indexable> indexables = operation.readIndexables(page, pageSize);
-            operation.buildPage(indexables);
+            List<? extends Indexable> indexables;
+            try {
+                operation.beforeRead();
+                indexables = operation.readIndexables(page, pageSize);
+            } finally {
+                operation.afterRead();
+            }
+
+            try {
+                operation.beforeBuild();
+
+                operation.buildPage(indexables);
+            } finally {
+                operation.afterBuild();
+            }
+
             
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
         } catch (RuntimeException e) {

@@ -25,12 +25,8 @@ package org.broadleafcommerce.core.search.service.solr.index;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
-import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.search.service.solr.SolrContext;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
-
-import java.io.IOException;
-
 
 /**
  * Rebuilds the entire Solr index. This type of indexing operation prevents other threads from performing any other global
@@ -89,15 +85,32 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
     }
 
     @Override
-    public void beforeIndexOperation() throws ServiceException {
-        LOG.info("Deleting the reindex core prior to rebuilding the index");
-        indexService.deleteAllNamespaceDocuments(getSolrServerForIndexing());
+    public void beforeCount() {
+        // By default we want to do nothing here
     }
 
     @Override
-    public void afterIndexOperation() throws ServiceException, IOException {
-        indexService.optimizeIndex(getSolrServerForIndexing());
-        // Swap the active and the reindex cores
-        shs.swapActiveCores();
+    public void afterCount() {
+        // By default we want to do nothing here
+    }
+
+    @Override
+    public void beforeRead() {
+        // By default we want to do nothing here
+    }
+
+    @Override
+    public void afterRead() {
+        // By default we want to do nothing here
+    }
+
+    @Override
+    public void beforeBuild() {
+        // By default we want to do nothing here
+    }
+
+    @Override
+    public void afterBuild() {
+        // By default we want to do nothing here
     }
 }
