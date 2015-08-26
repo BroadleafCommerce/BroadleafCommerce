@@ -23,6 +23,8 @@ import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.web.context.request.WebRequest;
 
 
 /**
@@ -38,7 +40,7 @@ public abstract class AbstractCartStateRequestProcessorExtensionHandler extends 
      * @return
      */
     @Override
-    public ExtensionResultStatusType lookupOrCreateCart(ExtensionResultHolder<Order> resultHolder) {
+    public ExtensionResultStatusType lookupOrCreateCart(WebRequest request, Customer customer, ExtensionResultHolder<Order> resultHolder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 }

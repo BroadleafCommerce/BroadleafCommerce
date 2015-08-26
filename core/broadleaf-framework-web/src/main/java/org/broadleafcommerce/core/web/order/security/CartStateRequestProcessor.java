@@ -111,7 +111,7 @@ public class CartStateRequestProcessor extends AbstractBroadleafWebRequestProces
         }
 
         ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
-        extensionManager.getProxy().lookupOrCreateCart(erh);
+        extensionManager.getProxy().lookupOrCreateCart(request, customer, erh);
 
         Order cart;
         if (erh.getResult() != null) {
