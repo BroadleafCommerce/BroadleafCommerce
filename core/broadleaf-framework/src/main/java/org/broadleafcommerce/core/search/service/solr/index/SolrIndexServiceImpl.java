@@ -394,35 +394,38 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     protected List<? extends Indexable> readAllActiveIndexables(int page, int pageSize) {
         if (useSku) {
             List<Sku> skus = skuDao.readAllActiveSkus(page, pageSize);
-            ArrayList<Sku> skusToIndex = new ArrayList<Sku>();
-
-            if (skus != null && !skus.isEmpty()) {
-                for (Sku sku : skus) {
-                    //If the sku is not active, don't index it...
-                    if (!sku.isActive()) {
-                        continue;
-                    }
-
-                    //If this is the default sku and the product has product options
-                    //and is not allowed to be sold without product options
-                    if (sku.getDefaultProduct() != null
-                            && !sku.getProduct().getCanSellWithoutOptions()
-                            && !sku.getProduct().getAdditionalSkus().isEmpty()) {
-                        continue;
-                    }
-                    
-                    if (sku.getDefaultProduct() instanceof ProductBundle) {
-                        continue;
-                    }
-
-                    skusToIndex.add(sku);
-                }
-            }
-
-            return skusToIndex;
+            return filterIndexableSkus(skus);
         } else {
             return productDao.readAllActiveProducts(page, pageSize);
         }
+    }
+    
+    public List<Sku> filterIndexableSkus(List<Sku> skus) {
+        ArrayList<Sku> skusToIndex = new ArrayList<Sku>();
+
+        if (CollectionUtils.isNotEmpty(skus)) {
+            for (Sku sku : skus) {
+                //If the sku is not active, don't index it...
+                if (!sku.isActive()) {
+                    continue;
+                }
+
+                //If this is the default sku and the product has product options
+                //and is not allowed to be sold without product options
+                if (sku.getDefaultProduct() != null
+                        && !sku.getProduct().getCanSellWithoutOptions()
+                        && !sku.getProduct().getAdditionalSkus().isEmpty()) {
+                    continue;
+                }
+                
+                if (sku.getDefaultProduct() instanceof ProductBundle) {
+                    continue;
+                }
+
+                skusToIndex.add(sku);
+            }
+        }
+        return skusToIndex;
     }
 
     @Override
