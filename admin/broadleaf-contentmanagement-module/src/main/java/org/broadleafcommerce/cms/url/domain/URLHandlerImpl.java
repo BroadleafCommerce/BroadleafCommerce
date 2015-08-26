@@ -37,8 +37,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,7 +55,7 @@ import javax.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, ProfileEntity, URLHandlerAdminPresentation {
@@ -67,12 +65,12 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @Id
     @GeneratedValue(generator = "URLHandlerID")
     @GenericGenerator(
-        name="URLHandlerID",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="URLHandlerImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.cms.url.domain.URLHandlerImpl")
-        }
+            name = "URLHandlerID",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "URLHandlerImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.url.domain.URLHandlerImpl")
+            }
     )
     @Column(name = "URL_HANDLER_ID")
     @AdminPresentation(friendlyName = "URLHandlerImpl_ID", order = 1, group = GroupName.General, visibility = VisibilityEnum.HIDDEN_ALL)
@@ -81,7 +79,7 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @AdminPresentation(friendlyName = "URLHandlerImpl_incomingURL", order = 1, group = GroupName.General, prominent = true,
             helpText = "urlHandlerIncoming_help", defaultValue = "")
     @Column(name = "INCOMING_URL", nullable = false)
-    @Index(name="INCOMING_URL_INDEX", columnNames={"INCOMING_URL"})
+    @Index(name = "INCOMING_URL_INDEX", columnNames = {"INCOMING_URL"})
     protected String incomingURL;
 
     @Column(name = "NEW_URL", nullable = false)
@@ -96,12 +94,12 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
             prominent = true)
     protected String urlRedirectType;
 
-    @Column(name="IS_REGEX")
+    @Column(name = "IS_REGEX")
     @AdminPresentation(friendlyName = "URLHandlerImpl_isRegexHandler", order = 1, group = GroupName.General, prominent = true,
             groupOrder = 1,
             helpText = "urlHandlerIsRegexHandler_help")
-     @Index(name="IS_REGEX_HANDLER_INDEX", columnNames={"IS_REGEX"})
-     protected Boolean isRegex = false;
+    @Index(name = "IS_REGEX_HANDLER_INDEX", columnNames = {"IS_REGEX"})
+    protected Boolean isRegex = false;
 
     @Override
     public Long getId() {
@@ -177,10 +175,10 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     }
 
     /**
-     * In a preview environment, {@link #getLocation()} attempts to navigate to the 
-     * provided URL.    If the URL contains a Regular Expression, then we can't 
-     * navigate to it. 
-     * 
+     * In a preview environment, {@link #getLocation()} attempts to navigate to the
+     * provided URL.    If the URL contains a Regular Expression, then we can't
+     * navigate to it.
+     *
      * @param location
      * @return
      */

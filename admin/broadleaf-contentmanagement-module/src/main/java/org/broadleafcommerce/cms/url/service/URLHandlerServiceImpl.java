@@ -49,18 +49,16 @@ import net.sf.ehcache.Element;
 @Service("blURLHandlerService")
 public class URLHandlerServiceImpl implements URLHandlerService {
 
-    private static final Log LOG = LogFactory.getLog(URLHandlerServiceImpl.class);
     protected static final String REGEX_SPECIAL_CHARS_PATTERN = "([\\[\\]\\.\\|\\?\\*\\+\\(\\)\\\\~`\\!@#%&\\-_+={}'\"\"<>:;, \\/])"; //other than ^ and $
-    
     //This is just a placeholder object to allow us to cache a URI that does not have a URL handler.
     protected static final NullURLHandler NULL_URL_HANDLER = new NullURLHandler();
-  	
-  	protected Cache urlHandlerCache;
+    private static final Log LOG = LogFactory.getLog(URLHandlerServiceImpl.class);
+    protected Cache urlHandlerCache;
 
-    @Resource(name="blURLHandlerDao")
+    @Resource(name = "blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
 
-    @Resource(name="blStatisticsService")
+    @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
 
     protected Map<String, Pattern> urlPatternMap = new EfficientLRUMap<String, Pattern>(2000);
@@ -68,41 +66,41 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     /**
      * Checks the passed in URL to determine if there is a matching URLHandler.
      * Returns null if no handler was found.
-     * 
+     *
      * @param uri
      * @return
      */
     @Override
     public URLHandler findURLHandlerByURI(String uri) {
-    	
-    	//This allows clients or implementors to manipulate the URI, for example making it all lower case.
-    	//The default implementation simply does not manipulate the URI in any way, but simply returns 
-    	//what is passed in.
-    	uri = manipulateUri(uri);
-    	
-    	URLHandler handler = null;
-    	
-    	SandBox sandbox = null;
+
+        //This allows clients or implementors to manipulate the URI, for example making it all lower case.
+        //The default implementation simply does not manipulate the URI in any way, but simply returns
+        //what is passed in.
+        uri = manipulateUri(uri);
+
+        URLHandler handler = null;
+
+        SandBox sandbox = null;
         Site site = null;
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
-			sandbox = BroadleafRequestContext.getBroadleafRequestContext().getSandBox();
+            sandbox = BroadleafRequestContext.getBroadleafRequestContext().getSandBox();
             site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
-		}
-		
+        }
+
         String key = buildKey(site, sandbox, uri);
-    	
-    	//See if this is in cache first...
-    	handler = getUrlHandlerFromCache(key);
-    	
-    	if (handler == null) {
-    		//Check for an exact match in the DB...
-    		handler = urlHandlerDao.findURLHandlerByURI(uri);
-    		
-    		if (handler == null) {
-    			//Check for a regex match
-    			handler = checkForMatches(uri);
-    		}
-    		
+
+        //See if this is in cache first...
+        handler = getUrlHandlerFromCache(key);
+
+        if (handler == null) {
+            //Check for an exact match in the DB...
+            handler = urlHandlerDao.findURLHandlerByURI(uri);
+
+            if (handler == null) {
+                //Check for a regex match
+                handler = checkForMatches(uri);
+            }
+
             if (handler == null) {
                 //Use the NullURLHandler instance. This will be cached to indicate that 
                 //This URL does not have a match.
@@ -111,14 +109,14 @@ public class URLHandlerServiceImpl implements URLHandlerService {
                 //Create a non-entity instance of the DTO to cache.
                 handler = new URLHandlerDTO(handler.getNewURL(), handler.getUrlRedirectType());
             }
-    		
-    		getUrlHandlerCache().put(new Element(key, handler));
-    	}
-    	
-    	if (handler instanceof NullURLHandler) {
-    		return null;
-    	}
-    	
+
+            getUrlHandlerCache().put(new Element(key, handler));
+        }
+
+        if (handler instanceof NullURLHandler) {
+            return null;
+        }
+
         return handler;
     }
 
@@ -131,7 +129,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     public List<URLHandler> findAllURLHandlers() {
         return urlHandlerDao.findAllURLHandlers();
     }
-    
+
     @Override
     public List<URLHandler> findAllRegexURLHandlers() {
         return urlHandlerDao.findAllRegexURLHandlers();
@@ -142,7 +140,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     public URLHandler saveURLHandler(URLHandler handler) {
         return urlHandlerDao.saveURLHandler(handler);
     }
-    
+
     protected URLHandler checkForMatches(String requestURI) {
         URLHandler currentHandler = null;
         try {
@@ -179,17 +177,17 @@ public class URLHandlerServiceImpl implements URLHandlerService {
 
         return null;
     }
-    
+
     /*
      * Some clients may wish, for example, to convert the URI into all lower case, or to manipulate it in some way.  This 
      * is just a convenience method to allow the manipulation of the URI coming in that we are trying to 
      * find a match for.
      */
     protected String manipulateUri(String uri) {
-    	//The default is not to modify the URI at all.
-    	return uri;
+        //The default is not to modify the URI at all.
+        return uri;
     }
-    
+
     protected URLHandler getUrlHandlerFromCache(String key) {
         Element cacheElement = getUrlHandlerCache().get(key);
         if (cacheElement != null) {
@@ -204,7 +202,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         }
         return urlHandlerCache;
     }
-    
+
     protected String buildKey(Site site, SandBox sandBox, String requestUri) {
         StringBuilder key = new StringBuilder();
         if (site != null) {
@@ -220,9 +218,9 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         return key.toString();
     }
 
-  protected String wrapStringsWithAnchors(String incomingUrl) {
+    protected String wrapStringsWithAnchors(String incomingUrl) {
         if (!incomingUrl.startsWith("^")) {
-            if (incomingUrl.substring(0,1).matches(REGEX_SPECIAL_CHARS_PATTERN)) {
+            if (incomingUrl.substring(0, 1).matches(REGEX_SPECIAL_CHARS_PATTERN)) {
                 incomingUrl = "^" + incomingUrl;
             } else {
                 incomingUrl = "^/" + incomingUrl;
@@ -230,7 +228,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         }
 
         if (!incomingUrl.endsWith("$")) {
-            incomingUrl+= "$";
+            incomingUrl += "$";
         }
 
         return incomingUrl;

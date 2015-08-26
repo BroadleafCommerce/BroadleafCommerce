@@ -26,19 +26,19 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
  * @author Jon Fleschler (jfleschler)
  */
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "URLHandlerImpl_friendyName",
-    tabs = {
-        @AdminTabPresentation(name = URLHandlerAdminPresentation.TabName.General,
-            order = URLHandlerAdminPresentation.TabOrder.General,
-                groups = {
-                        @AdminGroupPresentation(name = URLHandlerAdminPresentation.GroupName.General,
-                                order = URLHandlerAdminPresentation.GroupOrder.General,
-                                untitled = true),
-                        @AdminGroupPresentation(name = URLHandlerAdminPresentation.GroupName.Redirect,
-                                order = URLHandlerAdminPresentation.GroupOrder.Redirect,
-                                column = 1)
-                }
-        )
-    }
+        tabs = {
+                @AdminTabPresentation(name = URLHandlerAdminPresentation.TabName.General,
+                        order = URLHandlerAdminPresentation.TabOrder.General,
+                        groups = {
+                                @AdminGroupPresentation(name = URLHandlerAdminPresentation.GroupName.General,
+                                        order = URLHandlerAdminPresentation.GroupOrder.General,
+                                        untitled = true),
+                                @AdminGroupPresentation(name = URLHandlerAdminPresentation.GroupName.Redirect,
+                                        order = URLHandlerAdminPresentation.GroupOrder.Redirect,
+                                        column = 1)
+                        }
+                )
+        }
 )
 
 public interface URLHandlerAdminPresentation {
