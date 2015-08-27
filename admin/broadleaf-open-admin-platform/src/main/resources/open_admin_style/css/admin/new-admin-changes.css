@@ -974,7 +974,7 @@ p.deployment-summary {
 .sandbox-selector-wrapper > select {
     -webkit-appearance: none;
     border-radius: 0px;
-
+    box-shadow: none;
 }
 .rule-filter-container.admin-select:before,
 .rule-operator-container.admin-select:before {
