@@ -168,6 +168,7 @@ input[type="radio"].radio+label.radio-label.clr,
 
 .radio-container {
     padding: 10px 10px 4px 10px;
+    display: inline-block;
 }
 
 /* add nowrap to listgrids */
@@ -248,6 +249,21 @@ div.action-popup img.ajax-loader {
     padding-left: 10px;
     color: #94AF39;
  }
+
+div.alert-box.list-grid-alert.save-alert {
+    display: inline-block;
+    margin-bottom: 0;
+    margin-left: 0px;
+    padding-right: 7px;
+    background: none;
+    border: none;
+    color: #98B30A;
+    text-shadow: none;
+}
+
+div.alert-box.list-grid-alert.save-alert a.close {
+    display: none;
+}
 
 button:disabled {
     background-color: #999999 !important;
@@ -379,6 +395,10 @@ button:disabled {
     line-height: 40px;
 }
 
+.selectize-control.single:not(.selectize-adder) {
+    display: inline-block;
+}
+
 .select-style {
     overflow: visible;
     background: #fff;
@@ -454,10 +474,10 @@ button:disabled {
     margin-bottom: -10px;
 }
 
-textarea, .selectize-input, input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"] {
-    margin: 5px 0 0 0;
-    border-radius: 0px;
-}
+/*textarea, .selectize-input, input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"] {*/
+    /*margin: 5px 0 0 0;*/
+    /*border-radius: 0px;*/
+/*}*/
 /* single-line text inputs only */
 input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"] {
     height: 34px;
@@ -823,9 +843,9 @@ legend {
     margin-left: 25px;
 }
 
-.input-group > input {
-    margin: 0;
-}
+/*.input-group > input {*/
+    /*margin: 0;*/
+/*}*/
 
 .input-group-addon {
     border-radius: 0px;
@@ -955,6 +975,8 @@ p.deployment-summary {
 
 .foreign-key-value-container .display-value.read-only {
     margin-right:15px;
+    padding: 6px;
+    min-width: 200px;
 }
 
 .thumbnail {
@@ -1017,29 +1039,4 @@ blockquote::before{
 
 [data-fieldname="rejectionLabel"] {
     white-space: initial !important;
-}
-
-.field-group.local {
-    position: relative;
-}
-
-.field-group.local > div:before {
-    content: "\e615";
-    font-family: 'broadleaf';
-    float: right;
-    vertical-align: middle;
-    position: absolute;
-    right: 8px;
-    top: 38px;
-}
-
-
-.field-group.local > .radio-container:before {
-    content: "\e615";
-    font-family: 'broadleaf';
-    float: right;
-    vertical-align: middle;
-    position: absolute;
-    right: 8px;
-    top: 30px;
 }

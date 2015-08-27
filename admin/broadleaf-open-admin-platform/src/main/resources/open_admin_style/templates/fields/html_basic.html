@@ -4,7 +4,7 @@
 <div th:substituteby="components/fieldTranslation" />
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
-<div class="twelve indented-form-value"
+<div class="redactor-field"
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
 
     <textarea class="redactor" name="content"

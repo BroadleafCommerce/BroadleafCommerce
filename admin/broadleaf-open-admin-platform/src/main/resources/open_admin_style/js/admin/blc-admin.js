@@ -36,9 +36,9 @@ var BLCAdmin = (function($) {
 	}
 	var originalStickyBarOffset = $('.sticky-container').offset().top;
 	
-    var fieldSelectors = 'input, .custom-checkbox, .foreign-key-value-container span.display-value, .redactor_box, ' + 
-                         '.asset-selector-container img, select, div.custom-checkbox, div.small-enum-container, ' + 
-                         'textarea, div.radio-container';
+    var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container span.display-value, .redactor_box, ' +
+                         '.asset-selector-container img, >div>select, div.custom-checkbox, div.small-enum-container, ' +
+                         'textarea, div.radio-container, div.query-builder-rules-container, >.selectize-control>.selectize-input, .redactor-box';
     
 	function showModal($data, onModalHide, onModalHideArgs) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals

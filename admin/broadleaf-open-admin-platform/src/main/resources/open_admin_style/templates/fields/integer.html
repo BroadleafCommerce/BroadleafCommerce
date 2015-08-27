@@ -2,7 +2,7 @@
        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
-<div>
+<div class="changes">
        <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
               th:required="${field.required}"
               th:placeholder="${field.hint}"

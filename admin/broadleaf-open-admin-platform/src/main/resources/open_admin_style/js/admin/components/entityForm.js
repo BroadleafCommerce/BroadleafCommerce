@@ -150,8 +150,28 @@ $(document).ready(function() {
                 $('.has-error').removeClass('has-error');
 
                 if (!data.errors) {
-                    $(".alert-box").removeClass("alert").addClass("success");
-                    $(".alert-box-message").text("Successfully saved");
+                    //$(".alert-box").removeClass("alert").addClass("success");
+                    //$(".alert-box-message").text("Successfully saved");
+
+                    var alert = {
+                        message: BLCAdmin.messages.saved + '!',
+                        alertType: 'save-alert',
+                        autoClose: 1000,
+                        clearOtherAlerts: true
+                    };
+
+                    var $alert = $('<div>').addClass('alert-box list-grid-alert').addClass('save-alert');
+                    var $closeLink = $('<a>').attr('href', '').addClass('close').html('&times;');
+
+                    $alert.append("Successfully saved");
+                    $alert.append($closeLink);
+
+                    $(".alert-box").find('.alert-box-message').html($alert);
+
+                    setTimeout(function() {
+                        $closeLink.click();
+                    }, 1000);
+
                 } else {
                     showErrors(data, BLCAdmin.messages.problemSaving);
                 }

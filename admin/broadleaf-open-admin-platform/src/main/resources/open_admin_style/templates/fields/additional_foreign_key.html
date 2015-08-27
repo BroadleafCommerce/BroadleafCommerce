@@ -1,4 +1,4 @@
-<div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}">
+<div th:if="${field instanceof T(org.broadleafcommerce.openadmin.web.form.entity.ComboField)}" th:remove="tag">
     <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
         <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
     </label>

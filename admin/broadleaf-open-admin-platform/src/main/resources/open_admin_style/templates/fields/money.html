@@ -2,7 +2,7 @@
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
-<div>
+<div class="changes">
     <input type="text" step=".01"
            th:classappend="${group.column == 0} ? 'numeric-field'"
            th:field="*{fields['__${field.name}__'].value}" />
