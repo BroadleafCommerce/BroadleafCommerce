@@ -827,6 +827,10 @@ legend {
     margin: 0;
 }
 
+.input-group-addon {
+    border-radius: 0px;
+}
+
 .modal-body *.selectize-control {
     border: 1px solid #D8D5D0;
     height: 42px;
