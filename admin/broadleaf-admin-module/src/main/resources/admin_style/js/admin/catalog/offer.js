@@ -66,7 +66,7 @@
             if (offerDiscountType == "PERCENT_OFF") {
                 $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass("blc-icon-percent");
             } else {
-                $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass("fa fa-dollar");
+                $form.find("#fields\\'value\\'\\.value").siblings().find('i').addClass(BLCAdmin.messages.currencyIconClass);
             }
         },
         

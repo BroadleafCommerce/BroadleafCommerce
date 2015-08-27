@@ -111,6 +111,7 @@
                 <value>classpath:/messages/GeneratedMessagesEntityOpenAdmin</value>
                 <value>classpath:/messages/GeneratedMessagesEntityProfile</value>
                 <value>classpath:/messages/OpenAdminMessages</value>
+                <value>classpath:/messages/OpenAdminJavascriptMessages</value>
             </list>
         </property>
     </bean>
@@ -290,6 +291,7 @@
                 <ref bean="blSystemPropertyJSResolver" />
                 <ref bean="blRuleBuilderOptionResourceResolver" />
                 <ref bean="blPathResourceResolver" />
+                <ref bean="blMessagesResourceResolver" />
             </list>
         </property>
     </bean>
