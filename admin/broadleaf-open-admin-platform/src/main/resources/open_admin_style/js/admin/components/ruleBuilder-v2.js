@@ -555,6 +555,13 @@
             }
         },
 
+        /** Clears hidden field data **/
+        clearField : function (ruleBuilder) {
+            var hiddenId = ruleBuilder.hiddenId;
+            $("#"+hiddenId).val('{}');
+            this.setReadableJSONValueOnField(ruleBuilder, null);
+        },
+
         setReadableJSONValueOnField : function (ruleBuilder, data) {
             var hiddenId = ruleBuilder.hiddenId;
             var readableElement = $('#'+hiddenId+'-readable');
@@ -564,45 +571,56 @@
                 //clear out existing content
                 $(readableElement).empty();
 
-                for (var i=0; i<data.length; i++) {
-                    var dataDTO = data[i];
-                    var prefix = $("<span>", {'class' : 'readable-rule-prefix',
-                                              'text' : dataDTO.quantity ?
-                                                  'Match ' + dataDTO.quantity + ' items where: ' :
-                                                  'Rule where: '});
+                // If no data, set "No rules applied"
+                if (data == null || data.length == 0) {
+                    var noRules = $("<span>", {'class': 'readable-no-rule', 'text' : 'No rules applied yet.'});
+                    $(readableElement).append(noRules);
+                // else fill in data
+                } else {
 
-                    $(readableElement).append(prefix);
-                    var condition = dataDTO.condition;
-                    for (var k = 0; k < dataDTO.rules.length; k++) {
-                        var ruleDTO = dataDTO.rules[k];
+                    for (var i = 0; i < data.length; i++) {
+                        var dataDTO = data[i];
+                        var prefix = $("<span>", {
+                            'class': 'readable-rule-prefix',
+                            'text': dataDTO.quantity ?
+                            'Match ' + dataDTO.quantity + ' items where: ' :
+                                'Rule where: '
+                        });
 
-                        var name = $("<span>", {'class' : 'readable-rule-field',
-                            'text' : ruleBuilder.getFieldLabelById(ruleDTO.id)});
-                        var operator = $("<span>", {'class' : 'readable-rule-operator',
-                            'text' : ruleBuilder.getOperatorLabelByOperatorType(ruleDTO.operator)});
-                        var value = $("<span>", {'class' : 'readable-rule-value',
-                            'text' : ruleDTO.value});
+                        $(readableElement).append(prefix);
+                        var condition = dataDTO.condition;
+                        for (var k = 0; k < dataDTO.rules.length; k++) {
+                            var ruleDTO = dataDTO.rules[k];
 
-                        $(readableElement).append(name);
-                        $(readableElement).append(operator);
-                        $(readableElement).append(value);
+                            var name = $("<span>", {
+                                'class': 'readable-rule-field',
+                                'text': ruleBuilder.getFieldLabelById(ruleDTO.id)
+                            });
+                            var operator = $("<span>", {
+                                'class': 'readable-rule-operator',
+                                'text': ruleBuilder.getOperatorLabelByOperatorType(ruleDTO.operator)
+                            });
+                            var value = $("<span>", {
+                                'class': 'readable-rule-value',
+                                'text': ruleDTO.value
+                            });
 
-                        if (k != dataDTO.rules.length-1) {
-                            var additional = $("<span>", {'text' : condition});
-                            $(readableElement).append(additional);
+                            $(readableElement).append(name);
+                            $(readableElement).append(operator);
+                            $(readableElement).append(value);
+
+                            if (k != dataDTO.rules.length - 1) {
+                                var additional = $("<span>", {'text': condition});
+                                $(readableElement).append(additional);
+                            }
+                        }
+
+                        if (i != data.length - 1) {
+                            var and = $("<span>", {'text': 'and'});
+                            $(readableElement).append(and);
                         }
                     }
-
-                    if (i != data.length-1) {
-                        var and = $("<span>", {'text' : 'and'});
-                        $(readableElement).append(and);
-                    }
                 }
-            }
-
-            if (data == null || data.length == 0) {
-                var noRules = $("<span>", {'class': 'readable-no-rule', 'text' : 'No rules applied yet.'});
-                $(readableElement).append(noRules);
             }
 
         }
@@ -771,6 +789,13 @@ $(document).ready(function() {
         var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
         BLCAdmin.ruleBuilders.setJSONValueOnField(ruleBuilder);
         BLCAdmin.hideCurrentModal();
+    });
+
+    /**  **/
+    $('body').on('click', 'div.clear-rule-builder', function() {
+        var hiddenId = $($(this)).data('hiddenid');
+        var ruleBuilder = BLCAdmin.ruleBuilders.getRuleBuilderByHiddenId(hiddenId);
+        BLCAdmin.ruleBuilders.clearField(ruleBuilder);
     });
 
     /**

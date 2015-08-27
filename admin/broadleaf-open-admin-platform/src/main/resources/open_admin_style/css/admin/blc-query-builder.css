@@ -261,3 +261,10 @@
 .read-only-rule span.readable-no-rule {
     font-style: italic;
 }
+
+.launch-modal-rule-builder {
+    width:49%;
+}
+.clear-rule-builder {
+    width:49%;
+}

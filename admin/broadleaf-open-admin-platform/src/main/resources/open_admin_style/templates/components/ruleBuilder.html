@@ -43,8 +43,17 @@
              th:attr="data-hiddenId=${field.jsonFieldName},
                      data-ruleType=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
                      data-ruleTitleId=${field.name + '-header'}">
-            <i class="fa fa-list-alt fa-lg"></i>
-            <span>Launch Rule Builder</span>
+            <i class="fa fa-edit fa-lg"></i>
+            <span>Edit Rule</span>
+        </div>
+
+        <div class="clear-rule-builder button"
+             th:if="${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'MODAL'}"
+             th:attr="data-hiddenId=${field.jsonFieldName},
+                     data-ruleType=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
+                     data-ruleTitleId=${field.name + '-header'}">
+            <i class="fa fa-remove fa-lg"></i>
+            <span>Clear Rule</span>
         </div>
 
         <!--/* For: "RADIO" display type */-->
