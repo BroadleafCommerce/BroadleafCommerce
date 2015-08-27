@@ -556,7 +556,7 @@
         /** Clears hidden field data **/
         clearField : function (ruleBuilder) {
             var hiddenId = ruleBuilder.hiddenId;
-            $("#"+hiddenId).val('{}');
+            $("#"+hiddenId).val('{"data":[]}');
             this.setReadableJSONValueOnField(ruleBuilder, null);
         },
 
