@@ -38,7 +38,7 @@ var BLCAdmin = (function($) {
 	
     var fieldSelectors = 'input, .custom-checkbox, .foreign-key-value-container span.display-value, .redactor_box, ' + 
                          '.asset-selector-container img, select, div.custom-checkbox, div.small-enum-container, ' + 
-                         'textarea';
+                         'textarea, div.radio-container';
     
 	function showModal($data, onModalHide, onModalHideArgs) {
 		// If we already have an active modal, we don't need another backdrop on subsequent modals

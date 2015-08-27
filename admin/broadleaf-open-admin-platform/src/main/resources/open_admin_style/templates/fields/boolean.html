@@ -3,7 +3,7 @@
 </label>
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
-<div>
+<div class="radio-container">
     <input type="radio" class="radio" th:id="${field.name + '-true'}" th:value="${true}" th:field="*{fields['__${field.name}__'].value}" />
     <label th:for="${field.name + '-true'}" th:inline="text" class="radio-label">
         <span th:text="#{Yes}" />

@@ -11,7 +11,7 @@
     </select>
 </div>
 
-<div th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) lt #props.getAsInt('admin.enum.minCountForDropDown')}">
+<div th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) lt #props.getAsInt('admin.enum.minCountForDropDown')}" class="radio-container">
     <div th:each="entry : *{fields['__${field.name}__'].options}">
         <input th:field="*{fields['__${field.name}__'].value}"
                type="radio"

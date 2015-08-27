@@ -3,11 +3,12 @@
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
+<div>
 <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
        th:required="${field.required}"
        th:placeholder="${field.hint}"
        th:field="*{fields['__${field.name}__'].value}" />
-
+</div>
 <textarea th:if="*{fields['__${field.name}__'].isLargeEntry}"
           th:field="*{fields['__${field.name}__'].value}"
           th:placeholder="${field.hint}"

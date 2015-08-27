@@ -163,6 +163,11 @@ input[type="radio"].radio+label.radio-label.clr,
 .radio > input[type="radio"]+label {
     padding-left: 25px;
     padding-right: 15px;
+    margin-bottom: 8px;
+}
+
+.radio-container {
+    padding: 10px 10px 4px 10px;
 }
 
 /* add nowrap to listgrids */
@@ -836,62 +841,6 @@ legend {
     margin: 5px 0;
 }
 
-/*a.workflow-icon.change-type {*/
-    /*background-image: url(../img/app_icons.png);*/
-    /*width: 80px;*/
-    /*height: 80px;*/
-    /*color: #2c2c2c;*/
-    /*display: inline;*/
-    /*cursor: default;*/
-    /*float: left;*/
-    /*margin: -30px;*/
-/*}*/
-
-/*a.workflow-icon.change-type.CustomerCreditAccountImpl{background-position:-160px -160px}*/
-/*a.workflow-icon.change-type.GiftCardAccountImpl{background-position:-160px -160px}*/
-/*a.workflow-icon.change-type.ContentItemImpl{background-position:-80px -160px}*/
-/*a.workflow-icon.change-type.ContentZoneImpl{background-position:-240px -160px}*/
-/*a.workflow-icon.change-type.ContentZoneDefinitionImpl{background-position:-240px -160px}*/
-/*a.workflow-icon.change-type.ContentTargeterImpl{background-position:-80px -160px}*/
-/*a.workflow-icon.change-type.WidgetImpl{background-position:-240px -160px}*/
-/*a.workflow-icon.change-type.OfferCodeGenerationInfoImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.CustomerSegmentImpl{background-position:-160px -160px}*/
-/*a.workflow-icon.change-type.CustomFieldImpl{background-position:-640px -160px}*/
-/*a.workflow-icon.change-type.WorkflowScheduledDeploymentImpl{background-position:-480px -160px}*/
-/*a.workflow-icon.change-type.InternationalMessageImpl{background-position:-320px -160px}*/
-/*a.workflow-icon.change-type.DynamicRegionalFormImpl{background-position:-320px -160px}*/
-/*a.workflow-icon.change-type.FulfillmentLocationImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.ProductGroupImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.SkuGroupImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.PriceListImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.PageTypeImplImpl{background-position:-640px -160px}*/
-/*a.workflow-icon.change-type.ThemeConfigurationImpl{background-position:-240px -160px}*/
-/*a.workflow-icon.change-type.ThemeFileImpl{background-position:-240px -160px}*/
-/*a.workflow-icon.change-type.StaticAssetImpl{background-position:-80px -160px}*/
-/*a.workflow-icon.change-type.PageImpl{background-position:-80px -160px}*/
-/*a.workflow-icon.change-type.URLHandlerImpl{background-position:-80px -160px}*/
-/*a.workflow-icon.change-type.ModuleConfigurationImpl{background-position:-640px -160px}*/
-/*a.workflow-icon.change-type.SystemPropertyImpl{background-position:-640px -160px}*/
-/*a.workflow-icon.change-type.SystemPropertyImpl{background-position:-640px -160px}*/
-/*a.workflow-icon.change-type.TranslationImpl{background-position:-320px -160px}*/
-/*a.workflow-icon.change-type.SandBoxManagementImpl{background-position:-480px -160px}*/
-/*a.workflow-icon.change-type.CatalogImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.SiteImpl{background-position:-80px -160px}*/
-/*a.workflow-icon.change-type.CategoryImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.ProductImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.ProductOptionImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.SkuImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.OfferImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.OrderImpl{background-position:-160px -160px}*/
-/*a.workflow-icon.change-type.SearchFacetImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.SearchRedirectImpl{background-position:0px -160px}*/
-/*a.workflow-icon.change-type.MenuImpl{background-position:-80px -160px}*/
-/*a.workflow-icon.change-type.AdminPermissionImpl{background-position:-560px -160px}*/
-/*a.workflow-icon.change-type.AdminRoleImpl{background-position:-560px -160px}*/
-/*a.workflow-icon.change-type.AdminUserImpl{background-position:-560px -160px}*/
-/*a.workflow-icon.change-type.CustomerImpl{background-position:-160px -160px}*/
-
-
 .table-holder.warning a.entity {
     text-decoration: underline;
     color: #EEBB69;
@@ -965,6 +914,12 @@ p.changes-made-label {
     font-size: .85em;
     margin-bottom: 0.5em;
     margin-top: -5px;
+}
+
+p.local-changes-made-label {
+    font-size: .85em;
+    margin-bottom: 0.5em;
+    margin-top: 30px;
 }
 
 p.deployment-summary {
@@ -1058,4 +1013,29 @@ blockquote::before{
 
 [data-fieldname="rejectionLabel"] {
     white-space: initial !important;
+}
+
+.field-group.local {
+    position: relative;
+}
+
+.field-group.local > div:before {
+    content: "\e615";
+    font-family: 'broadleaf';
+    float: right;
+    vertical-align: middle;
+    position: absolute;
+    right: 8px;
+    top: 38px;
+}
+
+
+.field-group.local > .radio-container:before {
+    content: "\e615";
+    font-family: 'broadleaf';
+    float: right;
+    vertical-align: middle;
+    position: absolute;
+    right: 8px;
+    top: 30px;
 }

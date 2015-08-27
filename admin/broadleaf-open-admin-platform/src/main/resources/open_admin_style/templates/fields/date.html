@@ -2,5 +2,7 @@
 <label th:for="*{fields['__${field.name}__'].value}">
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
-<input class="datetimepicker" type="text" th:field="*{fields['__${field.name}__'].value}"
-       th:classappend="${group.column == 0} ? 'date-field'"/>
+<div>
+    <input class="datetimepicker" type="text" th:field="*{fields['__${field.name}__'].value}"
+           th:classappend="${group.column == 0} ? 'date-field'"/>
+</div>

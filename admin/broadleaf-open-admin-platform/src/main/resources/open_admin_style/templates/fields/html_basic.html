@@ -7,7 +7,7 @@
 <div class="twelve indented-form-value"
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
 
-<textarea class="redactor" name="content"
+    <textarea class="redactor" name="content"
               th:if="${overrideAssetSectionKey}"
               th:attr="data-select-asset-url=@{${'/'+overrideAssetSectionKey+ '/' + assetAssociationId + '/chooseAsset'}}"
               th:field="*{fields['__${field.name}__'].value}"/>
