@@ -29,12 +29,10 @@
  */
 (function($, BLCAdmin) {
 
-    /**
-     * As selects are created, add necessary class to convert them to our custom appearance
-     */
-    $(document).on('DOMNodeInserted', '.rule-filter-container select, .rule-operator-container select', function(e) {
-        $(e.target).parent().addClass('admin-select');
-    });
+    BLCAdmin.RuleTypeEnum = {
+        RULE_SIMPLE : "rule-builder-simple",
+        RULE_WITH_QUANTITY : "rule-builder-with-quantity"
+    }
 
     /**
      * An Admin page may contain multiple rule builders of various different types.
@@ -233,8 +231,8 @@
          *
          * @param $container - the ".query-builder-rules-container" in which to append the builder
          * @param typeToCreate - if there is no existing rule, the method will look for the passed in typeToCreate:
-         * - "add-main-item-rule" : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
-         * - "add-main-rule" : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE
+         * - BLCAdmin.RuleTypeEnum.RULE_SIMPLE : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_WITH_QUANTITY
+         * - BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY : associated with org.broadleafcommerce.common.presentation.client.SupportedFieldType.RULE_SIMPLE
          */
         showOrCreateMainRuleBuilder : function($container, typeToCreate) {
             var containerId = $container.attr("id");
@@ -244,9 +242,9 @@
 
                 //If invoked from a "RADIO" - create new query builder for the container
                 if ($container.children().children().length == 0) {
-                    if (typeToCreate === 'add-main-rule') {
+                    if (typeToCreate === BLCAdmin.RuleTypeEnum.RULE_SIMPLE) {
                         this.addAdditionalQueryBuilder($container, null);
-                    } else if (typeToCreate === 'add-main-item-rule') {
+                    } else if (typeToCreate === BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY) {
                         this.addAdditionalQueryBuilder($container, 1);
                     }
                 }
@@ -269,7 +267,7 @@
          */
         getEmptyRuleData : function(qty) {
             var emptyData = {
-                pk:null,
+                pk: null,
                 quantity: qty,
                 condition:'AND',
                 rules: []
@@ -337,7 +335,7 @@
          * @param ruleType
          */
         constructQueryBuilder : function(container, ruleData, fields, ruleBuilder) {
-            if (ruleBuilder.ruleType === 'add-main-item-rule') {
+            if (ruleBuilder.ruleType === BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY) {
                 container.find('.add-and-button').remove();
             }
 
@@ -355,7 +353,7 @@
             });
             ruleBuilder.addQueryBuilder($(builder));
 
-            if (ruleBuilder.ruleType === 'add-main-item-rule') {
+            if (ruleBuilder.ruleType === BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY) {
                 container.append(this.getAndDivider());
                 container.append(this.getAddAnotherConditionLink());
             }
@@ -562,6 +560,7 @@
             this.setReadableJSONValueOnField(ruleBuilder, null);
         },
 
+        /** Set the readable translation of the rule corresponding to the rule builder **/
         setReadableJSONValueOnField : function (ruleBuilder, data) {
             var hiddenId = ruleBuilder.hiddenId;
             var readableElement = $('#'+hiddenId+'-readable');
@@ -711,7 +710,7 @@ $(document).ready(function() {
         //Also hide the error divs if they are shown
         $container.parent().find('.field-label.error').hide();
         $container.parent().find('.query-builder-rules-container-mvel').hide();
-        BLCAdmin.ruleBuilders.hideMainRuleBuilder($container, 'add-main-rule');
+        BLCAdmin.ruleBuilders.hideMainRuleBuilder($container);
     });
 
     /**
@@ -759,7 +758,7 @@ $(document).ready(function() {
                 }
             } else {
                 var qty = null;
-                if (ruleType === 'add-main-item-rule') {
+                if (ruleType === BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY) {
                     qty = 1;
                 }
 
@@ -836,4 +835,10 @@ $(document).ready(function() {
         }
     });
 
+    /**
+     * As selects are created, add necessary class to convert them to our custom appearance
+     */
+    $(document).on('DOMNodeInserted', '.rule-filter-container select, .rule-operator-container select', function(e) {
+        $(e.target).parent().addClass('admin-select');
+    });
 });

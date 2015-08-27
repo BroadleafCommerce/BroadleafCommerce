@@ -668,7 +668,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         if (fieldType.equals(SupportedFieldType.RULE_SIMPLE.toString())) {
                             ((RuleBuilderField) f).setRuleType("rule-builder-simple");
                         } else if (fieldType.equals(SupportedFieldType.RULE_WITH_QUANTITY.toString())) {
-                            ((RuleBuilderField) f).setRuleType("rule-builder-complex");
+                            ((RuleBuilderField) f).setRuleType("rule-builder-with-quantity");
                         }
                     } else if (LookupType.DROPDOWN.equals(fmd.getLookupType())) {
                         // We're dealing with a to-one field that wants to be rendered as a dropdown instead of in a 

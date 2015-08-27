@@ -28,7 +28,7 @@
                th:value="${field.json}"/>
 
         <div class="rule-builder-required-field"
-            th:attr="data-ruletype=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
+            th:attr="data-ruletype=${field.ruleType},
                      data-modal=${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'MODAL'}" />
 
         <!--/* For: "MODAL" display type */-->
@@ -41,7 +41,7 @@
         <div class="launch-modal-rule-builder button"
              th:if="${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'MODAL'}"
              th:attr="data-hiddenId=${field.jsonFieldName},
-                     data-ruleType=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'},
+                     data-ruleType=${field.ruleType},
                      data-ruleTitleId=${field.name + '-header'}">
             <i class="fa fa-edit fa-lg"></i>
             <span>Edit Rule</span>
@@ -65,7 +65,7 @@
                    th:name="${field.name}"
                    th:id="${field.name + '-true'}"
                    th:class="${field.ruleType == 'rule-builder-simple' ? 'radio add-main-rule' : 'radio add-main-item-rule'}"
-                   th:attr="data-ruletype=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'}"
+                   th:attr="data-ruletype=${field.ruleType}"
                    th:checked="${!#arrays.isEmpty(field.dataWrapper.data) or field.dataWrapper.error != null}" />
             <label th:for="${field.name + '-true'}" class="radio-label">
                 <span style="margin-right: 10px;" th:text="#{Yes}" />
@@ -113,7 +113,7 @@
                      data-fields=${fieldWrapper.serialize()},
                      data-data=${field.dataWrapper.serialize()},
                      data-modal=${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'MODAL'},
-                     data-ruletype=${(field.ruleType == 'rule-builder-simple') ? 'add-main-rule' : 'add-main-item-rule'}" />
+                     data-ruletype=${field.ruleType}" />
     
     </div>
 </blc_admin:admin_field_builder>

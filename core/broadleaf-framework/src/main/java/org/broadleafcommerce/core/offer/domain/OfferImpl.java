@@ -155,7 +155,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "OFFER_DISCOUNT_TYPE")
     @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order = 1000, 
-        group = OfferAdminPresentation.GroupName.Amount,
+        group = OfferAdminPresentation.GroupName.RuleConfiguration,
         requiredOverride = RequiredOverride.REQUIRED,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
         broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferDiscountType")
@@ -163,7 +163,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "OFFER_VALUE", nullable=false, precision=19, scale=5)
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order = 2000, 
-        group = OfferAdminPresentation.GroupName.Amount,
+        group = OfferAdminPresentation.GroupName.RuleConfiguration,
         prominent = true, gridOrder = 4,
         defaultValue = "0")
     protected BigDecimal value;
@@ -277,7 +277,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferQualifyingCriteriaXrefImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Qualifying_Item_Rule",
-        group = OfferAdminPresentation.GroupName.Qualifier,
+        group = OfferAdminPresentation.GroupName.RuleConfiguration,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY,
         ruleIdentifier = RuleIdentifier.ORDERITEM)
     protected Set<OfferQualifyingCriteriaXref> qualifyingItemCriteria = new HashSet<OfferQualifyingCriteriaXref>();
@@ -288,7 +288,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "offer", targetEntity = OfferTargetCriteriaXrefImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOffers")
     @AdminPresentation(friendlyName = "OfferImpl_Target_Item_Rule",
-        group = OfferAdminPresentation.GroupName.ItemTarget,
+        group = OfferAdminPresentation.GroupName.RuleConfiguration,
         fieldType = SupportedFieldType.RULE_WITH_QUANTITY, 
         ruleIdentifier = RuleIdentifier.ORDERITEM)
     protected Set<OfferTargetCriteriaXref> targetItemCriteria = new HashSet<OfferTargetCriteriaXref>();
@@ -336,7 +336,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
             @AdminPresentationMapField(
                 fieldName = RuleIdentifier.FULFILLMENT_GROUP_FIELD_KEY,
                 fieldPresentation = @AdminPresentation(fieldType = SupportedFieldType.RULE_SIMPLE, 
-                    group = OfferAdminPresentation.GroupName.Qualifier,
+                    group = OfferAdminPresentation.GroupName.RuleConfiguration,
                     ruleIdentifier = RuleIdentifier.FULFILLMENTGROUP, friendlyName = "OfferImpl_FG_Rule")
             )
         }

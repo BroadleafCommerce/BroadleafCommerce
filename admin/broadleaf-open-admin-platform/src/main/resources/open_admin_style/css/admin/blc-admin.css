@@ -1416,7 +1416,7 @@ a.remove-subcondition {
 	display: none;
 }
 
-.rule-builder-complex > div > .conditional-rules > .conditional > .remove {
+.rule-builder-with-quantity > div > .conditional-rules > .conditional > .remove {
 	display: none;
 }
 
