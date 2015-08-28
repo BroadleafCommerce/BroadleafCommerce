@@ -47,8 +47,46 @@ public interface SolrIndexService {
      * @throws ServiceException
      */
     public void rebuildIndex() throws ServiceException, IOException;
-    
-    public void rebuildIndex(SolrIndexOperation process) throws ServiceException, IOException;
+
+    /**
+     * Executed before we do any indexing when rebuilding the current index. Usually this handles deleting the current index.
+     *
+     * @throws ServiceException
+     */
+    public void preIndexing() throws ServiceException;
+
+    /**
+     * Handles all the indexing for the current index rebuild. This is where all of the SolrIndexOperation's need to be executed and the index needs to be built.
+     * This is the method that should be overridden to specify which operations should be run to build the correct index.
+     *
+     * @throws IOException
+     * @throws ServiceException
+     */
+    public void doIndexing() throws IOException, ServiceException;
+
+    /**
+     * Executed after we do any indexing when rebuilding the current index. Usually this handles optimizing the index and swapping the cores.
+     *
+     * @throws IOException
+     * @throws ServiceException
+     */
+    public void postIndexing() throws IOException, ServiceException;
+
+    /**
+     * Creates the Core SolrIndexOperation for rebuilding the current index. This is the primary index operation used to rebuild the index.
+     *
+     * @return a SolrIndexOperation capable of rebuilding the current index
+     */
+    public SolrIndexOperation getCoreIndexOperation();
+
+    /**
+     * Executes the given SolrIndexOperation to properly rebuild the index
+     *
+     * @param operation the SolrIndexOperation that is to be executed
+     * @throws ServiceException
+     * @throws IOException
+     */
+    public void executeSolrIndexOperation(SolrIndexOperation operation) throws ServiceException, IOException;
     
     /**
      * Allows a query to determine if a full reindex is currently being performed. 

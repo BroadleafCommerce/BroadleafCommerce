@@ -25,14 +25,12 @@ package org.broadleafcommerce.core.search.service.solr.index;
 import org.apache.solr.client.solrj.SolrServer;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
-
-import java.io.IOException;
 import java.util.List;
 
 
 /**
  *  Defines the lifecylce of an indexing operation used in {@link SolrIndexService}. Each of the methods in this interface
- *  are executed in order during different phases of {@link SolrIndexService#rebuildIndex(SolrIndexOperation)}.
+ *  are executed in order during different phases of {@link SolrIndexService#executeSolrIndexOperation(SolrIndexOperation)}.
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -49,9 +47,9 @@ public interface SolrIndexOperation {
     public SolrServer getSolrServerForIndexing();
 
     /**
-     * Any processing that is required to be performed prior to the index operation executing
+     * Executes before the count, this is where any filters or setup for counting can be taken care of
      */
-    public void beforeIndexOperation() throws ServiceException;
+    public void beforeCount();
     
     /**
      * The count of all of the {@link Indexable} items about to be indexed. Used to determine paging used by
@@ -59,7 +57,17 @@ public interface SolrIndexOperation {
      * @throws ServiceException
      */
     public Long countIndexables() throws ServiceException;
-    
+
+    /**
+     * Executes after the count, this is where any filters or cleanup for counting can be taken care of
+     */
+    public void afterCount();
+
+    /**
+     * Executes before the read, this is where any filters or setup for reading can be taken care of
+     */
+    public void beforeRead();
+
     /**
      * Perform the a read of the {@link Indexable} items for a particular page and pageSize
      * @throws ServiceException
@@ -67,15 +75,26 @@ public interface SolrIndexOperation {
     public List<? extends Indexable> readIndexables(int page, int pageSize) throws ServiceException;
 
     /**
+     * Executes after the read, this is where any filters or cleanup for reading can be taken care of
+     */
+    public void afterRead();
+
+
+    /**
+     * Executes before building each page, this is where any filters or setup for building can be taken care of
+     */
+    public void beforeBuild();
+
+    /**
      * Build a page from {@link #readIndexables(int, int)} on the {@link #getSolrServerForIndexing()}. This is used as a
      * wrapper extension around {@link SolrIndexService#buildIncrementalIndex(List, SolrServer)}.
      */
     public void buildPage(List<? extends Indexable> indexables) throws ServiceException;
-    
+
     /**
-     * After this index operation is complete, usually does a {@link SolrIndexService#optimizeIndex(SolrServer)}
+     * Executes after building each page, this is where any filters or cleanup for building can be taken care of
      */
-    public void afterIndexOperation() throws ServiceException, IOException;
+    public void afterBuild();
     
     /**
      * If a lock was obtained in {@link #obtainLock()} this releases it
