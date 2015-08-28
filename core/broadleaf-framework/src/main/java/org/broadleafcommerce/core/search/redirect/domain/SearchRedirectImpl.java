@@ -27,21 +27,13 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Parameter;
 
-import java.util.Date;
-
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import java.util.Date;
 
 /**
  * @author priyeshpatel
@@ -77,12 +69,12 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable 
     @AdminPresentation(excluded = true)
     protected Integer searchPriority;
 
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 1000, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 1000, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1, defaultValue = "New Search Term")
     @Column(name = "SEARCH_TERM", nullable = false)
     protected String searchTerm;
     
     @Column(name = "URL", nullable = false)
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 2000, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1)
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 2000, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1, defaultValue = "/")
     protected String url;
 
     /** The active start date. */
