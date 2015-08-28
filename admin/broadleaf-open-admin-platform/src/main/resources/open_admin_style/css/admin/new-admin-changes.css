@@ -149,6 +149,11 @@ a {
     margin-top: 10px;
 }
 
+.modal .modal-body .nav-tabs > li.active > a {
+    background-color:transparent;
+    border-bottom-color:white;
+}
+
 .sandbox-bar .row {
     margin: 0;
 }
@@ -664,8 +669,13 @@ fieldset legend i.help-tip {
     margin-top: -35px;
 }
 
+.modal .entity-errors {
+    margin-top: 0px;
+}
+
 .section-tabs {
     padding-top: 10px;
+    background-color:inherit;
 }
 
 .empty-section-tabs {
