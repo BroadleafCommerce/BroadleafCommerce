@@ -40,6 +40,13 @@
      */
     var ruleBuildersArray = [];
 
+    /**
+     * Fields (Filters) for the Query Builder may need some pre-initialization (e.g. Selectize) and set-up.
+     * All custom handlers that need to be run on this field can be added to this list.
+     * @type {Array}
+     */
+    var preInitQueryBuilderFieldHandlers = [];
+
     BLCAdmin.ruleBuilders = {
 
         /**
@@ -369,6 +376,95 @@
         },
 
         /**
+         * Handlers designed to execute on a field before initializing the query builder
+         */
+        addPreInitQueryBuilderFieldHandler : function(fn) {
+            preInitQueryBuilderFieldHandlers.push(fn);
+        },
+
+        /**
+         * Invoke all registered query builder field handlers for this field
+         * @param field
+         */
+        runPreInitQueryBuilderFieldHandler : function(field) {
+            for (var i = 0; i < preInitQueryBuilderFieldHandlers.length; i++) {
+                preInitQueryBuilderFieldHandlers[i](field);
+            }
+        },
+
+        initSelectizeFieldHandler : function(field) {
+            //initialize selectize plugin
+            var opRef = field.operators;
+            if (opRef && typeof opRef === 'string' && "blcOperators_Selectize" === opRef) {
+                var sectionKey = field.selectizeSectionKey;
+
+                field.multiple = true;
+                field.plugin = 'selectize';
+                field.input = function(rule, name){
+                    return "<input type='text' class='query-builder-selectize-input' data-hydrate=''>";
+                },
+                field.plugin_config = {
+                    maxItems: null,
+                    persist: false,
+                    valueField: "id",
+                    labelField: "label",
+                    searchField: "label",
+                    loadThrottle: 100,
+                    preload: true,
+                    hideSelected: true,
+                    placeholder: field.label + " +",
+                    onInitialize: function () {
+                        var $selectize = this;
+                        $selectize.sectionKey = sectionKey;
+                        this.revertSettings.$children.each(function () {
+                            $.extend($selectize.options[this.value], $(this).data());
+                        });
+                    },
+                    onLoad: function() {
+                        // Initialize selectize rule data
+                        // after the options have been loaded
+                        // (Values may contain multiple items and are sent back as a single String array)
+                        var $selectize = this;
+                        var dataHydrate = $.parseJSON($selectize.$input.attr("data-hydrate"));
+                        for (var k=0; k<dataHydrate.length; k++) {
+                            if (!isNaN(dataHydrate[k])) {
+                                $selectize.addItem(Number(dataHydrate[k]), false);
+                            }
+                        }
+                    },
+                    load: function(query, callback) {
+                        var $selectize = this;
+                        var queryData = {};
+                        queryData["name"] = query;
+
+                        BLC.ajax({
+                            url: BLC.servletContext + "/" + sectionKey + "/selectize",
+                            type: 'GET',
+                            data: queryData
+                        }, function(data) {
+                            $.each(data.options, function (index, value) {
+                                if ($selectize.getOption(value.id).length === 0 && $selectize.getItem(value.id).length === 0) {
+                                    $selectize.addOption({id: value.id, label: value.name});
+                                    if (typeof value.alternateId !== 'undefined') {
+                                        $selectize.options[value.name].alternate_id = data.alternateId;
+                                    }
+                                }
+                            });
+                            callback(data);
+                        });
+                    }
+                };
+                field.valueSetter = function(rule, value) {
+                    rule.$el.find('.rule-value-container input.query-builder-selectize-input')[0].selectize.setValue(value);
+                    rule.$el.find('.rule-value-container input.query-builder-selectize-input').attr('data-hydrate', value);
+                };
+                field.valueGetter = function(rule) {
+                    return "["+rule.$el.find('.rule-value-container input.query-builder-selectize-input').val()+"]";
+                }
+            }
+        },
+
+        /**
          * Initializes the configuration object necessary for the jQuery Query Builder
          * to support the BLC Admin Rule Builder use cases (both RULE_WITH_QUANTITY and RULE_SIMPLE)
          * by passing in the fields (filters) and ruleData (rules) for the passed in rule builder
@@ -392,78 +488,13 @@
             //initialize operators and values on the fields
             for (var i=0; i<fields.length; i++){
                 (function(){
+
+                    //run any pre-initialization handlers for this field
+                    BLCAdmin.ruleBuilders.runPreInitQueryBuilderFieldHandler(fields[i]);
+
                     var opRef = fields[i].operators;
                     if (opRef && typeof opRef === 'string') {
                         fields[i].operators = window[opRef];
-
-                        //initialize selectize plugin
-                        if ("blcOperators_Selectize" === opRef) {
-                            var sectionKey = fields[i].selectizeSectionKey;
-
-                            fields[i].multiple = true;
-                            fields[i].plugin = 'selectize';
-                            fields[i].input = function(rule, name){
-                                return "<input type='text' class='query-builder-selectize-input' data-hydrate=''>";
-                            },
-                            fields[i].plugin_config = {
-                                maxItems: null,
-                                persist: false,
-                                valueField: "id",
-                                labelField: "label",
-                                searchField: "label",
-                                loadThrottle: 100,
-                                preload: true,
-                                hideSelected: true,
-                                placeholder: fields[i].label + " +",
-                                onInitialize: function () {
-                                    var $selectize = this;
-                                    $selectize.sectionKey = sectionKey;
-                                    this.revertSettings.$children.each(function () {
-                                        $.extend($selectize.options[this.value], $(this).data());
-                                    });
-                                },
-                                onLoad: function() {
-                                    // Initialize selectize rule data
-                                    // after the options have been loaded
-                                    // (Values may contain multiple items and are sent back as a single String array)
-                                    var $selectize = this;
-                                    var dataHydrate = $.parseJSON($selectize.$input.attr("data-hydrate"));
-                                    for (var k=0; k<dataHydrate.length; k++) {
-                                        if (!isNaN(dataHydrate[k])) {
-                                            $selectize.addItem(Number(dataHydrate[k]), false);
-                                        }
-                                    }
-                                },
-                                load: function(query, callback) {
-                                    var $selectize = this;
-                                    var queryData = {};
-                                    queryData["name"] = query;
-
-                                    BLC.ajax({
-                                        url: BLC.servletContext + "/" + sectionKey + "/selectize",
-                                        type: 'GET',
-                                        data: queryData
-                                    }, function(data) {
-                                        $.each(data.options, function (index, value) {
-                                            if ($selectize.getOption(value.id).length === 0 && $selectize.getItem(value.id).length === 0) {
-                                                $selectize.addOption({id: value.id, label: value.name});
-                                                if (typeof value.alternateId !== 'undefined') {
-                                                    $selectize.options[value.name].alternate_id = data.alternateId;
-                                                }
-                                            }
-                                        });
-                                        callback(data);
-                                    });
-                                }
-                            };
-                            fields[i].valueSetter = function(rule, value) {
-                                rule.$el.find('.rule-value-container input.query-builder-selectize-input')[0].selectize.setValue(value);
-                                rule.$el.find('.rule-value-container input.query-builder-selectize-input').attr('data-hydrate', value);
-                            };
-                            fields[i].valueGetter = function(rule) {
-                                return "["+rule.$el.find('.rule-value-container input.query-builder-selectize-input').val()+"]";
-                            }
-                        }
                     }
 
                     var valRef = fields[i].values;
@@ -631,6 +662,9 @@
      * the appropriate fields and data (as specified by the container)
      */
     BLCAdmin.addInitializationHandler(function($container) {
+        //Add default pre-init handlers (e.g. selectize)
+        BLCAdmin.ruleBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.ruleBuilders.initSelectizeFieldHandler);
+
         $container.find('.rule-builder-data').each(function(index, element) {
             var $this = $(this),
                 hiddenId = $this.data('hiddenid'),

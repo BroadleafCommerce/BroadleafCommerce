@@ -58,7 +58,7 @@
 .query-builder .rule-container .rule-value-container {
   border-left: 1px solid #ddd;
   padding-left: 7px;
-  width: 275px;
+  width: 250px;
 }
 .query-builder .rule-container .rule-value-container .rule-val-sep {
   padding: 5px;
