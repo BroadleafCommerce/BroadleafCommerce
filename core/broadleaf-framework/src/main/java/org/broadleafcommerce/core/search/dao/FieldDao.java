@@ -42,24 +42,6 @@ public interface FieldDao {
     public Field readFieldByAbbreviation(String abbreviation);
 
     /**
-     * Reads all Field objects that are set to searchable. This is typically used to build an
-     * index for searching. Note that the default Broadleaf implementation returns only fields that
-     * have a FieldEntity equal to PRODUCT
-     * 
-     * @return the product Fields
-     */
-    public List<Field> readAllProductFields();
-
-    /**
-     * Reads all Field objects that are set to searchable. This is typically used to build an
-     * index for searching. Note that the default Broadleaf implementation returns only fields that
-     * have a FieldEntity equal to SKU
-     * 
-     * @return the product Fields
-     */
-    public List<Field> readAllSkuFields();
-
-    /**
      * Finds all fields based on the entity type.
      * @param entityType
      * @return

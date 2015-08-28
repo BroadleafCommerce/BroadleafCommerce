@@ -24,7 +24,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
-import org.broadleafcommerce.core.search.service.solr.SolrIndexService;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
 
 import java.io.IOException;
 import java.util.List;

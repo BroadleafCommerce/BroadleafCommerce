@@ -17,13 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
+package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 
@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Service exposing several methods for creating a Solr index based on catalog product data.
  *
- * @see org.broadleafcommerce.core.search.service.solr.SolrIndexCachedOperation
+ * @see org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
  */
@@ -47,6 +47,46 @@ public interface SolrIndexService {
      * @throws ServiceException
      */
     public void rebuildIndex() throws ServiceException, IOException;
+
+    /**
+     * Executed before we do any indexing when rebuilding the current index. Usually this handles deleting the current index.
+     *
+     * @throws ServiceException
+     */
+    public void preIndexing() throws ServiceException;
+
+    /**
+     * Handles all the indexing for the current index rebuild. This is where all of the SolrIndexOperation's need to be executed and the index needs to be built.
+     * This is the method that should be overridden to specify which operations should be run to build the correct index.
+     *
+     * @throws IOException
+     * @throws ServiceException
+     */
+    public void doIndexing() throws IOException, ServiceException;
+
+    /**
+     * Executed after we do any indexing when rebuilding the current index. Usually this handles optimizing the index and swapping the cores.
+     *
+     * @throws IOException
+     * @throws ServiceException
+     */
+    public void postIndexing() throws IOException, ServiceException;
+
+    /**
+     * Creates the Core SolrIndexOperation for rebuilding the current index. This is the primary index operation used to rebuild the index.
+     *
+     * @return a SolrIndexOperation capable of rebuilding the current index
+     */
+    public SolrIndexOperation getCoreIndexOperation();
+
+    /**
+     * Executes the given SolrIndexOperation to properly rebuild the index
+     *
+     * @param operation the SolrIndexOperation that is to be executed
+     * @throws ServiceException
+     * @throws IOException
+     */
+    public void executeSolrIndexOperation(SolrIndexOperation operation) throws ServiceException, IOException;
     
     /**
      * Allows a query to determine if a full reindex is currently being performed. 
@@ -59,34 +99,15 @@ public interface SolrIndexService {
     public boolean isReindexInProcess();
 
     /**
-     * The internal method for building indexes. This is exposed via this interface in case someone would like to 
-     * more granularly control the indexing strategy.
-     * 
-     * @see #restoreState(Object[])
-     * @param page
-     * @param pageSize
-     * @param useReindexServer - if set to false will index directly on the primary server
-     * @throws ServiceException
-     */
-    public void buildIncrementalIndex(int page, int pageSize, boolean useReindexServer) throws ServiceException;
-
-    /**
      * This can be used in lieu of passing in page sizes,  The reason is that one might want to apply filters or only 
      * index certain skus.
-     * @param skus
-     * @param useReindexServer
+     * @param indexables the list of items to index
+     * @param solrServer if non-null, adds and commits the indexed documents to the server. If this is null, this will
+     * simply return the documents that were built from <b>indexables</b>
      * @throws ServiceException
+     * @return the {@link SolrInputDocument}s that were built from the given <b>indexables</b>
      */
-    public void buildIncrementalSkuIndex(List<Sku> skus, boolean useReindexServer) throws ServiceException;
-
-    /**
-     * This can be used in lieu of passing in page sizes,  The reason is that one might want to apply filters or only 
-     * index certain products.
-     * @param products
-     * @param useReindexServer
-     * @throws ServiceException
-     */
-    public void buildIncrementalProductIndex(List<Product> products, boolean useReindexServer) throws ServiceException;
+    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrServer solrServer) throws ServiceException;
 
     /**
      * Saves some global context that might be altered during indexing.
@@ -145,6 +166,10 @@ public interface SolrIndexService {
      */
     public void commit(SolrServer server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException;
 
+    public void deleteAllNamespaceDocuments(SolrServer server) throws ServiceException;
+    
+    public void deleteAllDocuments(SolrServer server) throws ServiceException;
+
     /**
      * Prints out the docs to the trace logger
      * 
@@ -166,22 +191,11 @@ public interface SolrIndexService {
      * @param locales
      * @return the document
      */
-    public SolrInputDocument buildDocument(Product product, List<Field> fields, List<Locale> locales);
-
-    /**
-     * Given a sku, fields that relate to that sku, and a list of locales and pricelists, builds a 
-     * SolrInputDocument to be added to the Solr index.
-     * 
-     * @param sku
-     * @param fields
-     * @param locales
-     * @return the document
-     */
-    public SolrInputDocument buildDocument(Sku sku, List<Field> fields, List<Locale> locales);
+    public SolrInputDocument buildDocument(Indexable indexable, List<Field> fields, List<Locale> locales);
 
     /**
      * SolrIndexService exposes {@link #buildIncrementalIndex(int, int, boolean)}.
-     * By wrapping the call to this method inside of a {@link org.broadleafcommerce.core.search.service.solr.SolrIndexCachedOperation.CacheOperation},
+     * By wrapping the call to this method inside of a {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation.CacheOperation},
      * a single cache will be used for all the contained calls to buildIncrementalIndex. Here's an example:
      * {@code
      *  performCachedOperation(new SolrIndexCachedOperation.CacheOperation() {
@@ -202,4 +216,21 @@ public interface SolrIndexService {
      * @throws ServiceException
      */
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
+    
+    /**
+     * <p>
+     * Filters out Skus that shouldn't be indexed if any of the following are true:
+     * 
+     * <p>
+     * <ol>
+     *  <li>If it's inactive</li>
+     *  <li>If it's a default Sku and shouldn't be sold without product options</li>
+     *  <li>If it's a default Sku for a Product Bundle</li>
+     * </ol>
+     * 
+     * @param skus
+     * @return a new list based on the given set of <b>skus</b> that only contains Skus that should be indexed
+     */
+    public List<Sku> filterIndexableSkus(List<Sku> skus);
+
 }

@@ -45,7 +45,7 @@ import java.util.Set;
  * @author btaylor
  * @see {@link ProductImpl},{@link Sku}, {@link Category}
  */
-public interface Product extends Serializable, MultiTenantCloneable<Product> {
+public interface Product extends Serializable, MultiTenantCloneable<Product>, Indexable {
 
     /**
      * The id of the Product.
