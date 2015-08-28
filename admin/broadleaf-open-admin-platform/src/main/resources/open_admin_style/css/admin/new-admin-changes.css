@@ -83,6 +83,16 @@ a {
 .app-content .content .header .button { line-height:14px; }
 .app-content .side-nav ul li a.active.logo { background-position-y: -90px }
 
+.app-content .card {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
+    padding: 20px;
+}
+
+
 .sandbox-bar .selectize-control.single .selectize-input {
     width: 260px;
     margin: 0;

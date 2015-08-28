@@ -324,6 +324,15 @@ public class EntityForm {
         addField(cmd, field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
+    public String processMessageString(String message) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            return context.getMessageSource().getMessage(message, null, message, context.getJavaLocale());
+        }
+
+        return message;
+    }
+
     public void addField(ClassMetadata cmd, Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
         groupName = groupName == null ? DEFAULT_GROUP_NAME : groupName;
         groupOrder = groupOrder == null ? DEFAULT_GROUP_ORDER : groupOrder;
@@ -353,11 +362,8 @@ public class EntityForm {
         // Tabs and groups should be looked up by their display, translated name since 2 unique strings can display the same
         // thing when they are looked up in message bundles after display
         // When displayed on the form the duplicate groups and tabs look funny
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            groupName = context.getMessageSource().getMessage(groupName, null, groupName, context.getJavaLocale());
-            tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
-        }
+        groupName = processMessageString(groupName);
+        tabName = processMessageString(tabName);
 
         FieldGroup fieldGroup = findGroup(groupName);
         if (fieldGroup == null) {
@@ -380,7 +386,7 @@ public class EntityForm {
         fieldGroup.addField(field);
     }
 
-    private FieldGroup findGroup(String groupName) {
+    public FieldGroup findGroup(String groupName) {
         FieldGroup fieldGroup = null;
         for (Tab tab : tabs) {
             fieldGroup = tab.findGroup(groupName);
@@ -417,11 +423,8 @@ public class EntityForm {
         }
 
         // Tabs/Groups should be looked up and referenced by their display name
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            tabName = context.getMessageSource().getMessage(tabName, null, tabName, context.getJavaLocale());
-            groupName = context.getMessageSource().getMessage(groupName, null, groupName, context.getJavaLocale());
-        }
+        tabName = processMessageString(tabName);
+        groupName = processMessageString(groupName);
 
         FieldGroup fieldGroup = findGroup(groupName);
         Tab tab = findTab(tabName);
@@ -712,12 +715,7 @@ public class EntityForm {
         Tab newTab = new Tab();
         newTab.setTitle(tabMetadata.getTabName());
         newTab.setOrder(tabMetadata.getTabOrder());
-
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            newTab.setTitle(context.getMessageSource().getMessage(tabMetadata.getTabName(), null, tabMetadata.getTabName(), context.getJavaLocale()));
-        }
-
+        newTab.setTitle(processMessageString(tabMetadata.getTabName()));
         tabs.add(newTab);
         return newTab.getTitle();
     }
@@ -730,17 +728,14 @@ public class EntityForm {
         newGroup.setIsBorderless(groupMetadata.getBorderless());
         newGroup.setToolTip(groupMetadata.getTooltip());
         newGroup.setCollapsed(groupMetadata.getCollapsed());
-
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            newGroup.setTitle(context.getMessageSource().getMessage(groupMetadata.getGroupName(), null, groupMetadata.getGroupName(), context.getJavaLocale()));
-            newGroup.setToolTip(context.getMessageSource().getMessage(groupMetadata.getTooltip(), null, groupMetadata.getTooltip(), context.getJavaLocale()));
-        }
+        newGroup.setTitle(processMessageString(groupMetadata.getGroupName()));
+        newGroup.setToolTip(processMessageString(groupMetadata.getTooltip()));
 
         Tab tab = findTab(processedTabName);
         if (groupMetadata.getColumn() != DEFAULT_COLUMN) {
             tab.setIsMultiColumn(true);
         }
+
         tab.getFieldGroups().add(newGroup);
     }
 

@@ -82,24 +82,19 @@
             
             var $fgCriteria = $form.find('#field-offerMatchRules---FULFILLMENT-GROUP');
             var $itemTarget = $form.find('#field-targetItemCriteria');
-            var $itemTargetFieldset = $itemTarget.closest('fieldset');
-            
+
             if (offerTypeValue == "ORDER") {
                 $fgCriteria.addClass('hidden');
                 $itemTarget.addClass('hidden');
-                $itemTargetFieldset.addClass('hidden');
             } else if (offerTypeValue == 'ORDER_ITEM') {
                 $fgCriteria.addClass('hidden');
                 $itemTarget.removeClass('hidden');
-                $itemTargetFieldset.removeClass('hidden');
             } else if (offerTypeValue == 'FULFILLMENT_GROUP') {
                 $fgCriteria.removeClass('hidden');
                 $itemTarget.addClass('hidden');
-                $itemTargetFieldset.addClass('hidden');
             } else {
                 $fgCriteria.addClass('hidden');
                 $itemTarget.addClass('hidden');
-                $itemTargetFieldset.addClass('hidden');
             }
 
         },

@@ -144,8 +144,8 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "OFFER_TYPE", nullable=false)
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 4000,
-        group = OfferAdminPresentation.GroupName.Description,
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Type", order = 1000,
+        group = OfferAdminPresentation.GroupName.RuleConfiguration,
         prominent =  true, gridOrder = 3,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration="org.broadleafcommerce.core.offer.service.type.OfferType",
@@ -154,7 +154,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
     @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order = 1000, 
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Discount_Type", order = 2000,
         group = OfferAdminPresentation.GroupName.RuleConfiguration,
         requiredOverride = RequiredOverride.REQUIRED,
         fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
@@ -162,7 +162,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     protected String discountType;
 
     @Column(name = "OFFER_VALUE", nullable=false, precision=19, scale=5)
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order = 2000, 
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Value", order = 3000,
         group = OfferAdminPresentation.GroupName.RuleConfiguration,
         prominent = true, gridOrder = 4,
         defaultValue = "0")

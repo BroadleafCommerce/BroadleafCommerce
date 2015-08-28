@@ -19,14 +19,15 @@
  */
 package org.broadleafcommerce.admin.web.controller.extension;
 
-import org.apache.batik.css.engine.Rule;
 import org.broadleafcommerce.admin.web.controller.entity.AdminOfferController;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.RuleBuilderDisplayType;
+import org.broadleafcommerce.core.offer.domain.OfferAdminPresentation;
 import org.broadleafcommerce.openadmin.web.controller.AbstractAdminAbstractControllerExtensionHandler;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractControllerExtensionManager;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.form.entity.FieldGroup;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import javax.annotation.PostConstruct;
@@ -55,7 +56,13 @@ public class AdminOfferControllerExtensionHandler extends AbstractAdminAbstractC
 
             if (form != null) {
                 //UX Meta-Data to display the Rule Builders on the Offer Screen
-                // Qualifier Builders
+                FieldGroup ruleConfigGroup = form.findGroup(form.
+                        processMessageString(OfferAdminPresentation.GroupName.RuleConfiguration));
+                if (ruleConfigGroup != null) {
+                    ruleConfigGroup.getGroupAttributes().put("additionalGroupClasses", "card");
+                }
+
+                // Qualifier and Target Item Builders
                 Field qualField = form.findField("qualifyingItemCriteria");
                 if (qualField != null) {
                     qualField.withAttribute("displayType", RuleBuilderDisplayType.NORMAL.name());
@@ -64,8 +71,6 @@ public class AdminOfferControllerExtensionHandler extends AbstractAdminAbstractC
                 if (fgField != null) {
                     fgField.withAttribute("displayType", RuleBuilderDisplayType.NORMAL.name());
                 }
-
-                //Target Item Builder
                 Field tarField = form.findField("targetItemCriteria");
                 if (tarField != null) {
                     tarField.withAttribute("displayType", RuleBuilderDisplayType.NORMAL.name());

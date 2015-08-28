@@ -26,9 +26,11 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -43,6 +45,8 @@ public class FieldGroup {
     protected Boolean isBorderless;
     protected Boolean collapsed;
     protected String toolTip;
+    protected Map<String, Object> groupAttributes = new HashMap<String, Object>();
+
 
     Set<ListGrid> listGrids = new TreeSet<ListGrid>(new Comparator<ListGrid>() {
         @Override
@@ -138,7 +142,16 @@ public class FieldGroup {
     public void setToolTip(String toolTip) {
         this.toolTip = toolTip;
     }
-    
+
+    public Map<String, Object> getGroupAttributes() {
+        return groupAttributes;
+    }
+
+    public void setGroupAttributes(Map<String, Object> groupAttributes) {
+        this.groupAttributes = groupAttributes;
+    }
+
+
     public FieldGroup withTitle(String title) {
         setTitle(title);
         return this;
