@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 
@@ -73,7 +74,8 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
             }
 
             if ("pk".equals(name)) {
-                if (getNullAwareText(element.getValue()) == null) {
+                if (getNullAwareText(element.getValue()) == null ||
+                        StringUtils.isBlank(element.getValue().asText())) {
                     dataDTO.setPk(null);
                 } else {
                     dataDTO.setPk(element.getValue().asLong());
