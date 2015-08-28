@@ -38,17 +38,7 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationMapKey;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.OptionFilterParam;
-import org.broadleafcommerce.common.presentation.OptionFilterParamType;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.template.TemplatePathContainer;
@@ -57,48 +47,17 @@ import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.Locatable;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
-import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl;
-import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
-import org.broadleafcommerce.core.search.domain.CategorySearchFacetImpl;
-import org.broadleafcommerce.core.search.domain.SearchFacet;
-import org.hibernate.annotations.BatchSize;
+import org.broadleafcommerce.core.search.domain.*;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import java.util.*;
 
 /**
  * @author bTaylor
@@ -178,7 +137,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order = 1000,
             group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
             prominent = true, gridOrder = 1, columnWidth = "300px",
-            translatable = true)
+            translatable = true, defaultValue = "New Category")
     protected String name;
 
     @Column(name = "URL")
