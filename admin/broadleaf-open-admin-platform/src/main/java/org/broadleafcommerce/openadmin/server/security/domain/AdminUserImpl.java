@@ -26,11 +26,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationOperationTypes;
-import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -38,35 +34,19 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
 import org.broadleafcommerce.openadmin.server.service.type.ContextType;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * 
@@ -103,12 +83,12 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name", gridOrder = 1000, order = 1000,
-            group = AdminUserAdminPresentation.GroupName.User, prominent = true)
+            group = AdminUserAdminPresentation.GroupName.User, prominent = true, defaultValue = "My Name")
     protected String name;
 
     @Column(name = "LOGIN", nullable=false)
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Login", gridOrder = 2000, order = 2000,
-            group = AdminUserAdminPresentation.GroupName.User, prominent = true)
+            group = AdminUserAdminPresentation.GroupName.User, prominent = true, defaultValue = "New Admin User")
     protected String login;
 
     @Column(name = "PASSWORD")
@@ -129,7 +109,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
 
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address", order = 3000, group = AdminUserAdminPresentation.GroupName.User)
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address", order = 3000, group = AdminUserAdminPresentation.GroupName.User, defaultValue = "my-email@website.com")
     protected String email;
 
     @Column(name = "PHONE_NUMBER")
