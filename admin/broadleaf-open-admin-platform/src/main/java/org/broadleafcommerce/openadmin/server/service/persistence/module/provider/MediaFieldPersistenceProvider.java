@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
+import org.broadleafcommerce.common.util.Tuple;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.Property;
@@ -35,7 +36,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.ParentEntityPe
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension.MediaFieldPersistenceProviderExtensionManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.extension
+        .MediaFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.AddFilterPropertiesRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.PopulateValueRequest;
@@ -109,25 +111,33 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 boolean persist = false;
                 boolean noPrimary = false;
                 Media media;
+                Boolean cleared;
                 try {
-                    if (extensionManager != null) {
-                        ExtensionResultHolder<Media> result = new ExtensionResultHolder<Media>();
-                        extensionManager.getProxy().retrieveMedia(instance, populateValueRequest, result);
-                        media = result.getResult();
-                    } else {
+                    checkExtension:
+                    {
+                        if (extensionManager != null) {
+                            ExtensionResultHolder<Tuple<Media, Boolean>> result = new ExtensionResultHolder<Tuple<Media, Boolean>>();
+                            ExtensionResultStatusType statusType = extensionManager.getProxy().retrieveMedia(instance, populateValueRequest, result);
+                            if (ExtensionResultStatusType.NOT_HANDLED != statusType) {
+                                Tuple<Media,Boolean> tuple = result.getResult();
+                                media = tuple.getFirst();
+                                cleared = tuple.getSecond();
+                                break checkExtension;
+                            }
+                        }
                         media = (Media) populateValueRequest.getFieldManager().getFieldValue(instance,
                                 populateValueRequest.getProperty().getName());
+                        cleared = false;
                     }
-                    if (newMedia == null && media != null) {
+                    if (newMedia == null) {
                         noPrimary = true;
                         dirty = true;
-
-                        // remove entry in sku to media map
-                        populateValueRequest.getFieldManager().setFieldValue(instance,
-                            populateValueRequest.getProperty().getName(), null);
-                        populateValueRequest.getPersistenceManager().getDynamicEntityDao().remove(media);
-
-
+                        if (!cleared && media != null) {
+                            // remove entry in sku to media map
+                            populateValueRequest.getFieldManager().setFieldValue(instance,
+                                    populateValueRequest.getProperty().getName(), null);
+                            populateValueRequest.getPersistenceManager().getDynamicEntityDao().remove(media);
+                        }
                     } else if (media == null) {
                         media = (Media) valueType.newInstance();
 
@@ -144,10 +154,14 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                 } catch (FieldNotAvailableException e) {
                     throw new IllegalArgumentException(e);
                 }
-                populateValueRequest.getProperty().setOriginalValue(convertMediaToJson(media));
+                if (media != null) {
+                    populateValueRequest.getProperty().setOriginalValue(convertMediaToJson(media));
+                }
                 if (!noPrimary) {
                     dirty = establishDirtyState(newMedia, media);
-                    updateMedia(populateValueRequest, newMedia, persist, media);
+                    if (dirty) {
+                        updateMedia(populateValueRequest, newMedia, persist, media);
+                    }
                 }
                 if (dirty) {
                     updateMedia(populateValueRequest, newMedia, persist, media);

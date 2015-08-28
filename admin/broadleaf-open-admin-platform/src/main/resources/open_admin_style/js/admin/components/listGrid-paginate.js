@@ -697,14 +697,7 @@
                         
                         // Fetch records if necessary
                         $.doTimeout('fetch', fetchDebounce, function() {
-                            if (singleGrid) {
-                                var url = null;
-                            } else if (isAssetGrid) {
-                                var url = $tbody.closest('table').data('currenturl');
-                            } else {
-                                var url = $tbody.closest('table').data('path');
-                            }
-                            
+                        	var url = $tbody.closest('table').data('path');
                             BLCAdmin.listGrid.paginate.loadRecords($tbody, url);
                         });
                         

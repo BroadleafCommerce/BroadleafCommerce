@@ -279,7 +279,7 @@ public class SkuImpl implements Sku {
             @ValidationConfiguration(
                 validationImplementation = "blAfterStartDateValidator",
                 configurationItems = {
-                        @ConfigurationItem(itemName = "otherField", itemValue = "defaultSku.activeStartDate")
+                        @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
                 }) 
         })
     protected Date activeEndDate;

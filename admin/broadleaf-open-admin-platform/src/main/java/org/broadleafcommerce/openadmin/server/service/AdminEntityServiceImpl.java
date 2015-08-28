@@ -352,21 +352,28 @@ public class AdminEntityServiceImpl implements AdminEntityService {
     }
 
     @Override
-    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, List<SectionCrumb> sectionCrumb)
+    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, Integer startIndex, Integer maxIndex, List<SectionCrumb> sectionCrumb)
             throws ServiceException {
         Map<String, DynamicResultSet> map = new HashMap<String, DynamicResultSet>();
 
         PersistenceResponse response = getClassMetadata(ppr);
         ClassMetadata cmd = response.getDynamicResultSet().getClassMetaData();
         for (Property p : cmd.getProperties()) {
-            if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0]) 
+            if (ArrayUtils.contains(p.getMetadata().getAvailableToTypes(), containingEntity.getType()[0])
                     && p.getMetadata() instanceof CollectionMetadata) {
-                PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, null, null, sectionCrumb);
+                PersistenceResponse response2 = getRecordsForCollection(cmd, containingEntity, p, null, startIndex, maxIndex, sectionCrumb);
                 map.put(p.getName(), response2.getDynamicResultSet());
             }
         }
 
         return map;
+    }
+
+    @Override
+    public Map<String, DynamicResultSet> getRecordsForAllSubCollections(PersistencePackageRequest ppr, Entity containingEntity, List<SectionCrumb> sectionCrumb)
+            throws ServiceException {
+
+        return getRecordsForAllSubCollections(ppr, containingEntity, null, null, sectionCrumb);
     }
 
     @Override

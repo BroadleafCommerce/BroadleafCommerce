@@ -525,9 +525,10 @@ $(document).ready(function() {
         if (search.length > 0) {
             submitData[$firstInput.data('name')] = search;
         }
-        
+        var oldParams = BLCAdmin.history.getUrlParameters();
+
         BLC.ajax({
-            url: $(this).closest('form').attr('action'),
+            url: $(this).closest('form').attr('action') +'?'+ oldParams,
             type: "GET",
             data: submitData
         }, function(data) {
