@@ -556,6 +556,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
 
                     f.withName(property.getName())
                          .withFieldType(fieldType)
+                         .withFieldComponentRenderer(fmd.getFieldComponentRenderer())
                          .withOrder(fmd.getOrder())
                          .withFriendlyName(fmd.getFriendlyName())
                          .withForeignKeyDisplayValueProperty(fmd.getForeignKeyDisplayValueProperty())

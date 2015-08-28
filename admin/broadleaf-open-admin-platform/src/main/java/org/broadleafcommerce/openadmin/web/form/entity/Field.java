@@ -40,6 +40,7 @@ public class Field {
     protected String fieldType;
     protected String value;
     protected String displayValue;
+    protected String fieldComponentRenderer;
     protected String foreignKeyDisplayValueProperty;
     protected String foreignKeyClass;
     protected String owningEntityClass;
@@ -82,6 +83,11 @@ public class Field {
     
     public Field withFieldType(String fieldType) {
         setFieldType(fieldType);
+        return this;
+    }
+    
+    public Field withFieldComponentRenderer(String fieldComponentRenderer) {
+        setFieldComponentRenderer(fieldComponentRenderer);
         return this;
     }
     
@@ -310,6 +316,23 @@ public class Field {
 
     public void setFieldType(String fieldType) {
         this.fieldType = fieldType;
+    }
+
+    /**
+     * Returns the component renderer for the field.  Defaults to the fieldType unless otherwise set.
+     * 
+     * @return String
+     */
+    public String getFieldComponentRenderer() {
+        if ((StringUtils.isEmpty(fieldComponentRenderer) || fieldComponentRenderer == SupportedFieldType.UNKNOWN.toString()) && fieldType != null) {
+            return fieldType.toString();
+        }
+        return fieldComponentRenderer;
+    }
+
+    
+    public void setFieldComponentRenderer(String fieldComponentRenderer) {
+        this.fieldComponentRenderer = fieldComponentRenderer;
     }
 
     public String getValue() {

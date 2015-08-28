@@ -48,6 +48,7 @@
                             class="no-hover"
                             th:classappend="${headerField.mainEntityLink ? 'first' : ''}"
                             th:with="fieldType=${headerField.fieldType},
+                                     fieldComponentRenderer=${headerField.fieldComponentRenderer},
                                      fieldName=${headerField.name},
                                      fieldFriendlyName=${headerField.friendlyName},
                                      index=${headerFieldStat.index}">
