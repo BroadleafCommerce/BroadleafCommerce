@@ -23,11 +23,13 @@
     BLCAdmin.offer = {
 
         initValueFieldStyle : function ($form) {
-            var inputGroup = $("<div>", {'class' : 'input-group'});
-            var inputGroupIcon = $("<i>", {'class' : 'blc-icon-percent'});
-            var inputGroupAddon = $("<span>", {'class' : 'input-group-addon'});
-            inputGroupAddon.append(inputGroupIcon);
-            $form.find("#fields\\'value\\'\\.value").wrap(inputGroup).before(inputGroupAddon);
+            if (!$form.find("#fields\\'value\\'\\.value").parent().hasClass('input-group')) {
+                var inputGroup = $("<div>", {'class' : 'input-group'});
+                var inputGroupIcon = $("<i>", {'class' : 'blc-icon-percent'});
+                var inputGroupAddon = $("<span>", {'class' : 'input-group-addon'});
+                inputGroupAddon.append(inputGroupIcon);
+                $form.find("#fields\\'value\\'\\.value").wrap(inputGroup).before(inputGroupAddon);
+            }
         },
     
         addOnChangeTriggers : function($form) {
