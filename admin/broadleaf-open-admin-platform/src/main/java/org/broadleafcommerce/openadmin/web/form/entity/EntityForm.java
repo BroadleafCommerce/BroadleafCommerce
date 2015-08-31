@@ -342,20 +342,22 @@ public class EntityForm {
         // Check CMD for Tab/Group name overrides so that Tabs/Groups can be properly found by their display names
         boolean groupFound = false;
         Map<String, TabMetadata> tabMetadataMap = cmd.getTabAndGroupMetadata();
-        for (String tabKey : tabMetadataMap.keySet()) {
-            Map<String, GroupMetadata> groupMetadataMap = tabMetadataMap.get(tabKey).getGroupMetadata();
-            for (String groupKey : groupMetadataMap.keySet()) {
-                if (groupKey.equals(groupName) || groupMetadataMap.get(groupKey).getGroupName().equals(groupName)) {
-                    groupName = groupMetadataMap.get(groupKey).getGroupName();
-                    groupFound = true;
+        if (tabMetadataMap != null) {
+            for (String tabKey : tabMetadataMap.keySet()) {
+                Map<String, GroupMetadata> groupMetadataMap = tabMetadataMap.get(tabKey).getGroupMetadata();
+                for (String groupKey : groupMetadataMap.keySet()) {
+                    if (groupKey.equals(groupName) || groupMetadataMap.get(groupKey).getGroupName().equals(groupName)) {
+                        groupName = groupMetadataMap.get(groupKey).getGroupName();
+                        groupFound = true;
+                        break;
+                    }
+                }
+                if (groupFound) {
                     break;
                 }
-            }
-            if (groupFound) {
-                break;
-            }
-            if (tabKey.equals(tabName) || tabMetadataMap.get(tabKey).getTabName().equals(tabName)) {
-                tabName = tabMetadataMap.get(tabKey).getTabName();
+                if (tabKey.equals(tabName) || tabMetadataMap.get(tabKey).getTabName().equals(tabName)) {
+                    tabName = tabMetadataMap.get(tabKey).getTabName();
+                }
             }
         }
 

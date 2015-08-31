@@ -47,7 +47,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Column(name = "PRICING_MODEL")
     @AdminPresentation(friendlyName = "productBundlePricingModel", 
-            group = ProductImpl.Presentation.Group.Name.Price,
+            group = ProductAdminPresentation.GroupName.Price,
             order = 1,
         helpText = "productBundlePricingModelHelp", 
         fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, 
