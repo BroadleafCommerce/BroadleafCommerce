@@ -67,13 +67,12 @@ import java.util.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name="BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
-@AdminPresentationClass(friendlyName = "CategoryImpl_baseCategory")
 @SQLDelete(sql="UPDATE BLC_CATEGORY SET ARCHIVED = 'Y' WHERE CATEGORY_ID = ?")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CategoryImpl implements Category, Status, AdminMainEntity, Locatable, TemplatePathContainer {
+public class CategoryImpl implements Category, Status, AdminMainEntity, Locatable, TemplatePathContainer, CategoryAdminPresentation {
 
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
@@ -135,42 +134,42 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Column(name = "NAME", nullable=false)
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Name", order = 1000,
-            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            group = CategoryAdminPresentation.GroupName.General, groupOrder = CategoryAdminPresentation.GroupOrder.General,
             prominent = true, gridOrder = 1, columnWidth = "300px",
             translatable = true, defaultValue = "New Category")
     protected String name;
 
     @Column(name = "URL")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 2000,
-            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            group = CategoryAdminPresentation.GroupName.General, groupOrder = CategoryAdminPresentation.GroupOrder.General,
             prominent = true, gridOrder = 2, columnWidth = "300px",
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     @Index(name="CATEGORY_URL_INDEX", columnNames={"URL"})
     protected String url;
 
     @Column(name = "OVERRIDE_GENERATED_URL")
-    @AdminPresentation(friendlyName = "CategoryImpl_Override_Generated_Url", group = Presentation.Group.Name.General,
+    @AdminPresentation(friendlyName = "CategoryImpl_Override_Generated_Url", group = CategoryAdminPresentation.GroupName.General,
             order = 2010)
     protected Boolean overrideGeneratedUrl = false;
 
     @Column(name = "EXTERNAL_ID")
     @Index(name="CATEGORY_E_ID_INDEX", columnNames={"EXTERNAL_ID"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_ExternalID",
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+            tab = CategoryAdminPresentation.TabName.Advanced, tabOrder = CategoryAdminPresentation.TabOrder.Advanced,
+            group = CategoryAdminPresentation.GroupName.Advanced, groupOrder = CategoryAdminPresentation.GroupOrder.Advanced)
     protected String externalId;
 
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url_Key",
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+            tab = CategoryAdminPresentation.TabName.Advanced, tabOrder = CategoryAdminPresentation.TabOrder.Advanced,
+            group = CategoryAdminPresentation.GroupName.Advanced, groupOrder = CategoryAdminPresentation.GroupOrder.Advanced,
             excluded = true)
     protected String urlKey;
 
     @Column(name = "DESCRIPTION")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Description",
-            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            group = CategoryAdminPresentation.GroupName.General, groupOrder = CategoryAdminPresentation.GroupOrder.General,
             largeEntry = true,
             excluded = true,
             translatable = true)
@@ -178,20 +177,20 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "TAX_CODE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_TaxCode", order = 4000,
-            group = Presentation.Group.Name.Advanced)
+            group = CategoryAdminPresentation.GroupName.Advanced)
     @AdminPresentationDataDrivenEnumeration(optionCanEditValues = true, optionFilterParams = { @OptionFilterParam(
             param = "type.key", value = "TAX_CODE", paramType = OptionFilterParamType.STRING) })
     protected String taxCode;
 
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_Start_Date", order = 1000,
-            group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange,
+            group = CategoryAdminPresentation.GroupName.ActiveDateRange, groupOrder = CategoryAdminPresentation.GroupOrder.ActiveDateRange,
             defaultValue = "today")
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Active_End_Date", order = 2000,
-        group = Presentation.Group.Name.ActiveDateRange, groupOrder = Presentation.Group.Order.ActiveDateRange,
+        group = CategoryAdminPresentation.GroupName.ActiveDateRange, groupOrder = CategoryAdminPresentation.GroupOrder.ActiveDateRange,
         validationConfigurations = { 
             @ValidationConfiguration(validationImplementation = "blAfterStartDateValidator",
                 configurationItems = { 
@@ -202,15 +201,15 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
 
     @Column(name = "DISPLAY_TEMPLATE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Display_Template", order = 1000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced)
+            tab = CategoryAdminPresentation.TabName.Advanced, tabOrder = CategoryAdminPresentation.TabOrder.Advanced,
+            group = CategoryAdminPresentation.GroupName.Advanced, groupOrder = CategoryAdminPresentation.GroupOrder.Advanced)
     protected String displayTemplate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
     @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Long_Description", order = 3000,
-            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General,
+            group = CategoryAdminPresentation.GroupName.General, groupOrder = CategoryAdminPresentation.GroupOrder.General,
             largeEntry = true,
             fieldType = SupportedFieldType.HTML_BASIC,
             translatable = true)
@@ -220,7 +219,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
     @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 4000,
-            group = Presentation.Group.Name.General, groupOrder = Presentation.Group.Order.General)
+            group = CategoryAdminPresentation.GroupName.General, groupOrder = CategoryAdminPresentation.GroupOrder.General)
     @AdminPresentationToOneLookup()
     @Deprecated
     protected Category defaultParentCategory;
@@ -235,7 +234,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             parentObjectProperty = "category",
             friendlyName = "allChildCategoriesTitle",
             sortProperty = "displayOrder",
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            tab = CategoryAdminPresentation.TabName.Advanced, tabOrder = CategoryAdminPresentation.TabOrder.Advanced,
             gridVisibleFields = { "name" })
     protected List<CategoryXref> allChildCategoryXrefs = new ArrayList<CategoryXref>(10);
 
@@ -249,7 +248,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             parentObjectProperty = "subCategory",
             friendlyName = "allParentCategoriesTitle",
             sortProperty = "displayOrder",
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            tab = CategoryAdminPresentation.TabName.Advanced, tabOrder = CategoryAdminPresentation.TabOrder.Advanced,
             gridVisibleFields = { "name" })
     protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<CategoryXref>(10);
 
@@ -263,7 +262,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             parentObjectProperty = "category",
             friendlyName = "allProductsTitle",
             sortProperty = "displayOrder",
-            tab = Presentation.Tab.Name.Products, tabOrder = Presentation.Tab.Order.Products,
+            tab = CategoryAdminPresentation.TabName.Products, tabOrder = CategoryAdminPresentation.TabOrder.Products,
             gridVisibleFields = { "defaultSku.name" })
     protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
 
@@ -276,7 +275,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @BatchSize(size = 50)
     @AdminPresentationMap(
             friendlyName = "SkuImpl_Sku_Media",
-            tab = Presentation.Tab.Name.Media, tabOrder = Presentation.Tab.Order.Media,
+            tab = CategoryAdminPresentation.TabName.Media, tabOrder = CategoryAdminPresentation.TabOrder.Media,
             keyPropertyFriendlyName = "SkuImpl_Sku_Media_Key",
             deleteEntityUponRemove = true,
             mediaField = "url",
@@ -299,7 +298,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "CategoryImpl_Category_Media",
-        tab = Presentation.Tab.Name.Media, tabOrder = Presentation.Tab.Order.Media,
+        tab = CategoryAdminPresentation.TabName.Media, tabOrder = CategoryAdminPresentation.TabOrder.Media,
         keyPropertyFriendlyName = "CategoryImpl_Category_Media_Key",
         deleteEntityUponRemove = true,
         mediaField = "media.url",
@@ -326,7 +325,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @OrderBy(value="sequence")
     @BatchSize(size = 50)
     @AdminPresentationAdornedTargetCollection(friendlyName = "featuredProductsTitle", order = 1000,
-            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+            tab = CategoryAdminPresentation.TabName.Marketing, tabOrder = CategoryAdminPresentation.TabOrder.Marketing,
             targetObjectProperty = "product",
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
@@ -338,7 +337,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "crossSaleProductsTitle", order = 2000,
-            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+            tab = CategoryAdminPresentation.TabName.Marketing, tabOrder = CategoryAdminPresentation.TabOrder.Marketing,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
@@ -350,7 +349,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "upsaleProductsTitle", order = 3000,
-            tab = Presentation.Tab.Name.Marketing, tabOrder = Presentation.Tab.Order.Marketing,
+            tab = CategoryAdminPresentation.TabName.Marketing, tabOrder = CategoryAdminPresentation.TabOrder.Marketing,
             targetObjectProperty = "relatedSaleProduct",
             sortProperty = "sequence",
             maintainedAdornedTargetFields = { "promotionMessage" },
@@ -361,7 +360,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blCategories")
     @OrderBy(value="sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "categoryFacetsTitle", order = 1000,
-            tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets,
+            tab = CategoryAdminPresentation.TabName.SearchFacets, tabOrder = CategoryAdminPresentation.TabOrder.SearchFacets,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
             gridVisibleFields = { "field", "label", "searchDisplayPriority" })
@@ -372,7 +371,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
     @OrderBy(value = "sequence")
     @AdminPresentationAdornedTargetCollection(friendlyName = "excludedFacetsTitle", order = 2000,
-            tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets,
+            tab = CategoryAdminPresentation.TabName.SearchFacets, tabOrder = CategoryAdminPresentation.TabOrder.SearchFacets,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
             gridVisibleFields = { "field", "label", "searchDisplayPriority" })
@@ -385,7 +384,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @MapKey(name="name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "categoryAttributesTitle",
-        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+        tab = CategoryAdminPresentation.TabName.Advanced, tabOrder = CategoryAdminPresentation.TabOrder.Advanced,
         deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name"
     )
     protected Map<String, CategoryAttribute> categoryAttributes = new HashMap<String, CategoryAttribute>();
@@ -393,16 +392,16 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
             helpText = "categoryInventoryTypeHelpText",
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+            tab = CategoryAdminPresentation.TabName.Advanced, tabOrder = CategoryAdminPresentation.TabOrder.Advanced,
+            group = CategoryAdminPresentation.GroupName.Advanced, groupOrder = CategoryAdminPresentation.GroupOrder.Advanced,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.inventory.service.type.InventoryType")
     protected String inventoryType;
     
     @Column(name = "FULFILLMENT_TYPE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_FulfillmentType", order = 3000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-            group = Presentation.Group.Name.Advanced, groupOrder = Presentation.Group.Order.Advanced,
+            tab = CategoryAdminPresentation.TabName.Advanced, tabOrder = CategoryAdminPresentation.TabOrder.Advanced,
+            group = CategoryAdminPresentation.GroupName.Advanced, groupOrder = CategoryAdminPresentation.GroupOrder.Advanced,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
