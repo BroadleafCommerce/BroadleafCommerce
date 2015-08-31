@@ -216,6 +216,11 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         if (criteria.getMatchRule() != null && criteria.getMatchRule().trim().length() != 0) {
             HashMap<String, Object> vars = new HashMap<String, Object>();
             orderItem.updateRuleVariables(vars);
+
+            if (extensionManager != null) {
+                extensionManager.getProxy().applyAdditionalRuleVariablesForItemOfferEvaluation(orderItem, vars);
+            }
+
             Boolean expressionOutcome = executeExpression(criteria.getMatchRule(), vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToItem = true;
