@@ -40,15 +40,15 @@ public class Weight implements Serializable {
 
     @Column(name = "WEIGHT")
     @AdminPresentation(friendlyName = "ProductWeight_Product_Weight", order = 9000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping)
+        tab = ProductAdminPresentation.TabName.Shipping, tabOrder = ProductAdminPresentation.TabOrder.Shipping,
+        group = ProductAdminPresentation.GroupName.Shipping, groupOrder = ProductAdminPresentation.GroupOrder.Shipping)
     protected BigDecimal weight;
 
         
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
     @AdminPresentation(friendlyName = "ProductWeight_Product_Weight_Units", order = 10000,
-        tab = ProductImpl.Presentation.Tab.Name.Shipping, tabOrder = ProductImpl.Presentation.Tab.Order.Shipping,
-        group = ProductImpl.Presentation.Group.Name.Shipping, groupOrder = ProductImpl.Presentation.Group.Order.Shipping,
+            tab = ProductAdminPresentation.TabName.Shipping, tabOrder = ProductAdminPresentation.TabOrder.Shipping,
+            group = ProductAdminPresentation.GroupName.Shipping, groupOrder = ProductAdminPresentation.GroupOrder.Shipping,
         fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, 
         broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType")
     protected String weightUnitOfMeasure;
