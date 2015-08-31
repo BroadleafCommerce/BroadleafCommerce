@@ -93,7 +93,7 @@ public interface SolrHelperService {
      * @return the property name for the facet type of this field
      */
     public String getPropertyNameForFieldFacet(Field field, String prefix);
-    
+
     /**
      * Returns the searchable field types for the given field. If there were none configured, will return
      * a list with TEXT FieldType.
