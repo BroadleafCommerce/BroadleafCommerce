@@ -90,9 +90,10 @@ public interface SolrHelperService {
      * 
      * @param field
      * @param prefix
+     * @param facetType
      * @return the property name for the facet type of this field
      */
-    public String getPropertyNameForFieldFacet(Field field, String prefix);
+    public String getPropertyNameForFieldFacet(Field field, String prefix, FieldType facetType);
 
     /**
      * Returns the searchable field types for the given field. If there were none configured, will return
