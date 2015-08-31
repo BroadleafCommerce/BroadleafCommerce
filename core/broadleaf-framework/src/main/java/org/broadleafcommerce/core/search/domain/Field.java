@@ -153,7 +153,7 @@ public interface Field extends Serializable, MultiTenantCloneable<Field> {
     public List<FieldType> getSearchableFieldTypes();
 
     /**
-     * Gets the {@org.broadleafcommerce.core.search.service.type.SearchFieldType} of this field.  This is used by
+     * Gets the {@org.broadleafcommerce.core.search.service.type.FieldType} of this field.  This is used by
      * SearchField and SearchFacet to determine searchableFieldTypes and facetFieldType respectively.
      *
      * @return
@@ -161,7 +161,7 @@ public interface Field extends Serializable, MultiTenantCloneable<Field> {
     public String getFieldType();
 
     /**
-     * Sets the {@org.broadleafcommerce.core.search.service.type.SearchFieldType} of this field.  This is used by
+     * Sets the {@org.broadleafcommerce.core.search.service.type.FieldType} of this field.  This is used by
      * SearchField and SearchFacet to determine searchableFieldTypes and facetFieldType respectively.
      *
      * @param fieldType

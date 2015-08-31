@@ -22,10 +22,8 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.core.catalog.service.SearchFieldInfo;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
-import org.broadleafcommerce.core.search.service.type.SearchFieldType;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -78,13 +76,9 @@ public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandle
         adminInstance = (SearchFacet) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
         adminInstance = dynamicEntityDao.merge(adminInstance);
 
-        SearchFieldType fieldType = SearchFieldType.getInstance(adminInstance.getField().getFieldType());
+        FieldType fieldType = FieldType.getInstance(adminInstance.getField().getFieldType());
 
-        if (fieldType.equals(SearchFieldType.STRING)) {
-            adminInstance.setFacetFieldType(FieldType.STRING.getType());
-        } else if (SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType.getType()) != null) {
-            adminInstance.setFacetFieldType(SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType.getType()).getType());
-        }
+        adminInstance.setFacetFieldType(fieldType.getType());
 
         if (extensionManager != null) {
             extensionManager.getProxy().addtoSearchableFields(persistencePackage, adminInstance);

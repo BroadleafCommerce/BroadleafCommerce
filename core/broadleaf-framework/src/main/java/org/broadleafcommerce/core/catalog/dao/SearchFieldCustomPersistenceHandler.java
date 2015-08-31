@@ -22,10 +22,8 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.core.catalog.service.SearchFieldInfo;
 import org.broadleafcommerce.core.search.domain.SearchField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
-import org.broadleafcommerce.core.search.service.type.SearchFieldType;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -34,11 +32,9 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
 
 /**
@@ -82,10 +78,10 @@ public class SearchFieldCustomPersistenceHandler extends CustomPersistenceHandle
         adminInstance = (SearchField) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
         adminInstance = dynamicEntityDao.merge(adminInstance);
 
-        SearchFieldType fieldType = SearchFieldType.getInstance(adminInstance.getField().getFieldType());
+        FieldType fieldType = FieldType.getInstance(adminInstance.getField().getFieldType());
 
         List<FieldType> searchableFieldTypes = new ArrayList<FieldType>();
-        searchableFieldTypes.add(SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType.getType()));
+        searchableFieldTypes.add(fieldType);
 
         adminInstance.setSearchableFieldTypes(searchableFieldTypes);
 

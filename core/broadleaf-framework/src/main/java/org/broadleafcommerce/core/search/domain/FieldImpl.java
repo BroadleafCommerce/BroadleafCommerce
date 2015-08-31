@@ -131,7 +131,7 @@ public class FieldImpl implements Field, AdminMainEntity {
     @Column(name = "FIELD_TYPE")
     @AdminPresentation(friendlyName = "FieldImpl_Field_Type", order = 4, prominent = true, gridOrder = 4,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.core.search.service.type.SearchFieldType",
+            broadleafEnumeration = "org.broadleafcommerce.core.search.domain.solr.FieldType",
             requiredOverride = RequiredOverride.REQUIRED)
     protected String fieldType;
     
