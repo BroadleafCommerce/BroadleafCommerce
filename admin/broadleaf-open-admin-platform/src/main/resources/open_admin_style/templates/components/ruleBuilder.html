@@ -83,20 +83,21 @@
         <!--/* For: All display types */-->
         <h4 th:id="${field.name + '-header'}" class="field-label" th:text="#{${field.friendlyName}}"
             th:classappend="${!field.required ? 'query-builder-rules-header' : 'required'}"
-            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.attributes['displayType'] == 'RADIO') OR field.dataWrapper.error != null OR field.attributes['displayType'] == 'MODAL') ? 'display: none;' : ''}" />
+            th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.attributes['displayType'] == 'RADIO') OR field.attributes['displayType'] == 'MODAL') ? 'display: none;' : ''}" />
 
         <div class="query-builder-rules-container"
-            th:classappend="${field.required ? 'required-query-builder' : ''}"
+            th:classappend="${(field.required ? 'required-query-builder' : '')
+                              + (field.dataWrapper.error != null ? 'rule-data-error' : '')}"
             th:style="${((#arrays.isEmpty(field.dataWrapper.data) AND field.attributes['displayType'] == 'RADIO') OR field.dataWrapper.error != null OR field.attributes['displayType'] == 'MODAL') ? 'display: none;' : ''}"
             th:id="${field.name}"/>
         
         <!--/* For: All display types - rule parsing errors */-->
-        <div class="field-label query-builder-rules-header error"
+        <div class="field-label error"
             th:if="${field.dataWrapper.error != null}"
             th:style="${field.dataWrapper.error == null ? 'display: none;' : ''}"
             th:inline="text">
             [[#{'ruleErrorTitle'}]] [[${field.dataWrapper.error}]]
-            <a href="#" class="rule-reset" th:inline="text">[[#{Reset_Rule}]] <i class="icon-undo"></i></a>
+            <a href="#" class="button rule-reset right" th:inline="text">[[#{Reset_Rule}]] <i class="icon-undo"></i></a>
         </div>
 
         <div class="query-builder-rules-container-mvel"

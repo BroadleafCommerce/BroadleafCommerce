@@ -47,6 +47,13 @@
      */
     var preInitQueryBuilderFieldHandlers = [];
 
+    /**
+     * Fields (Filters) for the Query Builder may need some post-constructions set up (e.g. Selectize).
+     * All custom post handlers that need to be run on the builder can be added to this list.
+     * @type {Array}
+     */
+    var postConstructQueryBuilderFieldHandlers = [];
+
     BLCAdmin.ruleBuilders = {
 
         /**
@@ -245,7 +252,9 @@
             var containerId = $container.attr("id");
             var ruleBuilder = this.getRuleBuilder(containerId);
             if (ruleBuilder != null) {
-                $container.show();
+                if (!$container.hasClass('rule-data-error')) {
+                    $container.show();
+                }
 
                 //If invoked from a "RADIO" - create new query builder for the container
                 if ($container.children().children().length == 0) {
@@ -351,13 +360,9 @@
             var addRemoveConditionsLink = ruleBuilder.builders.length >= 1;
             builder.queryBuilder(this.initializeQueryBuilderConfig(ruleData, fields, addRemoveConditionsLink));
 
-            //fix selectize upon adding a new rule
-            $(builder).on('afterCreateRuleInput.queryBuilder', function(e, rule) {
-                if (rule.filter.plugin == 'selectize') {
-                    rule.$el.find('.rule-value-container').css('min-width', '200px')
-                        .find('.selectize-control').removeClass('form-control');
-                }
-            });
+            //run any post-construct handlers
+            BLCAdmin.ruleBuilders.runPostConstructQueryBuilderFieldHandler(builder);
+
             ruleBuilder.addQueryBuilder($(builder));
 
             if (ruleBuilder.ruleType === BLCAdmin.RuleTypeEnum.RULE_WITH_QUANTITY) {
@@ -392,7 +397,25 @@
             }
         },
 
-        initSelectizeFieldHandler : function(field) {
+        /**
+         * Handlers designed to execute on the query builder after construction
+         */
+        addPostConstructQueryBuilderFieldHandler : function(fn) {
+            postConstructQueryBuilderFieldHandlers.push(fn);
+        },
+
+        runPostConstructQueryBuilderFieldHandler : function(builder) {
+            for (var i = 0; i < postConstructQueryBuilderFieldHandlers.length; i++) {
+                postConstructQueryBuilderFieldHandlers[i](builder);
+            }
+        },
+
+        /**
+         * A custom pre-init query builder field handler to modify the filters object
+         * in order to support the Selectize widget in the Query Builder.
+         * @param field
+         */
+        initSelectizePreInitFieldHandler : function(field) {
             //initialize selectize plugin
             var opRef = field.operators;
             if (opRef && typeof opRef === 'string' && "blcOperators_Selectize" === opRef) {
@@ -462,6 +485,19 @@
                     return "["+rule.$el.find('.rule-value-container input.query-builder-selectize-input').val()+"]";
                 }
             }
+        },
+
+        /**
+         * A custom post-construct query builder handler to fix the selectize widget upon adding a new rule
+         * @param builder
+         */
+        initSelectizePostConstructFieldHandler : function (builder) {
+            $(builder).on('afterCreateRuleInput.queryBuilder', function(e, rule) {
+                if (rule.filter.plugin == 'selectize') {
+                    rule.$el.find('.rule-value-container').css('min-width', '200px')
+                        .find('.selectize-control').removeClass('form-control');
+                }
+            });
         },
 
         /**
@@ -662,9 +698,11 @@
      * the appropriate fields and data (as specified by the container)
      */
     BLCAdmin.addInitializationHandler(function($container) {
-        //Add default pre-init handlers (e.g. selectize)
-        BLCAdmin.ruleBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.ruleBuilders.initSelectizeFieldHandler);
+        //Add default pre-init and post-construct handlers (e.g. selectize)
+        BLCAdmin.ruleBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.ruleBuilders.initSelectizePreInitFieldHandler);
+        BLCAdmin.ruleBuilders.addPostConstructQueryBuilderFieldHandler(BLCAdmin.ruleBuilders.initSelectizePostConstructFieldHandler);
 
+        //Initialize all rule builders on the page
         $container.find('.rule-builder-data').each(function(index, element) {
             var $this = $(this),
                 hiddenId = $this.data('hiddenid'),
@@ -836,15 +874,14 @@ $(document).ready(function() {
      */
     $('body').on('click', 'a.rule-reset', function(){
         var $errorLabelContainer = $(this).parent();
-        var $invalidMvelContainer = $($(this).parent().next());
-        var $builderContainer = $($errorLabelContainer.prev());
-        var $validLabelContainer = $($builderContainer.prev());
+        var $invalidMvelContainer = $($(this).parent().siblings('.query-builder-rules-container-mvel'));
+        var $builderContainer = $($(this).parent().siblings('.query-builder-rules-container'));
 
         //Remove the error containers
         $errorLabelContainer.remove();
         $invalidMvelContainer.remove();
         //Show the 'real' containers
-        $validLabelContainer.show();
+        $builderContainer.removeClass('rule-data-error');
         $builderContainer.show();
 
         //clear out the original faulty input
