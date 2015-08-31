@@ -34,9 +34,7 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
-
 import java.util.Map;
-
 import javax.annotation.Resource;
 
 /**
@@ -84,8 +82,8 @@ public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandle
 
         if (fieldType.equals(SearchFieldType.STRING)) {
             adminInstance.setFacetFieldType(FieldType.STRING.getType());
-        } else if (SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType) != null) {
-            adminInstance.setFacetFieldType(SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType).getType());
+        } else if (SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType.getType()) != null) {
+            adminInstance.setFacetFieldType(SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType.getType()).getType());
         }
 
         if (extensionManager != null) {

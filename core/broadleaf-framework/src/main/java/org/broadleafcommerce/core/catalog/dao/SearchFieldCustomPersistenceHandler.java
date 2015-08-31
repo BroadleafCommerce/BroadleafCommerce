@@ -85,7 +85,7 @@ public class SearchFieldCustomPersistenceHandler extends CustomPersistenceHandle
         SearchFieldType fieldType = SearchFieldType.getInstance(adminInstance.getField().getFieldType());
 
         List<FieldType> searchableFieldTypes = new ArrayList<FieldType>();
-        searchableFieldTypes.add(SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType));
+        searchableFieldTypes.add(SearchFieldInfo.SEARCH_FIELD_SOLR_FIELD_TYPE.get(fieldType.getType()));
 
         adminInstance.setSearchableFieldTypes(searchableFieldTypes);
 

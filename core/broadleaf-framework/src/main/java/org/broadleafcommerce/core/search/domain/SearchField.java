@@ -59,20 +59,6 @@ public interface SearchField extends Serializable, MultiTenantCloneable<SearchFi
     public void setField(Field field);
 
     /**
-     * Gets the abbreviation for this search field
-     *
-     * @return
-     */
-    public String getAbbreviation();
-
-    /**
-     * Sets the abbreviation for this search field
-     *
-     * @param abbreviation
-     */
-    public void setAbbreviation(String abbreviation);
-
-    /**
      * Gets the searchable field types for this search field
      *
      * @return

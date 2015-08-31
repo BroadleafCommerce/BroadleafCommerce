@@ -90,11 +90,6 @@ public class SearchFieldImpl implements SearchField, Serializable {
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
     protected Field field;
 
-    @Column(name = "ABBREVIATION")
-    @AdminPresentation(friendlyName = "SearchFieldImpl_abbreviation", group = "SearchFieldImpl_description",
-            order = 2000, prominent = true, gridOrder = 2000)
-    protected String abbreviation;
-
     // This is a broadleaf enumeration
     @ElementCollection
     @CollectionTable(name="BLC_SEARCH_FIELD_TYPES", joinColumns=@JoinColumn(name="SEARCH_FIELD_ID"))
@@ -122,16 +117,6 @@ public class SearchFieldImpl implements SearchField, Serializable {
     @Override
     public void setField(Field field) {
         this.field = field;
-    }
-
-    @Override
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    @Override
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
     }
 
     @Override
@@ -179,7 +164,6 @@ public class SearchFieldImpl implements SearchField, Serializable {
             return createResponse;
         }
         SearchField cloned = createResponse.getClone();
-        cloned.setAbbreviation(abbreviation);
         cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
         for(String entry : searchableFieldTypes){
             cloned.getSearchableFieldTypes().add(FieldType.getInstance(entry));
