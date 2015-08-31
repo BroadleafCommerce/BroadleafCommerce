@@ -82,9 +82,10 @@
 
 $(document).ready(function() {
 	
-	$('body').on('mouseover', 'img.thumbnail', function() {
-	    if (!$(this).hasClass('placeholder-image')) {
-	        $.doTimeout('hover', 250, BLCAdmin.imagezoom.showImage, this);
+	$('body').on('mouseover', 'div.view-asset-selector', function() {
+		var $img = $(this).parent().find('img:visible');
+	    if (!$img.hasClass('placeholder-image')) {
+	        $.doTimeout('hover', 250, BLCAdmin.imagezoom.showImage, $img);
 	    }
 	});
 	
@@ -94,9 +95,9 @@ $(document).ready(function() {
 	});
 	
 	// When we leave the thumbnail image, remove the zoomed container from view
-	$('body').on('mouseout', 'img.thumbnail', function() {
+	$('body').on('mouseout', 'div.view-asset-selector', function() {
 	    BLCAdmin.imagezoom.hideImage();
 	    $.doTimeout('hover');
 	});
-	
+
 })

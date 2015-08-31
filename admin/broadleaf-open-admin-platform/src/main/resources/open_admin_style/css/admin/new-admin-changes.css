@@ -999,9 +999,9 @@ p.deployment-summary {
     min-width: 200px;
 }
 
-.thumbnail {
-    margin-bottom: 10px;
-}
+/*.thumbnail {*/
+    /*margin-bottom: 10px;*/
+/*}*/
 
 
 /* Making dropdowns rectangular */
@@ -1059,4 +1059,153 @@ blockquote::before{
 
 [data-fieldname="rejectionLabel"] {
     white-space: initial !important;
+}
+
+.media-image {
+    /*height: 150px;*/
+    /*width: 150px;*/
+    object-fit: cover;
+    min-width: 150px;
+}
+
+.sidebar-content .media-image {
+    height: auto;
+    width: 100%;
+    max-width: 350px;
+    object-fit: cover;
+}
+
+.sidebar-content .asset-selector-container {
+    text-align: center;
+}
+
+.media-image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.sidebar-content .media-image-container {
+    width: 100%;
+    max-width: 350px;
+}
+
+.media-image-container .media-actions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    color: #636466;
+    background: rgba(255,255,255,0.8);
+    display: none;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+.media-image-container:hover .media-actions {
+    display: block;
+}
+
+.media-image-container button {
+    border-radius: 20%;
+    padding: 5px;
+    font-size: 30px;
+    width: 44px;
+    height: 40px;
+    position: absolute;
+}
+
+.media-image-container .media-actions button {
+    width: 50px;
+    height: 50px;
+}
+
+/*.sidebar-content .media-image-container .media-actions button {*/
+    /*width: 20%;*/
+/*}*/
+
+.media-image-container .media-actions button.clear-asset-selector {
+    /*left: 60%;*/
+    top: 40%;
+}
+
+.media-image-container .media-actions button.show-asset-selector {
+    /*left: 20%;*/
+    top: 40%;
+    font-size: 22px;
+}
+
+.media-image-container div.view-asset-selector {
+    border-radius: 20%;
+    padding: 5px;
+    position: absolute;
+    color: white;
+    right: 1%;
+    bottom: 1%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    background-color: rgba(0,0,0,0.25);
+    box-shadow: none;
+    z-index: 5;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 1em;
+}
+
+.media-image-container .media-actions button > i {
+    margin: 0;
+}
+
+.media-image .thumbnail {
+    height: 150px;
+}
+
+.sidebar .media-image .thumbnail {
+    height: auto;
+}
+
+.thumbnail {
+    padding: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    display: inline;
+    border: none;
+}
+
+.placeholder-image {
+    width: 100%;
+    max-width: 350px;
+}
+
+div.imagePreviewContainer {
+    width: 200px;
+    height: 200px;
+    float: left;
+}
+
+div#thumbnail-zoom {
+    position: absolute;
+    z-index: 99999999;
+    font-size: 19px;
+    background-color: #FFF;
+    padding: 10px;
+    border: 1px solid #CCC;
+    border-radius: 4px;
+}
+
+td[data-fieldname="thumbnail"] {
+    padding: 0 !important;
+    object-fit: cover;
+    width: 52px;
+    height: 52px;
+}
+
+div.uploadMessage {
+    display: none;
+}
+
+.uploadFileFormContainer {
+    padding: 10px 0;
 }

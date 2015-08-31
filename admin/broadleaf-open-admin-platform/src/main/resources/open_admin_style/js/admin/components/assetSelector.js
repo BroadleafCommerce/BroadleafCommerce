@@ -134,7 +134,7 @@ $(document).ready(function() {
     	$container.on('assetInfoSelected', function(event, fields) {
     		var $this = $(this);
     		    		   
-    		$this.find('img.thumbnail').attr("src", fields['adminDisplayAssetUrl'] + '?largeAdminThumbnail');
+    		$this.find('img.thumbnail').attr("src", fields['adminDisplayAssetUrl']);
     		$this.find('img.thumbnail').data("fullurl", fields['adminDisplayAssetUrl']);
     		$this.find('img.thumbnail').parent().attr("href", fields['adminDisplayAssetUrl']);
     		$this.find('img.thumbnail').removeClass('placeholder-image');
@@ -148,7 +148,11 @@ $(document).ready(function() {
     		    $this.find('input.mediaUrl').val(fields['assetUrl']);
     		}
     		$container.find('button.clear-asset-selector').show();
-			BLCAdmin.hideCurrentModal();
+            $container.find('.media-image-container .media-actions').css('display', '');
+
+            $container.find('div.asset-url').html(fields['assetUrl']);
+
+            BLCAdmin.hideCurrentModal();
     	});
     	
     	BLCAdmin.showLinkAsModal($(this).data('select-url'), function() {
@@ -156,8 +160,29 @@ $(document).ready(function() {
     	});
     	
 		return false;
-    });    
-    
+    });
+
+    $('body').on('click', 'button.clear-asset-selector', function(event) {
+        //Get the media container
+        var $container = $(this).closest('div.asset-selector-container');
+        var $this = $(this);
+
+        //Set media value to null so that when the request is sent the entry in the map for primary is deleted
+        $container.find('input.mediaItem').val('null').trigger('change');
+
+        //Set placeholder image and hide clear button since there's nothing to clear
+        var src = $container.find('img.placeholder').attr('src');
+        $container.find('img.thumbnail').attr('src', src);
+        $container.find('img.thumbnail').addClass('placeholder-image');
+        $this.hide();
+
+        $container.find('.media-image-container .media-actions').css('display', 'block');
+
+        positionMediaButtons($container.find('.media-image-container'));
+        $container.find('div.asset-url').html('No media selected.')
+
+    });
+
     // When we detect that a user has selected a file from his file system, we will trigger an event
     $('body').on('change', 'input.ajaxUploadFile[type="file"]', function() {
         BLCAdmin.asset.assetSelected($(this));
@@ -185,5 +210,26 @@ $(document).ready(function() {
     if(window.navigator.userAgent.indexOf('MSIE ') > 0) {
     	$('button.upload-asset').addClass('hidden');
     	$('#assetUploadForm').removeClass('hidden');
+    }
+
+    $('body').on('mouseover', '.media-image-container', function() {
+        positionMediaButtons(this);
+    });
+
+    function positionMediaButtons(container) {
+        var center = $(container).width() / 2;
+        var spacing = 15;
+
+        // clear goes on the right
+        var clearBtn = $(container).find('.media-actions button.clear-asset-selector');
+        clearBtn.css('left', parseInt(center + spacing) + 'px');
+
+        // lookup goes on the left unless clear is hidden
+        var lookupBtn = $(container).find('.media-actions button.show-asset-selector');
+        if (clearBtn.css('display') != 'none') {
+            lookupBtn.css('left', parseInt(center - spacing - 50) + 'px');
+        } else {
+            lookupBtn.css('left', parseInt(center - 25) + 'px');
+        }
     }
 });
