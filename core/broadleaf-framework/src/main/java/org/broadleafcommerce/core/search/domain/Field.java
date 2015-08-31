@@ -88,17 +88,13 @@ public interface Field extends Serializable, MultiTenantCloneable<Field> {
      * Gets the abbreviation of this Field. This will be used in URL query string parameters for sorting and
      * filtering
      * @return the abbreviation
-     * @deprecated
      */
-    @Deprecated
     public String getAbbreviation();
 
     /**
      * Sets the abbreviation
      * @param abbreviation
-     * @deprecated
      */
-    @Deprecated
     public void setAbbreviation(String abbreviation);
 
     /**

@@ -94,7 +94,6 @@ public class FieldImpl implements Field, AdminMainEntity {
             prominent = true)
     protected String propertyName;
 
-    @Deprecated
     @Column(name = "ABBREVIATION")
     @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_general", order = 3, excluded = true)
     protected String abbreviation;
@@ -171,13 +170,11 @@ public class FieldImpl implements Field, AdminMainEntity {
         this.propertyName = propertyName;
     }
 
-    @Deprecated
     @Override
     public String getAbbreviation() {
         return abbreviation;
     }
 
-    @Deprecated
     @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
