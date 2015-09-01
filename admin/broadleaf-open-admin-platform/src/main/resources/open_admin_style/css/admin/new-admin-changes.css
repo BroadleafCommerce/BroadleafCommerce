@@ -184,6 +184,7 @@ input[type="radio"].radio+label.radio-label.clr,
 .radio-container {
     padding: 10px 10px 4px 10px;
     display: inline-block;
+    min-width: 275px;
 }
 
 /* add nowrap to listgrids */
@@ -721,6 +722,7 @@ input.color-picker-value {
     color: #B3B3B3;
     margin-top: -5px;
     font-size: 12px;
+    display: block;
 }
 
 .field-group {
