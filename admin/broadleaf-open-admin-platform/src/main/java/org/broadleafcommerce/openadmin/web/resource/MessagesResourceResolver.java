@@ -36,28 +36,34 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Created by brandon on 8/27/15.
+ * Generated resource resolver for Admin Javascript Messages
+ *
+ * @author Brandon Smith
+ * @author Elbert Bautista (elbertbautista)
  */
 @Component("blMessagesResourceResolver")
 public class MessagesResourceResolver implements ResourceResolver {
 
-    public org.springframework.core.io.Resource resolveResource(HttpServletRequest request, String path, List<? extends Resource> locations, ResourceResolverChain chain) {
-        if(!path.equalsIgnoreCase("admin/ui/messages.js")) {
+    protected static final String MESSAGES_JS_PATH="admin/ui/messages.js";
+    protected static final String OPEN_ADMIN_MESSAGES_PROPERTIES="messages/OpenAdminJavascriptMessages.properties";
+
+    public Resource resolveResource(HttpServletRequest request, String path, List<? extends Resource> locations, ResourceResolverChain chain) {
+        if (!path.equalsIgnoreCase(getMessagesJsPath())) {
             return chain.resolveResource(request, path, locations);
         } else {
-            org.springframework.core.io.Resource resource = chain.resolveResource(request, path, locations);
+            Resource resource = chain.resolveResource(request, path, locations);
             return this.updateMessagesVariables(resource, path);
         }
     }
 
-    protected org.springframework.core.io.Resource updateMessagesVariables(org.springframework.core.io.Resource resource, String path) {
-        if(resource != null) {
+    protected Resource updateMessagesVariables(Resource resource, String path) {
+        if (resource != null) {
             String contents;
             try {
                 contents = this.getResourceContents(resource);
                 contents = replaceResourceContents(contents);
             } catch (IOException e) {
-                throw new RuntimeException("Could not get resource (offerTemplate JS) contents", e);
+                throw new RuntimeException("Could not get resource (Messages JS) contents", e);
             }
 
             return new GeneratedResource(contents.getBytes(), path);
@@ -89,7 +95,7 @@ public class MessagesResourceResolver implements ResourceResolver {
 
         try {
             Properties prop = new Properties();
-            String propFileName = "messages/OpenAdminJavascriptMessages.properties";
+            String propFileName = getOpenAdminMessagesProperties();
 
             inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
 
@@ -110,7 +116,7 @@ public class MessagesResourceResolver implements ResourceResolver {
             contents = contents.replace("//BLC-ADMIN-JS-MESSAGES", propertiesObject.getBuffer().toString().substring(0, propertiesObject.getBuffer().toString().length() - 2) + "}");
 
         } catch (Exception e) {
-            System.out.println("Exception: " + e);
+            throw new RuntimeException(e);
         } finally {
             if(inputStream != null) {
                 inputStream.close();
@@ -119,9 +125,19 @@ public class MessagesResourceResolver implements ResourceResolver {
         return contents;
     }
 
-    public String resolveUrlPath(String resourcePath, List<? extends org.springframework.core.io.Resource> locations, ResourceResolverChain chain) {
-        return !"admin/ui/messages.js".equals(resourcePath)
-                ? chain.resolveUrlPath(resourcePath, locations)
-                : "admin/ui/messages.js";
+    @Override
+    public String resolveUrlPath(String resourcePath, List<? extends Resource> locations, ResourceResolverChain chain) {
+        if(!MESSAGES_JS_PATH.equals(resourcePath)){
+            return chain.resolveUrlPath(resourcePath,locations);
+        }
+        return MESSAGES_JS_PATH;
+    }
+
+    public String getMessagesJsPath() {
+        return MESSAGES_JS_PATH;
+    }
+
+    public String getOpenAdminMessagesProperties() {
+        return OPEN_ADMIN_MESSAGES_PROPERTIES;
     }
 }

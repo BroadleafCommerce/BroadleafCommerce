@@ -17,9 +17,13 @@
  * limitations under the License.
  * #L%
  */
+/*
+ * Dynamic Admin Message Resolver
+ * {@see org.broadleafcommerce.openadmin.web.resource.MessagesResourceResolver}
+ */
 (function($, BLCAdmin) {
     
     BLCAdmin.messages = //BLC-ADMIN-JS-MESSAGES
-    ;
+    ; // Note that this semi-colon is not an error and should not be removed.
     
 })(jQuery, BLCAdmin);

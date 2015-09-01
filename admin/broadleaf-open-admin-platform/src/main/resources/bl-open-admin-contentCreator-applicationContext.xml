@@ -279,7 +279,7 @@
         </property>
     </bean>
     
-               <!--  Spring 4.1 Admin Resource Resolvers --> 
+    <!--  Spring 4.1 Admin Resource Resolvers -->
     <bean id="blAdminResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
@@ -296,7 +296,7 @@
         </property>
     </bean>
     
-  <!--  Spring 4.1 Admin Resource Handling Base Classes -->
+   <!--  Spring 4.1 Admin Resource Handling Base Classes -->
    <bean id="adminResourceHttpRequestHandlerBase" abstract="true" 
         class="org.broadleafcommerce.common.web.resource.BroadleafResourceHttpRequestHandler">   
         <!--  property name="themesBaseDirectory" value="/WEB-INF/" / -->
