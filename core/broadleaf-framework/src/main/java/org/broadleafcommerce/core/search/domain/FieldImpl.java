@@ -173,6 +173,7 @@ public class FieldImpl implements Field, AdminMainEntity {
         this.friendlyName = friendlyName;
     }
 
+    @Deprecated
     @Override
     public Boolean getSearchable() {
         if (searchable == null) {
@@ -181,6 +182,7 @@ public class FieldImpl implements Field, AdminMainEntity {
         return searchable;
     }
 
+    @Deprecated
     @Override
     public void setSearchable(Boolean searchable) {
         this.searchable = searchable;
