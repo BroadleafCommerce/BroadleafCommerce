@@ -49,12 +49,11 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_OPTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(friendlyName = "ProductOptionImpl_baseProductOption", populateToOneFields=PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class ProductOptionImpl implements ProductOption, AdminMainEntity {
+public class ProductOptionImpl implements ProductOption, AdminMainEntity, ProductOptionAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -98,23 +97,23 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity {
     protected Integer displayOrder;
 
     @Column(name = "VALIDATION_STRATEGY_TYPE")
-    @AdminPresentation(friendlyName = "productOption_validationStrategyType", group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType")
+    @AdminPresentation(friendlyName = "productOption_validationStrategyType", group = GroupName.Validation, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType")
     private String productOptionValidationStrategyType;
 
     @Column(name = "VALIDATION_TYPE")
-    @AdminPresentation(friendlyName = "productOption_validationType", group = "productOption_validation", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType")
+    @AdminPresentation(friendlyName = "productOption_validationType", group = GroupName.Validation, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType")
     private String productOptionValidationType;
 
     @Column(name = "VALIDATION_STRING")
-    @AdminPresentation(friendlyName = "productOption_validationSring", group = "productOption_validation")
+    @AdminPresentation(friendlyName = "productOption_validationSring", group = GroupName.Validation)
     protected String validationString;
 
     @Column(name = "ERROR_CODE")
-    @AdminPresentation(friendlyName = "productOption_errorCode", group = "productOption_validation")
+    @AdminPresentation(friendlyName = "productOption_errorCode", group = GroupName.Validation)
     protected String errorCode;
 
     @Column(name = "ERROR_MESSAGE")
-    @AdminPresentation(friendlyName = "productOption_errorMessage", group = "productOption_validation", translatable = true)
+    @AdminPresentation(friendlyName = "productOption_errorMessage", group = GroupName.Validation, translatable = true)
     protected String errorMessage;
 
     @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class, cascade = {CascadeType.ALL})
