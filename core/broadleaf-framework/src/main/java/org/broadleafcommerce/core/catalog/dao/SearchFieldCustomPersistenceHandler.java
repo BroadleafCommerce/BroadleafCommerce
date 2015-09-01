@@ -22,16 +22,28 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFieldImpl;
+import org.broadleafcommerce.core.search.domain.SearchFieldTypeImpl;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.ForeignKey;
+import org.broadleafcommerce.openadmin.dto.OperationTypes;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
+import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.ListUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -78,15 +90,20 @@ public class SearchFieldCustomPersistenceHandler extends CustomPersistenceHandle
         adminInstance = (SearchField) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
         adminInstance = dynamicEntityDao.merge(adminInstance);
 
-        FieldType fieldType = FieldType.getInstance(adminInstance.getField().getFieldType());
-
-        List<FieldType> searchableFieldTypes = new ArrayList<FieldType>();
-        searchableFieldTypes.add(fieldType);
-
-        adminInstance.setSearchableFieldTypes(searchableFieldTypes);
-
+        ExtensionResultStatusType result = ExtensionResultStatusType.NOT_HANDLED;
         if (extensionManager != null) {
-            extensionManager.getProxy().addtoSearchableFields(persistencePackage, adminInstance);
+             result = extensionManager.getProxy().addtoSearchableFields(persistencePackage, adminInstance);
+        }
+
+        if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
+            // If there is no searchable field types then we need to add a default as String
+            if (ListUtils.isEmpty(adminInstance.getSearchableFieldTypes())) {
+                PersistencePackage pp = createPersistencePackage(adminInstance, FieldType.STRING);
+
+                PersistenceManager pm = PersistenceManagerFactory.getPersistenceManager();
+
+                pm.add(pp);
+            }
         }
 
         Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
@@ -105,6 +122,51 @@ public class SearchFieldCustomPersistenceHandler extends CustomPersistenceHandle
         } catch (Exception e) {
             throw new ServiceException("Unable to perform add for entity: " + SearchField.class.getName(), e);
         }
+    }
+
+
+    protected PersistencePackage createPersistencePackage(SearchField searchField, FieldType fieldType) {
+        PersistencePackage pp = new PersistencePackage();
+        pp.setCeilingEntityFullyQualifiedClassname(SearchFieldTypeImpl.class.getName());
+        pp.setSecurityCeilingEntityFullyQualifiedClassname(SearchFieldTypeImpl.class.getName());
+        pp.setSectionEntityField("searchableFieldTypes");
+
+        PersistencePerspective perspective = new PersistencePerspective(new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC,
+                OperationType.BASIC, OperationType.BASIC), new String[]{}, new ForeignKey[]{});
+        ForeignKey foreignKey = new ForeignKey("searchField", SearchFieldImpl.class.getName());
+        foreignKey.setOriginatingField(pp.getSectionEntityField());
+        foreignKey.setDisplayValueProperty("name");
+        perspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, foreignKey);
+        pp.setPersistencePerspective(perspective);
+
+        Entity entity = new Entity();
+        entity.setType(new String[] { "org.broadleafcommerce.core.search.domain.SearchFieldTypeImpl" });
+        List<Property> properties = new ArrayList<Property>();
+        {
+            Property prop = new Property();
+            prop.setName("searchField");
+            prop.setValue(String.valueOf(searchField.getId()));
+            prop.setIsDirty(true);
+            properties.add(prop);
+        }
+        {
+            Property prop = new Property();
+            prop.setName("searchableFieldType");
+            prop.setValue(fieldType.getType());
+            prop.setIsDirty(true);
+            properties.add(prop);
+        }
+
+
+        entity.setProperties(properties.toArray(new Property[properties.size()]));
+        pp.setEntity(entity);
+        pp.setRequestingEntityName(searchField.getField().getFriendlyName());
+        SectionCrumb section = new SectionCrumb();
+        section.setSectionIdentifier(SearchFieldImpl.class.getName());
+        section.setSectionId(String.valueOf(searchField.getId()));
+        pp.setSectionCrumbs(new SectionCrumb[] { section });
+
+        return pp;
     }
 
 }

@@ -199,22 +199,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public List<FieldType> getSearchableFieldTypes(Field field) {
-        // We will index all configured searchable field types
-        List<FieldType> typesToConsider = new ArrayList<FieldType>();
-        if (CollectionUtils.isNotEmpty(field.getSearchableFieldTypes())) {
-            typesToConsider.addAll(field.getSearchableFieldTypes());
-        }
-
-        // If there were no searchable field types configured, we will use TEXT as a default one
-        if (CollectionUtils.isEmpty(typesToConsider)) {
-            typesToConsider.add(FieldType.TEXT);
-        }
-
-        return typesToConsider;
-    }
-
-    @Override
     public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType) {
         List<String> prefixList = new ArrayList<String>();
         searchExtensionManager.getProxy().buildPrefixListForSearchableField(field, searchableFieldType, prefixList);

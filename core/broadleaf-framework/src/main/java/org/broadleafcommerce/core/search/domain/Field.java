@@ -133,43 +133,7 @@ public interface Field extends Serializable, MultiTenantCloneable<Field> {
     public FieldType getFacetFieldType();
 
     /**
-     * Sets the searchableFieldTypes
-     *
-     * @see #getSearchableFieldTypes()
-     * @param searchableFieldTypes
-     * @deprecated this is now part of SearchField
-     */
-    @Deprecated
-    public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes);
-
-    /**
-     * Gets the dynamic searchable field types. For example, in solr, if you wanted to index a field as both
-     * text and string, you would have two searchable field types, String and Text
-     *
-     * @return the searchable types for this field
-     * @deprecated this is now part of SearchField
-     */
-    @Deprecated
-    public List<FieldType> getSearchableFieldTypes();
-
-    /**
-     * Gets the {@org.broadleafcommerce.core.search.service.type.FieldType} of this field.  This is used by
-     * SearchField and SearchFacet to determine searchableFieldTypes and facetFieldType respectively.
-     *
-     * @return
-     */
-    public String getFieldType();
-
-    /**
-     * Sets the {@org.broadleafcommerce.core.search.service.type.FieldType} of this field.  This is used by
-     * SearchField and SearchFacet to determine searchableFieldTypes and facetFieldType respectively.
-     *
-     * @param fieldType
-     */
-    public void setFieldType(String fieldType);
-
-    /**
-     * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available 
+     * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available
      * in the community version of Broadleaf Commerce.
      * @return the searchConfigs
      * @deprecated

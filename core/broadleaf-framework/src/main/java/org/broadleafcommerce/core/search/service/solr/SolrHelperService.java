@@ -96,15 +96,6 @@ public interface SolrHelperService {
     public String getPropertyNameForFieldFacet(Field field, String prefix, FieldType facetType);
 
     /**
-     * Returns the searchable field types for the given field. If there were none configured, will return
-     * a list with TEXT FieldType.
-     * 
-     * @param field
-     * @return the searchable field types for the given field
-     */
-    public List<FieldType> getSearchableFieldTypes(Field field);
-
-    /**
      * Returns the property name for the given field and field type. This will apply the global prefix to the field,
      * and it will also apply either the locale prefix or the pricelist prefix, depending on whether or not the field
      * type was set to FieldType.PRICE

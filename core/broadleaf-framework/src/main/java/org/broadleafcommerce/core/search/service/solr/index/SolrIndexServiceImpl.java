@@ -57,6 +57,7 @@ import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrContext;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
@@ -511,18 +512,19 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 // If we find a SearchField entry for this field, then this field is searchable
                 if (searchField != null) {
 
-                    List<FieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+                    List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
 
                     // For each of its search field types, get the property values, and add a field to the document for each property value
-                    for (FieldType sft : searchableFieldTypes) {
-                        Map<String, Object> propertyValues = getPropertyValues(indexable, field, sft, locales);
+                    for (SearchFieldType sft : searchableFieldTypes) {
+                        FieldType fieldType = FieldType.getInstance(sft.getSearchableFieldType());
+                        Map<String, Object> propertyValues = getPropertyValues(indexable, field, fieldType, locales);
 
                         // Build out the field for every prefix
                         for (Entry<String, Object> entry : propertyValues.entrySet()) {
                             String prefix = entry.getKey();
                             prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
 
-                            String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, sft, prefix);
+                            String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, fieldType, prefix);
                             Object value = entry.getValue();
 
                             document.addField(solrPropertyName, value);

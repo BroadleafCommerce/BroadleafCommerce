@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -76,12 +77,14 @@ public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandle
         adminInstance = (SearchFacet) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
         adminInstance = dynamicEntityDao.merge(adminInstance);
 
-        FieldType fieldType = FieldType.getInstance(adminInstance.getField().getFieldType());
-
-        adminInstance.setFacetFieldType(fieldType.getType());
-
+        ExtensionResultStatusType result = ExtensionResultStatusType.NOT_HANDLED;
         if (extensionManager != null) {
-            extensionManager.getProxy().addtoSearchableFields(persistencePackage, adminInstance);
+            result = extensionManager.getProxy().addtoSearchableFields(persistencePackage, adminInstance);
+        }
+
+        if (result.equals(ExtensionResultStatusType.NOT_HANDLED) && adminInstance.getFacetFieldType() == null) {
+            // if we don't have a facetFieldType set, then set a default value
+            adminInstance.setFacetFieldType(FieldType.STRING.getType());
         }
 
         if(adminInstance.getLabel() == null) {
