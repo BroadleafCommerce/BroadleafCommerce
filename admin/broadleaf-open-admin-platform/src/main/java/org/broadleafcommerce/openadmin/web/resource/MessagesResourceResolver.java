@@ -79,7 +79,6 @@ public class MessagesResourceResolver implements ResourceResolver {
                 writer.flush();
                 writer.close();
             }
-
         }
 
         return contents;
@@ -90,7 +89,7 @@ public class MessagesResourceResolver implements ResourceResolver {
 
         try {
             Properties prop = new Properties();
-            String propFileName = "/messages/OpenAdminJavascriptMessages.properties";
+            String propFileName = "messages/OpenAdminJavascriptMessages.properties";
 
             inputStream = getClass().getClassLoader().getResourceAsStream(propFileName);
 
@@ -99,7 +98,6 @@ public class MessagesResourceResolver implements ResourceResolver {
             } else {
                 throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
             }
-
 
             StringWriter propertiesObject = new StringWriter();
             propertiesObject.append("{");
