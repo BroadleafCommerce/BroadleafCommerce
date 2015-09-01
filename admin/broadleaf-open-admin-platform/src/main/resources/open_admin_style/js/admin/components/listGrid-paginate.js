@@ -684,8 +684,8 @@
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
                 scrollEasing: "linear",
-                scrollInertia: 1000,
-                snapAmount: 53,
+                scrollInertia: 500,
+                mouseWheelPixels: 53,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
