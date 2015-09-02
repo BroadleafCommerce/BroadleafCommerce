@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -53,7 +54,7 @@ import java.util.List;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SearchFacetImpl implements SearchFacet, Serializable {
+public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEntity, SearchFacetAdminPresentation {
 
     private static final long serialVersionUID = 1L;
 
@@ -68,40 +69,38 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         }
     )
     @Column(name = "SEARCH_FACET_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = GroupName.General, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "LABEL")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description",
-            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = GroupName.General,
+            prominent = true, translatable = true, gridOrder = 1000)
     protected String label;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = "SearchFacetImpl_description",
+    @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = GroupName.General,
             prominent = true, gridOrder = 2000, defaultValue = "")
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
     protected Field field;
     
     @Column(name =  "SHOW_ON_SEARCH")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4000,
-            group = "SearchFacetImpl_description", groupOrder = 1, prominent = false,
+    @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 2000,
+            group = GroupName.Options, prominent = false,
             tooltip = "SearchFacetImpl_showOnSearchTooltip")
     protected Boolean showOnSearch = false;
     
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
     @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority",
-            order = 5000,
-            group = "SearchFacetImpl_description",
-            groupOrder = 1,
+            order = 1000,
+            group = GroupName.Options,
             prominent = true,
             tooltip = "SearchFacetImpl_searchPriorityTooltip")
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6000,
-            group = "SearchFacetImpl_description",
-            groupOrder = 1,
+    @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 3000,
+            group = GroupName.Options,
             tooltip = "SearchFacetImpl_multiselectTooltip")
     protected Boolean canMultiselect = true;
     
@@ -120,9 +119,8 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     
     @Column(name = "REQUIRES_ALL_DEPENDENT")
     @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets",
-            order = 7000,
-            group = "SearchFacetImpl_description",
-            groupOrder = 1,
+            order = 4000,
+            group = GroupName.Options,
             tooltip = "SearchFacetImpl_requiresAllDependentFacetsTooltip")
     protected Boolean requiresAllDependentFacets = false;
     
@@ -259,5 +257,10 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
         }
 
         return createResponse;
+    }
+
+    @Override
+    public String getMainEntityName() {
+        return getLabel();
     }
 }
