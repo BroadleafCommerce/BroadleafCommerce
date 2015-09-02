@@ -233,7 +233,7 @@
     </table>
 </div>
 
-<span class="listgrid-table-footer" th:inline="text">
+<div class="listgrid-table-footer" th:inline="text">
     <span class="listgrid-table-footer-message" th:inline="text">
         <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}" />
         <span class="low-index" th:unless="${records}">0</span>
@@ -243,7 +243,7 @@
         <span class="total-records" th:text="${#lists.size(listGrid.records)}" />
         <span th:text="${'records'}" />
     </span>
-</span>
+</div>
 
 <span class="listgrid-table-spinner-container" style="display:none;" th:inline="text">
     <i class="listgrid-table-spinner icon-spin icon-spinner" />

@@ -26,58 +26,102 @@ a {
     outline: 0;
 }
 
+svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+circle {
+    fill: rgba(255,255,255,0.25);
+}
+
+.button {
+    text-decoration: none;
+    color: #fff;
+    background-color: #26a69a;
+    text-align: center;
+    letter-spacing: .5px;
+    -webkit-transition: .2s ease-out;
+    -moz-transition: .2s ease-out;
+    -o-transition: .2s ease-out;
+    -ms-transition: .2s ease-out;
+    transition: .2s ease-out;
+    cursor: pointer;
+}
+
+.button {
+    border: none;
+    border-radius: 2px;
+    display: inline-block;
+    height: 36px;
+    line-height: 36px;
+    outline: 0;
+    padding: 0 2rem;
+    text-transform: uppercase;
+    vertical-align: middle;
+    -webkit-tap-highlight-color: transparent;
+}
+.button {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+.button:hover {
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+}
+
+.button-action {
+    display: inline-block;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    width: 37px;
+    height: 37px;
+    line-height: 37px;
+    padding: 0;
+    background-color: #26a69a;
+    border-radius: 50%;
+    transition: .3s;
+    cursor: pointer;
+    vertical-align: middle;
+
+    border: none;
+    outline: 0;
+    text-transform: uppercase;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.button.large {
+    padding: 0 2rem;
+}
+
+.button.primary:hover {
+    background-color: #BAD363;
+}
+
+.button-group:first-child {
+    z-index: 999;
+}
+
+.button-group>.button {
+    float: none;
+}
+
+.app-content .content .section-content .main-content .content-area-title-bar>.button-group .button {
+    margin-top: 0;
+}
+
 .button.secondary {
-    background-color: #313131;
+    background-color: #404040;
 }
 
-.button.primary, .submit-button {
-    -webkit-box-shadow: 0 2px #465A0F;
-    -moz-box-shadow: 0 2px #465A0F;
-    box-shadow: 0 2px #465A0F;;
+.button.secondary:hover {
+    background-color: #757575;
 }
 
-.button.secondary {
-    -webkit-box-shadow: 0 2px #212121;
-    -moz-box-shadow: 0 2px #212121;
-    box-shadow: 0 2px #212121;;
-}
-
-.button.primary, .button.secondary, .submit-button {
-    margin: 0;
-}
-
-.button.primary:active, .button.secondary:active, .submit-button:active {
-    margin-top: 4px !important;
-    margin-bottom: -4px;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-}
-
-.app-content .content .section-content .main-content .content-area-title-bar>.button.primary:active,
-.app-content .content .section-content .main-content .content-area-title-bar>.button-group .button.primary:active {
-    margin-top: 17px !important;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
-}
-
-.app-content .content .sandbox-bar .sandbox-actions .button {
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-    border-radius: 0;
-}
-.app-content .content .sandbox-bar .sandbox-actions .button:hover {
-    background-color: rgba(0,0,0,0.25);
-}
-
-.app-content .content .sandbox-bar .sandbox-actions .button:active {
-    margin-right: 2px;
-    margin-left: 7px;
-}
-
-.app-content .content .sandbox-bar .sandbox-actions .button a:active {
-    padding: 6px 18px;
+.nav-links li {
+    position: relative;
 }
 
 .app-content .content .header .button { line-height:14px; }
@@ -92,6 +136,17 @@ a {
     padding: 20px;
 }
 
+.app-content .content .sandbox-bar {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.app-content .content .sandbox-bar .sandbox-actions .button {
+    background-color: rgba(0,0,0,0.1);
+    margin: 2px 0 0 5px;
+    padding: 0;
+    line-height: 10px;
+    color: white;
+}
 
 .sandbox-bar .selectize-control.single .selectize-input {
     width: 260px;
@@ -124,7 +179,7 @@ a {
 
 .button {
     /*font-size: 14px;*/
-    line-height: 12px;
+    /*line-height: 12px;*/
 }
 
 .button > i {
@@ -292,8 +347,11 @@ button:disabled {
 }
 
 .listgrid-table-footer {
-    padding: 2px 5px;
-    display: inline-block;
+    padding: 2px 10px;
+    /* display: inline-block; */
+    background-color: #E1E0DD;
+    border-top: 1px solid #E4E2DF;
+    font-size: 12px;
 }
 
 /* added to stop listgrid flicker */
@@ -327,7 +385,7 @@ button:disabled {
 }
 
 .listgrid-search-actions .button{
-    padding: 8px 11px;
+    position: relative;
 }
 
 .table {
@@ -513,6 +571,7 @@ input[type="text"], input[type="email"], input[type="password"], input[type="dat
 }
 
 .dropdown-menu-right {
+    margin: -20px 0 0;
     min-width: 100%;
 }
 
