@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.redirect.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -43,8 +44,7 @@ import java.util.Date;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SEARCH_INTERCEPT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "SearchRedirectImpl_friendyName")
-public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable {
+public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable, AdminMainEntity, SearchRedirectAdminPresentation {
     
     private static final long serialVersionUID = 1L;
     
@@ -69,23 +69,23 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable 
     @AdminPresentation(excluded = true)
     protected Integer searchPriority;
 
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 1000, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1, defaultValue = "New Search Term")
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 1000, group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "New Search Term")
     @Column(name = "SEARCH_TERM", nullable = false)
     protected String searchTerm;
     
     @Column(name = "URL", nullable = false)
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 2000, group = "SearchRedirectImpl_description", prominent = true, groupOrder = 1, defaultValue = "/")
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 2000, group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "/")
     protected String url;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE" )
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 3000, group = "SearchRedirectImpl_description", tooltip = "skuStartDateTooltip", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 3000, group = GroupName.Dates, tooltip = "skuStartDateTooltip", groupOrder = 1)
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     @Index(name="SEARCH_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 4000, group = "SearchRedirectImpl_description", tooltip = "skuEndDateTooltip", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_End_Date", order = 4000, group = GroupName.Dates, tooltip = "skuEndDateTooltip", groupOrder = 1)
     protected Date activeEndDate;
     
     @Override
@@ -158,4 +158,8 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable 
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), true);
     }
 
+    @Override
+    public String getMainEntityName() {
+        return getSearchTerm();
+    }
 }

@@ -37,12 +37,10 @@ import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.ConfigurationItem;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -205,7 +203,8 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
     @AdminPresentation(friendlyName = "ProductImpl_Is_Featured_Product", requiredOverride = RequiredOverride.NOT_REQUIRED,
             tab = ProductAdminPresentation.TabName.Marketing, tabOrder = ProductAdminPresentation.TabOrder.Marketing,
-            group = ProductAdminPresentation.GroupName.Badges, groupOrder = ProductAdminPresentation.GroupOrder.Badges)
+            group = ProductAdminPresentation.GroupName.Badges, groupOrder = ProductAdminPresentation.GroupOrder.Badges,
+            defaultValue = "false")
     protected Boolean isFeaturedProduct = false;
 
     @OneToOne(targetEntity = SkuImpl.class, cascade = { CascadeType.ALL })
