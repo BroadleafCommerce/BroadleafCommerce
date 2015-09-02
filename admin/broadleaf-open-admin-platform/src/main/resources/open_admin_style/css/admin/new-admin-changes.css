@@ -30,7 +30,7 @@ a {
     background-color: #313131;
 }
 
-.button.primary {
+.button.primary, .submit-button {
     -webkit-box-shadow: 0 2px #465A0F;
     -moz-box-shadow: 0 2px #465A0F;
     box-shadow: 0 2px #465A0F;;
@@ -42,11 +42,11 @@ a {
     box-shadow: 0 2px #212121;;
 }
 
-.button.primary, .button.secondary {
+.button.primary, .button.secondary, .submit-button {
     margin: 0;
 }
 
-.button.primary:active, .button.secondary:active {
+.button.primary:active, .button.secondary:active, .submit-button:active {
     margin-top: 4px !important;
     margin-bottom: -4px;
     -webkit-box-shadow: none;
@@ -416,8 +416,12 @@ button:disabled {
 }
 
 .select-style {
-    overflow: visible;
     background: #fff;
+     border: none;
+     width: 100%;
+     overflow: hidden;
+     margin: 10px 0 15px 0;
+     background: none;
 }
 
 .alert {
@@ -487,7 +491,7 @@ button:disabled {
 
 .modal-header h3 {
     font-weight: 500;
-    margin-bottom: -10px;
+    /*margin-bottom: -10px;*/
 }
 
 /*textarea, .selectize-input, input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"] {*/
@@ -499,6 +503,9 @@ input[type="text"], input[type="email"], input[type="password"], input[type="dat
     height: 34px;
 }
 
+input[type="text"], input[type="email"], input[type="password"], input[type="date"], input[type="tel"], input[type="number"], input[type="url"], input[type="search"], input[type="datetime"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime-local"], textarea {
+     margin: 0;
+}
 
 .errors {
     margin-bottom: 5px;
@@ -720,7 +727,6 @@ input.color-picker-value {
 
 .field-help {
     color: #B3B3B3;
-    margin-top: -5px;
     font-size: 12px;
     display: block;
 }
@@ -874,6 +880,7 @@ legend {
 }
 
 .modal-body *.selectize-control {
+    width: 100%;
     border: 1px solid #D8D5D0;
     height: 42px;
     background-color: white;
@@ -903,7 +910,7 @@ legend {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .modal {
