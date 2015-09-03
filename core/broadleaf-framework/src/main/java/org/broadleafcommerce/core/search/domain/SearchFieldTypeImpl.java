@@ -26,6 +26,8 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -68,14 +70,22 @@ public class SearchFieldTypeImpl implements SearchFieldType, Serializable {
             }
     )
     @Column(name = "SEARCH_FIELD_TYPE_ID")
+    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_ID", group = "SearchFieldTypeImpl_description",
+            visibility= VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(optional=false, targetEntity = SearchFieldImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "SEARCH_FIELD_ID")
+    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_searchField", group = "SearchFieldTypeImpl_description",
+            visibility= VisibilityEnum.HIDDEN_ALL)
     protected SearchField searchField;
 
     @Column(name = "SEARCHABLE_FIELD_TYPE")
-    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_Searchable_Field_Type")
+    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_searchableFieldType", group = "SearchFieldTypeImpl_description", order = 4, prominent = true, gridOrder = 4,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.search.domain.solr.FieldType",
+            requiredOverride = RequiredOverride.REQUIRED,
+            defaultValue = "t")
     protected String searchableFieldType;
 
     @Override

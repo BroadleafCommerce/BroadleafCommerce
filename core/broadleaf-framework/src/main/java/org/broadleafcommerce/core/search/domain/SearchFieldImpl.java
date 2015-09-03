@@ -97,7 +97,7 @@ public class SearchFieldImpl implements SearchField, Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "searchField", targetEntity = SearchFieldTypeImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "SearchFieldImpl_Searchable_Field_Types", order = 1000)
+    @AdminPresentationCollection(friendlyName = "SearchFieldImpl_searchableFieldTypes", order = 1000)
     protected List<SearchFieldType> searchableFieldTypes = new ArrayList<SearchFieldType>();
 
     @Override

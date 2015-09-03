@@ -529,9 +529,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         }
 
         for (Field currentField : fields) {
-            if (currentField.getSearchable()) {
-                appendFieldToQuery(queryBuilder, currentField);
-            }
+            appendFieldToQuery(queryBuilder, currentField);
         }
         return queryBuilder.toString();
     }
@@ -539,15 +537,11 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected void appendFieldToQuery(StringBuilder queryBuilder, Field currentField) {
         SearchField searchField = searchFieldDao.readSearchFieldForField(currentField);
 
-        if (searchField == null) {
-            // This field is not searchable so do nothing...
-            return;
-        }
-
         List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
         for (SearchFieldType currentType : searchableFieldTypes) {
             queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, FieldType.getInstance(currentType.getSearchableFieldType()))).append(" ");
         }
+
     }
 
     /**
