@@ -538,7 +538,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 SearchFacet searchFacet = searchFacetDao.readSearchFacetForField(field);
 
                 // If we find a SearchFacet entry for this field, then this field is faceted
-                if (searchFacet != null) {
+                if (searchFacet != null && searchFacet.getFacetFieldType() != null) {
                     // Get the FacetFieldType for the SearchFacet, get the property values, and add a field to the document for each property value
                     FieldType facetType = FieldType.getInstance(searchFacet.getFacetFieldType());
 
