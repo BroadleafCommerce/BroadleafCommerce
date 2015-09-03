@@ -44,9 +44,11 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.ListUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -140,7 +142,7 @@ public class SearchFieldCustomPersistenceHandler extends CustomPersistenceHandle
         pp.setPersistencePerspective(perspective);
 
         Entity entity = new Entity();
-        entity.setType(new String[] { "org.broadleafcommerce.core.search.domain.SearchFieldTypeImpl" });
+        entity.setType(new String[] { SearchFieldTypeImpl.class.getName() });
         List<Property> properties = new ArrayList<Property>();
         {
             Property prop = new Property();
