@@ -59,7 +59,7 @@
                         <!--This entry acting as placeholder for Edit links-->
                     <!--</th:comment>-->
                 <!--</th>-->
-                <th class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (__${listGrid.listGridType}__ == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}">
+                <th class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}">
                     <th:comment th:remove="all">
                         This entry is acting as placeholder for Workflow Action links
                     </th:comment>
@@ -106,7 +106,7 @@
                     <td th:unless="${index.count == 1}"></td>
                 </div>
                 <td th:if="${listGrid.listGridType} == 'main'"/>
-                <td th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (__${listGrid.listGridType}__ == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}"/>
+                <td th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}"/>
             </tr>
             
             <tr th:each="record : ${listGrid.records}"
@@ -207,6 +207,7 @@
                     <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${action.actionId} != 'SPLIT'">
                         <a th:classappend="${action.buttonClass}"
                            href="#"
+                           class="button button-action"
                            th:attr="data-urlpostfix=${action.urlPostfix},
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-queryparams=${listGrid.sectionCrumbRepresentation}"
@@ -217,6 +218,7 @@
                     <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}">
                         <a th:classappend="${action.buttonClass}"
                            href="#"
+                           class="button button-action"
                            th:attr="data-urlpostfix=${action.urlPostfix},
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-queryparams=${listGrid.sectionCrumbRepresentation}"
