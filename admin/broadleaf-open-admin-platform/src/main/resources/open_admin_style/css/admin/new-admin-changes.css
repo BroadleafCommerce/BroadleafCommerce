@@ -1306,3 +1306,24 @@ div.uploadMessage {
 .uploadFileFormContainer {
     padding: 10px 0;
 }
+
+#nav-section-headers {
+    position: absolute !important;
+    background-color: transparent !important;
+    z-index: 1500;
+    display: block !important;
+    pointer-events: none;
+    top: 0;
+}
+
+.section-header {
+    height: 80px;
+    position: absolute;
+    background-color: black;
+    -webkit-transition: .2s ease-out;
+    -moz-transition: .2s ease-out;
+    -o-transition: .2s ease-out;
+    -ms-transition: .2s ease-out;
+    transition: .2s ease-out;
+    display: none;
+}
