@@ -77,7 +77,7 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity {
 
     @Column(name = "PROPERTY_NAME", nullable = false)
     @AdminPresentation(friendlyName = "SystemPropertyImpl_name", order = 1000,
-            requiredOverride = RequiredOverride.REQUIRED, defaultValue = "New Property",
+            requiredOverride = RequiredOverride.REQUIRED, defaultValue = "",
         group = "SystemPropertyImpl_general", groupOrder = 1000, prominent = true, gridOrder = 1000)
     protected String name;
 

@@ -23,8 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.annotations.Cache;
@@ -69,12 +67,12 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
     @AdminPresentation(excluded = true)
     protected Integer searchPriority;
 
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 1000, group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "New Search Term")
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_searchTerm", order = 1000, group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "")
     @Column(name = "SEARCH_TERM", nullable = false)
     protected String searchTerm;
     
     @Column(name = "URL", nullable = false)
-    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 2000, group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "/")
+    @AdminPresentation(friendlyName = "SearchRedirectImpl_url", order = 2000, group = GroupName.General, prominent = true, groupOrder = 1, defaultValue = "")
     protected String url;
 
     /** The active start date. */
