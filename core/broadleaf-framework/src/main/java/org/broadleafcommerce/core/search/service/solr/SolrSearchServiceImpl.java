@@ -44,6 +44,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
+import org.broadleafcommerce.core.search.dao.SearchFieldDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
@@ -51,6 +52,8 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
@@ -59,7 +62,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -78,7 +80,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -121,6 +122,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Resource(name = "blSolrIndexService")
     protected SolrIndexService solrIndexService;
+
+    @Resource(name = "blSearchFieldDao")
+    protected SearchFieldDao searchFieldDao;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
@@ -525,18 +529,19 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         }
 
         for (Field currentField : fields) {
-            if (currentField.getSearchable()) {
-                appendFieldToQuery(queryBuilder, currentField);
-            }
+            appendFieldToQuery(queryBuilder, currentField);
         }
         return queryBuilder.toString();
     }
 
     protected void appendFieldToQuery(StringBuilder queryBuilder, Field currentField) {
-        List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(currentField);
-        for (FieldType currentType : searchableFieldTypes) {
-            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, currentType)).append(" ");
+        SearchField searchField = searchFieldDao.readSearchFieldForField(currentField);
+
+        List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+        for (SearchFieldType currentType : searchableFieldTypes) {
+            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, FieldType.getInstance(currentType.getSearchableFieldType()))).append(" ");
         }
+
     }
 
     /**

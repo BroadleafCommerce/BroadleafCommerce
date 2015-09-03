@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
@@ -41,16 +42,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -90,19 +93,12 @@ public class SearchFieldImpl implements SearchField, Serializable {
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
     protected Field field;
 
-    @Column(name = "ABBREVIATION")
-    @AdminPresentation(friendlyName = "SearchFieldImpl_abbreviation", group = "SearchFieldImpl_description",
-            order = 2000, prominent = true, gridOrder = 2000)
-    protected String abbreviation;
-
     // This is a broadleaf enumeration
-    @ElementCollection
-    @CollectionTable(name="BLC_SEARCH_FIELD_TYPES", joinColumns=@JoinColumn(name="SEARCH_FIELD_ID"))
-    @Column(name="SEARCHABLE_FIELD_TYPE")
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "searchField", targetEntity = SearchFieldTypeImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    protected List<String> searchableFieldTypes = new ArrayList<String>();
+    @AdminPresentationCollection(friendlyName = "SearchFieldImpl_searchableFieldTypes", order = 1000)
+    protected List<SearchFieldType> searchableFieldTypes = new ArrayList<SearchFieldType>();
 
     @Override
     public Long getId() {
@@ -125,31 +121,13 @@ public class SearchFieldImpl implements SearchField, Serializable {
     }
 
     @Override
-    public String getAbbreviation() {
-        return abbreviation;
+    public List<SearchFieldType> getSearchableFieldTypes() {
+        return searchableFieldTypes;
     }
 
     @Override
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
-
-    @Override
-    public List<FieldType> getSearchableFieldTypes() {
-        List<FieldType> fieldTypes = new ArrayList<FieldType>();
-        for (String fieldType : searchableFieldTypes) {
-            fieldTypes.add(FieldType.getInstance(fieldType));
-        }
-        return fieldTypes;
-    }
-
-    @Override
-    public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes) {
-        List<String> fieldTypes = new ArrayList<String>();
-        for (FieldType fieldType : searchableFieldTypes) {
-            fieldTypes.add(fieldType.getType());
-        }
-        this.searchableFieldTypes = fieldTypes;
+    public void setSearchableFieldTypes(List<SearchFieldType> searchableFieldTypes) {
+        this.searchableFieldTypes = searchableFieldTypes;
     }
 
     @Override
@@ -179,10 +157,9 @@ public class SearchFieldImpl implements SearchField, Serializable {
             return createResponse;
         }
         SearchField cloned = createResponse.getClone();
-        cloned.setAbbreviation(abbreviation);
         cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
-        for(String entry : searchableFieldTypes){
-            cloned.getSearchableFieldTypes().add(FieldType.getInstance(entry));
+        for(SearchFieldType entry : searchableFieldTypes){
+            cloned.getSearchableFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
         }
 
         return createResponse;

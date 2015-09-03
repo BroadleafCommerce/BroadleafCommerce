@@ -20,8 +20,6 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.core.search.domain.solr.FieldType;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -59,30 +57,16 @@ public interface SearchField extends Serializable, MultiTenantCloneable<SearchFi
     public void setField(Field field);
 
     /**
-     * Gets the abbreviation for this search field
-     *
-     * @return
-     */
-    public String getAbbreviation();
-
-    /**
-     * Sets the abbreviation for this search field
-     *
-     * @param abbreviation
-     */
-    public void setAbbreviation(String abbreviation);
-
-    /**
      * Gets the searchable field types for this search field
      *
      * @return
      */
-    public List<FieldType> getSearchableFieldTypes();
+    public List<SearchFieldType> getSearchableFieldTypes();
 
     /**
      * Sets the searchable field types for this search field
      *
      * @param searchableFieldTypes
      */
-    public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes);
+    public void setSearchableFieldTypes(List<SearchFieldType> searchableFieldTypes);
 }

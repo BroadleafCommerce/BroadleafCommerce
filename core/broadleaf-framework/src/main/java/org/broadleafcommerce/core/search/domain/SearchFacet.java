@@ -173,16 +173,16 @@ public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFa
     public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets);
 
     /**
+     * This String represents the FieldType for the given SearchFacet. This is the FieldType that will be used when this Field is indexed in Solr
      *
-     *
-     * @return
+     * @return the String representing the FieldType of this SearchFacet
      */
     public String getFacetFieldType();
 
     /**
+     * Sets the FieldType for the current SearchFacet
      *
-     *
-     * @param facetFieldType
+     * @param facetFieldType the String representation of a FieldType
      */
     public void setFacetFieldType(String facetFieldType);
 }

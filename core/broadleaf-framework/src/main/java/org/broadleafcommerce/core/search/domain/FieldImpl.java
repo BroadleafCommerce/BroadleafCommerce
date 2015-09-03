@@ -94,7 +94,6 @@ public class FieldImpl implements Field, AdminMainEntity {
             prominent = true)
     protected String propertyName;
 
-    @Deprecated
     @Column(name = "ABBREVIATION")
     @AdminPresentation(friendlyName = "FieldImpl_abbreviation", group = "FieldImpl_general", order = 3, excluded = true)
     protected String abbreviation;
@@ -109,16 +108,6 @@ public class FieldImpl implements Field, AdminMainEntity {
     @Column(name = "FACET_FIELD_TYPE")
     @AdminPresentation(friendlyName = "FieldImpl_facetFieldType", group = "FieldImpl_general", excluded = true)
     protected String facetFieldType;
-
-    // This is a broadleaf enumeration
-    @Deprecated
-    @ElementCollection
-    @CollectionTable(name="BLC_FIELD_SEARCH_TYPES", joinColumns=@JoinColumn(name="FIELD_ID"))
-    @Column(name="SEARCHABLE_FIELD_TYPE")
-    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
-    @BatchSize(size = 50)
-    protected List<String> searchableFieldTypes = new ArrayList<String>();
     
     @Column(name = "TRANSLATABLE")
     @AdminPresentation(friendlyName = "FieldImpl_translatable", group = "FieldImpl_general", excluded = true)
@@ -128,13 +117,6 @@ public class FieldImpl implements Field, AdminMainEntity {
     @AdminPresentation(friendlyName = "FieldImpl_isCustom", group = "FieldImpl_general",
             visibility = VisibilityEnum.VISIBLE_ALL)
     protected Boolean isCustom = false;
-
-    @Column(name = "FIELD_TYPE")
-    @AdminPresentation(friendlyName = "FieldImpl_Field_Type", order = 4, prominent = true, gridOrder = 4,
-            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.core.search.service.type.SearchFieldType",
-            requiredOverride = RequiredOverride.REQUIRED)
-    protected String fieldType;
     
     @Override
     public String getQualifiedFieldName() {
@@ -171,13 +153,11 @@ public class FieldImpl implements Field, AdminMainEntity {
         this.propertyName = propertyName;
     }
 
-    @Deprecated
     @Override
     public String getAbbreviation() {
         return abbreviation;
     }
 
-    @Deprecated
     @Override
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
@@ -219,26 +199,6 @@ public class FieldImpl implements Field, AdminMainEntity {
     public void setFacetFieldType(FieldType facetFieldType) {
         this.facetFieldType = facetFieldType == null ? null : facetFieldType.getType();
     }
-
-    @Deprecated
-    @Override
-    public List<FieldType> getSearchableFieldTypes() {
-        List<FieldType> fieldTypes = new ArrayList<FieldType>();
-        for (String fieldType : searchableFieldTypes) {
-            fieldTypes.add(FieldType.getInstance(fieldType));
-        }
-        return fieldTypes;
-    }
-
-    @Deprecated
-    @Override
-    public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes) {
-        List<String> fieldTypes = new ArrayList<String>();
-        for (FieldType fieldType : searchableFieldTypes) {
-            fieldTypes.add(fieldType.getType());
-        }
-        this.searchableFieldTypes = fieldTypes;
-    }
     
     @Override
     public Boolean getTranslatable() {
@@ -258,16 +218,6 @@ public class FieldImpl implements Field, AdminMainEntity {
     @Override
     public void setIsCustom(Boolean isCustom) {
         this.isCustom = isCustom;
-    }
-
-    @Override
-    public String getFieldType() {
-        return fieldType;
-    }
-
-    @Override
-    public void setFieldType(String fieldType) {
-        this.fieldType = fieldType;
     }
 
     @Deprecated
@@ -318,9 +268,6 @@ public class FieldImpl implements Field, AdminMainEntity {
         cloned.setPropertyName(propertyName);
         cloned.setSearchable(searchable);
         cloned.setTranslatable(translatable);
-        for (String entry : searchableFieldTypes) {
-            ((FieldImpl) cloned).searchableFieldTypes.add(entry);
-        }
         cloned.setEntityType(getEntityType());
         return createResponse;
     }
