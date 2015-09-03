@@ -83,12 +83,12 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name", gridOrder = 1000, order = 1000,
-            group = AdminUserAdminPresentation.GroupName.User, prominent = true, defaultValue = "My Name")
+            group = AdminUserAdminPresentation.GroupName.User, prominent = true, defaultValue = "")
     protected String name;
 
     @Column(name = "LOGIN", nullable=false)
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Login", gridOrder = 2000, order = 2000,
-            group = AdminUserAdminPresentation.GroupName.User, prominent = true, defaultValue = "New Admin User")
+            group = AdminUserAdminPresentation.GroupName.User, prominent = true, defaultValue = "")
     protected String login;
 
     @Column(name = "PASSWORD")
@@ -109,7 +109,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
 
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address", order = 3000, group = AdminUserAdminPresentation.GroupName.User, defaultValue = "my-email@website.com")
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address", order = 3000, group = AdminUserAdminPresentation.GroupName.User, defaultValue = "")
     protected String email;
 
     @Column(name = "PHONE_NUMBER")

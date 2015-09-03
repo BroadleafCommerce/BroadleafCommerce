@@ -705,7 +705,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                          .withTypeaheadEnabled(fmd.getEnableTypeaheadLookup());
 
                     String defaultValue = fmd.getDefaultValue();
-                    if (StringUtils.isNotEmpty(defaultValue)) {
+                    if (defaultValue != null) {
                         defaultValue = extractDefaultValueFromFieldData(fieldType, fmd);
                         f.withValue(defaultValue);
                     }
