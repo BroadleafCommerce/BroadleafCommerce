@@ -113,7 +113,7 @@ $('body').on('change', 'input.color-picker-value', function() {
     $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
 });
 
-$(".button, .nav-section, .nav-links li").on("click", function(e){
+$('body').on('click', '.button:not(.disabled), .nav-section, .nav-links li', function(e) {
     var x = e.pageX;
     var y = e.pageY;
     var clickY = y - $(this).offset().top;
@@ -128,9 +128,8 @@ $(".button, .nav-section, .nav-links li").on("click", function(e){
         $(this).append('<svg><circle cx="' + setX + '" cy="' + setY + '" r="' + 0 + '"></circle></svg>');
 
         var c = $(box).find("circle");
-        c.animate(
-            {
-                "r": $(box).outerWidth()
+        c.animate( {
+                "r" : Math.sqrt(Math.pow($(box).outerWidth(), 2) + Math.pow($(box).outerHeight(), 2)).toFixed(2)
             },
             {
                 easing: "easeOutQuad",

@@ -220,7 +220,7 @@
          * @returns {*|jQuery|HTMLElement}
          */
         getSaveModalRuleLink : function(hiddenId) {
-            var saveBtn = $("<button>", {'class' : 'set-modal-rule-builder button',
+            var saveBtn = $("<button>", {'class' : 'set-modal-rule-builder button primary',
                                          'text' : 'Set Rule',
                                          'data-hiddenId' : hiddenId});
             return saveBtn;

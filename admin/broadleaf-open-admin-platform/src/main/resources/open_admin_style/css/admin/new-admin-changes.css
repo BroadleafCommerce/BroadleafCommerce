@@ -40,7 +40,7 @@ circle {
 .button {
     text-decoration: none;
     color: #fff;
-    background-color: #26a69a;
+    background-color: #404040;
     text-align: center;
     letter-spacing: .5px;
     -webkit-transition: .2s ease-out;
@@ -70,34 +70,58 @@ circle {
     box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 
+.button.large {
+    padding: 0 2rem;
+}
+
+.button.secondary, .button {
+    background-color: #404040;
+}
+
+.button.secondary:hover, .button:hover {
+    background-color: #757575;
+}
+
+.button.primary:hover {
+    background-color: #BAD363;
+}
+
+.button.and-button {
+    background-color: #757575;
+}
+
+.button.and-button:hover, .button-action:hover {
+    background-color: #A2A2A2;
+}
+
 .button-action {
     display: inline-block;
-    color: #fff;
+    color: #fff !important;
     position: relative;
     overflow: hidden;
     z-index: 1;
-    width: 37px;
-    height: 37px;
-    line-height: 37px;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
     padding: 0;
-    background-color: #26a69a;
+    background-color: #757575;
     border-radius: 50%;
     transition: .3s;
     cursor: pointer;
     vertical-align: middle;
-
     border: none;
     outline: 0;
     text-transform: uppercase;
     -webkit-tap-highlight-color: transparent;
 }
 
-.button.large {
-    padding: 0 2rem;
-}
 
-.button.primary:hover {
-    background-color: #BAD363;
+
+.button.disabled {
+    background-color: #DFDFDF !important;
+    box-shadow: none;
+    color: #9F9F9F !important;
+    cursor: default;
 }
 
 .button-group:first-child {
@@ -112,13 +136,14 @@ circle {
     margin-top: 0;
 }
 
-.button.secondary {
-    background-color: #404040;
+.app-content .content .section-content .main-content .content-area-title-bar>.button {
+    margin-top: 20px;
 }
 
-.button.secondary:hover {
-    background-color: #757575;
+tr {
+    position: relative;
 }
+
 
 .nav-links li {
     position: relative;
@@ -183,7 +208,7 @@ circle {
 }
 
 .button > i {
-    margin-right: 5px;
+    /*margin-right: 5px;*/
 
 }
 
@@ -573,6 +598,10 @@ input[type="text"], input[type="email"], input[type="password"], input[type="dat
 .dropdown-menu-right {
     margin: -20px 0 0;
     min-width: 100%;
+}
+
+.listgrid-toolbar .dropdown-menu-right {
+    margin: 0;
 }
 
 .dropdown-menu>li>a.alert {
