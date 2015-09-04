@@ -22,8 +22,8 @@
     display: none;
 }
 
-a {
-    outline: 0;
+a:active,a:focus {
+    outline: none;
 }
 
 svg {
@@ -90,13 +90,19 @@ circle {
     background-color: #757575;
 }
 
-.button.and-button:hover, .button-action:hover {
+.button.and-button:hover {
     background-color: #A2A2A2;
+}
+
+.button-action:hover {
+    background-color: rgba(255,255,255,0.5);
+    color: black;
+    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 
 .button-action {
     display: inline-block;
-    color: #fff !important;
+    /* color: #fff !important; */
     position: relative;
     overflow: hidden;
     z-index: 1;
@@ -104,7 +110,7 @@ circle {
     height: 28px;
     line-height: 28px;
     padding: 0;
-    background-color: #757575;
+    background-color: transparent;
     border-radius: 50%;
     transition: .3s;
     cursor: pointer;
@@ -113,6 +119,7 @@ circle {
     outline: 0;
     text-transform: uppercase;
     -webkit-tap-highlight-color: transparent;
+    box-shadow: none;
 }
 
 
@@ -971,12 +978,12 @@ legend {
     border-radius: 0px;
 }
 
-.modal-body *.selectize-control {
-    width: 100%;
-    border: 1px solid #D8D5D0;
-    height: 42px;
-    background-color: white;
-}
+/*.modal-body *.selectize-control {*/
+    /*width: 100%;*/
+    /*border: 1px solid #D8D5D0;*/
+    /*height: 42px;*/
+    /*background-color: white;*/
+/*}*/
 
 .and-divider {
     display: block;
@@ -1076,17 +1083,17 @@ p.deployment-summary {
     margin-top: 6px;
 }
 
-.borderlessGroup .selectize-control.single .selectize-input {
+.selectize-control.single .selectize-input {
     display: inline-block;
     background: white;
     width: 400px;
     height: 40px;
     vertical-align: middle;
-    border: 1px solid #D8D5D0;
+    /*border: 1px solid #D8D5D0;*/
     padding: 10px 10px 8px 10px;
 }
 
-.borderlessGroup .selectize-control.single .selectize-input.has-items {
+.selectize-control.single .selectize-input.has-items {
     padding: 0px 10px;
 }
 

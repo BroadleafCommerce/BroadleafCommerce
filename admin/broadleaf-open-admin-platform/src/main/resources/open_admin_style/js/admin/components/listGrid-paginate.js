@@ -468,7 +468,7 @@
         
         updateGridSize : function($tbody) {
             var $table = $tbody.closest('table.list-grid-table');
-            var $headerTable = $table.closest('div.listgrid-container').find('.listgrid-header-wrapper table');
+            var $headerTable = $table.closest('.listgrid-container').find('.listgrid-header-wrapper table');
             var thWidths = [];
             var $modalBody = $tbody.closest('.modal-body');
             

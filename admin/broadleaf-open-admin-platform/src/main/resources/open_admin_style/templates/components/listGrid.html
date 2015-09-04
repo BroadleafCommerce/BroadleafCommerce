@@ -105,8 +105,8 @@
 
                     <td th:unless="${index.count == 1}"></td>
                 </div>
-                <td th:if="${listGrid.listGridType} == 'main'"/>
-                <td th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}"/>
+                <td th:if="${listGrid.listGridType} == 'main'"></td>
+                <td th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}"></td>
             </tr>
             
             <tr th:each="record : ${listGrid.records}"
@@ -228,7 +228,7 @@
                     </span>
                 </td>
                 
-                <td th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}" data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}" />
+                <td th:unless="${listGrid.hideIdColumn or !#props.forceShowIdColumns}" data-fieldname="id" th:text="${record.id}" th:attr="data-fieldvalue=${record.id}"></td>
             </tr>
             
         </tbody>

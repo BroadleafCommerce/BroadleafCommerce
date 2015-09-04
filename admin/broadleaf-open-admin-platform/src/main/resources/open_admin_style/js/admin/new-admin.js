@@ -157,7 +157,8 @@ $('div.side-nav li a').hover(function() {
     if ($('.secondary-nav:visible').length == 1) {
         var selector = $(this).data("toggle") + '-header';
         if ($(selector).css('display') == 'none') {
-            $(selector).css('left', $(selector).width() * -1 + 'px');
+            var pos = ($(selector).width() * -1) - 10;
+            $(selector).css('left', pos + 'px');
             $(selector).show();
 
             setTimeout(function () {
@@ -169,5 +170,6 @@ $('div.side-nav li a').hover(function() {
     }
 }, function() {
     var selector = $(this).data("toggle") + '-header';
-    $(selector).css('left', $(selector).width() * -1 + 'px');
+    var pos = ($(selector).width() * -1) - 10;
+    $(selector).css('left', pos + 'px');
 });
