@@ -17,10 +17,12 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.breadcrumbs.service;
+package org.broadleafcommerce.core.web.breadcrumbs;
 
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTOType;
+import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbHandlerDefaultPriorities;
+import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbServiceExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.springframework.beans.factory.annotation.Value;

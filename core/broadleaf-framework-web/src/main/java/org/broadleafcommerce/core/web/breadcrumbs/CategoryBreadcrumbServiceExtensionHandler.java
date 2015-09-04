@@ -25,7 +25,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTOType;
-import org.broadleafcommerce.common.breadcrumbs.service.AbstractBreadcrumbServiceExtensionHandler;
 import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbHandlerDefaultPriorities;
 import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbServiceExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;

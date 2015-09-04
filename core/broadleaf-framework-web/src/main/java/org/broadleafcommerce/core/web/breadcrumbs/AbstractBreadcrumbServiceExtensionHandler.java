@@ -17,12 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.common.breadcrumbs.service;
+package org.broadleafcommerce.core.web.breadcrumbs;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.utils.URIBuilder;
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
+import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbServiceExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
