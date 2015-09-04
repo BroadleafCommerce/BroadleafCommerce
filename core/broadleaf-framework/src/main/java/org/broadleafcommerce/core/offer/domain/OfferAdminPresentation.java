@@ -56,7 +56,15 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             order = OfferAdminPresentation.TabOrder.Advanced,
             groups = {
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Advanced,
-                    order = OfferAdminPresentation.GroupOrder.Advanced)
+                    order = OfferAdminPresentation.GroupOrder.Advanced),
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.CombineStack,
+                        order = OfferAdminPresentation.GroupOrder.CombineStack),
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.QualifierRuleRestriction,
+                    order = OfferAdminPresentation.GroupOrder.QualifierRuleRestriction,
+                    column = 1),
+                @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.TargetRuleRestriction,
+                    order = OfferAdminPresentation.GroupOrder.TargetRuleRestriction,
+                    column = 1)
             }
         )
     }
@@ -81,6 +89,9 @@ public interface OfferAdminPresentation {
         public static final String Usage = "OfferImpl_Usage";
         public static final String RuleConfiguration = "OfferImpl_Rule_Configuration";
         public static final String Advanced = "OfferImpl_Advanced";
+        public static final String CombineStack = "OfferImpl_Combine_Stack";
+        public static final String QualifierRuleRestriction = "OfferImpl_Qualifier_Rule_Restriction";
+        public static final String TargetRuleRestriction = "OfferImpl_Target_Rule_Restriction";
         public static final String Codes = "OfferImpl_Codes_Tab";
     }
 
@@ -90,6 +101,9 @@ public interface OfferAdminPresentation {
         public static final int Usage = 3000;
         public static final int RuleConfiguration = 4000;
         public static final int Advanced = 1000;
+        public static final int CombineStack = 2000;
+        public static final int QualifierRuleRestriction = 3000;
+        public static final int TargetRuleRestriction = 4000;
         public static final int Codes = 1000;
     }
 

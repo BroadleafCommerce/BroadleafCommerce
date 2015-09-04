@@ -623,6 +623,10 @@ label {
     display: block;
 }
 
+label i.help-tip {
+    text-transform: none;
+}
+
 .numeric-field {
     min-width: 200px;
     width: 16.6667% !important;
