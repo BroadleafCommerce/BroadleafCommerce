@@ -64,7 +64,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Id
     @Column(name = "CUSTOMER_ID")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", group = "CustomerImpl_Primary_Key",
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Id", group = CustomerAdminPresentation.GroupName.General,
             visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
@@ -75,7 +75,8 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "USER_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_UserName", order = 4000, group = "CustomerImpl_Customer")
+    @AdminPresentation(friendlyName = "CustomerImpl_UserName", order = 4000, group = CustomerAdminPresentation.GroupName.Customer,
+            tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General)
     protected String username;
 
     @Column(name = "PASSWORD")
@@ -84,17 +85,20 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Column(name = "EMAIL_ADDRESS")
     @Index(name = "CUSTOMER_EMAIL_INDEX", columnNames = { "EMAIL_ADDRESS" })
-    @AdminPresentation(friendlyName = "CustomerImpl_Email_Address", order = 1000, group = "CustomerImpl_Customer",
+    @AdminPresentation(friendlyName = "CustomerImpl_Email_Address", order = 1000, group = CustomerAdminPresentation.GroupName.Customer,
+            tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General,
             prominent = true, gridOrder = 1000)
     protected String emailAddress;
 
     @Column(name = "FIRST_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_First_Name", order = 2000, group = "CustomerImpl_Customer", 
+    @AdminPresentation(friendlyName = "CustomerImpl_First_Name", order = 2000, group = CustomerAdminPresentation.GroupName.Customer,
+            tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General,
             prominent = true, gridOrder = 2000)
     protected String firstName;
 
     @Column(name = "LAST_NAME")
-    @AdminPresentation(friendlyName = "CustomerImpl_Last_Name", order = 3000, group = "CustomerImpl_Customer", 
+    @AdminPresentation(friendlyName = "CustomerImpl_Last_Name", order = 3000, group = CustomerAdminPresentation.GroupName.Customer,
+            tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General,
             prominent = true, gridOrder = 3000)
     protected String lastName;
 
@@ -102,39 +106,38 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
     @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question", order = 4000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             excluded = true)
     protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
     @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Answer", order = 5000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
             excluded = true)
     protected String challengeAnswer;
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
-    @AdminPresentation(excluded = true)
+    @AdminPresentation(excluded = true,
+            tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General)
     protected Boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email",order=1000, 
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Receive_Email",order=1000, group = CustomerAdminPresentation.GroupName.General,
+            tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General)
     protected Boolean receiveEmail = true;
 
     @Column(name = "IS_REGISTERED")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered", order = 4000,
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Registered", order = 4000, group = CustomerAdminPresentation.GroupName.General,
+            tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General,
             prominent = true, gridOrder = 4000)
     protected Boolean registered = false;
     
     @Column(name = "DEACTIVATED")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", order=3000,
-        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", order=3000, group = CustomerAdminPresentation.GroupName.General,
+            tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General)
     protected Boolean deactivated = false;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",order=4000,             
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",order=4000,
         excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
     
@@ -144,7 +147,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "CustomerAttributeImpl_Attribute_Name",
             deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name",
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced
+            tab = CustomerAdminPresentation.TabName.Advanced, tabOrder = CustomerAdminPresentation.TabOrder.Advanced
     )
     protected Map<String, CustomerAttribute> customerAttributes = new HashMap<String, CustomerAttribute>();
 
@@ -153,16 +156,16 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @Where(clause = "archived != 'Y'")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Addresses", order = 1000,
-            addType = AddMethodType.PERSIST,
-            tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
+            tab = CustomerAdminPresentation.TabName.ContactInfo, tabOrder = CustomerAdminPresentation.TabOrder.ContactInfo,
+            addType = AddMethodType.PERSIST)
     protected List<CustomerAddress> customerAddresses = new ArrayList<CustomerAddress>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Phones", order = 2000,
-            addType = AddMethodType.PERSIST,
-            tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
+            tab = CustomerAdminPresentation.TabName.ContactInfo, tabOrder = CustomerAdminPresentation.TabOrder.ContactInfo,
+            addType = AddMethodType.PERSIST)
     protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
 
     @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = {CascadeType.ALL})
@@ -170,14 +173,14 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Payments", order = 3000,
+            tab = CustomerAdminPresentation.TabName.ContactInfo, tabOrder = CustomerAdminPresentation.TabOrder.ContactInfo,
             addType = AddMethodType.PERSIST,
-            readOnly = true,
-            tab = Presentation.Tab.Name.Contact, tabOrder = Presentation.Tab.Order.Contact)
+            readOnly = true)
     protected List<CustomerPayment> customerPayments  = new ArrayList<CustomerPayment>();
 
     @Column(name = "TAX_EXEMPTION_CODE")
-    @AdminPresentation(friendlyName = "CustomerImpl_Customer_TaxExemptCode", order = 5000,
-            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+    @AdminPresentation(friendlyName = "CustomerImpl_Customer_TaxExemptCode", order = 5000, group = CustomerAdminPresentation.GroupName.General,
+            tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General,
             visibility = VisibilityEnum.GRID_HIDDEN)
     protected String taxExemptionCode;
 
@@ -551,24 +554,6 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
             cloned.getCustomerPhones().add(clonedEntry);
         }
         return createResponse;
-    }
-
-    public static class Presentation {
-
-        public static class Tab {
-
-            public static class Name {
-
-                public static final String Contact = "CustomerImpl_Contact_Tab";
-                public static final String Advanced = "CustomerImpl_Advanced_Tab";
-            }
-
-            public static class Order {
-
-                public static final int Contact = 2000;
-                public static final int Advanced = 3000;
-            }
-        }
     }
 
     @Override

@@ -29,51 +29,22 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
-import org.broadleafcommerce.common.presentation.AdminPresentationMap;
-import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.ValidationConfiguration;
+import org.broadleafcommerce.common.presentation.*;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationOverrides;
 import org.broadleafcommerce.common.web.Locatable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditable;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.*;
 
 /**
  * Created by bpolster.
@@ -101,10 +72,10 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
-public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity {
+public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity, PageAdminPresentation {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final Integer ZERO = new Integer(0);
 
     @Id
@@ -119,26 +90,26 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
         )
     @Column(name = "PAGE_ID")
     protected Long id;
-    
+
     @ManyToOne(targetEntity = PageTemplateImpl.class)
     @JoinColumn(name = "PAGE_TMPLT_ID")
     @AdminPresentation(friendlyName = "PageImpl_Page_Template", order = 4000,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic, prominent = true,
+        group = PageAdminPresentation.GroupName.Misc, groupOrder = PageAdminPresentation.GroupOrder.Misc, prominent = true,
         requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "templateName")
     protected PageTemplate pageTemplate;
 
     @Column (name = "DESCRIPTION")
-    @AdminPresentation(friendlyName = "PageImpl_Description", order = 1000, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+    @AdminPresentation(friendlyName = "PageImpl_Description", order = 1000,
+        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic,
             requiredOverride = RequiredOverride.REQUIRED,
         prominent = true, gridOrder = 1)
     protected String description;
 
     @Column (name = "FULL_URL")
     @Index(name="PAGE_FULL_URL_INDEX", columnNames={"FULL_URL"})
-    @AdminPresentation(friendlyName = "PageImpl_Full_Url", order = 3000, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+    @AdminPresentation(friendlyName = "PageImpl_Full_Url", order = 3000,
+        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic,
         prominent = true, gridOrder = 2,
         validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String fullUrl;
@@ -149,21 +120,21 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     @ClonePolicyMapOverride
     @ClonePolicyArchive
     protected Map<String,PageField> pageFields = new HashMap<String,PageField>();
-    
+
     @Column(name = "PRIORITY")
     @Deprecated
     protected Integer priority;
-    
+
     @Column(name = "OFFLINE_FLAG")
     @AdminPresentation(friendlyName = "PageImpl_Offline", order = 3500,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic, defaultValue = "false")
-    protected Boolean offlineFlag = false;     
+        group = PageAdminPresentation.GroupName.Misc, groupOrder = PageAdminPresentation.GroupOrder.Misc, defaultValue = "false")
+    protected Boolean offlineFlag = false;
 
     /*
      * This will not work with Enterprise workflows.  Do not use.
      */
     @ManyToMany(targetEntity = PageRuleImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_PAGE_RULE_MAP", 
+    @JoinTable(name = "BLC_PAGE_RULE_MAP",
         inverseJoinColumns = @JoinColumn(name = "PAGE_RULE_ID", referencedColumnName = "PAGE_RULE_ID"))
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
@@ -174,17 +145,16 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
      * This will not work with Enterprise workflows. Do not use.
      */
     @OneToMany(fetch = FetchType.LAZY, targetEntity = PageItemCriteriaImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF", 
-        joinColumns = @JoinColumn(name = "PAGE_ID"), 
+    @JoinTable(name = "BLC_QUAL_CRIT_PAGE_XREF",
+        joinColumns = @JoinColumn(name = "PAGE_ID"),
         inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
     @Deprecated
     @IgnoreEnterpriseBehavior
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
 
     @Column(name = "EXCLUDE_FROM_SITE_MAP")
-    @AdminPresentation(friendlyName = "PageImpl_Exclude_From_Site_Map", order = 1000,
-        tab = Presentation.Tab.Name.Seo, tabOrder = Presentation.Tab.Order.Seo,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    @AdminPresentation(friendlyName = "PageImpl_Exclude_From_Site_Map", order = 1800,
+        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic)
     protected Boolean excludeFromSiteMap;
 
     @OneToMany(mappedBy = "page", targetEntity = PageAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
@@ -197,26 +167,24 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
 
     @Column(name = "ACTIVE_START_DATE")
     @AdminPresentation(friendlyName = "PageImpl_activeStartDate", order = 5000,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic,
         excluded = true)
     protected Date activeStartDate;
 
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName = "PageImpl_activeEndDate", order = 6000, 
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic,
+    @AdminPresentation(friendlyName = "PageImpl_activeEndDate", order = 6000,
+        group = PageAdminPresentation.GroupName.Basic, groupOrder = PageAdminPresentation.GroupOrder.Basic,
         excluded = true)
     protected Date activeEndDate;
 
     @Column (name = "META_TITLE")
-    @AdminPresentation(friendlyName = "PageImpl_metaTitle", order = 2000, 
-        tab = Presentation.Tab.Name.Seo, tabOrder = Presentation.Tab.Order.Seo,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    @AdminPresentation(friendlyName = "PageImpl_metaTitle", order = 2000,
+        group = PageAdminPresentation.GroupName.Misc, groupOrder = PageAdminPresentation.GroupOrder.Misc, largeEntry = true)
     protected String metaTitle;
 
     @Column (name = "META_DESCRIPTION")
-    @AdminPresentation(friendlyName = "PageImpl_metaDescription", order = 3000, 
-        tab = Presentation.Tab.Name.Seo, tabOrder = Presentation.Tab.Order.Seo,
-        group = Presentation.Group.Name.Basic, groupOrder = Presentation.Group.Order.Basic)
+    @AdminPresentation(friendlyName = "PageImpl_metaDescription", order = 3000,
+        group = PageAdminPresentation.GroupName.Misc, groupOrder = PageAdminPresentation.GroupOrder.Misc, largeEntry = true)
     protected String metaDescription;
 
     @Embedded
@@ -282,7 +250,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     public void setAuditable(AdminAuditable auditable) {
         this.auditable = auditable;
     }
-    
+
     @Override
     public Boolean getOfflineFlag() {
         return offlineFlag == null ? false : offlineFlag;
@@ -305,7 +273,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     public void setPriority(Integer priority) {
         this.priority = priority;
     }
-    
+
     @Override
     public Map<String, PageRule> getPageMatchRules() {
         return pageMatchRules;
@@ -325,7 +293,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     public void setQualifyingItemCriteria(Set<PageItemCriteria> qualifyingItemCriteria) {
         this.qualifyingItemCriteria = qualifyingItemCriteria;
     }
-    
+
     @Override
     public boolean getExcludeFromSiteMap() {
         if (this.excludeFromSiteMap == null) {
@@ -371,34 +339,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
             cloned.setPageTemplate(clonedTemplateRsp.getClone());
         }
         return createResponse;
-    }
-
-    public static class Presentation {
-        public static class Tab {
-            public static class Name {
-                public static final String Rules = "PageImpl_Rules_Tab";
-                public static final String Seo = "PageImpl_Seo_Tab";
-            }
-            
-            public static class Order {
-                public static final int Rules = 1000;
-                public static final int Seo = 2000;
-            }
-        }
-            
-        public static class Group {
-            public static class Name {
-                public static final String Basic = "PageImpl_Basic";
-                public static final String Page = "PageImpl_Page";
-                public static final String Rules = "PageImpl_Rules";
-            }
-            
-            public static class Order {
-                public static final int Basic = 1000;
-                public static final int Page = 2000;
-                public static final int Rules = 1000;
-            }
-        }
     }
 
     @Override
@@ -460,6 +400,6 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
     public void setMetaDescription(String metaDescription) {
         this.metaDescription = metaDescription;
     }
-    
+
 }
 
