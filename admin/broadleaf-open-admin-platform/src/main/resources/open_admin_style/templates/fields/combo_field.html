@@ -3,8 +3,8 @@
 </label>
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
-<div class="select-style">
-    <select th:field="*{fields['__${field.name}__'].value}">
+<div th:remove="tag">
+    <select class="six" th:field="*{fields['__${field.name}__'].value}">
         <option th:each="entry : *{fields['__${field.name}__'].options}"
                 th:value="${entry.key}"
                 th:text="#{${entry.value}}" />
