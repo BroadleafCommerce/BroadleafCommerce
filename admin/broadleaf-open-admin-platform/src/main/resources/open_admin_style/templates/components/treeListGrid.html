@@ -1,0 +1,29 @@
+<div class="tree-listgrid-container" th:attr="data-baseurl=@{${subTreeBaseUrl}}">
+
+    <!-- Form for add new entity -->
+    <blc:form method="POST" id="add-entity-form" style="display:none;"></blc:form>
+
+    <div class="tree-ribbon">
+        <div class="tree-breadcrumb-container">
+            <span class="breadcrumb-title">
+                <span th:remove="tag" th:unless="${inModal}" th:text="${entityFriendlyName} ? #{${entityFriendlyName}} + ' ' : ''"/>
+                <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null} and ${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
+                      th:text="#{${collectionProperty.metadata.name}}" />
+                <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null}"
+                      th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
+                      th:text="#{${collectionProperty.metadata.friendlyName}}" />
+                Hierarchy
+            </span>
+        </div>
+    </div>
+    <div class="select-group">
+        <div class="select-column-wrapper" style="width: 320px; height: 400px;">
+            <div class="select-column listgrid-container" data-columndepth="0">
+                <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

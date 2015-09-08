@@ -1,4 +1,8 @@
-<div class="listgrid-container single-listgrid">
+<div th:if="${isTreeListGrid != null and isTreeListGrid}" th:remove="tag">
+    <div th:include="components/treeListGrid" th:object="${listGrid}" th:remove="tag" />
+    <div th:include="components/listGridModalActions" th:object="${listGrid}" th:remove="tag" />
+</div>
+<div th:unless="${isTreeListGrid != null and isTreeListGrid}" class="listgrid-container single-listgrid">
     <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
     <div th:include="components/listGridModalActions" th:object="${listGrid}" th:remove="tag" />
 </div>
