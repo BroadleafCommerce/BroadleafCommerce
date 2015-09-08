@@ -62,14 +62,12 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
 
     /**
      * Provides an extension point to modify the SolrQuery.
-     * 
      * @param context
      * @param query
      * @param qualifiedSolrQuery
      * @param facets
      * @param searchCriteria
      * @param defaultSort
-     *      * @return
      */
     public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
             List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
@@ -85,23 +83,5 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
 
-    /**
-     * Accumulates a field boost value to the given query field if applicable
-     *
-     * @param searchField the SearchField to gather the field boost value for
-     * @param globalBoost the Global boost for this field
-     * @return the result of this handler
-     */
-    public ExtensionResultStatusType accumulateGlobalBoostValue(SearchField searchField, ExtensionResultHolder<BigDecimal> globalBoost);
-
-    /**
-     * Appends a boost function to the given query for this if applicable
-     *
-     *
-     * @param query
-     * @param searchField
-     * @param queryBuilder
-     * @return
-     */
-    public ExtensionResultStatusType appendToBoostQueryIfApplicable(SolrQuery query, SearchField searchField, StringBuilder queryBuilder);
+    public ExtensionResultStatusType modifySolrQueryField(SearchField searchField, StringBuilder query, String solrFieldName);
 }

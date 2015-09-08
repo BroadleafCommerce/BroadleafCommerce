@@ -21,7 +21,6 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -31,7 +30,6 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -62,7 +60,11 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     
     @Override
     public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-        List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override public ExtensionResultStatusType modifySolrQueryField(SearchField searchField, StringBuilder query, String solrFieldName) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -71,13 +73,4 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override
-    public ExtensionResultStatusType accumulateGlobalBoostValue(SearchField searchField, ExtensionResultHolder<BigDecimal> globalBoost) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType appendToBoostQueryIfApplicable(SolrQuery query, SearchField searchField, StringBuilder queryBuilder) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
 }
