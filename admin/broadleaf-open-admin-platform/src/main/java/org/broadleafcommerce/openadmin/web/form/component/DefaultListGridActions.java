@@ -42,6 +42,12 @@ public class DefaultListGridActions {
         .withUrlPostfix("/add")
         .withIconClass("blc-icon-add-category")
         .withDisplayText("Add");
+
+    public static final ListGridAction TREE_SUB_ADD = new ListGridAction(ListGridAction.TREE_SUB_ADD)
+        .withButtonClass("tree-sub-list-grid-add")
+        .withUrlPostfix("/new/enterprise-add")
+        .withIconClass("blc-icon-add-category")
+        .withDisplayText("Sub-tree Add");
     
     public static final ListGridAction REORDER = new ListGridAction(ListGridAction.REORDER)
         .withButtonClass("sub-list-grid-reorder")
@@ -73,9 +79,13 @@ public class DefaultListGridActions {
         .withIconClass("blc-icon-edit")
         .withDisplayText("Edit");
 
-
     public static final ListGridAction SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
         .withButtonClass("list-grid-single-select")
+        .withDisplayText("Select")
+        .withSingleActionOnly(true);
+
+    public static final ListGridAction TREE_SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
+        .withButtonClass("tree-list-grid-single-select")
         .withDisplayText("Select")
         .withSingleActionOnly(true);
 

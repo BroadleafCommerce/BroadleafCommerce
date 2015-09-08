@@ -96,7 +96,8 @@ public class ListGrid {
         MAP,
         TRANSLATION,
         ASSET,
-        WORKFLOW
+        WORKFLOW,
+        TREE
     }
 
     public enum SelectType {

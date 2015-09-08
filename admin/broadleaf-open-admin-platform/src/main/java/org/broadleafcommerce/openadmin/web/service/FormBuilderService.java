@@ -75,6 +75,17 @@ public interface FormBuilderService {
 
     /**
      *
+     * @param drs
+     * @param cmd
+     * @param sectionKey
+     * @return the ListGrid
+     * @throws ServiceException
+     */
+    public ListGrid buildTreeListGridColumn(DynamicResultSet drs, ClassMetadata cmd, String sectionKey, List<SectionCrumb> sectionCrumbs)
+            throws ServiceException;
+
+    /**
+     *
      * @param containingEntityId
      * @param drs
      * @param field
