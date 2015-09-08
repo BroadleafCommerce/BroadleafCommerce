@@ -120,7 +120,9 @@ public class AdminBasicOperationsController extends AdminAbstractController {
 
         DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
 
-        ExtensionResultStatusType extensionResultStatusType = extensionManager.getProxy().buildLookupListGrid(drs, mainMetadata, ppr.getCeilingEntityClassname(), sectionCrumbs, model);
+        ClassMetadata targetClassMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
+
+        ExtensionResultStatusType extensionResultStatusType = extensionManager.getProxy().buildLookupListGrid(drs, targetClassMetadata, ppr.getCeilingEntityClassname(), sectionCrumbs, model);
         if (extensionResultStatusType.equals(ExtensionResultStatusType.NOT_HANDLED)) {
             ListGrid listGrid = null;
             if (collectionField.contains("|") || dynamicField) {
