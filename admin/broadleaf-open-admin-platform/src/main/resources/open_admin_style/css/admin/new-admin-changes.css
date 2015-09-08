@@ -577,6 +577,7 @@ button:disabled {
 .close {
     font-size: 30px;
     margin: 0;
+    z-index: 999;
 }
 
 .modal-header h3 {
