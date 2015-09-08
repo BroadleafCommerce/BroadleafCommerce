@@ -1338,3 +1338,114 @@ div.uploadMessage {
     transition: .2s ease-out;
     display: none;
 }
+
+.field-group.local {
+    position: relative;
+}
+
+.field-group.local > div:before {
+    content: "\e615";
+    font-family: 'broadleaf';
+    float: right;
+    vertical-align: middle;
+    position: absolute;
+    right: 8px;
+    top: 38px;
+}
+
+
+.field-group.local > .radio-container:before {
+    content: "\e615";
+    font-family: 'broadleaf';
+    float: right;
+    vertical-align: middle;
+    position: absolute;
+    right: 8px;
+    top: 30px;
+}
+
+.tree-listgrid-container {
+    text-align: left;
+}
+
+.tree-listgrid-container .tree-ribbon {
+    position: relative;
+    z-index: 10;
+    height: 50px;
+    width: 100%;
+    float: left;
+    background-color: #FCFBF9;
+    border-top: 1px solid #E0E0E0;
+    border-left: 1px solid #E0E0E0;
+    border-right: 1px solid #E0E0E0;
+    -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
+    -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
+    box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
+}
+
+.tree-listgrid-container .tree-ribbon .tree-breadcrumb-container {
+    margin-left: 15px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.tree-listgrid-container .tree-ribbon .tree-breadcrumb-container .breadcrumb-title {
+    margin-right: 40px;
+}
+
+.tree-listgrid-container .tree-ribbon .tree-breadcrumb-container .tree-breadcrumb {
+    margin-right: 10px;
+}
+
+.tree-listgrid-container .tree-ribbon .tree-breadcrumb-container .tree-breadcrumb:hover {
+    color: #F2B95A;
+}
+
+.tree-listgrid-container .select-column {
+    height: 400px;
+    width: 320px;
+    padding: 0;
+    float: left;
+}
+
+.tree-listgrid-container .select-column.loading-column {
+    height: 400px;
+    width: 320px;
+    max-height: 400px;
+    padding: 0;
+    float: left;
+    background-color: #E0E0E0;
+}
+
+.tree-listgrid-container .select-column .listgrid-header-wrapper {
+    visibility: hidden;
+    height: 0;
+    border-bottom: 0;
+}
+
+.tree-listgrid-container .select-column .listgrid-body-wrapper {
+    height: 100%;
+}
+
+.tree-listgrid-container .select-column .listgrid-table-footer {
+    display: none;
+}
+
+.tree-listgrid-container .select-column .column-spinner-container {
+    margin: auto;
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.tree-listgrid-container .select-group {
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: 405px;
+    border: 1px solid #E0E0E0;
+    -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
+    -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
+    box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
+}
