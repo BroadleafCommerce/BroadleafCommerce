@@ -33,8 +33,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             order = CategoryAdminPresentation.TabOrder.General,
             groups = {
                 @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.Description,
-                        order = CategoryAdminPresentation.GroupOrder.Description,
-                        borderless = false),
+                        order = CategoryAdminPresentation.GroupOrder.Description),
                 @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.ActiveDateRange,
                         order = CategoryAdminPresentation.GroupOrder.ActiveDateRange,
                         column = 1),
@@ -46,12 +45,11 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             order = CategoryAdminPresentation.TabOrder.Marketing,
             groups = {
                 @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.General,
-                        order = CategoryAdminPresentation.GroupOrder.General, borderless = false)
+                        order = CategoryAdminPresentation.GroupOrder.General)
             }
         ),
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Media,
-            order = CategoryAdminPresentation.TabOrder.Media
-        ),
+            order = CategoryAdminPresentation.TabOrder.Media),
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.SearchFacets,
             order = CategoryAdminPresentation.TabOrder.SearchFacets),
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Advanced,
