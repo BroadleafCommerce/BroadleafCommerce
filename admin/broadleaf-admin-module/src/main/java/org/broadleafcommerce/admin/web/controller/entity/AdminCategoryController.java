@@ -20,27 +20,17 @@
 package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
-import org.broadleafcommerce.openadmin.web.form.entity.EntityFormAction;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Handles admin operations for the {@link Category} entity.
@@ -55,7 +45,7 @@ public class AdminCategoryController extends AdminBasicEntityController {
     
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-    
+
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
         //allow external links to work for ToOne items
@@ -63,10 +53,6 @@ public class AdminCategoryController extends AdminBasicEntityController {
             return super.getSectionKey(pathVars);
         }
         return SECTION_KEY;
-    }
-    
-    protected boolean getTreeViewEnabled() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("admin.category.treeViewEnabled");
     }
 
     @Override
@@ -86,41 +72,9 @@ public class AdminCategoryController extends AdminBasicEntityController {
             .withAttribute("toggleField", "overrideGeneratedUrl")
             .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
     }
-    
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
-        String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
-
-        if (getTreeViewEnabled()) {
-            return entityListWithTreeView(model);
-        } else {
-            return returnPath;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected String entityListWithTreeView(Model model) {
-        List<Category> parentCategories = catalogService.findAllParentCategories();
-        model.addAttribute("parentCategories", parentCategories);
-        
-        List<EntityFormAction> mainActions = (List<EntityFormAction>) model.asMap().get("mainActions");
-        
-        mainActions.add(new EntityFormAction("CategoryTreeView")
-            .withButtonClass("show-category-tree-view")
-            .withDisplayText("Category_Tree_View"));
-        
-        mainActions.add(new EntityFormAction("CategoryListView")
-            .withButtonClass("show-category-list-view active")
-            .withDisplayText("Category_List_View"));
-        
-        model.addAttribute("viewType", "categoryTree");
-        return "modules/defaultContainer";
-    }
 
     @Override
     public String[] getSectionCustomCriteria() {
-            return new String[]{"categoryDirectEdit"};
-        }
+        return new String[]{"categoryDirectEdit"};
+    }
 }
