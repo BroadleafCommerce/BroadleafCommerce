@@ -24,7 +24,8 @@
     var updateUrlDebounce = 700;
     var lockDebounce = 100;
     var maxSubCollectionListGridHeight = 360;
-    
+    var treeListGridHeight = 400;
+
     var tableResizing = {
         active : false,
         headerTable : undefined,
@@ -526,7 +527,7 @@
             // If we're the only grid on the page, we should stretch to the bottom of the screen if we are not encapsulated
             // inside of an entity-form
             var listGridsCount = BLCAdmin.listGrid.getListGridCount($);
-            if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0) {
+            if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0 && $table.data('listgridtype') !== 'tree') {
                 var $window = $(window);
                 
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
@@ -544,7 +545,7 @@
             } else if ($modalBody.length > 0) {
                 // If this is inside of a modal, the max height should be the size of the modal
 
-                var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 51;
+                var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 30;
 
                 $wrapper.closest('.adorned-select-wrapper').find('fieldset').each(function(index, fieldset) {
                     maxHeight -= $(fieldset).height();
@@ -568,10 +569,16 @@
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
                 $modalBody.css('overflow-y', 'auto');
+            } else if ($table.data('listgridtype') === 'tree') {
+                var maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, treeListGridHeight);
+                $wrapper.css('max-height', maxHeight);
+                $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
+
+                $wrapper.mCustomScrollbar('update');
             } else {
                 // not in a modal, not the only grid on the screen, my size should be equal to max size of a grid
-                // There is a possibility, if pagination is limited on the packed, that 
-                
+                // There is a possibility, if pagination is limited on the packed, that
+
                 var maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, maxSubCollectionListGridHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
@@ -645,6 +652,7 @@
         initialize : function($container) {
             var $table = $container.find('table.list-grid-table');
             var $tbody = $table.children('tbody');
+            var $container = $table.closest('.listgrid-container');
             var thWidths = [];
             var $modalBody = $container.closest('.modal-body');
             
@@ -690,6 +698,7 @@
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
                         var inModal = $tbody.closest('.modal-body').length === 1;
+                        var listGridType = $table.data('listgridtype');
                         var isAssetGrid = $tbody.closest('table').data('listgridtype') == 'asset';
 
                         // Update the currently visible range
@@ -698,11 +707,17 @@
                         // Fetch records if necessary
                         $.doTimeout('fetch', fetchDebounce, function() {
                         	var url = $tbody.closest('table').data('path');
+                            if ($container.data('parentid')) {
+                                url += "?parentId=" + $container.data('parentid');
+                                url += "&inModal=" + inModal;
+                            } else {
+                                url += "?inModal=" + inModal;
+                            }
                             BLCAdmin.listGrid.paginate.loadRecords($tbody, url);
                         });
                         
                         // Also update the URL if this is the only grid on the page
-                        if (singleGrid && !inModal) {
+                        if (singleGrid && !inModal && listGridType !== 'tree') {
                             $.doTimeout('updateurl', updateUrlDebounce, function(){
                                 BLCAdmin.listGrid.paginate.updateUrlFromScroll($tbody);
                             });

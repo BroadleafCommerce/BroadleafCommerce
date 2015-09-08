@@ -152,8 +152,11 @@
                 var value = hiddenFields.hiddenFields[j].val;
                 fields[fieldName] = value;
             }
-            
-            
+
+            if ($tr.closest('.tree-listgrid-container')) {
+                fields['selectedRow'] = $tr;
+            }
+
             return fields;
         },
         
@@ -303,6 +306,12 @@ $(document).ready(function() {
         
         if ($tr.find('td.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
 
+            // Avoid rebuilding "next" columns if row is already selected
+            if (!$tr.hasClass('selected') && listGridType === 'tree') {
+                $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
+            }
+
+            // Select row based on select type
             $('body').trigger('listGrid-' + listGridSelectType + '-rowSelected', [link, fields, currentUrl]);
 
             // If Adorned or Asset ListGrid, process row click by adding item id to form.
