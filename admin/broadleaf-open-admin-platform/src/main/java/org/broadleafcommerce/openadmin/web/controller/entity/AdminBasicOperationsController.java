@@ -21,6 +21,8 @@
 package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -32,6 +34,7 @@ import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
+import org.broadleafcommerce.openadmin.web.controller.AdminBasicOperationsControllerExtensionManager;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.service.SearchFieldResolver;
 import org.springframework.stereotype.Controller;
@@ -59,6 +62,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller("blAdminBasicOperationsController")
 public class AdminBasicOperationsController extends AdminAbstractController {
+
+    @Resource(name = "blAdminBasicOperationsControllerExtensionManager")
+    protected AdminBasicOperationsControllerExtensionManager extensionManager;
 
     @Resource(name = "blSearchFieldResolver")
     protected SearchFieldResolver searchFieldResolver;
@@ -113,22 +119,26 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         modifyFetchPersistencePackageRequest(ppr, pathVars);
 
         DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
-        ListGrid listGrid = null;
-        // If we're dealing with a lookup from a dynamic field, we need to build the list grid differently
-        if (collectionField.contains("|") || dynamicField) {
-            listGrid = formService.buildMainListGrid(drs, mainMetadata, "/" + owningClass, sectionCrumbs);
-            listGrid.setListGridType(ListGrid.Type.TO_ONE);
-            listGrid.setSubCollectionFieldName(collectionField);
-            listGrid.setPathOverride("/" + owningClass + "/" + collectionField + "/select");
-            md = new BasicFieldMetadata();
-            md.setFriendlyName(mainMetadata.getPolymorphicEntities().getFriendlyName());
-            collectionProperty = new Property();
-            collectionProperty.setMetadata(md);
-        } else if (md instanceof BasicFieldMetadata) {
-            listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
+
+        ExtensionResultStatusType extensionResultStatusType = extensionManager.getProxy().buildLookupListGrid(drs, mainMetadata, ppr.getCeilingEntityClassname(), sectionCrumbs, model);
+        if (extensionResultStatusType.equals(ExtensionResultStatusType.NOT_HANDLED)) {
+            ListGrid listGrid = null;
+            if (collectionField.contains("|") || dynamicField) {
+                // If we're dealing with a lookup from a dynamic field, we need to build the list grid differently
+                listGrid = formService.buildMainListGrid(drs, mainMetadata, "/" + owningClass, sectionCrumbs);
+                listGrid.setListGridType(ListGrid.Type.TO_ONE);
+                listGrid.setSubCollectionFieldName(collectionField);
+                listGrid.setPathOverride("/" + owningClass + "/" + collectionField + "/select");
+                md = new BasicFieldMetadata();
+                md.setFriendlyName(mainMetadata.getPolymorphicEntities().getFriendlyName());
+                collectionProperty = new Property();
+                collectionProperty.setMetadata(md);
+            } else if (md instanceof BasicFieldMetadata) {
+                listGrid = formService.buildCollectionListGrid(null, drs, collectionProperty, owningClass, sectionCrumbs);
+            }
+            model.addAttribute("listGrid", listGrid);
         }
 
-        model.addAttribute("listGrid", listGrid);
         model.addAttribute("viewType", "modal/simpleSelectEntity");
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -207,5 +217,9 @@ public class AdminBasicOperationsController extends AdminAbstractController {
      */
     protected void modifyFetchPersistencePackageRequest(PersistencePackageRequest ppr, Map<String, String> pathVars) {
 
+    }
+
+    protected boolean isTreeViewEnabled() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("admin.category.treeViewEnabled");
     }
 }
