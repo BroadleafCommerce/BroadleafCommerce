@@ -4,7 +4,7 @@
         <div th:substituteby="components/listGridToolbar" />
     </div>
 
-    <div class="col6">
+    <div class="col6" style="white-space: nowrap;">
         <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
             <input id="listgrid-search" type="search" name="table-search" style="width:300px;display: inline-block;"
                    th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />

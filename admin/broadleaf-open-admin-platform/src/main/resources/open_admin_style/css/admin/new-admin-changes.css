@@ -111,7 +111,7 @@ circle {
     line-height: 28px;
     padding: 0;
     background-color: transparent;
-    border-radius: 50%;
+    /*border-radius: 50%;*/
     transition: .3s;
     cursor: pointer;
     vertical-align: middle;
@@ -1080,6 +1080,7 @@ p.deployment-summary {
 }
 
 .custom-entity-search {
+    float: right;
     text-align: right;
     margin-top: 6px;
 }
