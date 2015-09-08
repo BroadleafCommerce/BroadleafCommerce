@@ -348,6 +348,7 @@
                 <ref bean="blDataDrivenEnumerationProcessor" />
                 <ref bean="blResourceBundleProcessor" />
                 <ref bean="blConfigVariableProcessor" />
+                <ref bean="blBreadcrumbProcessor" />
             </set>
         </property>
     </bean>
