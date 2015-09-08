@@ -741,7 +741,7 @@ $(document).ready(function() {
         updateMultiSelectCheckbox($tbody, $listgridHeader);
     });
 
-    $('body').on('click', 'td.listgrid-row-actions', function(event) {
+    $('body').on('click', 'td.listgrid-row-actions span', function(event) {
         return false;
     });
 
