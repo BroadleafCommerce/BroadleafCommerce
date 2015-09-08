@@ -21,14 +21,17 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -82,4 +85,23 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
 
+    /**
+     * Accumulates a field boost value to the given query field if applicable
+     *
+     * @param searchField the SearchField to gather the field boost value for
+     * @param globalBoost the Global boost for this field
+     * @return the result of this handler
+     */
+    public ExtensionResultStatusType accumulateGlobalBoostValue(SearchField searchField, ExtensionResultHolder<BigDecimal> globalBoost);
+
+    /**
+     * Appends a boost function to the given query for this if applicable
+     *
+     *
+     * @param query
+     * @param searchField
+     * @param queryBuilder
+     * @return
+     */
+    public ExtensionResultStatusType appendToBoostQueryIfApplicable(SolrQuery query, SearchField searchField, StringBuilder queryBuilder);
 }

@@ -35,6 +35,8 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
@@ -537,9 +539,25 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected void appendFieldToQuery(StringBuilder queryBuilder, Field currentField) {
         SearchField searchField = searchFieldDao.readSearchFieldForField(currentField);
 
-        List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
-        for (SearchFieldType currentType : searchableFieldTypes) {
-            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, FieldType.getInstance(currentType.getSearchableFieldType()))).append(" ");
+        if (searchField != null) {
+            List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+            for (SearchFieldType currentType : searchableFieldTypes) {
+                queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, FieldType.getInstance(currentType.getSearchableFieldType())));
+
+                ExtensionResultHolder<BigDecimal> globalBoost = new ExtensionResultHolder<>();
+
+                // set globalBoost initially to 0 since this is a summation
+                globalBoost.setResult(new BigDecimal(0));
+
+                ExtensionResultStatusType result = extensionManager.getProxy().accumulateGlobalBoostValue(searchField, globalBoost);
+                if (ExtensionResultStatusType.HANDLED.equals(result) && globalBoost.getResult() != null) {
+                    // if we have a boost value, append it
+                    queryBuilder.append("^").append(globalBoost.getResult());
+                }
+
+                queryBuilder.append(" ");
+
+            }
         }
 
     }
@@ -584,6 +602,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")");
         solrQuery.set("defType", "edismax");
         solrQuery.set("qf", buildQueryFieldsString());
+
+        // Attach 'bq' boost query
+        attachBoostQuery(solrQuery);
 
         // Attach additional restrictions
         attachSortClause(solrQuery, searchCriteria, defaultSort);
@@ -680,6 +701,37 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         }
 
         return buildSearchFacetDTOs(searchFacets);
+    }
+
+    /**
+     * Sets up the boost query if applicable
+     *
+     * @param query
+     */
+    protected void attachBoostQuery(SolrQuery query) {
+        StringBuilder queryBuilder = new StringBuilder();
+        List<Field> fields = null;
+        if (useSku) {
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
+        } else {
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+        }
+
+        for (Field field: fields) {
+            appendBoostQueryIfApplicable(query, field, queryBuilder);
+        }
+
+        if (queryBuilder.length() != 0) {
+            query.set("bq", queryBuilder.toString());
+        }
+    }
+
+    protected void appendBoostQueryIfApplicable(SolrQuery query, Field field, StringBuilder queryBuilder) {
+        SearchField searchField = searchFieldDao.readSearchFieldForField(field);
+
+        if (searchField != null) {
+            extensionManager.getProxy().appendToBoostQueryIfApplicable(query, searchField, queryBuilder);
+        }
     }
 
     /**
