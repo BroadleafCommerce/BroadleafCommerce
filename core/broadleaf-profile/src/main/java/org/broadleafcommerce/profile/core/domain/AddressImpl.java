@@ -164,7 +164,8 @@ public class AddressImpl implements Address {
     protected State state;
 
     @Column(name = "ISO_COUNTRY_SUB")
-    @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order=110, group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order=110, group = "AddressImpl_Address",
+                        tooltip = "AddressImpl_Country_Subdivision_ToolTip")
     protected String isoCountrySubdivision;
 
     @Column(name = "SUB_STATE_PROV_REG")
