@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 /**
  * Created by brandon on 9/3/15.
  */
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CategoryImpl_baseCategory",
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "PageImpl_basePage",
     tabs = {
         @AdminTabPresentation(name = PageAdminPresentation.TabName.General,
             order = PageAdminPresentation.TabOrder.General,
