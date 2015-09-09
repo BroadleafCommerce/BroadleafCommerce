@@ -553,11 +553,7 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getRetailPrice() {
-        Money tmpRetailPrice = getRetailPriceInternal();
-        if (tmpRetailPrice == null) {
-            throw new IllegalStateException("Retail price on Sku with id " + getId() + " was null");
-        }
-        return tmpRetailPrice;
+        return getRetailPriceInternal();
     }
 
     /*
