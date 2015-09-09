@@ -31,7 +31,6 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -84,12 +83,20 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
     public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
 
     /**
-     * Finds and adds the query fields for the given search field and searchable field type. This method should only ADD to the list within the queryFieldsResult parameters
+     * <p>
+     * Finds and adds the query fields for the given search field and searchable field type. This method should only ADD
+     * to the list within the <b>queryFieldsResult</b> parameters.
+     *
+     * <p>
+     * Most implementations of this will need to invoke {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
+     * in order to return the right value to populate in the <b>queryFieldsResult</b>. If the returned result is
+     * {@link ExtensionResultStatusType#NOT_HANDLED} then the default behavior is to only do that.
      *
      * @param searchField the search field
      * @param fieldType the field type of the field
      * @param queryFieldsResult the binding result that contains the list of query fields, only add to this
      * @return the result of the handler, if NOT_HANDLED, then no query fields were added
+     * @see {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
      */
     public ExtensionResultStatusType getQueryField(SearchField searchField, FieldType fieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
 }
