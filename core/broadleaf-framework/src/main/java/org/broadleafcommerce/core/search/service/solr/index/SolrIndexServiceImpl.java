@@ -527,7 +527,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                             String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, fieldType, prefix);
                             Object value = entry.getValue();
 
-                            document.addField(solrPropertyName, value);
+                            if (StringUtils.equals(fieldType.getType(), FieldType.COMMA_SEPARATED.getType())) {
+                                // if it is comma separated we need to change it to be a multivalued field of FieldType Strings
+                                solrPropertyName = shs.getPropertyNameForFieldSearchable(field, FieldType.STRINGS, prefix);
+                                for (String kw: ((String) value).split(",")) {
+                                    document.addField(solrPropertyName, kw);
+                                }
+                            } else {
+                                document.addField(solrPropertyName, value);
+                            }
+
                             addedProperties.add(solrPropertyName);
                         }
                     }
