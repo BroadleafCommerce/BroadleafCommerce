@@ -531,7 +531,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                                 Object value = entry.getValue();
 
                                 document.addField(solrPropertyName, value);
-
                                 addedProperties.add(solrPropertyName);
                             }
                         }
