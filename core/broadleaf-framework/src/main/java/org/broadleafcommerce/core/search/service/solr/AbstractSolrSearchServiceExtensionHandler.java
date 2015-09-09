@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
@@ -59,7 +60,11 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     
     @Override
     public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-        List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override public ExtensionResultStatusType modifySolrQueryField(SearchField searchField, StringBuilder query, String solrFieldName) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

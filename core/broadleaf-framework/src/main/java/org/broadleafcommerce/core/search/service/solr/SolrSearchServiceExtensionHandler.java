@@ -21,14 +21,17 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -59,14 +62,12 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
 
     /**
      * Provides an extension point to modify the SolrQuery.
-     * 
      * @param context
      * @param query
      * @param qualifiedSolrQuery
      * @param facets
      * @param searchCriteria
      * @param defaultSort
-     *      * @return
      */
     public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
             List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
@@ -82,4 +83,5 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
 
+    public ExtensionResultStatusType modifySolrQueryField(SearchField searchField, StringBuilder query, String solrFieldName);
 }
