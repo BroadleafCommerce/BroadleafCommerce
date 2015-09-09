@@ -83,5 +83,13 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
 
+    /**
+     * Finds and adds the query fields for the given search field and searchable field type. This method should only ADD to the list within the queryFieldsResult parameters
+     *
+     * @param searchField the search field
+     * @param fieldType the field type of the field
+     * @param queryFieldsResult the binding result that contains the list of query fields, only add to this
+     * @return the result of the handler, if NOT_HANDLED, then no query fields were added
+     */
     public ExtensionResultStatusType getQueryField(SearchField searchField, FieldType fieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
 }

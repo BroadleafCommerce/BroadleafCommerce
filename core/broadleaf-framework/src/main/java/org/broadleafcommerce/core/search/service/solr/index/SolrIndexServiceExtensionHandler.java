@@ -109,5 +109,15 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType attachAdditionalBasicFields(Indexable indexable, SolrInputDocument document, SolrHelperService shs);
 
+    /**
+     * This is used to populate any fields for the given parameters as well as adding any property names to the added properties list.
+     *
+     * @param document the document we are populating
+     * @param field the field we are populating the document with
+     * @param fieldType the field type of the field
+     * @param propertyValues the property values for the given Field
+     * @param addedProperties the properties that have been added to this document so far
+     * @return the result of this handler, if NOT_HANDLED, no fields were populated
+     */
     public ExtensionResultStatusType populateDocumentForSearchField(SolrInputDocument document, Field field, FieldType fieldType, Map<String, Object> propertyValues, List<String> addedProperties);
 }
