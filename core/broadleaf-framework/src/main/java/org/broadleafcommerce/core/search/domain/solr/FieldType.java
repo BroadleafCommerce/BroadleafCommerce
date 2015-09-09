@@ -60,8 +60,6 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
     public static final FieldType TRIEDATE = new FieldType("tdt", "Trie Date");
     public static final FieldType COORDINATE = new FieldType("c", "Coordinate");
 
-    public static final FieldType COMMA_SEPARATED = new FieldType("cs", "Comma Separated");
-
     public static FieldType getInstance(final String type) {
         return TYPES.get(type);
     }
