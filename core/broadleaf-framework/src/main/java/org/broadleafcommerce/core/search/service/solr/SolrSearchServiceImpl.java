@@ -537,9 +537,16 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected void appendFieldToQuery(StringBuilder queryBuilder, Field currentField) {
         SearchField searchField = searchFieldDao.readSearchFieldForField(currentField);
 
-        List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
-        for (SearchFieldType currentType : searchableFieldTypes) {
-            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, FieldType.getInstance(currentType.getSearchableFieldType()))).append(" ");
+        if (searchField != null) {
+            List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+            for (SearchFieldType currentType : searchableFieldTypes) {
+                String solrFieldName = shs.getPropertyNameForFieldSearchable(currentField, FieldType.getInstance(currentType.getSearchableFieldType()));
+                queryBuilder.append(solrFieldName);
+
+                extensionManager.getProxy().modifySolrQueryField(searchField, queryBuilder, solrFieldName);
+
+                queryBuilder.append(" ");
+            }
         }
 
     }
@@ -656,6 +663,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      */
     protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
             List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
+
+        extensionManager.getProxy().modifySolrQuery(query, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
     }
     
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {
