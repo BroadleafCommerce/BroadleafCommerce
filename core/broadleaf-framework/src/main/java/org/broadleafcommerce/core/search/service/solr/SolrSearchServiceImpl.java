@@ -35,6 +35,8 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
@@ -528,27 +530,47 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
 
+        // we want to gather all the query fields into one list
+        List<String> queryFields = new ArrayList<>();
         for (Field currentField : fields) {
-            appendFieldToQuery(queryBuilder, currentField);
+            getQueryFields(queryFields, currentField);
         }
+
+        // we join our query fields to a single string to append to the solr query
+        queryBuilder.append(StringUtils.join(queryFields, " "));
+
         return queryBuilder.toString();
     }
 
-    protected void appendFieldToQuery(StringBuilder queryBuilder, Field currentField) {
+    /**
+     * This helper method gathers the query fields for the given field and stores them in the List parameter.
+     *
+     * @param queryFields the query fields for this query
+     * @param currentField the current field
+     */
+    protected void getQueryFields(final List<String> queryFields, Field currentField) {
         SearchField searchField = searchFieldDao.readSearchFieldForField(currentField);
 
         if (searchField != null) {
             List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+
             for (SearchFieldType currentType : searchableFieldTypes) {
-                String solrFieldName = shs.getPropertyNameForFieldSearchable(currentField, FieldType.getInstance(currentType.getSearchableFieldType()));
-                queryBuilder.append(solrFieldName);
+                FieldType fieldType = FieldType.getInstance(currentType.getSearchableFieldType());
 
-                extensionManager.getProxy().modifySolrQueryField(searchField, queryBuilder, solrFieldName);
+                // this will hold the list of query fields for our given field
+                ExtensionResultHolder<List<String>> queryFieldResult = new ExtensionResultHolder<>();
+                queryFieldResult.setResult(queryFields);
 
-                queryBuilder.append(" ");
+                // here we try to get the query field's for this search field
+                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(searchField, fieldType, queryFieldResult);
+
+                if (ExtensionResultStatusType.NOT_HANDLED.equals(result)){
+                    // if we didn't get any query fields we just add a default one
+                    String solrFieldName = shs.getPropertyNameForFieldSearchable(currentField, fieldType);
+                    queryFields.add(solrFieldName);
+                }
             }
         }
-
     }
 
     /**

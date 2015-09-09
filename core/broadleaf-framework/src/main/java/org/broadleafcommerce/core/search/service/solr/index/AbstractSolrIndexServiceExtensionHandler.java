@@ -55,6 +55,10 @@ public abstract class AbstractSolrIndexServiceExtensionHandler extends AbstractE
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
+    @Override public ExtensionResultStatusType populateDocumentForSearchField(SolrInputDocument document, Field field, FieldType fieldType, Map<String, Object> propertyValues, List<String> addedProperties) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
     @Override
     public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<? extends Indexable> products, List<Field> fields, List<Locale> locales) {
         return ExtensionResultStatusType.NOT_HANDLED;
