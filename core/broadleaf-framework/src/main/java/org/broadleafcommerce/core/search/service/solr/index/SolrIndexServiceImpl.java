@@ -30,6 +30,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -511,7 +512,6 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                 // If we find a SearchField entry for this field, then this field is searchable
                 if (searchField != null) {
-
                     List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
 
                     // For each of its search field types, get the property values, and add a field to the document for each property value
@@ -519,25 +519,21 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                         FieldType fieldType = FieldType.getInstance(sft.getSearchableFieldType());
                         Map<String, Object> propertyValues = getPropertyValues(indexable, field, fieldType, locales);
 
-                        // Build out the field for every prefix
-                        for (Entry<String, Object> entry : propertyValues.entrySet()) {
-                            String prefix = entry.getKey();
-                            prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
+                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForSearchField(document, field, fieldType, propertyValues, addedProperties);
 
-                            String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, fieldType, prefix);
-                            Object value = entry.getValue();
+                        if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                            // Build out the field for every prefix
+                            for (Entry<String, Object> entry : propertyValues.entrySet()) {
+                                String prefix = entry.getKey();
+                                prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
 
-                            if (StringUtils.equals(fieldType.getType(), FieldType.COMMA_SEPARATED.getType())) {
-                                // if it is comma separated we need to change it to be a multivalued field of FieldType Strings
-                                solrPropertyName = shs.getPropertyNameForFieldSearchable(field, FieldType.STRINGS, prefix);
-                                for (String kw: ((String) value).split(",")) {
-                                    document.addField(solrPropertyName, kw);
-                                }
-                            } else {
+                                String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, fieldType, prefix);
+                                Object value = entry.getValue();
+
                                 document.addField(solrPropertyName, value);
-                            }
 
-                            addedProperties.add(solrPropertyName);
+                                addedProperties.add(solrPropertyName);
+                            }
                         }
                     }
                 }

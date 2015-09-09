@@ -24,6 +24,7 @@ package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
@@ -107,5 +108,6 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      * Allows the extension additional fields to the document that are not configured via the DB.
      */
     public ExtensionResultStatusType attachAdditionalBasicFields(Indexable indexable, SolrInputDocument document, SolrHelperService shs);
-    
+
+    public ExtensionResultStatusType populateDocumentForSearchField(SolrInputDocument document, Field field, FieldType fieldType, Map<String, Object> propertyValues, List<String> addedProperties);
 }

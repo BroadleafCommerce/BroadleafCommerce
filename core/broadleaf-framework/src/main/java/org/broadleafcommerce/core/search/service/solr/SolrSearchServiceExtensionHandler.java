@@ -83,5 +83,5 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
 
-    public ExtensionResultStatusType modifySolrQueryField(SearchField searchField, StringBuilder query, String solrFieldName);
+    public ExtensionResultStatusType getQueryField(SearchField searchField, FieldType fieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
 }
