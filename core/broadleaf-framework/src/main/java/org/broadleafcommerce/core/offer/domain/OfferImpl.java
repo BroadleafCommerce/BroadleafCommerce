@@ -131,7 +131,6 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "OFFER_DESCRIPTION")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Description", order = 2000, 
         group = OfferAdminPresentation.GroupName.Description,
-        prominent = true, gridOrder = 2,
         largeEntry = true)
     protected String description;
 
@@ -176,6 +175,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Column(name = "START_DATE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Start_Date", order = 1000,
         group = OfferAdminPresentation.GroupName.ActivityRange,
+        prominent = true, gridOrder = 2,
         defaultValue = "today")
     protected Date startDate;
 
@@ -193,6 +193,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
 
     @Column(name = "STACKABLE")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Stackable",
+            tooltip = "OfferImplStackable_tooltip",
             group = OfferAdminPresentation.GroupName.CombineStack)
     protected Boolean stackable = true;
 
@@ -231,6 +232,7 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
      */
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Combinable",
+        tooltip = "OfferImplCombinableWithOtherOffers_tooltip",
         group = OfferAdminPresentation.GroupName.CombineStack)
     protected Boolean combinableWithOtherOffers = true;
 
