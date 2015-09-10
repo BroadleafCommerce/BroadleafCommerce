@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
@@ -93,10 +94,10 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * {@link ExtensionResultStatusType#NOT_HANDLED} then the default behavior is to only do that.
      *
      * @param searchField the search field
-     * @param fieldType the field type of the field
+     * @param searchFieldType the field type of the field
      * @param queryFieldsResult the binding result that contains the list of query fields, only add to this
      * @return the result of the handler, if NOT_HANDLED, then no query fields were added
      * @see {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
      */
-    public ExtensionResultStatusType getQueryField(SearchField searchField, FieldType fieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
+    public ExtensionResultStatusType getQueryField(SearchField searchField, SearchFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
 }

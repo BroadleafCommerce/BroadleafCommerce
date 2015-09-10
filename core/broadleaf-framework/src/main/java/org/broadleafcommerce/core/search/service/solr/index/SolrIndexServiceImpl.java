@@ -516,7 +516,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                     // For each of its search field types, get the property values, and add a field to the document for each property value
                     for (SearchFieldType sft : searchableFieldTypes) {
-                        FieldType fieldType = FieldType.getInstance(sft.getSearchableFieldType());
+                        FieldType fieldType = sft.getSearchableFieldType();
                         Map<String, Object> propertyValues = getPropertyValues(indexable, field, fieldType, locales);
 
                         ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForSearchField(document, field, fieldType, propertyValues, addedProperties);
