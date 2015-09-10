@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
@@ -77,7 +78,7 @@ public class SearchFieldTypeImpl implements SearchFieldType, Serializable {
     @ManyToOne(optional=false, targetEntity = SearchFieldImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "SEARCH_FIELD_ID")
     @AdminPresentation(friendlyName = "SearchFieldTypeImpl_searchField", group = "SearchFieldTypeImpl_description",
-            visibility= VisibilityEnum.HIDDEN_ALL)
+            prominent = true, order=1, gridOrder=1, visibility=VisibilityEnum.FORM_HIDDEN)
     protected SearchField searchField;
 
     @Column(name = "SEARCHABLE_FIELD_TYPE")
@@ -89,13 +90,13 @@ public class SearchFieldTypeImpl implements SearchFieldType, Serializable {
     protected String searchableFieldType;
 
     @Override
-    public String getSearchableFieldType() {
-        return searchableFieldType;
+    public FieldType getSearchableFieldType() {
+        return FieldType.getInstance(searchableFieldType);
     }
 
     @Override
-    public void setSearchableFieldType(String searchableFieldType) {
-        this.searchableFieldType = searchableFieldType;
+    public void setSearchableFieldType(FieldType searchableFieldType) {
+        this.searchableFieldType = searchableFieldType.getType();
     }
 
     @Override
@@ -130,7 +131,7 @@ public class SearchFieldTypeImpl implements SearchFieldType, Serializable {
         }
 
         if (searchableFieldType != null) {
-            searchFieldType.setSearchableFieldType(searchableFieldType);
+            searchFieldType.setSearchableFieldType(this.getSearchableFieldType());
         }
         return createResponse;
     }

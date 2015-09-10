@@ -20,6 +20,7 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import java.io.Serializable;
 
 /**
@@ -29,9 +30,9 @@ import java.io.Serializable;
  */
 public interface SearchFieldType extends Serializable, MultiTenantCloneable<SearchFieldType> {
 
-    String getSearchableFieldType();
+    FieldType getSearchableFieldType();
 
-    void setSearchableFieldType(String searchableFieldType);
+    void setSearchableFieldType(FieldType searchableFieldType);
 
     Long getId();
 

@@ -554,15 +554,15 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         if (searchField != null) {
             List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
 
-            for (SearchFieldType currentType : searchableFieldTypes) {
-                FieldType fieldType = FieldType.getInstance(currentType.getSearchableFieldType());
+            for (SearchFieldType searchFieldType : searchableFieldTypes) {
+                FieldType fieldType = searchFieldType.getSearchableFieldType();
 
                 // this will hold the list of query fields for our given field
                 ExtensionResultHolder<List<String>> queryFieldResult = new ExtensionResultHolder<>();
                 queryFieldResult.setResult(queryFields);
 
                 // here we try to get the query field's for this search field
-                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(searchField, fieldType, queryFieldResult);
+                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(searchField, searchFieldType, queryFieldResult);
 
                 if (ExtensionResultStatusType.NOT_HANDLED.equals(result)){
                     // if we didn't get any query fields we just add a default one
