@@ -620,9 +620,6 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         attachFacets(solrQuery, namedFacetMap);
         
         modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
-        
-        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
-                searchCriteria, defaultSort);
 
         if (LOG.isTraceEnabled()) {
             try {
