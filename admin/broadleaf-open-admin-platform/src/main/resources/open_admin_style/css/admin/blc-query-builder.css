@@ -268,3 +268,28 @@
 .clear-rule-builder {
     width:49%;
 }
+
+/* filter builder styles */
+.query-builder-filters-container .group-conditions {
+    height: 40px;
+    vertical-align: baseline;
+    line-height: 40px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+.query-builder-filters-container hr {
+    margin-top: 0;
+}
+
+.query-builder-filters-container .rules-group-container, .query-builder-filters-container .rule-container {
+    background-color: white;
+    border: none;
+}
+
+.query-builder-filters-container .rule-container:before, .query-builder-filters-container .rule-container:after {
+    content: none;
+}
+
+.query-builder-filters-container .query-builder-rules .remove-row {
+    padding: 8px;
+}

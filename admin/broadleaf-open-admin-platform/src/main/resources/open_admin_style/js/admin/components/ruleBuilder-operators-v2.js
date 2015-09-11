@@ -105,3 +105,25 @@ var blcOperators_Text_List = [
     "COUNT_LESS_OR_EQUAL",
     "COUNT_EQUALS"
 ];
+
+var blcFilterOperators_Text = [
+    "CONTAINS"
+];
+
+var blcFilterOperators_Numeric = [
+    "EQUALS",
+    "BETWEEN"
+];
+
+var blcFilterOperators_Date = [
+    "EQUALS",
+    "BETWEEN"
+];
+
+var blcFilterOperators_Boolean = [
+    "EQUALS"
+];
+
+var blcFilterOperators_Enumeration = [
+    "EQUALS"
+];

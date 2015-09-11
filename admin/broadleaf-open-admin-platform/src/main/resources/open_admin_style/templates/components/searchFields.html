@@ -9,8 +9,24 @@
             <input id="listgrid-search" type="search" name="table-search" style="width:300px;display: inline-block;"
                    th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
             <div class="listgrid-search-actions">
-                <button class="button primary search-button" th:inline="text" th:utext="#{Search}" />
-                <button class="button secondary clear-search" th:inline="text" th:utext="#{Clear_Search}" />
+                <button class="button primary search-button" th:inline="text" th:utext="#{Search}"></button>
+                <button class="button secondary clear-search" th:inline="text" th:utext="#{Clear_Search}"></button>
+
+                <!-- Filter information -->
+                <button class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${listGrid.jsonFieldName}"></button>
+                <div class="filter-builder-data"
+                     th:attr="data-hiddenid=${listGrid.jsonFieldName},
+                     data-containerid=${listGrid.friendlyName},
+                     data-fields=${listGrid.fieldWrapper.serialize()},
+                     data-data=${listGrid.dataWrapper.serialize()}">
+                </div>
+
+                <input type="hidden"
+                       th:id="${listGrid.jsonFieldName}"
+                       th:name="${listGrid.friendlyName}"
+                       value="{&quot;data&quot;:[]}"/>
+
+                <div class="query-builder-filters-container" th:id="${listGrid.friendlyName}" style="display: none;"></div>
             </div>
         </form>
     </div>

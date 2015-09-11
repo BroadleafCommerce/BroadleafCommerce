@@ -221,25 +221,6 @@
         BLCAdmin.listGrid.filter.showOperators(criteria);
     });
 
-    // reset other active states
-    $(document).on('click.fndtn', '.listgrid-headerBtn.dropdown:not(.split), .listgrid-headerBtn.dropdown.split i.filter-icon', function (e) {
-        var $el = $(this),
-            button = $el.closest('.listgrid-headerBtn.dropdown'),
-            dropdown = $('> ul', button);
-
-        // If the click is registered on an actual link or on button element then do not preventDefault which stops the browser from following the link
-        if ($.inArray(e.target.nodeName, ['A', 'BUTTON'])){
-            e.preventDefault();
-        }
-
-        // close other dropdowns
-        setTimeout(function () {
-            dropdown.toggleClass('show-dropdown');
-            BLCAdmin.listGrid.filter.closeDropdowns(dropdown);
-        }, 0);
-        
-    });
-
     // close all dropdowns and deactivate all buttons
     $(document).on('click.fndtn', 'body, html', function (e) {
         if (undefined == e.originalEvent) { return; }
@@ -498,7 +479,7 @@ $(document).ready(function() {
     });
 
     $('body').on('click', '.custom-entity-search button.clear-search', function(event) {
-        $(this).closest('form').find('input').val('');
+        $(this).closest('form').find('#listgrid-search').val('');
         $(this).siblings(".search-button").click();
     });
 

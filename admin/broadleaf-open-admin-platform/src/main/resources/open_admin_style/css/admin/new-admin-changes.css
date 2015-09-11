@@ -1091,8 +1091,11 @@ p.deployment-summary {
     width: 400px;
     height: 40px;
     vertical-align: middle;
-    /*border: 1px solid #D8D5D0;*/
     padding: 10px 10px 8px 10px;
+}
+
+:not(.sandbox-selector-wrapper) > .selectize-control.single .selectize-input {
+    border: 1px solid #D8D5D0;
 }
 
 .selectize-control.single .selectize-input.has-items {

@@ -909,7 +909,7 @@ $(document).ready(function() {
     /**
      * As selects are created, add necessary class to convert them to our custom appearance
      */
-    $(document).on('DOMNodeInserted', '.rule-filter-container select, .rule-operator-container select', function(e) {
+    $(document).on('DOMNodeInserted', '.query-builder-rules-container .rule-filter-container select, .query-builder-rules-container .rule-operator-container select', function(e) {
         $(e.target).parent().addClass('admin-select');
     });
 });

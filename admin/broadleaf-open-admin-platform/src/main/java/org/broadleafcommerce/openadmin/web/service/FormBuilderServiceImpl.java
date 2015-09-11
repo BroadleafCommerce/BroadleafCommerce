@@ -77,8 +77,9 @@ import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.rulebuilder.DataDTODeserializer;
-import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
-import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.*;
+import org.codehaus.jettison.json.JSONObject;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.Version;
@@ -169,6 +170,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         ListGrid.Type type = ListGrid.Type.MAIN;
         String idProperty = "id";
 
+        FieldWrapper wrapper = new FieldWrapper();
         for (Property p : cmd.getProperties()) {
             if (p.getMetadata() instanceof BasicFieldMetadata) {
                 BasicFieldMetadata fmd = (BasicFieldMetadata) p.getMetadata();
@@ -181,6 +183,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         && !ArrayUtils.contains(getGridHiddenVisibilities(), fmd.getVisibility())) {
                     Field hf = createHeaderField(p, fmd);
                     headerFields.add(hf);
+
+                    wrapper.getFields().add(constructFieldDTOFromFieldData(hf, fmd));
+
                 }
             }
         }
@@ -195,8 +200,59 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             message += "Please mark some @AdminPresentation fields with 'prominent = true'";
             LOG.error(message);
         }
-        
+
+        // Set up the filter builder params
+        listGrid.setJsonFieldName("entityListGridJson");
+        listGrid.setFriendlyName("entityListGrid");
+        listGrid.setFieldBuilder("RULE_SIMPLE");
+        listGrid.setFieldWrapper(wrapper);
+
+        String blankJsonString =  "{\"data\":[]}";
+        listGrid.setJson(blankJsonString);
+        DataWrapper dw = convertJsonToDataWrapper(blankJsonString);
+        if (dw != null) {
+            listGrid.setDataWrapper(dw);
+        }
+
         return listGrid;
+    }
+
+    protected FieldDTO constructFieldDTOFromFieldData(Field field, BasicFieldMetadata fmd) {
+        FieldDTO fieldDTO = new FieldDTO();
+        //translate the label to display
+        String label = field.getFriendlyName();
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        MessageSource messages = context.getMessageSource();
+        if (messages != null) {
+            label = messages.getMessage(label, null, label, context.getJavaLocale());
+        }
+        fieldDTO.setLabel(label);
+
+        fieldDTO.setId(field.getName());
+        if (field.getFieldType().equals("STRING")) {
+            fieldDTO.setOperators("blcFilterOperators_Text");
+        } else if (field.getFieldType().equals("DATE")) {
+            fieldDTO.setOperators("blcFilterOperators_Date");
+        } else if (field.getFieldType().equals("NUMBER") || field.getFieldType().equals("MONEY") || field.getFieldType().equals("DECIMAL")) {
+            fieldDTO.setOperators("blcFilterOperators_Numeric");
+        } else if (field.getFieldType().equals("BOOLEAN")) {
+            fieldDTO.setOperators("blcFilterOperators_Boolean");
+        } else if (field.getFieldType().equals("BROADLEAF_ENUMERATION")) {
+            fieldDTO.setOperators("blcFilterOperators_Enumeration");
+            fieldDTO.setInput("select");
+            fieldDTO.setType("string");
+            String[][] enumerationValues = fmd.getEnumerationValues ();
+            Map<String, String> enumMap = new HashMap<String, String>();
+            for (int i = 0; i < enumerationValues.length; i++) {
+                enumMap.put(enumerationValues[i][0], enumerationValues[i][1]);
+            }
+
+            fieldDTO.setValues(new JSONObject(enumMap).toString());
+        } else {
+            fieldDTO.setOperators("blcFilterOperators_Text");
+        }
+
+        return fieldDTO;
     }
     
     protected Field createHeaderField(Property p, BasicFieldMetadata fmd) {

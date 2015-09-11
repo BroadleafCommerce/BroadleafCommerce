@@ -27,6 +27,8 @@ import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
+import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -105,6 +107,13 @@ public class ListGrid {
         MULTI_SELECT,
         SELECTIZE
     }
+
+    /* Filter Builder required Fields */
+    protected String fieldBuilder;
+    protected DataWrapper dataWrapper;
+    protected String json;
+    protected String jsonFieldName;
+    protected FieldWrapper fieldWrapper;
 
     /* ************** */
     /* CUSTOM METHODS */
@@ -493,5 +502,45 @@ public class ListGrid {
             return;
         }
         this.sectionCrumbs = sectionCrumbs;
+    }
+
+    public String getFieldBuilder() {
+        return fieldBuilder;
+    }
+
+    public void setFieldBuilder(String fieldBuilder) {
+        this.fieldBuilder = fieldBuilder;
+    }
+
+    public FieldWrapper getFieldWrapper() {
+        return fieldWrapper;
+    }
+
+    public void setFieldWrapper(FieldWrapper fieldWrapper) {
+        this.fieldWrapper = fieldWrapper;
+    }
+
+    public DataWrapper getDataWrapper() {
+        return dataWrapper;
+    }
+
+    public void setDataWrapper(DataWrapper dataWrapper) {
+        this.dataWrapper = dataWrapper;
+    }
+
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
+    }
+
+    public String getJsonFieldName() {
+        return jsonFieldName;
+    }
+
+    public void setJsonFieldName(String jsonFieldName) {
+        this.jsonFieldName = jsonFieldName;
     }
 }
