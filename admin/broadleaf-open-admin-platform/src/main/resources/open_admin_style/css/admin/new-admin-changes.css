@@ -18,6 +18,10 @@
  * #L%
  */
 
+.app-content .side-nav {
+    z-index: 300;
+}
+
 .hidden {
     display: none;
 }

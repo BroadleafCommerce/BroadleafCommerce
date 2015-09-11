@@ -14,7 +14,7 @@
     <div class="content">
         <div th:substituteby="layout/partials/header" />
 
-        <div class="section-content" th:classappend="${sandboxable != null} ? 'sandboxed'">
+        <div class="section-content sandboxed">
             <div th:substituteby="layout/partials/secondLeftNav" />
             <div th:substituteby="${templateName}" />
         </div>
