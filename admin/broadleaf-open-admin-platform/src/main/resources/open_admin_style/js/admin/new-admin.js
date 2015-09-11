@@ -152,24 +152,3 @@ $('body').on('click', '.button:not(.disabled), .nav-section, .nav-links li', fun
         );
     }
 });
-
-$('div.side-nav li a').hover(function() {
-    if ($('.secondary-nav:visible').length == 1) {
-        var selector = $(this).data("toggle") + '-header';
-        if ($(selector).css('display') == 'none') {
-            var pos = ($(selector).width() * -1) - 10;
-            $(selector).css('left', pos + 'px');
-            $(selector).show();
-
-            setTimeout(function () {
-                $(selector).css('left', '0');
-            }, 10);
-        } else {
-            $(selector).css('left', '0');
-        }
-    }
-}, function() {
-    var selector = $(this).data("toggle") + '-header';
-    var pos = ($(selector).width() * -1) - 10;
-    $(selector).css('left', pos + 'px');
-});

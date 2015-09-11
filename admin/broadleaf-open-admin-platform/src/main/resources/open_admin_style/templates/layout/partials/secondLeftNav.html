@@ -19,11 +19,4 @@
             </li>
         </ul>
     </div>
-
-    <div class="secondary-nav" id="nav-section-headers">
-        <div th:each="module,i : ${adminMenu.adminModules}" th:inline="text" th:if="${i.index != 0}"
-             th:id="${module.icon + '-header'}" class="section-header" th:style="'top:' +  ${(i.index * 80) + 10} + 'px;'">
-            <h2 th:text="#{__${module.moduleKey}__}"></h2>
-        </div>
-    </div>
 </div>
