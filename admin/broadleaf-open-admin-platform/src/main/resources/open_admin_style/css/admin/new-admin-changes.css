@@ -22,6 +22,36 @@
     z-index: 300;
 }
 
+.app-content .side-nav ul li {
+    font-size: 1em;
+    color: #A4A4A4;
+    text-shadow: none;
+}
+
+.app-content .side-nav ul li a:hover:before, .app-content .side-nav ul li a.active::before {
+    /*font-size: 2em;*/
+    color: #FFFFFF;
+    text-shadow: none;
+}
+
+.app-content .side-nav ul li a:hover, .app-content .side-nav ul li a.active {
+    background-color: #212121;
+}
+
+
+.app-content .side-nav ul li a {
+    background-image: none;
+}
+
+.app-content .side-nav ul li a:before {
+    font-size: 2em;
+    color: #A4A4A4;
+    text-shadow: none;
+    position: absolute;
+    top: 26px;
+    left: 23px;
+}
+
 .hidden {
     display: none;
 }

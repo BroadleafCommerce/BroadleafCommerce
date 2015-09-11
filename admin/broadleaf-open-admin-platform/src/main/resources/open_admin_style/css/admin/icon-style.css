@@ -63,6 +63,9 @@
 .blc-icon-content:before {
 	content: "\e606";
 }
+.blc-icon-content-icon:before {
+	content: "\e606";
+}
 .blc-icon-customer-care:before {
 	content: "\e607";
 }
@@ -79,6 +82,9 @@
 	content: "\e60b";
 }
 .blc-icon-globe:before {
+	content: "\e60c";
+}
+.blc-icon-internationalization:before {
 	content: "\e60c";
 }
 .blc-icon-notifications:before {
