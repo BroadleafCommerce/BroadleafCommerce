@@ -426,10 +426,10 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         } else if (md instanceof AdornedTargetCollectionMetadata) {
             ppr.getEntity().setType(new String[] { ppr.getAdornedList().getAdornedTargetEntityClassname() });
             
-            String[] maintainedFields = ((AdornedTargetCollectionMetadata) md).getMaintainedAdornedTargetFields();
-            if (maintainedFields == null || maintainedFields.length == 0) {
-                ppr.setValidateUnsubmittedProperties(false);
-            }
+            // It's possible that the adorned target has properties found in the metadata that does not appear in the form
+            // at all. Because of this, we should only be validating properties that are actually submitted in the relationship
+            // target which could be a subset of the full property set from both the xref and the target entity
+            ppr.setValidateUnsubmittedProperties(false);
         } else if (md instanceof MapMetadata) {
             ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
             
