@@ -2,7 +2,7 @@
 
 <div class="side-nav">
     <ul>
-        <li><a href="" class="nav-section logo" data-toggle="#logo"></a></li>
+        <li><a href="/admin/overview" class="nav-section logo"></a></li>
         <li th:each="module : ${adminMenu.adminModules}" th:inline="text">
             <a th:class="${'nav-section ' + module.icon}" href="" th:attr="data-toggle=${'#' + module.icon}"></a>
         </li>
