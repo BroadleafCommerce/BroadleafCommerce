@@ -210,6 +210,12 @@ public class SkuImpl implements Sku {
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
+    @Column(name = "PURCHASE_COST", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Purchase_Cost", order = 2500,
+            group = Presentation.Group.Name.Price, groupOrder = Presentation.Group.Order.Price, prominent = true,
+            gridOrder = 7, fieldType = SupportedFieldType.MONEY)
+    protected BigDecimal purchaseCost;
+
     @Column(name = "NAME")
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name", order = ProductImpl.Presentation.FieldOrder.NAME,
@@ -650,6 +656,21 @@ public class SkuImpl implements Sku {
     @Deprecated
     public void setListPrice(Money listPrice) {
         this.retailPrice = Money.toAmount(listPrice);
+    }
+
+    @Override
+    public Money getPurchaseCost() {
+        return new Money(purchaseCost, getCurrency());
+    }
+
+    @Override
+    public void setPurchaseCost(Money purchaseCost) {
+        this.purchaseCost = purchaseCost.getAmount();
+    }
+
+    @Override
+    public Money getMargin() {
+        return getPrice().subtract(getPurchaseCost());
     }
 
     @Override

@@ -176,6 +176,20 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     public void setListPrice(Money listPrice);
 
     /**
+     *
+     * @return
+     */
+    public Money getPurchaseCost();
+
+    /**
+     *
+     * @param purchaseCost
+     */
+    public void setPurchaseCost(Money purchaseCost);
+
+    public Money getMargin();
+
+    /**
      * Returns the name of the Sku.  The name is a label used to show when displaying the sku.
      */
     public String getName();

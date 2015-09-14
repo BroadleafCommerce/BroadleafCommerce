@@ -798,4 +798,6 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      */
     public Money getSalePrice();
 
+    public Money getMargin();
+
 }
