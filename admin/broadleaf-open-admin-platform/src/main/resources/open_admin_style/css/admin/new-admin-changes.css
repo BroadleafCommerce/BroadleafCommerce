@@ -52,6 +52,10 @@
     left: 23px;
 }
 
+.app-content .content .section-content .main-content .listgrid-container {
+    padding: 20px 40px;
+}
+
 .hidden {
     display: none;
 }
@@ -93,15 +97,9 @@ circle {
     line-height: 36px;
     outline: 0;
     padding: 0 2rem;
-    text-transform: uppercase;
+    text-transform: capitalize;
     vertical-align: middle;
     -webkit-tap-highlight-color: transparent;
-}
-.button {
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-}
-.button:hover {
-    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 
 .button.large {
@@ -116,9 +114,11 @@ circle {
     background-color: #757575;
 }
 
+/**
 .button.primary:hover {
     background-color: #BAD363;
 }
+**/
 
 .button.and-button {
     background-color: #757575;
@@ -131,7 +131,6 @@ circle {
 .button-action:hover {
     background-color: rgba(255,255,255,0.5);
     color: black;
-    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
 }
 
 .button-action {
@@ -202,15 +201,12 @@ tr {
     padding: 20px;
 }
 
-.app-content .content .sandbox-bar {
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-}
-
 .app-content .content .sandbox-bar .sandbox-actions .button {
     background-color: rgba(0,0,0,0.1);
-    margin: 2px 0 0 5px;
+    margin: 5px 0 0 5px;
     padding: 0;
-    line-height: 10px;
+    line-height: normal;
+    height: inherit;
     color: white;
 }
 
@@ -315,6 +311,7 @@ input[type="radio"].radio+label.radio-label.clr,
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: middle;
+    padding: 5px 5px 5px 15px;
 }
 
 .borderlessGroup {
@@ -415,7 +412,6 @@ button:disabled {
 .listgrid-table-footer {
     padding: 2px 10px;
     /* display: inline-block; */
-    background-color: #E1E0DD;
     border-top: 1px solid #E4E2DF;
     font-size: 12px;
 }
@@ -426,11 +422,28 @@ button:disabled {
 }
 
 .list-grid-table tbody tr:hover {
+    background-color: #E1E0DD;
+}
+
+.listgrid-container tr.dirty {
+    background-color: #F7EFDC;
+}
+
+.table-striped>tbody>tr.dirty:nth-of-type(even) {
+    background-color: #F7EFDC;
+}
+
+.table-striped>tbody>tr.dirty:nth-of-type(odd) {
     background-color: #F7EFDC;
 }
 
 .list-grid-table tbody tr.selected {
     background-color: #F7EFDC;
+}
+
+.list-grid-table .workflow-icon {
+    font-weight: bold;
+    color: #efbc62;
 }
 
 .listgrid-modal-actions {
@@ -817,6 +830,9 @@ fieldset legend i.help-tip {
 
 .section-tabs {
     padding-top: 10px;
+}
+
+.modal .section-tabs {
     background-color:inherit;
 }
 
@@ -848,11 +864,11 @@ body.login .account-actions {
 
 .account-actions ul {
     width: 130px;
-    float: left;
+    float: right;
 }
 
 .account-actions .button {
-    float: right;
+    float: left;
 }
 
 input.color-picker-value {

@@ -218,7 +218,7 @@ public class ListGridRecord {
 
         if (getIsDirty()) {
             return new ListGridRecordIcon()
-                .withCssClass("icon-pencil")
+                .withCssClass("blc-icon-site-updates")
                 .withMessage(BLCMessageUtils.getMessage("listgrid.record.edited"))
                 .withHasDetails(false);
         }
