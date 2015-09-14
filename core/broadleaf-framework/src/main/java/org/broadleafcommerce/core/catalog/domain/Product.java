@@ -798,6 +798,10 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
      */
     public Money getSalePrice();
 
+    /**
+     * added just for convenience, references defaultSku.margin
+     * @return
+     */
     public Money getMargin();
 
 }
