@@ -660,6 +660,14 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getCost() {
+        if (cost == null && hasDefaultSku()) {
+            return lookupDefaultSku().getCost();
+        }
+
+        if (cost == null) {
+            return null;
+        }
+
         return new Money(cost, getCurrency());
     }
 
