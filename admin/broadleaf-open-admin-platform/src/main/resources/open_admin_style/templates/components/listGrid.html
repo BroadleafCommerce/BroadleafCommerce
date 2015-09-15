@@ -117,7 +117,7 @@
                             th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}" />
                             
                         <span th:if="${headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">
-                           <span th:remove="tag" th:text="${field.displayValue}" />
+                           <span th:if="${!headerField.mainEntityLink}" th:remove="tag" th:text="${field.displayValue}" />
                            <a th:href="@{${headerField.foreignKeyClass + '/' + field.value}}" class="modal-view">
                                 <i class="icon-external-link"></i>
                            </a>
