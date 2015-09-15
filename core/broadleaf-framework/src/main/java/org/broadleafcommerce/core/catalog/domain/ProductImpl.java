@@ -419,6 +419,11 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     }
 
     @Override
+    public Money getMargin() {
+        return getDefaultSku().getMargin();
+    }
+
+    @Override
     public Sku getDefaultSku() {
         return defaultSku;
     }
