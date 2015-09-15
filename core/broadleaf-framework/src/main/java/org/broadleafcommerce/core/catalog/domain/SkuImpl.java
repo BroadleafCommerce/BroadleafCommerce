@@ -682,7 +682,7 @@ public class SkuImpl implements Sku {
         }
 
         if (margin != null && purchaseCost != null) {
-            margin.subtract(purchaseCost);
+            margin = margin.subtract(purchaseCost);
         }
 
         return margin;
