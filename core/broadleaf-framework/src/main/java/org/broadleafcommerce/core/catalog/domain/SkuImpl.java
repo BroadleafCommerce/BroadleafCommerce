@@ -670,19 +670,22 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getMargin() {
-        Money margin = getPrice();
+        Money margin = null;
+        Money price = getPrice();
         Money purchaseCost = getCost();
 
-        if (margin == null && hasDefaultSku()) {
-            margin = lookupDefaultSku().getPrice();
+        if (price == null && hasDefaultSku()) {
+            price = lookupDefaultSku().getPrice();
         }
 
         if (purchaseCost == null && hasDefaultSku()) {
             purchaseCost = lookupDefaultSku().getCost();
         }
 
-        if (margin != null && purchaseCost != null) {
-            margin = margin.subtract(purchaseCost);
+        if (price != null) {
+            if (purchaseCost != null) {
+                margin = price.subtract(purchaseCost).divide(price.getAmount());
+            }
         }
 
         return margin;
