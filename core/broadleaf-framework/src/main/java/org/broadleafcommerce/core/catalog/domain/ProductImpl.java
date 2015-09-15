@@ -128,8 +128,6 @@ import javax.persistence.Transient;
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = true)),
         @AdminPresentationMergeOverride(name = "defaultSku.retailPrice", mergeEntries =
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "REQUIRED")),
-        @AdminPresentationMergeOverride(name = "defaultSku.purchaseCost", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "REQUIRED")),
         @AdminPresentationMergeOverride(name = "defaultSku.name", mergeEntries =
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "REQUIRED"))
 })

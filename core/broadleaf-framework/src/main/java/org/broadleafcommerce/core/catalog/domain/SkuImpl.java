@@ -210,11 +210,11 @@ public class SkuImpl implements Sku {
         fieldType = SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
-    @Column(name = "PURCHASE_COST", precision = 19, scale = 5)
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Purchase_Cost", order = 2500,
-            group = Presentation.Group.Name.Price, groupOrder = Presentation.Group.Order.Price, prominent = true,
-            gridOrder = 7, fieldType = SupportedFieldType.MONEY)
-    protected BigDecimal purchaseCost;
+    @Column(name = "COST", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Cost", order = 2500,
+            group = Presentation.Group.Name.Price, groupOrder = Presentation.Group.Order.Price,
+            fieldType = SupportedFieldType.MONEY)
+    protected BigDecimal cost;
 
     @Column(name = "NAME")
     @Index(name = "SKU_NAME_INDEX", columnNames = {"NAME"})
@@ -659,18 +659,33 @@ public class SkuImpl implements Sku {
     }
 
     @Override
-    public Money getPurchaseCost() {
-        return new Money(purchaseCost, getCurrency());
+    public Money getCost() {
+        return new Money(cost, getCurrency());
     }
 
     @Override
-    public void setPurchaseCost(Money purchaseCost) {
-        this.purchaseCost = purchaseCost.getAmount();
+    public void setCost(Money cost) {
+        this.cost = cost.getAmount();
     }
 
     @Override
     public Money getMargin() {
-        return getPrice().subtract(getPurchaseCost());
+        Money margin = getPrice();
+        Money purchaseCost = getCost();
+
+        if (margin == null && hasDefaultSku()) {
+            margin = lookupDefaultSku().getPrice();
+        }
+
+        if (purchaseCost == null && hasDefaultSku()) {
+            purchaseCost = lookupDefaultSku().getCost();
+        }
+
+        if (margin != null && purchaseCost != null) {
+            margin.subtract(purchaseCost);
+        }
+
+        return margin;
     }
 
     @Override

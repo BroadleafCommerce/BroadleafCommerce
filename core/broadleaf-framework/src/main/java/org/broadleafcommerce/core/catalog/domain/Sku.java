@@ -180,17 +180,17 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      *
      * @return the purchase cost of this Sku
      */
-    public Money getPurchaseCost();
+    public Money getCost();
 
     /**
      * Sets the purchase cost for this Sku.
      *
-     * @param purchaseCost
+     * @param cost
      */
-    public void setPurchaseCost(Money purchaseCost);
+    public void setCost(Money cost);
 
     /**
-     * Returns the margin of the Sku. This is the value of getPrice() - getPurchaseCost()
+     * Returns the margin of the Sku. This is the value of getPrice() - getCost()
      *
      * @return the margin of this Sku
      */
