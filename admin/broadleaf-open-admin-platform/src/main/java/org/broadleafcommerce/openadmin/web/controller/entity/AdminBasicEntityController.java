@@ -962,6 +962,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             listGrid.setFriendlyName(collectionMetadata.getPolymorphicEntities().getFriendlyName());
             if (entityForm == null) {
                 entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+                entityForm.setCeilingEntityClassname(ppr.getAdornedList().getAdornedTargetEntityClassname());
             } else {
                 formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
                 formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm);
