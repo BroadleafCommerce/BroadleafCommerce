@@ -36,12 +36,23 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
 
         var numElements = rule.$el.find('.rule-value-container span.rule-val-sep').length + 1;
         if (numElements > 1) {
-            var dynamicWidth = 225/numElements;
+            var dynamicWidth = 205/numElements;
             rule.$el.find('.rule-value-container span.rule-val-sep').parent()
                 .find('input').each(function() {
                     var $this = $(this);
                     $this.wrap("<div style='display:inline-block;width:" + dynamicWidth + "px;'></div>");
                 });
+        }
+
+        if (rule.$el.find('.filter-apply-button').length == 0) {
+            // add "Apply" button
+            var applyButton = $("<button>", {
+                html: "Apply",
+                class: "button primary filter-apply-button"
+            });
+            rule.$el.find('.rule-header .rule-actions').append(applyButton);
+            rule.$el.find('.rule-header .remove-row').css('right', '').css('left', '16px');
+            rule.$el.find('.filter-text').css('padding-left', '22px');
         }
     });
 
@@ -50,15 +61,16 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
     });
 
     this.on('afterCreateRuleOperators.filter', function(h, rule) {
-        //var el = rule.$el;
+        var el = rule.$el;
 
         // make rule filter field readonly
-        //var filterText = el.find('div.rule-filter-container > div > div.selectize-input .item').text();
-        //var readonlyFilter = $("<span>", {
-        //    html: "Filter where <strong>" + filterText + "</strong>"
-        //});
-        //el.find('div.rule-filter-container').append($(readonlyFilter));
-        //el.find('div.rule-filter-container > div > div.selectize-input').hide();
+        var filterText = el.find('div.rule-filter-container > div > div.selectize-input .item').text();
+        var readonlyFilter = $("<span>", {
+            html: "Filter where <strong>" + filterText + "</strong>",
+            class: "filter-text"
+        });
+        el.find('div.rule-filter-container').append($(readonlyFilter));
+        el.find('div.rule-filter-container > div > div.selectize-input').hide();
 
         styleInputs(rule);
     });
@@ -69,6 +81,11 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
 
     this.on('afterUpdateRuleOperator.filter', function(h, rule) {
         styleInputs(rule);
+    });
+
+    this.on('afterDeleteRule.filter', function(h, rule) {
+        // apply the filters
+        BLCAdmin.filterBuilders.applyFilters();
     });
 
     /**

@@ -139,6 +139,9 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     @Resource(name = "blListGridErrorMessageExtensionManager")
     protected ListGridErrorMessageExtensionManager listGridErrorExtensionManager;
 
+    @Resource(name = "blAdminNavigationService")
+    protected AdminNavigationService adminNavigationService;
+
     @Resource
     protected DataFormatProvider dataFormatProvider;
 
@@ -248,6 +251,12 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             }
 
             fieldDTO.setValues(new JSONObject(enumMap).toString());
+        } else if (field.getFieldType().equals("ADDITIONAL_FOREIGN_KEY")) {
+            fieldDTO.setOperators("blcFilterOperators_Selectize");
+            fieldDTO.setType("string");
+
+            AdminSection section = adminNavigationService.findAdminSectionByClassAndSectionId(fmd.getForeignKeyClass(), null);
+            fieldDTO.setSelectizeSectionKey(section.getSectionKey());
         } else {
             fieldDTO.setOperators("blcFilterOperators_Text");
         }

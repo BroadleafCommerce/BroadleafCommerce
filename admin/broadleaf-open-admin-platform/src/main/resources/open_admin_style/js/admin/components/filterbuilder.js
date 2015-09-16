@@ -310,10 +310,10 @@
          * @param hiddenId
          * @returns {*|jQuery|HTMLElement}
          */
-        getSaveModalFilterLink : function(hiddenId) {
+        getCloseModalFilterLink : function(hiddenId) {
             var saveBtn = $("<button>", {'class' : 'set-modal-filter-builder button primary',
-                'text' : 'Apply Filters',
-                'data-hiddenId' : hiddenId});
+                'text' : 'Close'
+            });
             return saveBtn;
         },
 
@@ -352,6 +352,102 @@
             }
             return null;
         },
+
+        /**
+         * A custom pre-init query builder field handler to modify the filters object
+         * in order to support the Selectize widget in the Query Builder.
+         * @param field
+         */
+        initSelectizePreInitFieldHandler : function(field) {
+            //initialize selectize plugin
+            var opRef = field.operators;
+
+            if (opRef && typeof opRef === 'string' && "blcFilterOperators_Selectize" === opRef) {
+                var sectionKey = field.selectizeSectionKey;
+
+                field.multiple = true;
+                field.plugin = 'selectize';
+                field.input = function(rule, name){
+                    return "<input type='text' class='query-builder-selectize-input' data-hydrate=''>";
+                },
+                    field.plugin_config = {
+                        maxItems: null,
+                        persist: false,
+                        valueField: "id",
+                        labelField: "label",
+                        searchField: "label",
+                        loadThrottle: 100,
+                        preload: true,
+                        hideSelected: true,
+                        placeholder: field.label + " +",
+                        onInitialize: function () {
+                            var $selectize = this;
+                            $selectize.sectionKey = sectionKey;
+                            this.revertSettings.$children.each(function () {
+                                $.extend($selectize.options[this.value], $(this).data());
+                            });
+                        },
+                        onLoad: function() {
+                            // Initialize selectize rule data
+                            // after the options have been loaded
+                            // (Values may contain multiple items and are sent back as a single String array)
+                            var $selectize = this;
+                            var dataHydrate = '[' + $selectize.$input.attr("data-hydrate") + ']';
+                            dataHydrate = $.parseJSON(dataHydrate);
+                            for (var k=0; k<dataHydrate.length; k++) {
+                                if (!isNaN(dataHydrate[k])) {
+                                    $selectize.addItem(Number(dataHydrate[k]), false);
+                                    var name = $selectize.getItem(Number(dataHydrate[k])).text();
+                                    var $readonly = this.$input.parent().parent().find('.read-only');
+                                    $readonly.html($readonly.html().replace(Number(dataHydrate[k]), name));
+                                }
+                            }
+                        },
+                        load: function(query, callback) {
+                            var $selectize = this;
+                            var queryData = {};
+                            queryData["name"] = query;
+
+                            BLC.ajax({
+                                url: BLC.servletContext + "/" + sectionKey + "/selectize",
+                                type: 'GET',
+                                data: queryData
+                            }, function(data) {
+                                $.each(data.options, function (index, value) {
+                                    if ($selectize.getOption(value.id).length === 0 && $selectize.getItem(value.id).length === 0) {
+                                        $selectize.addOption({id: value.id, label: value.name});
+                                        if (typeof value.alternateId !== 'undefined') {
+                                            $selectize.options[value.name].alternate_id = data.alternateId;
+                                        }
+                                    }
+                                });
+                                callback(data);
+                            });
+                        }
+                    };
+                field.valueSetter = function(rule, value) {
+                    rule.$el.find('.rule-value-container input.query-builder-selectize-input')[0].selectize.setValue(value);
+                    rule.$el.find('.rule-value-container input.query-builder-selectize-input').attr('data-hydrate', value);
+                };
+                field.valueGetter = function(rule) {
+                    return "["+rule.$el.find('.rule-value-container input.query-builder-selectize-input').val()+"]";
+                }
+            }
+        },
+
+        /**
+         * A custom post-construct query builder handler to fix the selectize widget upon adding a new rule
+         * @param builder
+         */
+        initSelectizePostConstructFieldHandler : function (builder) {
+            $(builder).on('afterCreateRuleInput.queryBuilder', function(e, rule) {
+                if (rule.filter.plugin == 'selectize') {
+                    rule.$el.find('.rule-value-container').css('min-width', '200px')
+                        .find('.selectize-control').removeClass('form-control');
+                }
+            });
+        },
+
         /**
          * Initializes the configuration object necessary for the jQuery Query Builder
          * to support the BLC Admin Rule Builder use cases (both RULE_WITH_QUANTITY and RULE_SIMPLE)
@@ -412,7 +508,9 @@
                         var numInputs = 1;
                         // is this a 'BETWEEN' filter?
                         if (queryString.indexOf('|') > 0) {
-                            numInputs = 2;
+                            if (fields[i].operators.length > 1) {
+                                numInputs = 2;
+                            }
                             queryString = queryString.split('|');
                         }
 
@@ -451,15 +549,95 @@
                     pk:filterData.pk,
                     removeConditionsLink: removeBtn}},
                 icons: {'add_rule':'fa fa-plus-circle',
-                    'remove_rule':'fa fa-minus-circle'},
+                    'remove_rule':'fa fa-times'},
                 allow_groups: false,
-                inputs_separator: "<span class='rule-val-sep'>,</span>",
+                inputs_separator: "<span class='rule-val-sep'>and</span>",
                 filters: fields,
                 rules: filterData.rules && filterData.rules.length > 0 ? filterData : null,
                 operators: window['blcOperators']
 
             };
             return config;
+        },
+
+        applyFilters : function() {
+            var hiddenId = $("#hidden-id").data('hiddenid');
+            var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
+
+            BLCAdmin.filterBuilders.setJSONValueOnField(filterBuilder);
+
+            // Convert JSON to request params
+            var filters = JSON.parse($('#' + hiddenId).val());
+            var inputs = [];
+
+            if (filters.data.length > 0) {
+                var rules = filters.data[0].rules;
+                $(rules).each(function (i, e) {
+                    var input = {'name': e.id, 'value': BLCAdmin.filterBuilders.formatInput(e.value, e.operator)};
+                    inputs.push(input);
+                });
+            }
+
+            var $tbody = $('body').find('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
+            BLC.ajax({
+                url: $($('.filter-fields')[0]).data('action'),
+                type: "GET",
+                data: $.param(inputs)
+            }, function(data) {
+                if ($tbody.data('listgridtype') == 'main') {
+
+                    if (inputs.length) {
+                        $(inputs).each(function (index, input) {
+                            BLCAdmin.history.replaceUrlParameter(input.name, input.value);
+                        });
+                    } else {
+                        $(BLCAdmin.history.getUrlParameters()).each(function(index, input) {
+                            for (var key in input) {
+                                BLCAdmin.history.replaceUrlParameter(key, null);
+                            }
+                        });
+                    }
+                }
+                BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, { isRefresh : false });
+            });
+
+            $('.error-container').hide();
+        },
+
+        /**
+         * Formats the input from the filter builder for saving
+         * @param input
+         * @param operator
+         * @returns {*}
+         */
+        formatInput : function(input, operator) {
+            // check if input is a date
+            var date = new Date(input);
+            if (date != 'Invalid Date') {
+                //mm/dd/yy HH:mm
+                input = BLCAdmin.dates.getServerDate(input);
+            }
+
+            switch(operator) {
+                case "IS_NULL":
+                    input = '\'\'';
+                    break;
+                case "BETWEEN":
+                    var array = JSON.parse(input);
+                    input = array[0] + '|' + array[1];
+                    break;
+                case "COLLECTION_IN":
+                case "COLLECTION_NOT_IN":
+                    var array = JSON.parse(input);
+                    input = '';
+                    for (var i = 0; i < array.length; i++) {
+                        input += array[i] + '|'
+                    }
+                    input = input.substring(0, input.length - 1);
+                    break;
+                default:
+            }
+            return input;
         },
 
         /** Set the readable translation of the rule corresponding to the rule builder **/
@@ -532,6 +710,11 @@
      * the appropriate fields and data (as specified by the container)
      */
     BLCAdmin.addInitializationHandler(function($container) {
+
+        //Add default pre-init and post-construct handlers (e.g. selectize)
+        BLCAdmin.filterBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePreInitFieldHandler);
+        BLCAdmin.filterBuilders.addPostConstructQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePostConstructFieldHandler);
+
         BLCAdmin.addExcludedSelectizeSelector('.query-builder-filters-container *');
 
         //Initialize all filter builders on the page
@@ -559,63 +742,67 @@
 $(document).ready(function() {
 
     /**
+     * Invoked from the "Apply" button on an individual row
+     */
+    $('body').on('click', 'button.filter-apply-button', function () {
+        // apply the filters
+        BLCAdmin.filterBuilders.applyFilters();
+
+        // mark this rule as read-only
+        var el = $(this).parent().parent().parent();
+
+        var filterText = el.find('.rule-filter-container .selectize-input .item').text();
+        var operatorText = el.find('.rule-operator-container .selectize-input .item').text();
+        var valueText = el.find('.rule-value-container .selectize-input .item');
+
+        var valueArray = [];
+        $.each(valueText, function(i, val) {
+            valueArray.push($(val).text());
+        });
+        valueText = valueArray.join(", ");
+
+        if (valueText == '') {
+            valueText = el.find('.rule-value-container input');
+            $.each(valueText, function(i, val) {
+                valueArray.push($(val).val());
+            });
+        }
+        valueText = valueArray.join(" and ");
+
+        // if no value is set, this is probably an empty row
+        if (!valueText) {
+            return;
+        }
+
+        el.find('.read-only').remove();
+        var readonlySpan = $("<span>", {
+            html: "Filter where <strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
+            class: "read-only"
+        });
+        el.append($(readonlySpan));
+
+        el.find('.rule-filter-container').hide();
+        el.find('.rule-operator-container').hide();
+        el.find('.rule-value-container').hide();
+        el.find('.rule-value-container input').hide();
+
+        // need to remove the "Apply" button on already applied filters
+        el.find('.filter-apply-button').remove();
+        el.find('.rule-header .remove-row').css('left', '').css('right', '16px');
+        el.find('.filter-text').css('padding-left', '0');
+    });
+
+    /**
      * Invoked from a Filter Builder with display type : "MODAL"
-     * Invoked from the "Apply Filters" button on a modal filter builder
+     * Invoked from the "Close" button on a modal filter builder
      */
     $('body').on('click', 'button.set-modal-filter-builder', function () {
-        var hiddenId = $($(this)).data('hiddenid');
-        var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
-
-        // remove any empty rules
-        for (var i = 0; i < filterBuilder.builders.length; i++) {
-            var builder = filterBuilder.builders[i];
-
-            $(builder).find('.rule-operator-container').each(function(i, e) {
-               if (e.innerHTML == '') {
-                   $(e).parent().find('button').click()
-               }
-            });
-        }
-
-        BLCAdmin.filterBuilders.setJSONValueOnField(filterBuilder);
         BLCAdmin.hideCurrentModal();
+    });
 
-        // Convert JSON to request params
-        var filters = JSON.parse($('#' + hiddenId).val());
-        var inputs = [];
-
-        if (filters.data.length > 0) {
-            var rules = filters.data[0].rules;
-            $(rules).each(function (i, e) {
-                var input = {'name': e.id, 'value': formatInput(e.value, e.operator)};
-                inputs.push(input);
-            });
-        }
-
-        var $tbody = $('body').find('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
-        //BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
-        BLC.ajax({
-            url: $(this).closest('.filter-fields').data('action'),
-            type: "GET",
-            data: $.param(inputs)
-        }, function(data) {
-            if ($tbody.data('listgridtype') == 'main') {
-
-                if (inputs.length) {
-                    $(inputs).each(function (index, input) {
-                        BLCAdmin.history.replaceUrlParameter(input.name, input.value);
-                    });
-                } else {
-                    $(BLCAdmin.history.getUrlParameters()).each(function(index, input) {
-                        for (var key in input) {
-                            BLCAdmin.history.replaceUrlParameter(key, null);
-                        }
-                    });
-                }
-            }
-            //BLCAdmin.listGrid.hideLoadingSpinner($tbody);
-            BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, { isRefresh : false });
-        });
+    $('body').on('click', '.remove-row', function() {
+        // apply the filters
+        BLCAdmin.filterBuilders.applyFilters();
     });
 
     /**
@@ -650,10 +837,18 @@ $(document).ready(function() {
         }
         $modalContainer.show();
 
+        var hiddenInput = $("<input>", {
+            'type' : 'hidden',
+            'id' : 'hidden-id',
+            'data-hiddenId' : hiddenId
+        });
+
         var $modal = BLCAdmin.getModalSkeleton();
+        //$modal.addClass('sm');
+        $modal.find('.modal-body').append(hiddenInput);
         $modal.find('.modal-body').append($modalContainer);
         $modal.find('.modal-body').css('overflow', 'visible');
-        $modal.find('.modal-footer').append(BLCAdmin.filterBuilders.getSaveModalFilterLink(hiddenId));
+        $modal.find('.modal-footer').append(BLCAdmin.filterBuilders.getCloseModalFilterLink(hiddenId));
 
         $modal.find('.modal-body').find('select').each(function(i, el) {
             var el = $(el);
@@ -665,6 +860,50 @@ $(document).ready(function() {
             el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("122px");
             el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("245px");
             el.parent().parent().find('div.rule-value-container').css("display", "inline-block");
+        });
+
+        $modal.find('.rule-container').each(function(i, el) {
+            var el = $(el);
+
+            var filterText = el.find('.rule-filter-container .selectize-input .item').text();
+            var operatorText = el.find('.rule-operator-container .selectize-input .item').text();
+            var valueText = el.find('.rule-value-container .selectize-input .item').text();
+            if (valueText == '') {
+                var valueArray = [];
+                valueText = el.find('.rule-value-container input');
+                $.each(valueText, function(i, val) {
+                    valueArray.push($(val).val());
+                });
+                valueText = valueArray.join("</strong> and <strong>");
+            }
+
+            // check for selectize value
+            if (valueText == "</strong> and <strong>") {
+                valueText = el.find('.rule-value-container input').data('hydrate');
+                valueText = valueText.toString().replace(',', "</strong>, <strong>");
+            }
+
+            // if no value is set, this is probably an empty row
+            if (!valueText) {
+                return;
+            }
+
+            el.find('.read-only').remove();
+            var readonlySpan = $("<span>", {
+                html: "Filter where <strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
+                class: "read-only"
+            });
+            el.append($(readonlySpan));
+
+            el.find('.rule-filter-container').hide();
+            el.find('.rule-operator-container').hide();
+            el.find('.rule-value-container').hide();
+            el.find('.rule-value-container input').hide();
+
+            // need to remove the "Apply" button on already applied filters
+            el.find('.filter-apply-button').remove();
+            el.find('.rule-header .remove-row').css('left', '').css('right', '16px');
+            el.find('.filter-text').css('padding-left', '0');
         });
 
         BLCAdmin.showElementAsModal($modal, function() {
@@ -690,33 +929,5 @@ $(document).ready(function() {
             el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("223px");
         }
     });
-
-    /**
-     * Formats the input from the filter builder for saving
-     * @param input
-     * @param operator
-     * @returns {*}
-     */
-    function formatInput(input, operator) {
-
-        // check if input is a date
-        var date = new Date(input);
-        if (date != 'Invalid Date') {
-            //mm/dd/yy HH:mm
-            input = BLCAdmin.dates.getServerDate(input);
-        }
-
-        switch(operator) {
-            case "IS_NULL":
-                input = '\'\'';
-                break;
-            case "BETWEEN":
-                var array = JSON.parse(input);
-                input = array[0] + '|' + array[1];
-                break;
-            default:
-        }
-        return input;
-    }
 
 });

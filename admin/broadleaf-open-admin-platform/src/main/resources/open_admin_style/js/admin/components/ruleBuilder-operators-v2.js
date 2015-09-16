@@ -127,3 +127,7 @@ var blcFilterOperators_Boolean = [
 var blcFilterOperators_Enumeration = [
     "EQUALS"
 ];
+
+var blcFilterOperators_Selectize = [
+    "COLLECTION_IN"
+];
