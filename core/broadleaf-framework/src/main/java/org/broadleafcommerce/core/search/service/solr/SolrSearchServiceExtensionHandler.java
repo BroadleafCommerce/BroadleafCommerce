@@ -93,11 +93,13 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * in order to return the right value to populate in the <b>queryFieldsResult</b>. If the returned result is
      * {@link ExtensionResultStatusType#NOT_HANDLED} then the default behavior is to only do that.
      *
+     *
+     * @param query
      * @param searchField the search field
      * @param searchFieldType the field type of the field
      * @param queryFieldsResult the binding result that contains the list of query fields, only add to this
      * @return the result of the handler, if NOT_HANDLED, then no query fields were added
      * @see {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
      */
-    public ExtensionResultStatusType getQueryField(SearchField searchField, SearchFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
+    public ExtensionResultStatusType getQueryField(SolrQuery query, SearchField searchField, SearchFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
 }

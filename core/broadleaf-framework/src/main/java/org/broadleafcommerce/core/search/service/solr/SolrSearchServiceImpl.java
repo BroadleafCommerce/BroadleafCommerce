@@ -521,7 +521,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         return "";
     }
 
-    protected String buildQueryFieldsString() {
+    protected String buildQueryFieldsString(SolrQuery query) {
         StringBuilder queryBuilder = new StringBuilder();
         List<Field> fields = null;
         if (useSku) {
@@ -533,7 +533,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         // we want to gather all the query fields into one list
         List<String> queryFields = new ArrayList<>();
         for (Field currentField : fields) {
-            getQueryFields(queryFields, currentField);
+            getQueryFields(query, queryFields, currentField);
         }
 
         // we join our query fields to a single string to append to the solr query
@@ -544,11 +544,11 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     /**
      * This helper method gathers the query fields for the given field and stores them in the List parameter.
-     *
+     * @param query
      * @param queryFields the query fields for this query
      * @param currentField the current field
      */
-    protected void getQueryFields(final List<String> queryFields, Field currentField) {
+    protected void getQueryFields(SolrQuery query, final List<String> queryFields, Field currentField) {
         SearchField searchField = searchFieldDao.readSearchFieldForField(currentField);
 
         if (searchField != null) {
@@ -562,7 +562,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 queryFieldResult.setResult(queryFields);
 
                 // here we try to get the query field's for this search field
-                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(searchField, searchFieldType, queryFieldResult);
+                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(query, searchField, searchFieldType, queryFieldResult);
 
                 if (ExtensionResultStatusType.NOT_HANDLED.equals(result)){
                     // if we didn't get any query fields we just add a default one
@@ -612,7 +612,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         }
         solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")");
         solrQuery.set("defType", "edismax");
-        solrQuery.set("qf", buildQueryFieldsString());
+        solrQuery.set("qf", buildQueryFieldsString(solrQuery));
 
         // Attach additional restrictions
         attachSortClause(solrQuery, searchCriteria, defaultSort);
