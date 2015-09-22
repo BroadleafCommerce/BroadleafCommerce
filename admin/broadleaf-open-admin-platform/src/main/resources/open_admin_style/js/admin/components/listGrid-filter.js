@@ -474,11 +474,16 @@ $(document).ready(function() {
      * (like Products)
      */
     $('body').on('submit', 'form.custom-entity-search', function(event) {
-        $('body').find('.custom-entity-search a').click();
+        $('body').find('.custom-entity-search button.search-button').click();
         return false;
     });
 
-    $('body').on('click', '.custom-entity-search button.clear-search', function(event) {
+    $('body').on('search', '#listgrid-search', function(event) {
+        $('body').find('.custom-entity-search button.search-button').click();
+        return false;
+    });
+
+    $('body').on('click', '.custom-entity-search button[type=search]', function(event) {
         $(this).closest('form').find('#listgrid-search').val('');
         $(this).siblings(".search-button").click();
     });

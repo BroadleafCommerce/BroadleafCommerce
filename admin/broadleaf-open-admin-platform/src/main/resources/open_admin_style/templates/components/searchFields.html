@@ -6,14 +6,36 @@
 
     <div class="col6" style="white-space: nowrap;">
         <form class="custom-entity-search" th:action="${currentUrl}" method="GET">
-            <input id="listgrid-search" type="search" name="table-search" style="width:300px;display: inline-block;"
+            <input id="listgrid-search" type="search" name="table-search" style="height:36px;vertical-align:bottom;width:300px;display: inline-block;"
                    th:placeholder="#{Search_Placeholder(#{${listGrid.headerFields[0].friendlyName}}, #{${entityFriendlyName}})}" />
             <div class="listgrid-search-actions">
                 <button class="button primary search-button" th:inline="text" th:utext="#{Search}"></button>
-                <button class="button secondary clear-search" th:inline="text" th:utext="#{Clear_Search}"></button>
+                <!--<button class="button secondary clear-search" th:inline="text" th:utext="#{Clear_Search}"></button>-->
 
                 <!-- Filter information -->
                 <button class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${listGrid.jsonFieldName}"></button>
+
+
+
+
+
+                <!-- Dropdown button if more than one action -->
+                <!--<div class="button-group">-->
+                    <!--<button class="button primary search-button" th:inline="text" th:utext="#{Search}"></button>-->
+                    <!--<button type="button" class="button primary large dropdown-toggle" data-toggle="dropdown" aria-expanded="false">-->
+                        <!--<span class="caret"></span>-->
+                    <!--</button>-->
+                    <!--<ul class="dropdown-menu dropdown-menu-right" role="menu">-->
+                        <!--<li>-->
+                            <!--<button class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${listGrid.jsonFieldName}"></button>-->
+                        <!--</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+
+
+
+
+
                 <div class="filter-builder-data"
                      th:attr="data-hiddenid=${listGrid.jsonFieldName},
                      data-containerid=${listGrid.friendlyName},

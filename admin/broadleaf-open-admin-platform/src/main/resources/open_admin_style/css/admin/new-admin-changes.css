@@ -1133,6 +1133,7 @@ p.deployment-summary {
     float: right;
     text-align: right;
     margin-top: 6px;
+    position: relative;
 }
 
 .selectize-control.single .selectize-input {
