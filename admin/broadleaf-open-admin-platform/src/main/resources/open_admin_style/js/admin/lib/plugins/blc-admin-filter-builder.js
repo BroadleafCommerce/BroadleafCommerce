@@ -57,6 +57,9 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
     });
 
     this.on('afterCreateRuleFilters.filter', function(h, rule) {
+        var rules = $(h.target).find('.rules-list');
+        rules.find('.no-filters').remove();
+
         styleInputs(rule);
     });
 
@@ -86,6 +89,13 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
     this.on('afterDeleteRule.filter', function(h, rule) {
         // apply the filters
         BLCAdmin.filterBuilders.applyFilters();
+
+        var rules = $(h.target).find('.rules-list');
+        if (!rules.children().length) {
+            // if the rule is undefined then display "No filters" message
+            var noFiltersText = BLCAdmin.filterBuilders.getNoFilterText();
+            rules.append(noFiltersText);
+        }
     });
 
     /**
@@ -118,7 +128,7 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
             //TODO i18n the text
             var followingRulesSpan = $("<span>", {"class": "rules-group-header-span", "text": "Filters Applied"});
             $h.find('.group-conditions').append(followingRulesSpan);
-            $h.find('.group-actions button').addClass('button').text('Add New Filter');
+            $h.find('.group-actions button').addClass('button primary').text('Add New Filter');
 
             $h.find('.rules-group-header').append($("<hr />"));
             h.value = $h.prop('outerHTML');

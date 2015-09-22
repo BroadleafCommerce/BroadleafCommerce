@@ -168,7 +168,7 @@
     margin: 5px;
 }
 
-.query-builder-rules .group-actions button {
+.query-builder-rules-container .query-builder-rules .group-actions button {
     background-color: rgba(0,0,0,0.04);
     color: #9a9a9a;
     font-size: 13px;
@@ -341,4 +341,17 @@
 .query-builder-filters-container .selectize-dropdown-content {
     background-color: white;
     border: 1px solid #d0d0d0;
+}
+
+.query-builder-filters-container .query-builder-rules .edit-row {
+    padding: 0;
+    position: absolute;
+    right: 42px;
+    top: 20px;
+    text-align: center;
+    color: #9a9a9a;
+    font-size: 18px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
 }

@@ -311,10 +311,35 @@
          * @returns {*|jQuery|HTMLElement}
          */
         getCloseModalFilterLink : function(hiddenId) {
-            var saveBtn = $("<button>", {'class' : 'set-modal-filter-builder button primary',
+            var saveBtn = $("<button>", {'class' : 'set-modal-filter-builder button secondary',
                 'text' : 'Close'
             });
             return saveBtn;
+        },
+
+        /**
+         * Returns a "No filters applied" text element
+         * @returns {*|jQuery|HTMLElement}
+         */
+        getNoFilterText: function() {
+            var noFiltersText = $("<li>", {
+                html: "No filters applied yet.  Click Add New Filter",
+                class: "rule-container no-filters"
+            });
+            return noFiltersText;
+        },
+
+        /**
+         * Returns an "edit" butten element
+         * @param el
+         * @returns {*|jQuery|HTMLElement}
+         */
+        getEditButton: function(el) {
+            var editButton = $("<button>", {
+                'class' : 'edit-row',
+                'html' : '<i class="fa fa-pencil"></i>'
+            });
+            el.find('.rule-actions').append(editButton);
         },
 
         /**
@@ -379,6 +404,7 @@
                         loadThrottle: 100,
                         preload: true,
                         hideSelected: true,
+                        unique: true,
                         placeholder: field.label + " +",
                         onInitialize: function () {
                             var $selectize = this;
@@ -476,6 +502,8 @@
                     //run any pre-initialization handlers for this field
                     BLCAdmin.filterBuilders.runPreInitQueryBuilderFieldHandler(fields[i]);
 
+                    fields[i].unique = true;
+
                     var opRef = fields[i].operators;
                     if (opRef && typeof opRef === 'string') {
                         fields[i].operators = window[opRef];
@@ -545,17 +573,23 @@
             var removeBtn = addRemoveConditionsLink? this.getRemoveConditionLink() : null;
 
             var config = {
-                plugins: {'blc-admin-filter-builder': {
-                    pk:filterData.pk,
-                    removeConditionsLink: removeBtn}},
-                icons: {'add_rule':'fa fa-plus-circle',
-                    'remove_rule':'fa fa-times'},
+                plugins: {
+                    //'unique-filter': null,
+                    'blc-admin-filter-builder': {
+                        pk:filterData.pk,
+                        removeConditionsLink: removeBtn
+                    }
+                },
+                icons: {
+                    'add_rule':'fa fa-plus-circle',
+                    'remove_rule':'fa fa-times'
+                },
                 allow_groups: false,
                 inputs_separator: "<span class='rule-val-sep'>and</span>",
                 filters: fields,
                 rules: filterData.rules && filterData.rules.length > 0 ? filterData : null,
-                operators: window['blcOperators']
-
+                operators: window['blcOperators'],
+                select_placeholder: '~ Choose Attribute'
             };
             return config;
         },
@@ -563,6 +597,11 @@
         applyFilters : function() {
             var hiddenId = $("#hidden-id").data('hiddenid');
             var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
+
+            // couldn't find filter builder so exit
+            if (!filterBuilder) {
+                return;
+            }
 
             BLCAdmin.filterBuilders.setJSONValueOnField(filterBuilder);
 
@@ -573,8 +612,10 @@
             if (filters.data.length > 0) {
                 var rules = filters.data[0].rules;
                 $(rules).each(function (i, e) {
-                    var input = {'name': e.id, 'value': BLCAdmin.filterBuilders.formatInput(e.value, e.operator)};
-                    inputs.push(input);
+                    if (e.value != '[]') {
+                        var input = {'name': e.id, 'value': BLCAdmin.filterBuilders.formatInput(e.value, e.operator)};
+                        inputs.push(input);
+                    }
                 });
             }
 
@@ -770,11 +811,12 @@ $(document).ready(function() {
         valueText = valueArray.join(" and ");
 
         // if no value is set, this is probably an empty row
-        if (!valueText) {
+        if (!valueText || valueText == ' and ') {
             return;
         }
 
         el.find('.read-only').remove();
+        el.find('.filter-text').remove();
         var readonlySpan = $("<span>", {
             html: "Filter where <strong>" + filterText + "</strong> " + operatorText + " <strong>" + valueText + "</strong>",
             class: "read-only"
@@ -790,6 +832,9 @@ $(document).ready(function() {
         el.find('.filter-apply-button').remove();
         el.find('.rule-header .remove-row').css('left', '').css('right', '16px');
         el.find('.filter-text').css('padding-left', '0');
+
+        // add the edit button
+        BLCAdmin.filterBuilders.getEditButton(el);
     });
 
     /**
@@ -803,6 +848,44 @@ $(document).ready(function() {
     $('body').on('click', '.remove-row', function() {
         // apply the filters
         BLCAdmin.filterBuilders.applyFilters();
+    });
+
+    $('body').on('click', '.edit-row', function() {
+        var el = $(this).parent().parent().parent();
+
+        el.find('.read-only').remove();
+        el.find('.filter-text').remove();
+
+        // make rule filter field readonly
+        var filterText = el.find('div.rule-filter-container > div > div.selectize-input .item').text();
+        var readonlyFilter = $("<span>", {
+            html: "Filter where <strong>" + filterText + "</strong>",
+            class: "filter-text"
+        });
+        el.find('div.rule-filter-container').append($(readonlyFilter));
+
+        el.find('.rule-filter-container').show();
+        el.find('.rule-operator-container').show();
+
+        var hasSelectize = el.find('.rule-value-container').find('.selectize-control');
+        if (!hasSelectize.length) {
+            el.find('.rule-value-container input').show();
+        } else {
+            el.find('.rule-value-container .selectize-input').css('width','233px');
+        }
+        el.find('.rule-value-container').show();
+
+        // add "Apply" button
+        var applyButton = $("<button>", {
+            html: "Apply",
+            class: "button primary filter-apply-button"
+        });
+        el.find('.rule-header .rule-actions').append(applyButton);
+        el.find('.rule-header .remove-row').css('right', '').css('left', '16px');
+        el.find('.filter-text').css('padding-left', '22px');
+
+        // remove edit-button
+        el.find('.edit-row').remove();
     });
 
     /**
@@ -885,6 +968,7 @@ $(document).ready(function() {
 
             // if no value is set, this is probably an empty row
             if (!valueText) {
+                el.find('.remove-row').click();
                 return;
             }
 
@@ -895,6 +979,7 @@ $(document).ready(function() {
             });
             el.append($(readonlySpan));
 
+            el.find('div.rule-filter-container > div > div.selectize-input').hide();
             el.find('.rule-filter-container').hide();
             el.find('.rule-operator-container').hide();
             el.find('.rule-value-container').hide();
@@ -904,6 +989,9 @@ $(document).ready(function() {
             el.find('.filter-apply-button').remove();
             el.find('.rule-header .remove-row').css('left', '').css('right', '16px');
             el.find('.filter-text').css('padding-left', '0');
+
+            // add the edit button
+            BLCAdmin.filterBuilders.getEditButton(el);
         });
 
         BLCAdmin.showElementAsModal($modal, function() {
@@ -921,6 +1009,9 @@ $(document).ready(function() {
         var el = $(e.target);
         if (el.is('select')) {
             if (el.hasClass('form-control')) {
+                var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId('entityListGridJson');
+                $(filterBuilder.builders[0]).queryBuilder('updateDisabledFilters');
+                el.find('option[disabled]').remove();
                 el.removeClass('form-control').selectize();
             }
 
