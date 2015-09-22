@@ -116,39 +116,3 @@ $('body').on('change', 'input.color-picker-value', function() {
     var $this = $(this);
     $this.closest('.field-box').find('input.color-picker').spectrum('set', $this.val());
 });
-
-$('body').on('click', '.button:not(.disabled), .nav-section, .nav-links li', function(e) {
-    var x = e.pageX;
-    var y = e.pageY;
-    var clickY = y - $(this).offset().top;
-    var clickX = x - $(this).offset().left;
-    var box = this;
-
-    if (x && y) {
-        var setX = parseInt(clickX);
-        var setY = parseInt(clickY);
-
-        $(this).find("svg").remove();
-        $(this).append('<svg><circle cx="' + setX + '" cy="' + setY + '" r="' + 0 + '"></circle></svg>');
-
-        var c = $(box).find("circle");
-        c.animate( {
-                "r" : Math.sqrt(Math.pow($(box).outerWidth(), 2) + Math.pow($(box).outerHeight(), 2)).toFixed(2)
-            },
-            {
-                easing: "easeOutQuad",
-                duration: 400,
-                step: function (val) {
-                    c.attr("r", val);
-                },
-                complete: function () {
-                    $(this).animate({
-                        opacity: 0
-                    }, 1000, function() {
-                        $(this).parent().remove();
-                    });
-                }
-            }
-        );
-    }
-});
