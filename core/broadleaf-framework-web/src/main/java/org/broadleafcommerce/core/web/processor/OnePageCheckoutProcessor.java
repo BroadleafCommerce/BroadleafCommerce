@@ -513,14 +513,15 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         if (cart.getFulfillmentGroups() == null) {
             return false;
         }
+        boolean populatedShippingAddress = false;
         for (FulfillmentGroup fulfillmentGroup : cart.getFulfillmentGroups()) {
             if (fulfillmentGroupService.isShippable(fulfillmentGroup.getType())) {
-                if (fulfillmentGroup.getAddress() == null || fulfillmentGroup.getFulfillmentOption() == null) {
-                    return false;
+                if (fulfillmentGroup.getAddress() != null && fulfillmentGroup.getFulfillmentOption() != null) {
+                    populatedShippingAddress = true;
                 }
             }
         }
-        return true;
+        return populatedShippingAddress;
     }
 
 

@@ -518,9 +518,19 @@ $(document).ready(function() {
         
         var submitData = {};
         submitData[$firstInput.data('name')] =  $firstInput.val();
-        
+        // replace search value if it exist
+        for (key in submitData) {
+            BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
+        }
+        var urlParams = "";
+        var baseUrl = window.location.href;
+        var indexOfQ = baseUrl.indexOf('?');
+        if (indexOfQ >= 0) {
+            urlParams = baseUrl.substring(indexOfQ + 1);
+        }
+
         BLC.ajax({
-            url: $(this).closest('form').attr('action'),
+            url: $(this).closest('form').attr('action') +'?'+ urlParams,
             type: "GET",
             data: submitData
         }, function(data) {

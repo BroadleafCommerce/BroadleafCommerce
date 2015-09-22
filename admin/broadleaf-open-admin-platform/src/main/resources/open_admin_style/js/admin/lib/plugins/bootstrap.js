@@ -165,13 +165,17 @@
           this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
             .appendTo(document.body)
 
-          this.$backdrop.click(function() {
-              BLCAdmin.hideCurrentModal();
-          }
+            /**
+             * The only way that a BLC Admin modal can be closed is to click the "escape" key or press the close button.
+             * It should be noted that this is a deviation from the default behavior of bootstrap modals in order to allow multiple stacked open modals;
+             * The original code in bootstrap.js for modals has been left and commented out below.
+             */
+
+            //this.$backdrop.click(function() {
             //this.options.backdrop == 'static' ?
-              //$.proxy(this.$element[0].focus, this.$element[0])
+            //$.proxy(this.$element[0].focus, this.$element[0])
             //: $.proxy(this.hide, this)
-          )
+            //})
 
           if (doAnimate) this.$backdrop[0].offsetWidth // force reflow
 
