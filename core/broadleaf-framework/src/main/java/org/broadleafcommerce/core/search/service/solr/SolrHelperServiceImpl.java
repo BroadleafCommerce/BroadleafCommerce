@@ -330,7 +330,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         Long categoryId = getCategoryId(category);
         return new StringBuilder()
                 .append(getCategoryFieldName())
-                .append("_").append(categoryId).append("_").append("sort_d")
+                .append("_").append(categoryId).append("_").append(FieldType.SORT.getType())
                 .toString();
     }
 
@@ -339,7 +339,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         categoryId = getCategoryId(categoryId);
         return new StringBuilder()
                 .append(getCategoryFieldName())
-                .append("_").append(categoryId).append("_").append("sort_d")
+                .append("_").append(categoryId).append("_").append(FieldType.SORT.getType())
                 .toString();
     }
 
