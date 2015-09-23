@@ -20,7 +20,6 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
-import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.util.xml.ISO8601DateAdapter;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -28,6 +27,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Date;
 import java.util.List;
@@ -99,22 +99,6 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
             this.billingAddress = addressWrapper;
         }
 
-        if (model.getExpirationDate() != null) {
-            this.setExpirationDate(model.getExpirationDate());
-        }
-        if (model.getPaymentName() != null) {
-            this.setCardName(model.getPaymentName());
-        }
-        if (model.getLastFour() != null) {
-            this.setLastFour(model.getLastFour());
-        }
-        if (model.getCardType() != null) {
-            this.setCardType(model.getCardType());
-        }
-        if (model.getPaymentGatewayType() != null) {
-            this.setPaymentGatewayType(model.getPaymentGatewayType().getType());
-        }
-
         CustomerWrapper customerWrapper = (CustomerWrapper) context.getBean(CustomerWrapper.class.getName());
         customerWrapper.wrapDetails(model.getCustomer(), request);
         this.customer = customerWrapper;
@@ -128,7 +112,8 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
      * In this context, it is also assumed to contain id references to existing Customer and (billing) Address. 
      * No other fields from either customer or billingAddress are assumed, or necessary. 
      */
-    public CustomerPayment unwrap(HttpServletRequest request, org.springframework.context.ApplicationContext context) {
+    @Override
+    public CustomerPayment unwrap(HttpServletRequest request, ApplicationContext context) {
         CustomerPaymentService custPayService = (CustomerPaymentService) context.getBean("blCustomerPaymentService");
         CustomerPayment custPay = custPayService.create();
 
@@ -141,13 +126,8 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
         custPay.setCustomer(cust);
 
         custPay.setIsDefault(this.isDefault);
-        custPay.setPaymentName(this.getCardName());
-        custPay.setCardType(this.getCardType());
-        custPay.setExpirationDate(this.getExpirationDate());
-        custPay.setPaymentGatewayType(PaymentGatewayType.getInstance(this.getPaymentGatewayType()));
-        custPay.setLastFour(this.getLastFour());
         custPay.setPaymentToken(this.getPaymentToken());
-        super.transferAdditionalFieldsFromWrapper(custPay, this);
+        super.transferAdditionalFieldsFromWrapper(this, custPay);
         return custPay;
 
     }
@@ -197,10 +177,12 @@ public class CustomerPaymentWrapper extends BaseWrapper implements APIWrapper<Cu
         this.customer = customer;
     }
 
+    @Override
     public List<MapElementWrapper> getAdditionalFields() {
         return additionalFields;
     }
 
+    @Override
     public void setAdditionalFields(List<MapElementWrapper> additionalFields) {
         this.additionalFields = additionalFields;
     }

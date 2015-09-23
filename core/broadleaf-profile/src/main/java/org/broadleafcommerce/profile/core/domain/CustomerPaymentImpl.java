@@ -22,13 +22,11 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -38,14 +36,10 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,42 +119,6 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             groupOrder = Presentation.Group.Order.PAYMENT)
     protected boolean isDefault = false;
 
-    @Column(name = "LAST_PAYMENT_STATUS")
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Status", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.profile.core.domain.LastPaymentStatus",
-            prominent = false)
-    protected String lastPaymentStatus;
-
-    @Column(name = "EXPIRATION_DATE")
-    @Index(name="IDX_EXPIRATION_DATE_SEARCH", columnNames={"EXPIRATION_DATE"})
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Expiration_Date", order = 1000)
-    protected Date expirationDate;
-
-    @Column(name = "PAYMENT_NAME")
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Name", order = 1000)
-    protected String paymentName;
-
-    @Column(name = "LAST_FOUR")
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Last_Four", order = 1000)
-    protected String lastFour;
-
-    @Column(name = "CARD_TYPE")
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Card_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.payment.CreditCardType",
-            prominent = false)
-    protected String cardType;
-
-    @Column(name = "PAYMENT_GATEWAY_TYPE")
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Payment_Gateway_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.common.payment.PaymentGatewayType",
-            prominent = false)
-    protected String paymentGatewayType;
-
-    @Column(name = "LAST_EXPIRATION_NOTIFICATION")
-    @Index(name="IDX_LAST_EXPIRATION_NOTIFICATION_SEARCH", columnNames={"LAST_EXPIRATION_NOTIFICATION"})
-    @AdminPresentation(friendlyName = "CustomerPaymentImpl_Last_Expiration_Notification", order = 1001)
-    protected Date lastExpirationNotification;
-
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyType(@Type(type = "java.lang.String"))
     @Lob
@@ -228,56 +186,6 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     @Override
     public void setIsDefault(boolean aDefault) {
         this.isDefault = aDefault;
-    }
-
-    @Override
-    public String getLastPaymentStatus() {
-        return lastPaymentStatus;
-    }
-
-    @Override
-    public void setLastPaymentStatus(String aDefault) {
-        this.lastPaymentStatus = aDefault;
-    }
-
-    @Override
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    @Override
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
-    @Override
-    public String getPaymentName() {
-        return paymentName;
-    }
-
-    @Override
-    public void setPaymentName(String paymentName) {
-        this.paymentName = paymentName;
-    }
-
-    @Override
-    public String getLastFour() {
-        return lastFour;
-    }
-
-    @Override
-    public void setLastFour(String lastFour) {
-        this.lastFour = lastFour;
-    }
-
-    @Override
-    public String getCardType() {
-        return cardType;
-    }
-
-    @Override
-    public void setCardType(String cardType) {
-        this.cardType = cardType;
     }
 
     @Override
@@ -364,42 +272,6 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             }
         }
 
-    }
-
-    @Override
-    public Date getLastExpirationNotification() {
-        return lastExpirationNotification;
-    }
-
-    @Override
-    public void setLastExpirationNotification(Date lastExpirationNotification) {
-        this.lastExpirationNotification = lastExpirationNotification;
-    }
-
-    @Override
-    public PaymentGatewayType getPaymentGatewayType() {
-        return PaymentGatewayType.getInstance(paymentGatewayType);
-    }
-
-    @Override
-    public void setPaymentGatewayType(PaymentGatewayType paymentGatewayType) {
-        this.paymentGatewayType = paymentGatewayType == null ? null : paymentGatewayType.getType();
-    }
-
-    @Override
-    public void setExpirationDate(String expirationDate) {
-        String[] expDateArray = expirationDate.split("/");
-        Calendar calendar = new GregorianCalendar();
-        calendar.set(Integer.parseInt(expDateArray[1]), Integer.parseInt(expDateArray[0]), 0);
-        calendar.add(Calendar.MONTH, 1);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-
-        Date date = calendar.getTime();
-        this.expirationDate = date;
     }
 
 }

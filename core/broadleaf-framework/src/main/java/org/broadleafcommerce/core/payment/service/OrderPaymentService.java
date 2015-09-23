@@ -19,13 +19,10 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
-import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
 import java.util.List;
 
@@ -56,6 +53,4 @@ public interface OrderPaymentService {
 
     public PaymentLog createLog();
 
-    public CustomerPayment createCustomerPaymentFromOrderPayment(Customer customer, OrderPayment orderPayment) throws
-            PaymentException;
 }

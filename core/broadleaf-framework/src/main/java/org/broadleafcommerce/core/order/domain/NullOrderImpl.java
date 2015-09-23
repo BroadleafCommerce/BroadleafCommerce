@@ -383,16 +383,6 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
-    public Boolean getIsSecondary() {
-        return false;
-    }
-
-    @Override
-    public void setIsSecondary(Boolean isSecondary) {
-        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
-    }
-
-    @Override
     public <G extends Order> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         return null;
     }

@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
@@ -49,7 +50,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -130,24 +130,22 @@ public class OrderItemServiceImpl implements OrderItemService {
             item.setRetailPrice(itemRequest.getRetailPriceOverride());
         }
 
-        if (itemRequest.getItemAttributes() != null && !itemRequest.getItemAttributes().isEmpty()) {
-            Map<String, OrderItemAttribute> attributeMap = new HashMap<String, OrderItemAttribute>();
-            OrderItemAttribute orderItemAttribute;
-            
-            Iterator it = itemRequest.getItemAttributes().entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
-                orderItemAttribute = new OrderItemAttributeImpl();
-                
-                orderItemAttribute.setName(pair.getKey().toString());
-                orderItemAttribute.setValue(pair.getValue().toString());
-                orderItemAttribute.setOrderItem(item);
-                
-                attributeMap.put(pair.getKey().toString(), orderItemAttribute);
-                it.remove();
+        if (MapUtils.isNotEmpty(itemRequest.getItemAttributes())) {
+            Map<String, OrderItemAttribute> attributeMap = item.getOrderItemAttributes();
+            if (attributeMap == null) {
+                attributeMap = new HashMap<String, OrderItemAttribute>();
+                item.setOrderItemAttributes(attributeMap);
             }
             
-            item.setOrderItemAttributes(attributeMap);
+            for (Entry<String, String> entry : itemRequest.getItemAttributes().entrySet()) {
+                OrderItemAttribute orderItemAttribute = new OrderItemAttributeImpl();
+                
+                orderItemAttribute.setName(entry.getKey());
+                orderItemAttribute.setValue(entry.getValue());
+                orderItemAttribute.setOrderItem(item);
+                
+                attributeMap.put(entry.getKey(), orderItemAttribute);
+            }
         }
         
         return item;

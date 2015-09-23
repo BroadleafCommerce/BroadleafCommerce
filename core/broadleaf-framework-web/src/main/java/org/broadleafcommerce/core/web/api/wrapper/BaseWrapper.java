@@ -20,17 +20,18 @@
 
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.broadleafcommerce.profile.core.domain.AdditionalFields;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.broadleafcommerce.profile.core.domain.AdditionalFields;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * Base class for APIWrapper implementations to inject the EntityConfiguration reference.
@@ -72,14 +73,14 @@ public abstract class BaseWrapper implements ApplicationContextAware {
      * @param model
      * @param me
      */
-    public void transferAdditionalFieldsFromWrapper(AdditionalFields model, WrapperAdditionalFields me) {
+    public void transferAdditionalFieldsFromWrapper(WrapperAdditionalFields from, AdditionalFields to) {
         Map<String, String> destination = new HashMap<String, String>();
-        if (me.getAdditionalFields() != null && !me.getAdditionalFields().isEmpty()) {
-            for (MapElementWrapper elem : me.getAdditionalFields()) {
+        if (CollectionUtils.isNotEmpty(from.getAdditionalFields())) {
+            for (MapElementWrapper elem : from.getAdditionalFields()) {
                 destination.put(elem.key, elem.value);
             }
         }
-        model.setAdditionalFields(destination);
+        to.setAdditionalFields(destination);
     }
 
 }

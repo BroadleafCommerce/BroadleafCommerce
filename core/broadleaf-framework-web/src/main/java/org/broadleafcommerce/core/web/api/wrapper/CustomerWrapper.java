@@ -105,29 +105,6 @@ public class CustomerWrapper extends BaseWrapper implements APIWrapper<Customer>
         return customer;
     }
 
-    /**
-     * builds a Customer domain object, from a RESTful POST, assuming no previous database presence
-     * @param request
-     * @param context
-     * @return
-     */
-    public Customer restfulUnwrap(HttpServletRequest request, ApplicationContext context) {
-        CustomerService customerService = (CustomerService) context.getBean("blCustomerService");
-        Customer customer = customerService.createNewCustomer();
-        customer.setId(this.id);
-        customer.setFirstName(this.firstName);
-        customer.setLastName(this.lastName);
-        customer.setEmailAddress(this.emailAddress);
-        if (customerAttributes != null) {
-            for (CustomerAttributeWrapper customerAttributeWrapper : customerAttributes) {
-                CustomerAttribute attribute = customerAttributeWrapper.unwrap(request, context);
-                attribute.setCustomer(customer);
-                customer.getCustomerAttributes().put(attribute.getName(), attribute);
-            }
-        }
-        return customer;
-    }
-
     public Long getId() {
         return id;
     }

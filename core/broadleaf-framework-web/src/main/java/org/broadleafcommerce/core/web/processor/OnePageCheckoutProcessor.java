@@ -231,18 +231,6 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
                 if (PaymentType.CREDIT_CARD.equals(payment.getType())) {
                     if (payment.getBillingAddress() != null) {
                         billingForm.setAddress(payment.getBillingAddress());
-                        Boolean savePayment = payment.isSavePayment();
-                        billingForm.setSaveNewPayment(savePayment);
-                        Boolean useExisting = payment.isUseExisting();
-                        billingForm.setUseCustomerPayment(useExisting);
-                        if (savePayment) {
-                            billingForm.setPaymentName(payment.getPaymentName());
-                        }
-                        Boolean customerPaymentExists = payment.getCustomerPayment() != null;
-                        if (customerPaymentExists && useExisting) {
-                            billingForm.setCustomerPayment(payment.getCustomerPayment());
-                            billingForm.setCustomerPaymentId(payment.getCustomerPayment().getId());
-                        }
                     }
                 }
             }
@@ -298,7 +286,6 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         boolean showBillingInfoSection = true;
         boolean showShippingInfoSection = true;
         boolean showAllPaymentMethods = true;
-        boolean showPaymentMethodSection = true;
 
         int numShippableFulfillmentGroups = calculateNumShippableFulfillmentGroups();
         if (numShippableFulfillmentGroups == 0) {
@@ -320,7 +307,6 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
                     orderContainsUnconfirmedCreditCard = true;
                     unconfirmedCC = payment;
                 }
-                showPaymentMethodSection = payment.getCustomerPayment() == null;
             }
         }
 
@@ -339,7 +325,6 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
         localVars.put("showBillingInfoSection", showBillingInfoSection);
         localVars.put("showAllPaymentMethods", showAllPaymentMethods);
-        localVars.put("showPaymentMethodSection", showPaymentMethodSection);
         localVars.put("orderContainsThirdPartyPayment", orderContainsThirdPartyPayment);
         localVars.put("orderContainsUnconfirmedCreditCard", orderContainsUnconfirmedCreditCard);
         localVars.put("unconfirmedCC", unconfirmedCC);

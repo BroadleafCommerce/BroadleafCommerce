@@ -32,7 +32,6 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.CustomerPhone;
 import org.springframework.stereotype.Service;
 
@@ -100,12 +99,6 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         //Copy Additional Fields from PaymentTransaction into the Request DTO.
         //This will contain any gateway specific information needed to perform actions on this transaction
         Map<String, String> additionalFields = paymentTransaction.getAdditionalFields();
-
-        CustomerPayment customerPayment = paymentTransaction.getOrderPayment().getCustomerPayment();
-        if(customerPayment != null &&
-                customerPayment.getPaymentToken() != null) {
-            requestDTO.additionalField("TOKEN", customerPayment.getPaymentToken());
-        }
         
         for (String key : additionalFields.keySet()) {
             requestDTO.additionalField(key, additionalFields.get(key));

@@ -32,7 +32,6 @@ import org.broadleafcommerce.common.payment.dto.GatewayCustomerDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
-import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController;
 import org.broadleafcommerce.core.checkout.service.CheckoutService;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
@@ -52,7 +51,6 @@ import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.State;
 import org.broadleafcommerce.profile.core.service.AddressService;
 import org.broadleafcommerce.profile.core.service.CountryService;
-import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.core.service.StateService;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,9 +80,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     @Resource(name = "blOrderPaymentService")
     protected OrderPaymentService orderPaymentService;
 
-    @Resource(name = "blCustomerPaymentService")
-    private CustomerPaymentService customerPaymentService;
-    
     @Resource(name = "blCheckoutService")
     protected CheckoutService checkoutService;
     
@@ -162,8 +157,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         // as invalid before adding the new one
         List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
         Address tempBillingAddress = null;
-        Boolean savePayment = false;
-        String paymentName = null;
         if (!config.handlesMultiplePayments()) {
             PaymentGatewayType gateway = config.getGatewayType();
             for (OrderPayment p : order.getPayments()) {
@@ -179,8 +172,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
 
                     if (PaymentGatewayType.TEMPORARY.equals(p.getGatewayType()) ) {
                         tempBillingAddress = p.getBillingAddress();
-                        savePayment = p.isSavePayment();
-                        paymentName = p.getPaymentName();
                     }
                 }
             }
@@ -226,17 +217,6 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         payment.setOrder(order);
         transaction.setOrderPayment(payment);
         payment.addTransaction(transaction);
-
-
-        try {
-            if (savePayment) {
-                payment.setPaymentName(paymentName);
-                payment.setCustomerPayment(orderPaymentService.createCustomerPaymentFromOrderPayment(order.getCustomer(), payment));
-            }
-        } catch (PaymentException e) {
-            e.printStackTrace();
-        }
-
 
         payment = orderPaymentService.save(payment);
 

@@ -19,17 +19,13 @@
  */
 package org.broadleafcommerce.core.payment.service;
 
-import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.util.TransactionUtils;
-import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.dao.OrderPaymentDao;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.service.CustomerPaymentService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,58 +101,4 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
         return paymentDao.readTransactionById(transactionId);
     }
 
-    @Override
-    public CustomerPayment createCustomerPaymentFromOrderPayment(Customer customer, OrderPayment orderPayment) throws PaymentException {
-        String cardType = null;
-        String expDate = null;
-        String lastFour = null;
-        String token = null;
-
-        for (PaymentTransaction paymentTransaction : orderPayment.getTransactions()) {
-            if (cardType == null) {
-                cardType = paymentTransaction.getAdditionalFields().get(PaymentAdditionalFieldType.CARD_TYPE.getType());
-            }
-            if (expDate == null) {
-                expDate = paymentTransaction.getAdditionalFields().get(PaymentAdditionalFieldType.EXP_DATE.getType());
-            }
-            if (lastFour == null) {
-                lastFour = paymentTransaction.getAdditionalFields().get(PaymentAdditionalFieldType.LAST_FOUR.getType());
-            }
-            if (token == null) {
-                token = paymentTransaction.getAdditionalFields().get(PaymentAdditionalFieldType.TOKEN.getType());
-            }
-        }
-
-        CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentByToken(token);
-        
-        if (customerPayment == null) {
-            customerPayment = customerPaymentService.create();
-        } else {
-            return customerPayment;
-        }
-        
-        customerPayment.setCustomer(customer);
-        customerPayment.setBillingAddress(orderPayment.getBillingAddress());
-        customerPayment.setPaymentGatewayType(orderPayment.getGatewayType());
-
-        if (expDate != null) {
-            customerPayment.setExpirationDate(expDate);
-        }
-
-        customerPayment.setCardType(cardType);
-        customerPayment.setLastFour(lastFour);
-        customerPayment.setPaymentToken(token);
-
-        String paymentName = orderPayment.getPaymentName();
-        if (paymentName == null || paymentName.isEmpty()) {
-            if (customerPayment.getCardType() != null && customerPayment.getLastFour() != null) {
-                paymentName = customerPayment.getCardType() + " ending in " + customerPayment.getLastFour();
-            } else {
-                paymentName = "Payment #" + customer.getCustomerPayments().size();
-            }
-        }
-        customerPayment.setPaymentName(paymentName);
-
-        return customerPaymentService.saveCustomerPayment(customerPayment);
-    }
 }

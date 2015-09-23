@@ -20,14 +20,6 @@
 
 package org.broadleafcommerce.core.web.api.endpoint.catalog;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -63,6 +55,14 @@ import org.broadleafcommerce.core.web.api.wrapper.SkuAttributeWrapper;
 import org.broadleafcommerce.core.web.api.wrapper.SkuWrapper;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.springframework.http.HttpStatus;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class exposes catalog services as RESTful APIs.  It is dependent on
@@ -574,18 +574,6 @@ public abstract class CatalogEndpoint extends BaseEndpoint {
         }
         throw BroadleafWebServicesException.build(HttpStatus.NOT_FOUND.value())
                 .addMessage(BroadleafWebServicesException.PRODUCT_NOT_FOUND, id);
-    }
-
-    public Long addSku(HttpServletRequest request, SkuWrapper skuWr) {
-        Sku sku = catalogService.createSku();
-        sku.setName(skuWr.getName());
-        Sku persisted = catalogService.saveSku(sku);
-        if (persisted != null) {
-            return persisted.getId();
-        } else {
-            throw BroadleafWebServicesException.build(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                    .addMessage(BroadleafWebServicesException.UNKNOWN_ERROR);
-        }
     }
 
     protected SearchService getSearchService() {

@@ -44,7 +44,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
@@ -282,10 +281,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Column(name = "TAX_OVERRIDE")
     protected Boolean taxOverride;
-
-    @Column(name = "IS_SECONDARY")
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
-    protected Boolean isSecondary;
 
     @Transient
     protected List<ActivityMessageDTO> orderMessages;
@@ -842,16 +837,6 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
        }
 
         return  createResponse;
-    }
-
-    @Override
-    public Boolean getIsSecondary() {
-        return isSecondary == null ? false : isSecondary;
-    }
-
-    @Override
-    public void setIsSecondary(Boolean isSecondary) {
-        this.isSecondary = isSecondary;
     }
 
     public static class Presentation {

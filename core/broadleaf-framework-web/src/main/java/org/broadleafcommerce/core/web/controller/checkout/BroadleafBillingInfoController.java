@@ -107,10 +107,6 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
                     p.setBillingAddress(updatedAddress);
                 }
                 
-                p.setCustomerPayment(customerPayment);
-                p.setSavePayment(saveNewPayment);
-                p.setPaymentName(paymentName);
-                p.setUseExisting(useCustomerPayment);
                 found = true;
             }
         }
@@ -124,10 +120,6 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             tempOrderPayment.setPaymentGatewayType(PaymentGatewayType.TEMPORARY);
             tempOrderPayment.setBillingAddress(billingForm.getAddress());
             tempOrderPayment.setOrder(cart);
-            tempOrderPayment.setCustomerPayment(customerPayment);
-            tempOrderPayment.setSavePayment(saveNewPayment);
-            tempOrderPayment.setPaymentName(paymentName);
-            tempOrderPayment.setUseExisting(useCustomerPayment);
             cart.getPayments().add(tempOrderPayment);
         }
 

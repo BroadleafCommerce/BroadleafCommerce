@@ -485,15 +485,4 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      */
     public void setTaxOverride(Boolean taxOverride);
 
-    /**
-     * 
-     * @return whether or not this order should display in the list of orders in admin
-     */
-    public Boolean getIsSecondary();
-
-    /**
-     * Sets whether or not this order should display in the list of orders in admin
-     * @param isSecondary
-     */
-    public void setIsSecondary(Boolean isSecondary);
 }
