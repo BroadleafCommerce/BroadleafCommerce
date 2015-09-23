@@ -98,7 +98,7 @@ public class SearchFieldTypeImpl implements SearchFieldType, Serializable {
     @ManyToOne(optional=false, targetEntity = SearchFieldImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "SEARCH_FIELD_ID")
     @AdminPresentation(friendlyName = "SearchFieldTypeImpl_searchField", group = "SearchFieldTypeImpl_description",
-            order=3, visibility=VisibilityEnum.FORM_HIDDEN)
+            order=3, gridOrder = 3, visibility=VisibilityEnum.FORM_HIDDEN)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "field.friendlyName")
     protected SearchField searchField;
 
