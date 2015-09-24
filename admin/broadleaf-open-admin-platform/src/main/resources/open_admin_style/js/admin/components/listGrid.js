@@ -380,7 +380,7 @@ $(document).ready(function() {
             
             var displayValue = fields[displayValueProp];
             var $selectedRow = BLCAdmin.currentModal().find('tr[data-link="' + link + '"]');
-            var $displayField = $selectedRow.find('td[data-fieldname=' + displayValueProp + ']');
+            var $displayField = $selectedRow.find('td[data-fieldname=' + displayValueProp.split(".").join("\\.") + ']');
             if ($displayField.hasClass('derived')) {
                 displayValue = $.trim($displayField.text());
             }

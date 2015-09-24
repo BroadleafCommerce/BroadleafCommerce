@@ -31,6 +31,10 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeEntry;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
+import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
+import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -62,6 +66,15 @@ import javax.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
+@AdminPresentationMergeOverrides({
+        @AdminPresentationMergeOverride(name = "searchField.field.friendlyName", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "SearchFieldTypeImpl_searchField")
+        })
+})
 @AdminPresentationClass(friendlyName = "SearchFieldTypeImpl_friendly", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class SearchFieldTypeImpl implements SearchFieldType, Serializable {
 
@@ -85,7 +98,7 @@ public class SearchFieldTypeImpl implements SearchFieldType, Serializable {
     @ManyToOne(optional=false, targetEntity = SearchFieldImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "SEARCH_FIELD_ID")
     @AdminPresentation(friendlyName = "SearchFieldTypeImpl_searchField", group = "SearchFieldTypeImpl_description",
-            prominent = true, order=3, gridOrder=3, visibility=VisibilityEnum.FORM_HIDDEN)
+            order=3, gridOrder = 3, visibility=VisibilityEnum.FORM_HIDDEN)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "field.friendlyName")
     protected SearchField searchField;
 
