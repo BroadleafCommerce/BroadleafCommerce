@@ -106,10 +106,12 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
     public ExtensionResultStatusType getQueryField(SolrQuery query, SearchField searchField, SearchFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
 
     /**
-     * <p>Modifies the search results from a Solr query</p>
+     * <p>Modifies the product search results from a Solr query</p>
+     *
+     * <p>The parameters passed into this method should be assumed to be sorted identically and match one to one.</p>
      *
      * @param responseDocuments the response documents from Solr
-     * @param products the resulting products
+     * @param products the products that tie to the response documents
      * @return the result of the handler, if NOT_HANDLED, then no changes where made
      */
     public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products);
