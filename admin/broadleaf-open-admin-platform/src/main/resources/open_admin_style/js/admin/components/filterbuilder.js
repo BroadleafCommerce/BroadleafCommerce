@@ -528,7 +528,6 @@
                         fields[i].values = window[valRef];
                     }
 
-
                     // check for existing rules in the url
                     var queryString = BLCAdmin.filterBuilders.getQueryVariable(fields[i].id);
 
@@ -892,6 +891,8 @@ $(document).ready(function() {
      * Invoked from the "Filter" button on the listgrid
      */
     $(document).on('click', '.filter-button', function (e) {
+        // make sure it doesn't submit the form
+        e.preventDefault();
         // show the filter modal
         var $container = $($(this)).siblings('.query-builder-filters-container');
         var hiddenId = $($(this)).data('hiddenid');
@@ -901,7 +902,6 @@ $(document).ready(function() {
         $modalContainer.empty();
 
         var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilder($modalContainer.attr('id'));
-
         if (filterBuilder) {
             var jsonVal = $.parseJSON($('#'+hiddenId).val());
             if (jsonVal.data.length > 0) {
