@@ -32,10 +32,14 @@ import java.lang.annotation.Target;
  * for the collection entity members based on the parent entity. See the multi-tenant module documentation for more
  * information.
  *
+ * @deprecated The system should be automatically able to detect collections that require multitenant behavior. An exception
+ * to this is a ManyToMany collection using a join table. In such a situation, you should consider modelling the join table
+ * as an entity itself and convert the collection to a OneToMany using that new "join table" entity.
  * @author Jeff Fischer
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
+@Deprecated
 public @interface SiteDiscriminatable {
 
     SiteDiscriminatableType type();
