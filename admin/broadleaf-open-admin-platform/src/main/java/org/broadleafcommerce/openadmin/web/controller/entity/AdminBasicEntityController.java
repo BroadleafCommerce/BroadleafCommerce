@@ -1053,8 +1053,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
             @PathVariable(value="collectionField") String collectionField,
             @PathVariable(value="collectionItemId") String collectionItemId,
             @PathVariable(value="alternateId") String alternateId) throws Exception {
-        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, alternateId, collectionItemId,
                 "viewCollectionItem");
+        String returnPath = showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
         
         // Since this is a read-only view, actions don't make sense in this context
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
