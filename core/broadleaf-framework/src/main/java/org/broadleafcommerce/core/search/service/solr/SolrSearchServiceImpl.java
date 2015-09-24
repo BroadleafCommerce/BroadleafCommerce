@@ -621,6 +621,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         
         modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
 
+        solrQuery.setShowDebugInfo(true);
+
         if (LOG.isTraceEnabled()) {
             try {
                 LOG.trace(URLDecoder.decode(solrQuery.toString(), "UTF-8"));
@@ -821,6 +823,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 }
             });
         }
+
+        extensionManager.getProxy().modifySearchResults(responseDocuments, products);
 
         return products;
     }

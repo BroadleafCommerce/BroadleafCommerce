@@ -20,10 +20,12 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
@@ -102,4 +104,13 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @see {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
      */
     public ExtensionResultStatusType getQueryField(SolrQuery query, SearchField searchField, SearchFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
+
+    /**
+     * <p>Modifies the search results from a Solr query</p>
+     *
+     * @param responseDocuments the response documents from Solr
+     * @param products the resulting products
+     * @return the result of the handler, if NOT_HANDLED, then no changes where made
+     */
+    public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products);
 }
