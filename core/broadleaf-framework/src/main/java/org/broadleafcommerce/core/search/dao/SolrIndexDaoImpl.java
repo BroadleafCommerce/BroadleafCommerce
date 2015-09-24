@@ -112,13 +112,11 @@ public class SolrIndexDaoImpl implements SolrIndexDao {
                             List<ProductsByCategoryWithOrder> categoryChildren = readProductIdsByCategory(categoryId);
     
                             // Cache the display order bigdecimals
-                            BigDecimal displayOrder = new BigDecimal("1.00000");
                             for (ProductsByCategoryWithOrder child : categoryChildren) {
-                                catalogStructure.getDisplayOrdersByCategoryProduct().put(categoryId + "-" + child.getProductId(), child.getDisplayOrder()==null?displayOrder:child.getDisplayOrder());
+                                // We only want to cache the display order for this child if one exists
                                 if (child.getDisplayOrder() != null) {
-                                    displayOrder = child.displayOrder;
+                                    catalogStructure.getDisplayOrdersByCategoryProduct().put(categoryId + "-" + child.getProductId(), child.getDisplayOrder());
                                 }
-                                displayOrder = displayOrder.add(new BigDecimal("1.00000"));
                             }
     
                             //filter the list for sandbox values

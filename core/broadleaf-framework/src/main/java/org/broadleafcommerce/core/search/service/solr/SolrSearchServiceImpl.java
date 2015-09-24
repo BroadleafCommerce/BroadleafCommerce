@@ -723,7 +723,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         } else {
             fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
+
         shs.attachSortClause(query, searchCriteria, defaultSort, fields);
+        query.addSort("score", SolrQuery.ORDER.desc);
     }
 
     /**

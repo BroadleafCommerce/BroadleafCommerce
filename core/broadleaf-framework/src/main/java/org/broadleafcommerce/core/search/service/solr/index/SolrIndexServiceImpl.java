@@ -620,10 +620,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                 String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                 String displayOrderKey = categoryId + "-" + cacheKey;
-                Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
+                if (cache.getDisplayOrdersByCategoryProduct().containsKey(displayOrderKey)) {
+                    Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
 
-                if (document.getField(categorySortFieldName) == null) {
-                    document.addField(categorySortFieldName, displayOrder);
+                    if (document.getField(categorySortFieldName) == null && displayOrder != null) {
+                        document.addField(categorySortFieldName, displayOrder);
+                    }
                 }
 
                 // This is the entire tree of every category defined on the product
@@ -801,6 +803,11 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      */
     private Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
         BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+
+        if (displayOrder == null) {
+            return null;
+        }
+
         return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
     }
 }
