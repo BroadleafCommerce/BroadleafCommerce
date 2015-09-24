@@ -44,6 +44,7 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -158,7 +159,7 @@ public class AdminProductController extends AdminBasicEntityController {
                 requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
             }
             model.addAttribute("currentUri", requestUri);
-            model.addAttribute("modalHeaderType", "addEntity");
+            model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
             setModelAttributes(model, SECTION_KEY);
             return "modules/modalContainer";
         } else {
@@ -177,7 +178,7 @@ public class AdminProductController extends AdminBasicEntityController {
         model.addAttribute("viewType", "modal/simpleAddEntity");
                 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "addCollectionItem");
+        model.addAttribute("modalHeaderType", ModalHeaderType.ADD_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, SECTION_KEY);
         return "modules/modalContainer";
@@ -240,7 +241,7 @@ public class AdminProductController extends AdminBasicEntityController {
         model.addAttribute("viewType", "modal/simpleEditEntity");
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "updateCollectionItem");
+        model.addAttribute("modalHeaderType", ModalHeaderType.UPDATE_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, SECTION_KEY);
         return "modules/modalContainer";
