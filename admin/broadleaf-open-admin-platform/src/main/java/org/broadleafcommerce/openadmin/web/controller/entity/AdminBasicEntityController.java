@@ -962,9 +962,9 @@ public class AdminBasicEntityController extends AdminAbstractController {
             listGrid.setPathOverride(request.getRequestURL().toString());
             listGrid.setFriendlyName(collectionMetadata.getPolymorphicEntities().getFriendlyName());
             if (entityForm == null) {
-                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false);
             } else {
-                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
+                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false, entityForm);
                 formService.populateEntityFormFieldValues(collectionMetadata, entity, entityForm);
             }
             
@@ -1060,6 +1060,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         // Since this is a read-only view, actions don't make sense in this context
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
         ef.removeAllActions();
+        ef.setReadOnly();
         
         return returnPath;
     }
@@ -1166,12 +1167,13 @@ public class AdminBasicEntityController extends AdminAbstractController {
             }
             
             boolean populateTypeAndId = true;
+            boolean isViewCollectionItem = ModalHeaderType.VIEW_COLLECTION_ITEM.getType().equals(modalHeaderType);
             if (entityForm == null) {
-                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+                entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, isViewCollectionItem);
             } else {
                 entityForm.clearFieldsMap();
                 String entityType = entityForm.getEntityType();
-                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, entityForm);
+                formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, isViewCollectionItem, entityForm);
                 entityForm.setEntityType(entityType);
                 populateTypeAndId = false;
             }
@@ -1390,7 +1392,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             AdornedTargetList atl = ppr.getAdornedList();
             
             // Get an entity form for the entity
-            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id);
+            EntityForm entityForm = formService.buildAdornedListForm(fmd, ppr.getAdornedList(), id, false);
             Entity entity = service.getAdvancedCollectionRecord(mainMetadata, parentEntity, collectionProperty, 
                     collectionItemId, sectionCrumbs, alternateId).getDynamicResultSet().getRecords()[0];
             formService.populateEntityFormFields(entityForm, entity);

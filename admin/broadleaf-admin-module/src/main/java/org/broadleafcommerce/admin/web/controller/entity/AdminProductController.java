@@ -268,7 +268,7 @@ public class AdminProductController extends AdminBasicEntityController {
                 return showUpdateAdditionalSku(request, model, id, collectionItemId, pathVars, entityForm);
             } else {
                 return super.showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
-                        "updateCollectionItem", entityForm, entity);
+                        modalHeaderType, entityForm, entity);
             }
         } catch (Exception e) {
             throw new ServiceException(e);
