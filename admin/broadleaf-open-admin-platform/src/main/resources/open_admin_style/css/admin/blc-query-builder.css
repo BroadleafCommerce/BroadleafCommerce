@@ -277,6 +277,7 @@
     text-transform: uppercase;
     font-weight: 500;
 }
+
 .query-builder-filters-container hr {
     margin-top: 0;
 }
@@ -324,6 +325,16 @@
     padding: 0 12px;
 }
 
+.button-group .filter-button {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.clear-filters i {
+    font-size: 16px;
+    padding-top: 10px;
+}
+
 .query-builder-filters-container .query-builder .has-error .error-container {
     display: none !important;
 }
@@ -341,6 +352,10 @@
 .query-builder-filters-container .selectize-dropdown-content {
     background-color: white;
     border: 1px solid #d0d0d0;
+}
+
+.query-builder-filters-container .rules-list .no-filters {
+    height: 62px;
 }
 
 .query-builder-filters-container .query-builder-rules .edit-row {

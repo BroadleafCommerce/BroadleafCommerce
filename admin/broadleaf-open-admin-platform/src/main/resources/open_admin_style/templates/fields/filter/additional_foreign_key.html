@@ -8,7 +8,8 @@
         <span style="display: none;"
             class="display-value read-only"
             th:attr="data-select-url=@{${'/' + headerField.owningEntityClass + '/' + headerField.name + '/select'}}"
-            th:text="${headerField.displayValue}" />
+            th:text="${headerField.displayValue}">
+        </span>
         
         <button class="to-one-lookup tiny radius dark button hover-cursor"
             type="button" th:inline="text"

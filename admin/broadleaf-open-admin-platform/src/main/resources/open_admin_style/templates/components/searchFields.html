@@ -14,7 +14,7 @@
                 <!-- Filter information -->
                 <button class="button filter-button" th:inline="text" th:utext="#{Filter}" th:attr="data-hiddenid=${listGrid.jsonFieldName}"></button>
 
-                <div class="filter-builder-data"
+                <div class="filter-builder-data" style="display: none;"
                      th:attr="data-hiddenid=${listGrid.jsonFieldName},
                      data-containerid=${listGrid.friendlyName},
                      data-fields=${listGrid.fieldWrapper.serialize()},

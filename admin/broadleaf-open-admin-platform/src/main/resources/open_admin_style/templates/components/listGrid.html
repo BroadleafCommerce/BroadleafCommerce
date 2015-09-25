@@ -40,9 +40,12 @@
                             <span th:remove="tag" th:if="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.name}}" />
                             <span th:remove="tag" th:unless="${#strings.isEmpty(headerField.friendlyName)}" th:text="#{${headerField.friendlyName}}" />
                             <div class="listgrid-filter-sort-container">
+                                <!--<i class="filter-icon fa fa-filter"></i>-->
                                 <i class="sort-icon blc-icon-select-arrows"></i>
                             </div>
                         </div>
+
+                        <input type="hidden" class="listgrid-criteria" th:attr="data-name=${headerField.name}" />
 
                         <ul th:include="components/partials/listGridHeaderFilter"
                             class="no-hover"

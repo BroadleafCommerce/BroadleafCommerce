@@ -527,45 +527,6 @@
                     if (valRef && typeof valRef === 'string') {
                         fields[i].values = window[valRef];
                     }
-
-                    // check for existing rules in the url
-                    var queryString = BLCAdmin.filterBuilders.getQueryVariable(fields[i].id);
-
-                    if (queryString != null) {
-                        var numInputs = 1;
-                        // is this a 'BETWEEN' filter?
-                        if (queryString.indexOf('|') > 0) {
-                            if (fields[i].operators.length > 1) {
-                                numInputs = 2;
-                            }
-                            queryString = queryString.split('|');
-                        }
-
-                        // there is a variable, check if its already in a rule
-                        var found = false;
-                        for (var r = 0; r < filterData.rules.length; r++) {
-                            if (filterData.rules[r].id === fields[i].id) {
-                                found = true;
-
-                                filterData.rules[r].value = queryString;
-                                filterData.rules[r].operator = numInputs == 1 ? fields[i].operators[0] : fields[i].operators[1];
-                                break;
-                            }
-                        }
-                        // check if the rule existed, if not create it
-                        if (!found) {
-                            var newRule = {};
-                            newRule.field = fields[i].id;
-                            newRule.id = fields[i].id;
-                            newRule.input = fields[i].input != null ? fields[i].input : 'text';
-                            newRule.operator = numInputs == 1 ? fields[i].operators[0] : fields[i].operators[1];
-                            newRule.type = fields[i].type;
-                            newRule.value = queryString;
-
-                            filterData.rules.push(newRule);
-                        }
-                    }
-
                 })();
             }
 
@@ -625,16 +586,16 @@
                 data: $.param(inputs)
             }, function(data) {
                 if ($tbody.data('listgridtype') == 'main') {
-
+                    // clear all url params
+                    $(BLCAdmin.history.getUrlParameters()).each(function(index, input) {
+                        for (var key in input) {
+                            BLCAdmin.history.replaceUrlParameter(key, null);
+                        }
+                    });
+                    // add back active filters
                     if (inputs.length) {
                         $(inputs).each(function (index, input) {
                             BLCAdmin.history.replaceUrlParameter(input.name, input.value);
-                        });
-                    } else {
-                        $(BLCAdmin.history.getUrlParameters()).each(function(index, input) {
-                            for (var key in input) {
-                                BLCAdmin.history.replaceUrlParameter(key, null);
-                            }
                         });
                     }
                 }
@@ -750,7 +711,6 @@
      * the appropriate fields and data (as specified by the container)
      */
     BLCAdmin.addInitializationHandler(function($container) {
-
         //Add default pre-init and post-construct handlers (e.g. selectize)
         BLCAdmin.filterBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePreInitFieldHandler);
         BLCAdmin.filterBuilders.addPostConstructQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePostConstructFieldHandler);
@@ -769,6 +729,63 @@
 
             //Create QueryBuilder Instances for all rule builders on the page
             BLCAdmin.filterBuilders.initializeFilterBuilder($this.parent(), filterBuilder);
+
+            // check if there are any existing filters on the page
+            var filterData = BLCAdmin.filterBuilders.getEmptyFilterData();
+            for (var i=0; i < filterBuilder.fields.length; i++) {
+                var field = jQuery.extend({}, filterBuilder.fields[i]);
+                field.operators = window[field.operators];
+
+                // check for existing rules in the url
+                var queryString = BLCAdmin.filterBuilders.getQueryVariable(field.id);
+
+                if (queryString != null) {
+                    var numInputs = 1;
+                    // is this a 'BETWEEN' filter?
+                    if (queryString.indexOf('|') > 0) {
+                        if (field.operators.length > 1) {
+                            numInputs = 2;
+                        }
+                        queryString = queryString.split('|');
+                    }
+
+                    var newRule = {};
+                    newRule.field = field.id;
+                    newRule.id = field.id;
+                    newRule.input = field.input != null ? field.input : 'text';
+                    newRule.operator = numInputs == 1 ? field.operators[0] : field.operators[1];
+                    newRule.type = field.type;
+                    newRule.value = queryString;
+
+                    filterData.rules.push(newRule);
+                }
+            }
+
+            // set the rules to the filterbuilder
+            var jsonVal = JSON.stringify({ 'data' : [filterData] });
+            $('#' + hiddenId).val(jsonVal);
+
+            // if there are active filters, change the filter button to "Edit"
+            if (filterData.rules.length > 0) {
+                var filterButton = $(this).parent().find('.filter-button');
+
+                filterButton.text("Edit Filter");
+
+                var clearButton = $('<button>', {
+                    'html' : '<i class="fa fa-times" />',
+                    'class' : 'button dropdown-toggle clear-filters'
+                });
+
+                var buttonGroup = $('<div>', {
+                    'class' : 'button-group'
+                });
+
+                buttonGroup.append(filterButton);
+                buttonGroup.append(clearButton);
+
+                $(this).parent().append(buttonGroup);
+            }
+
         });
 
         ////Once all the query builders have been initialized - show or render the component based on its display type
@@ -888,13 +905,48 @@ $(document).ready(function() {
     });
 
     /**
+     * Invoked from the "X" (Clear Filters) button on the listgrid
+     */
+    $(document).on('click', '.clear-filters', function (e) {
+        // make sure it doesn't submit the form
+        e.preventDefault();
+
+        var $filterButton = $($(this)).siblings('.filter-button');
+        var hiddenId = $filterButton.data('hiddenid');
+
+        // clear the filters from the filterbuilder
+        var jsonVal = JSON.stringify({ 'data' : [] });
+        $('#' + hiddenId).val(jsonVal);
+
+        // remove query string from URL
+        $(BLCAdmin.history.getUrlParameters()).each(function(index, input) {
+            for (var key in input) {
+                BLCAdmin.history.replaceUrlParameter(key, null);
+            }
+        });
+
+        // click the search button to reload the list grid
+        $('.custom-entity-search input#listgrid-search').val('');
+        $('.custom-entity-search button.search-button').click();
+
+        // change "edit filter" button back to "filter"
+        $filterButton.text("Filter");
+        $filterButton.insertBefore($filterButton.parent());
+        $filterButton.siblings('.button-group').remove();
+    });
+
+    /**
      * Invoked from the "Filter" button on the listgrid
      */
     $(document).on('click', '.filter-button', function (e) {
         // make sure it doesn't submit the form
         e.preventDefault();
+
         // show the filter modal
         var $container = $($(this)).siblings('.query-builder-filters-container');
+        if (!$container.length) {
+            $container = $($(this)).parent().siblings('.query-builder-filters-container');
+        }
         var hiddenId = $($(this)).data('hiddenid');
 
         var $modalContainer = $container.clone();
@@ -968,7 +1020,7 @@ $(document).ready(function() {
 
             // if no value is set, this is probably an empty row
             if (!valueText) {
-                el.find('.remove-row').click();
+                //el.find('.remove-row').click();
                 return;
             }
 
@@ -996,7 +1048,40 @@ $(document).ready(function() {
 
         BLCAdmin.showElementAsModal($modal, function() {
             var modalFilterBuilder = BLCAdmin.filterBuilders.getFilterBuilder($modalContainer.attr('id'));
+            var hiddenId = modalFilterBuilder.hiddenId;
             modalFilterBuilder.removeAllQueryBuilders();
+
+            // if we don't have the clear filters button, add it
+            var filterData = $.parseJSON($('#' + hiddenId).val());
+            // if there are active filters, change the filter button to "Edit"
+            if (filterData.data.length == 1) {
+                if (filterData.data[0].rules.length > 0) {
+                    if (!$('.clear-filters').length) {
+                        var filterButton = $('.filter-button');
+                        filterButton.text("Edit Filter");
+
+                        var clearButton = $('<button>', {
+                            'html' : '<i class="fa fa-times" />',
+                            'class': 'button dropdown-toggle clear-filters'
+                        });
+
+                        var buttonGroup = $('<div>', {
+                            'class': 'button-group'
+                        });
+
+                        buttonGroup.append(filterButton);
+                        buttonGroup.append(clearButton);
+
+                        $('.listgrid-search-actions').append(buttonGroup);
+                    }
+                }
+            } else {
+                // change "edit filter" button back to "filter"
+                var $filterButton = $('.filter-button');
+                $filterButton.text("Filter");
+                $filterButton.insertBefore($filterButton.parent());
+                $filterButton.siblings('.button-group').remove();
+            }
         });
     });
 

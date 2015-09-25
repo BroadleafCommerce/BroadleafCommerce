@@ -18,7 +18,8 @@
         <div class="listgrid-criteria" th:attr="data-field-index=${index}">
             <div class="listgrid-criteria-container">
                 <div th:remove="element"
-                th:substituteby="${'fields/filter/' + #strings.toLowerCase(fieldType)}" />
+                    th:substituteby="${'fields/filter/' + #strings.toLowerCase(fieldType)}">
+                </div>
             </div>
         </div>
 

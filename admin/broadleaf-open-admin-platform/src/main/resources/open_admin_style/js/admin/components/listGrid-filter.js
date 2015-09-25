@@ -55,22 +55,6 @@
         },
         
         initialize : function(context) {
-            // Positioning the Flyout List
-            var normalButtonHeight  = $('.listgrid-headerBtn.dropdown:not(.large):not(.small):not(.tiny)', context).outerHeight() - 1,
-                largeButtonHeight   = $('.listgrid-headerBtn.large.dropdown', context).outerHeight() - 1,
-                smallButtonHeight   = $('.listgrid-headerBtn.small.dropdown', context).outerHeight() - 1,
-                tinyButtonHeight    = $('.listgrid-headerBtn.tiny.dropdown', context).outerHeight() - 1;
-
-            $('.listgrid-headerBtn.dropdown:not(.large):not(.small):not(.tiny) > ul', context).css('top', normalButtonHeight);
-            $('.listgrid-headerBtn.dropdown.large > ul', context).css('top', largeButtonHeight);
-            $('.listgrid-headerBtn.dropdown.small > ul', context).css('top', smallButtonHeight);
-            $('.listgrid-headerBtn.dropdown.tiny > ul', context).css('top', tinyButtonHeight);
-
-            $('.listgrid-headerBtn.dropdown.up:not(.large):not(.small):not(.tiny) > ul', context).css('top', 'auto').css('bottom', normalButtonHeight - 2);
-            $('.listgrid-headerBtn.dropdown.up.large > ul', context).css('top', 'auto').css('bottom', largeButtonHeight - 2);
-            $('.listgrid-headerBtn.dropdown.up.small > ul', context).css('top', 'auto').css('bottom', smallButtonHeight - 2);
-            $('.listgrid-headerBtn.dropdown.up.tiny > ul', context).css('top', 'auto').css('bottom', tinyButtonHeight - 2);
-            
             //fill out the criteria and sorts based on the current URL parameters
             var $header = $('#listGrid-main-header');
             if ($header.length == 0) {
@@ -88,8 +72,11 @@
             // We'll make a clone of the object here so we don't modify the original data
             params = $.extend({}, params);
 
+            // unbold all headerfields
+            $('.listgrid-title').css('font-weight', 'normal');
+
             if (params) {
-                $('i.filter-icon').removeClass('active');
+                $('i.filter-icon').hide();
                 var sortProperty = params['sortProperty'];
                 if (sortProperty) {
                     //first enable the clear sorts button
@@ -115,124 +102,17 @@
                     delete params['sortProperty'];
                     delete params['sortDirection'];
                 }
-                
-                //iterate through the rest of the parameters and fill out the criteria inputs as necessary
+
+                // iterate through the rest of the parameters
                 $.each(params, function(key, value) {
                     var $criteriaInput = $header.find("input[data-name='" + key + "']");
-                    
-                    if (!$criteriaInput || $criteriaInput.length <= 0) {
-                        $criteriaInput = $header.find("select[data-name='" + key + "']");
-                    }
-                    
-                    if ($criteriaInput && $criteriaInput.length > 0) {
-                        $criteriaInput.val(decodeURIComponent(value));
-                        $criteriaInput.closest('.filter-fields').find('button.listgrid-clear-filter').removeAttr('disabled');
-                        //show the active filter icon
-                        var filterIcon = $($criteriaInput).parents('.listgrid-headerBtn').find('div i.filter-icon');
-                        filterIcon.toggleClass('active', true);
-                        
-                        var $parent = $criteriaInput.parent();
-                        if ($parent.hasClass('additional-foreign-key-container')) {
-                            var $ul = $parent.find('ul.active-foreign-key-filters');
-                            $ul.empty();
-                            
-                            if (value.indexOf('|') >= 0) {
-                                var vals = value.split('|');
-                                var i;
-                                for (i = 0; i < vals.length; i++) {
-                                    $ul.append($('<li>', { 'data-id' : vals[i] }));
-                                }
-                            } else {
-                                $ul.append($('<li>', { 'data-id' : value }));
-                            }
-                            
-                            var url = $parent.find('button.to-one-lookup').data('select-url');
-                            url = url.replace('/select', '/details');
-                            BLC.ajax({
-                                url: url,
-                                type: "GET",
-                                data: { ids : value }
-                            }, function(data) {
-                                $ul.find('li').each(function(i, e) {
-                                    var $li = $(e);
-                                    $li.append($('<i>', { 'class' : 'icon-remove-sign remove-to-one-filter' }));
-                                    $li.append(data[$li.data('id')]);
-                                });
-                            });
-                        } else if ($parent.hasClass('boolean-input-container')) {
-                            var $yesInput = $parent.find('input.radio-input[value="true"]');
-                            var $noInput = $parent.find('input.radio-input[value="false"]');
-                            if (value == 'false') {
-                                $noInput.click();
-                            } else {
-                                $yesInput.click();
-                            }
-                        } else if ($parent.hasClass('range-input-container')) {
-                            var rangeValue = value;
-                            // If we're dealing with dates, we need to parse for the display value
-                            if ($parent.find('.datepicker').length > 0) {
-                                rangeValue = decodeURIComponent(rangeValue);
-                                if (rangeValue.indexOf('|') >= 0) {
-                                    var vals = rangeValue.split('|');
-                                    vals[0] = BLCAdmin.dates.getDisplayDate(vals[0]);
-                                    vals[1] = BLCAdmin.dates.getDisplayDate(vals[1]);
-                                    rangeValue = vals[0] + '|' + vals[1];
-                                } else {
-                                    rangeValue = BLCAdmin.dates.getDisplayDate(rangeValue);
-                                }
-                            }
-                            
-                            if (rangeValue.indexOf('|') >= 0) {
-                                var vals = rangeValue.split('|');
-
-                                $parent.find('.specific-input').addClass('hidden');
-                                $parent.find('.range-input').removeClass('hidden');
-                                
-                                $parent.find('input.range-low').val(vals[0]);
-                                $parent.find('input.range-high').val(vals[1]);
-                            } else {
-                                $parent.find('input.range-single').val(rangeValue);
-                            }
-                        }
-                    }
+                    // bold the header name
+                    $criteriaInput.parent().find('.listgrid-title').css('font-weight', 'bold');
+                    //$criteriaInput.parent().find('i.filter-icon').show();
                 });
             }
         }
     };
-    
-    // Prevent event propagation on disabled buttons
-    $(document).on('click.fndtn', '.button.disabled', function (e) {
-        e.preventDefault();
-    });
-
-    // Prevent event propagation on the dropdown form
-    $('.listgrid-headerBtn.dropdown div.filter-fields').click(function (e) {
-        if (!$(e.target).is('a') && !$(e.target).is('button') && !$(e.target).is('i')) {
-            e.stopPropagation();
-        }
-    });
-
-    $('.listgrid-headerBtn.dropdown .add-filter').click(function (e) {
-        var $el = $(this),
-            $form = $el.closest('div.filter-fields'),
-            criteria = $form.find('.listgrid-criteria');
-
-        $(criteria).append(BLCAdmin.listGrid.filter.createCriteria);
-        BLCAdmin.listGrid.filter.showOperators(criteria);
-    });
-
-    // close all dropdowns and deactivate all buttons
-    $(document).on('click.fndtn', 'body, html', function (e) {
-        if (undefined == e.originalEvent) { return; }
-        // check original target instead of stopping event propagation to play nice with other events
-        if (!$(e.originalEvent.target).parents().is('.listgrid-headerBtn') &&
-                !$(e.originalEvent.target).parents().is('#ui-datepicker-div')) {
-            BLCAdmin.listGrid.filter.closeDropdowns();
-            if (dropdownAsToggle) {
-                BLCAdmin.listGrid.filter.resetToggles();
-            }
-        }
-    });
     
 })(jQuery, BLCAdmin);
 
@@ -280,42 +160,9 @@ $(document).ready(function() {
             $(this).closest('.listgrid-headerBtn').find('input.sort-property').toggleClass('active', true);
         }
 
-        //submit the form just for this particular field since this is the only sort that changed
+        // submit the form just for this particular field since this is the only sort that changed
         $(this).closest('.listgrid-headerBtn').find('div.filter-fields .listgrid-filter').trigger('click', true);
 
-        return false;
-    });
-    
-    $('body').on('click', 'button.listgrid-clear-sort', function() {
-        BLCAdmin.listGrid.filter.clearActiveSorts($(this));
-        $(this).attr('disabled', 'disabled');
-        $(this).closest('ul').find('div.filter-fields .listgrid-filter').click();
-        return false;
-    });
-    
-    $('body').on('click', 'button.listgrid-clear-filter', function(event) {
-        event.preventDefault();
-        $(this).closest('.filter-fields').find('.listgrid-criteria-input').val('');
-        $(this).closest('.filter-fields').find('.radio-input').attr('checked', false);
-        $(this).closest('.filter-fields').find('.listgrid-criteria-input-range').val('');
-        //clear out the foreign key display value
-        $foreignKeyDisplay = $(this).closest('.filter-fields').find('div.foreign-key-value-container span.display-value');
-        if ($foreignKeyDisplay) {
-            $foreignKeyDisplay.text('');
-        }
-        $(this).closest('th').find('.filter-icon').removeClass('active');
-        $(this).attr('disabled', 'disabled');
-        $(this).closest('ul').find('div.filter-fields .listgrid-filter').trigger('click', true);
-
-        $(this).closest('.filter-fields').find('ul.active-foreign-key-filters').empty();
-        
-        var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
-        
-        if ($tbody.data('listgridtype') == 'main') {
-            var name = $(this).closest('.filter-fields').find('.listgrid-criteria-input').data('name');
-            BLCAdmin.history.replaceUrlParameter(name, null);
-        }
-            
         return false;
     });
 
@@ -499,7 +346,7 @@ $(document).ready(function() {
         var $container = $(this).closest('.listgrid-container');
         var tableId = $container.find('table').last().attr('id');
         var $firstInput = $($container.find('#listGrid-main-header th .listgrid-criteria-input')[0]);
-        
+
         if ($firstInput.length == 0) {
            // if there wasn't a primary list grid, check for an inline list grid.
            $firstInput = $($container.find('.list-grid-table th .listgrid-criteria-input')[0]);
@@ -533,54 +380,6 @@ $(document).ready(function() {
             BLCAdmin.listGrid.replaceRelatedCollection($relatedListGrid, null, { isRefresh : false});
             $firstInput.trigger('input');
         });
-        return false;
-    });
-    
-    $('body').on('change', 'input.to-one-new-selection', function(e) {
-        var $this = $(this);
-        var $parent = $this.parent();
-
-        var newValue = $this.val();
-        var serializedField = $parent.find('.listgrid-criteria-input');
-        
-        if (serializedField.val() == '') {
-            serializedField.val(newValue);
-        } else {
-            serializedField.val(serializedField.val() + '|' + newValue);
-        }
-        
-        serializedField.trigger('change');
-    });
-
-    $('body').on('click', '.remove-to-one-filter', function() {
-        var $li = $(this).closest('li');
-        var id = $li.data('id');
-        
-        var $input = $(this).closest('.additional-foreign-key-container').find('input.to-one-criteria-input');
-        
-        if ($input.val().indexOf('|') >= 0) {
-            if ($input.val().indexOf(id) == 0) {
-                $input.val($input.val().replace(id + '|', ''));
-            } else {
-                $input.val($input.val().replace('|' + id, ''));
-            }
-        } else {
-            $li.remove();
-            $input.val('');
-        }
-        
-        $input.trigger('change');
-    });
-    
-    $('body').on('click', 'a.numeric-range-toggle', function(e) {
-        e.preventDefault();
-        
-        var $parent = $(this).closest('div.filter-fields');
-
-        $parent.find('.specific-input').toggleClass('hidden');
-        $parent.find('.range-input').toggleClass('hidden');
-                
-        
         return false;
     });
 
