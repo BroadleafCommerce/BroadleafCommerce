@@ -330,7 +330,7 @@
         },
 
         /**
-         * Returns an "edit" butten element
+         * Returns an "edit" button element
          * @param el
          * @returns {*|jQuery|HTMLElement}
          */
@@ -900,6 +900,9 @@ $(document).ready(function() {
         el.find('.rule-header .remove-row').css('right', '').css('left', '16px');
         el.find('.filter-text').css('padding-left', '22px');
 
+        // focus on value input field
+        el.find('.rule-value-container input').focus();
+
         // remove edit-button
         el.find('.edit-row').remove();
     });
@@ -1108,4 +1111,12 @@ $(document).ready(function() {
         }
     });
 
+    /**
+     * Trigger "Apply" on enter press
+     */
+    $('body').on('keyup', '.rule-value-container > input', function(e) {
+        if(e.keyCode == 13) {
+            $(this).parent().parent().find('.filter-apply-button').click();
+        }
+    });
 });

@@ -309,7 +309,14 @@
 .query-builder-filters-container .query-builder .rule-container .rule-value-container {
     border-left: none;
     padding-left: 7px;
-    /* width: 250px; */
+}
+
+.query-builder-filters-container .query-builder .rule-container .rule-value-container input.form-control {
+    height: 40px;
+    vertical-align: middle;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0;
 }
 
 .query-builder-filters-container .query-builder .rules-group-container .rules-list {

@@ -53,6 +53,9 @@ $.fn.queryBuilder.define('blc-admin-filter-builder', function(options) {
             rule.$el.find('.rule-header .rule-actions').append(applyButton);
             rule.$el.find('.rule-header .remove-row').css('right', '').css('left', '16px');
             rule.$el.find('.filter-text').css('padding-left', '22px');
+
+            // focus on value input field
+            rule.$el.find('.rule-value-container input').focus();
         }
     });
 
