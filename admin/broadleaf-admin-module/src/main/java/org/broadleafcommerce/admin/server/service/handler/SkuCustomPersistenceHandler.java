@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -332,33 +333,37 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * @return <b>null</b> if successfully validation, the error entity otherwise
      */
     protected Entity validateUniqueProductOptionValueCombination(Product product, List<Property> productOptionProperties, Sku currentSku) {
-        List<Long> productOptionValueIds = new ArrayList<Long>();
-        for (Property property : productOptionProperties) {
-            productOptionValueIds.add(Long.parseLong(property.getValue()));
-        }
+        //do not attempt POV validation if no PO properties were passed in
+        if (CollectionUtils.isNotEmpty(productOptionProperties)) {
+            List<Long> productOptionValueIds = new ArrayList<Long>();
+            for (Property property : productOptionProperties) {
+                productOptionValueIds.add(Long.parseLong(property.getValue()));
+            }
 
-        boolean validated = true;
-        for (Sku sku : product.getAdditionalSkus()) {
-            if (currentSku == null || !sku.getId().equals(currentSku.getId())) {
-                List<Long> testList = new ArrayList<Long>();
-                for (ProductOptionValue optionValue : sku.getProductOptionValues()) {
-                    testList.add(optionValue.getId());
-                }
-                
-                if (productOptionValueIds.containsAll(testList) && productOptionValueIds.size() == testList.size()) {
-                    validated = false;
-                    break;
+            boolean validated = true;
+            for (Sku sku : product.getAdditionalSkus()) {
+                if (currentSku == null || !sku.getId().equals(currentSku.getId())) {
+                    List<Long> testList = new ArrayList<Long>();
+                    for (ProductOptionValue optionValue : sku.getProductOptionValues()) {
+                        testList.add(optionValue.getId());
+                    }
+
+                    if (CollectionUtils.isNotEmpty(testList) &&
+                            productOptionValueIds.containsAll(testList) &&
+                            productOptionValueIds.size() == testList.size()) {
+                        validated = false;
+                        break;
+                    }
                 }
             }
-        }
-        
-        if (!validated) {
-            Entity errorEntity = new Entity();
-            errorEntity.setValidationFailure(true);
-            for (Property productOptionProperty : productOptionProperties) {
-                errorEntity.addValidationError(productOptionProperty.getName(), "uniqueSkuError");
+
+            if (!validated) {
+                Entity errorEntity = new Entity();
+                for (Property productOptionProperty : productOptionProperties) {
+                    errorEntity.addValidationError(productOptionProperty.getName(), "uniqueSkuError");
+                }
+                return errorEntity;
             }
-            return errorEntity;
         }
         return null;
     }

@@ -37,7 +37,7 @@ import java.util.Properties;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.springframework.util.Assert;
 
-public class SandBoxConnection implements Connection {
+public abstract class SandBoxConnection implements Connection {
     
     private Connection delegate;
     private GenericObjectPool connectionPool;
