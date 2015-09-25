@@ -1080,7 +1080,6 @@ $(document).ready(function() {
                 }
             } else {
                 // change "edit filter" button back to "filter"
-                debugger;
                 var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
                 filterButton.text("Filter");
                 filterButton.insertBefore(filterButton.parent());
