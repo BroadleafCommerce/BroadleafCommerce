@@ -369,6 +369,7 @@ div.action-popup img.ajax-loader {
 .listgrid-toolbar {
     margin-top: 10px;
     margin-bottom: 10px;
+    display: inline-block;
 }
 
 
@@ -451,11 +452,19 @@ button:disabled {
 }
 
 .listgrid-search {
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 
 .listgrid-search .col6 {
     height: 45px;
+    white-space: nowrap;
+}
+
+.listgrid-search input {
+    height: 36px !important;
+    vertical-align: bottom;
+    width: 300px;
+    display: inline-block;
 }
 
 .listgrid-search-actions {
@@ -1129,11 +1138,25 @@ p.deployment-summary {
     margin-top: -5px;
 }
 
-.custom-entity-search {
+/*.custom-entity-search {*/
+    /*float: right;*/
+    /*text-align: right;*/
+    /*margin-top: 6px;*/
+    /*position: relative;*/
+/*}*/
+
+.filter-info {
     float: right;
     text-align: right;
+}
+
+.filter-info .button-group {
     margin-top: 6px;
-    position: relative;
+}
+
+.filter-info > .filter-button {
+    margin-top: 6px;
+
 }
 
 .selectize-control.single .selectize-input {

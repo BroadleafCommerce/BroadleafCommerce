@@ -1057,7 +1057,7 @@ $(document).ready(function() {
             if (filterData.data.length == 1) {
                 if (filterData.data[0].rules.length > 0) {
                     if (!$('.clear-filters').length) {
-                        var filterButton = $('.filter-button');
+                        var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
                         filterButton.text("Edit Filter");
 
                         var clearButton = $('<button>', {
@@ -1072,15 +1072,16 @@ $(document).ready(function() {
                         buttonGroup.append(filterButton);
                         buttonGroup.append(clearButton);
 
-                        $('.listgrid-search-actions').append(buttonGroup);
+                        $('.filter-info:visible').append(buttonGroup);
                     }
                 }
             } else {
                 // change "edit filter" button back to "filter"
-                var $filterButton = $('.filter-button');
-                $filterButton.text("Filter");
-                $filterButton.insertBefore($filterButton.parent());
-                $filterButton.siblings('.button-group').remove();
+                debugger;
+                var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+                filterButton.text("Filter");
+                filterButton.insertBefore(filterButton.parent());
+                filterButton.siblings('.button-group:visible').remove();
             }
         });
     });
@@ -1094,7 +1095,8 @@ $(document).ready(function() {
         var el = $(e.target);
         if (el.is('select')) {
             if (el.hasClass('form-control')) {
-                var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId('entityListGridJson');
+                var hiddenId = $('.modal-body').find('#hidden-id').data('hiddenid');
+                var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
                 $(filterBuilder.builders[0]).queryBuilder('updateDisabledFilters');
                 el.find('option[disabled]').remove();
                 el.removeClass('form-control').selectize();

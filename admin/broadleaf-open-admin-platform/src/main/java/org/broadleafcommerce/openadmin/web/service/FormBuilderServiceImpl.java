@@ -204,9 +204,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             LOG.error(message);
         }
 
+        Date c = new Date();
+        String friendlyName = "listGrid" + c.getTime();
         // Set up the filter builder params
-        listGrid.setJsonFieldName("entityListGridJson");
-        listGrid.setFriendlyName("entityListGrid");
+        listGrid.setJsonFieldName(friendlyName + "Json");
+        listGrid.setFriendlyName(friendlyName);
         listGrid.setFieldBuilder("RULE_SIMPLE");
         listGrid.setFieldWrapper(wrapper);
 
