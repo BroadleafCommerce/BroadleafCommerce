@@ -43,17 +43,11 @@ public class DefaultListGridActions {
         .withIconClass("blc-icon-add-category")
         .withDisplayText("Add");
 
-    public static final ListGridAction TREE_SUB_ADD = new ListGridAction(ListGridAction.TREE_SUB_ADD)
-        .withButtonClass("tree-sub-list-grid-add")
-        .withUrlPostfix("/new/enterprise-add")
+    public static final ListGridAction TREE_ADD = new ListGridAction(ListGridAction.TREE_ADD)
+        .withButtonClass("tree-list-grid-row-add")
+        .withUrlPostfix("/new/enterprise-tree-add")
         .withIconClass("blc-icon-add-category")
-        .withDisplayText("Sub-tree Add");
-    
-    public static final ListGridAction REORDER = new ListGridAction(ListGridAction.REORDER)
-        .withButtonClass("sub-list-grid-reorder")
-        .withUrlPostfix("/update")
-        .withIconClass("fa fa-arrows fa-lg")
-        .withDisplayText("Reorder");
+        .withDisplayText("Add Child");
 
     // Actions for row-level
     public static final ListGridAction REMOVE = new ListGridAction(ListGridAction.REMOVE)
