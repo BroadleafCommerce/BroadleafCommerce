@@ -113,8 +113,11 @@ public class SiteMapServiceImpl implements SiteMapService {
         }
 
         siteMapBuilder.persistSiteMap();
+
+
+        // Check for GZip
         if (getGzipSiteMapFiles()) {
-            gzipAndDeleteFiles(fileWorkArea, siteMapBuilder.getIndexedFileNames());
+            gzipFile(fileWorkArea, siteMapBuilder.getIndexedFileNames());
             List<String> indexFileNames = new ArrayList<String>();
             for (String fileName: siteMapBuilder.getIndexedFileNames()) {
                 indexFileNames.add(fileName + ENCODING_EXTENSION);
@@ -203,9 +206,38 @@ public class SiteMapServiceImpl implements SiteMapService {
     }
 
     /**
-     * Gzip a file and then delete the file
-     * 
-     * @param fileName
+     *
+     * @param fileWorkArea
+     * @param fileNames
+     */
+    protected void gzipFile(FileWorkArea fileWorkArea, List<String> fileNames){
+        for (String fileName : fileNames) {
+            try {
+                String fileNameWithPath = FilenameUtils.normalize(fileWorkArea.getFilePathLocation() + File.separator + fileName);
+
+                FileInputStream fis = new FileInputStream(fileNameWithPath);
+                FileOutputStream fos = new FileOutputStream(fileNameWithPath + ENCODING_EXTENSION);
+                GZIPOutputStream gzipOS = new GZIPOutputStream(fos);
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = fis.read(buffer)) != -1) {
+                    gzipOS.write(buffer, 0, len);
+                }
+                //close resources
+                gzipOS.close();
+                fos.close();
+                fis.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * GZip a file, Then delete it
+     * @param fileWorkArea
+     * @param fileNames
      */
     protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames) {
         for (String fileName : fileNames) {
@@ -233,6 +265,7 @@ public class SiteMapServiceImpl implements SiteMapService {
             }
         }
     }
+
 
     public List<SiteMapGenerator> getSiteMapGenerators() {
         return siteMapGenerators;
