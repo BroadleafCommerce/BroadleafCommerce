@@ -17,6 +17,72 @@
  * limitations under the License.
  * #L%
  */
+
+(function($, BLCAdmin) {
+
+    BLCAdmin.entityForm = {
+        showActionSpinner : function ($actions) {
+            $("#headerFlashAlertBoxContainer").addClass("hidden");
+            $actions.find('button').prop("disabled",true);
+            $actions.find('img.ajax-loader').show();
+        },
+
+        /**
+         * Should happen after the AJAX request completes
+         */
+        hideActionSpinner : function () {
+            var $actions = $('.entity-form-actions');
+            $actions.find('button').prop("disabled",false);
+            $actions.find('img.ajax-loader').hide();
+        },
+
+        showErrors : function (data, alertMessage) {
+            $.each( data.errors , function( idx, error ){
+                if (error.errorType == "field") {
+                    var fieldGroup = $("#field-" + error.field);
+
+                    // Add an error indicator to the fields tab
+                    // this can happen more than once because the indicator is absolute positioning
+                    var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0,4);
+                    var tab = $('a[href=' + tabId + ']');
+                    tab.prepend('<span class="tab-error-indicator danger"></span>');
+
+                    // Mark the field as an error
+                    var fieldError = "<div class='error'";
+                    if (fieldGroup.find(".field-help").length !== 0) {
+                        fieldError += " style='margin-top:-5px;'";
+                    }
+                    fieldError += ">" + error.message + "</div>";
+
+                    $(fieldGroup).append(fieldError);
+                    $(fieldGroup).addClass("has-error");
+                } else if (error.errorType == 'global'){
+                    var globalError = "<div class='tabError'><b>" + BLCAdmin.messages.globalErrors + "</b><span class='error'>"
+                        + error.message + "</span></div>";
+                    $(".entity-errors").append(globalError);
+                }
+            });
+            if (!BLCAdmin.currentModal().length) {
+                $('#headerFlashAlertBoxContainer .alert-box').removeClass('success').addClass('alert');
+                $('#headerFlashAlertBoxContainer .alert-box-message').text(alertMessage);
+            } else if (BLCAdmin.currentModal().find('#headerFlashAlertBoxContainer .alert-box').length) {
+                var $headerFlashAlertBoxContainer = BLCAdmin.currentModal().find('#headerFlashAlertBoxContainer');
+                $headerFlashAlertBoxContainer.find('.alert-box').removeClass('success').addClass('alert');
+                $headerFlashAlertBoxContainer.find('.alert-box-message').text(alertMessage);
+            } else {
+                var $modalFooter = BLCAdmin.currentModal().find('.modal-footer');
+                var headerFlashAlertBoxContainer = '<div id="headerFlashAlertBoxContainer"><div id="headerFlashAlertBox" class="alert-box">' +
+                    '<span class="alert-box-message"></span></div></div>';
+                $modalFooter.append(headerFlashAlertBoxContainer);
+
+                var $headerFlashAlertBoxContainer = $modalFooter.find('#headerFlashAlertBoxContainer');
+                $headerFlashAlertBoxContainer.find('.alert-box').removeClass('success').addClass('alert');
+                $headerFlashAlertBoxContainer.find('.alert-box-message').text(alertMessage);
+            }
+        }
+    };
+})(jQuery, BLCAdmin);
+
 $(document).ready(function() {
     
     var $tabs = $('dl.tabs.entity-form');
@@ -56,9 +122,9 @@ $(document).ready(function() {
      			url: tabUrl,
      			type: "POST",
      			data: $form.serializeArray(),
-     			complete: hideActionSpinner
+     			complete: BLCAdmin.entityForm.hideActionSpinner
      		}, function(data) {
-     			$('div.' + href + 'Tab div.listgrid-container div.listgrid-header-wrapper table.list-grid-table').each(function() {
+     			$('div.' + href + 'Tab fieldset.listgrid-container div.listgrid-header-wrapper table.list-grid-table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
                     var $tableWrapper = data.find('div.listgrid-header-wrapper:has(table#' + tableId + ')');
      				BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
@@ -85,14 +151,14 @@ $(document).ready(function() {
         var currentAction = $form.attr('action');
         var deleteUrl = currentAction + '/delete'
 
-        showActionSpinner($(this).closest('.entity-form-actions'));
+        BLCAdmin.entityForm.showActionSpinner($(this).closest('.entity-form-actions'));
         
         // On success this should redirect, on failure we'll get some JSON back
         BLC.ajax({
             url: deleteUrl,
             type: "POST",
             data: $form.serializeArray(),
-            complete: hideActionSpinner
+            complete: BLCAdmin.entityForm.hideActionSpinner
         }, function (data) {
             $("#headerFlashAlertBoxContainer").removeClass("hidden");
             $(".errors, .error, .tab-error-indicator, .tabError").remove();
@@ -102,7 +168,7 @@ $(document).ready(function() {
                 $(".alert-box").removeClass("alert").addClass("success");
                 $(".alert-box-message").text("Successfully deleted");
             } else {
-                showErrors(data, BLCAdmin.messages.problemDeleting);
+                BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemDeleting);
             }
             
         });
@@ -114,7 +180,7 @@ $(document).ready(function() {
         $('body').click(); // Defocus any current elements in case they need to act prior to form submission
         var $form = BLCAdmin.getForm($(this));
 
-        showActionSpinner($(this).closest('.entity-form-actions'));
+        BLCAdmin.entityForm.showActionSpinner($(this).closest('.entity-form-actions'));
 
         if ($(".blc-admin-ajax-update").length && $form.parents(".modal-body").length == 0) {
             submitFormViaAjax($form);
@@ -143,7 +209,7 @@ $(document).ready(function() {
                 dataType: "json",
                 type: "POST",
                 data: $form.serializeArray(),
-                complete: hideActionSpinner
+                complete: BLCAdmin.entityForm.hideActionSpinner
             }, function (data) {
                 $("#headerFlashAlertBoxContainer").removeClass("hidden");
                 $(".errors, .error, .tab-error-indicator, .tabError").remove();
@@ -173,7 +239,7 @@ $(document).ready(function() {
                     }, 1000);
 
                 } else {
-                    showErrors(data, BLCAdmin.messages.problemSaving);
+                    BLCAdmin.entityForm.showErrors(data, BLCAdmin.messages.problemSaving);
                 }
                 
                 BLCAdmin.runPostFormSubmitHandlers($form, data);
@@ -190,51 +256,6 @@ $(document).ready(function() {
     function hideTabSpinner($tab, $tabBody) {
         $tabBody.find('button').prop("disabled", false);
         $tab.find('i.icon-spinner').hide();
-    }
-
-    function showActionSpinner($actions) {
-        $("#headerFlashAlertBoxContainer").addClass("hidden");
-        $actions.find('button').prop("disabled",true);
-        $actions.find('img.ajax-loader').show();
-    }
-    
-    /**
-     * Should happen after the AJAX request completes
-     */
-    function hideActionSpinner () {
-        var $actions = $('.entity-form-actions');
-        $actions.find('button').prop("disabled",false);
-        $actions.find('img.ajax-loader').hide();
-    }
-    
-    function showErrors(data, alertMessage) {
-        $.each( data.errors , function( idx, error ){
-            if (error.errorType == "field") {
-                var fieldGroup = $("#field-" + error.field);
-
-                // Add an error indicator to the fields tab
-                // this can happen more than once because the indicator is absolute positioning
-                var tabId = '#' + fieldGroup.parents('.entityFormTab').attr("class").substring(0,4);
-                var tab = $('a[href=' + tabId + ']');
-                tab.prepend('<span class="tab-error-indicator danger"></span>');
-
-                // Mark the field as an error
-                var fieldError = "<div class='error'";
-                if (fieldGroup.find(".field-help").length !== 0) {
-                    fieldError += " style='margin-top:-5px;'";
-                }
-                fieldError += ">" + error.message + "</div>";
-
-                $(fieldGroup).append(fieldError);
-                $(fieldGroup).addClass("has-error");
-            } else if (error.errorType == 'global'){
-                var globalError = "<div class='tabError'><b>" + BLCAdmin.messages.globalErrors + "</b><span class='error'>"
-                    + error.message + "</span></div>";
-                $(".entity-errors").append(globalError);
-            }
-        });
-        $("#headerFlashAlertBoxContainer .alert-box").removeClass("success").addClass("alert");
-        $("#headerFlashAlertBoxContainer .alert-box-message").text(alertMessage);
     }
     
     $('body').on('submit', 'form.entity-form', function(event) {
