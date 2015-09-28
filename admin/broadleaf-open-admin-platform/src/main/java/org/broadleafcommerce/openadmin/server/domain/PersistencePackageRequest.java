@@ -70,6 +70,7 @@ public class PersistencePackageRequest {
     protected Map<String, PersistencePackageRequest> subRequests = new LinkedHashMap<String, PersistencePackageRequest>();
     protected boolean validateUnsubmittedProperties = true;
     protected boolean isUpdateLookupType = false;
+    protected boolean isTreeCollection = false;
 
     protected OperationTypes operationTypesOverride = null;
 
@@ -537,5 +538,12 @@ public class PersistencePackageRequest {
     public void setUpdateLookupType(boolean isUpdateLookupType) {
         this.isUpdateLookupType = isUpdateLookupType;
     }
-    
+
+    public boolean isTreeCollection() {
+        return isTreeCollection;
+    }
+
+    public void setIsTreeCollection(boolean isTreeCollection) {
+        this.isTreeCollection = isTreeCollection;
+    }
 }

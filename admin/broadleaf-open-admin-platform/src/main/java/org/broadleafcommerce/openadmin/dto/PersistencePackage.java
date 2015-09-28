@@ -49,6 +49,8 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     //internalUsage
     protected boolean isProcessedInternal = false;
 
+    protected boolean isTreeCollection = false;
+
     public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
         this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
     }
@@ -263,6 +265,14 @@ public class PersistencePackage implements Serializable, StateDescriptor {
      */
     public void setProcessedInternal(boolean isProcessedInternal) {
         this.isProcessedInternal = isProcessedInternal;
+    }
+
+    public boolean isTreeCollection() {
+        return isTreeCollection;
+    }
+
+    public void setIsTreeCollection(boolean isTreeCollection) {
+        this.isTreeCollection = isTreeCollection;
     }
 
     @Override
