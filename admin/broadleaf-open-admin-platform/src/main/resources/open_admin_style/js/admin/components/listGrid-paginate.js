@@ -693,7 +693,7 @@
                 theme: 'dark',
                 scrollEasing: "linear",
                 scrollInertia: 500,
-                mouseWheelPixels: 53,
+                mouseWheelPixels: 38,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
