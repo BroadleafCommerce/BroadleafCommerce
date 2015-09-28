@@ -783,6 +783,10 @@ fieldset legend i.help-tip {
     margin: 0;
 }
 
+#headerFlashAlertBox .close {
+    visibility: hidden;
+}
+
 .tab-error-indicator {
     -moz-border-radius: 50%;
     -webkit-border-radius: 50%;
@@ -850,6 +854,10 @@ fieldset legend i.help-tip {
     background-color: rgba(0,0,0,0.06);
     width: 100%;
     border-bottom: 1px solid #ddd;
+}
+
+.modal-body .empty-section-tabs {
+    display: none;
 }
 
 .empty-section-tabs ul {
@@ -1462,29 +1470,34 @@ div.uploadMessage {
     box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
 }
 
-.tree-listgrid-container .tree-ribbon .tree-breadcrumb-container {
+.tree-listgrid-container .tree-ribbon .tree-title-container {
     margin-left: 15px;
+    margin-right: 15px;
     position: relative;
     top: 50%;
     transform: translateY(-50%);
 }
 
-.tree-listgrid-container .tree-ribbon .tree-breadcrumb-container .breadcrumb-title {
+.tree-listgrid-container .tree-ribbon .tree-title-container .tree-title {
     margin-right: 40px;
 }
 
-.tree-listgrid-container .tree-ribbon .tree-breadcrumb-container .tree-breadcrumb {
+.tree-listgrid-container .tree-ribbon .tree-title-container .listgrid-row-actions {
+    float: right;
+}
+
+.tree-listgrid-container .tree-ribbon .tree-title-container .tree-breadcrumb {
     margin-right: 10px;
 }
 
-.tree-listgrid-container .tree-ribbon .tree-breadcrumb-container .tree-breadcrumb:hover {
     color: #F2B95A;
+.tree-listgrid-container .tree-ribbon .tree-title-container .tree-breadcrumb:hover {
 }
 
-.tree-listgrid-container .select-column {
+.tree-listgrid-container .select-column.listgrid-container {
     height: 400px;
     width: 320px;
-    padding: 0;
+    padding: 0 !important;
     float: left;
 }
 
@@ -1527,4 +1540,8 @@ div.uploadMessage {
     -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
     -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
     box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
+.listgrid-container a.sub-list-grid-reorder {
+    padding-right: 5px;
+}
+
 }
