@@ -42,6 +42,7 @@ public class ListGrid {
     protected String friendlyName = null;
     protected String idProperty;
     protected int order;
+    protected boolean isSortable;
 
     protected Set<Field> headerFields = new TreeSet<Field>(new Comparator<Field>() {
 
@@ -271,8 +272,7 @@ public class ListGrid {
      * @return
      */
     public boolean isSortable() {
-        return getToolbarActions().contains(DefaultListGridActions.REORDER) || 
-                Type.MAP.toString().toLowerCase().equals(getListGridType());
+        return this.isSortable || Type.MAP.toString().toLowerCase().equals(getListGridType());
     }
 
     /* ************************ */
@@ -342,6 +342,14 @@ public class ListGrid {
     
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public boolean getIsSortable() {
+        return isSortable;
+    }
+
+    public void setIsSortable(boolean isSortable) {
+        this.isSortable = isSortable;
     }
 
     public Set<Field> getHeaderFields() {

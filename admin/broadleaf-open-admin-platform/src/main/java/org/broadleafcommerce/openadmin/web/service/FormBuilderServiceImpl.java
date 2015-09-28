@@ -114,6 +114,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     private static final Log LOG = LogFactory.getLog(FormBuilderServiceImpl.class);
 
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
+    private static final String ALL_CHILD_CATEGORY_XREFS = "allChildCategoryXrefs";
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
@@ -521,7 +522,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         if (sortable) {
             listGrid.setCanFilterAndSort(false);
-            listGrid.getToolbarActions().add(DefaultListGridActions.REORDER);
+            listGrid.setIsSortable(true);
         }
 
         if (modalSingleSelectable) {

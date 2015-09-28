@@ -283,6 +283,13 @@
 })(jQuery, BLCAdmin);
 
 $(document).ready(function() {
+    var isMouseDown = false;
+
+    $('body').mousedown(function() {
+        isMouseDown = true;
+    }).mouseup(function() {
+        isMouseDown = false;
+    });
     
     /**
      * Bind a handler to trigger anytime a table row is clicked on any list grid. 
@@ -321,6 +328,19 @@ $(document).ready(function() {
             }
         }
     });
+
+    $('body').on({
+        mouseenter: function () {
+            var $tr = $(this);
+
+            if ($tr.has('a.sub-list-grid-reorder') && $tr.find('a.sub-list-grid-reorder').css('visibility') === 'hidden') {
+                $tr.find('a.sub-list-grid-reorder').css({opacity: 0.0, visibility: 'visible'}).animate({opacity: 1.0}, 400);
+            }
+        },
+        mouseleave:function () {
+            $(this).find('a.sub-list-grid-reorder').css({visibility: 'hidden'});
+        }
+    },'.list-grid-table tbody tr');
     
     /**
      * The rowSelected handler for the main list grid doesn't do anything by default
@@ -508,57 +528,92 @@ $(document).ready(function() {
         BLCAdmin.showLinkAsModal($(this).attr('data-actionurl'));
         return false;
     });
-    
-    $('body').on('click', 'button.sub-list-grid-reorder', function() {
-        var $container = $(this).closest('.listgrid-container');
-        var $table = $container.find('table');
-        var $tbody = $table.find('tbody');
-        var $trs = $tbody.find('tr');
-        var doneReordering = $table.hasClass('reordering');
-        
-        $table.toggleClass('reordering');
-        
-        if (doneReordering) {
-            $container.find('.listgrid-icon').removeClass('fa fa-arrows-v fa-lg');
 
-            $container.find('.listgrid-toolbar button').removeAttr('disabled');
-            $(this).html($('<i>', { 'class' : 'icon-move' }));
-            $(this).append(' ' + BLCAdmin.messages.reorder);
-            
-            BLCAdmin.listGrid.updateRowActionButtons($container);
-            
-            $trs.removeClass('draggable').addClass('clickable');
-            $tbody.sortable("destroy");
-        } else {
-            $container.find('.listgrid-icon').addClass('fa fa-arrows-v fa-lg');
+    $('body').on({
+        mouseenter: function () {
+            var $this = $(this);
+            var $container = $this.closest('.listgrid-container');
+            var $table = $container.find('table');
+            var $tbody = $table.find('tbody');
+            var $trs = $tbody.find('tr');
+            var parentId = typeof $container.data('parentid') === 'undefined' ? null : $container.data('parentid');
 
-            $container.find('.listgrid-toolbar button').attr('disabled', 'disabled');
-            $(this).removeAttr('disabled').html(BLCAdmin.messages.done);
-            
+            $table.addClass('reordering');
+
             $trs.removeClass('clickable').addClass('draggable');
-            
+
             $tbody.sortable({
                 helper : BLCAdmin.listGrid.fixHelper,
                 update : function(event, ui) {
+                    var url = ui.item.data('link') + '/sequence';
+
+                    if (ui.item.closest('table.list-grid-table').length
+                        && ui.item.closest('table.list-grid-table').data('listgridtype') === 'tree') {
+                        // Expected uri structure: "/admin/{section}/{child-id}/{alternate-id}/sequence"
+                        // Desired uri structure: "/admin/{section}/{parent-id}/{collection-name}/{child-id}/{alternate-id}/sequence"
+                        // Beginning: "/admin/{section}"
+                        // Middle: "/{parent-id}/{collection-name}"
+                        // End: "/{child-id}/{alternate-id}/sequence"
+                        var parentId = ui.item.closest('.listgrid-container').data('parentid');
+                        var collectionName = ui.item.closest('.tree-listgrid-container').data('collectionname');
+
+                        var thirdToLastIndex = url.lastIndexOf('/', url.lastIndexOf('/', url.lastIndexOf('/') - 1) - 1);
+                        var beginning = url.substring(0, thirdToLastIndex);
+                        var middle = "/" + parentId + "/" + collectionName;
+                        var end = url.substring(thirdToLastIndex);
+                        url = beginning + middle + end;
+                    }
+
                     BLC.ajax({
-                        url : ui.item.data('link') + '/sequence',
+                        url : url,
                         type : "POST",
                         data : {
-                            newSequence : ui.item.index()
+                            newSequence : ui.item.index(),
+                            parentId : parentId
                         }
                     }, function(data) {
                         var $container = $('div.listgrid-container#' + data.field);
-                        BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', { 
-                            alertType: 'save-alert', 
-                            autoClose: 400 
+                        BLCAdmin.listGrid.showAlert($container, BLCAdmin.messages.saved + '!', {
+                            alertType: 'save-alert',
+                            autoClose: 400
                         });
+
+                        $container = $this.closest('.listgrid-container');
+                        if ($container.prev().length) {
+                            var $parent = $container.prev().find('tr.selected');
+                            if (!$parent.hasClass('dirty')) {
+                                $parent.addClass('dirty');
+                                var pencilIcon = '<span><a class="hover-cursor workflow-icon icon-pencil" data-width="200" ' +
+                                    'title="This record has been modified in the current sandbox"></a></span>';
+
+                                if ($parent.find('.sub-list-grid-reorder').length) {
+                                    $parent.find('.sub-list-grid-reorder').after(pencilIcon);
+                                } else {
+                                    var contents = $parent.find('td:first').html();
+                                    $parent.find('td:first').html(pencilIcon + contents);
+                                }
+                            }
+                        }
                     });
                 }
             }).disableSelection();
+        },
+        mouseleave:function () {
+            if (isMouseDown) {
+                return false;
+            }
+
+            var $container = $(this).closest('.listgrid-container');
+            var $table = $container.find('table');
+            var $tbody = $table.find('tbody');
+            var $trs = $tbody.find('tr');
+
+            $table.removeClass('reordering');
+
+            $trs.removeClass('draggable').addClass('clickable');
+            $tbody.sortable("destroy");
         }
-        
-        return false;
-    });
+    },'a.sub-list-grid-reorder');
     
     $('body').on('click', 'a.sub-list-grid-remove, button.sub-list-grid-remove', function() {
         var link = BLCAdmin.listGrid.getActionLink($(this));
