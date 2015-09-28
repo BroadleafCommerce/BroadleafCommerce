@@ -1418,31 +1418,6 @@ div.uploadMessage {
     display: none;
 }
 
-.field-group.local {
-    position: relative;
-}
-
-.field-group.local > div:before {
-    content: "\e615";
-    font-family: 'broadleaf';
-    float: right;
-    vertical-align: middle;
-    position: absolute;
-    right: 8px;
-    top: 38px;
-}
-
-
-.field-group.local > .radio-container:before {
-    content: "\e615";
-    font-family: 'broadleaf';
-    float: right;
-    vertical-align: middle;
-    position: absolute;
-    right: 8px;
-    top: 30px;
-}
-
 .tree-listgrid-container {
     text-align: left;
 }
