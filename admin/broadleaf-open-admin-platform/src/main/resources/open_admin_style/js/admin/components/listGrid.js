@@ -314,17 +314,19 @@ $(document).ready(function() {
         if ($tr.find('td.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
 
             // Avoid rebuilding "next" columns if row is already selected
-            if (!$tr.hasClass('selected') && listGridType === 'tree') {
-                $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
+            if (listGridType === 'tree' && !$tr.hasClass('selected')) {
+                $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
 
             // Select row based on select type
-            $('body').trigger('listGrid-' + listGridSelectType + '-rowSelected', [link, fields, currentUrl]);
+            if (listGridType !== 'tree' || !$tr.hasClass('selected')) {
+                $('body').trigger('listGrid-' + listGridSelectType + '-rowSelected', [$tr, link, fields, currentUrl]);
+            }
 
             // If Adorned or Asset ListGrid, process row click by adding item id to form.
             // Else, wait for confirmation button click.
             if (listGridType === 'adorned_with_form' || listGridType === 'adorned'|| listGridType === 'asset') {
-                $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
+                $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
         }
     });
@@ -345,22 +347,22 @@ $(document).ready(function() {
     /**
      * The rowSelected handler for the main list grid doesn't do anything by default
      */
-    $('body').on('listGrid-main-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-main-rowSelected', function(event, $target, link, fields, currentUrl) {
     });
 
     /**
      * The rowSelected handler for the inline list grid ...
      */
-    function inlineRowSelected(event, link, fields, currentUrl, multi) {
-        var $tr = $('tr[data-link="' + link + '"]');
+    function inlineRowSelected(event, $target, link, fields, currentUrl, multi) {
+        var $tr = $target !== null ? $target : $('tr[data-link="' + link + '"]');
         var currentlySelected = $tr.hasClass('selected');
         var $listGridContainer = $tr.closest('.listgrid-container');
         var $tbody = $tr.closest("tbody");
         var $listgridHeader = $tbody.closest(".listgrid-body-wrapper").prev();
         
         if (!multi) {
-            $tr.closest('tbody').find('tr').removeClass('selected');
-            $tr.closest('tbody').find('tr').find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
+            $tbody.find('tr').removeClass('selected');
+            $tbody.find('tr').find('input[type=checkbox].listgrid-checkbox').prop('checked', false);
         }
         
         if (!currentlySelected) {
@@ -375,31 +377,31 @@ $(document).ready(function() {
         
         BLCAdmin.listGrid.updateRowActionButtons($listGridContainer);
     }
-    $('body').on('listGrid-single_select-rowSelected', function(event, link, fields, currentUrl) {
-        inlineRowSelected(event, link, fields, currentUrl, false);
+    $('body').on('listGrid-single_select-rowSelected', function(event, $target, link, fields, currentUrl) {
+        inlineRowSelected(event, $target, link, fields, currentUrl, false);
     });
-    $('body').on('listGrid-translation-rowSelected', function(event, link, fields, currentUrl) {
-        inlineRowSelected(event, link, fields, currentUrl, false);
+    $('body').on('listGrid-translation-rowSelected', function(event, $target, link, fields, currentUrl) {
+        inlineRowSelected(event, $target, link, fields, currentUrl, false);
     });
-    $('body').on('listGrid-multi_select-rowSelected', function(event, link, fields, currentUrl) {
-        inlineRowSelected(event, link, fields, currentUrl, true);
+    $('body').on('listGrid-multi_select-rowSelected', function(event, $target, link, fields, currentUrl) {
+        inlineRowSelected(event, $target, link, fields, currentUrl, true);
     });
-    $('body').on('listGrid-selectize-rowSelected', function(event, link, fields, currentUrl) {
-        inlineRowSelected(event, link, fields, currentUrl, false);
+    $('body').on('listGrid-selectize-rowSelected', function(event, $target, link, fields, currentUrl) {
+        inlineRowSelected(event, $target, link, fields, currentUrl, false);
     });
     
     /**
      * The rowSelected handler for a toOne list grid needs to trigger the specific valueSelected handler 
      * for the field that we are performing the to-one lookup on.
      */
-    $('body').on('listGrid-to_one-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-to_one-rowSelected', function(event, $target, link, fields, currentUrl) {
         $('div.additional-foreign-key-container').trigger('valueSelected', [fields, link, currentUrl]);
     });
     
     /**
      * The rowSelected handler for a simpleCollection list grid ...
      */
-    $('body').on('listGrid-basic-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-basic-rowSelected', function(event, $target, link, fields, currentUrl) {
         var postData = {};
         
         for (var key in fields){
@@ -428,7 +430,7 @@ $(document).ready(function() {
      * lists that do not have any additional maintained fields. In this case, we can simply
      * submit the form directly.
      */
-    $('body').on('listGrid-adorned-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-adorned-rowSelected', function(event, $target, link, fields, currentUrl) {
         $(this).find('input#adornedTargetIdProperty').val(fields['id']);
     });
     
@@ -436,7 +438,7 @@ $(document).ready(function() {
      * The rowSelected handler for an adornedTargetWithForm list grid. Once the user selects an entity,
      * show the form with the additional maintained fields.
      */
-    $('body').on('listGrid-adorned_with_form-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-adorned_with_form-rowSelected', function(event, $target, link, fields, currentUrl) {
         $(this).find('input#adornedTargetIdProperty').val(fields['id']);
     });
     
@@ -679,7 +681,7 @@ $(document).ready(function() {
         var fields = BLCAdmin.listGrid.getRowFields($selectedRow);
         var currentUrl = $container.find("table").data('currenturl');
 
-        $('body').trigger('listGrid-' + listGridType + '-rowSelected', [link, fields, currentUrl]);
+        $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$(this), link, fields, currentUrl]);
     });
     
     $('body').on('submit', 'form.modal-form', function(event) { 
