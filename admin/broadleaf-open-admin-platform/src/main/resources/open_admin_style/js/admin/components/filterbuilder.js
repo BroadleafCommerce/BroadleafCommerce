@@ -851,6 +851,8 @@ $(document).ready(function() {
 
         // add the edit button
         BLCAdmin.filterBuilders.getEditButton(el);
+
+        $('.filter-text').show();
     });
 
     /**
@@ -936,6 +938,8 @@ $(document).ready(function() {
         $filterButton.text("Filter");
         $filterButton.insertBefore($filterButton.parent());
         $filterButton.siblings('.button-group').remove();
+
+        $('.filter-text').hide();
     });
 
     /**
@@ -1076,6 +1080,7 @@ $(document).ready(function() {
                         buttonGroup.append(clearButton);
 
                         $('.filter-info:visible').append(buttonGroup);
+                        $('.filter-text').show();
                     }
                 }
             } else {
@@ -1084,6 +1089,7 @@ $(document).ready(function() {
                 filterButton.text("Filter");
                 filterButton.insertBefore(filterButton.parent());
                 filterButton.siblings('.button-group:visible').remove();
+                $('.filter-text').hide();
             }
         });
     });
