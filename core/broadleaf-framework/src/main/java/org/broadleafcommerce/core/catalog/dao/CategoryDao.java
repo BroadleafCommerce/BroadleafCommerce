@@ -69,7 +69,7 @@ public interface CategoryDao {
     /**
      * @return a list of all categories that do not have a defaultParentCategory set
      */
-    public List<Category> readAllParentCategories();
+    public Category readRootCategory();
 
     /**
      * Retrieve a list of {@code Category} instances by name.

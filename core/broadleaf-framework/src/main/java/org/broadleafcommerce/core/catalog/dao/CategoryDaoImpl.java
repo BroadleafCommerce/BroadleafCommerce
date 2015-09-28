@@ -42,9 +42,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 /**
  * 
@@ -112,22 +109,11 @@ public class CategoryDaoImpl implements CategoryDao {
     }
     
     @Override
-    public List<Category> readAllParentCategories() {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
-        Root<CategoryImpl> category = criteria.from(CategoryImpl.class);
-
-        criteria.select(category);
-        criteria.where(builder.isNull(category.get("defaultParentCategory")));
-        TypedQuery<Category> query = em.createQuery(criteria);
+    public Category readRootCategory() {
+        Query query = em.createNamedQuery("BC_READ_ROOT_CATEGORY");
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-
-        try {
-            return query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
+        return (Category) query.getSingleResult();
     }
 
     @Override
