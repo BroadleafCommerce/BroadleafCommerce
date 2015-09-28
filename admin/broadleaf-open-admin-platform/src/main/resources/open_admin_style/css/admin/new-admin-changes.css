@@ -314,6 +314,10 @@ input[type="radio"].radio+label.radio-label.clr,
     padding: 5px 5px 5px 15px;
 }
 
+.table tbody > tr > td.list-grid-no-results {
+    line-height: 28px;
+}
+
 .borderlessGroup {
     border: 0;
     padding: 0;
@@ -1540,8 +1544,22 @@ div.uploadMessage {
     -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
     -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
     box-shadow: rgba(0,0,0,0.1) 0px 2px 5px,inset 0 20px 20px -20px rgba(0,0,0,0.1);
+}
+
 .listgrid-container a.sub-list-grid-reorder {
     padding-right: 5px;
 }
 
+.listgrid-container .listgrid-table-spinner-container {
+    margin: auto;
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+}
+
+.mCustomScrollBox > .mCSB_scrollTools {
+    border-right: 1px solid #DDD;
+    border-left: 1px solid #DDD;
 }
