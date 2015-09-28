@@ -164,6 +164,13 @@
                     </span>
                     
                     <span th:case="*" th:remove="tag">
+                        <a href="#" class="sub-list-grid-reorder"
+                           style="visibility: hidden;"
+                           th:if="${headerFieldStat.first} and ${listGrid.isSortable()}"
+                           th:unless="${inModal}">
+                            <i class="fa fa-arrows-v fa-lg"/>
+                        </a>
+
                         <span th:substituteby="components/partials/listGridIcon" />
                         
                         <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
