@@ -22,7 +22,6 @@ package org.broadleafcommerce.openadmin.web.controller.entity;
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -118,12 +117,12 @@ public class AdminBasicOperationsController extends AdminAbstractController {
 
         modifyFetchPersistencePackageRequest(ppr, pathVars);
 
-        DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
-
         ClassMetadata targetClassMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
 
         ExtensionResultStatusType extensionResultStatusType = extensionManager.getProxy().buildLookupListGrid(ppr, targetClassMetadata, ppr.getCeilingEntityClassname(), sectionCrumbs, model, requestParams);
         if (extensionResultStatusType.equals(ExtensionResultStatusType.NOT_HANDLED)) {
+            DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
+
             ListGrid listGrid = null;
             if (collectionField.contains("|") || dynamicField) {
                 // If we're dealing with a lookup from a dynamic field, we need to build the list grid differently
@@ -219,9 +218,5 @@ public class AdminBasicOperationsController extends AdminAbstractController {
      */
     protected void modifyFetchPersistencePackageRequest(PersistencePackageRequest ppr, Map<String, String> pathVars) {
 
-    }
-
-    protected boolean isTreeViewEnabled() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("admin.category.treeViewEnabled");
     }
 }
