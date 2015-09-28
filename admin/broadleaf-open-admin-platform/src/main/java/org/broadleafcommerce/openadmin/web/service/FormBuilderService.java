@@ -30,6 +30,7 @@ import org.broadleafcommerce.openadmin.dto.MapMetadata;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.springframework.validation.BindingResult;
@@ -75,13 +76,15 @@ public interface FormBuilderService {
 
     /**
      *
+     *
+     * @param ppr
      * @param drs
      * @param cmd
      * @param sectionKey
      * @return the ListGrid
      * @throws ServiceException
      */
-    public ListGrid buildTreeListGridColumn(DynamicResultSet drs, ClassMetadata cmd, String sectionKey, List<SectionCrumb> sectionCrumbs)
+    public ListGrid buildTreeListGridColumn(PersistencePackageRequest ppr, DynamicResultSet drs, ClassMetadata cmd, String sectionKey, List<SectionCrumb> sectionCrumbs, String parentId)
             throws ServiceException;
 
     /**

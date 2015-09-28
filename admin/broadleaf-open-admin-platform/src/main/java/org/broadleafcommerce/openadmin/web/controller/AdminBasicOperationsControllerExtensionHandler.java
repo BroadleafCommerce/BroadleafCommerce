@@ -24,8 +24,10 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicOperationsController;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -41,13 +43,15 @@ public interface AdminBasicOperationsControllerExtensionHandler extends Extensio
      * Invoked every time {@link AdminBasicOperationsController#showSelectCollectionItem()} is invoked to allow the
      * ListGrid style to be built in a different style. For example, Tree ListGrids should be used for Categories.
      * 
-     * @param drs
+     *
+     * @param ppr
      * @param cmd
      * @param owningClass
      * @param sectionCrumbs
      * @param model
+     * @param requestParams
      * @return ExtensionResultStatusType
      */
-    public ExtensionResultStatusType buildLookupListGrid(DynamicResultSet drs, ClassMetadata cmd, String owningClass,
-            List<SectionCrumb> sectionCrumbs, Model model);
+    public ExtensionResultStatusType buildLookupListGrid(PersistencePackageRequest ppr, ClassMetadata cmd, String owningClass,
+            List<SectionCrumb> sectionCrumbs, Model model, MultiValueMap<String, String> requestParams);
 }

@@ -154,13 +154,20 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     };
 
     @Override
-    public ListGrid buildTreeListGridColumn(DynamicResultSet drs, ClassMetadata cmd, String sectionKey, List<SectionCrumb> sectionCrumbs) throws ServiceException {
-        ListGrid lg = buildMainListGrid(drs, cmd, sectionKey, sectionCrumbs);
+    public ListGrid buildTreeListGridColumn(PersistencePackageRequest ppr, DynamicResultSet drs, ClassMetadata cmd, String sectionKey,
+            List<SectionCrumb> sectionCrumbs, String parentId) throws ServiceException {
+        Property collectionProperty = cmd.getPMap().get(ALL_CHILD_CATEGORY_XREFS);
+
+        ListGrid lg = buildCollectionListGrid(parentId, drs, collectionProperty, sectionKey, sectionCrumbs);
+        lg.getRowActions().remove(DefaultListGridActions.REMOVE);
+        lg.getModalRowActions().remove(DefaultListGridActions.SINGLE_SELECT);
         lg.addModalRowAction(DefaultListGridActions.TREE_SINGLE_SELECT);
-        lg.addRowAction(DefaultListGridActions.TREE_SUB_ADD);
+        lg.addRowAction(DefaultListGridActions.TREE_ADD);
         lg.addRowAction(DefaultListGridActions.EDIT);
         lg.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
         lg.setListGridType(ListGrid.Type.TREE);
+        lg.setPathOverride(sectionKey.startsWith("/") ? sectionKey : "/" + sectionKey);
+        lg.setIsSortable(true);
 
         return lg;
     }
