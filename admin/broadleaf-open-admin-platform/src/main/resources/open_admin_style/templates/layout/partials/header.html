@@ -31,22 +31,21 @@
         </ul>
     </div>
 
-    <!--<div id="lightbox">-->
-
-        <!--<div id="expire-message" class="modal in">-->
-            <!--<div id="expire-header" class="brand">-->
-            <!--<div id="expire-header-message" th:text="#{header.session.expire}"></div>-->
-            <!--</div>-->
-            <!--<div id="expire-content">-->
-                <!--<a id="stay-logged-in" class="expire-button button medium dark radius" href="#" th:text="#{header.stay.logged.in}"></a>-->
-                <!--<a id="session-logout" class="expire-button button medium dark radius" th:href="@{/adminLogout.htm}" th:text="#{header.logout}"></a>-->
-                <!--<div id="expire-text">-->
-
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div  class="modal-backdrop"></div>-->
-    <!--</div>-->
 
     <div th:substituteby="layout/partials/sandboxRibbon" />
 </header>
+<div id="lightbox">
+
+    <div id="expire-message" class="modal in sm">
+        <div id="expire-header" class="modal-header">
+            <h3 id="expire-header-message" th:text="#{header.session.expire}"></h3>
+        </div>
+        <div id="expire-content" class="modal-body">
+            <div id="expire-text"></div>
+            <br />
+            <a type="button" id="stay-logged-in" class="button primary" th:text="#{header.stay.logged.in}"></a>
+            <a type="button" id="session-logout" class="button secondary" th:href="@{/adminLogout.htm}" th:text="#{header.logout}"></a>
+        </div>
+    </div>
+    <div  class="modal-backdrop"></div>
+</div>

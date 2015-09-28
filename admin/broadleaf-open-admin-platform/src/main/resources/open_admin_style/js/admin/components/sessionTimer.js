@@ -78,7 +78,7 @@
         },
         
         getTimeLeftSeconds : function(){
-            return sessionTimeLeft/1000;
+            return moment.duration(sessionTimeLeft/1000, 'seconds').format('m [min] s [sec]');
         },
 
         isExpired : function() {
