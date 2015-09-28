@@ -20,10 +20,12 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
@@ -67,6 +69,10 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     }
 
     @Override public ExtensionResultStatusType getQueryField(SolrQuery query, SearchField searchField, SearchFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
