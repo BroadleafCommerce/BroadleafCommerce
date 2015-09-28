@@ -1,24 +1,56 @@
-<div class="tree-listgrid-container" th:attr="data-baseurl=@{${subTreeBaseUrl}}">
+<div class="tree-listgrid-container" th:attr="data-baseurl=@{${subTreeBaseUrl}}, data-collectionname=${collectionName}">
 
     <!-- Form for add new entity -->
     <blc:form method="POST" id="add-entity-form" style="display:none;"></blc:form>
 
     <div class="tree-ribbon">
-        <div class="tree-breadcrumb-container">
-            <span class="breadcrumb-title">
-                <span th:remove="tag" th:unless="${inModal}" th:text="${entityFriendlyName} ? #{${entityFriendlyName}} + ' ' : ''"/>
-                <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null} and ${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
-                      th:text="#{${collectionProperty.metadata.name}}" />
-                <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null}"
-                      th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
-                      th:text="#{${collectionProperty.metadata.friendlyName}}" />
-                Hierarchy
+        <div class="tree-title-container">
+            <span class="tree-title">
+                <div th:if="${isTreeRoot} or ${inModal}" th:remove="tag">
+                    <span th:remove="tag" th:unless="${inModal}" th:text="${entityFriendlyName} ? #{${entityFriendlyName}} + ' ' : ''"/>
+                    <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null} and ${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
+                          th:text="#{${collectionProperty.metadata.name}}" />
+                    <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null}"
+                          th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
+                          th:text="#{${collectionProperty.metadata.friendlyName}}" />
+                    Hierarchy
+                </div>
+                <div th:unless="${isTreeRoot}" th:remove="tag">
+                    <span th:remove="tag" th:text="${parentName}"/>
+                </div>
             </span>
+
+            <div th:unless="${isTreeRoot}" th:remove="tag">
+                <span class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}">
+                    <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${action.actionId} != 'SPLIT' and ${action.actionId} != 'REORDER' and ${listGrid.listGridType} == 'workflow'">
+                        <a th:classappend="${action.buttonClass}"
+                           href="#"
+                           class="button button-action"
+                           th:attr="data-urlpostfix=${action.urlPostfix},
+                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                           th:title="#{${action.displayText}}">
+                            <i th:class="${action.iconClass}"/>
+                        </a>
+                    </span>
+                    <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}">
+                        <a th:classappend="${action.buttonClass}"
+                           href="#"
+                           class="button button-action"
+                           th:attr="data-urlpostfix=${action.urlPostfix},
+                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
+                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
+                           th:title="#{${action.displayText}}">
+                            <i th:class="${action.iconClass}"/>
+                        </a>
+                    </span>
+                </span>
+            </div>
         </div>
     </div>
     <div class="select-group">
         <div class="select-column-wrapper" style="width: 320px; height: 400px;">
-            <div class="select-column listgrid-container" data-columndepth="0">
+            <div class="select-column listgrid-container" data-columndepth="0" th:attr="data-parentid=${parentId}">
                 <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
             </div>
         </div>
