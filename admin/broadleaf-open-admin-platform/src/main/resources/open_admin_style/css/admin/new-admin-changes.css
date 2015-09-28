@@ -1510,3 +1510,11 @@ div.uploadMessage {
 .session-time {
     color: #94AF39;
 }
+
+.mainEntityName {
+    max-width: 600px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: top;
+}

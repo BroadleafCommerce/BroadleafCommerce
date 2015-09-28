@@ -270,4 +270,11 @@ $(document).ready(function() {
         }
         return false;
     });
+
+    /**
+     * Intercepts the enter keypress from the main entity name input and updates the entity title
+     */
+    $('body').on('keyup', '.main-entity-name input', function(event) {
+        $('.mainEntityName').text($(this).val());
+    });
 });
