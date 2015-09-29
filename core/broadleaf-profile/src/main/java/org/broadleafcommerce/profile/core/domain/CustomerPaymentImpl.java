@@ -22,7 +22,6 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -47,10 +46,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -77,7 +74,7 @@ import javax.persistence.UniqueConstraint;
         })
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
-public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
+public class CustomerPaymentImpl implements CustomerPayment {
 
     private static final long serialVersionUID = 1L;
 
@@ -119,7 +116,7 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             groupOrder = Presentation.Group.Order.PAYMENT)
     protected boolean isDefault = false;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection()
     @MapKeyType(@Type(type = "java.lang.String"))
     @Lob
     @Type(type = "org.hibernate.type.StringClobType")
@@ -134,9 +131,6 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
             keyPropertyFriendlyName = "CustomerPaymentImpl_additional_field_key",
             forceFreeFormKeys = true)
     protected Map<String, String> additionalFields = new HashMap<String, String>();
-
-    @Embedded
-    protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
     @Override
     public void setId(Long id) {
@@ -196,30 +190,6 @@ public class CustomerPaymentImpl implements CustomerPayment, AdditionalFields {
     @Override
     public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
-    }
-
-    @Override
-    public Character getArchived() {
-        ArchiveStatus temp;
-        if (archiveStatus == null) {
-            temp = new ArchiveStatus();
-        } else {
-            temp = archiveStatus;
-        }
-        return temp.getArchived();
-    }
-
-    @Override
-    public boolean isActive() {
-        return 'Y' != getArchived();
-    }
-
-    @Override
-    public void setArchived(Character archived) {
-        if (archiveStatus == null) {
-            archiveStatus = new ArchiveStatus();
-        }
-        archiveStatus.setArchived(archived);
     }
 
     @Override
