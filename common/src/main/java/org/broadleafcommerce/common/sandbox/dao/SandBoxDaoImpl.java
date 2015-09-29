@@ -179,13 +179,21 @@ public class SandBoxDaoImpl implements SandBoxDao {
 
     @Override
     public SandBox retrieveNamedSandBox(SandBoxType sandboxType, String sandboxName) {
+        return retrieveNamedSandBox(sandboxType, sandboxName, null);
+    }
+
+    @Override
+    public SandBox retrieveNamedSandBox(SandBoxType sandBoxType, String sandboxName, Long authorId) {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
         List<Predicate> restrictions = new ArrayList<Predicate>();
-        restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandboxType.getType()));
+        restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandBoxType.getType()));
         restrictions.add(builder.equal(sandbox.get("sandBox").get("name"), sandboxName));
+        if (authorId != null) {
+            restrictions.add(builder.equal(sandbox.get("sandBox").get("author"), authorId));
+        }
         restrictions.add(
                 builder.or(
                         builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),

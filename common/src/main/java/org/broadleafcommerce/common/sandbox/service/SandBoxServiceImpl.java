@@ -124,13 +124,13 @@ public class SandBoxServiceImpl implements SandBoxService {
     
     @Override
     public synchronized SandBox createUserSandBox(Long authorId, SandBox approvalSandBox) {
-        if (checkForExistingSandboxWithTypeAndName(SandBoxType.USER, approvalSandBox.getName())) {
+        if (checkForExistingSandbox(SandBoxType.USER, approvalSandBox.getName(), authorId)) {
             return sandBoxDao.createUserSandBox(authorId, approvalSandBox);
         }
 
         return sandBoxDao.retrieveNamedSandBox(SandBoxType.USER, approvalSandBox.getName());
     }
-    
+
     @Override
     public synchronized SandBox createDefaultSandBox() {
         return sandBoxDao.createDefaultSandBox();
@@ -163,12 +163,12 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Override
     public boolean checkForExistingApprovalSandboxWithName(String sandboxName) {
-        return checkForExistingSandboxWithTypeAndName(SandBoxType.APPROVAL, sandboxName);
+        return checkForExistingSandbox(SandBoxType.APPROVAL, sandboxName, null);
     }
 
     @Override
-    public boolean checkForExistingSandboxWithTypeAndName(SandBoxType sandBoxType, String sandboxName) {
-        SandBox sb = sandBoxDao.retrieveNamedSandBox(sandBoxType, sandboxName);
+    public boolean checkForExistingSandbox(SandBoxType sandBoxType, String sandboxName, Long authorId) {
+        SandBox sb = sandBoxDao.retrieveNamedSandBox(sandBoxType, sandboxName, authorId);
         return sb == null;
     }
 

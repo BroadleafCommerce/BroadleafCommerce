@@ -86,5 +86,5 @@ public interface SandBoxService {
 
     public List<SandBox> retrieveChildSandBoxesByParentId(Long parentSandBoxId);
 
-    public boolean checkForExistingSandboxWithTypeAndName(SandBoxType sandBoxType, String sandboxName);
+    public boolean checkForExistingSandbox(SandBoxType sandBoxType, String sandboxName, Long authorId);
 }
