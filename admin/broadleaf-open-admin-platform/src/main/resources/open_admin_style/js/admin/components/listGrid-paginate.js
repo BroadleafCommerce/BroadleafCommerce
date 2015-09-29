@@ -424,7 +424,7 @@
         // ************************* *
         
         getRowHeight : function($tbody) {
-            return $tbody.find('tr:not(.blank-padding):first').height();
+            return $tbody.find('td:not(.blank-padding):first').css('height').replace('px', '');
         },
         
         getTopVisibleIndex : function($tbody) {
@@ -662,7 +662,7 @@
             // First, we'll adjust the size of the table to be 15px less, since this is the margin we need
             // for our scrollbar. This will ensure the widths are correct once we draw the scrollbar
             $table.css('width', ($table.width() - 15) + 'px');
-            
+
             // Figure out what the currently drawn widths are for each row
             // This is effectively the same for all rows for both the head and the body for now
             // Also, set the width we determined directly on the element

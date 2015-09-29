@@ -18,6 +18,11 @@
  * #L%
  */
 
+.listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon) {
+    color: #809831;
+    text-decoration: underline;
+}
+
 .app-content .side-nav {
     z-index: 300;
 }
@@ -1522,4 +1527,20 @@ div.uploadMessage {
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: top;
+}
+
+.listgrid-table-spinner-container {
+    margin: auto;
+    text-align: center;
+    position: relative;
+    transform: translateY(-50%);
+    background-color: #E0E0E0;
+}
+
+.mCustomScrollBox {
+    background-color: #E0E0E0;
+}
+
+.mCSB_draggerContainer {
+    background-color: #F9F7F3;
 }
