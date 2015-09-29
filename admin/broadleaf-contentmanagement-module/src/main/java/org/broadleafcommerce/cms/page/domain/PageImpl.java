@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyArchive;
 import org.broadleafcommerce.common.extensibility.jpa.clone.ClonePolicyMapOverride;
+import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -177,6 +178,7 @@ public class PageImpl implements Page, AdminMainEntity, Locatable, ProfileEntity
         joinColumns = @JoinColumn(name = "PAGE_ID"), 
         inverseJoinColumns = @JoinColumn(name = "PAGE_ITEM_CRITERIA_ID"))
     @Deprecated
+    @IgnoreEnterpriseBehavior
     protected Set<PageItemCriteria> qualifyingItemCriteria = new HashSet<PageItemCriteria>();
 
     @Column(name = "EXCLUDE_FROM_SITE_MAP")

@@ -280,7 +280,7 @@ public class SkuImpl implements Sku {
             @ValidationConfiguration(
                 validationImplementation = "blAfterStartDateValidator",
                 configurationItems = {
-                        @ConfigurationItem(itemName = "otherField", itemValue = "defaultSku.activeStartDate")
+                        @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
                 }) 
         })
     protected Date activeEndDate;
@@ -554,11 +554,7 @@ public class SkuImpl implements Sku {
 
     @Override
     public Money getRetailPrice() {
-        Money tmpRetailPrice = getRetailPriceInternal();
-        if (tmpRetailPrice == null) {
-            throw new IllegalStateException("Retail price on Sku with id " + getId() + " was null");
-        }
-        return tmpRetailPrice;
+        return getRetailPriceInternal();
     }
 
     /*

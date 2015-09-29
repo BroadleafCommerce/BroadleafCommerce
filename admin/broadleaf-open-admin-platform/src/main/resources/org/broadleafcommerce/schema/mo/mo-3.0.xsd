@@ -167,6 +167,7 @@
             <xsd:enumeration value="forceFreeFormKeys"/>
             <xsd:enumeration value="translatable"/>
             <xsd:enumeration value="defaultValue"/>
+            <xsd:enumeration value="fieldComponentRenderer"/>
         </xsd:restriction>
     </xsd:simpleType>
 </xsd:schema>
