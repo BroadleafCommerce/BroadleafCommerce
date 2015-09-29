@@ -128,7 +128,7 @@ public class SandBoxServiceImpl implements SandBoxService {
             return sandBoxDao.createUserSandBox(authorId, approvalSandBox);
         }
 
-        return sandBoxDao.retrieveNamedSandBox(SandBoxType.USER, approvalSandBox.getName());
+        return sandBoxDao.retrieveNamedSandBox(SandBoxType.USER, approvalSandBox.getName(), authorId);
     }
 
     @Override
