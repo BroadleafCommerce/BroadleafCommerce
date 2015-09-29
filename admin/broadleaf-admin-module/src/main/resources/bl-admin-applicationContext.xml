@@ -45,8 +45,8 @@
                 <ref bean="blSkuCustomPersistenceHandler" />
                 <ref bean="blISOCountryPersistenceHandler"/>
                 <ref bean="blSkuBundleItemCustomPersistenceHandler" />
-                <ref bean="blOrderCustomPersistenceHandler" />
-                <ref bean="blSearchFacetRangeCustomPersistenceHandler" />            </list>
+                <ref bean="blSearchFacetRangeCustomPersistenceHandler" />
+            </list>
         </property>
     </bean>
 
