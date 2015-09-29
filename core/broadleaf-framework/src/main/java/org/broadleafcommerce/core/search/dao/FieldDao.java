@@ -41,6 +41,10 @@ public interface FieldDao {
      */
     public Field readFieldByAbbreviation(String abbreviation);
 
+    List<Field> readAllProductFields();
+
+    List<Field> readAllSkuFields();
+
     /**
      * Finds all fields based on the entity type.
      * @param entityType

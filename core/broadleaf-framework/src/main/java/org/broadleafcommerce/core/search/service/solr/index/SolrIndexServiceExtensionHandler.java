@@ -24,6 +24,7 @@ package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
@@ -107,5 +108,16 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      * Allows the extension additional fields to the document that are not configured via the DB.
      */
     public ExtensionResultStatusType attachAdditionalBasicFields(Indexable indexable, SolrInputDocument document, SolrHelperService shs);
-    
+
+    /**
+     * This is used to populate any fields for the given parameters as well as adding any property names to the added properties list.
+     *
+     * @param document the document we are populating
+     * @param field the field we are populating the document with
+     * @param fieldType the field type of the field
+     * @param propertyValues the property values for the given Field
+     * @param addedProperties the properties that have been added to this document so far
+     * @return the result of this handler, if NOT_HANDLED, no fields were populated
+     */
+    public ExtensionResultStatusType populateDocumentForSearchField(SolrInputDocument document, Field field, FieldType fieldType, Map<String, Object> propertyValues, List<String> addedProperties);
 }

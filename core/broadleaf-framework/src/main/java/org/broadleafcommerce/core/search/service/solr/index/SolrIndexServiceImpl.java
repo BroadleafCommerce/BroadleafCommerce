@@ -30,6 +30,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.service.LocaleService;
@@ -50,9 +51,14 @@ import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsidera
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
 import org.broadleafcommerce.core.search.dao.FieldDao;
+import org.broadleafcommerce.core.search.dao.SearchFacetDao;
+import org.broadleafcommerce.core.search.dao.SearchFieldDao;
 import org.broadleafcommerce.core.search.dao.SolrIndexDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.broadleafcommerce.core.search.domain.SearchFacet;
+import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrContext;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
@@ -61,7 +67,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -75,7 +80,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.annotation.Resource;
 
 
@@ -137,6 +141,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+
+    @Resource(name = "blSearchFacetDao")
+    protected SearchFacetDao searchFacetDao;
+
+    @Resource(name = "blSearchFieldDao")
+    protected SearchFieldDao searchFieldDao;
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
@@ -497,43 +507,63 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         for (Field field : fields) {
             try {
                 // Index the searchable fields
-                if (field.getSearchable()) {
-                    List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(field);
-                    for (FieldType sft : searchableFieldTypes) {
-                        Map<String, Object> propertyValues = getPropertyValues(indexable, field, sft, locales);
+                // Determine if field is searchable (check if it has a search field entry in BLC_SEARCH_FIELD)
+                SearchField searchField = searchFieldDao.readSearchFieldForField(field);
+
+                // If we find a SearchField entry for this field, then this field is searchable
+                if (searchField != null) {
+                    List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+
+                    // For each of its search field types, get the property values, and add a field to the document for each property value
+                    for (SearchFieldType sft : searchableFieldTypes) {
+                        FieldType fieldType = sft.getSearchableFieldType();
+                        Map<String, Object> propertyValues = getPropertyValues(indexable, field, fieldType, locales);
+
+                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForSearchField(document, field, fieldType, propertyValues, addedProperties);
+
+                        if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                            // Build out the field for every prefix
+                            for (Entry<String, Object> entry : propertyValues.entrySet()) {
+                                String prefix = entry.getKey();
+                                prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
+
+                                String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, fieldType, prefix);
+                                Object value = entry.getValue();
+
+                                document.addField(solrPropertyName, value);
+                                addedProperties.add(solrPropertyName);
+                            }
+                        }
+                    }
+                }
+
+                // Index the faceted field type as well
+                // Determine if field is faceted (check if it has a search facet entry in BLC_SEARCH_FACET)
+                SearchFacet searchFacet = searchFacetDao.readSearchFacetForField(field);
+
+                // If we find a SearchFacet entry for this field, then this field is faceted
+                if (searchFacet != null && searchFacet.getFacetFieldType() != null) {
+                    // Get the FacetFieldType for the SearchFacet, get the property values, and add a field to the document for each property value
+                    FieldType facetType = FieldType.getInstance(searchFacet.getFacetFieldType());
+
+                    if (facetType != null) {
+                        Map<String, Object> propertyValues = getPropertyValues(indexable, field, facetType, locales);
 
                         // Build out the field for every prefix
                         for (Entry<String, Object> entry : propertyValues.entrySet()) {
                             String prefix = entry.getKey();
                             prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
 
-                            String solrPropertyName = shs.getPropertyNameForFieldSearchable(field, sft, prefix);
+                            String solrFacetPropertyName = shs.getPropertyNameForFieldFacet(field, prefix, facetType);
                             Object value = entry.getValue();
 
-                            document.addField(solrPropertyName, value);
-                            addedProperties.add(solrPropertyName);
+                            if (!addedProperties.contains(solrFacetPropertyName)) {
+                                document.addField(solrFacetPropertyName, value);
+                            }
                         }
                     }
                 }
 
-                // Index the faceted field type as well
-                FieldType facetType = field.getFacetFieldType();
-                if (facetType != null) {
-                    Map<String, Object> propertyValues = getPropertyValues(indexable, field, facetType, locales);
-
-                    // Build out the field for every prefix
-                    for (Entry<String, Object> entry : propertyValues.entrySet()) {
-                        String prefix = entry.getKey();
-                        prefix = StringUtils.isBlank(prefix) ? prefix : prefix + "_";
-
-                        String solrFacetPropertyName = shs.getPropertyNameForFieldFacet(field, prefix);
-                        Object value = entry.getValue();
-
-                        if (!addedProperties.contains(solrFacetPropertyName)) {
-                            document.addField(solrFacetPropertyName, value);
-                        }
-                    }
-                }
             } catch (Exception e) {
                 LOG.error("Could not get value for property[" + field.getQualifiedFieldName() + "] for product id["
                         + indexable.getId() + "]", e);
@@ -590,10 +620,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                 String categorySortFieldName = shs.getCategorySortFieldName(shs.getCategoryId(categoryId));
                 String displayOrderKey = categoryId + "-" + cacheKey;
-                Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
+                if (cache.getDisplayOrdersByCategoryProduct().containsKey(displayOrderKey)) {
+                    Long displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
 
-                if (document.getField(categorySortFieldName) == null) {
-                    document.addField(categorySortFieldName, displayOrder);
+                    if (document.getField(categorySortFieldName) == null && displayOrder != null) {
+                        document.addField(categorySortFieldName, displayOrder);
+                    }
                 }
 
                 // This is the entire tree of every category defined on the product
@@ -771,6 +803,11 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      */
     protected Long convertDisplayOrderToLong(CatalogStructure cache, String displayOrderKey) {
         BigDecimal displayOrder = cache.getDisplayOrdersByCategoryProduct().get(displayOrderKey);
+
+        if (displayOrder == null) {
+            return null;
+        }
+
         return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
     }
 }

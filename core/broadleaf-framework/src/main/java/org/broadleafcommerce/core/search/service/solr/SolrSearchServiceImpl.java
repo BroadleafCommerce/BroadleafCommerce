@@ -35,6 +35,8 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
@@ -44,6 +46,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
+import org.broadleafcommerce.core.search.dao.SearchFieldDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
@@ -51,6 +54,8 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
@@ -59,7 +64,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -78,7 +82,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -121,6 +124,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Resource(name = "blSolrIndexService")
     protected SolrIndexService solrIndexService;
+
+    @Resource(name = "blSearchFieldDao")
+    protected SearchFieldDao searchFieldDao;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
@@ -515,7 +521,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         return "";
     }
 
-    protected String buildQueryFieldsString() {
+    protected String buildQueryFieldsString(SolrQuery query) {
         StringBuilder queryBuilder = new StringBuilder();
         List<Field> fields = null;
         if (useSku) {
@@ -524,18 +530,46 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
 
+        // we want to gather all the query fields into one list
+        List<String> queryFields = new ArrayList<>();
         for (Field currentField : fields) {
-            if (currentField.getSearchable()) {
-                appendFieldToQuery(queryBuilder, currentField);
-            }
+            getQueryFields(query, queryFields, currentField);
         }
+
+        // we join our query fields to a single string to append to the solr query
+        queryBuilder.append(StringUtils.join(queryFields, " "));
+
         return queryBuilder.toString();
     }
 
-    protected void appendFieldToQuery(StringBuilder queryBuilder, Field currentField) {
-        List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(currentField);
-        for (FieldType currentType : searchableFieldTypes) {
-            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, currentType)).append(" ");
+    /**
+     * This helper method gathers the query fields for the given field and stores them in the List parameter.
+     * @param query
+     * @param queryFields the query fields for this query
+     * @param currentField the current field
+     */
+    protected void getQueryFields(SolrQuery query, final List<String> queryFields, Field currentField) {
+        SearchField searchField = searchFieldDao.readSearchFieldForField(currentField);
+
+        if (searchField != null) {
+            List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+
+            for (SearchFieldType searchFieldType : searchableFieldTypes) {
+                FieldType fieldType = searchFieldType.getSearchableFieldType();
+
+                // this will hold the list of query fields for our given field
+                ExtensionResultHolder<List<String>> queryFieldResult = new ExtensionResultHolder<>();
+                queryFieldResult.setResult(queryFields);
+
+                // here we try to get the query field's for this search field
+                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(query, searchField, searchFieldType, queryFieldResult);
+
+                if (ExtensionResultStatusType.NOT_HANDLED.equals(result)){
+                    // if we didn't get any query fields we just add a default one
+                    String solrFieldName = shs.getPropertyNameForFieldSearchable(currentField, fieldType);
+                    queryFields.add(solrFieldName);
+                }
+            }
         }
     }
 
@@ -578,7 +612,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         }
         solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")");
         solrQuery.set("defType", "edismax");
-        solrQuery.set("qf", buildQueryFieldsString());
+        solrQuery.set("qf", buildQueryFieldsString(solrQuery));
 
         // Attach additional restrictions
         attachSortClause(solrQuery, searchCriteria, defaultSort);
@@ -586,9 +620,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         attachFacets(solrQuery, namedFacetMap);
         
         modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
-        
-        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
-                searchCriteria, defaultSort);
+
+        solrQuery.setShowDebugInfo(true);
 
         if (LOG.isTraceEnabled()) {
             try {
@@ -651,6 +684,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      */
     protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
             List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
+
+        extensionManager.getProxy().modifySolrQuery(query, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
     }
     
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {
@@ -690,7 +725,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         } else {
             fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
+
         shs.attachSortClause(query, searchCriteria, defaultSort, fields);
+        query.addSort("score", SolrQuery.ORDER.desc);
     }
 
     /**
@@ -788,6 +825,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 }
             });
         }
+
+        extensionManager.getProxy().modifySearchResults(responseDocuments, products);
 
         return products;
     }

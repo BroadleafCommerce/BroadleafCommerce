@@ -20,13 +20,18 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
@@ -59,14 +64,12 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
 
     /**
      * Provides an extension point to modify the SolrQuery.
-     * 
      * @param context
      * @param query
      * @param qualifiedSolrQuery
      * @param facets
      * @param searchCriteria
      * @param defaultSort
-     *      * @return
      */
     public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
             List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
@@ -82,4 +85,34 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer);
 
+    /**
+     * <p>
+     * Finds and adds the query fields for the given search field and searchable field type. This method should only ADD
+     * to the list within the <b>queryFieldsResult</b> parameters.
+     *
+     * <p>
+     * Most implementations of this will need to invoke {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
+     * in order to return the right value to populate in the <b>queryFieldsResult</b>. If the returned result is
+     * {@link ExtensionResultStatusType#NOT_HANDLED} then the default behavior is to only do that.
+     *
+     *
+     * @param query
+     * @param searchField the search field
+     * @param searchFieldType the field type of the field
+     * @param queryFieldsResult the binding result that contains the list of query fields, only add to this
+     * @return the result of the handler, if NOT_HANDLED, then no query fields were added
+     * @see {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
+     */
+    public ExtensionResultStatusType getQueryField(SolrQuery query, SearchField searchField, SearchFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
+
+    /**
+     * <p>Modifies the product search results from a Solr query</p>
+     *
+     * <p>The parameters passed into this method should be assumed to be sorted identically and match one to one.</p>
+     *
+     * @param responseDocuments the response documents from Solr
+     * @param products the products that tie to the response documents
+     * @return the result of the handler, if NOT_HANDLED, then no changes where made
+     */
+    public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products);
 }

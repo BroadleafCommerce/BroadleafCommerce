@@ -54,6 +54,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
@@ -109,6 +110,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Resource(name = "blSolrIndexServiceExtensionManager")
     protected SolrIndexServiceExtensionManager indexExtensionManager;
+
+    @Resource(name = "blSearchFacetDao")
+    protected SearchFacetDao searchFacetDao;
     
     /**
      * This should only ever be called when using the Solr reindex service to do a full reindex. 
@@ -183,31 +187,15 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public String getPropertyNameForFieldFacet(Field field, String prefix) {
-        if (field.getFacetFieldType() == null) {
+    public String getPropertyNameForFieldFacet(Field field, String prefix, FieldType facetType) {
+        if (facetType == null) {
             return null;
         }
 
         return new StringBuilder()
                 .append(prefix)
-                .append(field.getAbbreviation()).append("_").append(field.getFacetFieldType().getType())
+                .append(field.getAbbreviation()).append("_").append(facetType.getType())
                 .toString();
-    }
-
-    @Override
-    public List<FieldType> getSearchableFieldTypes(Field field) {
-        // We will index all configured searchable field types
-        List<FieldType> typesToConsider = new ArrayList<FieldType>();
-        if (CollectionUtils.isNotEmpty(field.getSearchableFieldTypes())) {
-            typesToConsider.addAll(field.getSearchableFieldTypes());
-        }
-
-        // If there were no searchable field types configured, we will use TEXT as a default one
-        if (CollectionUtils.isEmpty(typesToConsider)) {
-            typesToConsider.add(FieldType.TEXT);
-        }
-
-        return typesToConsider;
     }
 
     @Override
@@ -220,8 +208,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getPropertyNameForFieldFacet(Field field) {
-        FieldType fieldType = field.getFacetFieldType();
-        if (fieldType == null) {
+        SearchFacet searchFacet = searchFacetDao.readSearchFacetForField(field);
+        if (searchFacet == null || searchFacet.getFacetFieldType() == null) {
             return null;
         }
 
@@ -230,7 +218,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         searchExtensionManager.getProxy().buildPrefixListForSearchableFacet(field, prefixList);
         String prefix = convertPrefixListToString(prefixList);
 
-        return getPropertyNameForFieldFacet(field, prefix);
+        return getPropertyNameForFieldFacet(field, prefix, FieldType.getInstance(searchFacet.getFacetFieldType()));
     }
 
     protected String convertPrefixListToString(List<String> prefixList) {
@@ -342,7 +330,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         Long categoryId = getCategoryId(category);
         return new StringBuilder()
                 .append(getCategoryFieldName())
-                .append("_").append(categoryId).append("_").append("sort_d")
+                .append("_").append(categoryId).append("_").append(FieldType.SORT.getType())
                 .toString();
     }
 
@@ -351,7 +339,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         categoryId = getCategoryId(categoryId);
         return new StringBuilder()
                 .append(getCategoryFieldName())
-                .append("_").append(categoryId).append("_").append("sort_d")
+                .append("_").append(categoryId).append("_").append(FieldType.SORT.getType())
                 .toString();
     }
 

@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
+public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFacet> {
 
     /**
      * Returns the internal id
@@ -171,4 +172,17 @@ public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
      */
     public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets);
 
+    /**
+     * This String represents the FieldType for the given SearchFacet. This is the FieldType that will be used when this Field is indexed in Solr
+     *
+     * @return the String representing the FieldType of this SearchFacet
+     */
+    public String getFacetFieldType();
+
+    /**
+     * Sets the FieldType for the current SearchFacet
+     *
+     * @param facetFieldType the String representation of a FieldType
+     */
+    public void setFacetFieldType(String facetFieldType);
 }

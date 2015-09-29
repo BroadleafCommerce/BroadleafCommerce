@@ -303,9 +303,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             targetObjectProperty = "product",
             parentObjectProperty = "category",
             friendlyName = "allProductsTitle",
-            sortProperty = "displayOrder",
             tab = Presentation.Tab.Name.Products, tabOrder = Presentation.Tab.Order.Products,
-            gridVisibleFields = { "defaultSku.name" })
+            gridVisibleFields = { "defaultSku.name", "displayOrder" },
+            maintainedAdornedTargetFields = { "displayOrder" })
     protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
 
     /*

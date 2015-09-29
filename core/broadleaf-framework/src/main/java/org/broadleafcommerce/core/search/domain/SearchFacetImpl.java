@@ -31,18 +31,19 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -83,15 +84,23 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     
     @Column(name = "LABEL")
     @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description",
-            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000)
+            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000, requiredOverride = RequiredOverride.REQUIRED)
     protected String label;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
     @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = "SearchFacetImpl_description",
-            prominent = true, gridOrder = 2000)
+            prominent = true, gridOrder = 2000, requiredOverride = RequiredOverride.REQUIRED)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
     protected Field field;
+
+    @Column(name = "FACET_FIELD_TYPE")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_facetFieldType", group = "SearchFacetImpl_description", order = 4, prominent = true, gridOrder = 4,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.search.domain.solr.FieldType",
+            requiredOverride = RequiredOverride.REQUIRED,
+            defaultValue = "t")
+    protected String facetFieldType;
     
     @Column(name =  "SHOW_ON_SEARCH")
     @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 4000,
@@ -105,14 +114,18 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
             group = "SearchFacetImpl_description",
             groupOrder = 1,
             prominent = true,
-            tooltip = "SearchFacetImpl_searchPriorityTooltip")
+            tooltip = "SearchFacetImpl_searchPriorityTooltip",
+            tab = "SearchFacetImpl_Advanced_tab",
+            tabOrder = 2000)
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
     @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 6000,
             group = "SearchFacetImpl_description",
             groupOrder = 1,
-            tooltip = "SearchFacetImpl_multiselectTooltip")
+            tooltip = "SearchFacetImpl_multiselectTooltip",
+            tab = "SearchFacetImpl_Advanced_tab",
+            tabOrder = 2000)
     protected Boolean canMultiselect = true;
     
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
@@ -135,7 +148,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
             groupOrder = 1,
             tooltip = "SearchFacetImpl_requiresAllDependentFacetsTooltip")
     protected Boolean requiresAllDependentFacets = false;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -224,6 +237,16 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @Override
     public void setSearchFacetRanges(List<SearchFacetRange> searchFacetRanges) {
         this.searchFacetRanges = searchFacetRanges;
+    }
+
+    @Override
+    public String getFacetFieldType() {
+        return facetFieldType;
+    }
+
+    @Override
+    public void setFacetFieldType(String facetFieldType) {
+        this.facetFieldType = facetFieldType;
     }
 
     @Override
