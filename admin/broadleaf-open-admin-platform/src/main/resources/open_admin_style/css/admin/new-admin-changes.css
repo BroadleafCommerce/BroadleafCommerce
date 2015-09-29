@@ -180,6 +180,11 @@ circle {
     margin-top: 20px;
 }
 
+.app-content .content .site-bar .button {
+    line-height: inherit;
+    margin: 7px 0 7px 12px;
+}
+
 tr {
     position: relative;
 }
