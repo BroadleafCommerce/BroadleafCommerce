@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.common;
 
+import java.util.Map;
 
 /**
  * Created by bpolster.
@@ -39,4 +40,10 @@ public interface RequestDTO {
      * @return true if this request came in through HTTPS
      */
     public Boolean isSecure();
+
+    /**
+     * By default, converts the properties on 
+     * @return
+     */
+    public Map<String, Object> getProperties();
 }
