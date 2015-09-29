@@ -17,14 +17,21 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.core.web.catalog;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.web.BLCAbstractHandlerMapping;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.ServletRequestBindingException;
+import org.springframework.web.bind.ServletRequestUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import javax.annotation.Resource;
@@ -43,9 +50,11 @@ import javax.servlet.http.HttpServletRequest;
  * @see CatalogService
  */
 public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
-    
-    private final String controllerName="blProductController";
-    
+
+    private static final Log LOG = LogFactory.getLog(ProductHandlerMapping.class);
+
+    private final String controllerName = "blProductController";
+
     @Value("${solr.index.use.sku}")
     protected boolean useSku;
 
@@ -61,13 +70,21 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-        if(useSku) {
-            return null;
-        }
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getRequestURIWithoutContext() != null) {
-            String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
-            Product product = catalogService.findProductByURI(requestUri);
+        if (context != null) {
+            if (shouldSkipExecution(context)) {
+                return null;
+            }
+            Product product = null;
+
+            if (allowProductResolutionUsingIdParam()) {
+                product = findProductUsingIdParam(context);
+            }
+
+            if (product == null) {
+                product = findProductUsingUrl(context);
+            }
+
             if (product != null) {
                 context.getRequest().setAttribute(CURRENT_PRODUCT_ATTRIBUTE_NAME, product);
                 return controllerName;
@@ -76,12 +93,55 @@ public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
         return null;
     }
 
+    protected Product findProductUsingIdParam(BroadleafRequestContext context) throws ServletRequestBindingException {
+        Long productId = ServletRequestUtils.getLongParameter(context.getRequest(), "productId");
+        if (productId != null) {
+            Product product = catalogService.findProductById(productId);
+            if (product != null && LOG.isDebugEnabled()) {
+                LOG.debug("Obtained the product using id=" + productId);
+            }
+            return product;
+        }
+        return null;
+    }
+
+    protected Product findProductUsingUrl(BroadleafRequestContext context)
+            throws ServletRequestBindingException, UnsupportedEncodingException {
+        String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
+        Product product = catalogService.findProductByURI(requestUri);
+        if (product != null && LOG.isDebugEnabled()) {
+            LOG.debug("Obtained the product using URI=" + requestUri);
+        }
+        return product;
+    }
+
     public String getDefaultTemplateName() {
         return defaultTemplateName;
     }
 
     public void setDefaultTemplateName(String defaultTemplateName) {
         this.defaultTemplateName = defaultTemplateName;
+    }
+
+    public boolean allowProductResolutionUsingIdParam() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("allowProductResolutionUsingIdParam");
+    }
+
+    public boolean allowCategoryResolutionUsingIdParam() {
+        return BLCSystemProperty.resolveBooleanSystemProperty("allowCategoryResolutionUsingIdParam");
+    }
+
+    public boolean shouldSkipExecution(BroadleafRequestContext context) throws ServletRequestBindingException {
+        if (useSku) {
+            return true;
+        }
+
+        if (allowCategoryResolutionUsingIdParam() &&
+                ServletRequestUtils.getLongParameter(context.getRequest(), "categoryId") != null) {
+            return true;
+        }
+
+        return false;
     }
 
 }
