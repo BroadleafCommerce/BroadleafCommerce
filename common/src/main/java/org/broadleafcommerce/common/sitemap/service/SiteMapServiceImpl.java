@@ -117,7 +117,7 @@ public class SiteMapServiceImpl implements SiteMapService {
 
         // Check for GZip
         if (getGzipSiteMapFiles()) {
-            gzipFile(fileWorkArea, siteMapBuilder.getIndexedFileNames());
+            gzipAndDeleteFiles(fileWorkArea, siteMapBuilder.getIndexedFileNames(), false);
             List<String> indexFileNames = new ArrayList<String>();
             for (String fileName: siteMapBuilder.getIndexedFileNames()) {
                 indexFileNames.add(fileName + ENCODING_EXTENSION);
@@ -210,7 +210,7 @@ public class SiteMapServiceImpl implements SiteMapService {
      * @param fileWorkArea
      * @param fileNames
      */
-    protected void gzipFile(FileWorkArea fileWorkArea, List<String> fileNames){
+    protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames,boolean shouldDeleteOriginal){
         for (String fileName : fileNames) {
             try {
                 String fileNameWithPath = FilenameUtils.normalize(fileWorkArea.getFilePathLocation() + File.separator + fileName);
@@ -227,6 +227,12 @@ public class SiteMapServiceImpl implements SiteMapService {
                 gzipOS.close();
                 fos.close();
                 fis.close();
+
+                if(shouldDeleteOriginal){
+                    File originalFile = new File(fileNameWithPath);
+                    originalFile.delete();
+                }
+
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -240,30 +246,7 @@ public class SiteMapServiceImpl implements SiteMapService {
      * @param fileNames
      */
     protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames) {
-        for (String fileName : fileNames) {
-            try {
-                String fileNameWithPath = FilenameUtils.normalize(fileWorkArea.getFilePathLocation() + File.separator + fileName);
-
-                FileInputStream fis = new FileInputStream(fileNameWithPath);
-                FileOutputStream fos = new FileOutputStream(fileNameWithPath + ENCODING_EXTENSION);
-                GZIPOutputStream gzipOS = new GZIPOutputStream(fos);
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = fis.read(buffer)) != -1) {
-                    gzipOS.write(buffer, 0, len);
-                }
-                //close resources
-                gzipOS.close();
-                fos.close();
-                fis.close();
-
-                File originalFile = new File(fileNameWithPath);
-                originalFile.delete();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        gzipAndDeleteFiles(fileWorkArea,fileNames,true);
     }
 
 
