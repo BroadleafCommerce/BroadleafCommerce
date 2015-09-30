@@ -66,4 +66,6 @@ public interface SandBoxDao {
     SandBox merge(SandBox userSandBox);
 
     List<SandBox> retrieveChildSandBoxesByParentId(Long parentSandBoxId);
+
+    SandBox retrieveNamedSandBox(SandBoxType sandBoxType, String sandboxName, Long authorId);
 }
