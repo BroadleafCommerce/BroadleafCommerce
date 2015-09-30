@@ -49,7 +49,7 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
  *
  * @author Elbert Bautista (elbertbautista)
  */
-public interface PaymentGatewayTransactionService extends FailureCountExposable {
+public interface PaymentGatewayTransactionService {
 
     public PaymentResponseDTO authorize(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
 
