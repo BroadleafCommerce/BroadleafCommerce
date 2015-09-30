@@ -481,7 +481,7 @@
             $headerTable.css('width', '');
             $table.css('width', '');
             $table.css('table-layout', 'fixed');
-            $headerTable.closest('.listgrid-container').find('th').css('width', '');
+            //$headerTable.closest('.listgrid-container').find('th').css('width', '');
             
             // Figure out what the new table width will be
             var newWidth = ($headerTable.width() - 15) + 'px';

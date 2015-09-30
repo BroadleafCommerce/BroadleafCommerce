@@ -165,7 +165,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Column(name = "URL")
     @AdminPresentation(friendlyName = "ProductImpl_Product_Url", order = ProductAdminPresentation.FieldOrder.URL,
             group = ProductAdminPresentation.GroupName.General, groupOrder = ProductAdminPresentation.GroupOrder.General,
-            prominent = true, gridOrder = 3, columnWidth = "200px",
+            prominent = true, gridOrder = 3, columnWidth = "260px",
             requiredOverride = RequiredOverride.REQUIRED,
             validationConfigurations = { @ValidationConfiguration(validationImplementation = "blUriPropertyValidator") })
     protected String url;
