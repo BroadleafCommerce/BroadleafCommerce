@@ -317,7 +317,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
             showBillingInfoSection = false;
             showAllPaymentMethods = false;
         } else if (orderTotalAfterAppliedPayments != null
-                && orderTotalAfterAppliedPayments.isZero()){
+                && orderTotalAfterAppliedPayments.isZero()) {
             //If all the applied payments (e.g. gift cards) cover the entire amount
             //we don't need to show all payment method options.
             showAllPaymentMethods = false;
@@ -338,7 +338,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
         String orderInfoHelpMessage = (String) localVars.get("orderInfoHelpMessage");
         String billingInfoHelpMessage = (String) localVars.get("billingInfoHelpMessage");
-        String shippingInfoHelpMessage  = (String) localVars.get("shippingInfoHelpMessage");
+        String shippingInfoHelpMessage = (String) localVars.get("shippingInfoHelpMessage");
 
         //Add the Order Info Section
         drawnSections.add(orderInfoSection);
