@@ -35,6 +35,10 @@
         <property name="persistenceUnitName" value="blPU"/>
     </bean>
     
+    <bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
+        <property name="shared" value="true"/>
+    </bean>
+
     <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
@@ -42,6 +46,17 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
+        <tx:attributes>
+          <tx:method name="*" propagation="REQUIRED"/>
+          <tx:method name="findNextId" propagation="REQUIRES_NEW"/>
+        </tx:attributes>
+    </tx:advice>
 
     <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
