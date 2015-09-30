@@ -18,8 +18,13 @@
  * #L%
  */
 
-.listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon) {
+.listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon),  tbody tr td:first-child a:not(.workflow-icon) {
     color: #809831;
+    text-decoration: underline;
+}
+
+.listgrid-body-wrapper tbody tr.dirty td:first-child a:not(.workflow-icon), tbody tr.dirty td:first-child a:not(.workflow-icon) {
+    color: #efbc62;
     text-decoration: underline;
 }
 
@@ -115,7 +120,7 @@ circle {
     background-color: #404040;
 }
 
-.button.secondary:hover, .button:hover {
+.button.secondary:hover {
     background-color: #757575;
 }
 
@@ -134,8 +139,8 @@ circle {
 }
 
 .button-action:hover {
-    background-color: rgba(255,255,255,0.5);
-    color: black;
+    background-color: transparent;
+    color: #809831;
 }
 
 .button-action {
@@ -455,6 +460,9 @@ button:disabled {
 .list-grid-table .workflow-icon {
     font-weight: bold;
     color: #efbc62;
+    margin-left: -6px;
+    vertical-align: sub;
+    font-size: 16px;
 }
 
 .listgrid-modal-actions {
@@ -491,6 +499,7 @@ button:disabled {
 }
 
 .table thead > tr > th {
+    padding-right: 0;
     border-bottom: none;
 }
 
@@ -973,10 +982,8 @@ div.action-popup span.deploy-error button {
 }
 
 span.workflow-action {
-    /*padding-right: 4px;*/
     font-size: 16px;
-    /*height: 25px;*/
-    /*line-height: 25px;*/
+    margin-right: -6px;
 }
 
 span.workflow-action a {
@@ -985,11 +992,16 @@ span.workflow-action a {
 }
 
 span.workflow-action a:hover {
-    color: #EB7F4C;
+    color: #809831;
+}
+
+.dirty span.workflow-action a:hover {
+    color: #efbc62;
 }
 
 .listgrid-row-actions {
     text-align: right;
+    padding-right: 14px !important;
 }
 
 fieldset {
@@ -1077,6 +1089,19 @@ legend {
     text-decoration: underline;
     color: #D20A33;
 }
+
+.table-holder.warning .listgrid-row-actions a:hover {
+    color: #EEBB69;
+}
+
+.table-holder.success .listgrid-row-actions a:hover {
+    color: #94AF39;
+}
+
+.table-holder.danger .listgrid-row-actions a:hover {
+    color: #D20A33;
+}
+
 
 .hidden {
     display: none !important;

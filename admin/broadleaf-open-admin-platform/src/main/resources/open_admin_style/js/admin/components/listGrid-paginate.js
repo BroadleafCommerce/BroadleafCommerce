@@ -480,6 +480,7 @@
             // Clear out widths
             $headerTable.css('width', '');
             $table.css('width', '');
+            $table.css('table-layout', 'fixed');
             $headerTable.closest('.listgrid-container').find('th').css('width', '');
             
             // Figure out what the new table width will be
@@ -687,7 +688,7 @@
             $clonedTable.append($tbody);
             $tbody = $clonedTable.find('tbody');
             $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
-            
+
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',

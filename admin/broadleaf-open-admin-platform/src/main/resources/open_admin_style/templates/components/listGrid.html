@@ -21,9 +21,7 @@
                     th:inline="text"
                     th:classappend="${#strings.isEmpty(headerField.columnWidth) ? '' : 'explicit-size'}"
                     th:attr="data-columnwidth=${#strings.isEmpty(headerField.columnWidth) ? '' : headerField.columnWidth}"
-                    th:style="${(#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';') 
-                              + ' ' + 
-                              (headerFieldStat.first ? 'padding-right: 20px;' : '')}"
+                    th:style="${(#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';')}"
                     scope="col">
 
                     <!--<span th:if="${headerFieldStat.first}" class="listgrid-icon" />-->
@@ -62,7 +60,9 @@
                         <!--This entry acting as placeholder for Edit links-->
                     <!--</th:comment>-->
                 <!--</th>-->
-                <th class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (listGrid.listGridType == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}">
+                <th class="listgrid-row-actions"
+                    th:if="not ${inModal}"
+                    th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (listGrid.listGridType == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}">
                     <th:comment th:remove="all">
                         This entry is acting as placeholder for Workflow Action links
                     </th:comment>
@@ -167,7 +167,7 @@
                     
                     <span th:case="*" th:remove="tag">
                         <span th:substituteby="components/partials/listGridIcon"></span>
-                        
+
                         <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
                            <span th:remove="tag" th:utext="${field.displayValue}"></span>
                         </span>
