@@ -42,6 +42,7 @@
         <class>org.broadleafcommerce.cms.file.domain.StaticAssetDescriptionImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentTypeImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldTemplateImpl</class>
+        <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldGroupXrefImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentFieldImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentImpl</class>
         <class>org.broadleafcommerce.cms.structure.domain.StructuredContentRuleImpl</class>        
