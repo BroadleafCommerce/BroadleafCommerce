@@ -1,7 +1,6 @@
 <label th:for="*{fields['__${field.name}__'].value}">
        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <div class="changes">
        <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
               th:required="${field.required}"
@@ -9,3 +8,5 @@
               th:field="*{fields['__${field.name}__'].value}"
               th:classappend="${group.column == 0} ? 'numeric-field'"/>
 </div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

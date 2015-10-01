@@ -1,7 +1,6 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 <div th:remove="tag">
     <select class="six" th:field="*{fields['__${field.name}__'].value}">
@@ -10,3 +9,5 @@
                 th:text="#{${entry.value}}" />
     </select>
 </div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

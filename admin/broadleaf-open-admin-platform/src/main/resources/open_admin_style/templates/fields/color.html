@@ -1,9 +1,10 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 <div>
     <input type="text" class="two color-picker-value" style="display: inline-block;" th:required="${field.required}" th:field="*{fields['__${field.name}__'].value}" />
     <input type="text" class="twelve color-picker" th:required="${field.required}" th:value="*{fields['__${field.name}__'].value}" />
 </div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

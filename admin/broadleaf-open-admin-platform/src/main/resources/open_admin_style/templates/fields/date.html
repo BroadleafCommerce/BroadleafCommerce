@@ -1,4 +1,3 @@
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <label th:for="*{fields['__${field.name}__'].value}">
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
@@ -6,3 +5,5 @@
     <input class="datetimepicker" type="text" th:field="*{fields['__${field.name}__'].value}"
            th:classappend="${group.column == 0} ? 'date-field'"/>
 </div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

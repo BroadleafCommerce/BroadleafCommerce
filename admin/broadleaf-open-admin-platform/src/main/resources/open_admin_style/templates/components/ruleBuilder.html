@@ -17,7 +17,6 @@
 
     <br th:if="${field.attributes['displayType'] != null AND field.attributes['displayType'] == 'RADIO'}" />
 
-    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
     <div th:substituteby="components/fieldTooltip" />
  
     <div th:classappend="${field.ruleType}">
@@ -117,4 +116,6 @@
                      data-ruletype=${field.ruleType}" />
     
     </div>
+
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 </blc_admin:admin_field_builder>

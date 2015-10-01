@@ -2,7 +2,6 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <div>
     <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
            th:required="${field.required}"
@@ -14,3 +13,5 @@
               th:placeholder="${field.hint}"
               cols="30" rows="10"/>
 </div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

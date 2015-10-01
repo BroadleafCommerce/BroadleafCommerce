@@ -782,6 +782,10 @@ fieldset legend i.help-tip {
     color: #DE3A2E;
 }
 
+.modal-footer #headerFlashAlertBoxContainer {
+    margin-top: 6px;
+}
+
 #headerFlashAlertBox.alert {
     padding: 0;
     margin: 0;
