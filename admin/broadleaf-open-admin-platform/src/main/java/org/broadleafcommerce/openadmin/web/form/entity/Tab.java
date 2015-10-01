@@ -57,6 +57,26 @@ public class Tab {
                     .toComparison();
         }
     });
+
+    public Tab withTitle(String title) {
+        setTitle(title);
+        return this;
+    }
+
+    public Tab withOrder(Integer order) {
+        setOrder(order);
+        return this;
+    }
+
+    public Tab withTabClass(String tabClass) {
+        setTabClass(tabClass);
+        return this;
+    }
+
+    public Tab withIsMultiColumn(Boolean isMultiColumn) {
+        setIsMultiColumn(isMultiColumn);
+        return this;
+    }
     
     public Boolean getIsVisible() {
         if (listGrids.size() > 0 || isTabsPresent) {
