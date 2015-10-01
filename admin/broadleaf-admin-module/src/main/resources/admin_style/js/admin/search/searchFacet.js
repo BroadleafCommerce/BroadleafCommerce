@@ -8,15 +8,11 @@
     var useFacetRangesSelector = '#field-useFacetRanges';
     var searchFacetRangesSelector = '#searchFacetRanges';
 
-    console.log("TEST ONE");
-
-
     BLCAdmin.addDependentFieldHandler(
         searchFacetClassName,
         useFacetRangesSelector,
         searchFacetRangesSelector,
         function showIfValue(parentValue) {
-            console.log("TEST TWO");
             return (parentValue === 'true');
         }
         ,

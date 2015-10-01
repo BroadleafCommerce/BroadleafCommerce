@@ -129,7 +129,8 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
             groupOrder = 1,
             tooltip = "SearchFacetImpl_searchPriorityTooltip",
             tab = "SearchFacetImpl_Advanced_tab",
-            tabOrder = 2000)
+            tabOrder = 2000,
+            visibility = VisibilityEnum.GRID_HIDDEN)
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
