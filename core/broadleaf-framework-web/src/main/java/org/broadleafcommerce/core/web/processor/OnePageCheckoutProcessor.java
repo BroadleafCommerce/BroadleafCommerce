@@ -286,6 +286,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
         boolean showBillingInfoSection = true;
         boolean showShippingInfoSection = true;
         boolean showAllPaymentMethods = true;
+        boolean showPaymentMethodSection = true;
 
         int numShippableFulfillmentGroups = calculateNumShippableFulfillmentGroups();
         if (numShippableFulfillmentGroups == 0) {
@@ -325,6 +326,7 @@ public class OnePageCheckoutProcessor extends AbstractLocalVariableDefinitionEle
 
         localVars.put("showBillingInfoSection", showBillingInfoSection);
         localVars.put("showAllPaymentMethods", showAllPaymentMethods);
+        localVars.put("showPaymentMethodSection", showPaymentMethodSection);
         localVars.put("orderContainsThirdPartyPayment", orderContainsThirdPartyPayment);
         localVars.put("orderContainsUnconfirmedCreditCard", orderContainsUnconfirmedCreditCard);
         localVars.put("unconfirmedCC", unconfirmedCC);
