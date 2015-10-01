@@ -71,7 +71,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     @Override
     public List<SandBox> retrievePreviewSandBoxes(Long authorId) {
         List<SandBox> returnList = new ArrayList<SandBox>();
-        List<SandBox> authorBoxes = sandBoxDao.retrieveSandBoxesForAuthor(authorId);
+        List<SandBox> authorBoxes = sandBoxDao.retrieveSandBoxesForAuthor(authorId, SandBoxType.USER);
         List<SandBox> approvalBoxes = sandBoxDao.retrieveSandBoxesByType(SandBoxType.APPROVAL);
         List<SandBox> defaultBoxes = sandBoxDao.retrieveSandBoxesByType(SandBoxType.DEFAULT);
 

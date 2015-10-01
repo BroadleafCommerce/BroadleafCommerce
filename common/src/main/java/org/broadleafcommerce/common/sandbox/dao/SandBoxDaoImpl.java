@@ -231,15 +231,25 @@ public class SandBoxDaoImpl implements SandBoxDao {
 
     @Override
     public List<SandBox> retrieveSandBoxesForAuthor(Long authorId) {
+        return retrieveSandBoxesForAuthor(authorId, null);
+    }
+
+    @Override
+    public List<SandBox> retrieveSandBoxesForAuthor(Long authorId, SandBoxType sandBoxType) {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
         criteria.select(sandbox.get("sandBox").as(SandBox.class));
-        criteria.where(
-                builder.and(builder.equal(sandbox.get("sandBox").get("author"), authorId),
-                        builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
-                                builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y')))
+        List<Predicate> restrictions = new ArrayList<Predicate>();
+        restrictions.add(builder.equal(sandbox.get("sandBox").get("author"), authorId));
+        if (sandBoxType != null) {
+            restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandBoxType.getType()));
+        }
+        restrictions.add(
+                builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
+                        builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y'))
         );
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         TypedQuery<SandBox> query = sandBoxEntityManager.createQuery(criteria);
         return query.getResultList();
     }
