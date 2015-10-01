@@ -192,6 +192,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                                                                     String fullPropertyName, Path explicitPath,
                                                                     List directValues) {
                                         root.fetch("defaultSku", JoinType.LEFT);
+                                        root.fetch("defaultCategory", JoinType.LEFT);
                                         return null;
                                     }
                                 })
