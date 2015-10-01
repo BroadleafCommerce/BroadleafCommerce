@@ -25,8 +25,7 @@
             <span class="caret"></span>
         </div>
         <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="accountdrop">
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a th:href="@{/changePassword}" class="change-password">Change Password</a></li>
             <li><a th:href="@{/adminLogout.htm}" th:utext="#{header.logout}">Logout</a></li>
         </ul>
     </div>

@@ -973,7 +973,11 @@ $('body').on('click', 'a.change-password', function(event) {
     BLC.ajax({
         url : $this.attr('href')
     }, function(data) {
-        $this.closest('div.attached').append(data);
+		var $modal = BLCAdmin.getModalSkeleton();
+		$modal.find('.modal-body').append($(data));
+		BLCAdmin.showElementAsModal($modal);
+
+        //$this.closest('div.attached').append(data);
         /*$this.parent().find('div.action-popup').find('div.generated-url-container').each(function(idx, el) {
             if ($(el).data('overridden-url') != true) {
                 BLCAdmin.generatedUrl.registerUrlGenerator($(el));
@@ -987,25 +991,46 @@ $('body').on('click', 'a.change-password', function(event) {
 $('body').on('click', 'button.change-password-confirm', function(event) {
     var $this = $(this);
     var $form = $this.closest('form');
-    
+
+	// show the spinner
+	$this.closest('.action-popup').find('img.ajax-loader').show();
+
+	// clear old errors
+	$this.closest('.action-popup').find('input[name=oldPassword]').css('border', '1px solid #D8D5D0');
+	$this.closest('.action-popup').find('input[name=password]').css('border', '1px solid #D8D5D0');
+	$this.closest('.action-popup').find('input[name=confirmPassword]').css('border', '1px solid #D8D5D0');
+
 	BLC.ajax({
 		url: $form.attr('action'),
 		type: "POST",
 		data: $form.serialize(),
 		error: function(data) {
             $this.closest('.actions').show();
-            $this.closest('.workflow-comment-prompt').find('img.ajax-loader').hide();
+			$this.closest('.action-popup').find('img.ajax-loader').hide();
     		BLC.defaultErrorHandler(data);
 		}
 	}, function(data) {
 	    if (data instanceof Object && data.hasOwnProperty('status') && data.status == 'error') {
+			//TODO: i18n
+
+			if (data.errorText.indexOf('match') > 0) {
+				// confirm password doesnt match
+				$this.closest('.action-popup').find('input[name=password]').css('border', '1px solid #890923');
+				$this.closest('.action-popup').find('input[name=confirmPassword]').css('border', '1px solid #890923');
+			} else if (data.errorText === 'Please enter a valid password.') {
+				// new password is not valid
+				$this.closest('.action-popup').find('input[name=oldPassword]').css('border', '1px solid #890923');
+				$this.closest('.action-popup').find('input[name=password]').css('border', '1px solid #890923');
+			}
+
             $this.closest('div.action-popup')
                 .find('span.submit-error')
                     .text(data.errorText)
                     .show();
 
+			// show the actions and hide the spinner
             $this.closest('.actions').show();
-            $this.closest('.workflow-comment-prompt').find('img.ajax-loader').hide();
+			$this.closest('.action-popup').find('img.ajax-loader').hide();
 		} else {
             $this.closest('div.action-popup')
                 .find('span.submit-error')
@@ -1013,12 +1038,10 @@ $('body').on('click', 'button.change-password-confirm', function(event) {
                     .addClass('success')
                     .show();
 
-            $this.closest('.action-popup').find('img.ajax-loader').show();
+            $this.closest('.action-popup').find('img.ajax-loader').hide();
             
             setTimeout(function() {
-                $this.closest('div.action-popup')
-                    .find('a.action-popup-cancel')
-                    .click();
+				$this.closest('.modal').find('.close').click();
             }, 2000);
             
 		    /*
