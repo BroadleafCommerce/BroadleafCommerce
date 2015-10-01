@@ -201,7 +201,6 @@ tr {
     position: relative;
 }
 
-
 .nav-links li {
     position: relative;
 }
@@ -330,6 +329,7 @@ input[type="radio"].radio+label.radio-label.clr,
     vertical-align: middle;
     padding: 5px 5px 5px 15px;
     position: relative;
+    height: 39px;
 }
 
 .borderlessGroup {
