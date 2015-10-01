@@ -112,8 +112,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
-    @Value("${admin.form.validation.errors.hideTopLevelErrors}")
-    protected boolean hideTopLevelErrors = false;
+    @Value("${admin.form.validation.errors.hideTopLevelErrors:false}")
+    protected boolean hideTopLevelErrors;
 
     // ******************************************
     // REQUEST-MAPPING BOUND CONTROLLER METHODS *
