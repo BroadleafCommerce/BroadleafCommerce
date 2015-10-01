@@ -174,6 +174,8 @@ circle {
     cursor: default;
 }
 
+
+
 .button-group:first-child {
     z-index: 999;
 }
@@ -721,7 +723,7 @@ label i.help-tip {
     width: 25% !important;
 }
 
-input[disabled], input[readonly], fieldset[disabled] input {
+input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     cursor: not-allowed;
     background-color: #eeeeee;
 }
@@ -1325,7 +1327,7 @@ blockquote::before{
     height: 100%;
 }
 
-.media-image-container:hover .media-actions {
+.media-image-container:not(.disabled):hover .media-actions {
     display: block;
 }
 
@@ -1569,4 +1571,8 @@ div.uploadMessage {
 
 .mCSB_draggerContainer {
     background-color: #F9F7F3;
+}
+
+.radio-label.disabled {
+    color: #B3B3B3;
 }

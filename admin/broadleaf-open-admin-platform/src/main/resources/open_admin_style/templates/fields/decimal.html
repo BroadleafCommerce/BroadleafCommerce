@@ -4,6 +4,7 @@
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <div class="changes">
     <input type="text"
+           th:disabled="${field.readOnly}"
            th:classappend="${group.column == 0} ? 'numeric-field'"
            th:field="*{fields['__${field.name}__'].value}" />
 </div>

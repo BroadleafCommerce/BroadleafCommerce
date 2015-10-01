@@ -5,11 +5,13 @@
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <div>
     <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
+           th:disabled="${field.readOnly}"
            th:required="${field.required}"
            th:placeholder="${field.hint}"
            th:field="*{fields['__${field.name}__'].value}" />
 
     <textarea th:if="*{fields['__${field.name}__'].isLargeEntry}"
+              th:disabled="${field.readOnly}"
               th:field="*{fields['__${field.name}__'].value}"
               th:placeholder="${field.hint}"
               cols="30" rows="10"/>

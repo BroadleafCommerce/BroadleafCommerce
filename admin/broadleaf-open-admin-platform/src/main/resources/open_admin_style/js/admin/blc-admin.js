@@ -435,7 +435,7 @@ var BLCAdmin = (function($) {
 			}
 
 			function initializeRadioFields($container) {
-				$container.find('.radio-label').on("click", function(e) {
+				$container.find('.radio-label:not(.disabled)').on("click", function(e) {
 					e.preventDefault();
 					$(this).prev('input').prop("checked", true).change();
 				});

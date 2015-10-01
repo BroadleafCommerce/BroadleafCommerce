@@ -6,7 +6,7 @@
     </label>
     <input type="hidden" class="mediaItem" th:field="*{fields['__${field.name}__'].value}" />
 
-    <div class="media-image-container">
+    <div class="media-image-container" th:classappend="${field.readOnly}? 'disabled'">
         <div class="media-image">
             <span th:if="*{fields['__${field.name}__'].media != null and !#strings.isEmpty(fields['__${field.name}__'].media.url)}">
                 <img class="thumbnail" th:attrappend="data-fullurl=@{*{fields['__${field.name}__'].media.url}}"
@@ -39,7 +39,7 @@
                 type="button" th:inline="text"
                 th:unless="${field.required}"
                 th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-                <i class="blc-icon-close"></i>
+                <i class="fa fa-times"></i>
             </button>
         </div>
     </div>

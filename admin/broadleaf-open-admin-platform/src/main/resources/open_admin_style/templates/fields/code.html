@@ -5,7 +5,8 @@
 <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 <div class="twelve indented-form-value">
-    <textarea class="autosize" style="width: 100%;" 
+    <textarea class="autosize" style="width: 100%;"
+        th:disabled="${field.readOnly}"
         th:field="*{fields['__${field.name}__'].value}"
         th:placeholder="${field.hint}" />
 </div>
