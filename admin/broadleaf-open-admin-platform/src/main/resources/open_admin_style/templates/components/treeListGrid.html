@@ -6,46 +6,14 @@
     <div class="tree-ribbon">
         <div class="tree-title-container">
             <span class="tree-title">
-                <div th:if="${isTreeRoot} or ${inModal}" th:remove="tag">
-                    <span th:remove="tag" th:unless="${inModal}" th:text="${entityFriendlyName} ? #{${entityFriendlyName}} + ' ' : ''"/>
-                    <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null} and ${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
-                          th:text="#{${collectionProperty.metadata.name}}" />
-                    <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null}"
-                          th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
-                          th:text="#{${collectionProperty.metadata.friendlyName}}" />
-                    Hierarchy
-                </div>
-                <div th:unless="${isTreeRoot}" th:remove="tag">
-                    <span th:remove="tag" th:text="${parentName}"/>
-                </div>
+                <span th:remove="tag" th:unless="${inModal}" th:text="${entityFriendlyName} ? #{${entityFriendlyName}} + ' ' : ''"/>
+                <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null} and ${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
+                      th:text="#{${collectionProperty.metadata.name}}" />
+                <span th:remove="tag" th:if="${inModal} and ${collectionProperty != null}"
+                      th:unless="${#strings.isEmpty(collectionProperty.metadata.friendlyName)}"
+                      th:text="#{${collectionProperty.metadata.friendlyName}}" />
+                Hierarchy
             </span>
-
-            <div th:unless="${isTreeRoot}" th:remove="tag">
-                <span class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}">
-                    <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${action.actionId} != 'SPLIT' and ${action.actionId} != 'REORDER' and ${listGrid.listGridType} == 'workflow'">
-                        <a th:classappend="${action.buttonClass}"
-                           href="#"
-                           class="button button-action"
-                           th:attr="data-urlpostfix=${action.urlPostfix},
-                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
-                           th:title="#{${action.displayText}}">
-                            <i th:class="${action.iconClass}"/>
-                        </a>
-                    </span>
-                    <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}">
-                        <a th:classappend="${action.buttonClass}"
-                           href="#"
-                           class="button button-action"
-                           th:attr="data-urlpostfix=${action.urlPostfix},
-                             data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
-                             data-queryparams=${listGrid.sectionCrumbRepresentation}"
-                           th:title="#{${action.displayText}}">
-                            <i th:class="${action.iconClass}"/>
-                        </a>
-                    </span>
-                </span>
-            </div>
         </div>
     </div>
     <div class="select-group">
