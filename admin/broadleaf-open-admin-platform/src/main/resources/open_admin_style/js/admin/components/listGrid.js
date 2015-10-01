@@ -182,7 +182,7 @@
                 $listGridContainer.find('button.row-action').attr('disabled', 'disabled');
             }
             
-            if (!$listGridContainer.find('td.list-grid-no-results').length) {
+            if (!$listGridContainer.find('tr.list-grid-no-results').length) {
                 $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
             }
             
@@ -311,7 +311,7 @@ $(document).ready(function() {
         var currentUrl = $table.data('currenturl');
         var fields = BLCAdmin.listGrid.getRowFields($tr);
         
-        if ($tr.find('td.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
+        if ($tr.find('tr.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
 
             // Avoid rebuilding "next" columns if row is already selected
             if (listGridType === 'tree' && !$tr.hasClass('selected')) {

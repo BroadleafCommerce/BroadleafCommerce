@@ -314,7 +314,7 @@ input[type="radio"].radio+label.radio-label.clr,
     padding: 5px 5px 5px 15px;
 }
 
-.table tbody > tr > td.list-grid-no-results {
+.table tbody > tr.list-grid-no-results > td {
     line-height: 28px;
 }
 
@@ -426,7 +426,7 @@ button:disabled {
     background-color: #F9F7F3;
 }
 
-.list-grid-table tbody tr:hover {
+.list-grid-table tbody tr:not(.list-grid-no-results):hover {
     background-color: #E1E0DD;
 }
 
