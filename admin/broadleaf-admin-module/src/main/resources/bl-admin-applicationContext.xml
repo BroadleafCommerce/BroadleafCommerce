@@ -247,6 +247,7 @@
                 <value>admin/catalog/product.js</value>
                 <value>admin/catalog/offer.js</value>
                 <value>admin/catalog/category.js</value>
+                <value>admin/search/searchFacet.js</value>
             </list>
         </property>
     </bean>

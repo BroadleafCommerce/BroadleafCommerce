@@ -62,6 +62,21 @@ public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFa
     public void setField(Field field);
 
     /**
+     * Gets the name of this SearchFacet. This is for admin naming purposes.
+     *
+     * @return the name
+     */
+    public String getName();
+
+    /**
+     * Sets the name
+     *
+     * @see #getName()
+     * @param name
+     */
+    public void setName(String name);
+
+    /**
      * Gets the label of this SearchFacet. This is the label that will be used for the user-friendly
      * display name of this facet
      * 
@@ -120,6 +135,21 @@ public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFa
      * @return the multiselect flag
      */
     public Boolean getCanMultiselect();
+
+    /**
+     * Gets whether or not this facet uses facet ranges
+     *
+     * @return the useFacetRanges flag
+     */
+    public Boolean getUseFacetRanges();
+
+    /**
+     * Sets useFacetRanges
+     *
+     * @see #getUseFacetRanges()
+     * @return
+     */
+    public void setUseFacetRanges(Boolean useFacetRanges);
 
     /**
      * Gets the applicable ranges for this search facet, if any are specified. For example, the 
