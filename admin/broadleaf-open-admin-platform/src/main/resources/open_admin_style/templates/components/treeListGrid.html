@@ -17,9 +17,13 @@
         </div>
     </div>
     <div class="select-group">
-        <div class="select-column-wrapper" style="width: 320px; height: 400px;">
-            <div class="select-column listgrid-container" data-columndepth="0" th:attr="data-parentid=${parentId}">
-                <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
+        <div class="select-column-wrapper" th:style="'width: ' + ${320 * #arrays.length(treeListGrid.treeListGridColumns)} + 'px; height: 400px;'">
+            <div type="hidden" id="treeParentPathJson" th:if="${treeParentPathJson != null}"
+                 th:attr="data-parentpathjson=${treeParentPathJson}" />
+            <div class="select-column listgrid-container"
+                 th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
+                 th:attr="data-parentid=${column.parentId}, data-columndepth=${iterStat.index}">
+                <div th:include="components/listGrid" th:with="listGrid=${column.listGrid}" th:remove="tag" />
             </div>
         </div>
     </div>
