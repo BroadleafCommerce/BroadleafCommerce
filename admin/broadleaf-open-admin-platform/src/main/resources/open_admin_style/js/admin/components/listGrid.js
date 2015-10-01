@@ -464,6 +464,10 @@ $(document).ready(function() {
             if ($displayField.hasClass('derived')) {
                 displayValue = $.trim($displayField.text());
             }
+
+            if (typeof BLCAdmin.treeListGrid !== 'undefined') {
+                BLCAdmin.treeListGrid.buildParentPathJson($this.closest('.modal-add-entity-form'), $selectedRow);
+            }
             
             var $valueField = $this.find('input.value');
             $valueField.val(fields['id']);
@@ -759,6 +763,10 @@ $(document).ready(function() {
         var $this = $(this);
         // Remove the current display value
         $this.prev().html($(this).prev().prev().html());
+
+        if (typeof BLCAdmin.treeListGrid !== 'undefined') {
+            BLCAdmin.treeListGrid.removeParentPathJson($container.closest('.modal-add-entity-form'));
+        }
         
         // Remove the criteria input val
         $container.find('.value').val('').trigger('change');
