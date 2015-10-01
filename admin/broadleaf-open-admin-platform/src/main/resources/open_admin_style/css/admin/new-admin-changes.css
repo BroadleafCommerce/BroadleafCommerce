@@ -327,6 +327,7 @@ input[type="radio"].radio+label.radio-label.clr,
     white-space: nowrap;
     vertical-align: middle;
     padding: 5px 5px 5px 15px;
+    position: relative;
 }
 
 .borderlessGroup {
