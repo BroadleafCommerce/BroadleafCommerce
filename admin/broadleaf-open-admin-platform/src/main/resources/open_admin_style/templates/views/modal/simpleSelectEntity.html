@@ -1,6 +1,9 @@
 <div th:if="${isTreeListGrid != null and isTreeListGrid}" th:remove="tag">
-    <div th:include="components/treeListGrid" th:object="${listGrid}" th:remove="tag" />
-    <div th:include="components/listGridModalActions" th:object="${listGrid}" th:remove="tag" />
+    <div th:include="components/treeListGrid" th:object="${treeListGrid}" th:remove="tag" />
+    <div th:include="components/listGridModalActions"
+         th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
+         th:if="${iterStat.index == 0}"
+         th:with="listGrid=${column.listGrid}" th:remove="tag" />
 </div>
 <div th:unless="${isTreeListGrid != null and isTreeListGrid}" class="listgrid-container single-listgrid">
     <div th:include="components/listGrid" th:object="${listGrid}" th:remove="tag" />
