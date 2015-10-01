@@ -139,23 +139,31 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> crumbs = getSectionCrumbs(request, null, null);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars);
-
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         listGrid.addRowAction(DefaultListGridActions.EDIT);
-
-        List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
-        addAddActionIfAllowed(sectionClassName, cmd, mainActions);
-        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
-        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
         
         Field firstField = listGrid.getHeaderFields().iterator().next();
         if (requestParams.containsKey(firstField.getName())) {
             model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
         }
-        
+
+        setupViewEntityListBasicModel(request, cmd, sectionKey, sectionClassName, model, requestParams);
+        model.addAttribute("listGrid", listGrid);
+        model.addAttribute("viewType", "entityList");
+
+        return "modules/defaultContainer";
+    }
+
+    protected void setupViewEntityListBasicModel(HttpServletRequest request, ClassMetadata cmd, String sectionKey,
+            String sectionClassName, Model model, MultiValueMap<String, String> requestParams) {
+        List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
+        addAddActionIfAllowed(sectionClassName, cmd, mainActions);
+        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
+        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
+
         // If this came from a delete save, we'll have a headerFlash request parameter to take care of
         if (requestParams.containsKey("headerFlash")) {
             model.addAttribute("headerFlash", requestParams.get("headerFlash").get(0));
@@ -171,12 +179,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("entityTypes", entityTypes);
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("listGrid", listGrid);
         model.addAttribute("mainActions", mainActions);
-        model.addAttribute("viewType", "entityList");
-
         setModelAttributes(model, sectionKey);
-        return "modules/defaultContainer";
     }
 
     @RequestMapping(value = "/selectize", method = RequestMethod.GET)
