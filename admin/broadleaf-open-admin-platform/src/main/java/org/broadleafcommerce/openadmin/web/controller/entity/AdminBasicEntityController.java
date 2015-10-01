@@ -513,49 +513,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
     }
     
     /**
-     * Populates the given <b>json</b> response object based on the given <b>form</b> and <b>result</b>
-     * @return the same <b>result</b> that was passed in
-     */
-    protected JsonResponse populateJsonValidationErrors(EntityForm form, BindingResult result, JsonResponse json) {
-        List<Map<String, Object>> errors = new ArrayList<Map<String, Object>>();
-        for (FieldError e : result.getFieldErrors()){
-            Map<String, Object> errorMap = new HashMap<String, Object>();
-            errorMap.put("errorType", "field");
-            String fieldName = e.getField().substring(e.getField().indexOf("[") + 1, e.getField().indexOf("]")).replace("_", "-");
-            errorMap.put("field", fieldName);
-            
-            errorMap.put("message", translateErrorMessage(e));
-            errorMap.put("code", e.getCode());
-            String tabFieldName = fieldName.replaceAll("-+", ".");
-            Tab errorTab = form.findTabForField(tabFieldName);
-            if (errorTab != null) {
-                errorMap.put("tab", errorTab.getTitle());
-            }
-            errors.add(errorMap);
-        }
-        for (ObjectError e : result.getGlobalErrors()) {
-            Map<String, Object> errorMap = new HashMap<String, Object>();
-            errorMap.put("errorType", "global");
-            errorMap.put("code", e.getCode());
-            errorMap.put("message", translateErrorMessage(e));
-            errors.add(errorMap);
-        }
-        json.with("errors", errors);
-        
-        return json;
-    }
-    
-    protected String translateErrorMessage(ObjectError error) {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            return context.getMessageSource().getMessage(error.getCode(), null, error.getCode(), context.getJavaLocale());
-        } else {
-            LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
-            return error.getCode();
-        }
-    }
-    
-    /**
      * Attempts to save the given entity. If validation is unsuccessful, it will re-render the entity form with
      * error fields highlighted. On a successful save, it will refresh the entity page.
      * 
