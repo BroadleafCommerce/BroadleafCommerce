@@ -79,6 +79,23 @@
                 $headerFlashAlertBoxContainer.find('.alert-box').removeClass('success').addClass('alert');
                 $headerFlashAlertBoxContainer.find('.alert-box-message').text(alertMessage);
             }
+        },
+
+        swapModalEntityForm : function ($modal, newHtml) {
+            $modal.find('.modal-header .tabs-container').replaceWith($(newHtml).find('.modal-body .tabs-container'));
+            // Show field-level validation errors
+            $modal.find('.modal-body .tabs-content').replaceWith($(newHtml).find('.modal-body .tabs-content'));
+            // Show EntityForm error list
+            var errorDiv = $(newHtml).find('.modal-body .errors');
+            if (errorDiv.length) {
+                //since we only replaced the content of the modal body, ensure the error div gets there as well
+                var currentErrorDiv = $modal.find('.modal-body .errors');
+                if (currentErrorDiv.length) {
+                    currentErrorDiv.replaceWith(errorDiv)
+                } else {
+                    $modal.find('.modal-body').prepend(errorDiv);
+                }
+            }
         }
     };
 })(jQuery, BLCAdmin);
@@ -272,21 +289,12 @@ $(document).ready(function() {
                 type: "POST",
                 data: $(this).serialize()
             }, function(data) {
-                $('.modal .modal-header .tabs-container').replaceWith($(data).find('.modal-body .tabs-container'));
-                $('.modal .modal-body .tabs-content').replaceWith($(data).find('.modal-body .tabs-content'));
-                var errorDiv = $(data).find('.modal-body .errors');
-                if (errorDiv.length) {
-                    //since we only replaced the content of the modal body, ensure the error div gets there as well
-                    var currentErrorDiv = BLCAdmin.currentModal().find('.modal-body .errors');
-                    if (currentErrorDiv.length) {
-                        currentErrorDiv.replaceWith(errorDiv)
-                    } else {
-                        BLCAdmin.currentModal().find('.modal-body').prepend(errorDiv);
-                    }
-                }
+                var $modal = BLCAdmin.currentModal();
+                BLCAdmin.entityForm.swapModalEntityForm($modal, data);
+
                 BLCAdmin.initializeFields($('.modal .modal-body .tabs-content'));
-                BLCAdmin.currentModal().find('.submit-button').show();
-                BLCAdmin.currentModal().find('img.ajax-loader').hide();
+                $modal.find('.submit-button').show();
+                $modal.find('img.ajax-loader').hide();
             });
         }
         return false;
