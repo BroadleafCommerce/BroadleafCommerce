@@ -257,7 +257,7 @@ tr {
 
 
 .button {
-    font-size: 14px;
+    font-size: 11px;
     /*line-height: 12px;*/
 }
 
@@ -707,6 +707,7 @@ input[type="radio"].radio {
 
 label {
     display: block;
+    margin-bottom: 0;
 }
 
 label i.help-tip {
@@ -724,7 +725,7 @@ label i.help-tip {
 }
 
 input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
-    cursor: not-allowed;
+    /*cursor: not-allowed;*/
     background-color: #eeeeee;
 }
 
@@ -913,7 +914,7 @@ input.color-picker-value {
 }
 
 .field-group {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 ::-webkit-input-placeholder {
