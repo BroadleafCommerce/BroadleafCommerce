@@ -114,7 +114,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     private static final Log LOG = LogFactory.getLog(FormBuilderServiceImpl.class);
 
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
-    private static final String ALL_CHILD_CATEGORY_XREFS = "allChildCategoryXrefs";
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService adminEntityService;
@@ -153,25 +152,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     protected static final VisibilityEnum[] GRID_HIDDEN_VISIBILITIES = new VisibilityEnum[] { 
             VisibilityEnum.HIDDEN_ALL, VisibilityEnum.GRID_HIDDEN 
     };
-
-    @Override
-    public ListGrid buildTreeListGridColumn(PersistencePackageRequest ppr, DynamicResultSet drs, ClassMetadata cmd, String sectionKey,
-            List<SectionCrumb> sectionCrumbs, String parentId) throws ServiceException {
-        Property collectionProperty = cmd.getPMap().get(ALL_CHILD_CATEGORY_XREFS);
-
-        ListGrid lg = buildCollectionListGrid(parentId, drs, collectionProperty, sectionKey, sectionCrumbs);
-        lg.getRowActions().remove(DefaultListGridActions.REMOVE);
-        lg.getModalRowActions().remove(DefaultListGridActions.SINGLE_SELECT);
-        lg.addModalRowAction(DefaultListGridActions.TREE_SINGLE_SELECT);
-        lg.addRowAction(DefaultListGridActions.TREE_ADD);
-        lg.addRowAction(DefaultListGridActions.EDIT);
-        lg.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
-        lg.setListGridType(ListGrid.Type.TREE);
-        lg.setPathOverride(sectionKey.startsWith("/") ? sectionKey : "/" + sectionKey);
-        lg.setIsSortable(true);
-
-        return lg;
-    }
 
     @Override
     public ListGrid buildMainListGrid(DynamicResultSet drs, ClassMetadata cmd, String sectionKey, List<SectionCrumb> sectionCrumbs)
