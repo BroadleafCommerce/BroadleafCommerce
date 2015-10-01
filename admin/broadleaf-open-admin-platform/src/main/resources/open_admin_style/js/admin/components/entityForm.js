@@ -62,7 +62,11 @@
                     $(".entity-errors").append(globalError);
                 }
             });
-            if (!BLCAdmin.currentModal().length) {
+            BLCAdmin.entityForm.showErrorHeaderAlert(alertMessage);
+        },
+
+        showErrorHeaderAlert : function (alertMessage) {
+            if (typeof BLCAdmin.currentModal() === 'undefined') {
                 $('#headerFlashAlertBoxContainer .alert-box').removeClass('success').addClass('alert');
                 $('#headerFlashAlertBoxContainer .alert-box-message').text(alertMessage);
             } else if (BLCAdmin.currentModal().find('#headerFlashAlertBoxContainer .alert-box').length) {
