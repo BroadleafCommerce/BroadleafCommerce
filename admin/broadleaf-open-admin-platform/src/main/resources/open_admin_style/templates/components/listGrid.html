@@ -21,9 +21,7 @@
                     th:inline="text"
                     th:classappend="${#strings.isEmpty(headerField.columnWidth) ? '' : 'explicit-size'}"
                     th:attr="data-columnwidth=${#strings.isEmpty(headerField.columnWidth) ? '' : headerField.columnWidth}"
-                    th:style="${(#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';') 
-                              + ' ' + 
-                              (headerFieldStat.first ? 'padding-right: 20px;' : '')}"
+                    th:style="${(#strings.isEmpty(headerField.columnWidth) ? '' : 'width: '+headerField.columnWidth+';')}"
                     scope="col">
 
                     <!--<span th:if="${headerFieldStat.first}" class="listgrid-icon" />-->
@@ -62,7 +60,9 @@
                         <!--This entry acting as placeholder for Edit links-->
                     <!--</th:comment>-->
                 <!--</th>-->
-                <th class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (listGrid.listGridType == 'workflow' and #lists.isEmpty(listGrid.activeToolbarActions))}">
+                <th class="listgrid-row-actions"
+                    th:if="not ${inModal}"
+                    th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}">
                     <th:comment th:remove="all">
                         This entry is acting as placeholder for Workflow Action links
                     </th:comment>
@@ -133,13 +133,15 @@
                     th:class="${field.isDerived ? 'derived' : ''}">
                     
                     <span th:case="'main'" th:remove="tag">
-                        <span th:substituteby="components/partials/listGridIcon" />
-                    
-                        <span th:if="${headerField.mainEntityLink}"
-                            th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}" />
+                        <span th:substituteby="components/partials/listGridIcon"></span>
+
+                        <a th:if="${headerField.mainEntityLink}"
+                           th:href="@{${record.path}}"
+                           th:text="${#strings.isEmpty(field.displayValue) ? '(No value set)' : field.displayValue}"></a>
+
                             
                         <span th:if="${headerField.canLinkToExternalEntity and !#strings.isEmpty(field.value)}" th:remove="tag">
-                           <span th:remove="tag" th:text="${field.displayValue}" />
+                           <span th:remove="tag" th:text="${field.displayValue}"></span>
                            <!--<a th:href="@{${headerField.foreignKeyClass + '/' + field.value}}" class="modal-view">-->
                                 <!--<i class="icon-external-link"></i>-->
                            <!--</a>-->
@@ -153,14 +155,14 @@
 
                         <span th:if="${field.fieldType == 'COLOR'}">
                             <span class="sandbox-color-square" 
-                                th:style="${'background-color: ' + field.value + ';'}" />
+                                th:style="${'background-color: ' + field.value + ';'}"></span>
                         </span>
                             
                         <span th:unless="${headerField.mainEntityLink 
                                 or headerField.canLinkToExternalEntity 
                                 or field.fieldType == 'IMAGE'
                                 or field.fieldType == 'COLOR'}"
-                              th:text="${field.displayValue}" th:remove="tag"/>
+                              th:text="${field.displayValue}" th:remove="tag"></span>
                     </span>
                     
                     <span th:case="*" th:remove="tag">
@@ -174,11 +176,11 @@
                         <span th:substituteby="components/partials/listGridIcon" />
                         
                         <span th:if="${headerField.canLinkToExternalEntity}" th:remove="tag">
-                           <span th:remove="tag" th:utext="${field.displayValue}" />
+                           <span th:remove="tag" th:utext="${field.displayValue}"></span>
                         </span>
 
                         <span th:if="${headerField.mainEntityLink and record.canLinkToExternalEntity}" th:remove="tag">
-                           <span th:remove="tag" th:utext="${field.displayValue}" />
+                           <span th:remove="tag" th:utext="${field.displayValue}"></span>
                            <!--<a th:href="@{${record.externalEntityPath}}" class="modal-view">-->
                                  <!--<i class="icon-external-link"></i>-->
                            <!--</a>-->
@@ -192,14 +194,14 @@
 
                         <span th:if="${field.fieldType == 'COLOR'}">
                             <span class="sandbox-color-square" 
-                                th:style="${'background-color: ' + field.value + ';'}" />
+                                th:style="${'background-color: ' + field.value + ';'}"></span>
                         </span>
                         
                         <span th:unless="${(headerField.mainEntityLink and record.canLinkToExternalEntity)
                                 or headerField.canLinkToExternalEntity
                                 or field.fieldType == 'IMAGE'
                                 or field.fieldType == 'COLOR'}"
-                              th:remove="tag" th:utext="${field.displayValue}" />
+                              th:remove="tag" th:utext="${field.displayValue}"></span>
                     </span>
                 </td>
 
@@ -222,7 +224,7 @@
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-queryparams=${listGrid.sectionCrumbRepresentation}"
                            th:title="#{${action.displayText}}">
-                            <i th:class="${action.iconClass}"/>
+                            <i th:class="${action.iconClass}"></i>
                         </a>
                     </span>
                     <span class="workflow-action" th:each="action : ${listGrid.activeRowActions}">
@@ -233,7 +235,7 @@
                              data-actionurl=@{${#strings.isEmpty(action.actionUrlOverride) ? (listGrid.path + action.urlPostfix) : action.actionUrlOverride} + ${listGrid.sectionCrumbRepresentation}},
                              data-queryparams=${listGrid.sectionCrumbRepresentation}"
                             th:title="#{${action.displayText}}">
-                            <i th:class="${action.iconClass}"/>
+                            <i th:class="${action.iconClass}"></i>
                         </a>
                     </span>
                 </td>
@@ -247,16 +249,16 @@
 
 <div class="listgrid-table-footer" th:inline="text">
     <span class="listgrid-table-footer-message" th:inline="text">
-        <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}" />
+        <span class="low-index" th:if="${records}" th:text="${listGrid.startIndex + 1}"></span>
         <span class="low-index" th:unless="${records}">0</span>
         -
-        <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}" />
-        <span th:text="${'of'}" />
-        <span class="total-records" th:text="${#lists.size(listGrid.records)}" />
-        <span th:text="${'records'}" />
+        <span class="high-index" th:text="${listGrid.startIndex + #lists.size(listGrid.records)}"></span>
+        <span th:text="${'of'}"></span>
+        <span class="total-records" th:text="${#lists.size(listGrid.records)}"></span>
+        <span th:text="${'records'}"></span>
     </span>
 </div>
 
 <span class="listgrid-table-spinner-container" style="display:none;" th:inline="text">
-    <i class="listgrid-table-spinner icon-spin icon-spinner" />
+    <i class="listgrid-table-spinner icon-spin icon-spinner"></i>
 </span>

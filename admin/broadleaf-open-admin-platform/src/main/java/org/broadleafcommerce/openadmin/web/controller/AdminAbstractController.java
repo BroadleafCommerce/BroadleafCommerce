@@ -21,11 +21,15 @@ package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
+import org.broadleafcommerce.common.web.JsonResponse;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.openadmin.dto.*;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
@@ -44,6 +48,9 @@ import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.openadmin.web.service.FormBuilderService;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,6 +72,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author apazzolini
  */
 public abstract class AdminAbstractController extends BroadleafAbstractController {
+    protected static final Log LOG = LogFactory.getLog(AdminAbstractController.class);
     
     public static final String FILTER_VALUE_SEPARATOR = "|";
     public static final String FILTER_VALUE_SEPARATOR_REGEX = "\\|";
@@ -787,5 +795,48 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             }
         }
         return myCrumbs;
+    }
+
+    /**
+     * Populates the given <b>json</b> response object based on the given <b>form</b> and <b>result</b>
+     * @return the same <b>result</b> that was passed in
+     */
+    protected JsonResponse populateJsonValidationErrors(EntityForm form, BindingResult result, JsonResponse json) {
+        List<Map<String, Object>> errors = new ArrayList<Map<String, Object>>();
+        for (FieldError e : result.getFieldErrors()){
+            Map<String, Object> errorMap = new HashMap<String, Object>();
+            errorMap.put("errorType", "field");
+            String fieldName = e.getField().substring(e.getField().indexOf("[") + 1, e.getField().indexOf("]")).replace("_", "-");
+            errorMap.put("field", fieldName);
+
+            errorMap.put("message", translateErrorMessage(e));
+            errorMap.put("code", e.getCode());
+            String tabFieldName = fieldName.replaceAll("-+", ".");
+            Tab errorTab = form.findTabForField(tabFieldName);
+            if (errorTab != null) {
+                errorMap.put("tab", errorTab.getTitle());
+            }
+            errors.add(errorMap);
+        }
+        for (ObjectError e : result.getGlobalErrors()) {
+            Map<String, Object> errorMap = new HashMap<String, Object>();
+            errorMap.put("errorType", "global");
+            errorMap.put("code", e.getCode());
+            errorMap.put("message", translateErrorMessage(e));
+            errors.add(errorMap);
+        }
+        json.with("errors", errors);
+
+        return json;
+    }
+
+    protected String translateErrorMessage(ObjectError error) {
+        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
+        if (context != null && context.getMessageSource() != null) {
+            return context.getMessageSource().getMessage(error.getCode(), null, error.getCode(), context.getJavaLocale());
+        } else {
+            LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
+            return error.getCode();
+        }
     }
 }

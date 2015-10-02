@@ -61,11 +61,6 @@ $(document).ready(function(){
 
     $('table.datatable').DataTable();
 
-    $('.radio-label').on("click", function(e) {
-        e.preventDefault();
-        $(this).prev('input').prop("checked", true).change();
-    });
-
     window.remodalGlobals = {
         namespace: "modal",
         defaults: {

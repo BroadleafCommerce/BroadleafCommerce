@@ -702,39 +702,17 @@
                     }
                 }
             }
+        },
 
-        }
-    };
-
-    /**
-     * Initialization handler to find all filter builders on the page and initialize them with
-     * the appropriate fields and data (as specified by the container)
-     */
-    BLCAdmin.addInitializationHandler(function($container) {
-        //Add default pre-init and post-construct handlers (e.g. selectize)
-        BLCAdmin.filterBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePreInitFieldHandler);
-        BLCAdmin.filterBuilders.addPostConstructQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePostConstructFieldHandler);
-
-        BLCAdmin.addExcludedSelectizeSelector('.query-builder-filters-container *');
-
-        //Initialize all filter builders on the page
-        $container.find('.filter-builder-data').each(function(index, element) {
-            var $this = $(this),
-                hiddenId = $this.data('hiddenid'),
-                containerId = $this.data('containerid'),
-                fields = $this.data('fields'),
-                data = $this.data('data'),
-                modal = $this.data('modal'),
-                filterBuilder = BLCAdmin.filterBuilders.addFilterBuilder(hiddenId, containerId, fields, data, modal);
-
-            //Create QueryBuilder Instances for all rule builders on the page
-            BLCAdmin.filterBuilders.initializeFilterBuilder($this.parent(), filterBuilder);
-
+        addExistingFilters: function(filterBuilder) {
+            var hiddenId = filterBuilder.hiddenId;
             // check if there are any existing filters on the page
             var filterData = BLCAdmin.filterBuilders.getEmptyFilterData();
             for (var i=0; i < filterBuilder.fields.length; i++) {
                 var field = jQuery.extend({}, filterBuilder.fields[i]);
-                field.operators = window[field.operators];
+                if (typeof field.operators === 'string' ) {
+                    field.operators = window[field.operators];
+                }
 
                 // check for existing rules in the url
                 var queryString = BLCAdmin.filterBuilders.getQueryVariable(field.id);
@@ -767,25 +745,64 @@
 
             // if there are active filters, change the filter button to "Edit"
             if (filterData.rules.length > 0) {
-                var filterButton = $(this).parent().find('.filter-button');
+                if (!$('.clear-filters').length) {
+                    var filterButton = $('.filter-button');
 
-                filterButton.text("Edit Filter");
+                    filterButton.text("Edit Filter");
 
-                var clearButton = $('<button>', {
-                    'html' : '<i class="fa fa-times" />',
-                    'class' : 'button dropdown-toggle clear-filters'
-                });
+                    var clearButton = $('<button>', {
+                        'html': '<i class="fa fa-times" />',
+                        'class': 'button dropdown-toggle clear-filters'
+                    });
 
-                var buttonGroup = $('<div>', {
-                    'class' : 'button-group'
-                });
+                    var buttonGroup = $('<div>', {
+                        'class': 'button-group'
+                    });
 
-                buttonGroup.append(filterButton);
-                buttonGroup.append(clearButton);
+                    buttonGroup.append(filterButton);
+                    buttonGroup.append(clearButton);
 
-                $(this).parent().append(buttonGroup);
+                    $('.filter-info:visible').append(buttonGroup);
+                }
+                $('.filter-text').show();
+            } else {
+                if ($('.filter-button').text() != 'Filter') {
+                    // change "edit filter" button back to "filter"
+                    var filterButton = $('.filter-button[data-hiddenid=' + hiddenId + ']');
+                    filterButton.text("Filter");
+                    filterButton.insertBefore(filterButton.parent());
+                    filterButton.siblings('.button-group:visible').remove();
+                    $('.filter-text').hide();
+                }
             }
+        }
+    };
 
+    /**
+     * Initialization handler to find all filter builders on the page and initialize them with
+     * the appropriate fields and data (as specified by the container)
+     */
+    BLCAdmin.addInitializationHandler(function($container) {
+        //Add default pre-init and post-construct handlers (e.g. selectize)
+        BLCAdmin.filterBuilders.addPreInitQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePreInitFieldHandler);
+        BLCAdmin.filterBuilders.addPostConstructQueryBuilderFieldHandler(BLCAdmin.filterBuilders.initSelectizePostConstructFieldHandler);
+
+        BLCAdmin.addExcludedSelectizeSelector('.query-builder-filters-container *');
+
+        //Initialize all filter builders on the page
+        $container.find('.filter-builder-data').each(function(index, element) {
+            var $this = $(this),
+                hiddenId = $this.data('hiddenid'),
+                containerId = $this.data('containerid'),
+                fields = $this.data('fields'),
+                data = $this.data('data'),
+                modal = $this.data('modal'),
+                filterBuilder = BLCAdmin.filterBuilders.addFilterBuilder(hiddenId, containerId, fields, data, modal);
+
+            //Create QueryBuilder Instances for all rule builders on the page
+            BLCAdmin.filterBuilders.initializeFilterBuilder($this.parent(), filterBuilder);
+
+            BLCAdmin.filterBuilders.addExistingFilters(filterBuilder);
         });
 
         ////Once all the query builders have been initialized - show or render the component based on its display type

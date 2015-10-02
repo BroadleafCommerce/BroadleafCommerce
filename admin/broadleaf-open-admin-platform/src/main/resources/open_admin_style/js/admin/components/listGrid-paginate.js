@@ -424,7 +424,7 @@
         // ************************* *
         
         getRowHeight : function($tbody) {
-            return $tbody.find('tr:not(.blank-padding):first').height();
+            return $tbody.find('td:not(.blank-padding):first').css('height').replace('px', '');
         },
         
         getTopVisibleIndex : function($tbody) {
@@ -480,7 +480,8 @@
             // Clear out widths
             $headerTable.css('width', '');
             $table.css('width', '');
-            $headerTable.closest('.listgrid-container').find('th').css('width', '');
+            $table.css('table-layout', 'fixed');
+            //$headerTable.closest('.listgrid-container').find('th').css('width', '');
             
             // Figure out what the new table width will be
             var newWidth = ($headerTable.width() - 15) + 'px';
@@ -662,7 +663,7 @@
             // First, we'll adjust the size of the table to be 15px less, since this is the margin we need
             // for our scrollbar. This will ensure the widths are correct once we draw the scrollbar
             $table.css('width', ($table.width() - 15) + 'px');
-            
+
             // Figure out what the currently drawn widths are for each row
             // This is effectively the same for all rows for both the head and the body for now
             // Also, set the width we determined directly on the element
@@ -687,7 +688,7 @@
             $clonedTable.append($tbody);
             $tbody = $clonedTable.find('tbody');
             $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
-            
+
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',

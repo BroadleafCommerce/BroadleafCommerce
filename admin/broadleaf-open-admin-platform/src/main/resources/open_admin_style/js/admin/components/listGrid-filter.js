@@ -354,21 +354,25 @@ $(document).ready(function() {
 
         $firstInput.val(search);
 
-        var submitData = {};
-        if (search.length > 0) {
-            submitData[$firstInput.data('name')] = search;
-        }
         var oldParams = BLCAdmin.history.getUrlParameters();
+        if (oldParams == null) {
+            oldParams = {};
+        }
+
+        if (search.length > 0) {
+            oldParams[$firstInput.data('name')] = search;
+        } else {
+            delete oldParams[$firstInput.data('name')];
+        }
 
         BLC.ajax({
-            url: $(this).closest('form').attr('action') +'?'+ oldParams,
+            url: $(this).closest('form').attr('action') + '?' + $.param(oldParams),
             type: "GET",
-            data: submitData
         }, function(data) {
             if ($(data).find('table').length === 1 && (BLCAdmin.currentModal() === undefined || BLCAdmin.currentModal().length === 0)) {
                 BLCAdmin.history.replaceUrlParameter('startIndex');
-                for (key in submitData) {
-                    BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
+                for (key in oldParams) {
+                    BLCAdmin.history.replaceUrlParameter(key, oldParams[key]);
                 }
             }
             var $relatedListGrid;
@@ -379,6 +383,15 @@ $(document).ready(function() {
             }
             BLCAdmin.listGrid.replaceRelatedCollection($relatedListGrid, null, { isRefresh : false});
             $firstInput.trigger('input');
+
+            if (search == "") {
+                BLCAdmin.history.replaceUrlParameter($firstInput.data('name'), null);
+            }
+
+            // update the filter builder
+            var hiddenId = $('.filter-button').data('hiddenid');
+            var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
+            BLCAdmin.filterBuilders.addExistingFilters(filterBuilder);
         });
         return false;
     });

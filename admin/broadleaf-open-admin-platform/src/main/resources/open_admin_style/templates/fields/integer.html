@@ -3,6 +3,7 @@
 </label>
 <div class="changes">
        <input th:unless="*{fields['__${field.name}__'].isLargeEntry}" type="text"
+              th:disabled="${field.readOnly}"
               th:required="${field.required}"
               th:placeholder="${field.hint}"
               th:field="*{fields['__${field.name}__'].value}"

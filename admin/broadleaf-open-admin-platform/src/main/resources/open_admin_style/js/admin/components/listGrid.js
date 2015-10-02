@@ -222,13 +222,13 @@
         },
         
         showLoadingSpinner : function($tbody, spinnerOffset) {
-            var $spinner = $tbody.closest('.listgrid-container').find('i.listgrid-table-spinner');
+            var $spinner = $tbody.closest('.listgrid-container').find('.listgrid-table-spinner-container');
             
             if (spinnerOffset) {
                 $spinner.css('position', 'absolute').css('top', spinnerOffset + 'px');
             }
-            
-            $spinner.parent().css('display', 'block');
+            $spinner.css('width',$tbody.width());
+            $spinner.css('display', 'block');
         },
         
         hideLoadingSpinner : function($tbody) {
@@ -238,7 +238,7 @@
         
         initialize : function($container) {
             BLCAdmin.listGrid.updateRowActionButtons($container);
-            
+
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
             }

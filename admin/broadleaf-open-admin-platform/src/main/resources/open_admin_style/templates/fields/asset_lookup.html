@@ -49,7 +49,7 @@
 
     <input type="hidden" class="mediaUrl twelve" th:field="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" />
 
-    <div class="media-image-container">
+    <div class="media-image-container" th:classappend="${field.readOnly}? 'disabled'">
         <div class="media-image">
             <span th:if="*{fields['__${field.name}__'].value != null and fields['__${field.name}__'].value != ''}" >
                 <img class="thumbnail"
@@ -84,7 +84,7 @@
                     type="button" th:inline="text"
                     th:unless="${field.required}"
                     th:style="*{#strings.isEmpty(fields['__${field.name}__'].value) ? 'display:none' : ''}">
-                <i class="blc-icon-close"></i>
+                <i class="fa fa-times"></i>
             </button>
         </div>
     </div>

@@ -3,6 +3,7 @@
 </label>
 <div>
     <input class="datetimepicker" type="text" th:field="*{fields['__${field.name}__'].value}"
+           th:disabled="${field.readOnly}"
            th:classappend="${group.column == 0} ? 'date-field'"/>
 </div>
 

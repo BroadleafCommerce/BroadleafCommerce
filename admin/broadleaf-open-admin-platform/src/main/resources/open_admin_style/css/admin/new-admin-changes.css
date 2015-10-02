@@ -18,6 +18,16 @@
  * #L%
  */
 
+.listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon),  tbody tr td:first-child a:not(.workflow-icon) {
+    color: #809831;
+    text-decoration: underline;
+}
+
+.listgrid-body-wrapper tbody tr.dirty td:first-child a:not(.workflow-icon), tbody tr.dirty td:first-child a:not(.workflow-icon) {
+    color: #efbc62;
+    text-decoration: underline;
+}
+
 .app-content .side-nav {
     z-index: 300;
 }
@@ -53,7 +63,7 @@
 }
 
 .app-content .content .section-content .main-content .listgrid-container {
-    padding: 20px 40px;
+    padding: 20px;
 }
 
 .hidden {
@@ -110,7 +120,7 @@ circle {
     background-color: #404040;
 }
 
-.button.secondary:hover, .button:hover {
+.button.secondary:hover {
     background-color: #757575;
 }
 
@@ -129,8 +139,8 @@ circle {
 }
 
 .button-action:hover {
-    background-color: rgba(255,255,255,0.5);
-    color: black;
+    background-color: transparent;
+    color: #809831;
 }
 
 .button-action {
@@ -164,6 +174,8 @@ circle {
     cursor: default;
 }
 
+
+
 .button-group:first-child {
     z-index: 999;
 }
@@ -180,10 +192,14 @@ circle {
     margin-top: 20px;
 }
 
+.app-content .content .site-bar .button {
+    line-height: inherit;
+    margin: 7px 0 7px 12px;
+}
+
 tr {
     position: relative;
 }
-
 
 .nav-links li {
     position: relative;
@@ -240,7 +256,7 @@ tr {
 
 
 .button {
-    /*font-size: 14px;*/
+    font-size: 11px;
     /*line-height: 12px;*/
 }
 
@@ -312,6 +328,8 @@ input[type="radio"].radio+label.radio-label.clr,
     white-space: nowrap;
     vertical-align: middle;
     padding: 5px 5px 5px 15px;
+    position: relative;
+    height: 39px;
 }
 
 .table tbody > tr.list-grid-no-results > td {
@@ -449,6 +467,9 @@ button:disabled {
 .list-grid-table .workflow-icon {
     font-weight: bold;
     color: #efbc62;
+    margin-left: -6px;
+    vertical-align: sub;
+    font-size: 16px;
 }
 
 .listgrid-modal-actions {
@@ -485,6 +506,7 @@ button:disabled {
 }
 
 .table thead > tr > th {
+    padding-right: 0;
     border-bottom: none;
 }
 
@@ -689,6 +711,7 @@ input[type="radio"].radio {
 
 label {
     display: block;
+    margin-bottom: 0;
 }
 
 label i.help-tip {
@@ -705,8 +728,8 @@ label i.help-tip {
     width: 25% !important;
 }
 
-input[disabled], input[readonly], fieldset[disabled] input {
-    cursor: not-allowed;
+input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
+    /*cursor: not-allowed;*/
     background-color: #eeeeee;
 }
 
@@ -907,7 +930,7 @@ input.color-picker-value {
 }
 
 .field-group {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 ::-webkit-input-placeholder {
@@ -979,10 +1002,8 @@ div.action-popup span.deploy-error button {
 }
 
 span.workflow-action {
-    /*padding-right: 4px;*/
     font-size: 16px;
-    /*height: 25px;*/
-    /*line-height: 25px;*/
+    margin-right: -6px;
 }
 
 span.workflow-action a {
@@ -991,11 +1012,16 @@ span.workflow-action a {
 }
 
 span.workflow-action a:hover {
-    color: #EB7F4C;
+    color: #809831;
+}
+
+.dirty span.workflow-action a:hover {
+    color: #efbc62;
 }
 
 .listgrid-row-actions {
     text-align: right;
+    padding-right: 14px !important;
 }
 
 fieldset {
@@ -1083,6 +1109,19 @@ legend {
     text-decoration: underline;
     color: #D20A33;
 }
+
+.table-holder.warning .listgrid-row-actions a:hover {
+    color: #EEBB69;
+}
+
+.table-holder.success .listgrid-row-actions a:hover {
+    color: #94AF39;
+}
+
+.table-holder.danger .listgrid-row-actions a:hover {
+    color: #D20A33;
+}
+
 
 .hidden {
     display: none !important;
@@ -1305,7 +1344,7 @@ blockquote::before{
     height: 100%;
 }
 
-.media-image-container:hover .media-actions {
+.media-image-container:not(.disabled):hover .media-actions {
     display: block;
 }
 
@@ -1434,31 +1473,6 @@ div.uploadMessage {
     display: none;
 }
 
-.field-group.local {
-    position: relative;
-}
-
-.field-group.local > div:before {
-    content: "\e615";
-    font-family: 'broadleaf';
-    float: right;
-    vertical-align: middle;
-    position: absolute;
-    right: 8px;
-    top: 38px;
-}
-
-
-.field-group.local > .radio-container:before {
-    content: "\e615";
-    font-family: 'broadleaf';
-    float: right;
-    vertical-align: middle;
-    position: absolute;
-    right: 8px;
-    top: 30px;
-}
-
 .tree-listgrid-container {
     text-align: left;
 }
@@ -1566,4 +1580,39 @@ div.uploadMessage {
 .mCustomScrollBox > .mCSB_scrollTools {
     border-right: 1px solid #DDD;
     border-left: 1px solid #DDD;
+}
+
+#lightbox {
+    opacity: 0;
+}
+.session-time {
+    color: #94AF39;
+}
+
+.mainEntityName {
+    max-width: 600px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+.listgrid-table-spinner-container {
+    margin: auto;
+    text-align: center;
+    position: relative;
+    transform: translateY(-50%);
+    background-color: #E0E0E0;
+}
+
+.mCustomScrollBox {
+    background-color: #E0E0E0;
+}
+
+.mCSB_draggerContainer {
+    background-color: #F9F7F3;
+}
+
+.radio-label.disabled {
+    color: #B3B3B3;
 }

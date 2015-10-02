@@ -2,11 +2,11 @@
 
     <li th:substituteby="layout/partials/additionalHeaderMenu" />
 
-    <div class="alert-box">
-        <div class="dropdown">
-            <div class="dropdown-toggle" id="notifications" data-toggle="dropdown" aria-expanded="true">
-                <i class="fa fa-bell"></i>
-            </div>
+    <!--<div class="alert-box">-->
+        <!--<div class="dropdown">-->
+            <!--<div class="dropdown-toggle" id="notifications" data-toggle="dropdown" aria-expanded="true">-->
+                <!--<i class="fa fa-bell"></i>-->
+            <!--</div>-->
             <!--<ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="notifications">-->
                 <!--<li class="notification new">Your change to Hot Sauce Name was approved <div class="time-ago">2 hours ago</div> </li>-->
                 <!--<li class="notification new alt">A change was assigned to you to approve <div class="time-ago">10 hours ago</div> </li>-->
@@ -15,8 +15,8 @@
                 <!--<li class="notification">All your changes were grouped into the Winter Closeout Changes deployment <div class="time-ago">Two weeks ago</div> </li>-->
                 <!--<li class="see-all"><a href="">See All Updates</a></li>-->
             <!--</ul>-->
-        </div> <!-- /account-info -->
-    </div>
+        <!--</div> &lt;!&ndash; /account-info &ndash;&gt;-->
+    <!--</div>-->
 
     <div class="account-info dropdown">
         <blc_admin:admin_user resultVar="adminUser" />
@@ -25,28 +25,26 @@
             <span class="caret"></span>
         </div>
         <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="accountdrop">
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a th:href="@{/changePassword}" class="change-password">Change Password</a></li>
             <li><a th:href="@{/adminLogout.htm}" th:utext="#{header.logout}">Logout</a></li>
         </ul>
     </div>
 
-    <!--<div id="lightbox">-->
-
-        <!--<div id="expire-message" class="modal in">-->
-            <!--<div id="expire-header" class="brand">-->
-            <!--<div id="expire-header-message" th:text="#{header.session.expire}"></div>-->
-            <!--</div>-->
-            <!--<div id="expire-content">-->
-                <!--<a id="stay-logged-in" class="expire-button button medium dark radius" href="#" th:text="#{header.stay.logged.in}"></a>-->
-                <!--<a id="session-logout" class="expire-button button medium dark radius" th:href="@{/adminLogout.htm}" th:text="#{header.logout}"></a>-->
-                <!--<div id="expire-text">-->
-
-                <!--</div>-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div  class="modal-backdrop"></div>-->
-    <!--</div>-->
 
     <div th:substituteby="layout/partials/sandboxRibbon" />
 </header>
+<div id="lightbox">
+
+    <div id="expire-message" class="modal in sm">
+        <div id="expire-header" class="modal-header">
+            <h3 id="expire-header-message" th:text="#{header.session.expire}"></h3>
+        </div>
+        <div id="expire-content" class="modal-body">
+            <div id="expire-text"></div>
+            <br />
+            <a type="button" id="stay-logged-in" class="button primary" th:text="#{header.stay.logged.in}"></a>
+            <a type="button" id="session-logout" class="button secondary" th:href="@{/adminLogout.htm}" th:text="#{header.logout}"></a>
+        </div>
+    </div>
+    <div  class="modal-backdrop"></div>
+</div>

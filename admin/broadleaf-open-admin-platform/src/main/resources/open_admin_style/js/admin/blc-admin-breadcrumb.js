@@ -23,7 +23,7 @@
  * main entity list
  */
 $(document).ready(function() {
-   var $midBcLink = $('ul.breadcrumbs li:nth-child(2) a');
+   var $midBcLink = $('a.back-button');
    var url = $midBcLink.attr('href');
 
    var full = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');

@@ -6,12 +6,16 @@
 <div class="redactor-field"
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
 
-    <textarea class="redactor" name="content"
+    <textarea th:class="${'redactor' + (field.readOnly? '-disable' : '')}"
+              name="content"
+              th:disabled="${field.readOnly}"
               th:if="${overrideAssetSectionKey}"
               th:attr="data-select-asset-url=@{${'/'+overrideAssetSectionKey+ '/' + assetAssociationId + '/chooseAsset'}}"
               th:field="*{fields['__${field.name}__'].value}"/>
 
-    <textarea class="redactor" name="content"
+    <textarea th:class="${'redactor' + (field.readOnly? '-disable' : '')}"
+              name="content"
+              th:disabled="${field.readOnly}"
               th:unless="${overrideAssetSectionKey}"
               th:attr="data-select-asset-url=@{${'/'+sectionKey+ '/' + assetAssociationId + '/chooseAsset'}}"
               th:field="*{fields['__${field.name}__'].value}"/>

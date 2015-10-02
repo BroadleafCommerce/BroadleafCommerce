@@ -139,23 +139,31 @@ public class AdminBasicEntityController extends AdminAbstractController {
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> crumbs = getSectionCrumbs(request, null, null);
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars);
-
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         listGrid.addRowAction(DefaultListGridActions.EDIT);
-
-        List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
-        addAddActionIfAllowed(sectionClassName, cmd, mainActions);
-        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
-        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
         
         Field firstField = listGrid.getHeaderFields().iterator().next();
         if (requestParams.containsKey(firstField.getName())) {
             model.addAttribute("mainSearchTerm", requestParams.get(firstField.getName()).get(0));
         }
-        
+
+        setupViewEntityListBasicModel(request, cmd, sectionKey, sectionClassName, model, requestParams);
+        model.addAttribute("listGrid", listGrid);
+        model.addAttribute("viewType", "entityList");
+
+        return "modules/defaultContainer";
+    }
+
+    protected void setupViewEntityListBasicModel(HttpServletRequest request, ClassMetadata cmd, String sectionKey,
+            String sectionClassName, Model model, MultiValueMap<String, String> requestParams) {
+        List<EntityFormAction> mainActions = new ArrayList<EntityFormAction>();
+        addAddActionIfAllowed(sectionClassName, cmd, mainActions);
+        extensionManager.getProxy().addAdditionalMainActions(sectionClassName, mainActions);
+        extensionManager.getProxy().modifyMainActions(cmd, mainActions);
+
         // If this came from a delete save, we'll have a headerFlash request parameter to take care of
         if (requestParams.containsKey("headerFlash")) {
             model.addAttribute("headerFlash", requestParams.get("headerFlash").get(0));
@@ -171,12 +179,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("entityTypes", entityTypes);
         model.addAttribute("entityFriendlyName", cmd.getPolymorphicEntities().getFriendlyName());
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("listGrid", listGrid);
         model.addAttribute("mainActions", mainActions);
-        model.addAttribute("viewType", "entityList");
-
         setModelAttributes(model, sectionKey);
-        return "modules/defaultContainer";
     }
 
     @RequestMapping(value = "/selectize", method = RequestMethod.GET)
@@ -510,49 +514,6 @@ public class AdminBasicEntityController extends AdminAbstractController {
             }
         }
         return dirtyList;
-    }
-    
-    /**
-     * Populates the given <b>json</b> response object based on the given <b>form</b> and <b>result</b>
-     * @return the same <b>result</b> that was passed in
-     */
-    protected JsonResponse populateJsonValidationErrors(EntityForm form, BindingResult result, JsonResponse json) {
-        List<Map<String, Object>> errors = new ArrayList<Map<String, Object>>();
-        for (FieldError e : result.getFieldErrors()){
-            Map<String, Object> errorMap = new HashMap<String, Object>();
-            errorMap.put("errorType", "field");
-            String fieldName = e.getField().substring(e.getField().indexOf("[") + 1, e.getField().indexOf("]")).replace("_", "-");
-            errorMap.put("field", fieldName);
-            
-            errorMap.put("message", translateErrorMessage(e));
-            errorMap.put("code", e.getCode());
-            String tabFieldName = fieldName.replaceAll("-+", ".");
-            Tab errorTab = form.findTabForField(tabFieldName);
-            if (errorTab != null) {
-                errorMap.put("tab", errorTab.getTitle());
-            }
-            errors.add(errorMap);
-        }
-        for (ObjectError e : result.getGlobalErrors()) {
-            Map<String, Object> errorMap = new HashMap<String, Object>();
-            errorMap.put("errorType", "global");
-            errorMap.put("code", e.getCode());
-            errorMap.put("message", translateErrorMessage(e));
-            errors.add(errorMap);
-        }
-        json.with("errors", errors);
-        
-        return json;
-    }
-    
-    protected String translateErrorMessage(ObjectError error) {
-        BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
-        if (context != null && context.getMessageSource() != null) {
-            return context.getMessageSource().getMessage(error.getCode(), null, error.getCode(), context.getJavaLocale());
-        } else {
-            LOG.warn("Could not find the MessageSource on the current request, not translating the message key");
-            return error.getCode();
-        }
     }
     
     /**
