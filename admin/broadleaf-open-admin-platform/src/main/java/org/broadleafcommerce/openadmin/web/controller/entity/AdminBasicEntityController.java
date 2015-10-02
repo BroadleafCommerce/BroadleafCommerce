@@ -112,8 +112,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
-    @Value("${admin.form.validation.errors.hideTopLevelErrors}")
-    protected boolean hideTopLevelErrors = false;
+    @Value("${admin.form.validation.errors.hideTopLevelErrors:false}")
+    protected boolean hideTopLevelErrors;
 
     // ******************************************
     // REQUEST-MAPPING BOUND CONTROLLER METHODS *
@@ -1512,6 +1512,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
         FieldMetadata md = collectionProperty.getMetadata();
         
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars);
+        ppr.addCustomCriteria("reorderParentEntityFetch");
+
         Entity parentEntity = service.getRecord(ppr, id, mainMetadata, false).getDynamicResultSet().getRecords()[0];
         
         ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
@@ -1533,7 +1535,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
             field.setValue(String.valueOf(sequenceValue));
             
             Map<String, Object> responseMap = new HashMap<String, Object>();
-            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, entity, collectionItemId, alternateId, sectionCrumbs);
+            service.updateSubCollectionEntity(entityForm, mainMetadata, collectionProperty, parentEntity, collectionItemId, alternateId, sectionCrumbs);
             responseMap.put("status", "ok");
             responseMap.put("field", collectionField);
             return responseMap;

@@ -154,18 +154,6 @@ public class FormBuilderServiceImpl implements FormBuilderService {
     };
 
     @Override
-    public ListGrid buildTreeListGridColumn(DynamicResultSet drs, ClassMetadata cmd, String sectionKey, List<SectionCrumb> sectionCrumbs) throws ServiceException {
-        ListGrid lg = buildMainListGrid(drs, cmd, sectionKey, sectionCrumbs);
-        lg.addModalRowAction(DefaultListGridActions.TREE_SINGLE_SELECT);
-        lg.addRowAction(DefaultListGridActions.TREE_SUB_ADD);
-        lg.addRowAction(DefaultListGridActions.EDIT);
-        lg.setSelectType(ListGrid.SelectType.SINGLE_SELECT);
-        lg.setListGridType(ListGrid.Type.TREE);
-
-        return lg;
-    }
-
-    @Override
     public ListGrid buildMainListGrid(DynamicResultSet drs, ClassMetadata cmd, String sectionKey, List<SectionCrumb> sectionCrumbs)
             throws ServiceException {
 
@@ -514,7 +502,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         }
         if (sortable) {
             listGrid.setCanFilterAndSort(false);
-            listGrid.getToolbarActions().add(DefaultListGridActions.REORDER);
+            listGrid.setIsSortable(true);
         }
 
         if (modalSingleSelectable) {

@@ -1,7 +1,6 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 <div class="radio-container">
     <input type="radio" class="radio" th:id="${field.name + '-true'}" th:value="${true}" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}"/>
@@ -14,3 +13,5 @@
         <span style="margin-right: 10px;" th:text="#{No}" />
     </label>
 </div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

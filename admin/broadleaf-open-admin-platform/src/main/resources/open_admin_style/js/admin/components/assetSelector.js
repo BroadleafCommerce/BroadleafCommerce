@@ -112,7 +112,7 @@ $(document).ready(function() {
     	$(this).data('enabled', !enabled);
     });
     
-    $('body').on('listGrid-asset-rowSelected', function(event, link, fields, currentUrl) {
+    $('body').on('listGrid-asset-rowSelected', function(event, $target, link, fields, currentUrl) {
         var json = {
             'assetUrl' : fields['cmsUrlPrefix'] + fields['fullUrl'],
             'adminDisplayAssetUrl' : fields['servletContext'] + fields['cmsUrlPrefix'] + fields['fullUrl']

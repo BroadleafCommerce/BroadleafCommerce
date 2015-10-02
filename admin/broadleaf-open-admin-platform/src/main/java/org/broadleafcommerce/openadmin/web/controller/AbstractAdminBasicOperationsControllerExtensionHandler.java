@@ -22,9 +22,10 @@ package org.broadleafcommerce.openadmin.web.controller;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
-import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
@@ -40,8 +41,8 @@ import java.util.List;
 public class AbstractAdminBasicOperationsControllerExtensionHandler extends AbstractExtensionHandler implements AdminBasicOperationsControllerExtensionHandler {
 
     @Override
-    public ExtensionResultStatusType buildLookupListGrid(DynamicResultSet drs, ClassMetadata cmd, String owningClass,
-            List<SectionCrumb> sectionCrumbs, Model model) {
+    public ExtensionResultStatusType buildLookupListGrid(PersistencePackageRequest ppr, ClassMetadata cmd, String owningClass,
+            List<SectionCrumb> sectionCrumbs, Model model, MultiValueMap<String, String> requestParams) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

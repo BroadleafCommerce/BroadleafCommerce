@@ -133,6 +133,7 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         pp.setCsrfToken(null);
         pp.setRequestingEntityName(request.getRequestingEntityName());
         pp.setValidateUnsubmittedProperties(request.isValidateUnsubmittedProperties());
+        pp.setIsTreeCollection(request.isTreeCollection());
 
 
         if (request.getEntity() != null) {

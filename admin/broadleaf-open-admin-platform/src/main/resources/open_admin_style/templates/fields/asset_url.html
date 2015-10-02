@@ -11,8 +11,9 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 <div class="twelve" style="margin-left: 20px; margin-bottom: 10px;">
    <span th:text="*{fields['__${field.name}__'].displayValue}"/>
    <input type="hidden" th:field="*{fields['__${field.name}__'].value}" />
-</div>  
+</div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

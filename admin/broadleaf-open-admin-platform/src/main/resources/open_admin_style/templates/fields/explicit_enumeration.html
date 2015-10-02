@@ -7,3 +7,5 @@
             th:value="${entry.key}"
             th:text="${entry.value}" />
 </select>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

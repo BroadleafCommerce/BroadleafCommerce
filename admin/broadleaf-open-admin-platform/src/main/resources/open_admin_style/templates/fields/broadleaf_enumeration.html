@@ -1,7 +1,6 @@
 <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 <div th:remove="tag" th:if="${!#maps.isEmpty(field.options) and #maps.size(field.options) ge #props.getAsInt('admin.enum.minCountForDropDown')}">
     <select class="six" th:field="*{fields['__${field.name}__'].value}" th:disabled="${field.readOnly}">
@@ -27,3 +26,5 @@
 <span th:if="${#maps.isEmpty(field.options)}" th:inline="text">
     &lt;[[#{No_Records_Found_Enum}]]&gt;
 </span>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />

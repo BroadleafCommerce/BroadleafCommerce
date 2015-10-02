@@ -35,6 +35,13 @@
         ORDER BY category.id</query>
     </named-query>
 
+    <named-query name="BC_READ_ROOT_CATEGORY">
+        <query>
+            SELECT category FROM org.broadleafcommerce.core.catalog.domain.Category category
+            WHERE category.name = 'blcRootCategory'
+        </query>
+    </named-query>
+
     <named-query name="BC_READ_ALL_SUBCATEGORIES">
         <query>SELECT xref.subCategory FROM org.broadleafcommerce.core.catalog.domain.CategoryXref xref
                 WHERE xref.category.id IN :parentCategoryId

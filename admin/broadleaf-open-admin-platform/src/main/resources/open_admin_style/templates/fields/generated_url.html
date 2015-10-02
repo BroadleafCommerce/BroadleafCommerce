@@ -8,8 +8,6 @@
         <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
     </label>
 
-    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
-
     <a class="override-generated-url" href="#" th:text="'(' + #{Override_Generated_URL-__${overriddenUrl ? 'enabled' : 'disabled'}__} + ')'"
         th:disabled="${field.readOnly}"
         th:unless="*{fields['__${field.name}__'].attributes[isPath]}"
@@ -34,5 +32,6 @@
                  data-allow-slash=*{fields['__${field.name}__'].attributes[allowSlash]},
                  data-prefix-selector=*{fields['__${field.name}__'].attributes['prefix-selector']}"
         th:readonly="${!overriddenUrl}" />
-    
+
+    <span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 </div>

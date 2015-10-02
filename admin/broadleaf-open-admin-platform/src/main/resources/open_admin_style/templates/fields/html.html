@@ -2,7 +2,6 @@
     <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
 </label>
 <div th:substituteby="components/fieldTranslation" />
-<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
 
 <div class="redactor-field"
      th:with="assetAssociationId=${entityForm.id==null? entityForm.parentId : entityForm.id}">
@@ -22,3 +21,5 @@
               th:field="*{fields['__${field.name}__'].value}"></textarea>
 
 </div>
+
+<span class="error" th:errors="*{fields['__${field.name}__'].value}" />
