@@ -79,7 +79,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
     
     @Resource(name = "blOrderPaymentService")
     protected OrderPaymentService orderPaymentService;
-    
+
     @Resource(name = "blCheckoutService")
     protected CheckoutService checkoutService;
     
@@ -217,6 +217,7 @@ public class DefaultPaymentGatewayCheckoutService implements PaymentGatewayCheck
         payment.setOrder(order);
         transaction.setOrderPayment(payment);
         payment.addTransaction(transaction);
+
         payment = orderPaymentService.save(payment);
 
         if (transaction.getSuccess()) {
