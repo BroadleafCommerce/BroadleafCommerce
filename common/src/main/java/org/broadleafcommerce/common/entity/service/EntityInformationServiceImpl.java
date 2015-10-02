@@ -58,6 +58,13 @@ public class EntityInformationServiceImpl implements EntityInformationService {
         return erh.getResult();
     }
 
+    @Override
+    public Long getDefaultCatalogIdForSite(Site site) {
+        ExtensionResultHolder<Long> erh = new ExtensionResultHolder<Long>();
+        extensionManager.getProxy().getDefaultCatalogIdForSite(site, erh);
+        return erh.getResult();
+    }
+
     /**
      * Factory method for instantiating the {@link EntityInformationDto}
      * @return
