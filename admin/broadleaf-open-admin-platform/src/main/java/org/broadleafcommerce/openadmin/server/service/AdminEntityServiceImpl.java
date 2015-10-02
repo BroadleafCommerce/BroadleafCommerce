@@ -512,7 +512,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
                     properties.add(p);
                 }
             }
-            ppr.setValidateUnsubmittedProperties(false);
         } else if (md instanceof MapMetadata) {
             ppr.getEntity().setType(new String[] { entityForm.getEntityType() });
             
