@@ -41,6 +41,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import com.google.common.base.Strings;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,10 +82,15 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @Column(name = "SEARCH_FACET_ID")
     @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = "SearchFacetImpl_description", groupOrder = 1, visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
+
+    @Column(name = "NAME")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_name", group = "SearchFacetImpl_description",
+            groupOrder = 2, order = 2, prominent = true, translatable = true, gridOrder = 500, requiredOverride = RequiredOverride.REQUIRED)
+    protected String name;
     
     @Column(name = "LABEL")
     @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = "SearchFacetImpl_description",
-            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000, requiredOverride = RequiredOverride.REQUIRED)
+            groupOrder = 1000, prominent = true, translatable = true, gridOrder = 1000)
     protected String label;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
@@ -95,7 +101,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     protected Field field;
 
     @Column(name = "FACET_FIELD_TYPE")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_facetFieldType", group = "SearchFacetImpl_description", order = 4, prominent = true, gridOrder = 4,
+    @AdminPresentation(friendlyName = "SearchFacetImpl_facetFieldType", group = "SearchFacetImpl_description", order = 4,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.search.domain.solr.FieldType",
             requiredOverride = RequiredOverride.REQUIRED,
@@ -107,16 +113,24 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
             group = "SearchFacetImpl_description", groupOrder = 1, prominent = false,
             tooltip = "SearchFacetImpl_showOnSearchTooltip")
     protected Boolean showOnSearch = false;
+
+    @Column(name = "USE_FACET_RANGES")
+    @AdminPresentation(friendlyName = "SearchFacetImpl_useFacetRanges", order = 5000,
+            group = "SearchFacetImpl_description",
+            groupOrder = 1,
+            tooltip = "SearchFacetImpl_useFacetRangesTooltip",
+            defaultValue = "false")
+    protected Boolean useFacetRanges = false;
     
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
     @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority",
             order = 5000,
             group = "SearchFacetImpl_description",
             groupOrder = 1,
-            prominent = true,
             tooltip = "SearchFacetImpl_searchPriorityTooltip",
             tab = "SearchFacetImpl_Advanced_tab",
-            tabOrder = 2000)
+            tabOrder = 2000,
+            visibility = VisibilityEnum.GRID_HIDDEN)
     protected Integer searchDisplayPriority = 1;
     
     @Column(name = "MULTISELECT")
@@ -138,7 +152,9 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationAdornedTargetCollection(targetObjectProperty = "requiredFacet", friendlyName = "requiredFacetTitle",
-            gridVisibleFields = { "label", "searchDisplayPriority", "canMultiselect", "requiresAllDependentFacets" })
+            gridVisibleFields = { "name", "label", "field" },
+            tab = "SearchFacetImpl_Advanced_tab",
+            tabOrder = 4000)
     protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
     
     @Column(name = "REQUIRES_ALL_DEPENDENT")
@@ -146,7 +162,9 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
             order = 7000,
             group = "SearchFacetImpl_description",
             groupOrder = 1,
-            tooltip = "SearchFacetImpl_requiresAllDependentFacetsTooltip")
+            tooltip = "SearchFacetImpl_requiresAllDependentFacetsTooltip",
+            tab = "SearchFacetImpl_Advanced_tab",
+            tabOrder = 3000)
     protected Boolean requiresAllDependentFacets = false;
 
     @Override
@@ -170,7 +188,21 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     }
 
     @Override
+    public String getName() {
+        return DynamicTranslationProvider.getValue(this, "name", name);
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public String getLabel() {
+        if (Strings.isNullOrEmpty(this.label)) {
+            return getName();
+        }
+
         return DynamicTranslationProvider.getValue(this, "label", label);
     }
 
@@ -207,6 +239,16 @@ public class SearchFacetImpl implements SearchFacet, Serializable {
     @Override
     public void setCanMultiselect(Boolean canMultiselect) {
         this.canMultiselect = canMultiselect;
+    }
+
+    @Override
+    public Boolean getUseFacetRanges() {
+        return useFacetRanges;
+    }
+
+    @Override
+    public void setUseFacetRanges(Boolean useFacetRanges) {
+        this.useFacetRanges = useFacetRanges;
     }
 
     @Override

@@ -405,7 +405,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
-            gridVisibleFields = { "field", "label", "searchDisplayPriority" })
+            gridVisibleFields = { "name", "label", "field" })
     @BatchSize(size = 50)
     protected List<CategorySearchFacet> searchFacets  = new ArrayList<CategorySearchFacet>();
 
@@ -416,7 +416,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             tab = Presentation.Tab.Name.SearchFacets, tabOrder = Presentation.Tab.Order.SearchFacets,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
-            gridVisibleFields = { "field", "label", "searchDisplayPriority" })
+            gridVisibleFields = { "name", "label", "field" })
     @BatchSize(size = 50)
     protected List<CategoryExcludedSearchFacet> excludedSearchFacets = new ArrayList<CategoryExcludedSearchFacet>(10);
 
