@@ -163,7 +163,7 @@
             $tbody.find('tr.blank-padding').each(function(index, element) {
                 var $e = $(element);
                 var pr = _this.getRange($e.data('range'));
-                
+
                 if ((padRange == null || padRange.lo < pr.lo)  && pr.lo <= newRange.lo) {
                     $pad = $e;
                     padRange = pr;
@@ -385,7 +385,7 @@
                     delta = (topIndex + botIndex) / 2;
                 }
                 delta = delta - topIndex;
-                spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
+                var spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
                 BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
                 
                 var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
@@ -689,12 +689,15 @@
             $tbody = $clonedTable.find('tbody');
             $clonedTable.attr('id', $clonedTable.attr('id').replace('-header', ''));
 
+            // Get the first td's height
+            var tdHeight = $tbody.find('td:first').outerHeight();
+
             // Set up the mCustomScrollbar on the table body. Also bind the necessary events to enable infinite scrolling
             $wrapper.mCustomScrollbar({
                 theme: 'dark',
                 scrollEasing: "linear",
                 scrollInertia: 500,
-                mouseWheelPixels: 38,
+                mouseWheelPixels: tdHeight,
                 callbacks: {
                     onScroll: function() {
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
