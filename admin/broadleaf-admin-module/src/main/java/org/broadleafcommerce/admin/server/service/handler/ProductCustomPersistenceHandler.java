@@ -151,7 +151,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 List<String> filterValues = fsc.getFilterValues();
                 cto.getCriteriaMap().remove("defaultCategory");
                 FilterMapping filterMapping = new FilterMapping()
-                        .withFieldPath(new FieldPath().withTargetProperty("allParentCategoryXrefs.category.id"))
+                        .withFieldPath(new FieldPath().withTargetProperty("allParentCategoryXrefs.id"))
                         .withDirectFilterValues(filterValues)
                         .withRestriction(new Restriction()
                                 .withPredicateProvider(new PredicateProvider() {
@@ -159,13 +159,13 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                                     public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
                                             From root, String ceilingEntity,
                                             String fullPropertyName, Path explicitPath, List directValues) {
-
-                                        //the property to be matched against (allParentCategoryXrefs.category.id) comes as "explicitPath"
-                                        //the specifics of what values are acceptable (those given as filter values, that in addition are defaults)
-                                        //are resolved in a sub-query
+                                        //We want to limit the product we find to those who have a CategoryProductXref that
+                                        //is unarchived, is the defaultReference, and is the selected filter category. We
+                                        //do this in a subquery to avoid an additional join that would cause duplicate query
+                                        //results.
                                         Subquery<Long> sub = fieldPathBuilder.getCriteria().subquery(Long.class);
                                         Root<CategoryProductXrefImpl> subRoot = sub.from(CategoryProductXrefImpl.class);
-                                        sub.select(subRoot.get("category").get("id").as(Long.class));
+                                        sub.select(subRoot.get("id").as(Long.class));
                                         List<Predicate> subRestrictions = new ArrayList<Predicate>();
                                         subRestrictions.add(builder.equal(subRoot.get("defaultReference"), Boolean.TRUE));
                                         subRestrictions.add(subRoot.get("category").get("id").in(directValues));

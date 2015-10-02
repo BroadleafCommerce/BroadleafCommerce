@@ -18,6 +18,7 @@
  * #L%
  */
 package org.broadleafcommerce.test
+
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.ContextHierarchy
 import org.springframework.test.context.transaction.TransactionConfiguration
