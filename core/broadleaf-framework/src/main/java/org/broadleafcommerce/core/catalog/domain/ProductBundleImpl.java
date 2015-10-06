@@ -128,7 +128,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Override
     public Money getBundleItemsRetailPrice() {
-        Money price = new Money(BigDecimal.ZERO);
+        Money price = Money.ZERO;
         for (SkuBundleItem item : getSkuBundleItems()) {
             price = price.add(item.getRetailPrice().multiply(item.getQuantity()));
         }
@@ -137,7 +137,7 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
     @Override
     public Money getBundleItemsSalePrice() {
-        Money price = new Money(BigDecimal.ZERO);
+        Money price = Money.ZERO;
         for (SkuBundleItem item : getSkuBundleItems()){
             if (item.getSalePrice() != null) {
                 price = price.add(item.getSalePrice().multiply(item.getQuantity()));
