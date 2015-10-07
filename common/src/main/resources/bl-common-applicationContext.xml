@@ -221,6 +221,14 @@
         </property>
     </bean>
 
+    <bean id="blWebComponentsLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <value>classpath:/common_style/web-components/</value>
+            </list>
+        </property>
+    </bean>
+
     <bean id="blFontLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
         <property name="sourceList">
             <list>
@@ -257,6 +265,13 @@
             </list>
         </property>
     </bean>
+
+    <bean id="blWebComponentsFileList" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
     
     <!--  Spring 4.1 Resource Resolvers -->
     <bean id="blJsResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
@@ -271,7 +286,14 @@
             <list>         
             </list>
         </property>
-    </bean>     
+    </bean>
+
+    <bean id="blWebComponentsResourceResolvers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
 
     <!--  Spring 4.1 Resource Transformers -->
     <bean id="blJsResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
@@ -291,6 +313,14 @@
             </list>
         </property>
     </bean>
+
+    <bean id="blWebComponentsResourceTransformers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+                <ref bean="blCachingResourceTransformer" />
+            </list>
+        </property>
+    </bean>
     
     <!--  Spring 4.1 Site Resource Handling Base Classes -->
     <bean id="siteResourceHttpRequestHandlerBase" abstract="true" 
@@ -306,13 +336,17 @@
     
     <bean id="siteCssResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
         <property name="locations" ref="blCssLocations" />
-        <property name="resourceTransformers" ref="blCssResourceTransformers" />    
+        <property name="resourceTransformers" ref="blCssResourceTransformers" />
+    </bean>
+
+    <bean id="siteWebComponentsResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
+        <property name="locations" ref="blWebComponentsLocations" />
+        <property name="resourceTransformers" ref="blWebComponentsResourceTransformers" />
     </bean>
     
     <bean id="siteImageResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
         <property name="locations" ref="blImageLocations" />
-        <property name="resourceTransformers" ref="blCssResourceTransformers" />    
-    </bean> 
+    </bean>
     
     <bean id="siteFontResourceRequestHandlerBase" abstract="true" parent="siteResourceHttpRequestHandlerBase">
         <property name="locations" ref="blFontLocations"/>            
