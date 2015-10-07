@@ -177,20 +177,20 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 QueryUtils.notArchived(builder, restrictions, root, "archiveStatus");
                 criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
                 TypedQuery<Long> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
-                final List<Long> productIds = query.getResultList();
+                List<Long> productIds = query.getResultList();
+                productIds = sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[productIds.size()]));
 
                 if (productIds.size() <= 500) {
                     FilterMapping filterMapping = new FilterMapping()
                         .withFieldPath(new FieldPath().withTargetProperty("id"))
-                        .withDirectFilterValues(filterValues)
+                        .withDirectFilterValues(productIds)
                         .withRestriction(new Restriction()
                             .withPredicateProvider(new PredicateProvider() {
                                    @Override
                                    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
                                                                    From root, String ceilingEntity, String fullPropertyName,
                                                                    Path explicitPath, List directValues) {
-                                       return explicitPath.in(sandBoxHelper.mergeCloneIds(ProductImpl.class,
-                                               productIds.toArray(new Long[productIds.size()])));
+                                       return explicitPath.in(directValues);
                                    }
                                }
                             )
