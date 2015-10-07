@@ -179,7 +179,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 TypedQuery<Long> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
                 final List<Long> productIds = query.getResultList();
 
-                if (productIds.size() <= 800) {
+                if (productIds.size() <= 500) {
                     FilterMapping filterMapping = new FilterMapping()
                         .withFieldPath(new FieldPath().withTargetProperty("id"))
                         .withDirectFilterValues(filterValues)
