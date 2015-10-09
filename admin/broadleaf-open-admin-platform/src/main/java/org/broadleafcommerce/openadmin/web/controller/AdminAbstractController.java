@@ -305,7 +305,14 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
             }
             dynamicForm.addField(field);
         }
-        
+        setSpecializedNameForFields(info, dynamicForm);
+
+        extensionManager.getProxy().modifyDynamicForm(dynamicForm, entityId);
+
+        return dynamicForm;
+    }
+
+    protected void setSpecializedNameForFields(DynamicEntityFormInfo info, EntityForm dynamicForm) {
         // Set the specialized name for these fields - we need to handle them separately
         dynamicForm.clearFieldsMap();
         for (Tab tab : dynamicForm.getTabs()) {
@@ -315,10 +322,6 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
                 }
             }
         }
-        
-        extensionManager.getProxy().modifyDynamicForm(dynamicForm, entityId);
-    
-        return dynamicForm;
     }
 
     /**
