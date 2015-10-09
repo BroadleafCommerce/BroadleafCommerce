@@ -412,7 +412,7 @@
     </bean>
 
     <!-- Start - this block should be removed in 4.1, since the DirectCopyTransform annotations will appear on these entities at that point -->
-    <bean id="blSiteMapGeneratorConfigurationConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
+    <bean id="blCommonConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
         <property name="templateTokens">
             <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.MULTITENANT_SITE"/>
         </property>
@@ -433,7 +433,7 @@
     <bean id="blCommonConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
-                <entry key="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl" value-ref="blSiteMapGeneratorConfigurationConditionalDirectCopyTransformerMember"/>
+                <entry key="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl" value-ref="blCommonConditionalDirectCopyTransformerMember"/>
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
             </map>
@@ -443,15 +443,6 @@
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
         <property name="collectionRef" value="blCommonConditionalDirectCopyTransformers"/>
         <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
-    </bean>
-
-    <bean id="blSiteMapConfigurationSiteMapGeneratorConfigurationConditionalFieldAnnotationTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalFieldAnnotationCopyTransformMemberDTO">
-        <property name="templateNames">
-            <array>
-                <value>org.broadleafcommerce.common.sitemap.domain.weave.OptionalEnterpriseSiteMapConfigurationSiteMapGeneratorConfigurationTemplate</value>
-            </array>
-        </property>
-        <property name="conditionalProperty" value="enable.site.map.mt.disc"/>
     </bean>
     
     <bean id="blBandedPriceFulfillmentOptionConditionalFieldAnnotationTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalFieldAnnotationCopyTransformMemberDTO">
@@ -477,7 +468,6 @@
             <map>
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.BandedPriceFulfillmentOptionImpl" value-ref="blBandedPriceFulfillmentOptionConditionalFieldAnnotationTransformerMember"/>
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.BandedWeightFulfillmentOptionImpl" value-ref="blBandedWeightFulfillmentOptionConditionalFieldAnnotationTransformerMember"/>
-                <entry key="org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl" value-ref="blSiteMapConfigurationSiteMapGeneratorConfigurationConditionalFieldAnnotationTransformerMember"/>
             </map>
         </property>
     </bean>
