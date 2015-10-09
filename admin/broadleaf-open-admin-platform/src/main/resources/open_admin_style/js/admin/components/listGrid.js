@@ -306,7 +306,7 @@ $(document).ready(function() {
         if (listGridType != 'main' && !$tr.hasClass('clickable')) {
             return false;
         }
-        
+
         var link = $tr.data('link');
         var currentUrl = $table.data('currenturl');
         var fields = BLCAdmin.listGrid.getRowFields($tr);
@@ -314,7 +314,7 @@ $(document).ready(function() {
         if ($tr.find('tr.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
 
             // Avoid rebuilding "next" columns if row is already selected
-            if (listGridType === 'tree' && !$tr.hasClass('selected')) {
+            if ((listGridType === 'tree' || listGridType === 'asset_grid') && !$tr.hasClass('selected')) {
                 $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
 

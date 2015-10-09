@@ -1,0 +1,33 @@
+<div class="asset-listgrid-container" th:attr="data-baseurl=@{${subTreeBaseUrl}}, data-collectionname=${collectionName}">
+
+    <div class="asset-ribbon">
+        <div class="asset-title-container">
+            <span class="breadcrumb-wrapper">
+                <a class="asset-breadcrumb" data-rowid="-999999" href="#">Home</a>
+            </span>
+        </div>
+    </div>
+    <div class="select-group">
+        <div class="select-column listgrid-container"
+             th:each="parentFolder, iterStat : ${assetGrid.parentFolders}"
+             th:attr="data-parentid=${parentFolder.folderId}"
+                th:if="${iterStat.index == (#arrays.length(assetGrid.parentFolders) - 1)}">
+            <div th:include="components/listGrid" th:with="listGrid=${parentFolder.subFolders}" th:remove="tag" />
+        </div>
+
+        <div class="asset-grid">
+            <div type="hidden" id="treeParentPathJson" th:if="${treeParentPathJson != null}" th:attr="data-parentpathjson=${treeParentPathJson}"></div>
+            <div class="asset-grid-container">
+                <div th:each="asset : ${assetGrid.records}" class="asset-item">
+                    <img class="thumbnail"
+                         th:src="@{${asset.fullUrl + '?largeAdminThumbnail'}}"
+                         th:attr="data-fullurl=@{${asset.fullUrl}}" />
+
+                    <div th:text="${asset.name}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

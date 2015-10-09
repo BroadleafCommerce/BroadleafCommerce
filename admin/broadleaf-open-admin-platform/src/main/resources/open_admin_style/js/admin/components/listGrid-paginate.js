@@ -524,16 +524,19 @@
             });
             
             var $wrapper = $tbody.closest('.listgrid-body-wrapper');
-            
+
             // If we're the only grid on the page, we should stretch to the bottom of the screen if we are not encapsulated
             // inside of an entity-form
             var listGridsCount = BLCAdmin.listGrid.getListGridCount($);
-            if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0 && $table.data('listgridtype') !== 'tree') {
+            if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0 &&
+                $table.data('listgridtype') !== 'tree' &&
+                $table.data('listgridtype') !== 'asset_grid') {
+
                 var $window = $(window);
                 
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
                 wrapperHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, wrapperHeight);
-                
+
                 $wrapper.css('max-height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
                 
@@ -574,6 +577,19 @@
                 var maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, treeListGridHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
+
+                $wrapper.mCustomScrollbar('update');
+            }  else if ($table.data('listgridtype') === 'asset_grid') {
+                var $window = $(window);
+
+                var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
+                wrapperHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, wrapperHeight);
+
+                $wrapper.css('max-height', wrapperHeight);
+                $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
+
+                $wrapper.css('height', wrapperHeight);
+                $wrapper.find('.mCustomScrollBox').css('height', wrapperHeight);
 
                 $wrapper.mCustomScrollbar('update');
             } else {
