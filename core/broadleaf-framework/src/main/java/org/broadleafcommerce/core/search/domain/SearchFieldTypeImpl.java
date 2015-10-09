@@ -63,7 +63,6 @@ import javax.persistence.Table;
 @Table(name = "BLC_SEARCH_FIELD_TYPES")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps=true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 @AdminPresentationMergeOverrides({
