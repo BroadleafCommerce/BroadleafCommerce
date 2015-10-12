@@ -246,7 +246,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             fieldDTO.setType("string");
 
             AdminSection section = adminNavigationService.findAdminSectionByClassAndSectionId(fmd.getForeignKeyClass(), null);
-            fieldDTO.setSelectizeSectionKey(section.getSectionKey());
+            if (section != null) {
+                fieldDTO.setSelectizeSectionKey(section.getSectionKey());
+            } else {
+                fieldDTO.setSelectizeSectionKey(context.getRequest().getServletPath());
+            }
         } else {
             fieldDTO.setOperators("blcFilterOperators_Text");
         }
