@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.broadleafcommerce.common.util.BLCMapUtils;
@@ -41,21 +43,45 @@ import java.util.Map;
  * @see {@link Property}
  *
  */
+@JsonAutoDetect
 public class Entity implements Serializable {
 
     protected static final long serialVersionUID = 1L;
 
+    @JsonProperty
     protected String[] type;
+
+    @JsonProperty(value = "entityProperties")
     protected Property[] properties;
+
+    @JsonProperty
     protected boolean isDirty = false;
+
+    @JsonProperty
     protected Date deployDate;
+
+    @JsonProperty
     protected Boolean isDeleted = false;
+
+    @JsonProperty
     protected Boolean isInactive = false;
+
+    @JsonProperty
     protected Boolean isActive = false;
+
+    @JsonProperty
     protected boolean multiPartAvailableOnThread = false;
+
+    @JsonProperty
     protected boolean isValidationFailure = false;
+
+    @JsonProperty
     protected boolean isPreAdd = false;
+
+    @JsonProperty
     protected Map<String, List<String>> validationErrors = new HashMap<String, List<String>>();
+
+    @JsonProperty
     protected List<String> globalValidationErrors = new ArrayList<String>();
     
     protected Map<String, Property> pMap = null;

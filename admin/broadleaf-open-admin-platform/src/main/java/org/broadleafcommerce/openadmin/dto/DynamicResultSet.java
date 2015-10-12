@@ -19,28 +19,46 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.broadleafcommerce.openadmin.web.form.entity.Tab;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 
 /**
  * 
  * @author jfischer
  *
  */
+@JsonAutoDetect
 public class DynamicResultSet implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonProperty
     private ClassMetadata classMetaData;
+
+    @JsonProperty
     private Entity[] records;
+
+    @JsonProperty
     private Integer pageSize;
+
+    @JsonProperty
     private Integer startIndex;
+
+    @JsonProperty
     private Integer totalRecords;
+
+    @JsonProperty
     private Integer batchId;
+
+    @JsonIgnore
     private Map<String, Tab> unselectedTabMetadata = new HashMap<String, Tab>();
+
     public DynamicResultSet() {
         //do nothing
     }
