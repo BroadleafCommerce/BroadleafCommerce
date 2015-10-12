@@ -19,11 +19,8 @@
  */
 @font-face {
 	font-family: 'broadleaf';
-	src:url('../../fonts/broadleaf.eot?-s748z9');
 	src:url('../../fonts/broadleaf.eot?#iefix-s748z9') format('embedded-opentype'),
-		url('../../fonts/broadleaf.ttf?-s748z9') format('truetype'),
-		url('../../fonts/broadleaf.woff?-s748z9') format('woff'),
-		url('../../fonts/broadleaf.svg?-s748z9#broadleaf') format('svg');
+		url('../../fonts/broadleaf.ttf?-s748z9') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }

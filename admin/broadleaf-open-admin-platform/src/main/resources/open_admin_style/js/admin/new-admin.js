@@ -59,7 +59,7 @@ $(document).ready(function(){
         equalheight('.equals .equal');
     });
 
-    $('table.datatable').DataTable();
+    //$('table.datatable').DataTable();
 
     window.remodalGlobals = {
         namespace: "modal",

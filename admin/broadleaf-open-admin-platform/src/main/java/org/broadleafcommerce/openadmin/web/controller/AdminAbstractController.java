@@ -511,13 +511,7 @@ public abstract class AdminAbstractController extends BroadleafAbstractControlle
         List<String> sortDirections = getSortDirections(requestParams);
         if (CollectionUtils.isNotEmpty(sortProperties)) {
             //set up a map to determine if there is already some criteria set for the sort property
-            Map<String, FilterAndSortCriteria> fasMap = BLCMapUtils.keyedMap(result, new TypedClosure<String, FilterAndSortCriteria>() {
-    
-                @Override
-                public String getKey(FilterAndSortCriteria value) {
-                    return value.getPropertyId();
-                }
-            });
+            Map<String, FilterAndSortCriteria> fasMap = new HashMap<String, FilterAndSortCriteria>();
             for (int i = 0; i < sortProperties.size(); i++) {
                 boolean sortAscending = SortDirection.ASCENDING.toString().equals(sortDirections.get(i));
                 FilterAndSortCriteria propertyCriteria = fasMap.get(sortProperties.get(i));

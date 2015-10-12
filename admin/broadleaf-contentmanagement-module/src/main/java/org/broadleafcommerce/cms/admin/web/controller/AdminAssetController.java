@@ -60,7 +60,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/" + AdminAssetController.SECTION_KEY)
 public class AdminAssetController extends AdminBasicEntityController {
     
-    protected static final String SECTION_KEY = "assets";
+    public static final String SECTION_KEY = "assets";
     
     @Resource(name = "blAssetFormBuilderService")
     protected AssetFormBuilderService formService;

@@ -100,7 +100,8 @@ public class ListGrid {
         TRANSLATION,
         ASSET,
         WORKFLOW,
-        TREE
+        TREE,
+        ASSET_GRID
     }
 
     public enum SelectType {

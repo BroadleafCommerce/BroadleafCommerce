@@ -203,7 +203,7 @@ $(document).ready(function() {
      */
     $('body').on('click', 'div.filter-fields button.listgrid-filter', function(event, indirect) {
         event.preventDefault();
-        
+
         // Dates need their value parsed to the appropriate server value
         $(this).closest('thead').find('div.filter-fields input.datepicker').each(function(i, e) {
             var serverVal = BLCAdmin.dates.getServerDate($(e).val());
