@@ -581,9 +581,7 @@
                 $wrapper.mCustomScrollbar('update');
             }  else if ($table.data('listgridtype') === 'asset_grid') {
                 var $window = $(window);
-
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
-                wrapperHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, wrapperHeight);
 
                 $wrapper.css('max-height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
@@ -620,7 +618,7 @@
             var paddedRowsHeight = rowHeight * numPaddedRows;
             
             var maxHeight = desiredMaxHeight;
-            
+
             // If we added visible padding and there isn't enough rows to cover the entire viewport that we want
             // (maxSubCollectionListGridHeight), then we need to shrink the size such that scrolling occurs. Otherwise,
             // we end up in a scenario in which you have some visible rows, padding is there, but no scrolling will

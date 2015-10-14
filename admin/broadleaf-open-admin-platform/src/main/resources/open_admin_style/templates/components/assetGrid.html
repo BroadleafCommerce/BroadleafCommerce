@@ -2,6 +2,7 @@
 
     <div class="asset-ribbon">
         <div class="asset-title-container">
+            <span class="asset-title"></span>
             <span class="breadcrumb-wrapper">
                 <a class="asset-breadcrumb" data-rowid="-999999" href="#">Home</a>
             </span>
@@ -23,7 +24,7 @@
                          th:src="@{${asset.fullUrl + '?largeAdminThumbnail'}}"
                          th:attr="data-fullurl=@{${asset.fullUrl}}" />
 
-                    <div th:text="${asset.name}"></div>
+                    <a th:href="${'/admin/assets/' + asset.id}" th:text="${asset.name}"></a>
                 </div>
             </div>
         </div>
