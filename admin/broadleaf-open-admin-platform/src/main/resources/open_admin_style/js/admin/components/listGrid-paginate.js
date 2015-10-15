@@ -472,22 +472,35 @@
             var $headerTable = $table.closest('.listgrid-container').find('.listgrid-header-wrapper table');
             var thWidths = [];
             var $modalBody = $tbody.closest('.modal-body');
-            
+
             if ($modalBody.length > 0) {
                 $modalBody.css('overflow-y', 'hidden');
             }
-            
-            // Clear out widths
-            $headerTable.css('width', '');
-            $table.css('width', '');
-            $table.css('table-layout', 'fixed');
-            //$headerTable.closest('.listgrid-container').find('th').css('width', '');
-            
-            // Figure out what the new table width will be
-            var newWidth = ($headerTable.width() - 15) + 'px';
-            $headerTable.css('width', newWidth);
-            $table.css('width', newWidth);
-            
+
+            if ($table.data('listgridtype') == 'asset_grid') {
+                var fullWidth = $('.select-group').width() - 320;
+
+                $headerTable.css('width', '');
+                $table.css('width', '');
+                $table.css('table-layout', 'fixed');
+                //$headerTable.closest('.listgrid-container').find('th').css('width', '');
+
+                // Figure out what the new table width will be
+                var newWidth = (fullWidth) + 'px';
+                $headerTable.css('width', newWidth);
+                $table.css('width', newWidth);
+            } else {
+                // Clear out widths
+                $headerTable.css('width', '');
+                $table.css('width', '');
+                $table.css('table-layout', 'fixed');
+                //$headerTable.closest('.listgrid-container').find('th').css('width', '');
+
+                // Figure out what the new table width will be
+                var newWidth = ($headerTable.width() - 15) + 'px';
+                $headerTable.css('width', newWidth);
+                $table.css('width', newWidth);
+            }
             // Determine if we need to ignore any explicitly set column widths
             var $explicitSizeThs = $headerTable.closest('.listgrid-container').find('th.explicit-size');
             if (($table.data('listgridtype') == 'main' && $table.outerWidth() < 960) || 
@@ -530,7 +543,8 @@
             var listGridsCount = BLCAdmin.listGrid.getListGridCount($);
             if (listGridsCount == 1 && $wrapper.parents('.entity-form').length == 0 &&
                 $table.data('listgridtype') !== 'tree' &&
-                $table.data('listgridtype') !== 'asset_grid') {
+                $table.data('listgridtype') !== 'asset_grid' &&
+                $table.data('listgridtype') !== 'asset_grid_folder') {
 
                 var $window = $(window);
                 
@@ -579,7 +593,7 @@
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
 
                 $wrapper.mCustomScrollbar('update');
-            }  else if ($table.data('listgridtype') === 'asset_grid') {
+            }  else if ($table.data('listgridtype') === 'asset_grid' || $table.data('listgridtype') === 'asset_grid_folder') {
                 var $window = $(window);
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
 
@@ -717,7 +731,6 @@
                         var singleGrid = BLCAdmin.listGrid.getListGridCount($) == 1;
                         var inModal = $tbody.closest('.modal-body').length === 1;
                         var listGridType = $table.data('listgridtype');
-                        var isAssetGrid = $tbody.closest('table').data('listgridtype') == 'asset';
 
                         // Update the currently visible range
                         BLCAdmin.listGrid.paginate.updateTableFooter($tbody);

@@ -101,7 +101,8 @@ public class ListGrid {
         ASSET,
         WORKFLOW,
         TREE,
-        ASSET_GRID
+        ASSET_GRID,
+        ASSET_GRID_FOLDER
     }
 
     public enum SelectType {

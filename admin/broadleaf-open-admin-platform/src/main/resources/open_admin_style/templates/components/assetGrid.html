@@ -6,14 +6,16 @@
             <span class="breadcrumb-wrapper">
                 <a class="asset-breadcrumb" data-rowid="-999999" href="#">Home</a>
             </span>
+
+            <div class="asset-title-actions">
+                <a class="asset-image-view active" href="#"><i class="fa fa-th"></i></a>
+                <a class="asset-list-view" href="#"><i class="fa fa-list"></i></a>
+            </div>
         </div>
     </div>
     <div class="select-group">
-        <div class="select-column listgrid-container"
-             th:each="parentFolder, iterStat : ${assetGrid.parentFolders}"
-             th:attr="data-parentid=${parentFolder.folderId}"
-                th:if="${iterStat.index == (#arrays.length(assetGrid.parentFolders) - 1)}">
-            <div th:include="components/listGrid" th:with="listGrid=${parentFolder.subFolders}" th:remove="tag" />
+        <div class="select-column listgrid-container" th:attr="data-parentid=${currentFolder.folderId}">
+            <div th:include="components/listGrid" th:with="listGrid=${currentFolder.subFolders}" th:remove="tag"></div>
         </div>
 
         <div class="asset-grid">
@@ -28,6 +30,7 @@
                 </div>
             </div>
         </div>
+        <div class="asset-listgrid listgrid-container" th:include="components/listGrid" th:with="listGrid=${assetGrid.assetListGrid}"></div>
     </div>
 </div>
 
