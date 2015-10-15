@@ -477,13 +477,12 @@
                 $modalBody.css('overflow-y', 'hidden');
             }
 
-            if ($table.data('listgridtype') == 'asset_grid') {
+            if ($table.data('listgridtype') == 'asset_grid' && $('.select-column:visible').length > 0) {
                 var fullWidth = $('.select-group').width() - 320;
 
                 $headerTable.css('width', '');
                 $table.css('width', '');
                 $table.css('table-layout', 'fixed');
-                //$headerTable.closest('.listgrid-container').find('th').css('width', '');
 
                 // Figure out what the new table width will be
                 var newWidth = (fullWidth) + 'px';
