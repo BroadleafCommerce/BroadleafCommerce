@@ -44,7 +44,7 @@
             } else {
                 $iframe.load(this.iframeOnLoadRedactor);
             }
-            
+
             $form.attr('target', 'upload_target');
             $form.submit();
         },
@@ -196,7 +196,8 @@ $(document).ready(function() {
     });
     
     // On the asset list view, the upload button triggers this form
-    $('body').on('click', 'button.upload-asset', function(event) {    
+    $('body').on('click', 'a.upload-asset', function(event) {
+        event.preventDefault();
         $('#assetUploadFile').click();
     });  
     
