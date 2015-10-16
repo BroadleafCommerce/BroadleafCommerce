@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -407,6 +408,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "sequence",
             gridVisibleFields = { "name", "label", "field" })
     @BatchSize(size = 50)
+    @IgnoreEnterpriseBehavior
     protected List<CategorySearchFacet> searchFacets  = new ArrayList<CategorySearchFacet>();
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryExcludedSearchFacetImpl.class, cascade = { CascadeType.ALL })
@@ -418,6 +420,7 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             sortProperty = "sequence",
             gridVisibleFields = { "name", "label", "field" })
     @BatchSize(size = 50)
+    @IgnoreEnterpriseBehavior
     protected List<CategoryExcludedSearchFacet> excludedSearchFacets = new ArrayList<CategoryExcludedSearchFacet>(10);
 
 
