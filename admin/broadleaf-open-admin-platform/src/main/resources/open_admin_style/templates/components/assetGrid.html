@@ -30,7 +30,12 @@
                 </div>
             </div>
         </div>
-        <div class="asset-listgrid listgrid-container" th:include="components/listGrid" th:with="listGrid=${assetGrid.assetListGrid}"></div>
+        <div class="asset-listgrid-wrapper" style="display: none;">
+            <div class="asset-listgrid listgrid-container" th:attr="data-parentid=${currentFolder.folderId}"
+                 th:include="components/listGrid"
+                 th:with="listGrid=${assetGrid.assetListGrid}">
+            </div>
+        </div>
     </div>
 </div>
 

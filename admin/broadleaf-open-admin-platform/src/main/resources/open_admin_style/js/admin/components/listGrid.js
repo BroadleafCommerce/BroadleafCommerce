@@ -225,7 +225,9 @@
             var $spinner = $tbody.closest('.listgrid-container').find('.listgrid-table-spinner-container');
             
             if (spinnerOffset) {
-                $spinner.css('position', 'absolute').css('top', spinnerOffset + 'px');
+                $spinner.css('position', 'absolute');
+                $spinner.css('top', spinnerOffset + 'px');
+                $spinner.css('left', $tbody.offset().left - 80 + 'px');
             }
             $spinner.css('width',$tbody.width());
             $spinner.css('display', 'block');
