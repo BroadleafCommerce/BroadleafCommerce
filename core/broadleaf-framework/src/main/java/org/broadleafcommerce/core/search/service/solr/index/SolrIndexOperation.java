@@ -22,7 +22,7 @@
  */
 package org.broadleafcommerce.core.search.service.solr.index;
 
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import java.util.List;
@@ -42,9 +42,9 @@ public interface SolrIndexOperation {
     public boolean obtainLock();
     
     /**
-     * Which {@link SolrServer} the index should be built on
+     * Which {@link SolrClient} the index should be built on
      */
-    public SolrServer getSolrServerForIndexing();
+    public SolrClient getSolrServerForIndexing();
 
     /**
      * Executes before the count, this is where any filters or setup for counting can be taken care of
@@ -87,7 +87,7 @@ public interface SolrIndexOperation {
 
     /**
      * Build a page from {@link #readIndexables(int, int)} on the {@link #getSolrServerForIndexing()}. This is used as a
-     * wrapper extension around {@link SolrIndexService#buildIncrementalIndex(List, SolrServer)}.
+     * wrapper extension around {@link SolrIndexService#buildIncrementalIndex(List, SolrClient)}.
      */
     public void buildPage(List<? extends Indexable> indexables) throws ServiceException;
 

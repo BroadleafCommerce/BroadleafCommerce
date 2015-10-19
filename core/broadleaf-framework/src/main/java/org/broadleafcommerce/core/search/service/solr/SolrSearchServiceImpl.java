@@ -25,11 +25,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
+import org.apache.solr.client.solrj.response.CollectionAdminResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.cloud.Aliases;
@@ -138,7 +139,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
             final String baseTempPath = System.getProperty("java.io.tmpdir");
 
-            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome-4.10.3");
+            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome-5.3.1");
             if (System.getProperty("tmpdir.solrhome") != null) {
                 //allow for an override of tmpdir
                 tempDir = new File(System.getProperty("tmpdir.solrhome"));
@@ -287,12 +288,12 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         }
     }
 
-    public SolrSearchServiceImpl(SolrServer solrServer) {
+    public SolrSearchServiceImpl(SolrClient solrServer) {
         SolrContext.setPrimaryServer(solrServer);
     }
 
     /**
-     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
+     * This constructor serves to mimic the one which takes in one {@link SolrClient} argument.
      * By having this and then simply disregarding the second parameter, we can more easily support 2-core
      * Solr configurations that use embedded/standalone per environment.
      * 
@@ -308,7 +309,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     }
 
     /**
-     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
+     * This constructor serves to mimic the one which takes in one {@link SolrClient} argument.
      * By having this and then simply disregarding the second and third parameters, we can more easily support 2-core
      * Solr configurations that use embedded/standalone per environment, along with an admin server.
      * 
@@ -323,12 +324,12 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         this(solrServer);
     }
 
-    public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer) {
+    public SolrSearchServiceImpl(SolrClient solrServer, SolrClient reindexServer) {
         SolrContext.setPrimaryServer(solrServer);
         SolrContext.setReindexServer(reindexServer);
     }
 
-    public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer, SolrServer adminServer) {
+    public SolrSearchServiceImpl(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer) {
         SolrContext.setPrimaryServer(solrServer);
         SolrContext.setReindexServer(reindexServer);
         SolrContext.setAdminServer(adminServer);
@@ -344,8 +345,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         if (SolrContext.isSolrCloudMode()) {
             //We want to use the Solr APIs to make sure the correct collections are set up.
 
-            CloudSolrServer primary = (CloudSolrServer) SolrContext.getServer();
-            CloudSolrServer reindex = (CloudSolrServer) SolrContext.getReindexServer();
+            CloudSolrClient primary = (CloudSolrClient) SolrContext.getServer();
+            CloudSolrClient reindex = (CloudSolrClient) SolrContext.getReindexServer();
             if (primary == null || reindex == null) {
                 throw new IllegalStateException("The primary and reindex CloudSolrServers must not be null. Check "
                         + "your configuration and ensure that you are passing a different instance for each to the "
@@ -403,14 +404,18 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                     }
                 }
 
-                CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
-                CollectionAdminRequest.createAlias(primary.getDefaultCollection(), collectionName, primary);
+                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                        .setConfigName(solrCloudConfigName).process(primary);
+
+                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
+                        .setAliasedCollections(collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                 String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                            .setConfigName(solrCloudConfigName).process(primary);
                 }
             }
 
@@ -436,14 +441,18 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                     }
                 }
 
-                CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
-                CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), collectionName, primary);
+                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                        .setConfigName(solrCloudConfigName).process(primary);
+
+                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
+                        .setAliasedCollections(collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                 String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                            .setConfigName(solrCloudConfigName).process(primary);
                 }
             }
         }
@@ -451,13 +460,13 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Override
     public void destroy() throws Exception {
-        //Make sure we shut down each of the SolrServer references (these is really the Solr clients despite the name)
+        //Make sure we shut down each of the SolrClient references (these is really the Solr clients despite the name)
         try {
             if (SolrContext.getServer() != null) {
                 SolrContext.getServer().shutdown();
             }
         } catch (Exception e) {
-            LOG.error("Error shutting down primary SolrServer (client).", e);
+            LOG.error("Error shutting down primary SolrClient (client).", e);
         }
 
         try {
@@ -466,7 +475,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 SolrContext.getReindexServer().shutdown();
             }
         } catch (Exception e) {
-            LOG.error("Error shutting down reindex SolrServer (client).", e);
+            LOG.error("Error shutting down reindex SolrClient (client).", e);
         }
 
         try {
@@ -476,7 +485,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 SolrContext.getAdminServer().shutdown();
             }
         } catch (Exception e) {
-            LOG.error("Error shutting down admin SolrServer (client).", e);
+            LOG.error("Error shutting down admin SolrClient (client).", e);
         }
     }
 
@@ -592,7 +601,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return the ProductSearchResult of the search
      * @throws ServiceException
      */
-    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries)
+            throws ServiceException  {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Build the basic query
@@ -648,6 +658,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 }
             }
         } catch (SolrServerException e) {
+            throw new ServiceException("Could not perform search", e);
+        } catch (IOException e) {
             throw new ServiceException("Could not perform search", e);
         }
 

@@ -19,7 +19,7 @@
  */
 package org.broadleafcommerce.core.search.service.solr.index;
 
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
@@ -107,7 +107,7 @@ public interface SolrIndexService {
      * @throws ServiceException
      * @return the {@link SolrInputDocument}s that were built from the given <b>indexables</b>
      */
-    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrServer solrServer) throws ServiceException;
+    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrClient solrServer) throws ServiceException;
 
     /**
      * Saves some global context that might be altered during indexing.
@@ -133,7 +133,7 @@ public interface SolrIndexService {
      * @throws ServiceException
      * @throws IOException
      */
-    public void optimizeIndex(SolrServer server) throws ServiceException, IOException;
+    public void optimizeIndex(SolrClient server) throws ServiceException, IOException;
 
     /**
      * Allows a commit to be called.  By default, the details of the commit will depend on system properties, including:
@@ -148,27 +148,27 @@ public interface SolrIndexService {
      * @throws IOException
      */
 
-    public void commit(SolrServer server) throws ServiceException, IOException;
+    public void commit(SolrClient server) throws ServiceException, IOException;
 
     /**
-     * This allows an external caller to force a commit to the SolrServer.  See Solr Documentation for 
+     * This allows an external caller to force a commit to the SolrClient.  See Solr Documentation for
      * additional details.  If using softCommit, you should ensure that a hardCommit is performed, either 
      * using autoCommit, or at the end of the commit process to flush the changes to the disk.
      * 
      * Note that this method will force a commit even if solr.index.commit=false
      * 
-     * @param server - the SolrServer to update
+     * @param server - the SolrClient to update
      * @param softCommit - soft commit is an efficient commit that does not write the data to the file system
      * @param waitSearcher - whether or not to wait for a new searcher to be created
      * @param waitFlush - whether or not to wait for a flush to disk.
      * @throws ServiceException
      * @throws IOException
      */
-    public void commit(SolrServer server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException;
+    public void commit(SolrClient server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException;
 
-    public void deleteAllNamespaceDocuments(SolrServer server) throws ServiceException;
+    public void deleteAllNamespaceDocuments(SolrClient server) throws ServiceException;
     
-    public void deleteAllDocuments(SolrServer server) throws ServiceException;
+    public void deleteAllDocuments(SolrClient server) throws ServiceException;
 
     /**
      * Prints out the docs to the trace logger

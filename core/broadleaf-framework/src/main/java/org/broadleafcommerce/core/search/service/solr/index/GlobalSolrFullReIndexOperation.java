@@ -24,7 +24,7 @@ package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.broadleafcommerce.core.search.service.solr.SolrContext;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
@@ -80,7 +80,7 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
     }
 
     @Override
-    public SolrServer getSolrServerForIndexing() {
+    public SolrClient getSolrServerForIndexing() {
         return SolrContext.getReindexServer();
     }
 
