@@ -29,6 +29,7 @@ public class EntityFormAction implements Cloneable {
     public static final String SAVE = "SAVE";
     public static final String DELETE = "DELETE";
     public static final String PREVIEW = "PREVIEW";
+    public static final String REVERT = "REVERT";
 
     protected String buttonType = "button";
     protected String buttonClass = "";

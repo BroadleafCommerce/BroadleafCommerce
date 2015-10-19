@@ -73,5 +73,10 @@ public class DefaultListGridActions {
             .withButtonClass("workflow-preview")
             .withIconClass("icon-eye-open")
             .withDisplayText("Workflow_button_preview");
+
+    public static final ListGridAction REVERT = new ListGridAction(ListGridAction.REVERT)
+            .withButtonClass("workflow-preview")
+            .withIconClass("icon-undo")
+            .withDisplayText("Revert_Button");
     
 }

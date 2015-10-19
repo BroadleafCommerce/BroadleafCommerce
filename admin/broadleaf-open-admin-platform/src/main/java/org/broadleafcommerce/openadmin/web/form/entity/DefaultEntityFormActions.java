@@ -36,4 +36,8 @@ public class DefaultEntityFormActions {
         .withButtonClass("preview-button")
         .withDisplayText("Preview");
 
+    public static final EntityFormAction REVERT = new EntityFormAction(EntityFormAction.REVERT)
+            .withButtonClass("revert-button")
+            .withDisplayText("Revert_Button");
+
 }
