@@ -1,18 +1,7 @@
 <div class="asset-listgrid-container" th:attr="data-baseurl=@{${subTreeBaseUrl}}, data-collectionname=${collectionName}">
+    <!-- Asset Ribbon -->
+    <div th:include="views/modal/assetFolderRibbon" th:with="folderList=${assetGrid.parentFolders}"></div>
 
-    <div class="asset-ribbon">
-        <div class="asset-title-container">
-            <span class="asset-title"></span>
-            <span class="breadcrumb-wrapper">
-                <a class="asset-breadcrumb" data-rowid="-999999" href="#">Home</a>
-            </span>
-
-            <div class="asset-title-actions">
-                <a class="asset-image-view active" href="#"><i class="fa fa-th"></i></a>
-                <a class="asset-list-view" href="#"><i class="fa fa-list"></i></a>
-            </div>
-        </div>
-    </div>
     <div class="select-group">
         <div class="select-column listgrid-container" th:attr="data-parentid=${currentFolder.folderId}">
             <div th:include="components/listGrid" th:with="listGrid=${currentFolder.subFolders}" th:remove="tag"></div>
