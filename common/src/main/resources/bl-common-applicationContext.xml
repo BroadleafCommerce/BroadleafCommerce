@@ -403,6 +403,20 @@
             </map>
         </property>
     </bean>
+
+    <bean id="blConditionalEntities" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="blConditionalOrmFiles" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+            </map>
+        </property>
+    </bean>
     
     <bean id="blConditionalFieldAnnotationCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
