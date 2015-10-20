@@ -32,6 +32,39 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
+ * Responsible for determining if an entity has been conditionally enabled. The primary utility of this class is to allow
+ * conditional inclusion of additional entities important for enhancements or bug fixes. Since this behavior requires
+ * explicit action by an implementation's codebase, fixes that require schema changes can safely be introduced in a patch release stream.
+ * </p>
+ * Setup inside a Broadleaf Commerce module is generally performed in a manner similar to this example:
+ * {@code
+    <bean id="blAuditConditionalORMConfig" class="org.broadleafcommerce.common.extensibility.jpa.ConditionalORMConfigDto">
+        <property name="puName" value="blPU"/>
+        <property name="conditionalProperty" value="enable.workflow.audit.report.request"/>
+    </bean>
+
+    <bean id="blCommonConditionalEntities" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="com.broadleafcommerce.enterprise.workflow.domain.AuditLogRequestImpl" value-ref="blAuditConditionalORMConfig"/>
+                <entry key="com.broadleafcommerce.enterprise.workflow.domain.AuditLogNodeRequestImpl" value-ref="blAuditConditionalORMConfig"/>
+                <entry key="com.broadleafcommerce.enterprise.workflow.domain.AuditReportRequestImpl" value-ref="blAuditConditionalORMConfig"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCommonConditionalEntities"/>
+        <property name="targetRef" value="blConditionalEntities"/>
+    </bean>
+ * }
+ * The goal is to add configuration for one or more entities and then add that configuration to the "blCommonConditionalEntities" map in
+ * Spring. The activity of this configuration will remain dormant until the "conditionalProperty" is defined and set to true in the implementation's
+ * Spring property files (or override property file). At that point, the entities will be introduced to Hibernate for normal
+ * inclusion. This has a similar effect to declaring a <class></class> element in a persistence.xml file. Note, the "blCommonConditionalOrmFiles"
+ * collection may be targeted as well, allowing you to conditionally includes ORM mapping files as well. This has a similar
+ * effect to declaring a <mapping-file></mapping-file> element in a persistence.xml file.
+ *
  * @author Jeff Fischer
  */
 public class ConditionalORMConfigPersistenceUnitPostProcessor implements org.springframework.orm.jpa.persistenceunit.PersistenceUnitPostProcessor, BeanFactoryAware {

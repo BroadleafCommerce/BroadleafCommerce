@@ -21,10 +21,6 @@ package org.broadleafcommerce.common.extensibility.jpa;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Jeff Fischer
- */
 public class ConditionalORMConfigDto implements Serializable {
 
     protected String puName;
