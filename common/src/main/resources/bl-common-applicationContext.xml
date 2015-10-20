@@ -418,7 +418,28 @@
         </property>
         <property name="conditionalProperty" value="enable.site.map.mt.disc"/>
     </bean>
-    
+
+    <bean id="blOptionalIncludeAdminUserTokenMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="archiveOnly" value="org.broadleafcommerce.common.weave.WeaveArchiveStatus"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blOptionalIncludeAdminUserTokenMap"/>
+        <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
+    </bean>
+
+    <bean id="blAdminUserConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
+        <property name="templateTokens">
+            <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.ARCHIVE_ONLY"/>
+        </property>
+        <property name="conditionalProperty" value="enable.admin.user.archive"/>
+    </bean>
+
+
     <!-- This is to conditionally add workflow annotation to FulfillmentPriceBandImpl -->
     <bean id="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
         <property name="templateTokens">
@@ -436,6 +457,7 @@
                 <entry key="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl" value-ref="blSiteMapGeneratorConfigurationConditionalDirectCopyTransformerMember"/>
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
                 <entry key="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl" value-ref="blBandedFulfillmentOptionConditionalDirectCopyTransformerMember"/>
+                <entry key="org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl" value-ref="blAdminUserConditionalDirectCopyTransformerMember" />
             </map>
         </property>
     </bean>
