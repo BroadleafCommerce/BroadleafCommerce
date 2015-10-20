@@ -139,32 +139,6 @@ public class AdminAssetUploadController extends AdminAbstractController {
         responseHeaders.add("Content-Type", "text/html; charset=utf-8");
         return new ResponseEntity<Map<String, Object>>(responseMap, responseHeaders, HttpStatus.OK);
     }
-    
-    /**
-     * Used by the Asset list view to upload an asset and then immediately show the
-     * edit form for that record.
-     * 
-     * @param request
-     * @param file
-     * @param sectionKey
-     * @return
-     * @throws IOException
-     */
-    @RequestMapping(value = "/uploadAsset", method = RequestMethod.POST)
-    public String upload(HttpServletRequest request,
-            @RequestParam("file") MultipartFile file,
-            @PathVariable(value="sectionKey") String sectionKey) throws IOException {
-        
-        StaticAsset staticAsset = staticAssetService.createStaticAssetFromFile(file, null);
-        staticAssetStorageService.createStaticAssetStorageFromFile(file, staticAsset);
-
-        String staticAssetUrlPrefix = staticAssetService.getStaticAssetUrlPrefix();
-        if (staticAssetUrlPrefix != null && !staticAssetUrlPrefix.startsWith("/")) {
-            staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
-        }
-        
-        return "redirect:/assets/" + staticAsset.getId();
-    }
 
     @RequestMapping(value = "/{addlSectionKey}/{id}/chooseAsset", method = RequestMethod.GET)
     public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model,
