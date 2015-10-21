@@ -13,7 +13,7 @@
                 <div th:each="asset : ${assetGrid.records}" class="asset-item">
                     <img class="thumbnail"
                          th:src="@{${asset.fullUrl + '?largeAdminThumbnail'}}"
-                         th:attr="data-fullurl=@{${asset.fullUrl}}" />
+                         th:attr="data-fullurl=@{${asset.fullUrl}}, data-rowid=${asset.id}" />
 
                     <a th:href="${'/admin/assets/' + asset.id}" th:text="${asset.name}"></a>
                 </div>
