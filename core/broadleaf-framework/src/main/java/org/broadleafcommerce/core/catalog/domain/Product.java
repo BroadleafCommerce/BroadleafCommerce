@@ -787,6 +787,14 @@ public interface Product extends Serializable, MultiTenantCloneable<Product>, In
     public void setTaxCode(String taxCode);
 
     /**
+     * In most implementations, including the default Broadleaf demo store, if a product doesn't have a retail price, 
+     * it can't be sold.     This method returns true if in the current context, the product has a price.    The current
+     * context may be different when accessed in an entperise context like one using PriceLists or MultiTentant.
+     * @return
+     */
+    public boolean hasRetailPrice();
+
+    /**
      * added just for convenience, references to defaultSku.retailPrice 
      * @return
      */

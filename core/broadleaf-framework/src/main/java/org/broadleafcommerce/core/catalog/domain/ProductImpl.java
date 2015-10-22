@@ -414,6 +414,11 @@ public class ProductImpl implements Product, Status, AdminMainEntity, Locatable,
     }
 
     @Override
+    public boolean hasRetailPrice() {
+        return getRetailPrice() != null;
+    }
+
+    @Override
     public Money getRetailPrice() {
         if (defaultSku == null) {
             return null;
