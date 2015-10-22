@@ -35,11 +35,11 @@ import java.util.Map;
 
 
 /**
- * Implementors of the SolrSearchServiceExtensionHandler interface should extend this class so that if 
+ * Implementors of the SolrIndexServiceExtensionHandler interface should extend this class so that if 
  * additional extension points are added which they don't care about, their code will not need to be
  * modified.
  * 
- * @author bpolster
+ * @author bpolster, Phillip Verheyden (phillipuniverse)
  */                                      
 public abstract class AbstractSolrIndexServiceExtensionHandler extends AbstractExtensionHandler
         implements SolrIndexServiceExtensionHandler {
@@ -70,7 +70,7 @@ public abstract class AbstractSolrIndexServiceExtensionHandler extends AbstractE
     }
 
     @Override
-    public ExtensionResultStatusType endBatchEvent() {
+    public ExtensionResultStatusType endBatchEvent(List<? extends Indexable> products) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
     

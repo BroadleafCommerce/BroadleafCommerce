@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -37,11 +38,24 @@ import java.util.List;
  * @see org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
+ * @author Phillip Verheyden (phillipuniverse)
  */
 public interface SolrIndexService {
 
     /**
-     * Rebuilds the current index. 
+     * <p>
+     * Executes a full rebuild of the Solr index. This will rebuild the index on a separate core/collection and then swap
+     * out the active core/collection with the new version of the index (essentially replacing all documents that are
+     * currently in the index).
+     * 
+     * <p>
+     * The order of methods that are apart of rebuilding the entire index:
+     * <ol>
+     *  <li><pre>{@link #preBuildIndex()}</pre></li>
+     *  <li><pre>{@link #buildIndex()}</pre></li>
+     *  <li><pre>{@link #postBuildIndex()}</pre></li>
+     * </ol>
+     * 
      * 
      * @throws IOException 
      * @throws ServiceException
@@ -49,20 +63,27 @@ public interface SolrIndexService {
     public void rebuildIndex() throws ServiceException, IOException;
 
     /**
-     * Executed before we do any indexing when rebuilding the current index. Usually this handles deleting the current index.
+     * Executed before we do any indexing when rebuilding the index. Usually this handles deleting the current index. This
+     * is called at the beginning of {@link #rebuildIndex()}
      *
      * @throws ServiceException
      */
-    public void preIndexing() throws ServiceException;
+    public void preBuildIndex() throws ServiceException;
 
     /**
-     * Handles all the indexing for the current index rebuild. This is where all of the SolrIndexOperation's need to be executed and the index needs to be built.
+     * <p>
+     * Handles all the document building for the current index rebuild. This is where all of the SolrIndexOperation's need to be
+     * created, executed and the documents built and added to the Solr index
+     * 
+     * <p>
      * This is the method that should be overridden to specify which operations should be run to build the correct index.
      *
      * @throws IOException
      * @throws ServiceException
+     * @see {@link #rebuildIndex()}
+     * @see {@link #preBuildIndex()}
      */
-    public void doIndexing() throws IOException, ServiceException;
+    public void buildIndex() throws IOException, ServiceException;
 
     /**
      * Executed after we do any indexing when rebuilding the current index. Usually this handles optimizing the index and swapping the cores.
@@ -70,17 +91,18 @@ public interface SolrIndexService {
      * @throws IOException
      * @throws ServiceException
      */
-    public void postIndexing() throws IOException, ServiceException;
+    public void postBuildIndex() throws IOException, ServiceException;
 
     /**
-     * Creates the Core SolrIndexOperation for rebuilding the current index. This is the primary index operation used to rebuild the index.
+     * Creates the  SolrIndexOperation for rebuilding the current index, used by {@link #buildIndex()}. This is the primary
+     * index operation used to rebuild the index.
      *
      * @return a SolrIndexOperation capable of rebuilding the current index
      */
-    public SolrIndexOperation getCoreIndexOperation();
+    public SolrIndexOperation getReindexOperation();
 
     /**
-     * Executes the given SolrIndexOperation to properly rebuild the index
+     * Executes the given <b>operation</b> in the correct method order
      *
      * @param operation the SolrIndexOperation that is to be executed
      * @throws ServiceException
@@ -89,18 +111,8 @@ public interface SolrIndexService {
     public void executeSolrIndexOperation(SolrIndexOperation operation) throws ServiceException, IOException;
     
     /**
-     * Allows a query to determine if a full reindex is currently being performed. 
+     * Builds a set of {@link Indexable}s against the given {@link SolrServer}
      * 
-     * NOTE: There is no guarantee that reindexing is not happening in another process or another server.  This 
-     * method simply indicates whether this instance, within a single JVM is currently performing a reindex.
-     * 
-     * @return
-     */
-    public boolean isReindexInProcess();
-
-    /**
-     * This can be used in lieu of passing in page sizes,  The reason is that one might want to apply filters or only 
-     * index certain skus.
      * @param indexables the list of items to index
      * @param solrServer if non-null, adds and commits the indexed documents to the server. If this is null, this will
      * simply return the documents that were built from <b>indexables</b>
@@ -125,9 +137,7 @@ public interface SolrIndexService {
     public void restoreState(Object[] pack);
 
     /**
-     * Triggers the Solr optimize index function on the given server.
-     * 
-     * NOTE: This should rarely be called.
+     * Triggers the Solr optimize index function on the given server. This is typically called at the end of a {@link #rebuildIndex()}
      * 
      * @param server
      * @throws ServiceException
@@ -166,8 +176,21 @@ public interface SolrIndexService {
      */
     public void commit(SolrServer server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException;
 
+    /**
+     * Deletes all documents that have a {@link SolrHelperService#getNamespaceFieldName()} set to
+     * {@link SolrHelperService#getCurrentNamespace()} and commits the results
+     * @param server where to run the operation on and commit to
+     * @throws ServiceException
+     */
     public void deleteAllNamespaceDocuments(SolrServer server) throws ServiceException;
     
+    /**
+     * Same as {@link #deleteAllNamespaceDocuments(SolrServer)} except does it for all documents on the given <b>server</b>
+     * without any restrictions.
+     * 
+     * @param server where to run the operation and commit to
+     * @throws ServiceException
+     */
     public void deleteAllDocuments(SolrServer server) throws ServiceException;
 
     /**

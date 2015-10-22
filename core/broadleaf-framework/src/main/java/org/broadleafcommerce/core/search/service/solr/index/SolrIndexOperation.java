@@ -49,7 +49,7 @@ public interface SolrIndexOperation {
     /**
      * Executes before the count, this is where any filters or setup for counting can be taken care of
      */
-    public void beforeCount();
+    public void beforeCountIndexables();
     
     /**
      * The count of all of the {@link Indexable} items about to be indexed. Used to determine paging used by
@@ -61,12 +61,12 @@ public interface SolrIndexOperation {
     /**
      * Executes after the count, this is where any filters or cleanup for counting can be taken care of
      */
-    public void afterCount();
+    public void afterCountIndexables();
 
     /**
      * Executes before the read, this is where any filters or setup for reading can be taken care of
      */
-    public void beforeRead();
+    public void beforeReadIndexables();
 
     /**
      * Perform the a read of the {@link Indexable} items for a particular page and pageSize
@@ -77,13 +77,13 @@ public interface SolrIndexOperation {
     /**
      * Executes after the read, this is where any filters or cleanup for reading can be taken care of
      */
-    public void afterRead();
+    public void afterReadIndexables();
 
 
     /**
      * Executes before building each page, this is where any filters or setup for building can be taken care of
      */
-    public void beforeBuild();
+    public void beforeBuildPage();
 
     /**
      * Build a page from {@link #readIndexables(int, int)} on the {@link #getSolrServerForIndexing()}. This is used as a
@@ -94,7 +94,7 @@ public interface SolrIndexOperation {
     /**
      * Executes after building each page, this is where any filters or cleanup for building can be taken care of
      */
-    public void afterBuild();
+    public void afterBuildPage();
     
     /**
      * If a lock was obtained in {@link #obtainLock()} this releases it

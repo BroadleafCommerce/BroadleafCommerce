@@ -66,6 +66,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -79,6 +80,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.annotation.Resource;
 
 
@@ -179,37 +181,32 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     @Override
-    public boolean isReindexInProcess() {
-        return false;
-    }
-
-    @Override
     public void rebuildIndex() throws ServiceException, IOException {
-        LOG.info("Rebuilding the solr index...");
+        LOG.info("Rebuilding the entire Solr index...");
         StopWatch s = new StopWatch();
 
         try{
-            preIndexing();
-            doIndexing();
+            preBuildIndex();
+            buildIndex();
         } finally {
-            postIndexing();
+            postBuildIndex();
         }
 
-        LOG.info(String.format("Finished building index in %s", s.toLapString()));
+        LOG.info(String.format("Finished building entire Solr index in %s", s.toLapString()));
     }
 
     @Override
-    public void preIndexing() throws ServiceException {
+    public void preBuildIndex() throws ServiceException {
         deleteAllNamespaceDocuments(SolrContext.getReindexServer());
     }
 
     @Override
-    public void doIndexing() throws IOException, ServiceException {
-        executeSolrIndexOperation(getCoreIndexOperation());
+    public void buildIndex() throws IOException, ServiceException {
+        executeSolrIndexOperation(getReindexOperation());
     }
 
     @Override
-    public void postIndexing() throws IOException, ServiceException {
+    public void postBuildIndex() throws IOException, ServiceException {
         // this is required to be at the very very very end after rebuilding the whole index
         optimizeIndex(SolrContext.getReindexServer());
         // Swap the active and the reindex cores
@@ -217,7 +214,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     @Override
-    public SolrIndexOperation getCoreIndexOperation() {
+    public SolrIndexOperation getReindexOperation() {
         return new GlobalSolrFullReIndexOperation(this, shs, errorOnConcurrentReIndex) {
 
             @Override
@@ -242,19 +239,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         operation.obtainLock();
         
         try {
-            LOG.info("Rebuilding the solr index...");
+            LOG.info("Executing Indexing operation");
             StopWatch s = new StopWatch();
 
             Object[] pack = saveState();
             try {
-                // TODO: allow specification of types, loop through types I'm indexing
                 final Long numItemsToIndex;
                 try {
-                    operation.beforeCount();
+                    operation.beforeCountIndexables();
 
                     numItemsToIndex = operation.countIndexables();
                 } finally {
-                    operation.afterCount();
+                    operation.afterCountIndexables();
                 }
 
                 if (LOG.isDebugEnabled()) {
@@ -276,7 +272,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 restoreState(pack);
             }
 
-            LOG.info(String.format("Finished building index in %s", s.toLapString()));
+            LOG.info(String.format("Indexing operation completed in %s", s.toLapString()));
         } finally {
             operation.releaseLock();
         }
@@ -355,18 +351,18 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         try {
             List<? extends Indexable> indexables;
             try {
-                operation.beforeRead();
+                operation.beforeReadIndexables();
                 indexables = operation.readIndexables(page, pageSize);
             } finally {
-                operation.afterRead();
+                operation.afterReadIndexables();
             }
 
             try {
-                operation.beforeBuild();
+                operation.beforeBuildPage();
 
                 operation.buildPage(indexables);
             } finally {
-                operation.afterBuild();
+                operation.afterBuildPage();
             }
 
             
@@ -380,7 +376,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     
     @Override
     public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrServer solrServer) throws ServiceException {
-        TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalProductIndex",
+        TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalIndex",
                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
@@ -447,7 +443,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
             TransactionUtils.finalizeTransaction(status, transactionManager, true);
             throw e;
         } finally {
-            extensionManager.getProxy().endBatchEvent();
+            extensionManager.getProxy().endBatchEvent(indexables);
         }
     }
 
@@ -460,6 +456,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         }
     }
     
+    @Override
     public List<Sku> filterIndexableSkus(List<Sku> skus) {
         ArrayList<Sku> skusToIndex = new ArrayList<Sku>();
 
