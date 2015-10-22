@@ -49,6 +49,6 @@ public interface BroadleafCurrencyDao {
 
     public BroadleafCurrency save(BroadleafCurrency currency);
     
-    public BroadleafCurrency create();
+    public BroadleafCurrency create();    
 
 }

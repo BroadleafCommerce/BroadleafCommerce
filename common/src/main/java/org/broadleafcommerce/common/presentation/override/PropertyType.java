@@ -40,6 +40,7 @@ public class PropertyType {
         public static final String PROMINENT = "prominent";
         public static final String COLUMNWIDTH = "columnWidth";
         public static final String BROADLEAFENUMERATION = "broadleafEnumeration";
+        public static final String FIELDCOMPONENTRENDERER = "fieldComponentRenderer";
         public static final String REQUIREDOVERRIDE = "requiredOverride";
         public static final String EXCLUDED = "excluded";
         public static final String TOOLTIP = "tooltip";

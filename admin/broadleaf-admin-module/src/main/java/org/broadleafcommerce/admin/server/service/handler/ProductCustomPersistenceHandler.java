@@ -29,8 +29,12 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeService;
 import org.broadleafcommerce.common.service.ParentCategoryLegacyModeServiceImpl;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
+import org.broadleafcommerce.common.util.TypedTransformer;
+import org.broadleafcommerce.common.util.dao.QueryUtils;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl;
@@ -45,6 +49,7 @@ import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.FilterAndSortCriteria;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
@@ -52,22 +57,29 @@ import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceH
 import org.broadleafcommerce.openadmin.server.service.persistence.module.EmptyFilterValues;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
+import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 /**
  * @author Jeff Fischer
@@ -80,6 +92,12 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Resource(name = "blProductCustomPersistenceHandlerExtensionManager")
     protected ProductCustomPersistenceHandlerExtensionManager extensionManager;
+    
+    @Resource(name = "blParentCategoryLegacyModeService")
+    protected ParentCategoryLegacyModeService parentCategoryLegacyModeService;
+
+    @Resource(name="blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
 
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
 
@@ -127,6 +145,66 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     @Override
     public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
+        
+        boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
+        
+        //the following code applies when filters are present only:
+        //"legacy" means that the parent category filter still utilizes Product.defaultCategory as the field to be matched
+        //against the categories chosen in the listGrid filter. The default behavior up to this point, assumes the "legacy" mode. 
+        //This means that one of the FilterAndSortCriterias will try to match the chosen values against "defaultCategory".
+        //If "legacy" is false, we remove that FilterAndSortCriteria from the CTO, and inject a new FilterMapping in cto.additionalFilterMappings,
+        //which seeks matching values in  allParentCategoryXRefs instead
+        if (!legacy) {
+            FilterAndSortCriteria fsc = cto.getCriteriaMap().get("defaultCategory");
+            if (fsc != null) {
+                List<String> filterValues = fsc.getFilterValues();
+                cto.getCriteriaMap().remove("defaultCategory");
+
+                List<Long> transformedValues = BLCCollectionUtils.collectList(filterValues, new TypedTransformer<Long>() {
+                    @Override
+                    public Long transform(Object input) {
+                        return Long.parseLong(((String) input));
+                    }
+                });
+                CriteriaBuilder builder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
+                CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+                Root<CategoryProductXrefImpl> root = criteria.from(CategoryProductXrefImpl.class);
+                criteria.select(root.get("product").get("id").as(Long.class));
+                List<Predicate> restrictions = new ArrayList<Predicate>();
+                restrictions.add(builder.equal(root.get("defaultReference"), Boolean.TRUE));
+                restrictions.add(root.get("category").get("id").in(transformedValues));
+                //archived?
+                QueryUtils.notArchived(builder, restrictions, root, "archiveStatus");
+                criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+                TypedQuery<Long> query = dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
+                List<Long> productIds = query.getResultList();
+                productIds = sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[productIds.size()]));
+
+                if (productIds.size() <= 500) {
+                    FilterMapping filterMapping = new FilterMapping()
+                        .withFieldPath(new FieldPath().withTargetProperty("id"))
+                        .withDirectFilterValues(productIds)
+                        .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                   @Override
+                                   public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                                                   From root, String ceilingEntity, String fullPropertyName,
+                                                                   Path explicitPath, List directValues) {
+                                       return explicitPath.in(directValues);
+                                   }
+                               }
+                            )
+                        );
+                    cto.getAdditionalFilterMappings().add(filterMapping);
+                } else {
+                    String joined = StringUtils.join(transformedValues, ',');
+                    LOG.warn(String.format("Skipping default category filtering for product fetch query since there are " +
+                            "more than 800 products found to belong to the selected default categories(%s). This is a " +
+                            "filter query limitation.", joined));
+                }
+            }
+        }
+
         cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
                 .withDirectFilterValues(new EmptyFilterValues())
                 .withRestriction(new Restriction()
@@ -254,9 +332,10 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
      */
     protected void removeBundleFieldRestrictions(ProductBundle adminInstance, Map<String, FieldMetadata> adminProperties, Entity entity) {
         //no required validation for product bundles
+        ((BasicFieldMetadata)adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(false);
         if (entity.getPMap().get("pricingModel") != null) {
-            if (ProductBundlePricingModelType.ITEM_SUM.getType().equals(entity.getPMap().get("pricingModel").getValue())) {
-                ((BasicFieldMetadata)adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(false);
+            if (ProductBundlePricingModelType.BUNDLE.getType().equals(entity.getPMap().get("pricingModel").getValue())) {
+                ((BasicFieldMetadata)adminProperties.get("defaultSku.retailPrice")).setRequiredOverride(true);
             }
         }
     }

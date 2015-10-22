@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidator;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,6 +65,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected Integer gridOrder;
     protected String columnWidth;
     protected String broadleafEnumeration;
+    protected String fieldComponentRenderer;
     protected Boolean readOnly;
     protected Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>(5);
     protected Boolean requiredOverride;
@@ -279,6 +281,23 @@ public class BasicFieldMetadata extends FieldMetadata {
 
     public void setBroadleafEnumeration(String broadleafEnumeration) {
         this.broadleafEnumeration = broadleafEnumeration;
+    }
+
+    /**
+     * Returns the component renderer for the field.  Defaults to the fieldType unless otherwise set.
+     * 
+     * @return String
+     */
+    public String getFieldComponentRenderer() {
+        if ((StringUtils.isEmpty(fieldComponentRenderer) || fieldComponentRenderer == SupportedFieldType.UNKNOWN.toString()) && fieldType != null) {
+            return fieldType.toString();
+        }
+        return fieldComponentRenderer;
+    }
+
+    
+    public void setFieldComponentRenderer(String fieldComponentRenderer) {
+        this.fieldComponentRenderer = fieldComponentRenderer;
     }
 
     public Boolean getReadOnly() {
@@ -570,6 +589,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.gridOrder = gridOrder;        
         metadata.columnWidth = columnWidth;
         metadata.broadleafEnumeration = broadleafEnumeration;
+        metadata.fieldComponentRenderer = fieldComponentRenderer;
         metadata.readOnly = readOnly;
         metadata.requiredOverride = requiredOverride;
         metadata.tooltip = tooltip;
@@ -639,6 +659,9 @@ public class BasicFieldMetadata extends FieldMetadata {
         BasicFieldMetadata metadata = (BasicFieldMetadata) o;
 
         if (broadleafEnumeration != null ? !broadleafEnumeration.equals(metadata.broadleafEnumeration) : metadata.broadleafEnumeration != null) {
+            return false;
+        }
+        if (fieldComponentRenderer != null ? !fieldComponentRenderer.equals(metadata.fieldComponentRenderer) : metadata.fieldComponentRenderer != null) {
             return false;
         }
         if (columnWidth != null ? !columnWidth.equals(metadata.columnWidth) : metadata.columnWidth != null) {
@@ -811,6 +834,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (gridOrder != null ? gridOrder.hashCode() : 0);
         result = 31 * result + (columnWidth != null ? columnWidth.hashCode() : 0);
         result = 31 * result + (broadleafEnumeration != null ? broadleafEnumeration.hashCode() : 0);
+        result = 31 * result + (fieldComponentRenderer != null ? fieldComponentRenderer.hashCode() : 0);
         result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
         result = 31 * result + (validationConfigurations != null ? validationConfigurations.hashCode() : 0);
         result = 31 * result + (requiredOverride != null ? requiredOverride.hashCode() : 0);

@@ -40,6 +40,7 @@ import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveIt
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.util.FormatUtil;
+import org.broadleafcommerce.common.util.ValidationUtil;
 import org.broadleafcommerce.common.util.dao.TQJoin;
 import org.broadleafcommerce.common.util.dao.TQOrder;
 import org.broadleafcommerce.common.util.dao.TQRestriction;
@@ -110,7 +111,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -411,20 +411,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 invalid.setPropertyValidationErrors(entity.getPropertyValidationErrors());
                 invalid.overridePropertyValues(entity);
 
-                StringBuilder sb = new StringBuilder();
-                for (Map.Entry<String, List<String>> entry : invalid.getPropertyValidationErrors().entrySet()) {
-                    Iterator<String> itr = entry.getValue().iterator();
-                    while (itr.hasNext()) {
-                        sb.append(entry.getKey());
-                        sb.append(" : ");
-                        sb.append(itr.next());
-                        if (itr.hasNext()) {
-                            sb.append(" / ");
-                        }
-                    }
-                }
-
-                throw new ValidationException(invalid, "The entity has failed validation - " + sb.toString());
+                String message = ValidationUtil.buildErrorMessage(invalid.getPropertyValidationErrors(), invalid.getGlobalValidationErrors());
+                throw new ValidationException(invalid, message);
             } else if (entityPersistenceException != null) {
                 throw ExceptionHelper.refineException(entityPersistenceException.getCause());
             } else {
