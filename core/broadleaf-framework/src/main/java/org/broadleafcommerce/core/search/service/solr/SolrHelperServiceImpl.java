@@ -53,6 +53,7 @@ import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.Field;
@@ -264,10 +265,19 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public Long getCurrentProductId(Indexable indexable) {
         if (Sku.class.isAssignableFrom(indexable.getClass())) {
-            return ((Sku) indexable).getProduct().getId();
+            return ((Sku) indexable).getDefaultProduct().getId();
         }
 
         return indexable.getId();
+    }
+
+    @Override
+    public Product getProductForIndexable(Indexable indexable) {
+        if (Sku.class.isAssignableFrom(indexable.getClass())) {
+            return ((Sku) indexable).getDefaultProduct();
+        }
+
+        return (Product) indexable;
     }
 
     @Override
