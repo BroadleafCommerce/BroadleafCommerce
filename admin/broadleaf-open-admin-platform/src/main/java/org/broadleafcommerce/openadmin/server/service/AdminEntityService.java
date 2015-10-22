@@ -375,5 +375,12 @@ public interface AdminEntityService {
      */
     public String getForeignEntityName(String owningClass, String id);
 
-
+    /**
+     * Reverts the entity of the passed in ID to it's original state (i.e. before a change was made and promoted/approved).
+     *
+     * @param entityType - the type of the entity to be reverted.
+     * @param id - the id of the entity to be reverted.
+     * @throws ServiceException
+     */
+    public void revertEntity(String entityType, String id) throws ServiceException;
 }
