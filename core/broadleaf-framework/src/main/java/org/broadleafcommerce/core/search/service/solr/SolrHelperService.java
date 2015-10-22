@@ -117,10 +117,9 @@ public interface SolrHelperService {
     public String getPropertyNameForFieldFacet(Field field);
     
     /**
-     * @param indexable
      * @return the Solr id of this indexable
      */
-    public String getSolrDocumentId(SolrInputDocument document, Indexable indexable);
+    public String getSolrDocumentId(SolrInputDocument document);
 
     /**
      * @return the name of the field that keeps track what namespace this document belongs to

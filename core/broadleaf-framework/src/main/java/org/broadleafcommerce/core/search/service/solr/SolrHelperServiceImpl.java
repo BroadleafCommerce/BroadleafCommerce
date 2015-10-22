@@ -283,7 +283,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public String getSolrDocumentId(SolrInputDocument document, Indexable indexable) {
+    public String getSolrDocumentId(SolrInputDocument document) {
         return UUID.randomUUID().toString().toLowerCase(java.util.Locale.ROOT);
     }
 
