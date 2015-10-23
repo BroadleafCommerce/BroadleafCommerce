@@ -21,7 +21,6 @@ package org.broadleafcommerce.cms.admin.web.controller;
 
 import org.broadleafcommerce.cms.admin.web.service.AssetFormBuilderService;
 import org.broadleafcommerce.cms.file.StaticAssetMultiTenantExtensionManager;
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
@@ -35,22 +34,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Asset} entity. This is mostly to support displaying image assets inline 
@@ -144,34 +136,6 @@ public class AdminAssetController extends AdminBasicEntityController {
             model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
         }
         return templatePath;
-    }
-
-
-    /**
-     * Used by the Asset list view to upload an asset and then immediately show the
-     * edit form for that record.
-     *
-     * @param request
-     * @param file
-     * @param sectionKey
-     * @return
-     * @throws IOException
-     */
-    @RequestMapping(value = "/uploadAsset", method = RequestMethod.POST)
-    public String upload(HttpServletRequest request, HttpServletResponse response, Model model,
-                         @PathVariable Map<String, String> pathVars,
-                         @RequestParam("file") MultipartFile file,
-                         @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
-
-        StaticAsset staticAsset = staticAssetService.createStaticAssetFromFile(file, null);
-        staticAssetStorageService.createStaticAssetStorageFromFile(file, staticAsset);
-
-        String staticAssetUrlPrefix = staticAssetService.getStaticAssetUrlPrefix();
-        if (staticAssetUrlPrefix != null && !staticAssetUrlPrefix.startsWith("/")) {
-            staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
-        }
-
-        return "redirect:/assets/" + staticAsset.getId();
     }
 
     @Override
