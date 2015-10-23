@@ -243,4 +243,13 @@ public interface SolrIndexService {
      */
     public List<Sku> filterIndexableSkus(List<Sku> skus);
 
+    /**
+     * Iterates through the fields for this indexable and indexes any SearchField's or SearchFacet's.
+     *  @param document
+     * @param indexable
+     * @param fields
+     * @param locales
+     */
+    public void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<Field> fields, List<Locale> locales);
 }
+

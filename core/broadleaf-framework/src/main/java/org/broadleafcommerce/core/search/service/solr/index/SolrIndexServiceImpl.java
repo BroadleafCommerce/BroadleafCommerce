@@ -496,7 +496,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         attachBasicDocumentFields(indexable, document);
 
-        // Keep track of searchable fields added to the index.   We need to also add the search facets if 
+        attachIndexableDocumentFields(document, indexable, fields, locales);
+
+        attachAdditionalDocumentFields(indexable, document);
+
+        return document;
+    }
+
+    @Override
+    public void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<Field> fields, List<Locale> locales) {
+        // Keep track of searchable fields added to the index.   We need to also add the search facets if
         // they weren't already added as a searchable field.
         List<String> addedProperties = new ArrayList<String>();
 
@@ -566,12 +575,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 throw ExceptionHelper.refineException(e);
             }
         }
-
-        attachAdditionalDocumentFields(indexable, document);
-
-        return document;
     }
-    
+
     /**
      * Implementors can extend this and override this method to add additional fields to the Solr document.
      * 
@@ -580,6 +585,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      */
     protected void attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document) {
         //Empty implementation. Placeholder for others to extend and add additional fields
+        extensionManager.getProxy().attachAdditionalDocumentFields(indexable, document);
     }
 
     protected void attachBasicDocumentFields(Indexable indexable, SolrInputDocument document) {
@@ -595,7 +601,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         // Add the namespace and ID fields for this product
         document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
         document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
-        
+        document.addField(shs.getTypeFieldName(), shs.getDocumentType(indexable));
         document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
         
         extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);

@@ -472,4 +472,19 @@ public interface SolrHelperService {
     public Long getCurrentProductId(Indexable indexable);
 
     public Product getProductForIndexable(Indexable indexable);
+
+    /**
+     * Returns the type field name, usually 'type_s'
+     *
+     * @return
+     */
+    public String getTypeFieldName();
+
+    /**
+     * Returns the type for the given Indexable. For Product's this is "product".
+     *
+     * @param indexable
+     * @return
+     */
+    public String getDocumentType(Indexable indexable);
 }

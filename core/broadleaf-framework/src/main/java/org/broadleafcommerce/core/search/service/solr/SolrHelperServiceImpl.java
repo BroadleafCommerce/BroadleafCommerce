@@ -287,6 +287,16 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
+    public String getTypeFieldName() {
+        return org.apache.commons.lang3.StringUtils.join("type_", FieldType.STRING.getType());
+    }
+
+    @Override
+    public String getDocumentType(Indexable indexable) {
+        return indexable.getFieldEntityType().getType();
+    }
+
+    @Override
     public String getSolrDocumentId(SolrInputDocument document, Indexable indexable) {
         return UUID.randomUUID().toString().toLowerCase(java.util.Locale.ROOT);
     }
