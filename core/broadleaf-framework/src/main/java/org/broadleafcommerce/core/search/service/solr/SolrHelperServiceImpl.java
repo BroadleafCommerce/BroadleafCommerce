@@ -267,7 +267,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public Long getCurrentProductId(Indexable indexable) {
         if (Sku.class.isAssignableFrom(indexable.getClass())) {
-            return ((Sku) indexable).getDefaultProduct().getId();
+            return ((Sku) indexable).getProduct().getId();
         }
 
         return indexable.getId();
@@ -276,14 +276,14 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public Product getProductForIndexable(Indexable indexable) {
         if (Sku.class.isAssignableFrom(indexable.getClass())) {
-            return ((Sku) indexable).getDefaultProduct();
+            return ((Sku) indexable).getProduct();
         }
 
         return (Product) indexable;
     }
 
     @Override
-    public String getSolrDocumentId(SolrInputDocument document) {
+    public String getSolrDocumentId(SolrInputDocument document, Indexable indexable) {
         return UUID.randomUUID().toString().toLowerCase(java.util.Locale.ROOT);
     }
 

@@ -597,7 +597,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         
         // Add the namespace and ID fields for this product
         document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
-        document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document));
+        document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
         
         document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
         
