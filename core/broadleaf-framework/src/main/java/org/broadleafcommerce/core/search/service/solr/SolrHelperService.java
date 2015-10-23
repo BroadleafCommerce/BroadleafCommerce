@@ -120,7 +120,7 @@ public interface SolrHelperService {
     /**
      * @return the Solr id of this indexable
      */
-    public String getSolrDocumentId(SolrInputDocument document);
+    public String getSolrDocumentId(SolrInputDocument document, Indexable indexable);
 
     /**
      * @return the name of the field that keeps track what namespace this document belongs to
