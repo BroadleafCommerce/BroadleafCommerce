@@ -65,6 +65,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -114,6 +115,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Resource(name = "blSearchFacetDao")
     protected SearchFacetDao searchFacetDao;
+
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
     
     /**
      * This should only ever be called when using the Solr reindex service to do a full reindex. 
@@ -299,7 +303,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getIndexableIdFieldName() {
-        return "indexableId";
+        if (useSku) {
+            return "skuId";
+        } else {
+            return "productId";
+        }
     }
 
     @Override

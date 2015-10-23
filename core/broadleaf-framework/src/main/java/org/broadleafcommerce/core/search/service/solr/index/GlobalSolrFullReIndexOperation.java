@@ -85,32 +85,32 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
     }
 
     @Override
-    public void beforeCount() {
+    public void beforeCountIndexables() {
         // By default we want to do nothing here
     }
 
     @Override
-    public void afterCount() {
+    public void afterCountIndexables() {
         // By default we want to do nothing here
     }
 
     @Override
-    public void beforeRead() {
+    public void beforeReadIndexables() {
         // By default we want to do nothing here
     }
 
     @Override
-    public void afterRead() {
+    public void afterReadIndexables() {
         // By default we want to do nothing here
     }
 
     @Override
-    public void beforeBuild() {
+    public void beforeBuildPage() {
         // By default we want to do nothing here
     }
 
     @Override
-    public void afterBuild() {
+    public void afterBuildPage() {
         // By default we want to do nothing here
     }
 }

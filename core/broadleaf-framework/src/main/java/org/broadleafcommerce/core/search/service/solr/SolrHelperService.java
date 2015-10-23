@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -132,7 +133,7 @@ public interface SolrHelperService {
     public String getIdFieldName();
     
     /**
-     * @return the productId field name
+     * @return either <b>"productId"</b> (99% of cases) or <b>"skuId"</b> if the <i>solr.index.use.sku</i> system property is true
      */
     public String getIndexableIdFieldName();
 
@@ -239,10 +240,7 @@ public interface SolrHelperService {
      * 
      * @param category
      * @return the category id to use
-     * 
-     *
      */
-    // TODO: THIS NEEDS TO STAY, ACTUALLY USED IN SEARCHING NOT INDEXING
     public Long getCategoryId(Category category);
 
     /**

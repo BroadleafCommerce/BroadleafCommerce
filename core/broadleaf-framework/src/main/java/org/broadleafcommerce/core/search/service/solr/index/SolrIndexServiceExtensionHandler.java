@@ -24,7 +24,6 @@ package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
-import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
@@ -39,7 +38,8 @@ import java.util.Map;
 
 
 /**
- * Extension handler for indexing operations in Solr
+ * Extension handler for indexing operations in Solr. Implementors should extend from {@link AbstractSolrIndexServiceExtensionHandler}
+ * to protect from API changes to this interface
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -83,7 +83,7 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      * 
      * @return
      */
-    public ExtensionResultStatusType endBatchEvent();
+    public ExtensionResultStatusType endBatchEvent(List<? extends Indexable> indexables);
 
     /**
      * Given the input field, populates the values array with the fields needed for the 
