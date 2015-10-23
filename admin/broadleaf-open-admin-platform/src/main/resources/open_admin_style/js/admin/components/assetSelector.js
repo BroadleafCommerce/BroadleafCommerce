@@ -116,7 +116,7 @@ $(document).ready(function() {
         var json = {
             'assetUrl' : fields['cmsUrlPrefix'] + fields['fullUrl'],
             'adminDisplayAssetUrl' : fields['servletContext'] + fields['cmsUrlPrefix'] + fields['fullUrl']
-        }
+        };
         
         $('div.asset-selector-container').trigger('assetInfoSelected', json);
         $('textarea.redactor').trigger('assetInfoSelected', json);

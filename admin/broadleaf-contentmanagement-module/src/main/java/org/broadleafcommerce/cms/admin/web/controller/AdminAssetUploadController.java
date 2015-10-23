@@ -75,7 +75,6 @@ public class AdminAssetUploadController extends AdminAbstractController {
     @Resource(name = "blAdminAssetController")
     protected AdminAssetController assetController;
 
-
     @RequestMapping(value = "/{id}/chooseAsset", method = RequestMethod.GET)
     public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model, 
             @PathVariable(value = "sectionKey") String sectionKey, 
@@ -138,6 +137,33 @@ public class AdminAssetUploadController extends AdminAbstractController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("Content-Type", "text/html; charset=utf-8");
         return new ResponseEntity<Map<String, Object>>(responseMap, responseHeaders, HttpStatus.OK);
+    }
+
+    /**
+     * Used by the Asset list view to upload an asset and then immediately show the
+     * edit form for that record.
+     *
+     * @param request
+     * @param file
+     * @param sectionKey
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/uploadAsset", method = RequestMethod.POST)
+    public String upload(HttpServletRequest request, HttpServletResponse response, Model model,
+                         @PathVariable Map<String, String> pathVars,
+                         @RequestParam("file") MultipartFile file,
+                         @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+
+        StaticAsset staticAsset = staticAssetService.createStaticAssetFromFile(file, null);
+        staticAssetStorageService.createStaticAssetStorageFromFile(file, staticAsset);
+
+        String staticAssetUrlPrefix = staticAssetService.getStaticAssetUrlPrefix();
+        if (staticAssetUrlPrefix != null && !staticAssetUrlPrefix.startsWith("/")) {
+            staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
+        }
+
+        return "redirect:/assets/" + staticAsset.getId();
     }
 
     @RequestMapping(value = "/{addlSectionKey}/{id}/chooseAsset", method = RequestMethod.GET)
