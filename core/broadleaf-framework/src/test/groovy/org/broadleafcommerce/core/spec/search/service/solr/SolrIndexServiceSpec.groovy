@@ -32,6 +32,7 @@ import org.broadleafcommerce.core.search.domain.Field
 import org.broadleafcommerce.core.search.domain.FieldEntity
 import org.broadleafcommerce.core.search.service.solr.SolrContext
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService
+import org.broadleafcommerce.core.search.service.solr.SolrHelperServiceImpl
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionHandler
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl
@@ -49,7 +50,7 @@ class SolrIndexServiceSpec extends Specification {
     ProductDao mockProductDao = Mock()
     SkuDao mockSkuDao = Mock()
     LocaleService mockLocaleService = Mock()
-    SolrHelperService mockShs = Mock()
+    SolrHelperService mockShs = Spy(SolrHelperServiceImpl)
     SolrIndexServiceExtensionManager mockExtensionManager = Mock()
     SandBoxHelper mockSandBoxHelper = Mock()
     
