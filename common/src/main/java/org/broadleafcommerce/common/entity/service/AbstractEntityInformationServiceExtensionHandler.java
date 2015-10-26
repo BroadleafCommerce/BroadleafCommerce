@@ -47,4 +47,8 @@ public class AbstractEntityInformationServiceExtensionHandler extends AbstractEx
     public ExtensionResultStatusType getOkayToUseSiteDiscriminator(Object o, ExtensionResultHolder<Boolean> erh) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    @Override public ExtensionResultStatusType getDefaultCatalogIdForSite(Site site, ExtensionResultHolder<Long> erh) {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
 }

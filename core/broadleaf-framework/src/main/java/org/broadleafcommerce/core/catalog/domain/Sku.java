@@ -53,7 +53,7 @@ import java.util.Set;
  * @author btaylor
  *
  */
-public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
+public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable {
 
     /**
      * Returns the id of this sku
@@ -174,6 +174,27 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
      */
     @Deprecated
     public void setListPrice(Money listPrice);
+
+    /**
+     * Returns the purchase cost of this Sku.
+     *
+     * @return the purchase cost of this Sku
+     */
+    public Money getCost();
+
+    /**
+     * Sets the purchase cost for this Sku.
+     *
+     * @param cost
+     */
+    public void setCost(Money cost);
+
+    /**
+     * Returns the margin of the Sku. This is the value of getPrice() - getCost()
+     *
+     * @return the margin of this Sku
+     */
+    public Money getMargin();
 
     /**
      * Returns the name of the Sku.  The name is a label used to show when displaying the sku.
@@ -406,6 +427,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
      * @see {@link ProductOptionValue}, {@link ProductOption}
      * @deprecated use {@link #getProductOptionValueXrefs()} instead
      */
+    @Deprecated
     Set<ProductOptionValue> getProductOptionValuesCollection();
 
     /**
@@ -415,6 +437,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku> {
      * @see {@link ProductOptionValue}, {@link ProductOption}
      * @deprecated use {@link #setProductOptionValueXrefs(Set)} instead
      */
+    @Deprecated
     void setProductOptionValuesCollection(Set<ProductOptionValue> productOptionValues);
 
     /**

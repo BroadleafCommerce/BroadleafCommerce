@@ -891,7 +891,7 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.10.3</version>
+                <version>5.3.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -906,7 +906,7 @@
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.10.3</version>
+                <version>5.3.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>

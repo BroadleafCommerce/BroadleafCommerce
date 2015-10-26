@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.common.rule;
 
+import org.broadleafcommerce.common.RequestDTO;
+import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 
@@ -84,5 +86,21 @@ public class MvelHelperTest extends TestCase {
 
         boolean result = MvelHelper.evaluateRule("locale.localeCode == 'US'", parameters);
         assertFalse(result);
+    }
+
+    /**
+     * Tests MVEL syntax for accessing request property map values.   
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void testRequestMapProperty() {
+        RequestDTO dto = new RequestDTOImpl();
+        dto.getProperties().put("blcSearchTerm", "hot");
+
+        Map parameters = new HashMap();
+        parameters.put("request", dto);
+
+        // If the "key" property doesn't contain an underscore, the expression returns true
+        boolean result = MvelHelper.evaluateRule("request.properties['blcSearchTerm'] == 'hot'", parameters);
+        assertTrue(result);
     }
 }

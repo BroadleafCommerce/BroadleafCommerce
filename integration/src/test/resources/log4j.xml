@@ -35,7 +35,14 @@
     <logger name="org.springframework.web"> <level value="warn" /> </logger>
     <logger name="org.springframework.web.servlet"> <level value="warn" /> </logger>
     <logger name="org.hibernate"> <level value="warn" /> </logger>
-    
+
+    <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" additivity="false">
+        <level value="debug"/>
+        <appender-ref ref="console"/>
+    </logger>
+
+    <logger name="org.hibernate.tool.hbm2ddl.SchemaExport"> <level value="fatal" /> </logger>
+
     <root>
         <priority value="warn" />
         <appender-ref ref="console" />

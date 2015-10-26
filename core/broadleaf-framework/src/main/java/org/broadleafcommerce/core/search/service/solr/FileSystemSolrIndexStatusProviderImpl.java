@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.search.service.solr.index.IndexStatusInfo;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexStatusProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

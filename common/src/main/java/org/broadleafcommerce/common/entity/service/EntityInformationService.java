@@ -68,4 +68,12 @@ public interface EntityInformationService {
      */
     boolean getOkayToUseSiteDiscriminator(Object o);
 
+    /**
+     * Given a Site object, returns the default catalog id. This method provides a hook for Broadleaf MultiTenant functionality
+     *
+     * @param site
+     * @return the default Catalog id
+     */
+    Long getDefaultCatalogIdForSite(Site site);
+
 }

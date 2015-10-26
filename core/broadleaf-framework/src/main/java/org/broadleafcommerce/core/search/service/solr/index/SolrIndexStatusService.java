@@ -17,11 +17,11 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
+package org.broadleafcommerce.core.search.service.solr.index;
 
 /**
- * Responsible for reading and writing the status using one or more {@link org.broadleafcommerce.core.search.service.solr.SolrIndexStatusProvider}
- * instances. {@link #getSeedStatusInstance()} can be used to provide a custom {@link org.broadleafcommerce.core.search.service.solr.IndexStatusInfo}
+ * Responsible for reading and writing the status using one or more {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexStatusProvider}
+ * instances. {@link #getSeedStatusInstance()} can be used to provide a custom {@link org.broadleafcommerce.core.search.service.solr.index.IndexStatusInfo}
  * implementation.
  *
  * @author Jeff Fischer
