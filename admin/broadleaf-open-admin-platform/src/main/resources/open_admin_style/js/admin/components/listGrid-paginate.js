@@ -559,9 +559,19 @@
                 if ($wrapper.find('.mCS_no_scrollbar').length > 0 && $modalBody.length === 0) {
                     BLCAdmin.listGrid.paginate.updateUrlFromScroll($wrapper.find('tbody'));
                 }
+            } else if ($table.data('listgridtype') === 'asset_grid' || $table.data('listgridtype') === 'asset_grid_folder') {
+                var $window = $(window);
+                var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
+
+                $wrapper.css('max-height', wrapperHeight);
+                $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
+
+                $wrapper.css('height', wrapperHeight);
+                $wrapper.find('.mCustomScrollBox').css('height', wrapperHeight);
+
+                $wrapper.mCustomScrollbar('update');
             } else if ($modalBody.length > 0) {
                 // If this is inside of a modal, the max height should be the size of the modal
-
                 var maxHeight = $modalBody.height() - $wrapper.prev().height() - $wrapper.next().height() - 30;
 
                 $wrapper.closest('.adorned-select-wrapper').find('fieldset').each(function(index, fieldset) {
@@ -590,17 +600,6 @@
                 var maxHeight = BLCAdmin.listGrid.paginate.computeActualMaxHeight($tbody, treeListGridHeight);
                 $wrapper.css('max-height', maxHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', maxHeight);
-
-                $wrapper.mCustomScrollbar('update');
-            }  else if ($table.data('listgridtype') === 'asset_grid' || $table.data('listgridtype') === 'asset_grid_folder') {
-                var $window = $(window);
-                var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
-
-                $wrapper.css('max-height', wrapperHeight);
-                $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
-
-                $wrapper.css('height', wrapperHeight);
-                $wrapper.find('.mCustomScrollBox').css('height', wrapperHeight);
 
                 $wrapper.mCustomScrollbar('update');
             } else {

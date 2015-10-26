@@ -39,6 +39,7 @@ public class ListGridAction implements Cloneable {
     public static final String TREE_ADD = "TREE_ADD";
     public static final String SINGLE_SELECT = "SINGLE_SELECT";
     public static final String MULTI_SELECT = "MULTI_SELECT";
+    public static final String ASSET_ADD = "ASSET_ADD";
 
     protected String buttonClass = "";
     protected String urlPostfix = "";

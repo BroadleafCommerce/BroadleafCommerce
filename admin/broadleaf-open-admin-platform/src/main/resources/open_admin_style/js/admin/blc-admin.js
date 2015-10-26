@@ -33,7 +33,7 @@ var BLCAdmin = (function($) {
 	var stackedModalOptions = {
 	    left: 20,
 	    top: 20
-	}
+	};
 	var originalStickyBarOffset = $('.sticky-container').offset().top;
 	
     var fieldSelectors = '>div>input:not([type=hidden]), .custom-checkbox, .foreign-key-value-container span.display-value, .redactor_box, ' +
@@ -192,7 +192,7 @@ var BLCAdmin = (function($) {
     		var availableHeight = $(window).height()
     		    - $modal.find('.modal-header').outerHeight()
     		    - $modal.find('.modal-footer').outerHeight()
-    		    - ($(window).height() * .1);
+    		    - ($(window).height() * 0.1);
 
     		$modal.find('.modal-body').css('max-height', availableHeight);
     	},
@@ -245,14 +245,24 @@ var BLCAdmin = (function($) {
     	
     	initializeModalButtons : function($data) {
             var $buttonDiv = $data.find('div.entity-form-actions');
-            if ($buttonDiv.length > 0) {
-                var $footer = $data.find('div.modal-footer');
-                if (!$footer.length) {
-                    $footer = $('<div>', { 'class' : 'modal-footer' });
-                    $buttonDiv.remove().appendTo($footer);
-                    $data.append($footer);
-                }
-            }
+			if ($buttonDiv.length > 0) {
+				var $footer = $data.find('div.modal-footer');
+				if (!$footer.length) {
+					$footer = $('<div>', { 'class' : 'modal-footer' });
+					$buttonDiv.remove().appendTo($footer);
+					$data.append($footer);
+				}
+			}
+
+			var $buttonDiv = $data.find('div.listgrid-modal-actions');
+			if ($buttonDiv.length > 0) {
+				var $footer = $data.find('div.modal-footer');
+				if (!$footer.length) {
+					$footer = $('<div>', { 'class' : 'modal-footer' });
+					$buttonDiv.remove().appendTo($footer);
+					$data.append($footer);
+				}
+			}
     	},
     	
     	showMessageAsModal : function(header, message) {

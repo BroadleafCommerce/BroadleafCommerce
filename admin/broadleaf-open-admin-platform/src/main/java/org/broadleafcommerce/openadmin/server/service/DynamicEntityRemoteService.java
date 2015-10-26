@@ -234,7 +234,6 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                         throw (ValidationException) e.getCause();
                     }
                     String message = exploitProtectionService.cleanString(e.getMessage());
-                    LOG.error("Problem adding new " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
                     throw recreateSpecificServiceException(e, message, e.getCause());
                 }
             }

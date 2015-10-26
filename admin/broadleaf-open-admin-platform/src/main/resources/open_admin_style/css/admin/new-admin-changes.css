@@ -476,6 +476,11 @@ button:disabled {
     padding-top: 10px;
 }
 
+.listgrid-modal-actions div {
+    display: inline-block;
+    padding-right: 10px;
+}
+
 .listgrid-search {
     margin-bottom: 6px;
 }
@@ -623,7 +628,7 @@ button:disabled {
 }
 
 .modal-body {
-    padding: 15px 30px 30px 30px;
+    padding: 15px 30px 0;
 }
 
 .modal-body .row {
@@ -654,6 +659,7 @@ button:disabled {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
+    text-align: left;
 }
 
 .close {
@@ -1130,6 +1136,11 @@ legend {
 .modal {
     -webkit-transition: 0.1s; /* Safari */
     transition: 0.1s;
+}
+
+.modal.xl {
+    width: 1100px;
+    margin-left: -550px;
 }
 
 .modal.lg {

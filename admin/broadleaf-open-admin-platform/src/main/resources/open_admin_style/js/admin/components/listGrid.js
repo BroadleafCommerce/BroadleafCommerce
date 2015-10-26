@@ -225,7 +225,9 @@
             var $spinner = $tbody.closest('.listgrid-container').find('.listgrid-table-spinner-container');
             
             if (spinnerOffset) {
-                $spinner.css('position', 'absolute').css('top', spinnerOffset + 'px');
+                $spinner.css('position', 'absolute');
+                $spinner.css('top', spinnerOffset + 'px');
+                $spinner.css('left', $tbody.offset().left - 80 + 'px');
             }
             $spinner.css('width',$tbody.width());
             $spinner.css('display', 'block');
@@ -310,7 +312,7 @@ $(document).ready(function() {
         var link = $tr.data('link');
         var currentUrl = $table.data('currenturl');
         var fields = BLCAdmin.listGrid.getRowFields($tr);
-        
+
         if ($tr.find('tr.list-grid-no-results').length == 0 && !$table.hasClass('reordering')) {
 
             // Avoid rebuilding "next" columns if row is already selected
@@ -326,6 +328,11 @@ $(document).ready(function() {
             // If Adorned or Asset ListGrid, process row click by adding item id to form.
             // Else, wait for confirmation button click.
             if (listGridType === 'adorned_with_form' || listGridType === 'adorned'|| listGridType === 'asset') {
+                $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
+            }
+
+            // Always trigger row selection for asset grid types
+            if (listGridType === 'asset_grid') {
                 $('body').trigger('listGrid-' + listGridType + '-rowSelected', [$tr, link, fields, currentUrl]);
             }
         }
@@ -389,7 +396,7 @@ $(document).ready(function() {
     $('body').on('listGrid-selectize-rowSelected', function(event, $target, link, fields, currentUrl) {
         inlineRowSelected(event, $target, link, fields, currentUrl, false);
     });
-    
+
     /**
      * The rowSelected handler for a toOne list grid needs to trigger the specific valueSelected handler 
      * for the field that we are performing the to-one lookup on.

@@ -13,7 +13,7 @@
            blc_admin:component_id="${listGrid}">
         <thead>
             <tr>
-                <th class="multiselect-checkbox" th:if="${listGrid.selectType} == 'multi_select'">
+                <th class="multiselect-checkbox explicit-size" th:if="${listGrid.selectType} == 'multi_select'" data-columnwidth="45px" style="width: 45px;">
                     <input type="checkbox" class="multiselect-checkbox"/>
                 </th>
                 <th th:each="headerField : ${listGrid.headerFields}"

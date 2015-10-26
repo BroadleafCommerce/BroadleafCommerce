@@ -21,10 +21,9 @@ package org.broadleafcommerce.cms.admin.web.controller;
 
 import org.broadleafcommerce.cms.admin.web.service.AssetFormBuilderService;
 import org.broadleafcommerce.cms.file.StaticAssetMultiTenantExtensionManager;
-import org.broadleafcommerce.cms.file.dao.StaticAssetDaoQueryExtensionManager;
-import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
+import org.broadleafcommerce.cms.file.service.StaticAssetStorageService;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;
@@ -35,20 +34,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Handles admin operations for the {@link Asset} entity. This is mostly to support displaying image assets inline 
@@ -67,6 +61,9 @@ public class AdminAssetController extends AdminBasicEntityController {
     
     @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
+
+    @Resource(name = "blStaticAssetStorageService")
+    protected StaticAssetStorageService staticAssetStorageService;
 
     @Resource(name = "blStaticAssetMultiTenantExtensionManager")
     protected StaticAssetMultiTenantExtensionManager staticAssetExtensionManager;

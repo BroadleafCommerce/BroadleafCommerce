@@ -4,7 +4,7 @@
 
 <div class="listgrid-modal-actions">
     <div th:each="action : ${listGrid.activeModalRowActions}">
-        <button disabled="disabled"
+        <button th:disabled="${!#strings.contains(action.buttonClass,'additional-action')}"
                 class="tiny radius dark row-action button primary"
                 type="button"
                 th:classappend="${action.buttonClass}"

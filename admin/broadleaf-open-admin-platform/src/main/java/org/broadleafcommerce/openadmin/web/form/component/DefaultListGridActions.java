@@ -83,6 +83,16 @@ public class DefaultListGridActions {
         .withDisplayText("Select")
         .withSingleActionOnly(true);
 
+    public static final ListGridAction ASSET_GRID_SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
+            .withButtonClass("asset-grid-single-select")
+            .withDisplayText("Select")
+            .withSingleActionOnly(true);
+
+    public static final ListGridAction ASSET_ADD = new ListGridAction(ListGridAction.ASSET_ADD)
+            .withButtonClass("upload-asset additional-action")
+            .withUrlPostfix("/assets")
+            .withDisplayText("Upload_Asset");
+
     public static final ListGridAction MULTI_SELECT = new ListGridAction(ListGridAction.MULTI_SELECT)
         .withButtonClass("list-grid-multi-select")
         .withDisplayText("Select");

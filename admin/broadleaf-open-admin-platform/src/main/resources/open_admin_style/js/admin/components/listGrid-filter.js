@@ -283,11 +283,20 @@ $(document).ready(function() {
             }
             
         });
-        
+
+        var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
+        if ($tbody.data('listgridtype') == 'asset_grid') {
+            var parentId = $('<input>', {
+                'name': 'parentId',
+                'data-name': 'parentId',
+                'value': $(this).closest('.listgrid-container').data('parentid').toString()
+            });
+            nonBlankInputs.push(parentId[0]);
+        }
+
         $(this).closest('.listgrid-container').find('.mCSB_container').css('top', '0px');
         $(this).closest('.listgrid-container').find('.listgrid-body-wrapper').mCustomScrollbar('update');
         
-        var $tbody = $(this).closest('.listgrid-container').find('.listgrid-body-wrapper .list-grid-table');
         BLCAdmin.listGrid.showLoadingSpinner($tbody, $tbody.closest('.mCustomScrollBox').position().top + 3);
         BLC.ajax({
             url: $(this).closest('.filter-fields').data('action'),
@@ -295,13 +304,17 @@ $(document).ready(function() {
             data: $(nonBlankInputs).serialize()
         }, function(data) {
             if ($tbody.data('listgridtype') == 'main') {
-                
                 $(nonBlankInputs).each(function(index, input) {
                     BLCAdmin.history.replaceUrlParameter(input.name, input.value);
                 });
             }
             BLCAdmin.listGrid.hideLoadingSpinner($tbody);
-            BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, { isRefresh : false });
+
+            if ($tbody.data('listgridtype') == 'asset_grid') {
+                BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.asset-listgrid div.listgrid-header-wrapper'), null, {isRefresh: false});
+            } else {
+                BLCAdmin.listGrid.replaceRelatedCollection($(data).find('div.listgrid-header-wrapper'), null, {isRefresh: false});
+            }
             $inputs.each(function(index, input) {
                 $(input).removeAttr('name');
             });
