@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-;(function ($, window, undefined) {
+(function ($, window, undefined) {
     'use strict';
     
     var $doc = $(document),

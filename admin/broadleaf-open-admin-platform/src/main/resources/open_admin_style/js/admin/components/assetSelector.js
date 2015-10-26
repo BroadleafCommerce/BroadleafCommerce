@@ -116,7 +116,7 @@ $(document).ready(function() {
         var json = {
             'assetUrl' : fields['cmsUrlPrefix'] + fields['fullUrl'],
             'adminDisplayAssetUrl' : fields['servletContext'] + fields['cmsUrlPrefix'] + fields['fullUrl']
-        }
+        };
         
         $('div.asset-selector-container').trigger('assetInfoSelected', json);
         $('textarea.redactor').trigger('assetInfoSelected', json);
@@ -194,13 +194,7 @@ $(document).ready(function() {
         $(this).closest('form.uploadFileForm').find('input[type="file"]').click();
         
     });
-    
-    // On the asset list view, the upload button triggers this form
-    $('body').on('click', 'a.upload-asset', function(event) {
-        event.preventDefault();
-        $('#assetUploadFile').click();
-    });  
-    
+
     // When we detect that a user has selected a file from his file system, we will trigger an event
     $('body').on('change', '#assetUploadFile', function() {
     	// TODO: Show a div with "loading" message

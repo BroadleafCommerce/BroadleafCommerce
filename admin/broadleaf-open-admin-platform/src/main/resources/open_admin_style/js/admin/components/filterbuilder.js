@@ -762,7 +762,8 @@
                     buttonGroup.append(filterButton);
                     buttonGroup.append(clearButton);
 
-                    $('.filter-info:visible').append(buttonGroup);
+                    $(buttonGroup).insertBefore($('.filter-info:visible .filter-builder-data'));
+                    //$('.filter-info:visible').append(buttonGroup);
                 }
                 $('.filter-text').show();
             } else {
@@ -1096,7 +1097,8 @@ $(document).ready(function() {
                         buttonGroup.append(filterButton);
                         buttonGroup.append(clearButton);
 
-                        $('.filter-info:visible').append(buttonGroup);
+                        $(buttonGroup).insertBefore($('.filter-info:visible .filter-builder-data'));
+                        //$('.filter-info:visible').append(buttonGroup);
                         $('.filter-text').show();
                     }
                 }
