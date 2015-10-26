@@ -25,16 +25,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
+import org.apache.solr.client.solrj.response.CollectionAdminResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.cloud.Aliases;
 import org.apache.solr.core.CoreContainer;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.dao.ProductDao;
@@ -44,6 +47,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
+import org.broadleafcommerce.core.search.dao.SearchFieldDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
@@ -51,14 +55,16 @@ import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -77,7 +83,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -121,6 +126,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Resource(name = "blSolrIndexService")
     protected SolrIndexService solrIndexService;
 
+    @Resource(name = "blSearchFieldDao")
+    protected SearchFieldDao searchFieldDao;
+
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
 
@@ -131,7 +139,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
             final String baseTempPath = System.getProperty("java.io.tmpdir");
 
-            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome-4.10.3");
+            File tempDir = new File(baseTempPath + File.separator + System.getProperty("user.name") + File.separator + "solrhome-5.3.1");
             if (System.getProperty("tmpdir.solrhome") != null) {
                 //allow for an override of tmpdir
                 tempDir = new File(System.getProperty("tmpdir.solrhome"));
@@ -280,12 +288,12 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         }
     }
 
-    public SolrSearchServiceImpl(SolrServer solrServer) {
+    public SolrSearchServiceImpl(SolrClient solrServer) {
         SolrContext.setPrimaryServer(solrServer);
     }
 
     /**
-     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
+     * This constructor serves to mimic the one which takes in one {@link SolrClient} argument.
      * By having this and then simply disregarding the second parameter, we can more easily support 2-core
      * Solr configurations that use embedded/standalone per environment.
      * 
@@ -301,7 +309,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     }
 
     /**
-     * This constructor serves to mimic the one which takes in one {@link SolrServer} argument.
+     * This constructor serves to mimic the one which takes in one {@link SolrClient} argument.
      * By having this and then simply disregarding the second and third parameters, we can more easily support 2-core
      * Solr configurations that use embedded/standalone per environment, along with an admin server.
      * 
@@ -316,12 +324,12 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         this(solrServer);
     }
 
-    public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer) {
+    public SolrSearchServiceImpl(SolrClient solrServer, SolrClient reindexServer) {
         SolrContext.setPrimaryServer(solrServer);
         SolrContext.setReindexServer(reindexServer);
     }
 
-    public SolrSearchServiceImpl(SolrServer solrServer, SolrServer reindexServer, SolrServer adminServer) {
+    public SolrSearchServiceImpl(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer) {
         SolrContext.setPrimaryServer(solrServer);
         SolrContext.setReindexServer(reindexServer);
         SolrContext.setAdminServer(adminServer);
@@ -337,8 +345,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         if (SolrContext.isSolrCloudMode()) {
             //We want to use the Solr APIs to make sure the correct collections are set up.
 
-            CloudSolrServer primary = (CloudSolrServer) SolrContext.getServer();
-            CloudSolrServer reindex = (CloudSolrServer) SolrContext.getReindexServer();
+            CloudSolrClient primary = (CloudSolrClient) SolrContext.getServer();
+            CloudSolrClient reindex = (CloudSolrClient) SolrContext.getReindexServer();
             if (primary == null || reindex == null) {
                 throw new IllegalStateException("The primary and reindex CloudSolrServers must not be null. Check "
                         + "your configuration and ensure that you are passing a different instance for each to the "
@@ -396,14 +404,18 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                     }
                 }
 
-                CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
-                CollectionAdminRequest.createAlias(primary.getDefaultCollection(), collectionName, primary);
+                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                        .setConfigName(solrCloudConfigName).process(primary);
+
+                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
+                        .setAliasedCollections(collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                 String collectionName = aliasCollectionMap.get(primary.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                            .setConfigName(solrCloudConfigName).process(primary);
                 }
             }
 
@@ -429,14 +441,18 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                     }
                 }
 
-                CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
-                CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), collectionName, primary);
+                new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                        .setConfigName(solrCloudConfigName).process(primary);
+
+                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
+                        .setAliasedCollections(collectionName).process(primary);
             } else {
                 //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
                 String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
                 collectionName = collectionName.split(",")[0];
                 if (!collectionNames.contains(collectionName)) {
-                    CollectionAdminRequest.createCollection(collectionName, solrCloudNumShards, solrCloudConfigName, primary);
+                    new CollectionAdminRequest.Create().setCollectionName(collectionName).setNumShards(solrCloudNumShards)
+                            .setConfigName(solrCloudConfigName).process(primary);
                 }
             }
         }
@@ -444,13 +460,13 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     @Override
     public void destroy() throws Exception {
-        //Make sure we shut down each of the SolrServer references (these is really the Solr clients despite the name)
+        //Make sure we shut down each of the SolrClient references (these is really the Solr clients despite the name)
         try {
             if (SolrContext.getServer() != null) {
                 SolrContext.getServer().shutdown();
             }
         } catch (Exception e) {
-            LOG.error("Error shutting down primary SolrServer (client).", e);
+            LOG.error("Error shutting down primary SolrClient (client).", e);
         }
 
         try {
@@ -459,7 +475,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 SolrContext.getReindexServer().shutdown();
             }
         } catch (Exception e) {
-            LOG.error("Error shutting down reindex SolrServer (client).", e);
+            LOG.error("Error shutting down reindex SolrClient (client).", e);
         }
 
         try {
@@ -469,7 +485,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 SolrContext.getAdminServer().shutdown();
             }
         } catch (Exception e) {
-            LOG.error("Error shutting down admin SolrServer (client).", e);
+            LOG.error("Error shutting down admin SolrClient (client).", e);
         }
     }
 
@@ -514,27 +530,55 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         return "";
     }
 
-    protected String buildQueryFieldsString() {
+    protected String buildQueryFieldsString(SolrQuery query) {
         StringBuilder queryBuilder = new StringBuilder();
         List<Field> fields = null;
         if (useSku) {
-            fields = fieldDao.readAllSkuFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
         } else {
-            fields = fieldDao.readAllProductFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
 
+        // we want to gather all the query fields into one list
+        List<String> queryFields = new ArrayList<>();
         for (Field currentField : fields) {
-            if (currentField.getSearchable()) {
-                appendFieldToQuery(queryBuilder, currentField);
-            }
+            getQueryFields(query, queryFields, currentField);
         }
+
+        // we join our query fields to a single string to append to the solr query
+        queryBuilder.append(StringUtils.join(queryFields, " "));
+
         return queryBuilder.toString();
     }
 
-    protected void appendFieldToQuery(StringBuilder queryBuilder, Field currentField) {
-        List<FieldType> searchableFieldTypes = shs.getSearchableFieldTypes(currentField);
-        for (FieldType currentType : searchableFieldTypes) {
-            queryBuilder.append(shs.getPropertyNameForFieldSearchable(currentField, currentType)).append(" ");
+    /**
+     * This helper method gathers the query fields for the given field and stores them in the List parameter.
+     * @param query
+     * @param queryFields the query fields for this query
+     * @param currentField the current field
+     */
+    protected void getQueryFields(SolrQuery query, final List<String> queryFields, Field currentField) {
+        SearchField searchField = searchFieldDao.readSearchFieldForField(currentField);
+
+        if (searchField != null) {
+            List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+
+            for (SearchFieldType searchFieldType : searchableFieldTypes) {
+                FieldType fieldType = searchFieldType.getSearchableFieldType();
+
+                // this will hold the list of query fields for our given field
+                ExtensionResultHolder<List<String>> queryFieldResult = new ExtensionResultHolder<>();
+                queryFieldResult.setResult(queryFields);
+
+                // here we try to get the query field's for this search field
+                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(query, searchField, searchFieldType, queryFieldResult);
+
+                if (ExtensionResultStatusType.NOT_HANDLED.equals(result)){
+                    // if we didn't get any query fields we just add a default one
+                    String solrFieldName = shs.getPropertyNameForFieldSearchable(currentField, fieldType);
+                    queryFields.add(solrFieldName);
+                }
+            }
         }
     }
 
@@ -557,7 +601,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @return the ProductSearchResult of the search
      * @throws ServiceException
      */
-    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
+    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort, String... filterQueries)
+            throws ServiceException  {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Build the basic query
@@ -571,17 +616,13 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         //This is for SolrCloud.  We assume that we are always searching against a collection aliased as "PRIMARY"
         solrQuery.setParam("collection", SolrContext.PRIMARY); //This should be ignored if not using SolrCloud
 
-        if (useSku) {
-            solrQuery.setFields(shs.getSkuIdFieldName());
-        } else {
-            solrQuery.setFields(shs.getProductIdFieldName());
-        }
+        solrQuery.setFields(shs.getIndexableIdFieldName());
         if (filterQueries != null) {
             solrQuery.setFilterQueries(filterQueries);
         }
         solrQuery.addFilterQuery(shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")");
         solrQuery.set("defType", "edismax");
-        solrQuery.set("qf", buildQueryFieldsString());
+        solrQuery.set("qf", buildQueryFieldsString(solrQuery));
 
         // Attach additional restrictions
         attachSortClause(solrQuery, searchCriteria, defaultSort);
@@ -589,9 +630,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         attachFacets(solrQuery, namedFacetMap);
         
         modifySolrQuery(solrQuery, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
-        
-        extensionManager.getProxy().modifySolrQuery(solrQuery, qualifiedSolrQuery, facets,
-                searchCriteria, defaultSort);
+
+        solrQuery.setShowDebugInfo(true);
 
         if (LOG.isTraceEnabled()) {
             try {
@@ -618,6 +658,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 }
             }
         } catch (SolrServerException e) {
+            throw new ServiceException("Could not perform search", e);
+        } catch (IOException e) {
             throw new ServiceException("Could not perform search", e);
         }
 
@@ -654,6 +696,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      */
     protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
             List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
+
+        extensionManager.getProxy().modifySolrQuery(query, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
     }
     
     protected List<SolrDocument> getResponseDocuments(QueryResponse response) {
@@ -689,11 +733,13 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
         List<Field> fields = null;
         if (useSku) {
-            fields = fieldDao.readAllSkuFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
         } else {
-            fields = fieldDao.readAllProductFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
+
         shs.attachSortClause(query, searchCriteria, defaultSort, fields);
+        query.addSort("score", SolrQuery.ORDER.desc);
     }
 
     /**
@@ -775,7 +821,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected List<Product> getProducts(List<SolrDocument> responseDocuments) {
         final List<Long> productIds = new ArrayList<Long>();
         for (SolrDocument doc : responseDocuments) {
-            productIds.add((Long) doc.getFieldValue(shs.getProductIdFieldName()));
+            productIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
         }
 
         List<Product> products = productDao.readProductsByIds(productIds);
@@ -785,12 +831,14 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
             Collections.sort(products, new Comparator<Product>() {
                 @Override
                 public int compare(Product o1, Product o2) {
-                    Long o1id = shs.getProductId(o1);
-                    Long o2id = shs.getProductId(o2);
+                    Long o1id = shs.getIndexableId(o1);
+                    Long o2id = shs.getIndexableId(o2);
                     return new Integer(productIds.indexOf(o1id)).compareTo(productIds.indexOf(o2id));
                 }
             });
         }
+
+        extensionManager.getProxy().modifySearchResults(responseDocuments, products);
 
         return products;
     }
@@ -806,7 +854,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected List<Sku> getSkus(List<SolrDocument> responseDocuments) {
         final List<Long> skuIds = new ArrayList<Long>();
         for (SolrDocument doc : responseDocuments) {
-            skuIds.add((Long) doc.getFieldValue(shs.getSkuIdFieldName()));
+            skuIds.add((Long) doc.getFieldValue(shs.getIndexableIdFieldName()));
         }
 
         List<Sku> skus = skuDao.readSkusByIds(skuIds);
@@ -903,9 +951,9 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria) {
         List<Field> fields = null;
         if (useSku) {
-            fields = fieldDao.readAllSkuFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
         } else {
-            fields = fieldDao.readAllProductFields();
+            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
         return shs.getSolrFieldKeyMap(searchCriteria, fields);
     }

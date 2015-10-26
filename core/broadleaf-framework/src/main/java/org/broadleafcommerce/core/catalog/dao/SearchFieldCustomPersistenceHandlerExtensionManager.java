@@ -17,17 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
+package org.broadleafcommerce.core.catalog.dao;
+
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 /**
- * Responsible for reading and writing the index status to some persistent store (e.g. the file system).
- *
- * @author Jeff Fischer
+ * @author Chad Harchar (charchar)
  */
-public interface SolrIndexStatusProvider {
+@Service("blSearchFieldCustomPersistenceHandlerExtensionManager")
+public class SearchFieldCustomPersistenceHandlerExtensionManager extends ExtensionManager<SearchFieldCustomPersistenceHandlerExtensionHandler> {
 
-    void handleUpdateIndexStatus(IndexStatusInfo status);
-
-    IndexStatusInfo readIndexStatus(IndexStatusInfo status);
+    public SearchFieldCustomPersistenceHandlerExtensionManager() {
+        super(SearchFieldCustomPersistenceHandlerExtensionHandler.class);
+    }
 
 }

@@ -25,7 +25,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.test.context.web.WebAppConfiguration
 
 import spock.lang.Specification
-
 /**
  * Base Integration Test Setup groovy file for Admin based integration tests. This base class has all the
  * applicationContext's shared by Integration tests for Admin based testing. Extend from this class on a

@@ -87,7 +87,10 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable 
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE" )
-    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date", order = 3000, group = "SearchRedirectImpl_description", tooltip = "skuStartDateTooltip", groupOrder = 1)
+    @AdminPresentation(friendlyName = "SkuImpl_Sku_Start_Date",
+            order = 3000, group = "SearchRedirectImpl_description",
+            tooltip = "skuStartDateTooltip", groupOrder = 1,
+            defaultValue = "today")
     protected Date activeStartDate;
 
     /** The active end date. */

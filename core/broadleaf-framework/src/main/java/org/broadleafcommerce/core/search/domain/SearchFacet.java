@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
+public interface SearchFacet extends Serializable, MultiTenantCloneable<SearchFacet> {
 
     /**
      * Returns the internal id
@@ -59,6 +60,21 @@ public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
      * @param fieldName
      */
     public void setField(Field field);
+
+    /**
+     * Gets the name of this SearchFacet. This is for admin naming purposes.
+     *
+     * @return the name
+     */
+    public String getName();
+
+    /**
+     * Sets the name
+     *
+     * @see #getName()
+     * @param name
+     */
+    public void setName(String name);
 
     /**
      * Gets the label of this SearchFacet. This is the label that will be used for the user-friendly
@@ -121,6 +137,21 @@ public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
     public Boolean getCanMultiselect();
 
     /**
+     * Gets whether or not this facet uses facet ranges
+     *
+     * @return the useFacetRanges flag
+     */
+    public Boolean getUseFacetRanges();
+
+    /**
+     * Sets useFacetRanges
+     *
+     * @see #getUseFacetRanges()
+     * @return
+     */
+    public void setUseFacetRanges(Boolean useFacetRanges);
+
+    /**
      * Gets the applicable ranges for this search facet, if any are specified. For example, the 
      * SearchFacet that interacts with "Manufacturers" might not have any ranges defined (as it
      * would depend on the manufacturers that are in the result list), but a facet on "Price"
@@ -171,4 +202,17 @@ public interface SearchFacet extends MultiTenantCloneable<SearchFacet> {
      */
     public void setRequiresAllDependentFacets(Boolean requiresAllDependentFacets);
 
+    /**
+     * This String represents the FieldType for the given SearchFacet. This is the FieldType that will be used when this Field is indexed in Solr
+     *
+     * @return the String representing the FieldType of this SearchFacet
+     */
+    public String getFacetFieldType();
+
+    /**
+     * Sets the FieldType for the current SearchFacet
+     *
+     * @param facetFieldType the String representation of a FieldType
+     */
+    public void setFacetFieldType(String facetFieldType);
 }

@@ -209,6 +209,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 .withDirectFilterValues(new EmptyFilterValues())
                 .withRestriction(new Restriction()
                                 .withPredicateProvider(new PredicateProvider() {
+                                    @Override
                                     public Predicate buildPredicate(CriteriaBuilder builder,
                                                                     FieldPathBuilder fieldPathBuilder, From root,
                                                                     String ceilingEntity,
@@ -295,6 +296,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategoryForUpdate
                         (persistencePackage, adminInstance);
                 handled = ExtensionResultStatusType.NOT_HANDLED != result;
+
+                extensionManager.getProxy().manageFields(persistencePackage, adminInstance);
             }
             if (!handled) {
                 setupXref(adminInstance);
