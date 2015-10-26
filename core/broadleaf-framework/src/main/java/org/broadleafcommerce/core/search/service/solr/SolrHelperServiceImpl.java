@@ -29,9 +29,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -125,8 +125,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public synchronized void swapActiveCores() throws ServiceException {
         if (SolrContext.isSolrCloudMode()) {
-            CloudSolrServer primary = (CloudSolrServer) SolrContext.getServer();
-            CloudSolrServer reindex = (CloudSolrServer) SolrContext.getReindexServer();
+            CloudSolrClient primary = (CloudSolrClient) SolrContext.getServer();
+            CloudSolrClient reindex = (CloudSolrClient) SolrContext.getReindexServer();
             try {
                 primary.connect();
                 Aliases aliases = primary.getZkStateReader().getAliases();
@@ -146,8 +146,10 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 reindexCollectionName = reindexCollectionName.split(",")[0];
 
                 //Essentially "swap cores" here by reassigning the aliases
-                CollectionAdminRequest.createAlias(primary.getDefaultCollection(), reindexCollectionName, primary);
-                CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), primaryCollectionName, primary);
+                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
+                        .setAliasedCollections(reindexCollectionName).process(primary);
+                new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
+                        .setAliasedCollections(primaryCollectionName).process(primary);
             } catch (Exception e) {
                 LOG.error("An exception occured swapping cores.", e);
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);
@@ -285,6 +287,16 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
+    public String getTypeFieldName() {
+        return org.apache.commons.lang3.StringUtils.join("type_", FieldType.STRING.getType());
+    }
+
+    @Override
+    public String getDocumentType(Indexable indexable) {
+        return indexable.getFieldEntityType().getType();
+    }
+
+    @Override
     public String getSolrDocumentId(SolrInputDocument document, Indexable indexable) {
         return UUID.randomUUID().toString().toLowerCase(java.util.Locale.ROOT);
     }
@@ -398,7 +410,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public void optimizeIndex(SolrServer server) throws ServiceException, IOException {
+    public void optimizeIndex(SolrClient server) throws ServiceException, IOException {
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Optimizing the index...");

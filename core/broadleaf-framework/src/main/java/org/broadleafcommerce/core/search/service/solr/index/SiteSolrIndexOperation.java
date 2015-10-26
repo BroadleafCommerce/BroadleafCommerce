@@ -24,7 +24,7 @@ package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.search.service.solr.SolrContext;
@@ -33,7 +33,7 @@ import java.util.HashSet;
 
 /**
  *  Builds an index for the current {@link Site} from {@link BroadleafRequestContext#getNonPersistentSite()}. This builds
- *  the index directly on the primary {@link SolrServer} (obtained via {@link SolrContext#getServer()}) so this operation
+ *  the index directly on the primary {@link SolrClient} (obtained via {@link SolrContext#getServer()}) so this operation
  *  should only be done once to avoid duplicate documents in the index.
  *
  * @author Phillip Verheyden (phillipuniverse)
@@ -93,7 +93,7 @@ public abstract class SiteSolrIndexOperation implements SolrIndexOperation {
     }
 
     @Override
-    public SolrServer getSolrServerForIndexing() {
+    public SolrClient getSolrServerForIndexing() {
         return SolrContext.getServer();
     }
 

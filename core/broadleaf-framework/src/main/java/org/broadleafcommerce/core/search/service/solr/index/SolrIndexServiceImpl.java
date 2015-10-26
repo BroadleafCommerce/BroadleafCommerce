@@ -25,7 +25,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
@@ -312,7 +312,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
     
     @Override
-    public void deleteAllNamespaceDocuments(SolrServer server) throws ServiceException {
+    public void deleteAllNamespaceDocuments(SolrClient server) throws ServiceException {
         try {
             String deleteQuery = shs.getNamespaceFieldName() + ":(\"" + shs.getCurrentNamespace() + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
@@ -329,7 +329,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
     
     @Override
-    public void deleteAllDocuments(SolrServer server) throws ServiceException {
+    public void deleteAllDocuments(SolrClient server) throws ServiceException {
         try {
             String deleteQuery = "*:*";
             LOG.debug("Deleting by query: " + deleteQuery);
@@ -375,7 +375,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
     
     @Override
-    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrServer solrServer) throws ServiceException {
+    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrClient solrServer) throws ServiceException {
         TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalIndex",
                 TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
         if (SolrIndexCachedOperation.getCache() == null) {
@@ -496,7 +496,16 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
         attachBasicDocumentFields(indexable, document);
 
-        // Keep track of searchable fields added to the index.   We need to also add the search facets if 
+        attachIndexableDocumentFields(document, indexable, fields, locales);
+
+        attachAdditionalDocumentFields(indexable, document);
+
+        return document;
+    }
+
+    @Override
+    public void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<Field> fields, List<Locale> locales) {
+        // Keep track of searchable fields added to the index.   We need to also add the search facets if
         // they weren't already added as a searchable field.
         List<String> addedProperties = new ArrayList<String>();
 
@@ -566,12 +575,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                 throw ExceptionHelper.refineException(e);
             }
         }
-
-        attachAdditionalDocumentFields(indexable, document);
-
-        return document;
     }
-    
+
     /**
      * Implementors can extend this and override this method to add additional fields to the Solr document.
      * 
@@ -580,6 +585,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      */
     protected void attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document) {
         //Empty implementation. Placeholder for others to extend and add additional fields
+        extensionManager.getProxy().attachAdditionalDocumentFields(indexable, document);
     }
 
     protected void attachBasicDocumentFields(Indexable indexable, SolrInputDocument document) {
@@ -595,7 +601,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
         // Add the namespace and ID fields for this product
         document.addField(shs.getNamespaceFieldName(), shs.getCurrentNamespace());
         document.addField(shs.getIdFieldName(), shs.getSolrDocumentId(document, indexable));
-        
+        document.addField(shs.getTypeFieldName(), shs.getDocumentType(indexable));
         document.addField(shs.getIndexableIdFieldName(), shs.getIndexableId(indexable));
         
         extensionManager.getProxy().attachAdditionalBasicFields(indexable, document, shs);
@@ -749,12 +755,12 @@ public class SolrIndexServiceImpl implements SolrIndexService {
      }
      
     @Override
-    public void optimizeIndex(SolrServer server) throws ServiceException, IOException {
+    public void optimizeIndex(SolrClient server) throws ServiceException, IOException {
         shs.optimizeIndex(server);
     }
 
     @Override
-    public void commit(SolrServer server) throws ServiceException, IOException {
+    public void commit(SolrClient server) throws ServiceException, IOException {
         if (this.commit) {
             commit(server, this.softCommit, this.waitSearcher, this.waitFlush);
         } else if (LOG.isDebugEnabled()) {
@@ -763,7 +769,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     }
 
     @Override
-    public void commit(SolrServer server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException {
+    public void commit(SolrClient server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException {
         try {
             if (!this.commit) {
                 LOG.warn("The flag / property \"solr.index.commit\" is set to false but a commit is being forced via the API.");
