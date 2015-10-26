@@ -20,23 +20,21 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrDocument;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
+import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -63,76 +61,23 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
     public ExtensionResultStatusType filterSearchFacetRanges(SearchFacetDTO dto, List<SearchFacetRange> ranges) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-
+    
     @Override
-    public ExtensionResultStatusType addPropertyValues(Product product, Field field, FieldType fieldType,
-            Map<String, Object> values, String propertyName, List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
+            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override
-    public ExtensionResultStatusType addPropertyValues(Sku sku, Field field, FieldType fieldType,
-            Map<String, Object> values, String propertyName, List<Locale> locales) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    @Override public ExtensionResultStatusType getQueryField(SolrQuery query, SearchField searchField, SearchFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override
-    public ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery, List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType attachAdditionalBasicFields(Product product, SolrInputDocument document, SolrHelperService shs) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType attachAdditionalBasicFields(Sku sku, SolrInputDocument document, SolrHelperService shs) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Product product, String[] returnContainer) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType getSolrDocumentId(SolrInputDocument document, Sku product, String[] returnContainer) {
+    @Override public ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
     public ExtensionResultStatusType getCategoryId(Category category, Long[] returnContainer) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType getCategoryId(Long category, Long[] returnContainer) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType getProductId(Product product, Long[] returnContainer) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType getSkuId(Sku sku, Long[] returnContainer) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-    
-    @Override
-    public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<Product> products, List<Field> fields, List<Locale> locales) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType startBatchEvent(List<Product> products) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType endBatchEvent() {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

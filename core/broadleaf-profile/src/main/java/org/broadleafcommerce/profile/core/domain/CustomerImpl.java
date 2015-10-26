@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package org.broadleafcommerce.profile.core.domain;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -33,20 +34,39 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.persistence.PreviewStatus;
 import org.broadleafcommerce.common.persistence.Previewable;
-import org.broadleafcommerce.common.presentation.*;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
+import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationMap;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Where;
 
-import javax.persistence.CascadeType;
-import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @EntityListeners(value = { AuditableListener.class, CustomerPersistedEntityListener.class })
@@ -55,7 +75,7 @@ import java.util.Map;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCustomerElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "CustomerImpl_baseCustomer")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps=true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.PREVIEW, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
@@ -104,7 +124,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
-    @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
+    @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnNames = { "CHALLENGE_QUESTION_ID" })
     @AdminPresentation(friendlyName = "CustomerImpl_Challenge_Question", order = 4000,
             excluded = true)
     protected ChallengeQuestion challengeQuestion;
@@ -129,7 +149,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
             tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General,
             prominent = true, gridOrder = 4000)
     protected Boolean registered = false;
-    
+
     @Column(name = "DEACTIVATED")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Deactivated", order=3000, group = CustomerAdminPresentation.GroupName.General,
             tab = CustomerAdminPresentation.TabName.General, tabOrder = CustomerAdminPresentation.TabOrder.General)
@@ -140,10 +160,10 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_Locale",order=4000,
         excluded = true, visibility = VisibilityEnum.GRID_HIDDEN)
     protected Locale customerLocale;
-    
+
     @OneToMany(mappedBy = "customer", targetEntity = CustomerAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blStandardElements")
-    @MapKey(name="name")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blStandardElements")
+    @MapKey(name = "name")
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "CustomerAttributeImpl_Attribute_Name",
             deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "ProductAttributeImpl_Attribute_Name",
@@ -151,32 +171,32 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     )
     protected Map<String, CustomerAttribute> customerAttributes = new HashMap<String, CustomerAttribute>();
 
-    @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerAddressImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @Where(clause = "archived != 'Y'")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Addresses", order = 1000,
             tab = CustomerAdminPresentation.TabName.ContactInfo, tabOrder = CustomerAdminPresentation.TabOrder.ContactInfo,
             addType = AddMethodType.PERSIST)
     protected List<CustomerAddress> customerAddresses = new ArrayList<CustomerAddress>();
 
-    @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPhoneImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Phones", order = 2000,
             tab = CustomerAdminPresentation.TabName.ContactInfo, tabOrder = CustomerAdminPresentation.TabOrder.ContactInfo,
             addType = AddMethodType.PERSIST)
     protected List<CustomerPhone> customerPhones = new ArrayList<CustomerPhone>();
 
-    @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
+    @OneToMany(mappedBy = "customer", targetEntity = CustomerPaymentImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Payments", order = 3000,
             tab = CustomerAdminPresentation.TabName.ContactInfo, tabOrder = CustomerAdminPresentation.TabOrder.ContactInfo,
             addType = AddMethodType.PERSIST,
             readOnly = true)
-    protected List<CustomerPayment> customerPayments  = new ArrayList<CustomerPayment>();
+    protected List<CustomerPayment> customerPayments = new ArrayList<CustomerPayment>();
 
     @Column(name = "TAX_EXEMPTION_CODE")
     @AdminPresentation(friendlyName = "CustomerImpl_Customer_TaxExemptCode", order = 5000, group = CustomerAdminPresentation.GroupName.General,
@@ -189,7 +209,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
 
     @Transient
     protected String unencodedChallengeAnswer;
-    
+
     @Transient
     protected boolean anonymous;
 
@@ -519,16 +539,16 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
         cloned.setChallengeAnswer(challengeAnswer);
         cloned.setChallengeQuestion(challengeQuestion);
         cloned.setCookied(cookied);
-        for(CustomerAddress entry : customerAddresses){
+        for (CustomerAddress entry : customerAddresses) {
             CustomerAddress clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setCustomer(cloned);
             cloned.getCustomerAddresses().add(clonedEntry);
 
         }
-        for(Map.Entry<String, CustomerAttribute> entry : customerAttributes.entrySet()){
+        for (Map.Entry<String, CustomerAttribute> entry : customerAttributes.entrySet()) {
             CustomerAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setCustomer(cloned);
-            cloned.getCustomerAttributes().put(entry.getKey(),clonedEntry);
+            cloned.getCustomerAttributes().put(entry.getKey(), clonedEntry);
         }
         cloned.setLoggedIn(loggedIn);
         cloned.setUsername(username);
@@ -543,12 +563,12 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
         cloned.setFirstName(firstName);
         cloned.setEmailAddress(emailAddress);
         cloned.setDeactivated(deactivated);
-        for(CustomerPayment entry : customerPayments){
+        for (CustomerPayment entry : customerPayments) {
             CustomerPayment clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setCustomer(cloned);
             cloned.getCustomerPayments().add(clonedEntry);
         }
-        for(CustomerPhone entry : customerPhones){
+        for (CustomerPhone entry : customerPhones) {
             CustomerPhone clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setCustomer(cloned);
             cloned.getCustomerPhones().add(clonedEntry);
@@ -565,10 +585,10 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable {
     public void setTaxExemptionCode(String exemption) {
         this.taxExemptionCode = exemption;
     }
-    
+
     @Override
     public boolean isTaxExempt() {
         return StringUtils.isNotEmpty(taxExemptionCode);
     }
-    
+
 }

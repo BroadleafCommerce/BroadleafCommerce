@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
+package org.broadleafcommerce.core.search.service.solr.index;
 
 import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -30,10 +30,10 @@ import java.util.Map;
 
 /**
  * Provides a single cache while exposing a block of code for execution to
- * {@link org.broadleafcommerce.core.search.service.solr.SolrIndexService#performCachedOperation(org.broadleafcommerce.core.search.service.solr.SolrIndexCachedOperation.CacheOperation)}.
- * This serves to boost performance while executing multiple calls to {@link org.broadleafcommerce.core.search.service.solr.SolrIndexService#buildIncrementalIndex(int, int, boolean)}.
+ * {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexService#performCachedOperation(org.broadleafcommerce.core.search.service.solr.SolrIndexCachedOperation.CacheOperation)}.
+ * This serves to boost performance while executing multiple calls to {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexService#buildIncrementalIndex(int, int, boolean)}.
  *
- * @see org.broadleafcommerce.core.search.service.solr.SolrIndexService
+ * @see org.broadleafcommerce.core.search.service.solr.index.SolrIndexService
  * @author Jeff Fischer
  */
 public class SolrIndexCachedOperation {

@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
+package org.broadleafcommerce.core.search.service.solr.index;
 
 import java.util.Date;
 import java.util.HashMap;

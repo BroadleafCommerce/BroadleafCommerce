@@ -5,7 +5,7 @@
     <artifactId>broadleaf</artifactId>
     <packaging>pom</packaging>
     <name>BroadleafCommerce</name>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.1.0-SNAPSHOT</version>
     <description>BroadleafCommerce Top Level Project</description>
     <url>http://www.broadleafcommerce.org</url>
     <licenses>
@@ -891,7 +891,7 @@
             <dependency>
                 <artifactId>solr-solrj</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.10.3</version>
+                <version>5.3.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -906,7 +906,7 @@
             <dependency>
                 <artifactId>solr-core</artifactId>
                 <groupId>org.apache.solr</groupId>
-                <version>4.10.3</version>
+                <version>5.3.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>

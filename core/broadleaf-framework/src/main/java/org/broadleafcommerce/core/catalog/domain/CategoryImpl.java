@@ -31,6 +31,7 @@ import org.broadleafcommerce.common.cache.HydratedSetup;
 import org.broadleafcommerce.common.cache.engine.CacheFactoryException;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
+import org.broadleafcommerce.common.extensibility.jpa.clone.IgnoreEnterpriseBehavior;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -261,9 +262,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             targetObjectProperty = "product",
             parentObjectProperty = "category",
             friendlyName = "allProductsTitle",
-            sortProperty = "displayOrder",
             tab = CategoryAdminPresentation.TabName.Products, tabOrder = CategoryAdminPresentation.TabOrder.Products,
-            gridVisibleFields = { "defaultSku.name" })
+            gridVisibleFields = { "defaultSku.name", "displayOrder" },
+            maintainedAdornedTargetFields = { "displayOrder" })
     protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
 
     /*
@@ -363,8 +364,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             tab = CategoryAdminPresentation.TabName.SearchFacets, tabOrder = CategoryAdminPresentation.TabOrder.SearchFacets,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
-            gridVisibleFields = { "field", "label", "searchDisplayPriority" })
+            gridVisibleFields = { "name", "label", "field" })
     @BatchSize(size = 50)
+    @IgnoreEnterpriseBehavior
     protected List<CategorySearchFacet> searchFacets  = new ArrayList<CategorySearchFacet>();
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryExcludedSearchFacetImpl.class, cascade = { CascadeType.ALL })
@@ -374,8 +376,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             tab = CategoryAdminPresentation.TabName.SearchFacets, tabOrder = CategoryAdminPresentation.TabOrder.SearchFacets,
             targetObjectProperty = "searchFacet",
             sortProperty = "sequence",
-            gridVisibleFields = { "field", "label", "searchDisplayPriority" })
+            gridVisibleFields = { "name", "label", "field" })
     @BatchSize(size = 50)
+    @IgnoreEnterpriseBehavior
     protected List<CategoryExcludedSearchFacet> excludedSearchFacets = new ArrayList<CategoryExcludedSearchFacet>(10);
 
 
