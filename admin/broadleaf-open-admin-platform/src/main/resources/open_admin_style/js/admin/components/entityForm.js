@@ -119,7 +119,7 @@ $(document).ready(function() {
         }
     }
 
-    $('body div.section-tabs:not(.workflow-tabs) li').find('a').click(function(event) {
+    $('body div.section-tabs:not(.workflow-tabs, .oms-tabs) li').find('a').click(function(event) {
         var $tab = $(this);
         var $tabBody = $('.' + $tab.attr('href').substring(1) + 'Tab');
         var text = getTabText($tab.find('span'));
