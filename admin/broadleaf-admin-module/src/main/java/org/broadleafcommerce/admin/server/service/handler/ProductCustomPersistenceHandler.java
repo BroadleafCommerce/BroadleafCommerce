@@ -184,6 +184,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 List<Long> productIds = query.getResultList();
                 productIds = sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[productIds.size()]));
 
+                if(productIds.size() == 0){
+                    return new DynamicResultSet(null, new Entity[0],0);
+                }
                 if (productIds.size() <= queryLimit) {
                     FilterMapping filterMapping = new FilterMapping()
                         .withFieldPath(new FieldPath().withTargetProperty("id"))
