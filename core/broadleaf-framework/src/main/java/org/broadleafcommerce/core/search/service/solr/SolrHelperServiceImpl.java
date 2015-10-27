@@ -29,9 +29,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -52,8 +52,10 @@ import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
@@ -62,6 +64,8 @@ import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
 import org.broadleafcommerce.core.search.domain.SearchFacetResultDTO;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -76,6 +80,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.jms.IllegalStateException;
@@ -103,16 +108,25 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     protected LocaleService localeService;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
-    protected SolrSearchServiceExtensionManager extensionManager;
+    protected SolrSearchServiceExtensionManager searchExtensionManager;
 
+    @Resource(name = "blSolrIndexServiceExtensionManager")
+    protected SolrIndexServiceExtensionManager indexExtensionManager;
+
+    @Resource(name = "blSearchFacetDao")
+    protected SearchFacetDao searchFacetDao;
+
+    @Value("${solr.index.use.sku}")
+    protected boolean useSku;
+    
     /**
      * This should only ever be called when using the Solr reindex service to do a full reindex. 
      */
     @Override
     public synchronized void swapActiveCores() throws ServiceException {
         if (SolrContext.isSolrCloudMode()) {
-            CloudSolrServer primary = (CloudSolrServer) SolrContext.getServer();
-            CloudSolrServer reindex = (CloudSolrServer) SolrContext.getReindexServer();
+            CloudSolrClient primary = (CloudSolrClient) SolrContext.getServer();
+            CloudSolrClient reindex = (CloudSolrClient) SolrContext.getReindexServer();
             try {
                 primary.connect();
                 Aliases aliases = primary.getZkStateReader().getAliases();
@@ -132,8 +146,10 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 reindexCollectionName = reindexCollectionName.split(",")[0];
 
                 //Essentially "swap cores" here by reassigning the aliases
-                CollectionAdminRequest.createAlias(primary.getDefaultCollection(), reindexCollectionName, primary);
-                CollectionAdminRequest.createAlias(reindex.getDefaultCollection(), primaryCollectionName, primary);
+                new CollectionAdminRequest.CreateAlias().setAliasName(primary.getDefaultCollection())
+                        .setAliasedCollections(reindexCollectionName).process(primary);
+                new CollectionAdminRequest.CreateAlias().setAliasName(reindex.getDefaultCollection())
+                        .setAliasedCollections(primaryCollectionName).process(primary);
             } catch (Exception e) {
                 LOG.error("An exception occured swapping cores.", e);
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);
@@ -178,54 +194,38 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public String getPropertyNameForFieldFacet(Field field, String prefix) {
-        if (field.getFacetFieldType() == null) {
+    public String getPropertyNameForFieldFacet(Field field, String prefix, FieldType facetType) {
+        if (facetType == null) {
             return null;
         }
 
         return new StringBuilder()
                 .append(prefix)
-                .append(field.getAbbreviation()).append("_").append(field.getFacetFieldType().getType())
+                .append(field.getAbbreviation()).append("_").append(facetType.getType())
                 .toString();
-    }
-
-    @Override
-    public List<FieldType> getSearchableFieldTypes(Field field) {
-        // We will index all configured searchable field types
-        List<FieldType> typesToConsider = new ArrayList<FieldType>();
-        if (CollectionUtils.isNotEmpty(field.getSearchableFieldTypes())) {
-            typesToConsider.addAll(field.getSearchableFieldTypes());
-        }
-
-        // If there were no searchable field types configured, we will use TEXT as a default one
-        if (CollectionUtils.isEmpty(typesToConsider)) {
-            typesToConsider.add(FieldType.TEXT);
-        }
-
-        return typesToConsider;
     }
 
     @Override
     public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType) {
         List<String> prefixList = new ArrayList<String>();
-        extensionManager.getProxy().buildPrefixListForSearchableField(field, searchableFieldType, prefixList);
+        searchExtensionManager.getProxy().buildPrefixListForSearchableField(field, searchableFieldType, prefixList);
         String prefix = convertPrefixListToString(prefixList);
         return getPropertyNameForFieldSearchable(field, searchableFieldType, prefix);
     }
 
     @Override
     public String getPropertyNameForFieldFacet(Field field) {
-        FieldType fieldType = field.getFacetFieldType();
-        if (fieldType == null) {
+        SearchFacet searchFacet = searchFacetDao.readSearchFacetForField(field);
+        if (searchFacet == null || searchFacet.getFacetFieldType() == null) {
             return null;
         }
 
         List<String> prefixList = new ArrayList<String>();
 
-        extensionManager.getProxy().buildPrefixListForSearchableFacet(field, prefixList);
+        searchExtensionManager.getProxy().buildPrefixListForSearchableFacet(field, prefixList);
         String prefix = convertPrefixListToString(prefixList);
 
-        return getPropertyNameForFieldFacet(field, prefix);
+        return getPropertyNameForFieldFacet(field, prefix, FieldType.getInstance(searchFacet.getFacetFieldType()));
     }
 
     protected String convertPrefixListToString(List<String> prefixList) {
@@ -241,7 +241,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public Long getCategoryId(Category category) {
         Long[] returnId = new Long[1];
-        ExtensionResultStatusType result = extensionManager.getProxy().getCategoryId(category, returnId);
+        ExtensionResultStatusType result = searchExtensionManager.getProxy().getCategoryId(category, returnId);
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
@@ -251,7 +251,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public Long getCategoryId(Long category) {
         Long[] returnId = new Long[1];
-        ExtensionResultStatusType result = extensionManager.getProxy().getCategoryId(category, returnId);
+        ExtensionResultStatusType result = indexExtensionManager.getProxy().getCategoryId(category, returnId);
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
@@ -259,38 +259,46 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public Long getProductId(Product product) {
+    public Long getIndexableId(Indexable indexable) {
         Long[] returnId = new Long[1];
-        ExtensionResultStatusType result = extensionManager.getProxy().getProductId(product, returnId);
+        ExtensionResultStatusType result = indexExtensionManager.getProxy().getIndexableId(indexable, returnId);
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
-        return product.getId();
+        return indexable.getId();
     }
 
     @Override
-    public Long getSkuId(Sku sku) {
-        Long[] returnId = new Long[1];
-        ExtensionResultStatusType result = extensionManager.getProxy().getSkuId(sku, returnId);
-        if (result.equals(ExtensionResultStatusType.HANDLED)) {
-            return returnId[0];
+    public Long getCurrentProductId(Indexable indexable) {
+        if (Sku.class.isAssignableFrom(indexable.getClass())) {
+            return ((Sku) indexable).getProduct().getId();
         }
-        return sku.getId();
+
+        return indexable.getId();
     }
 
     @Override
-    public String getSolrDocumentId(SolrInputDocument document, Product product) {
-        String[] returnId = new String[1];
-        ExtensionResultStatusType result = extensionManager.getProxy().getSolrDocumentId(document, product, returnId);
-        if (result.equals(ExtensionResultStatusType.HANDLED)) {
-            return returnId[0];
+    public Product getProductForIndexable(Indexable indexable) {
+        if (Sku.class.isAssignableFrom(indexable.getClass())) {
+            return ((Sku) indexable).getProduct();
         }
-        return String.valueOf(product.getId());
+
+        return (Product) indexable;
     }
 
     @Override
-    public String getSolrDocumentId(SolrInputDocument document, Sku sku) {
-        return String.valueOf(sku.getId());
+    public String getTypeFieldName() {
+        return org.apache.commons.lang3.StringUtils.join("type_", FieldType.STRING.getType());
+    }
+
+    @Override
+    public String getDocumentType(Indexable indexable) {
+        return indexable.getFieldEntityType().getType();
+    }
+
+    @Override
+    public String getSolrDocumentId(SolrInputDocument document, Indexable indexable) {
+        return UUID.randomUUID().toString().toLowerCase(java.util.Locale.ROOT);
     }
 
     @Override
@@ -304,13 +312,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public String getProductIdFieldName() {
-        return "productId";
-    }
-
-    @Override
-    public String getSkuIdFieldName() {
-        return "skuId";
+    public String getIndexableIdFieldName() {
+        if (useSku) {
+            return "skuId";
+        } else {
+            return "productId";
+        }
     }
 
     @Override
@@ -353,7 +360,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         Long categoryId = getCategoryId(category);
         return new StringBuilder()
                 .append(getCategoryFieldName())
-                .append("_").append(categoryId).append("_").append("sort_d")
+                .append("_").append(categoryId).append("_").append(FieldType.SORT.getType())
                 .toString();
     }
 
@@ -362,7 +369,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         categoryId = getCategoryId(categoryId);
         return new StringBuilder()
                 .append(getCategoryFieldName())
-                .append("_").append(categoryId).append("_").append("sort_d")
+                .append("_").append(categoryId).append("_").append(FieldType.SORT.getType())
                 .toString();
     }
 
@@ -403,7 +410,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public void optimizeIndex(SolrServer server) throws ServiceException, IOException {
+    public void optimizeIndex(SolrClient server) throws ServiceException, IOException {
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Optimizing the index...");
@@ -610,8 +617,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             // Clone the list - we don't want to remove these facets from the DB
             List<SearchFacetRange> facetRanges = new ArrayList<SearchFacetRange>(dto.getFacet().getSearchFacetRanges());
 
-            if (extensionManager != null) {
-                extensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
+            if (searchExtensionManager != null) {
+                searchExtensionManager.getProxy().filterSearchFacetRanges(dto, facetRanges);
             }
 
             if (facetRanges != null && facetRanges.size() > 0) {
@@ -830,5 +837,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             collection.add(o);
         }
     }
+
 
 }

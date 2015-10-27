@@ -34,6 +34,7 @@ import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -106,7 +107,7 @@ public class AdminTranslationController extends AdminAbstractController {
         model.addAttribute("form", form);
         model.addAttribute("listGrid", lg);
         model.addAttribute("viewType", "modal/translationListGrid");
-        model.addAttribute("modalHeaderType", "translation");
+        model.addAttribute("modalHeaderType", ModalHeaderType.TRANSLATION.getType());
         return "modules/modalContainer";
     }
 
@@ -137,7 +138,7 @@ public class AdminTranslationController extends AdminAbstractController {
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/translationAdd");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "addTranslation");
+        model.addAttribute("modalHeaderType", ModalHeaderType.ADD_TRANSLATION.getType());
         return "modules/modalContainer";
     }
 
@@ -198,7 +199,7 @@ public class AdminTranslationController extends AdminAbstractController {
             model.addAttribute("entityForm", entityForm);
             model.addAttribute("viewType", "modal/translationAdd");
             model.addAttribute("currentUrl", request.getRequestURL().toString());
-            model.addAttribute("modalHeaderType", "addTranslation");
+            model.addAttribute("modalHeaderType", ModalHeaderType.ADD_TRANSLATION.getType());
             return "modules/modalContainer";
         } else {
             return viewTranslation(request, response, model, form, result);
@@ -252,7 +253,7 @@ public class AdminTranslationController extends AdminAbstractController {
         model.addAttribute("entityForm", entityForm);
         model.addAttribute("viewType", "modal/translationAdd");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "updateTranslation");
+        model.addAttribute("modalHeaderType", ModalHeaderType.UPDATE_TRANSLATION.getType());
         return "modules/modalContainer";
     }
 

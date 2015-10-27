@@ -22,6 +22,7 @@ package org.broadleafcommerce.core.search.domain;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ import java.util.List;
  * 
  * @author Andre Azzolini (apazzolini)
  */
-public interface Field extends MultiTenantCloneable<Field> {
+public interface Field extends Serializable, MultiTenantCloneable<Field> {
     
     /**
      * Gets the id
@@ -99,19 +100,25 @@ public interface Field extends MultiTenantCloneable<Field> {
     /**
      * Gets the searchable flag
      * @return whether or not this Field is searchable
+     * @deprecated this is now determined if the Field is a SearchField
      */
+    @Deprecated
     public Boolean getSearchable();
 
     /** 
      * Sets the searchable flag
      * @param searchable
+     * @deprecated this is now determined if the Field is a SearchField
      */
+    @Deprecated
     public void setSearchable(Boolean searchable);
 
     /**
      * Sets the facet field type
      * @param facetFieldType
+     * @deprecated this is now part of SearchFacet
      */
+    @Deprecated
     public void setFacetFieldType(FieldType facetFieldType);
 
     /**
@@ -120,37 +127,27 @@ public interface Field extends MultiTenantCloneable<Field> {
      * 
      * @see #getSearchableFieldTypes()
      * @return the facet field type
+     * @deprecated this is now part of SearchFacet
      */
+    @Deprecated
     public FieldType getFacetFieldType();
 
     /**
-     * Sets the searchableFieldTypes
-     * 
-     * @see #getSearchableFieldTypes()
-     * @param searchableFieldTypes
-     */
-    public void setSearchableFieldTypes(List<FieldType> searchableFieldTypes);
-
-    /**
-     * Gets the dynamic searchable field types. For example, in solr, if you wanted to index a field as both
-     * text and string, you would have two searchable field types, String and Text
-     * 
-     * @return the searchable types for this field
-     */
-    public List<FieldType> getSearchableFieldTypes();
-    
-    /**
-     * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available 
+     * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available
      * in the community version of Broadleaf Commerce.
      * @return the searchConfigs
+     * @deprecated
      */
+    @Deprecated
     public List<SearchConfig> getSearchConfigs();
     
     /**
      * Sets the searchConfigs. 
      * @param searchConfigs
+     * @deprecated
      */
-    public void setSearchConfigs (List<SearchConfig> searchConfigs);
+    @Deprecated
+    public void setSearchConfigs(List<SearchConfig> searchConfigs);
 
     /**
      * Returns the qualified name of this Field. The default implementation returns the entityType joined
@@ -170,4 +167,18 @@ public interface Field extends MultiTenantCloneable<Field> {
      * @param translatable
      */
     public void setTranslatable(Boolean translatable);
+
+    /**
+     * Get whether or not this field is a CustomField
+     *
+     * @return
+     */
+    public Boolean getIsCustom();
+
+    /**
+     * Set whether or not this field is a CustomField
+     *
+     * @param isCustom
+     */
+    public void setIsCustom(Boolean isCustom);
 }

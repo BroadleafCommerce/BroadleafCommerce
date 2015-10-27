@@ -53,6 +53,7 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.common.web.Locatable;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -411,6 +412,11 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     }
 
     @Override
+    public boolean hasRetailPrice() {
+        return getRetailPrice() != null;
+    }
+
+    @Override
     public Money getRetailPrice() {
         if (defaultSku == null) {
             return null;
@@ -422,6 +428,11 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Override
     public Money getSalePrice() {
         return getRetailPrice();
+    }
+
+    @Override
+    public Money getMargin() {
+        return getDefaultSku().getMargin();
     }
 
     @Override
@@ -1006,6 +1017,11 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Override
     public String getLocation() {
         return getUrl();
+    }
+    
+    @Override
+    public FieldEntity getFieldEntityType() {
+        return FieldEntity.PRODUCT;
     }
 
 }

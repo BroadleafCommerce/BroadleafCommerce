@@ -88,6 +88,7 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
      * {@link GenericGroovyXmlWebContextLoader} in case of the Spring-Test framework requiring
      * this method to have a particular behavior.
      */
+    @Override
     protected String[] getResourceSuffixes() {
         return new String[] { "-context.xml", "Context.groovy" };
     }
@@ -192,12 +193,11 @@ public class BroadleafGenericGroovyXmlWebContextLoader extends AbstractContextLo
         ApplicationContext parent = mergedConfig.getParentApplicationContext();
         if (parent != null) {
             context.setParent(parent);
-            context.setPatchLocation(StringUtils.removeEnd(((MergeXmlWebApplicationContext) parent).getPatchLocation(), "classpath:/bl-applicationContext-test.xml"));
-            System.out.println(context.getPatchLocation());
+            context.setPatchLocation(((MergeXmlWebApplicationContext) parent).getPatchLocation());
         }
         //Calls unique to Broadleaf Implementation of the Smart Context Loader
         // the ";classpath:/bl-applicationContext-test.xml" is required by all integration tests so we add it here.
-        context.setPatchLocation(context.getPatchLocation() + StringUtils.join(mergedConfig.getLocations(), ";") +";classpath:/bl-applicationContext-test.xml");
+        context.setPatchLocation(context.getPatchLocation() + StringUtils.join(mergedConfig.getLocations(), ";"));
         context.setStandardLocationTypes(StandardConfigLocations.TESTCONTEXTTYPE);
         
         configureWebResources(context, webMergedConfig);

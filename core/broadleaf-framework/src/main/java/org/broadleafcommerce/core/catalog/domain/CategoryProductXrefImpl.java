@@ -99,7 +99,7 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
 
     /** The display order. */
     @Column(name = "DISPLAY_ORDER", precision = 10, scale = 6)
-    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CategoryProductXrefImpl_displayOrder", visibility = VisibilityEnum.HIDDEN_ALL)
     protected BigDecimal displayOrder;
     
     @Column(name = "DEFAULT_REFERENCE")

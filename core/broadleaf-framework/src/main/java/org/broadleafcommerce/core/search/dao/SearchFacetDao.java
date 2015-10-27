@@ -19,6 +19,7 @@
  */
 package org.broadleafcommerce.core.search.dao;
 
+import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 
@@ -57,4 +58,12 @@ public interface SearchFacetDao {
      * @return the instance after it has been persisted
      */
     public SearchFacet save(SearchFacet searchFacet);
+
+    /**
+     * Returns a SearchFacet for the given field, if one exists
+     *
+     * @param field the field to find a SearchFacet for
+     * @return the SearchFacet for the given field
+     */
+    public SearchFacet readSearchFacetForField(Field field);
 }

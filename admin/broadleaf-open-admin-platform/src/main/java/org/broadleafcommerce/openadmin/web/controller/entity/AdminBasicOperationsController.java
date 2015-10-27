@@ -35,6 +35,7 @@ import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.controller.AdminBasicOperationsControllerExtensionManager;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.broadleafcommerce.openadmin.web.service.SearchFieldResolver;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -143,7 +144,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         model.addAttribute("viewType", "modal/simpleSelectEntity");
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "selectCollectionItem");
+        model.addAttribute("modalHeaderType", ModalHeaderType.SELECT_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, owningClass);
         return "modules/modalContainer";
