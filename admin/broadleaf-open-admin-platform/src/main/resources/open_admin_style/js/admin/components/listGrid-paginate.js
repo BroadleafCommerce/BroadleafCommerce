@@ -386,14 +386,14 @@
                 delta = delta - topIndex;
                 spinnerOffset = $tbody.closest('.mCustomScrollBox').position().top + 3 + (this.getRowHeight($tbody) * delta);
                 BLCAdmin.listGrid.showLoadingSpinner($tbody, spinnerOffset);
-                
+
+                var params =  BLCAdmin.history.getUrlParameters();
+                for (var param in params) {
+                    baseUrl = BLCAdmin.history.getUrlWithParameter(param, params[param], null, baseUrl);
+                }
+
                 var url = BLCAdmin.history.getUrlWithParameter('startIndex', startIndex, null, baseUrl);
                 url = BLCAdmin.history.getUrlWithParameter('maxIndex', maxIndex, null, url);
-                
-                var params = $tbody.closest('.listgrid-container').find('.listgrid-header-wrapper table').data('currentparams');
-                for (var param in params) {
-                    url = BLCAdmin.history.getUrlWithParameter(param, params[param], null, url);
-                }
                 
                 //console.log('Loading more records -- ' + url);
                 
