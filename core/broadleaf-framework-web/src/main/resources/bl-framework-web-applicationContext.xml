@@ -197,6 +197,7 @@
             </set>
         </property>
         <property name="templateResolvers" ref="blWebTemplateResolvers" />
+        <property name="cacheManager" ref="blICacheManager" />
         <property name="templateModeHandlers" value="#{blThymeleafStandardTemplateModeHandlers.standardTemplateModeHandlers}" />
         <property name="dialects">
             <set>
