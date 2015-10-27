@@ -563,6 +563,10 @@
                 var $window = $(window);
                 var wrapperHeight = $window.height() - $wrapper.offset().top - 50;
 
+                if ($modalBody.length > 0) {
+                    wrapperHeight = $tbody.closest('.select-group').height()
+                }
+
                 $wrapper.css('max-height', wrapperHeight);
                 $wrapper.find('.mCustomScrollBox').css('max-height', wrapperHeight);
 

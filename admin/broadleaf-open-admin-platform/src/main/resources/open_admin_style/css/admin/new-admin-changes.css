@@ -358,7 +358,7 @@ input[type="radio"].radio+label.radio-label.clr,
     margin: 30px 10px;
 }
 .modal .modal-footer .entity-form-actions .button {
-    float:right;
+    /*float:right;*/
 }
 .modal .modal-footer .entity-form-actions .ajax-loader {
     float: right;
