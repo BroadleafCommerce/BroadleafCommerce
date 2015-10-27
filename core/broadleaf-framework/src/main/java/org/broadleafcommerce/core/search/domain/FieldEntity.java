@@ -20,7 +20,6 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,12 +35,12 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
 
     private static final Map<String, FieldEntity> TYPES = new LinkedHashMap<String, FieldEntity>();
 
-    public static final FieldEntity PRODUCT = new FieldEntity("PRODUCT", "product");
-    public static final FieldEntity SKU = new FieldEntity("SKU", "sku");
-    public static final FieldEntity CUSTOMER = new FieldEntity("CUSTOMER", "customer");
-    public static final FieldEntity ORDER = new FieldEntity("ORDER", "order");
-    public static final FieldEntity ORDERITEM = new FieldEntity("ORDERITEM", "orderItem");
-    public static final FieldEntity OFFER = new FieldEntity("OFFER", "offer");
+    public static final FieldEntity PRODUCT = new FieldEntity("org.broadleafcommerce.core.catalog.domain.Product", "Product", false);
+    public static final FieldEntity SKU = new FieldEntity("org.broadleafcommerce.core.catalog.domain.Sku", "Sku", false);
+    public static final FieldEntity CUSTOMER = new FieldEntity("org.broadleafcommerce.profile.core.domain.Customer", "Customer", false);
+    public static final FieldEntity ORDER = new FieldEntity("org.broadleafcommerce.core.order.domain.Order", "Order", false);
+    public static final FieldEntity ORDERITEM = new FieldEntity("org.broadleafcommerce.core.order.domain.OrderItem", "Order Item", false);
+    public static final FieldEntity OFFER = new FieldEntity("org.broadleafcommerce.core.offer.domain.Offer", "Offer", false);
 
     public static FieldEntity getInstance(final String type) {
         return TYPES.get(type);
@@ -49,13 +48,15 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
 
     private String type;
     private String friendlyType;
+    private Boolean isCustomFieldEntity;
 
     public FieldEntity() {
         //do nothing
     }
 
-    public FieldEntity(final String type, final String friendlyType) {
+    public FieldEntity(final String type, final String friendlyType, final Boolean isCustomFieldEntity) {
         this.friendlyType = friendlyType;
+        this.isCustomFieldEntity = isCustomFieldEntity;
         setType(type);
     }
 
@@ -65,6 +66,10 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
 
     public String getFriendlyType() {
         return friendlyType;
+    }
+
+    public Boolean getIsCustomFieldEntity() {
+        return isCustomFieldEntity;
     }
 
     private void setType(final String type) {

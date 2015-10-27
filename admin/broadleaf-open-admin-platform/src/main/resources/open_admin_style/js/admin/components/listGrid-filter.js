@@ -367,20 +367,25 @@ $(document).ready(function() {
 
         $firstInput.val(search);
 
-        var oldParams = BLCAdmin.history.getUrlParameters();
-        if (oldParams == null) {
-            oldParams = {};
+        $(this).closest('form').find('input').val('');
+        
+        var submitData = {};
+        submitData[$firstInput.data('name')] =  $firstInput.val();
+        // replace search value if it exist
+        for (key in submitData) {
+            BLCAdmin.history.replaceUrlParameter(key, submitData[key]);
         }
-
-        if (search.length > 0) {
-            oldParams[$firstInput.data('name')] = search;
-        } else {
-            delete oldParams[$firstInput.data('name')];
+        var urlParams = "";
+        var baseUrl = window.location.href;
+        var indexOfQ = baseUrl.indexOf('?');
+        if (indexOfQ >= 0) {
+            urlParams = baseUrl.substring(indexOfQ + 1);
         }
 
         BLC.ajax({
-            url: $(this).closest('form').attr('action') + '?' + $.param(oldParams),
+            url: $(this).closest('form').attr('action') +'?'+ urlParams,
             type: "GET",
+            data: submitData
         }, function(data) {
             if ($(data).find('table').length === 1 && (BLCAdmin.currentModal() === undefined || BLCAdmin.currentModal().length === 0)) {
                 BLCAdmin.history.replaceUrlParameter('startIndex');

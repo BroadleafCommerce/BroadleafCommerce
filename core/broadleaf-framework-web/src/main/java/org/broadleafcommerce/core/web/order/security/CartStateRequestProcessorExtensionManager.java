@@ -1,8 +1,8 @@
 /*
  * #%L
- * BroadleafCommerce Framework
+ * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2015 Broadleaf Commerce
+ * Copyright (C) 2009 - 2013 Broadleaf Commerce
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.service.solr;
+package org.broadleafcommerce.core.web.order.security;
+
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
+
 
 /**
- * Responsible for reading and writing the index status to some persistent store (e.g. the file system).
- *
- * @author Jeff Fischer
+ * @author bpolster
  */
-public interface SolrIndexStatusProvider {
-
-    void handleUpdateIndexStatus(IndexStatusInfo status);
-
-    IndexStatusInfo readIndexStatus(IndexStatusInfo status);
-
+@Service("blCartStateRequestProcessorExtensionManager")
+public class CartStateRequestProcessorExtensionManager extends ExtensionManager<CartStateRequestProcessorExtensionHandler> {
+    
+    public CartStateRequestProcessorExtensionManager() {
+        super(CartStateRequestProcessorExtensionHandler.class);
+    }
 }

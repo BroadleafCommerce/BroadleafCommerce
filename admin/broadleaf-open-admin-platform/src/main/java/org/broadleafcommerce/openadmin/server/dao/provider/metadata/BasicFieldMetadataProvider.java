@@ -399,6 +399,8 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 fieldMetadataOverride.setColumnWidth(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.BROADLEAFENUMERATION)) {
                 fieldMetadataOverride.setBroadleafEnumeration(stringValue);
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.FIELDCOMPONENTRENDERER)) {
+                fieldMetadataOverride.setFieldComponentRenderer(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.TOOLTIP)) {
                 fieldMetadataOverride.setTooltip(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.HELPTEXT)) {
@@ -499,6 +501,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (annot != null) {
             FieldMetadataOverride override = new FieldMetadataOverride();
             override.setBroadleafEnumeration(annot.broadleafEnumeration());
+            override.setFieldComponentRenderer(annot.fieldComponentRenderer());
             override.setColumnWidth(annot.columnWidth());
             override.setExplicitFieldType(annot.fieldType());
             override.setFieldType(annot.fieldType());
@@ -600,6 +603,11 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
         if (basicFieldMetadata.getFieldType() != null) {
             metadata.setFieldType(basicFieldMetadata.getFieldType());
+        }
+        if (StringUtils.isEmpty(basicFieldMetadata.getFieldComponentRenderer()) && basicFieldMetadata.getFieldType() != null) {
+            metadata.setFieldComponentRenderer(basicFieldMetadata.getFieldType().toString());
+        } else {
+            metadata.setFieldComponentRenderer(basicFieldMetadata.getFieldComponentRenderer());
         }
         if (basicFieldMetadata.getFriendlyName() != null) {
             metadata.setFriendlyName(basicFieldMetadata.getFriendlyName());

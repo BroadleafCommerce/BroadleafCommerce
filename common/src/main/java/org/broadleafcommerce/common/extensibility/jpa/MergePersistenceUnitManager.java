@@ -77,6 +77,13 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     @Resource(name="blEntityMarkerClassTransformer")
     protected EntityMarkerClassTransformer entityMarkerClassTransformer;
+    
+    /**
+     * This should only be used in a test context to deal with the Spring ApplicationContext refreshing between different
+     * test classes but not needing to do a new transformation of classes every time. This bean will get
+     * re-initialized but all the classes have already been transformed
+     */
+    protected static boolean transformed = false;
 
     @Override
     protected boolean isPersistenceUnitOverrideAllowed() {
@@ -225,7 +232,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             }
             
             // Only validate transformation results if there was a LoadTimeWeaver registered in the first place
-            if (weaverRegistered) {
+            if (weaverRegistered && !transformed) {
                 for (PersistenceUnitInfo pui : mergedPus.values()) {
                     for (String managedClassName : pui.getManagedClassNames()) {
                         if (!managedClassNames.contains(managedClassName)) {
@@ -280,6 +287,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                     LOG.error(message);
                     throw new IllegalStateException(message);
                 }
+                
+                transformed = true;
+            }
+            if (transformed) {
+                LOG.info("Did not recycle through class transformation since this has already occurred");
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

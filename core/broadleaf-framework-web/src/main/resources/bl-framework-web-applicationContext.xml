@@ -68,6 +68,7 @@
     <bean id="blOnePageCheckoutProcessor" class="org.broadleafcommerce.core.web.processor.OnePageCheckoutProcessor"/>
     <bean id="blUncacheableDataProcessor" class="org.broadleafcommerce.core.web.processor.UncacheableDataProcessor"/>
     <bean id="blGoogleUniversalAnalyticsProcessor" class="org.broadleafcommerce.core.web.processor.GoogleUniversalAnalyticsProcessor" />
+    <bean id="blCatalogRelativeHrefProcessor" class="org.broadleafcommerce.core.web.processor.CatalogRelativeHrefProcessor" />
 
     <bean id="blDialectFrameworkProcessors" class="org.springframework.beans.factory.config.SetFactoryBean">
         <property name="sourceSet">
@@ -95,6 +96,8 @@
                 <ref bean="blCreditCardTypesProcessor" />
                 <ref bean="blUncacheableDataProcessor" />
                 <ref bean="blGoogleUniversalAnalyticsProcessor" />
+                <ref bean="blCatalogRelativeHrefProcessor" />
+                
             </set>
         </property>
     </bean>
@@ -112,9 +115,10 @@
         <property name="sourceList">
             <list>
                 <bean class="org.broadleafcommerce.common.web.expression.NullBroadleafVariableExpression" />
-                <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />
+                <bean class="org.broadleafcommerce.common.web.expression.BRCVariableExpression" />                
                 <bean class="org.broadleafcommerce.common.web.expression.PropertiesVariableExpression" />
                 <bean class="org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression"/>
+                <bean class="org.broadleafcommerce.core.web.expression.BLCVariableExpression" />
                 <bean class="org.broadleafcommerce.profile.web.core.expression.CustomerVariableExpression"/>
             </list>
         </property>
