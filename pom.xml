@@ -48,7 +48,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.1.6.RELEASE</spring.version>
         <spring.security.version>3.2.6.RELEASE</spring.security.version>
-        <maven.source.plugin.version>2.2.1</maven.source.plugin.version>
+        <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
         <geb.version>0.10.0</geb.version>
         <spock.core.version>1.0-groovy-2.3</spock.core.version>
@@ -217,6 +217,15 @@
                 <configuration>
                     <!-- Only here for the Spock SNAPSHOT dependency since it has not been fully released -->
                     <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.plugin.version}</version>
+                <configuration>
+                    <!-- Don't create source as a default part of the release -->
+                    <attach>false</attach>
                 </configuration>
             </plugin>
             <plugin>
