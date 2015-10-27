@@ -19,23 +19,6 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.AnnotationMemberValue;
-import javassist.bytecode.annotation.ArrayMemberValue;
-import javassist.bytecode.annotation.BooleanMemberValue;
-import javassist.bytecode.annotation.MemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
-
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.broadleafcommerce.common.logging.LifeCycleEvent;
@@ -60,6 +43,23 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityListeners;
+
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtConstructor;
+import javassist.CtField;
+import javassist.CtMethod;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
@@ -154,7 +154,9 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
                     XFormParams params = reviewDirectCopyTransformAnnotations(clazz, mySkipOverlaps, myRenameMethodOverlaps, matchedPatterns);
                     XFormParams conditionalParams = reviewConditionalDirectCopyTransforms(convertedClassName, matchedPatterns);
-                    params = combineXFormParams(params,conditionalParams);
+                    if (conditionalParams != null && !conditionalParams.isEmpty()) {
+                        params = combineXFormParams(params, conditionalParams);
+                    }
                     xformVals = params.getXformVals();
                     xformSkipOverlaps = params.getXformSkipOverlaps();
                     xformRenameMethodOverlaps = params.getXformRenameMethodOverlaps();
@@ -324,44 +326,41 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
     /**
      * Combines two {@link org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyClassTransformer.XFormParams} together with
      * first passed in xformParama supercedes the second passed in parameter.
+     *
      * @param defaultParams
      * @param conditionalParams
      * @return
      */
-    protected XFormParams combineXFormParams(XFormParams defaultParams, XFormParams conditionalParams){
+    protected XFormParams combineXFormParams(XFormParams defaultParams, XFormParams conditionalParams) {
 
         XFormParams response = new XFormParams();
-        Map<String,Boolean> templateSkipMap = new LinkedHashMap<>();
+        Map<String, Boolean> templateSkipMap = new LinkedHashMap<>();
         List<String> templates = new ArrayList<String>();
         List<Boolean> skips = new ArrayList<Boolean>();
         List<Boolean> renames = new ArrayList<Boolean>();
         // Add the default Params
-        if(!defaultParams.isEmpty()){
-            for(String defaultParam : defaultParams.getXformVals()){
-                if(!templateSkipMap.containsKey(defaultParam)){
-                    templateSkipMap.put(defaultParam,true);
+        if (!defaultParams.isEmpty()) {
+            for (int iter = 0; iter < defaultParams.getXformVals().length; iter++) {
+                String defaultParam = defaultParams.getXformVals()[iter];
+                if (!templateSkipMap.containsKey(defaultParam)) {
+                    templateSkipMap.put(defaultParam, true);
+                    templates.add(defaultParam);
+                    skips.add(defaultParams.getXformSkipOverlaps()[iter]);
+                    renames.add(defaultParams.getXformRenameMethodOverlaps()[iter]);
                 }
-                templates.add(defaultParam);
             }
-            skips.addAll(Arrays.asList(defaultParams.getXformSkipOverlaps()));
-            renames.addAll(Arrays.asList(defaultParams.getXformRenameMethodOverlaps()));
         }
 
         // Only add Conditional Params if they are not already included
-        if(!conditionalParams.isEmpty()){
-            boolean isNewAddition = false;
-            for(String conditionalValue : conditionalParams.getXformVals()){
-                if(!templateSkipMap.containsKey(conditionalValue)){
-                    templates.add(conditionalValue);
-                    isNewAddition = true;
-                }
+        for (int iter = 0; iter < conditionalParams.getXformVals().length; iter++) {
+            String conditionalValue = conditionalParams.getXformVals()[iter];
+            if (!templateSkipMap.containsKey(conditionalValue)) {
+                templates.add(conditionalValue);
+                skips.add(conditionalParams.getXformSkipOverlaps()[iter]);
+                renames.add(conditionalParams.getXformRenameMethodOverlaps()[iter]);
             }
-            if(isNewAddition){
-                skips.addAll(Arrays.asList(conditionalParams.getXformSkipOverlaps()));
-                renames.addAll(Arrays.asList(conditionalParams.getXformRenameMethodOverlaps()));
-            }
-
         }
+
 
         // convert list to arrays
         response.setXformVals(templates.toArray(new String[templates.size()]));
