@@ -856,8 +856,12 @@ fieldset legend i.help-tip {
     display: none;
 }
 
-.sidebar {
+.sidebar:first-child {
     margin-top: 22px;
+}
+
+.app-content .sidebar {
+    margin-bottom: 15px;
 }
 
 .tabError {
