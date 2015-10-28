@@ -127,14 +127,14 @@ public class NodeUtil {
     public static void mergeNodeLists(Node targetNode, org.w3c.dom.NodeList list1, org.w3c.dom.NodeList list2, String attributeName) {
         NodeComparatorBySingleAttribute comparator = new NodeComparatorBySingleAttribute(attributeName);
         TreeSet<Node> resultSet = new TreeSet<Node>(comparator);
-        if (list1 != null) {
-            for (int i = 0; i < list1.getLength(); i++) {
-                resultSet.add(list1.item(i));
-            }
-        }
         if (list2 != null) {
             for (int i = 0; i < list2.getLength(); i++) {
                 resultSet.add(list2.item(i));
+            }
+        }
+        if (list1 != null) {
+            for (int i = 0; i < list1.getLength(); i++) {
+                resultSet.add(list1.item(i));
             }
         }
         for (Node node : resultSet) {
