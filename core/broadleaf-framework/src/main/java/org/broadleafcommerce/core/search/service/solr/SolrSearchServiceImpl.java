@@ -23,14 +23,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
-import org.apache.solr.client.solrj.response.CollectionAdminResponse;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.cloud.Aliases;
@@ -46,17 +45,17 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.FieldDao;
+import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
-import org.broadleafcommerce.core.search.dao.SearchFieldDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
-import org.broadleafcommerce.core.search.domain.SearchField;
-import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.SearchResult;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.SearchService;
@@ -65,6 +64,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.xml.sax.SAXException;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -83,6 +83,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -126,8 +127,8 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     @Resource(name = "blSolrIndexService")
     protected SolrIndexService solrIndexService;
 
-    @Resource(name = "blSearchFieldDao")
-    protected SearchFieldDao searchFieldDao;
+    @Resource(name = "blIndexFieldDao")
+    protected IndexFieldDao searchFieldDao;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
@@ -558,13 +559,13 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param currentField the current field
      */
     protected void getQueryFields(SolrQuery query, final List<String> queryFields, Field currentField) {
-        SearchField searchField = searchFieldDao.readSearchFieldForField(currentField);
+        IndexField searchField = searchFieldDao.readIndexFieldForField(currentField);
 
         if (searchField != null) {
-            List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+            List<IndexFieldType> searchableFieldTypes = searchField.getIndexableFieldTypes();
 
-            for (SearchFieldType searchFieldType : searchableFieldTypes) {
-                FieldType fieldType = searchFieldType.getSearchableFieldType();
+            for (IndexFieldType searchFieldType : searchableFieldTypes) {
+                FieldType fieldType = searchFieldType.getFieldType();
 
                 // this will hold the list of query fields for our given field
                 ExtensionResultHolder<List<String>> queryFieldResult = new ExtensionResultHolder<>();

@@ -43,7 +43,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -58,26 +57,26 @@ import javax.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SEARCH_FIELD")
+@Table(name = "BLC_INDEX_FIELD")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStandardElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class SearchFieldImpl implements SearchField, Serializable {
+public class IndexFieldImpl implements IndexField, Serializable {
 
     private static final long serialVersionUID = 2915813511754425605L;
 
     @Id
-    @GeneratedValue(generator = "SearchFieldId")
+    @GeneratedValue(generator = "IndexFieldId")
     @GenericGenerator(
-            name="SearchFieldId",
+            name="IndexFieldId",
             strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
-                    @Parameter(name="segment_value", value="SearchFieldImpl"),
-                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchFieldImpl")
+                    @Parameter(name="segment_value", value="IndexFieldImpl"),
+                    @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.IndexFieldImpl")
             }
     )
-    @Column(name = "SEARCH_FIELD_ID")
+    @Column(name = "INDEX_FIELD_ID")
     @AdminPresentation(friendlyName = "SearchFieldImpl_ID", group = "SearchFieldImpl_description",
             visibility= VisibilityEnum.HIDDEN_ALL)
     protected Long id;
@@ -89,12 +88,11 @@ public class SearchFieldImpl implements SearchField, Serializable {
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
     protected Field field;
 
-    // This is a broadleaf enumeration
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "searchField", targetEntity = SearchFieldTypeImpl.class, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "indexField", targetEntity = IndexFieldTypeImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "SearchFieldImpl_searchableFieldTypes", order = 1000)
-    protected List<SearchFieldType> searchableFieldTypes = new ArrayList<SearchFieldType>();
+    protected List<IndexFieldType> indexableFieldTypes = new ArrayList<IndexFieldType>();
 
     @Override
     public Long getId() {
@@ -117,19 +115,19 @@ public class SearchFieldImpl implements SearchField, Serializable {
     }
 
     @Override
-    public List<SearchFieldType> getSearchableFieldTypes() {
-        return searchableFieldTypes;
+    public List<IndexFieldType> getIndexableFieldTypes() {
+        return indexableFieldTypes;
     }
 
     @Override
-    public void setSearchableFieldTypes(List<SearchFieldType> searchableFieldTypes) {
-        this.searchableFieldTypes = searchableFieldTypes;
+    public void setIndexableFieldTypes(List<IndexFieldType> searchableFieldTypes) {
+        this.indexableFieldTypes = searchableFieldTypes;
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
-            SearchFieldImpl other = (SearchFieldImpl) obj;
+            IndexFieldImpl other = (IndexFieldImpl) obj;
             return new EqualsBuilder()
                     .append(id, other.id)
                     .append(field, other.field)
@@ -147,15 +145,15 @@ public class SearchFieldImpl implements SearchField, Serializable {
     }
 
     @Override
-    public <G extends SearchField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends IndexField> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
-        SearchField cloned = createResponse.getClone();
+        IndexField cloned = createResponse.getClone();
         cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
-        for(SearchFieldType entry : searchableFieldTypes){
-            cloned.getSearchableFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
+        for(IndexFieldType entry : indexableFieldTypes){
+            cloned.getIndexableFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
         }
 
         return createResponse;

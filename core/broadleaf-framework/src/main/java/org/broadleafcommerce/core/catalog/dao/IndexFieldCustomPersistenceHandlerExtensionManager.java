@@ -17,23 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.dao;
+package org.broadleafcommerce.core.catalog.dao;
 
-import org.broadleafcommerce.core.search.domain.Field;
-import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 /**
- * DAO used to interact with the database search fields
- *
- * @author Nick Crum (ncrum)
+ * @author Chad Harchar (charchar)
  */
-public interface SearchFieldDao {
+@Service("blIndexFieldCustomPersistenceHandlerExtensionManager")
+public class IndexFieldCustomPersistenceHandlerExtensionManager extends ExtensionManager<IndexFieldCustomPersistenceHandlerExtensionHandler> {
 
-    /**
-     * Returns the SearchField instance associated with the given field parameter, or null if non exists.
-     *
-     * @param field the Field we are looking for the SearchField for
-     * @return a SearchField instance for the given field
-     */
-    public SearchField readSearchFieldForField(Field field);
+    public IndexFieldCustomPersistenceHandlerExtensionManager() {
+        super(IndexFieldCustomPersistenceHandlerExtensionHandler.class);
+    }
+
 }

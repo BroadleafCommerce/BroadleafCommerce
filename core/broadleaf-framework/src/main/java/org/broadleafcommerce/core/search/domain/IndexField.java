@@ -20,13 +20,16 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Represents a field that gets stored in the search index
+ * 
  * @author Chad Harchar (charchar)
  */
-public interface SearchField extends Serializable, MultiTenantCloneable<SearchField> {
+public interface IndexField extends Serializable, MultiTenantCloneable<IndexField> {
 
     /**
      * Gets the id for this search field
@@ -61,12 +64,12 @@ public interface SearchField extends Serializable, MultiTenantCloneable<SearchFi
      *
      * @return
      */
-    public List<SearchFieldType> getSearchableFieldTypes();
+    public List<IndexFieldType> getIndexableFieldTypes();
 
     /**
      * Sets the searchable field types for this search field
      *
-     * @param searchableFieldTypes
+     * @param indexableFieldTypes
      */
-    public void setSearchableFieldTypes(List<SearchFieldType> searchableFieldTypes);
+    public void setIndexableFieldTypes(List<IndexFieldType> indexableFieldTypes);
 }
