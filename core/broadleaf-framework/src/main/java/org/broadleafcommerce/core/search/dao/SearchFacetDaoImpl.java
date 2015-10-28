@@ -67,6 +67,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 
         TypedQuery<SearchFacet> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
         
         return query.getResultList();
     }
@@ -103,6 +104,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 
         TypedQuery<T> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
         
         return query.getResultList();
     }
@@ -126,6 +128,7 @@ public class SearchFacetDaoImpl implements SearchFacetDao {
 
         TypedQuery<SearchFacet> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
 
         try {
             return query.getSingleResult();

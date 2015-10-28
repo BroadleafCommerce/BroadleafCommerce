@@ -62,6 +62,7 @@ public class SearchFieldDaoImpl implements SearchFieldDao {
 
         TypedQuery<SearchField> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Search");
 
         try {
             return query.getSingleResult();

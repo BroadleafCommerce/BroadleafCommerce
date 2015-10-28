@@ -138,6 +138,13 @@
         eternal="false"
         overflowToDisk="false"
         timeToLiveSeconds="60"/>
+
+    <cache
+        name="query.Search"
+        maxElementsInMemory="1000"
+        eternal="false"
+        overflowToDisk="false"
+        timeToLiveSeconds="600"/>
         
      <cache
         name="generatedResourceCache"
