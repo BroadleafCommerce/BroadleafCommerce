@@ -716,7 +716,7 @@ input[type="radio"].radio {
 }
 
 label {
-    display: block;
+    display: inline-block;
     margin-bottom: 0;
 }
 
@@ -1639,4 +1639,9 @@ div.uploadMessage {
 
 .radio-label.disabled {
     color: #B3B3B3;
+}
+
+.override-generated-url {
+    font-size: 12px;
+    letter-spacing: .05em;
 }
