@@ -80,6 +80,10 @@ public class IndexFieldImpl implements IndexField, Serializable {
     @AdminPresentation(friendlyName = "SearchFieldImpl_ID", group = "SearchFieldImpl_description",
             visibility= VisibilityEnum.HIDDEN_ALL)
     protected Long id;
+    
+    @Column(name = "SEARCHABLE")
+    @AdminPresentation(friendlyName = "Searchable", defaultValue = "true")
+    protected Boolean searchable;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
@@ -104,6 +108,14 @@ public class IndexFieldImpl implements IndexField, Serializable {
         this.id = id;
     }
 
+    public Boolean getSearchable() {
+        return searchable;
+    }
+
+    public void setSearchable(Boolean searchable) {
+        this.searchable = searchable;
+    }
+    
     @Override
     public Field getField() {
         return field;

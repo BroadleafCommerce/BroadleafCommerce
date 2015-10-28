@@ -21,6 +21,7 @@ package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrClient;
@@ -559,12 +560,12 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param currentField the current field
      */
     protected void getQueryFields(SolrQuery query, final List<String> queryFields, Field currentField) {
-        IndexField searchField = searchFieldDao.readIndexFieldForField(currentField);
+        IndexField indexField = searchFieldDao.readIndexFieldForField(currentField);
 
-        if (searchField != null) {
-            List<IndexFieldType> searchableFieldTypes = searchField.getIndexableFieldTypes();
+        if (indexField != null && BooleanUtils.isTrue(indexField.getSearchable())) {
+            List<IndexFieldType> fieldTypes = indexField.getIndexableFieldTypes();
 
-            for (IndexFieldType searchFieldType : searchableFieldTypes) {
+            for (IndexFieldType searchFieldType : fieldTypes) {
                 FieldType fieldType = searchFieldType.getFieldType();
 
                 // this will hold the list of query fields for our given field
@@ -572,7 +573,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
                 queryFieldResult.setResult(queryFields);
 
                 // here we try to get the query field's for this search field
-                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(query, searchField, searchFieldType, queryFieldResult);
+                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(query, indexField, searchFieldType, queryFieldResult);
 
                 if (ExtensionResultStatusType.NOT_HANDLED.equals(result)){
                     // if we didn't get any query fields we just add a default one

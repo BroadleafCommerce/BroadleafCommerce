@@ -44,7 +44,15 @@ public interface IndexField extends Serializable, MultiTenantCloneable<IndexFiel
      * @param id
      */
     public void setId(Long id);
+    
+    /**
+     * Whether or not the user should see results for this field when typing in search terms in the omnibox, or if
+     * this is just a field stored in the index (like margin or sorts)
+     */
+    public Boolean getSearchable();
 
+    public void setSearchable(Boolean searchable);
+    
     /**
      * Gets the field for this search field
      *
