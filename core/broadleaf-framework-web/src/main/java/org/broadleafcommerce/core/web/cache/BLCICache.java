@@ -36,14 +36,26 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Implementation of {@link org.thymeleaf.cache.StandardCache} in order for BLC to be able to
- * handle caching based on site and profile level templates.
+ * handle caching based on site and profile level templates.  As StandardCache is declared final,
+ * this is a wholesale copy with a few changes to get(), put() and getValueIfStillValid().
  *
  * @author Chad Harchar (charchar)
  */
 public class BLCICache<K, V> implements ICache<K, V> {
 
+    //START BLC MODIFICATION
+
+    public static final String NOT_FOUND = "NOT_FOUND";
+
     protected BLCICacheExtensionManager extensionManager;
 
+    /**
+     * This method differs from StandardCache.put() by not caching if we're in a sandbox, and adding a hook for
+     * Site and Profile interactions
+     *
+     * @param key
+     * @param value
+     */
     @Override
     public void put(K key, V value) {
 
@@ -59,6 +71,13 @@ public class BLCICache<K, V> implements ICache<K, V> {
 
     }
 
+    /**
+     * This method differs from StandardCache.get() by not caching if we're in a sandbox, and adding a hook for
+     * Site and Profile interactions
+     *
+     * @param key
+     * @return
+     */
     @Override
     public V get(K key) {
         V value = null;
@@ -78,25 +97,17 @@ public class BLCICache<K, V> implements ICache<K, V> {
         return value;
     }
 
-    private static final long REPORT_INTERVAL = 300000L; // 5 minutes
-    private static final String REPORT_FORMAT =
-            "[THYMELEAF][*][*][*][CACHE_REPORT] %8s elements | %12s puts | %12s gets | %12s hits | %12s misses - [%s]";
-    private volatile long lastExecution = System.currentTimeMillis();
-
-    private final String name;
-    private final boolean useSoftReferences;
-    private final int maxSize;
-    private final BLCICacheDataContainer<K,V> dataContainer;
-    private final ICacheEntryValidityChecker<? super K, ? super V> entryValidityChecker;
-
-    private final boolean traceExecution;
-    private final Logger logger;
-
-    private final AtomicLong getCount;
-    private final AtomicLong putCount;
-    private final AtomicLong hitCount;
-    private final AtomicLong missCount;
-
+    /**
+     * The only difference from StandardCache() is the constructor name
+     *
+     * @param name
+     * @param useSoftReferences
+     * @param initialCapacity
+     * @param maxSize
+     * @param entryValidityChecker
+     * @param logger
+     * @param extensionManager
+     */
     public BLCICache(final String name, final boolean useSoftReferences,
                          final int initialCapacity, final int maxSize, final ICacheEntryValidityChecker<? super K, ? super V> entryValidityChecker,
                          final Logger logger, BLCICacheExtensionManager extensionManager) {
@@ -116,7 +127,7 @@ public class BLCICache<K, V> implements ICache<K, V> {
         this.traceExecution = (logger != null && logger.isTraceEnabled());
 
         this.dataContainer =
-                new BLCICacheDataContainer<K,V>(this.name, initialCapacity, maxSize, this.traceExecution, this.logger);
+                new CacheDataContainer<K,V>(this.name, initialCapacity, maxSize, this.traceExecution, this.logger);
 
         this.getCount = new AtomicLong(0);
         this.putCount = new AtomicLong(0);
@@ -137,6 +148,12 @@ public class BLCICache<K, V> implements ICache<K, V> {
 
     }
 
+    /**
+     * This method behaves the same as StandardCache.put()
+     *
+     * @param key
+     * @param value
+     */
     public void defaultPut(final K key, final V value) {
 
         incrementReportEntity(this.putCount);
@@ -156,9 +173,36 @@ public class BLCICache<K, V> implements ICache<K, V> {
 
     }
 
+    /**
+     * This method behaves the same as StandardCache.get()
+     *
+     * @param key
+     * @return
+     */
     public V defaultGet(final K key) {
         return get(key, this.entryValidityChecker);
     }
+
+    //END BLC MODIFICATION (Continued below)
+
+    private static final long REPORT_INTERVAL = 300000L; // 5 minutes
+    private static final String REPORT_FORMAT =
+            "[THYMELEAF][*][*][*][CACHE_REPORT] %8s elements | %12s puts | %12s gets | %12s hits | %12s misses - [%s]";
+    private volatile long lastExecution = System.currentTimeMillis();
+
+    private final String name;
+    private final boolean useSoftReferences;
+    private final int maxSize;
+    private final CacheDataContainer<K,V> dataContainer;
+    private final ICacheEntryValidityChecker<? super K, ? super V> entryValidityChecker;
+
+    private final boolean traceExecution;
+    private final Logger logger;
+
+    private final AtomicLong getCount;
+    private final AtomicLong putCount;
+    private final AtomicLong hitCount;
+    private final AtomicLong missCount;
 
     public V get(final K key, final ICacheEntryValidityChecker<? super K, ? super V> validityChecker) {
 
@@ -233,8 +277,6 @@ public class BLCICache<K, V> implements ICache<K, V> {
 
     }
 
-
-
     public void clearKey(final K key) {
 
         final int newSize = this.dataContainer.remove(key);
@@ -273,7 +315,6 @@ public class BLCICache<K, V> implements ICache<K, V> {
         }
     }
 
-
     private void outputReportIfNeeded() {
 
         if (this.traceExecution) { // fail fast
@@ -299,7 +340,7 @@ public class BLCICache<K, V> implements ICache<K, V> {
 
     }
 
-    static final class BLCICacheDataContainer<K,V> {
+    static final class CacheDataContainer<K,V> {
 
         private final String name;
         private final boolean sizeLimit;
@@ -312,13 +353,13 @@ public class BLCICache<K, V> implements ICache<K, V> {
         private int fifoPointer;
 
 
-        BLCICacheDataContainer(final String name, final int initialCapacity,
+        CacheDataContainer(final String name, final int initialCapacity,
                                final int maxSize, final boolean traceExecution, final Logger logger) {
 
             super();
 
             this.name = name;
-            this.container = new ConcurrentHashMap<K,BLCICache.CacheEntry<V>>(initialCapacity);
+            this.container = new ConcurrentHashMap<K,CacheEntry<V>>(initialCapacity);
             this.maxSize = maxSize;
             this.sizeLimit = (maxSize >= 0);
             if (this.sizeLimit) {
@@ -333,32 +374,28 @@ public class BLCICache<K, V> implements ICache<K, V> {
 
         }
 
-
-        public BLCICache.CacheEntry<V> get(final Object key) {
+        public CacheEntry<V> get(final Object key) {
             // FIFO is not used for this --> better performance, but no LRU (only insertion order will apply)
             return this.container.get(key);
         }
-
 
         public Set<K> keySet() {
             return this.container.keySet();
         }
 
-
-        public int put(final K key, final BLCICache.CacheEntry<V> value) {
+        public int put(final K key, final CacheEntry<V> value) {
             if (this.traceExecution) {
                 return putWithTracing(key, value);
             }
             return putWithoutTracing(key, value);
         }
 
-
-        private int putWithoutTracing(final K key, final BLCICache.CacheEntry<V> value) {
+        private int putWithoutTracing(final K key, final CacheEntry<V> value) {
             // If we are not tracing, it's better to avoid the size() operation which has
             // some performance implications in ConcurrentHashMap (iteration and counting these maps
             // is slow if they are big)
 
-            final BLCICache.CacheEntry<V> existing = this.container.putIfAbsent(key, value);
+            final CacheEntry<V> existing = this.container.putIfAbsent(key, value);
             if (existing != null) {
                 // When not in 'trace' mode, will always return -1
                 return -1;
@@ -379,14 +416,14 @@ public class BLCICache<K, V> implements ICache<K, V> {
 
         }
 
-        private synchronized int putWithTracing(final K key, final BLCICache.CacheEntry<V> value) {
+        private synchronized int putWithTracing(final K key, final CacheEntry<V> value) {
 
-            final BLCICache.CacheEntry<V> existing = this.container.putIfAbsent(key, value);
+            final CacheEntry<V> existing = this.container.putIfAbsent(key, value);
             if (existing == null) {
                 if (this.sizeLimit) {
                     final Object removedKey = this.fifo[this.fifoPointer];
                     if (removedKey != null) {
-                        final BLCICache.CacheEntry<V> removed = this.container.remove(removedKey);
+                        final CacheEntry<V> removed = this.container.remove(removedKey);
                         if (removed != null) {
                             final Integer newSize = Integer.valueOf(this.container.size());
                             this.logger.trace(
@@ -402,7 +439,6 @@ public class BLCICache<K, V> implements ICache<K, V> {
 
         }
 
-
         public int remove(final K key) {
             if (this.traceExecution) {
                 return removeWithTracing(key);
@@ -410,10 +446,9 @@ public class BLCICache<K, V> implements ICache<K, V> {
             return removeWithoutTracing(key);
         }
 
-
         private int removeWithoutTracing(final K key) {
             // FIFO is also updated to avoid 'removed' keys remaining at FIFO (which could end up reducing cache size to 1)
-            final BLCICache.CacheEntry<V> removed = this.container.remove(key);
+            final CacheEntry<V> removed = this.container.remove(key);
             if (removed != null) {
                 if (this.sizeLimit && key != null) {
                     for (int i = 0; i < this.maxSize; i++) {
@@ -427,10 +462,9 @@ public class BLCICache<K, V> implements ICache<K, V> {
             return -1;
         }
 
-
         private synchronized int removeWithTracing(final K key) {
             // FIFO is also updated to avoid 'removed' keys remaining at FIFO (which could end up reducing cache size to 1)
-            final BLCICache.CacheEntry<V> removed = this.container.remove(key);
+            final CacheEntry<V> removed = this.container.remove(key);
             if (removed == null) {
                 // When tracing is active, this means nothing was removed
                 return -1;
@@ -446,18 +480,15 @@ public class BLCICache<K, V> implements ICache<K, V> {
             return this.container.size();
         }
 
-
         public void clear() {
             this.container.clear();
         }
-
 
         public int size() {
             return this.container.size();
         }
 
     }
-
 
     static final class CacheEntry<V> {
 
@@ -470,15 +501,11 @@ public class BLCICache<K, V> implements ICache<K, V> {
         @SuppressWarnings("unused")
         private final V cachedValueAnchor;
 
-
         CacheEntry(final V cachedValue, final boolean useSoftReferences) {
-
             super();
-
             this.cachedValueReference = new SoftReference<V>(cachedValue);
             this.cachedValueAnchor = (!useSoftReferences? cachedValue : null);
             this.creationTimeInMillis = System.currentTimeMillis();
-
         }
 
         public <K> V getValueIfStillValid(final String cacheMapName,
@@ -497,9 +524,16 @@ public class BLCICache<K, V> implements ICache<K, V> {
                 }
                 return null;
             }
-            if (checker == null || (cachedValue instanceof String && cachedValue.equals("NOT_FOUND")) || checker.checkIsValueStillValid(key, cachedValue, this.creationTimeInMillis)) {
+
+            // START BLC MODIFICATION
+            // Added check for NOT_FOUND, which indicates that the current cache does not exist, but we want to
+            // handle it in an extensionManager.get() implementation
+            if (checker == null || (cachedValue instanceof String && cachedValue.equals(NOT_FOUND))
+                    || checker.checkIsValueStillValid(key, cachedValue, this.creationTimeInMillis)) {
                 return cachedValue;
             }
+            // END BLC MODIFICATION
+
             return null;
         }
 

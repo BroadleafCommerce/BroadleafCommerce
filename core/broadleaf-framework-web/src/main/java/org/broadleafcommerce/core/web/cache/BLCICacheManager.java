@@ -32,8 +32,9 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 /**
- * Implementation of {@link org.thymeleaf.cache.StandardCacheManager} to use {@link BLCICache} for templates.
- * Only the initializeTemplateCache() method should behave differently.
+ * Implementation of {@link org.thymeleaf.cache.AbstractCacheManager} to use {@link BLCICache} for templates.
+ * This class heavily leverages {@link org.thymeleaf.cache.StandardCacheManager} functionality. Only the
+ * initializeTemplateCache() method should behave differently by instantiating a BLCICache instead of a StandardCache.
  *
  * @author Chad Harchar (charchar)
  */
