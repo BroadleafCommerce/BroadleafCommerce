@@ -46,7 +46,7 @@ public class BLCICacheManager extends AbstractCacheManager {
     protected StandardCacheManager standardCacheManager = new StandardCacheManager();
 
     /**
-     * This method was changed just to use StandardCache methods and should function the same
+     * This method was changed just to return a BLCICache, instead of a StandardCache
      *
      * @return
      */
@@ -64,7 +64,7 @@ public class BLCICacheManager extends AbstractCacheManager {
     }
 
     /**
-     * This method was changed just to use StandardCache methods and should function the same
+     * This method was changed just to use StandardCacheManager methods and should function the same
      *
      * @return
      */
@@ -81,7 +81,7 @@ public class BLCICacheManager extends AbstractCacheManager {
     }
 
     /**
-     * This method was changed just to use StandardCache methods and should function the same
+     * This method was changed just to use StandardCacheManager methods and should function the same
      *
      * @return
      */
@@ -98,7 +98,7 @@ public class BLCICacheManager extends AbstractCacheManager {
     }
 
     /**
-     * This method was changed just to use StandardCache methods and should function the same
+     * This method was changed just to use StandardCacheManager methods and should function the same
      *
      * @return
      */

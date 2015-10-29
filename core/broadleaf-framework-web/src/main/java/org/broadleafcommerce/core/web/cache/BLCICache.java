@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Implementation of {@link org.thymeleaf.cache.StandardCache} in order for BLC to be able to
+ * Modification of {@link org.thymeleaf.cache.StandardCache} in order for BLC to be able to
  * handle caching based on site and profile level templates.  As StandardCache is declared final,
  * this is a wholesale copy with a few changes to get(), put() and getValueIfStillValid().
  *
