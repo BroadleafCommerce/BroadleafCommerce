@@ -129,13 +129,13 @@ public class IndexFieldImpl implements IndexField, Serializable {
     }
 
     @Override
-    public List<IndexFieldType> getIndexableFieldTypes() {
+    public List<IndexFieldType> getFieldTypes() {
         return fieldTypes;
     }
 
     @Override
-    public void setIndexableFieldTypes(List<IndexFieldType> searchableFieldTypes) {
-        this.fieldTypes = searchableFieldTypes;
+    public void setFieldTypes(List<IndexFieldType> fieldTypes) {
+        this.fieldTypes = fieldTypes;
     }
 
     @Override
@@ -165,9 +165,10 @@ public class IndexFieldImpl implements IndexField, Serializable {
             return createResponse;
         }
         IndexField cloned = createResponse.getClone();
+        cloned.setSearchable(searchable);
         cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
         for(IndexFieldType entry : fieldTypes){
-            cloned.getIndexableFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
+            cloned.getFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
         }
 
         return createResponse;

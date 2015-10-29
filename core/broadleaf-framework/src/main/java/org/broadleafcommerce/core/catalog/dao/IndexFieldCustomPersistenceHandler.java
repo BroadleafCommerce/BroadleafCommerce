@@ -99,7 +99,7 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
 
         if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
             // If there is no searchable field types then we need to add a default as String
-            if (ListUtils.isEmpty(adminInstance.getIndexableFieldTypes())) {
+            if (ListUtils.isEmpty(adminInstance.getFieldTypes())) {
                 PersistencePackage pp = createPersistencePackage(adminInstance, FieldType.TEXT);
 
                 PersistenceManager pm = PersistenceManagerFactory.getPersistenceManager();

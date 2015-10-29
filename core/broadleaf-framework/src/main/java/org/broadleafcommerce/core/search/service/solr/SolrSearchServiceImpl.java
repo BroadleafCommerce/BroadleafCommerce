@@ -563,7 +563,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
         IndexField indexField = searchFieldDao.readIndexFieldForField(currentField);
 
         if (indexField != null && BooleanUtils.isTrue(indexField.getSearchable())) {
-            List<IndexFieldType> fieldTypes = indexField.getIndexableFieldTypes();
+            List<IndexFieldType> fieldTypes = indexField.getFieldTypes();
 
             for (IndexFieldType searchFieldType : fieldTypes) {
                 FieldType fieldType = searchFieldType.getFieldType();

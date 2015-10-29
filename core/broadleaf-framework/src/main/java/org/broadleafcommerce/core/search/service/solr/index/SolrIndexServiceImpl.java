@@ -517,7 +517,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
                 // If we find a SearchField entry for this field, then this field is searchable
                 if (searchField != null) {
-                    List<IndexFieldType> searchableFieldTypes = searchField.getIndexableFieldTypes();
+                    List<IndexFieldType> searchableFieldTypes = searchField.getFieldTypes();
 
                     // For each of its search field types, get the property values, and add a field to the document for each property value
                     for (IndexFieldType sft : searchableFieldTypes) {
