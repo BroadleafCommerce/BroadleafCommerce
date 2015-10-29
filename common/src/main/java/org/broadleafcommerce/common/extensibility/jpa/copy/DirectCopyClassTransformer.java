@@ -445,8 +445,14 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             for (String templateToken : dto.getTemplateTokens()) {
                 reviewTemplateTokens(matchedPatterns, templates, templateToken);
             }
-            skips.add(dto.isSkipOverlaps());
-            renames.add(dto.isRenameMethodOverlaps());
+            // For each of the templates being applied, ensure that they all have configured the right overlap configs
+            // Looping through templates and not templateTokens because 1 template token can drive multiple templates
+            // (e.g. 
+            for (int i = 0; i < templates.size(); i++) {
+                skips.add(dto.isSkipOverlaps());
+                renames.add(dto.isRenameMethodOverlaps());
+            }
+            
             response.setXformVals(templates.toArray(new String[templates.size()]));
             response.setXformSkipOverlaps(skips.toArray(new Boolean[skips.size()]));
             response.setXformRenameMethodOverlaps(renames.toArray(new Boolean[renames.size()]));
