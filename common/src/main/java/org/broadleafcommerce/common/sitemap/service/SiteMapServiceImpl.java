@@ -140,10 +140,10 @@ public class SiteMapServiceImpl implements SiteMapService {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Method getSiteMapFile() invoked for " + fileName);
         }
-        File siteMapFile = broadleafFileService.getResource(fileName,getSiteMapTimeoutInMillis());
+        File siteMapFile = broadleafFileService.getResource(fileName, getSiteMapTimeoutInMillis());
         if (siteMapFile.exists()) {
 
-            if(getAutoGenerateSiteMapAfterTimeout()){
+            if (getAutoGenerateSiteMapAfterTimeout()) {
                 long lastModified = siteMapFile.lastModified();
                 long now = System.currentTimeMillis();
                 // Create new SiteMap if timeout expired.
@@ -285,7 +285,7 @@ public class SiteMapServiceImpl implements SiteMapService {
         return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.createIfNotFound");
     }
 
-    public boolean getAutoGenerateSiteMapAfterTimeout(){
+    public boolean getAutoGenerateSiteMapAfterTimeout() {
         return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.createIfTimeoutExpired",false);
     }
 
