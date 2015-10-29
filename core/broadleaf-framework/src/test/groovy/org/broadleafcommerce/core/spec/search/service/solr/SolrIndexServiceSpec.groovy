@@ -29,10 +29,13 @@ import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.search.dao.FieldDao
 import org.broadleafcommerce.core.search.dao.SolrIndexDao
 import org.broadleafcommerce.core.search.domain.Field
+import org.broadleafcommerce.core.search.domain.FieldEntity
+import org.broadleafcommerce.core.search.service.solr.SolrContext
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService
-import org.broadleafcommerce.core.search.service.solr.SolrIndexServiceImpl
-import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionHandler
-import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionManager
+import org.broadleafcommerce.core.search.service.solr.SolrHelperServiceImpl
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionHandler
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager
+import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl
 import org.springframework.transaction.PlatformTransactionManager
 
 import spock.lang.Specification
@@ -47,8 +50,8 @@ class SolrIndexServiceSpec extends Specification {
     ProductDao mockProductDao = Mock()
     SkuDao mockSkuDao = Mock()
     LocaleService mockLocaleService = Mock()
-    SolrHelperService mockShs = Mock()
-    SolrSearchServiceExtensionManager mockExtensionManager = Mock()
+    SolrHelperService mockShs = Spy(SolrHelperServiceImpl)
+    SolrIndexServiceExtensionManager mockExtensionManager = Mock()
     SandBoxHelper mockSandBoxHelper = Mock()
     
     
@@ -67,10 +70,11 @@ class SolrIndexServiceSpec extends Specification {
     
     def "Test that Categories are being properly associated to skus when creating the solr index"(){
         setup:
-        mockExtensionManager.getProxy() >> Mock(SolrSearchServiceExtensionHandler)
-        mockFieldDao.readAllSkuFields() >> new ArrayList<Field>()
+        mockExtensionManager.getProxy() >> Mock(SolrIndexServiceExtensionHandler)
+        mockFieldDao.readFieldsByEntityType(FieldEntity.SKU) >> new ArrayList<Field>()
         
         service.buildDocument(*_) >> null
+        service.useSku = true;
         
         SkuImpl testSku1 = Mock(SkuImpl)
         SkuImpl testSku2 = Mock(SkuImpl)
@@ -88,7 +92,7 @@ class SolrIndexServiceSpec extends Specification {
         List<Long> productIds = [1, 2]
      
         when:
-        service.buildIncrementalSkuIndex(skus,false)
+        service.buildIncrementalIndex(skus, SolrContext.getReindexServer())
         
         then:
         1 * mockSolrIndexDao.populateProductCatalogStructure(productIds, _)
@@ -97,10 +101,11 @@ class SolrIndexServiceSpec extends Specification {
     
     def "Test that Categories are being properly associated to skus when creating the solr index for out of order skus"(){
         setup:
-        mockExtensionManager.getProxy() >> Mock(SolrSearchServiceExtensionHandler)
-        mockFieldDao.readAllSkuFields() >> new ArrayList<Field>()
+        mockExtensionManager.getProxy() >> Mock(SolrIndexServiceExtensionHandler)
+        mockFieldDao.readFieldsByEntityType(FieldEntity.SKU) >> new ArrayList<Field>()
         
         service.buildDocument(*_) >> null
+        service.useSku = true;
         
         SkuImpl testSku1 = Mock(SkuImpl)
         SkuImpl testSku2 = Mock(SkuImpl)
@@ -122,7 +127,7 @@ class SolrIndexServiceSpec extends Specification {
         List<Long> productIds = [3, 1, 2]
      
         when:
-        service.buildIncrementalSkuIndex(skus,false)
+        service.buildIncrementalIndex(skus, SolrContext.getReindexServer())
         
         then:
         1 * mockSolrIndexDao.populateProductCatalogStructure(productIds, _)

@@ -59,6 +59,12 @@ public class AdminCategoryController extends AdminBasicEntityController {
     protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
         Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
         overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+        boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+        Field fullUrl = ef.findField("url");
+        fullUrl.withAttribute("overriddenUrl", overriddenUrl)
+                .withAttribute("sourceField", "name")
+                .withAttribute("toggleField", "overrideGeneratedUrl")
+                .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
     }
 
     @Override

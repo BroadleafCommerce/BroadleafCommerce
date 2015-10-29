@@ -71,4 +71,11 @@ public interface EntityInformationServiceExtensionHandler extends ExtensionHandl
      */
     ExtensionResultStatusType getOkayToUseSiteDiscriminator(Object o, ExtensionResultHolder<Boolean> erh);
 
+    /**
+     * Handler implementations will populate the {@link ExtensionResultHolder} with a valid default catalog id for the site
+     *
+     * @param site {@link Site} the Site to get the catalog id from
+     * @param erh {@link ExtensionResultHolder} a container for the result
+     */
+    ExtensionResultStatusType getDefaultCatalogIdForSite(Site site, ExtensionResultHolder<Long> erh);
 }

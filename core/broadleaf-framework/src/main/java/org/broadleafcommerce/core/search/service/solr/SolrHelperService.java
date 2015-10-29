@@ -20,7 +20,7 @@
 package org.broadleafcommerce.core.search.service.solr;
 
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
@@ -28,8 +28,8 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
@@ -91,18 +91,10 @@ public interface SolrHelperService {
      * 
      * @param field
      * @param prefix
+     * @param facetType
      * @return the property name for the facet type of this field
      */
-    public String getPropertyNameForFieldFacet(Field field, String prefix);
-    
-    /**
-     * Returns the searchable field types for the given field. If there were none configured, will return
-     * a list with TEXT FieldType.
-     * 
-     * @param field
-     * @return the searchable field types for the given field
-     */
-    public List<FieldType> getSearchableFieldTypes(Field field);
+    public String getPropertyNameForFieldFacet(Field field, String prefix, FieldType facetType);
 
     /**
      * Returns the property name for the given field and field type. This will apply the global prefix to the field,
@@ -126,16 +118,9 @@ public interface SolrHelperService {
     public String getPropertyNameForFieldFacet(Field field);
     
     /**
-     * @param product
-     * @return the Solr id of this product
+     * @return the Solr id of this indexable
      */
-    public String getSolrDocumentId(SolrInputDocument document, Product product);
-
-    /**
-     * @param sku
-     * @return the Solr id of this sku
-     */
-    public String getSolrDocumentId(SolrInputDocument document, Sku sku);
+    public String getSolrDocumentId(SolrInputDocument document, Indexable indexable);
 
     /**
      * @return the name of the field that keeps track what namespace this document belongs to
@@ -148,14 +133,9 @@ public interface SolrHelperService {
     public String getIdFieldName();
     
     /**
-     * @return the productId field name
+     * @return either <b>"productId"</b> (99% of cases) or <b>"skuId"</b> if the <i>solr.index.use.sku</i> system property is true
      */
-    public String getProductIdFieldName();
-
-    /**
-     * @return the skuId field name
-     */
-    public String getSkuIdFieldName();
+    public String getIndexableIdFieldName();
 
     /**
      * @return the category field name, with the global prefix as appropriate
@@ -273,22 +253,13 @@ public interface SolrHelperService {
     public Long getCategoryId(Long category);
 
     /**
-     * In certain cases, the product id used for Solr indexing is different than the direct id on the product.
-     * This method provides a hook to substitute the product id if necessary.
-     * 
-     * @param product
-     * @return the product id to use
-     */
-    public Long getProductId(Product product);
-
-    /**
      * In certain cases, the sku id used for Solr indexing is different than the direct id on the sku.
      * This method provides a hook to substitute the sku id if necessary.
      * 
      * @param sku
      * @return the sku id to use
      */
-    public Long getSkuId(Sku sku);
+    public Long getIndexableId(Indexable indexable);
 
     /**
      * See getPropertyValue(Object, String)
@@ -356,7 +327,7 @@ public interface SolrHelperService {
      * @throws ServiceException
      * @throws IOException
      */
-    public void optimizeIndex(SolrServer server) throws ServiceException, IOException;
+    public void optimizeIndex(SolrClient server) throws ServiceException, IOException;
 
     /**
      * 
@@ -497,4 +468,23 @@ public interface SolrHelperService {
      * @param searchCriteria
      */
     public void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria);
+
+    public Long getCurrentProductId(Indexable indexable);
+
+    public Product getProductForIndexable(Indexable indexable);
+
+    /**
+     * Returns the type field name, usually 'type_s'
+     *
+     * @return
+     */
+    public String getTypeFieldName();
+
+    /**
+     * Returns the type for the given Indexable. For Product's this is "product".
+     *
+     * @param indexable
+     * @return
+     */
+    public String getDocumentType(Indexable indexable);
 }

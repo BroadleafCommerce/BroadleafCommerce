@@ -97,6 +97,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     private Boolean prominent;
     private String columnWidth;
     private String broadleafEnumeration;
+    private String fieldComponentRenderer;
     private Boolean readOnly;
     private Map<String, Map<String, String>> validationConfigurations;
     private Boolean requiredOverride;
@@ -306,6 +307,16 @@ public class FieldMetadataOverride extends MetadataOverride {
 
     public void setBroadleafEnumeration(String broadleafEnumeration) {
         this.broadleafEnumeration = broadleafEnumeration;
+    }
+
+    
+    public String getFieldComponentRenderer() {
+        return fieldComponentRenderer;
+    }
+
+    
+    public void setFieldComponentRenderer(String fieldComponentRenderer) {
+        this.fieldComponentRenderer = fieldComponentRenderer;
     }
 
     public Boolean getReadOnly() {

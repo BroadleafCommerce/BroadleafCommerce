@@ -19,7 +19,11 @@
  */
 package org.broadleafcommerce.core.web.api.wrapper;
 
+import org.broadleafcommerce.common.util.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.common.vendor.service.type.ContainerSizeType;
 import org.broadleafcommerce.core.catalog.domain.Dimension;
+import org.springframework.context.ApplicationContext;
 
 import java.math.BigDecimal;
 
@@ -32,7 +36,7 @@ import javax.xml.bind.annotation.XmlElement;
  * User: Kelly Tisdell
  * Date: 4/10/12
  */
-public class DimensionWrapper extends BaseWrapper implements APIWrapper<Dimension>{
+public class DimensionWrapper extends BaseWrapper implements APIWrapper<Dimension>, APIUnwrapper<Dimension> {
 
     @XmlElement
     protected BigDecimal width;
@@ -190,5 +194,17 @@ public class DimensionWrapper extends BaseWrapper implements APIWrapper<Dimensio
      */
     public void setDimensionUnitOfMeasure(String dimensionUnitOfMeasure) {
         this.dimensionUnitOfMeasure = dimensionUnitOfMeasure;
+    }
+
+    public Dimension unwrap(HttpServletRequest request, ApplicationContext context) {
+        Dimension dim = new Dimension();
+        dim.setContainer(ContainerShapeType.getInstance(this.container));
+        dim.setDimensionUnitOfMeasure(DimensionUnitOfMeasureType.getInstance(this.dimensionUnitOfMeasure));
+        dim.setDepth(this.depth);
+        dim.setGirth(this.girth);
+        dim.setHeight(this.height);
+        dim.setSize(ContainerSizeType.getInstance(this.size));
+        dim.setWidth(this.width);
+        return dim;
     }
 }

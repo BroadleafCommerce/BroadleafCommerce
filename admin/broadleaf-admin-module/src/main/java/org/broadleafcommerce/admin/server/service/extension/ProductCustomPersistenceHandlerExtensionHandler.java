@@ -55,4 +55,15 @@ public interface ProductCustomPersistenceHandlerExtensionHandler extends Extensi
      * @return
      */
     ExtensionResultStatusType manageRemove(PersistencePackage persistencePackage, Product product) throws ServiceException;
+
+    /**
+     * Perform any special handling for field on the product
+     *
+     * @param persistencePackage
+     * @param product
+     * @return
+     * @throws ServiceException
+     */
+    ExtensionResultStatusType manageFields(PersistencePackage persistencePackage, Product product) throws ServiceException;
+
 }

@@ -3,3 +3,7 @@
             th:attr="data-numitemsaffected=${numItemsAffected}"/>
     <div th:if="${listGrid.selectType} == 'selectize'" th:include="components/selectizeCollection" th:with="listGrid=${listGrid}" th:remove="tag"/>
 </div>
+<div th:unless="${treeListGridColumn}" th:remove="tag">
+    <div th:unless="${listGrid.selectType} == 'selectize'" th:include="components/listGrid" th:attr="data-numitemsaffected=${numItemsAffected}"/>
+    <div th:if="${listGrid.selectType} == 'selectize'" th:include="components/selectizeCollection" th:with="listGrid=${listGrid}" th:remove="tag"/>
+</div>

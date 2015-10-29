@@ -47,8 +47,13 @@ public abstract class AbstractMoneyFieldPersistenceProvider extends FieldPersist
             return MetadataProviderResponse.NOT_HANDLED;
         }
         
-        property.setValue(formatValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
-        property.setDisplayValue(formatDisplayValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
+        if (BigDecimal.class.isAssignableFrom(extractValueRequest.getRequestedValue().getClass())) {
+            property.setValue(formatValue((BigDecimal)extractValueRequest.getRequestedValue(), extractValueRequest, property));
+            property.setDisplayValue(formatDisplayValue((BigDecimal) extractValueRequest.getRequestedValue(), extractValueRequest, property));
+        } else {
+            property.setValue(extractValueRequest.getRequestedValue().toString());
+            property.setDisplayValue(extractValueRequest.getDisplayVal());
+        }
         
         return MetadataProviderResponse.HANDLED_BREAK;
     }

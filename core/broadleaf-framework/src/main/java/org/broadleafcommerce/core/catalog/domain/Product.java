@@ -45,7 +45,7 @@ import java.util.Set;
  * @author btaylor
  * @see {@link ProductImpl},{@link Sku}, {@link Category}
  */
-public interface Product extends Serializable, MultiTenantCloneable<Product> {
+public interface Product extends Serializable, MultiTenantCloneable<Product>, Indexable {
 
     /**
      * The id of the Product.
@@ -787,6 +787,14 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
     public void setTaxCode(String taxCode);
 
     /**
+     * In most implementations, including the default Broadleaf demo store, if a product doesn't have a retail price, 
+     * it can't be sold.     This method returns true if in the current context, the product has a price.    The current
+     * context may be different when accessed in an entperise context like one using PriceLists or MultiTentant.
+     * @return
+     */
+    public boolean hasRetailPrice();
+
+    /**
      * added just for convenience, references to defaultSku.retailPrice 
      * @return
      */
@@ -797,5 +805,11 @@ public interface Product extends Serializable, MultiTenantCloneable<Product> {
      * @return
      */
     public Money getSalePrice();
+
+    /**
+     * added just for convenience, references defaultSku.margin
+     * @return
+     */
+    public Money getMargin();
 
 }

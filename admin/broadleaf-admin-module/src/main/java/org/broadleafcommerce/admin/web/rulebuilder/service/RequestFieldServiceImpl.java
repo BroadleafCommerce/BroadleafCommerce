@@ -38,6 +38,15 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
     @Override
     public void init() {
         fields.add(new FieldData.Builder()
+                .label("rule_requestSearchKeyword")
+                .name("properties['blcSearchKeyword']")
+                .operators("blcOperators_Text")
+                .options("[]")
+                .type(SupportedFieldType.STRING)
+                .skipValidation(true)
+                .build());
+
+        fields.add(new FieldData.Builder()
                 .label("rule_requestFullUrl")
                 .name("fullUrlWithQueryString")
                 .operators("blcOperators_Text")

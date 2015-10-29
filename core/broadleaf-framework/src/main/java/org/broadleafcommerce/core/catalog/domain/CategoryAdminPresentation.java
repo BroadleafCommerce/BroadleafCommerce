@@ -32,30 +32,34 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.General,
             order = CategoryAdminPresentation.TabOrder.General,
             groups = {
-                @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.Description,
-                        order = CategoryAdminPresentation.GroupOrder.Description),
+                @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.General,
+                    order = CategoryAdminPresentation.GroupOrder.General),
                 @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.ActiveDateRange,
-                        order = CategoryAdminPresentation.GroupOrder.ActiveDateRange,
-                        column = 1),
-                @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.Advanced,
-                        order = CategoryAdminPresentation.GroupOrder.Advanced)
+                    order = CategoryAdminPresentation.GroupOrder.ActiveDateRange,
+                    column = 1),
+                @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.Miscellaneous,
+                    order = CategoryAdminPresentation.GroupOrder.Miscellaneous,
+                    column = 1)
             }
         ),
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Marketing,
-            order = CategoryAdminPresentation.TabOrder.Marketing,
-            groups = {
-                @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.General,
-                        order = CategoryAdminPresentation.GroupOrder.General)
-            }
+            order = CategoryAdminPresentation.TabOrder.Marketing
         ),
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Media,
             order = CategoryAdminPresentation.TabOrder.Media),
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.SearchFacets,
             order = CategoryAdminPresentation.TabOrder.SearchFacets),
-        @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Advanced,
-            order = CategoryAdminPresentation.TabOrder.Advanced),
+        @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Subcategories,
+            order = CategoryAdminPresentation.TabOrder.Subcategories
+        ),
         @AdminTabPresentation(name = CategoryAdminPresentation.TabName.Products,
-            order = CategoryAdminPresentation.TabOrder.Products)
+            order = CategoryAdminPresentation.TabOrder.Products,
+            groups = {
+                @AdminGroupPresentation(name = CategoryAdminPresentation.GroupName.ProductDefaults,
+                    order = CategoryAdminPresentation.GroupOrder.ProductDefaults,
+                    column = 1)
+            }
+        )
     }
 )
 public interface CategoryAdminPresentation {
@@ -65,7 +69,7 @@ public interface CategoryAdminPresentation {
         public static final String Marketing = "CategoryImpl_Marketing_Tab";
         public static final String Media = "CategoryImpl_Media_Tab";
         public static final String SearchFacets = "CategoryImpl_Search_Facets_Tab";
-        public static final String Advanced = "CategoryImpl_Advanced_Tab";
+        public static final String Subcategories = "CategoryImpl_Subcategories_Tab";
         public static final String Products = "CategoryImpl_Products_Tab";
     }
 
@@ -74,21 +78,21 @@ public interface CategoryAdminPresentation {
         public static final int Marketing = 2000;
         public static final int Media = 3000;
         public static final int SearchFacets = 4000;
-        public static final int Advanced = 5000;
+        public static final int Subcategories = 5000;
         public static final int Products = 6000;
     }
 
     public static class GroupName {
-        public static final String Description = "CategoryImpl_Category_Description";
-        public static final String ActiveDateRange = "CategoryImpl_Active_Date_Range";
-        public static final String Advanced = "CategoryImpl_Advanced";
         public static final String General = "CategoryImpl_General";
+        public static final String ActiveDateRange = "CategoryImpl_Active_Date_Range";
+        public static final String Miscellaneous = "CategoryImpl_Category_Miscellaneous";
+        public static final String ProductDefaults = "CategoryImpl_ProductDefaults";
     }
 
     public static class GroupOrder {
-        public static final int Description = 1000;
-        public static final int ActiveDateRange = 2000;
-        public static final int Advanced = 3000;
-        public static final int General = 4000;
+        public static final int General = 1000;
+        public static final int ActiveDateRange = 1000;
+        public static final int Miscellaneous = 2000;
+        public static final int ProductDefaults = 1000;
     }
 }

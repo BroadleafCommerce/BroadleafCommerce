@@ -44,6 +44,7 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGridAction;
 import org.broadleafcommerce.openadmin.web.form.entity.DefaultEntityFormActions;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 import org.broadleafcommerce.openadmin.web.form.entity.Field;
+import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -92,8 +93,25 @@ public class AdminProductController extends AdminBasicEntityController {
 
     @Override
     protected void modifyEntityForm(EntityForm ef, Map<String, String> pathVars) {
+        String defaultCategoryUrlPrefix = null;
+        Field defaultCategory = ef.findField("defaultCategory");
+        if (StringUtils.isNotBlank(defaultCategory.getValue())) {
+            Category cat = catalogService.findCategoryById(Long.parseLong(defaultCategory.getValue()));
+            defaultCategoryUrlPrefix = cat.getUrl();
+        }
+
         Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
         overrideGeneratedUrl.setFieldType(SupportedFieldType.HIDDEN.toString().toLowerCase());
+        boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+        Field fullUrl = ef.findField("url");
+        if (fullUrl != null) {
+            fullUrl.withAttribute("overriddenUrl", overriddenUrl)
+                    .withAttribute("sourceField", "defaultSku--name")
+                    .withAttribute("toggleField", "overrideGeneratedUrl")
+                    .withAttribute("prefix-selector", "#field-defaultCategory")
+                    .withAttribute("prefix", defaultCategoryUrlPrefix)
+                    .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+        }
     }
 
     @Override
@@ -158,7 +176,7 @@ public class AdminProductController extends AdminBasicEntityController {
                 requestUri = requestUri.substring(request.getContextPath().length() + 1, requestUri.length());
             }
             model.addAttribute("currentUri", requestUri);
-            model.addAttribute("modalHeaderType", "addEntity");
+            model.addAttribute("modalHeaderType", ModalHeaderType.ADD_ENTITY.getType());
             setModelAttributes(model, SECTION_KEY);
             return "modules/modalContainer";
         } else {
@@ -177,7 +195,7 @@ public class AdminProductController extends AdminBasicEntityController {
         model.addAttribute("viewType", "modal/simpleAddEntity");
                 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "addCollectionItem");
+        model.addAttribute("modalHeaderType", ModalHeaderType.ADD_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, SECTION_KEY);
         return "modules/modalContainer";
@@ -240,7 +258,7 @@ public class AdminProductController extends AdminBasicEntityController {
         model.addAttribute("viewType", "modal/simpleEditEntity");
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
-        model.addAttribute("modalHeaderType", "updateCollectionItem");
+        model.addAttribute("modalHeaderType", ModalHeaderType.UPDATE_COLLECTION_ITEM.getType());
         model.addAttribute("collectionProperty", collectionProperty);
         setModelAttributes(model, SECTION_KEY);
         return "modules/modalContainer";
@@ -267,7 +285,7 @@ public class AdminProductController extends AdminBasicEntityController {
                 return showUpdateAdditionalSku(request, model, id, collectionItemId, pathVars, entityForm);
             } else {
                 return super.showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
-                        "updateCollectionItem", entityForm, entity);
+                        modalHeaderType, entityForm, entity);
             }
         } catch (Exception e) {
             throw new ServiceException(e);

@@ -119,6 +119,8 @@
         <class>org.broadleafcommerce.core.search.domain.FieldImpl</class>
         <class>org.broadleafcommerce.core.search.domain.SearchSynonymImpl</class>
         <class>org.broadleafcommerce.core.search.domain.SearchFacetImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.SearchFieldImpl</class>
+        <class>org.broadleafcommerce.core.search.domain.SearchFieldTypeImpl</class>
         <class>org.broadleafcommerce.core.search.domain.SearchFacetRangeImpl</class>
         <class>org.broadleafcommerce.core.search.domain.RequiredFacetImpl</class>
         <class>org.broadleafcommerce.core.rating.domain.RatingSummaryImpl</class>
