@@ -119,7 +119,7 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      * @param addedProperties the properties that have been added to this document so far
      * @return the result of this handler, if NOT_HANDLED, no fields were populated
      */
-    public ExtensionResultStatusType populateDocumentForSearchField(SolrInputDocument document, Field field, FieldType fieldType, Map<String, Object> propertyValues, List<String> addedProperties);
+    public ExtensionResultStatusType populateDocumentForIndexField(SolrInputDocument document, Field field, FieldType fieldType, Map<String, Object> propertyValues, List<String> addedProperties);
 
     public ExtensionResultStatusType attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document);
 }

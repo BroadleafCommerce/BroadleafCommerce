@@ -77,7 +77,7 @@ public interface IndexField extends Serializable, MultiTenantCloneable<IndexFiel
     /**
      * Sets the searchable field types for this search field
      *
-     * @param indexableFieldTypes
+     * @param fieldTypes
      */
     public void setIndexableFieldTypes(List<IndexFieldType> indexableFieldTypes);
 }

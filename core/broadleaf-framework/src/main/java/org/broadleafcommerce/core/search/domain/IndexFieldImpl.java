@@ -77,17 +77,17 @@ public class IndexFieldImpl implements IndexField, Serializable {
             }
     )
     @Column(name = "INDEX_FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFieldImpl_ID", group = "SearchFieldImpl_description",
+    @AdminPresentation(friendlyName = "IndexFieldImpl_ID", group = "IndexFieldImpl_description",
             visibility= VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "SEARCHABLE")
-    @AdminPresentation(friendlyName = "Searchable", defaultValue = "true")
+    @AdminPresentation(friendlyName = "IndexFieldImpl_searchable", defaultValue = "true", prominent = true, tooltip = "IndexFieldImpl_searchable_tooltip")
     protected Boolean searchable;
 
     @ManyToOne(optional=false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFieldImpl_field", order = 1000, group = "SearchFieldImpl_description",
+    @AdminPresentation(friendlyName = "IndexFieldImpl_field", order = 1000, group = "IndexFieldImpl_description",
             prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
     protected Field field;
@@ -95,8 +95,8 @@ public class IndexFieldImpl implements IndexField, Serializable {
     @OneToMany(mappedBy = "indexField", targetEntity = IndexFieldTypeImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
-    @AdminPresentationCollection(friendlyName = "SearchFieldImpl_searchableFieldTypes", order = 1000)
-    protected List<IndexFieldType> indexableFieldTypes = new ArrayList<IndexFieldType>();
+    @AdminPresentationCollection(friendlyName = "IndexFieldImpl_fieldTypes", order = 1000)
+    protected List<IndexFieldType> fieldTypes = new ArrayList<IndexFieldType>();
 
     @Override
     public Long getId() {
@@ -108,10 +108,12 @@ public class IndexFieldImpl implements IndexField, Serializable {
         this.id = id;
     }
 
+    @Override
     public Boolean getSearchable() {
         return searchable;
     }
 
+    @Override
     public void setSearchable(Boolean searchable) {
         this.searchable = searchable;
     }
@@ -128,12 +130,12 @@ public class IndexFieldImpl implements IndexField, Serializable {
 
     @Override
     public List<IndexFieldType> getIndexableFieldTypes() {
-        return indexableFieldTypes;
+        return fieldTypes;
     }
 
     @Override
     public void setIndexableFieldTypes(List<IndexFieldType> searchableFieldTypes) {
-        this.indexableFieldTypes = searchableFieldTypes;
+        this.fieldTypes = searchableFieldTypes;
     }
 
     @Override
@@ -164,7 +166,7 @@ public class IndexFieldImpl implements IndexField, Serializable {
         }
         IndexField cloned = createResponse.getClone();
         cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
-        for(IndexFieldType entry : indexableFieldTypes){
+        for(IndexFieldType entry : fieldTypes){
             cloned.getIndexableFieldTypes().add(entry.createOrRetrieveCopyInstance(context).getClone());
         }
 

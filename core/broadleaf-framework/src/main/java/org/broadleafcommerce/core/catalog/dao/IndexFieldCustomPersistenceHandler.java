@@ -131,7 +131,7 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
         PersistencePackage pp = new PersistencePackage();
         pp.setCeilingEntityFullyQualifiedClassname(IndexFieldTypeImpl.class.getName());
         pp.setSecurityCeilingEntityFullyQualifiedClassname(IndexFieldTypeImpl.class.getName());
-        pp.setSectionEntityField("indexableFieldTypes");
+        pp.setSectionEntityField("fieldTypes");
 
         PersistencePerspective perspective = new PersistencePerspective(new OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC,
                 OperationType.BASIC, OperationType.BASIC), new String[]{}, new ForeignKey[]{});

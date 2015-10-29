@@ -524,7 +524,7 @@ public class SolrIndexServiceImpl implements SolrIndexService {
                         FieldType fieldType = sft.getFieldType();
                         Map<String, Object> propertyValues = getPropertyValues(indexable, field, fieldType, locales);
 
-                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForSearchField(document, field, fieldType, propertyValues, addedProperties);
+                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForIndexField(document, field, fieldType, propertyValues, addedProperties);
 
                         if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                             // Build out the field for every prefix

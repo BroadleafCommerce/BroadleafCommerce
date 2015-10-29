@@ -70,10 +70,17 @@ import javax.persistence.Table;
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "SearchFieldTypeImpl_searchField")
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_indexField")
+        }),
+        @AdminPresentationMergeOverride(name = "indexField.searchable", mergeEntries = {
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
+            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_searchable")
         })
 })
-@AdminPresentationClass(friendlyName = "SearchFieldTypeImpl_friendly", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(friendlyName = "IndexFieldTypeImpl_friendly", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -89,12 +96,12 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
             }
     )
     @Column(name = "INDEX_FIELD_TYPE_ID")
-    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_ID", group = "SearchFieldTypeImpl_description",
+    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_ID", group = "IndexFieldTypeTypeImpl_description",
             visibility= VisibilityEnum.HIDDEN_ALL)
     protected Long id;
     
     @Column(name = "FIELD_TYPE")
-    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_searchableFieldType", group = "SearchFieldTypeImpl_description", order = 4, prominent = true, gridOrder = 4,
+    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_fieldType", group = "IndexFieldTypeImpl_description", order = 4, prominent = true, gridOrder = 4,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.search.domain.solr.FieldType",
             requiredOverride = RequiredOverride.REQUIRED,
@@ -103,7 +110,7 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
 
     @ManyToOne(optional=false, targetEntity = IndexFieldImpl.class)
     @JoinColumn(name = "INDEX_FIELD_ID")
-    @AdminPresentation(friendlyName = "SearchFieldTypeImpl_searchField", group = "SearchFieldTypeImpl_description",
+    @AdminPresentation(friendlyName = "IndexFieldTypeImpl_indexField", group = "IndexFieldTypeImpl_description",
             order=3, gridOrder = 3, visibility=VisibilityEnum.FORM_HIDDEN)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "field.friendlyName")
     protected IndexField indexField;
