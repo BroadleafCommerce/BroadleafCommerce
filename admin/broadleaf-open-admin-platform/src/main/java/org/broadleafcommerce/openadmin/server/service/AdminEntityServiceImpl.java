@@ -856,11 +856,6 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         return null;
     }
 
-    @Override
-    public void revertEntity(String entityType, String id) throws ServiceException {
-        //do nothing -- override for specific behavior
-    }
-
     protected int getDefaultMaxResults() {
         return BLCSystemProperty.resolveIntSystemProperty("admin.default.max.results", 50);
     }
