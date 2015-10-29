@@ -94,7 +94,9 @@ public class DynamicFieldPersistenceHandlerHelper {
             Map<String, String> itemMap = new HashMap<String, String>();
             itemMap.put("regularExpression", definition.getValidationRegEx());
             itemMap.put(ConfigurationItem.ERROR_MESSAGE, definition.getValidationErrorMesageKey());
-            fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", itemMap);
+            List<Map<String, String>> configurationItems = new ArrayList<Map<String, String>>();
+            configurationItems.add(itemMap);
+            fieldMetadata.getValidationConfigurations().put("org.broadleafcommerce.openadmin.server.service.persistence.validation.RegexPropertyValidator", configurationItems);
         }
         
         

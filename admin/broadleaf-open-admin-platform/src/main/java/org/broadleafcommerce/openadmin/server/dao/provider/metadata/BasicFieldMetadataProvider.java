@@ -20,13 +20,6 @@
 
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -66,6 +59,14 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jeff Fischer
@@ -576,9 +577,15 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 itemMap.put(item.itemName(), item.itemValue());
             }
             if (override.getValidationConfigurations() == null) {
-                override.setValidationConfigurations(new LinkedHashMap<String, Map<String, String>>(5));
+                override.setValidationConfigurations(new LinkedHashMap<String, List<Map<String, String>>>(5));
             }
-            override.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+            List<Map<String, String>> configItems = override.getValidationConfigurations().get(configuration.validationImplementation());
+            if (configItems == null) {
+                configItems = new ArrayList<Map<String, String>>();
+            }
+            configItems.add(itemMap);
+            
+            override.getValidationConfigurations().put(configuration.validationImplementation(), configItems);
         }
     }
 

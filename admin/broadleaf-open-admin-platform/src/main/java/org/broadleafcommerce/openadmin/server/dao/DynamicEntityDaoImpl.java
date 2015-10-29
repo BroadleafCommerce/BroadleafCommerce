@@ -1209,7 +1209,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         for (Map.Entry<String, FieldMetadata> key : newFields.entrySet()) {
             convertedFields.put(propertyName + '.' + key.getKey(), key.getValue());
             if (key.getValue() instanceof BasicFieldMetadata) {
-                for (Map.Entry<String, Map<String, String>> entry : ((BasicFieldMetadata) key.getValue()).getValidationConfigurations().entrySet()) {
+                for (Map.Entry<String, List<Map<String, String>>> entry : ((BasicFieldMetadata) key.getValue()).getValidationConfigurations().entrySet()) {
                     Class<?> validatorImpl = null;
                     try {
                         validatorImpl = Class.forName(entry.getKey());
@@ -1220,9 +1220,11 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         }
                     }
                     if (validatorImpl != null && FieldNamePropertyValidator.class.isAssignableFrom(validatorImpl)) {
-                        for (Map.Entry<String, String> configs : entry.getValue().entrySet()) {
-                            if (newFields.containsKey(configs.getValue())) {
-                                configs.setValue(propertyName + "." + configs.getValue());
+                        for (Map<String, String> configs  :entry.getValue()) {
+                            for (Map.Entry<String, String> config : configs.entrySet()) {
+                                if (newFields.containsKey(config.getValue())) {
+                                    config.setValue(propertyName + "." + config.getValue());
+                                }
                             }
                         }
                     }
