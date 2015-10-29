@@ -188,7 +188,9 @@
         class="org.broadleafcommerce.common.web.BroadleafThymeleafStandardTemplateModeHandlers" />
         
     <bean id="thymeleafLayoutDialect" class="nz.net.ultraq.thymeleaf.LayoutDialect" />
-    
+
+    <bean id="blICacheManager" class="org.broadleafcommerce.core.web.cache.BLCICacheManager" />
+
     <bean id="blWebTemplateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">
         <property name="messageResolvers">
             <set>
