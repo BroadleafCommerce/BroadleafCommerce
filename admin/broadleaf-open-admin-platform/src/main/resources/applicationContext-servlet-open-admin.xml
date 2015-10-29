@@ -35,6 +35,7 @@
     <context:component-scan base-package="org.broadleafcommerce.openadmin.web.controller"/>
     
     <bean id="blAdminStructuredContentController" class="org.broadleafcommerce.cms.admin.web.controller.AdminStructuredContentController" />
+    <bean id="blAdminUserManagementController" class="org.broadleafcommerce.openadmin.web.controller.AdminUserManagementController" />
 
     <bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
         <property name="order" value="1"/>
@@ -142,5 +143,6 @@
     <mvc:interceptors>
       <bean class="org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilityInterceptor" />
     </mvc:interceptors>
-       
+
+
 </beans>
