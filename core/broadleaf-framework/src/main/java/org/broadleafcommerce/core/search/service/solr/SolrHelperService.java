@@ -80,7 +80,7 @@ public interface SolrHelperService {
      * Returns the property name for the given field, field type, and prefix
      * 
      * @param field
-     * @param searchableFieldType
+     * @param fieldType
      * @param prefix
      * @return the property name for the field and fieldtype
      */
@@ -102,7 +102,7 @@ public interface SolrHelperService {
      * type was set to FieldType.PRICE
      * 
      * @param field
-     * @param searchableFieldType
+     * @param fieldType
      * @return the property name for the field and fieldtype
      */
     public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType);

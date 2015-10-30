@@ -267,7 +267,7 @@ $(document).ready(function() {
             });
         }
     }
-    
+
     function showTabSpinner($tab, $tabBody) {
         $("#headerFlashAlertBoxContainer").addClass("hidden");
         $tabBody.find('button').prop("disabled", true);
@@ -278,7 +278,7 @@ $(document).ready(function() {
         $tabBody.find('button').prop("disabled", false);
         $tab.find('i.icon-spinner').hide();
     }
-    
+
     $('body').on('submit', 'form.entity-form', function(event) {
         var submit = BLCAdmin.runSubmitHandlers($(this));
         return submit;

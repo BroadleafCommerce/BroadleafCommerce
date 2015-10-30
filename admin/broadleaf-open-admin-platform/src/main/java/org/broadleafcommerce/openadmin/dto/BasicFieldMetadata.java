@@ -19,14 +19,16 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.LookupType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.openadmin.dto.visitor.MetadataVisitor;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.PropertyValidator;
-import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,7 +71,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String broadleafEnumeration;
     protected String fieldComponentRenderer;
     protected Boolean readOnly;
-    protected Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>(5);
+    protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<String, List<Map<String, String>>>(5);
     protected Boolean requiredOverride;
     protected String tooltip;
     protected String helpText;
@@ -332,11 +334,11 @@ public class BasicFieldMetadata extends FieldMetadata {
      * @return the validation configurations for this property keyed by the fully-qualified name of the
      * {@link PropertyValidator} implementation
      */
-    public Map<String, Map<String, String>> getValidationConfigurations() {
+    public Map<String, List<Map<String, String>>> getValidationConfigurations() {
         return validationConfigurations;
     }
 
-    public void setValidationConfigurations(Map<String, Map<String, String>> validationConfigurations) {
+    public void setValidationConfigurations(Map<String, List<Map<String, String>>> validationConfigurations) {
         this.validationConfigurations = validationConfigurations;
     }
 
@@ -601,12 +603,17 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.tooltip = tooltip;
         metadata.helpText = helpText;
         metadata.hint = hint;
-        for (Map.Entry<String, Map<String, String>> entry : validationConfigurations.entrySet()) {
-            Map<String, String> clone = new HashMap<String, String>(entry.getValue().size());
-            for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
-                clone.put(entry2.getKey(), entry2.getValue());
+        for (Map.Entry<String, List<Map<String, String>>> entry : validationConfigurations.entrySet()) {
+            List<Map<String, String>> clonedConfigItems = new ArrayList<Map<String, String>>(entry.getValue().size());
+            
+            for (Map<String, String> configEntries : entry.getValue()) {
+                Map<String, String> clone = new HashMap<String, String>(configEntries.keySet().size());
+                for (Map.Entry<String, String> entry2 : configEntries.entrySet()) {
+                    clone.put(entry2.getKey(), entry2.getValue());
+                }
+                clonedConfigItems.add(clone);
             }
-            metadata.validationConfigurations.put(entry.getKey(), clone);
+            metadata.validationConfigurations.put(entry.getKey(), clonedConfigItems);
         }
         metadata.lookupDisplayProperty = lookupDisplayProperty;
         metadata.forcePopulateChildProperties = forcePopulateChildProperties;

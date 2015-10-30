@@ -63,6 +63,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.hibernate.ejb.QueryHints;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -98,6 +99,9 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Resource(name="blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+
+    @Value("${product.query.limit:500}")
+    protected long queryLimit;
 
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
 
@@ -180,7 +184,10 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 List<Long> productIds = query.getResultList();
                 productIds = sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[productIds.size()]));
 
-                if (productIds.size() <= 500) {
+                if(productIds.size() == 0){
+                    return new DynamicResultSet(null, new Entity[0],0);
+                }
+                if (productIds.size() <= queryLimit) {
                     FilterMapping filterMapping = new FilterMapping()
                         .withFieldPath(new FieldPath().withTargetProperty("id"))
                         .withDirectFilterValues(productIds)
@@ -199,7 +206,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 } else {
                     String joined = StringUtils.join(transformedValues, ',');
                     LOG.warn(String.format("Skipping default category filtering for product fetch query since there are " +
-                            "more than 800 products found to belong to the selected default categories(%s). This is a " +
+                            "more than "+queryLimit+" products found to belong to the selected default categories(%s). This is a " +
                             "filter query limitation.", joined));
                 }
             }
