@@ -125,7 +125,7 @@ public interface Field extends Serializable, MultiTenantCloneable<Field> {
      * Gets the facet field type. Note that the facet field type is also the type used to perform sorting.
      * Any field where there is a desire to facet or sort on should have this FieldType specified.
      * 
-     * @see #getSearchableFieldTypes()
+     * @see #getFieldTypes()
      * @return the facet field type
      * @deprecated this is now part of SearchFacet
      */

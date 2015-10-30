@@ -31,7 +31,9 @@ import org.broadleafcommerce.common.presentation.client.OperationType;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
+import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
+import org.broadleafcommerce.common.util.TypedTransformer;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
@@ -456,7 +458,13 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 Sku sku = (Sku) records.get(i);
                 Entity entity = payload[i];
 
-                List<ProductOptionValue> optionValues = sku.getProductOptionValues();
+                List<ProductOptionValue> optionValues = BLCCollectionUtils.collectList(sku.getProductOptionValueXrefs(), new TypedTransformer<ProductOptionValue>() {
+                    @Override
+                    public ProductOptionValue transform(Object input) {
+                        return ((SkuProductOptionValueXref) input).getProductOptionValue();
+                    }
+                });
+
                 for (ProductOptionValue value : optionValues) {
                     Property optionProperty = new Property();
                     optionProperty.setName(PRODUCT_OPTION_FIELD_PREFIX + value.getProductOption().getId());

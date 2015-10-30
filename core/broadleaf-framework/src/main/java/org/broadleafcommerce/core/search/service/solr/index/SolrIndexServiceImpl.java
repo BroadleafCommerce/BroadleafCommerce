@@ -50,14 +50,14 @@ import org.broadleafcommerce.core.catalog.service.dynamic.SkuActiveDateConsidera
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.search.dao.CatalogStructure;
 import org.broadleafcommerce.core.search.dao.FieldDao;
+import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
-import org.broadleafcommerce.core.search.dao.SearchFieldDao;
 import org.broadleafcommerce.core.search.dao.SolrIndexDao;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
-import org.broadleafcommerce.core.search.domain.SearchField;
-import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrContext;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
@@ -146,8 +146,8 @@ public class SolrIndexServiceImpl implements SolrIndexService {
     @Resource(name = "blSearchFacetDao")
     protected SearchFacetDao searchFacetDao;
 
-    @Resource(name = "blSearchFieldDao")
-    protected SearchFieldDao searchFieldDao;
+    @Resource(name = "blIndexFieldDao")
+    protected IndexFieldDao searchFieldDao;
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
@@ -505,26 +505,24 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<Field> fields, List<Locale> locales) {
-        // Keep track of searchable fields added to the index.   We need to also add the search facets if
-        // they weren't already added as a searchable field.
+        // Keep track of fields added to the index.   We need to also add the search facets if
+        // they weren't already added as a normal index field.
         List<String> addedProperties = new ArrayList<String>();
 
         for (Field field : fields) {
             try {
-                // Index the searchable fields
-                // Determine if field is searchable (check if it has a search field entry in BLC_SEARCH_FIELD)
-                SearchField searchField = searchFieldDao.readSearchFieldForField(field);
+                IndexField indexField = searchFieldDao.readIndexFieldForField(field);
 
-                // If we find a SearchField entry for this field, then this field is searchable
-                if (searchField != null) {
-                    List<SearchFieldType> searchableFieldTypes = searchField.getSearchableFieldTypes();
+                // If we find an IndexField entry for this field, then we need to store it in the index
+                if (indexField != null) {
+                    List<IndexFieldType> searchableFieldTypes = indexField.getFieldTypes();
 
                     // For each of its search field types, get the property values, and add a field to the document for each property value
-                    for (SearchFieldType sft : searchableFieldTypes) {
-                        FieldType fieldType = sft.getSearchableFieldType();
+                    for (IndexFieldType sft : searchableFieldTypes) {
+                        FieldType fieldType = sft.getFieldType();
                         Map<String, Object> propertyValues = getPropertyValues(indexable, field, fieldType, locales);
 
-                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForSearchField(document, field, fieldType, propertyValues, addedProperties);
+                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForIndexField(document, field, fieldType, propertyValues, addedProperties);
 
                         if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                             // Build out the field for every prefix
