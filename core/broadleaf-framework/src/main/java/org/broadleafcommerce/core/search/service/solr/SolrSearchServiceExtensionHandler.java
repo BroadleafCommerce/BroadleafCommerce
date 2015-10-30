@@ -98,12 +98,12 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      *
      * @param query
      * @param indexField the search field
-     * @param searchFieldType the field type of the field
+     * @param indexFieldType the field type of the field
      * @param queryFieldsResult the binding result that contains the list of query fields, only add to this
      * @return the result of the handler, if NOT_HANDLED, then no query fields were added
      * @see {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
      */
-    public ExtensionResultStatusType getQueryField(SolrQuery query, IndexField searchField, IndexFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
+    public ExtensionResultStatusType getQueryField(SolrQuery query, IndexField indexField, IndexFieldType indexFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
 
     /**
      * <p>Modifies the product search results from a Solr query</p>

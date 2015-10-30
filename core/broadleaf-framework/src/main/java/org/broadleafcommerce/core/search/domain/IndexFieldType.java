@@ -25,7 +25,7 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import java.io.Serializable;
 
 /**
- * This interface is used for representing a FieldType for a SearchField entity
+ * This interface is used for representing a {@link FieldType} for an {@link IndexField}
  *
  * @author Nick Crum (ncrum)
  */

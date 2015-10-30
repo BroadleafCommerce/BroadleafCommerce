@@ -505,19 +505,17 @@ public class SolrIndexServiceImpl implements SolrIndexService {
 
     @Override
     public void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<Field> fields, List<Locale> locales) {
-        // Keep track of searchable fields added to the index.   We need to also add the search facets if
-        // they weren't already added as a searchable field.
+        // Keep track of fields added to the index.   We need to also add the search facets if
+        // they weren't already added as a normal index field.
         List<String> addedProperties = new ArrayList<String>();
 
         for (Field field : fields) {
             try {
-                // Index the searchable fields
-                // Determine if field is searchable (check if it has a search field entry in BLC_SEARCH_FIELD)
-                IndexField searchField = searchFieldDao.readIndexFieldForField(field);
+                IndexField indexField = searchFieldDao.readIndexFieldForField(field);
 
-                // If we find a SearchField entry for this field, then this field is searchable
-                if (searchField != null) {
-                    List<IndexFieldType> searchableFieldTypes = searchField.getFieldTypes();
+                // If we find an IndexField entry for this field, then we need to store it in the index
+                if (indexField != null) {
+                    List<IndexFieldType> searchableFieldTypes = indexField.getFieldTypes();
 
                     // For each of its search field types, get the property values, and add a field to the document for each property value
                     for (IndexFieldType sft : searchableFieldTypes) {

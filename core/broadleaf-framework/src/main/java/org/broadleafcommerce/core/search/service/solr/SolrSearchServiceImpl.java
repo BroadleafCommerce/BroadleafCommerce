@@ -129,7 +129,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected SolrIndexService solrIndexService;
 
     @Resource(name = "blIndexFieldDao")
-    protected IndexFieldDao searchFieldDao;
+    protected IndexFieldDao indexFieldDao;
 
     @Resource(name = "blSolrSearchServiceExtensionManager")
     protected SolrSearchServiceExtensionManager extensionManager;
@@ -560,20 +560,20 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param currentField the current field
      */
     protected void getQueryFields(SolrQuery query, final List<String> queryFields, Field currentField) {
-        IndexField indexField = searchFieldDao.readIndexFieldForField(currentField);
+        IndexField indexField = indexFieldDao.readIndexFieldForField(currentField);
 
         if (indexField != null && BooleanUtils.isTrue(indexField.getSearchable())) {
             List<IndexFieldType> fieldTypes = indexField.getFieldTypes();
 
-            for (IndexFieldType searchFieldType : fieldTypes) {
-                FieldType fieldType = searchFieldType.getFieldType();
+            for (IndexFieldType indexFieldType : fieldTypes) {
+                FieldType fieldType = indexFieldType.getFieldType();
 
                 // this will hold the list of query fields for our given field
                 ExtensionResultHolder<List<String>> queryFieldResult = new ExtensionResultHolder<>();
                 queryFieldResult.setResult(queryFields);
 
                 // here we try to get the query field's for this search field
-                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(query, indexField, searchFieldType, queryFieldResult);
+                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(query, indexField, indexFieldType, queryFieldResult);
 
                 if (ExtensionResultStatusType.NOT_HANDLED.equals(result)){
                     // if we didn't get any query fields we just add a default one

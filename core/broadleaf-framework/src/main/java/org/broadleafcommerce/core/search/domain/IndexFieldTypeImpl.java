@@ -141,8 +141,8 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
     }
 
     @Override
-    public void setIndexField(IndexField searchField) {
-        this.indexField = searchField;
+    public void setIndexField(IndexField indexField) {
+        this.indexField = indexField;
     }
 
     @Override
@@ -151,13 +151,13 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
-        IndexFieldType searchFieldType = createResponse.getClone();
+        IndexFieldType indexFieldType = createResponse.getClone();
         if (indexField != null) {
-            searchFieldType.setIndexField(indexField.createOrRetrieveCopyInstance(context).getClone());
+            indexFieldType.setIndexField(indexField.createOrRetrieveCopyInstance(context).getClone());
         }
 
         if (fieldType != null) {
-            searchFieldType.setFieldType(this.getFieldType());
+            indexFieldType.setFieldType(this.getFieldType());
         }
         return createResponse;
     }
