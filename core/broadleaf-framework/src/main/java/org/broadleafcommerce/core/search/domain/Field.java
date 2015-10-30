@@ -20,7 +20,6 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.io.Serializable;
 import java.util.List;
@@ -98,41 +97,6 @@ public interface Field extends Serializable, MultiTenantCloneable<Field> {
     public void setAbbreviation(String abbreviation);
 
     /**
-     * Gets the searchable flag
-     * @return whether or not this Field is searchable
-     * @deprecated this is now determined if the Field is a SearchField
-     */
-    @Deprecated
-    public Boolean getSearchable();
-
-    /** 
-     * Sets the searchable flag
-     * @param searchable
-     * @deprecated this is now determined if the Field is a SearchField
-     */
-    @Deprecated
-    public void setSearchable(Boolean searchable);
-
-    /**
-     * Sets the facet field type
-     * @param facetFieldType
-     * @deprecated this is now part of SearchFacet
-     */
-    @Deprecated
-    public void setFacetFieldType(FieldType facetFieldType);
-
-    /**
-     * Gets the facet field type. Note that the facet field type is also the type used to perform sorting.
-     * Any field where there is a desire to facet or sort on should have this FieldType specified.
-     * 
-     * @see #getFieldTypes()
-     * @return the facet field type
-     * @deprecated this is now part of SearchFacet
-     */
-    @Deprecated
-    public FieldType getFacetFieldType();
-
-    /**
      * Gets the searchConfigs. Note that a concrete implementation or usage of this class is not available
      * in the community version of Broadleaf Commerce.
      * @return the searchConfigs
@@ -168,17 +132,4 @@ public interface Field extends Serializable, MultiTenantCloneable<Field> {
      */
     public void setTranslatable(Boolean translatable);
 
-    /**
-     * Get whether or not this field is a CustomField
-     *
-     * @return
-     */
-    public Boolean getIsCustom();
-
-    /**
-     * Set whether or not this field is a CustomField
-     *
-     * @param isCustom
-     */
-    public void setIsCustom(Boolean isCustom);
 }
