@@ -53,6 +53,13 @@
     background-image: none;
 }
 
+.app-content .side-nav ul li a.blc-icon-blc-leaf:before {
+    font-size: 4em;
+    color: #809831;
+    top: 12px;
+    left: 12px;
+}
+
 .app-content .side-nav ul li a:before {
     font-size: 2em;
     color: #A4A4A4;
@@ -354,14 +361,14 @@ input[type="radio"].radio+label.radio-label.clr,
 
 .content-area-title-bar .ajax-loader,
 .entity-form-actions .ajax-loader {
-    float: right;
+    float: left;
     margin: 30px 10px;
 }
 .modal .modal-footer .entity-form-actions .button {
-    float:right;
+    float:left;
 }
 .modal .modal-footer .entity-form-actions .ajax-loader {
-    float: right;
+    float: left;
     margin: 10px 10px;
 }
 
