@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
@@ -67,7 +68,7 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      */
     public ExtensionResultStatusType getIndexableId(Indexable indexable, Long[] returnContainer);
     
-    public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<? extends Indexable> items, List<Field> fields, List<Locale> locales);
+    public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<? extends Indexable> items, List<IndexField> fields, List<Locale> locales);
 
     /**
      * Perform actions at the start of a batch to improve performance of Solr search for the list of batch products.  
@@ -119,7 +120,7 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      * @param addedProperties the properties that have been added to this document so far
      * @return the result of this handler, if NOT_HANDLED, no fields were populated
      */
-    public ExtensionResultStatusType populateDocumentForIndexField(SolrInputDocument document, Field field, FieldType fieldType, Map<String, Object> propertyValues, List<String> addedProperties);
+    public ExtensionResultStatusType populateDocumentForIndexField(SolrInputDocument document, IndexField field, FieldType fieldType, Map<String, Object> propertyValues);
 
     public ExtensionResultStatusType attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document);
 }
