@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.core.catalog.domain.Indexable;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
 
@@ -55,7 +56,7 @@ public abstract class AbstractSolrIndexServiceExtensionHandler extends AbstractE
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType populateDocumentForIndexField(SolrInputDocument document, Field field, FieldType fieldType, Map<String, Object> propertyValues, List<String> addedProperties) {
+    @Override public ExtensionResultStatusType populateDocumentForIndexField(SolrInputDocument document, IndexField field, FieldType fieldType, Map<String, Object> propertyValues) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -64,7 +65,7 @@ public abstract class AbstractSolrIndexServiceExtensionHandler extends AbstractE
     }
 
     @Override
-    public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<? extends Indexable> products, List<Field> fields, List<Locale> locales) {
+    public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<? extends Indexable> products, List<IndexField> fields, List<Locale> locales) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

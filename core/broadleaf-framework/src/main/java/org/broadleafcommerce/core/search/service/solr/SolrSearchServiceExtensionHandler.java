@@ -26,12 +26,11 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
-import org.broadleafcommerce.core.search.domain.IndexField;
-import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
@@ -43,14 +42,9 @@ import java.util.List;
 public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
 
     /**
-     * Returns a prefix if required for the passed in facet.
-     */
-    public ExtensionResultStatusType buildPrefixListForSearchableFacet(Field field, List<String> prefixList);
-
-    /**
      * Returns a prefix if required for the passed in searchable field. 
      */
-    public ExtensionResultStatusType buildPrefixListForSearchableField(Field field, FieldType searchableFieldType,
+    public ExtensionResultStatusType buildPrefixListForIndexField(IndexField field, FieldType fieldType,
             List<String> prefixList);
 
     /**
@@ -91,7 +85,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * to the list within the <b>queryFieldsResult</b> parameters.
      *
      * <p>
-     * Most implementations of this will need to invoke {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
+     * Most implementations of this will need to invoke {@link SolrHelperService#getPropertyNameForIndexField(IndexField, FieldType)}
      * in order to return the right value to populate in the <b>queryFieldsResult</b>. If the returned result is
      * {@link ExtensionResultStatusType#NOT_HANDLED} then the default behavior is to only do that.
      *
@@ -101,7 +95,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param indexFieldType the field type of the field
      * @param queryFieldsResult the binding result that contains the list of query fields, only add to this
      * @return the result of the handler, if NOT_HANDLED, then no query fields were added
-     * @see {@link SolrHelperService#getPropertyNameForFieldSearchable(Field, FieldType)}
+     * @see {@link SolrHelperService#getPropertyNameForIndexField(IndexField, FieldType)}
      */
     public ExtensionResultStatusType getQueryField(SolrQuery query, IndexField indexField, IndexFieldType indexFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
 
