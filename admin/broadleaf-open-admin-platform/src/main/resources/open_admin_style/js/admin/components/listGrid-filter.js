@@ -163,7 +163,7 @@ $(document).ready(function() {
         // submit the form just for this particular field since this is the only sort that changed
         $(this).closest('.listgrid-headerBtn').find('div.filter-fields .listgrid-filter').trigger('click', true);
 
-        return false;
+        //return false;
     });
 
     /**
