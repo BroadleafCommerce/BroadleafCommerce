@@ -20,13 +20,16 @@
 package org.broadleafcommerce.core.search.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+
 import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Represents a field that gets stored in the search index
+ * 
  * @author Chad Harchar (charchar)
  */
-public interface SearchField extends Serializable, MultiTenantCloneable<SearchField> {
+public interface IndexField extends Serializable, MultiTenantCloneable<IndexField> {
 
     /**
      * Gets the id for this search field
@@ -41,7 +44,15 @@ public interface SearchField extends Serializable, MultiTenantCloneable<SearchFi
      * @param id
      */
     public void setId(Long id);
+    
+    /**
+     * Whether or not the user should see results for this field when typing in search terms in the omnibox, or if
+     * this is just a field stored in the index (like margin or sorts)
+     */
+    public Boolean getSearchable();
 
+    public void setSearchable(Boolean searchable);
+    
     /**
      * Gets the field for this search field
      *
@@ -61,12 +72,12 @@ public interface SearchField extends Serializable, MultiTenantCloneable<SearchFi
      *
      * @return
      */
-    public List<SearchFieldType> getSearchableFieldTypes();
+    public List<IndexFieldType> getFieldTypes();
 
     /**
      * Sets the searchable field types for this search field
      *
-     * @param searchableFieldTypes
+     * @param fieldTypes
      */
-    public void setSearchableFieldTypes(List<SearchFieldType> searchableFieldTypes);
+    public void setFieldTypes(List<IndexFieldType> fieldTypes);
 }
