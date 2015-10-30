@@ -455,17 +455,17 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     }
 
     @Override
-    public CreateResponse<DiscreteOrderItemImpl> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
-        CreateResponse<DiscreteOrderItemImpl> createResponse = super.createOrRetrieveCopyInstance(context);
+    public CreateResponse<DiscreteOrderItem> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<DiscreteOrderItem> createResponse = super.createOrRetrieveCopyInstance(context);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
         DiscreteOrderItem cloned = createResponse.getClone();
         cloned.setBaseRetailPrice(getBaseRetailPrice());
         cloned.setBaseSalePrice(getBaseSalePrice());
-        cloned.setProduct(product.createOrRetrieveCopyInstance(context).getClone());
-        cloned.setSku(sku.createOrRetrieveCopyInstance(context).getClone());
-        cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setProduct(product);
+        cloned.setSku(sku);
+        cloned.setCategory(category);
         cloned.setDiscountingAllowed(discountsAllowed);
         cloned.setName(name);
         // dont clone

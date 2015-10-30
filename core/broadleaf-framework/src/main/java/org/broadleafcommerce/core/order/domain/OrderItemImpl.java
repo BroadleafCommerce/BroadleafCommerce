@@ -78,7 +78,7 @@ import java.util.Map;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
-public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable, MultiTenantCloneable<OrderItemImpl> {
+public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 
     private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
     private static final long serialVersionUID = 1L;
@@ -860,13 +860,13 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public <G extends OrderItemImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OrderItem> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
         OrderItem cloned = createResponse.getClone();
-        cloned.setCategory(category.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setCategory(category);
         cloned.setName(name);
         cloned.setOrderItemType(getOrderItemType());
         cloned.setDiscountingAllowed(discountsAllowed);
@@ -880,7 +880,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         // dont clone
         cloned.setParentOrderItem(parentOrderItem);
         for(OrderItem entry : childOrderItems){
-            OrderItem clonedEntry = ((OrderItemImpl)entry).createOrRetrieveCopyInstance(context).getClone();
+            OrderItem clonedEntry = ((OrderItem)entry).createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setParentOrderItem(clonedEntry);
             cloned.getChildOrderItems().add(clonedEntry);
         }
