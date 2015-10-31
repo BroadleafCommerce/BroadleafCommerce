@@ -21,10 +21,13 @@ package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
 import org.hibernate.ejb.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -68,4 +71,24 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
             return null;
         }
     }
+    
+    @Override
+    public List<IndexField> readFieldsByEntityType(FieldEntity entityType) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
+
+        Root<IndexFieldImpl> root = criteria.from(IndexFieldImpl.class);
+
+        criteria.select(root);
+        criteria.where(
+                builder.equal(root.get("field").get("entityType").as(String.class), entityType.getType())
+                );
+
+        TypedQuery<IndexField> query = em.createQuery(criteria);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
+
+        return query.getResultList();
+    }
+
 }
