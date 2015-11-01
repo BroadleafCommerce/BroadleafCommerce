@@ -49,7 +49,6 @@ import org.broadleafcommerce.core.search.dao.FieldDao;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
-import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.core.search.domain.IndexFieldType;
@@ -534,16 +533,16 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
     protected String buildQueryFieldsString(SolrQuery query) {
         StringBuilder queryBuilder = new StringBuilder();
-        List<Field> fields = null;
+        List<IndexField> fields = null;
         if (useSku) {
-            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
+            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
         } else {
-            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
 
         // we want to gather all the query fields into one list
         List<String> queryFields = new ArrayList<>();
-        for (Field currentField : fields) {
+        for (IndexField currentField : fields) {
             getQueryFields(query, queryFields, currentField);
         }
 
@@ -559,8 +558,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param queryFields the query fields for this query
      * @param currentField the current field
      */
-    protected void getQueryFields(SolrQuery query, final List<String> queryFields, Field currentField) {
-        IndexField indexField = indexFieldDao.readIndexFieldForField(currentField);
+    protected void getQueryFields(SolrQuery query, final List<String> queryFields, IndexField indexField) {
 
         if (indexField != null && BooleanUtils.isTrue(indexField.getSearchable())) {
             List<IndexFieldType> fieldTypes = indexField.getFieldTypes();
@@ -577,7 +575,7 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
 
                 if (ExtensionResultStatusType.NOT_HANDLED.equals(result)){
                     // if we didn't get any query fields we just add a default one
-                    String solrFieldName = shs.getPropertyNameForFieldSearchable(currentField, fieldType);
+                    String solrFieldName = shs.getPropertyNameForIndexField(indexFieldType.getIndexField(), fieldType);
                     queryFields.add(solrFieldName);
                 }
             }
@@ -733,11 +731,11 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
      * @param searchCriteria
      */
     protected void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort) {
-        List<Field> fields = null;
+        List<IndexField> fields = null;
         if (useSku) {
-            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
+            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.SKU);
         } else {
-            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
+            fields = indexFieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
         }
 
         shs.attachSortClause(query, searchCriteria, defaultSort, fields);
@@ -944,20 +942,6 @@ public class SolrSearchServiceImpl implements SearchService, InitializingBean, D
     protected Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets,
             final SearchCriteria searchCriteria) {
         return shs.getNamedFacetMap(facets, searchCriteria);
-    }
-
-    /**
-     * @param searchCriteria
-     * @return a map of abbreviated key to fully qualified solr index field key for all product fields
-     */
-    protected Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria) {
-        List<Field> fields = null;
-        if (useSku) {
-            fields = fieldDao.readFieldsByEntityType(FieldEntity.SKU);
-        } else {
-            fields = fieldDao.readFieldsByEntityType(FieldEntity.PRODUCT);
-        }
-        return shs.getSolrFieldKeyMap(searchCriteria, fields);
     }
 
     /**

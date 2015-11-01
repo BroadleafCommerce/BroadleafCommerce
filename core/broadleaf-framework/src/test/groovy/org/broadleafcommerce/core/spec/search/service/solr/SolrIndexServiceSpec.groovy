@@ -26,7 +26,7 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao
 import org.broadleafcommerce.core.catalog.domain.ProductImpl
 import org.broadleafcommerce.core.catalog.domain.Sku
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
-import org.broadleafcommerce.core.search.dao.FieldDao
+import org.broadleafcommerce.core.search.dao.IndexFieldDao
 import org.broadleafcommerce.core.search.dao.SolrIndexDao
 import org.broadleafcommerce.core.search.domain.Field
 import org.broadleafcommerce.core.search.domain.FieldEntity
@@ -45,7 +45,7 @@ class SolrIndexServiceSpec extends Specification {
     
     SolrIndexServiceImpl service;
     SolrIndexDao mockSolrIndexDao = Mock()
-    FieldDao mockFieldDao = Mock()
+    IndexFieldDao mockFieldDao = Mock()
     PlatformTransactionManager mockTransactionManager = Mock()
     ProductDao mockProductDao = Mock()
     SkuDao mockSkuDao = Mock()
@@ -58,7 +58,7 @@ class SolrIndexServiceSpec extends Specification {
     def setup() {
         service = Spy(SolrIndexServiceImpl)
         service.solrIndexDao = mockSolrIndexDao
-        service.fieldDao = mockFieldDao
+        service.indexFieldDao = mockFieldDao
         service.transactionManager = mockTransactionManager
         service.productDao = mockProductDao
         service.skuDao = mockSkuDao
