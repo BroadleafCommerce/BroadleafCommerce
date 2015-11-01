@@ -30,11 +30,12 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
+import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
+import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.AddMethodType;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -68,6 +69,7 @@ import javax.persistence.Table;
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEntity, SearchFacetAdminPresentation {
 
     private static final long serialVersionUID = 1L;
@@ -96,20 +98,12 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
             prominent = true, translatable = true, gridOrder = 1000)
     protected String label;
 
-    @ManyToOne(optional=false, targetEntity = FieldImpl.class)
-    @JoinColumn(name = "FIELD_ID")
+    @ManyToOne(optional=false, targetEntity = IndexFieldTypeImpl.class)
+    @JoinColumn(name = "INDEX_FIELD_TYPE_ID")
     @AdminPresentation(friendlyName = "SearchFacetImpl_field", order = 2000, group = "SearchFacetImpl_description",
             prominent = true, gridOrder = 2000, requiredOverride = RequiredOverride.REQUIRED)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
-    protected Field field;
-
-    @Column(name = "FACET_FIELD_TYPE")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_facetFieldType", group = "SearchFacetImpl_description", order = 4,
-            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.core.search.domain.solr.FieldType",
-            requiredOverride = RequiredOverride.REQUIRED,
-            defaultValue = "t")
-    protected String facetFieldType;
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "indexField.field.friendlyName")
+    protected IndexFieldType fieldType;
     
     @Column(name =  "SHOW_ON_SEARCH")
     @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 2000,
@@ -155,7 +149,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @AdminPresentationAdornedTargetCollection(targetObjectProperty = "requiredFacet", friendlyName = "requiredFacetTitle",
-            gridVisibleFields = { "name", "label", "field" },
+            gridVisibleFields = { "name", "label", "fieldType.indexField.field.friendlyName" },
             tab = "SearchFacetImpl_Advanced_tab",
             tabOrder = 4000)
     protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
@@ -181,13 +175,23 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     }
     
     @Override
-    public Field getField() {
-        return field;
+    public IndexFieldType getFieldType() {
+        return fieldType;
     }
-
+    
     @Override
-    public void setField(Field field) {
-        this.field = field;
+    public void setFieldType(IndexFieldType fieldType) {
+        this.fieldType = fieldType;
+    }
+    
+    @Override
+    public Field getField() {
+        return getFieldType().getIndexField().getField();
+    }
+    
+    @Override
+    public String getFacetFieldType() {
+        return getFieldType().getFieldType().getType();
     }
 
     @Override
@@ -285,22 +289,12 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     }
 
     @Override
-    public String getFacetFieldType() {
-        return facetFieldType;
-    }
-
-    @Override
-    public void setFacetFieldType(String facetFieldType) {
-        this.facetFieldType = facetFieldType;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             SearchFacetImpl other = (SearchFacetImpl) obj;
             return new EqualsBuilder()
                 .append(id, other.id)
-                .append(field, other.field)
+                .append(fieldType, other.fieldType)
                 .build();
         }
         return false;
@@ -310,7 +304,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     public int hashCode() {
         return new HashCodeBuilder(1, 31)
             .append(id)
-            .append(field)
+            .append(fieldType)
             .toHashCode();
     }
 
@@ -325,7 +319,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
         cloned.setLabel(label);
         cloned.setRequiresAllDependentFacets(requiresAllDependentFacets);
         cloned.setShowOnSearch(showOnSearch);
-        cloned.setField(field.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setFieldType(fieldType.createOrRetrieveCopyInstance(context).getClone());
         for(RequiredFacet entry : requiredFacets){
             RequiredFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getRequiredFacets().add(clonedEntry);
