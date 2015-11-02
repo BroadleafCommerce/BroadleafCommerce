@@ -34,7 +34,7 @@ public class PropertyType {
         public static final String NAME = "name";
         public static final String ORDER = "order";
         public static final String COLUMN = "column";
-        public static final String BORDERLESS = "borderless";
+        public static final String UNTITLED = "untitled";
         public static final String TOOLTIP = "tooltip";
         public static final String COLLAPSED = "collapsed";
     }

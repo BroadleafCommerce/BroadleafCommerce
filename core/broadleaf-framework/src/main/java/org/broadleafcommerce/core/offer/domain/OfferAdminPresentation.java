@@ -34,7 +34,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             groups = {
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Description,
                     order = OfferAdminPresentation.GroupOrder.Description,
-                    borderless = true),
+                    untitled = true),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.RuleConfiguration,
                     order = OfferAdminPresentation.GroupOrder.RuleConfiguration),
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.ActivityRange,
@@ -49,7 +49,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             order = OfferAdminPresentation.TabOrder.Codes,
             groups = {
                 @AdminGroupPresentation(name = OfferAdminPresentation.GroupName.Codes,
-                    order = OfferAdminPresentation.GroupOrder.Codes, borderless = true)
+                    order = OfferAdminPresentation.GroupOrder.Codes, untitled = true)
             }
         ),
         @AdminTabPresentation(name = OfferAdminPresentation.TabName.Advanced,

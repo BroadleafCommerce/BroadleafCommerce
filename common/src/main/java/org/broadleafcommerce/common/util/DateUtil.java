@@ -43,7 +43,7 @@ public class DateUtil {
         Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, currentDateResolution);
         if (returnDate != cachedDate) {
             if (SystemTime.shouldCacheDate()) {
-                cachedDate = returnDate;
+                cachedDate.setTime(returnDate.getTime());
             }
         }
         return returnDate;

@@ -2,9 +2,10 @@
 
 <div class="side-nav">
     <ul>
-        <li><a href="/admin/overview" class="nav-section logo"></a></li>
         <li th:each="module : ${adminMenu.adminModules}" th:inline="text">
-            <a th:class="${'nav-section ' + module.icon}" href="" th:attr="data-toggle=${'#' + module.icon}"></a>
+            <a th:class="${'nav-section ' + module.icon}" href="/admin/overview" th:if="${module.icon == 'blc-icon-blc-leaf'}"></a>
+            <a th:class="${'nav-section ' + module.icon}" href="" th:attr="data-toggle=${'#' + module.icon}"
+               th:unless="${module.icon == 'blc-icon-blc-leaf'}"></a>
         </li>
     </ul>
 </div>

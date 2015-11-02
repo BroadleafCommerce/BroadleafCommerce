@@ -164,7 +164,7 @@
             <xsd:enumeration value="group"/>
             <xsd:enumeration value="groupOrder"/>
             <xsd:enumeration value="groupCollapsed"/>
-            <xsd:enumeration value="isBorderlessGroup"/>
+            <xsd:enumeration value="isUntitledGroup"/>
             <xsd:enumeration value="tab"/>
             <xsd:enumeration value="tabOrder"/>
             <xsd:enumeration value="largeEntry"/>
@@ -228,7 +228,7 @@
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="name"/>
             <xsd:enumeration value="order"/>
-            <xsd:enumeration value="borderless"/>
+            <xsd:enumeration value="untitled"/>
             <xsd:enumeration value="column"/>
             <xsd:enumeration value="collapsed"/>
             <xsd:enumeration value="tooltip"/>

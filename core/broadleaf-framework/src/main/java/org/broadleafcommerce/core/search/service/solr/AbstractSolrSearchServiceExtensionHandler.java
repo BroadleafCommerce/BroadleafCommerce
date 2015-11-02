@@ -26,12 +26,11 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
-import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
-import org.broadleafcommerce.core.search.domain.SearchField;
-import org.broadleafcommerce.core.search.domain.SearchFieldType;
 import org.broadleafcommerce.core.search.domain.solr.FieldType;
 
 import java.util.List;
@@ -48,12 +47,7 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
         implements SolrSearchServiceExtensionHandler {
 
     @Override
-    public ExtensionResultStatusType buildPrefixListForSearchableFacet(Field field, List<String> prefixList) {
-        return ExtensionResultStatusType.NOT_HANDLED;
-    }
-
-    @Override
-    public ExtensionResultStatusType buildPrefixListForSearchableField(Field field, FieldType searchableFieldType, List<String> prefixList) {
+    public ExtensionResultStatusType buildPrefixListForIndexField(IndexField field, FieldType fieldType, List<String> prefixList) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -68,7 +62,7 @@ public abstract class AbstractSolrSearchServiceExtensionHandler extends Abstract
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
-    @Override public ExtensionResultStatusType getQueryField(SolrQuery query, SearchField searchField, SearchFieldType searchFieldType, ExtensionResultHolder<List<String>> queryFieldsResult) {
+    @Override public ExtensionResultStatusType getQueryField(SolrQuery query, IndexField indexField, IndexFieldType indexFieldType, ExtensionResultHolder<List<String>> queryFieldsResult) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

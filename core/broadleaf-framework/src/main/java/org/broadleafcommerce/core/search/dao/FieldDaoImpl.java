@@ -20,7 +20,6 @@
 package org.broadleafcommerce.core.search.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
-import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldEntity;
 import org.broadleafcommerce.core.search.domain.FieldImpl;
@@ -72,41 +71,13 @@ public class FieldDaoImpl implements FieldDao {
     
     @Override
     public List<Field> readAllProductFields() {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
-        
-        Root<FieldImpl> root = criteria.from(FieldImpl.class);
-        
-        criteria.select(root);
-        criteria.where(
-            builder.or(builder.equal(root.get("entityType"), FieldEntity.PRODUCT.getType()),
-                    builder.equal(root.get("entityType").as(String.class), ProductImpl.class.getName()))
-        );
+        return readFieldsByEntityType(FieldEntity.PRODUCT);
 
-        TypedQuery<Field> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-
-        return query.getResultList();
     }
 
     @Override
     public List<Field> readAllSkuFields() {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
-
-        Root<FieldImpl> root = criteria.from(FieldImpl.class);
-
-        criteria.select(root);
-        criteria.where(
-                builder.equal(root.get("entityType").as(String.class), FieldEntity.SKU.getType())
-                );
-
-        TypedQuery<Field> query = em.createQuery(criteria);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
-
-        return query.getResultList();
+        return readFieldsByEntityType(FieldEntity.SKU);
     }
 
     @Override

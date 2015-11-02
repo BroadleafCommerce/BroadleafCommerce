@@ -19,8 +19,12 @@
  */
 @font-face {
 	font-family: 'broadleaf';
-	src:url('../../fonts/broadleaf.eot?#iefix-s748z9') format('embedded-opentype'),
-		url('../../fonts/broadleaf.ttf?-s748z9') format('truetype');
+	src:url('../../fonts/broadleaf.eot?i3chse');
+	src:url('../../fonts/broadleaf.eot?i3chse#iefix') format('embedded-opentype'),
+	url('../../fonts/broadleaf.woff2?i3chse') format('woff2'),
+	url('../../fonts/broadleaf.ttf?i3chse') format('truetype'),
+	url('../../fonts/broadleaf.woff?i3chse') format('woff'),
+	url('../../fonts/broadleaf.svg?i3chse#broadleaf') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -39,6 +43,12 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.blc-icon-blc-leaf:before {
+	content: "\e900";
+}
+.blc-icon-blc-logo:before {
+	content: "\e901";
+}
 .blc-icon-add-category:before {
 	content: "\e600";
 }
@@ -60,9 +70,6 @@
 .blc-icon-content:before {
 	content: "\e606";
 }
-.blc-icon-content-icon:before {
-	content: "\e606";
-}
 .blc-icon-customer-care:before {
 	content: "\e607";
 }
@@ -79,9 +86,6 @@
 	content: "\e60b";
 }
 .blc-icon-globe:before {
-	content: "\e60c";
-}
-.blc-icon-internationalization:before {
 	content: "\e60c";
 }
 .blc-icon-notifications:before {
@@ -141,6 +145,9 @@
 .blc-icon-folder-images:before {
 	content: "\e61f";
 }
+.blc-icon-search:before {
+	content: "\e902";
+}
 .blc-icon-news:before {
 	content: "\e620";
 }
@@ -150,6 +157,4 @@
 .blc-icon-tools:before {
 	content: "\e622";
 }
-.blc-icon-percent:before {
-    content: '%';
-}
+

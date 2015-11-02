@@ -25,7 +25,7 @@ package org.broadleafcommerce.openadmin.dto.override;
 public class GroupMetadataOverride extends MetadataOverride {
 
     protected Integer column;
-    protected Boolean borderless;
+    protected Boolean untitled;
     protected String tooltip;
     protected Boolean collapsed;
 
@@ -37,12 +37,12 @@ public class GroupMetadataOverride extends MetadataOverride {
         this.column = column;
     }
 
-    public Boolean getBorderless() {
-        return borderless;
+    public Boolean getUntitled() {
+        return untitled;
     }
 
-    public void setBorderless(Boolean borderless) {
-        this.borderless = borderless;
+    public void setUntitled(Boolean untitled) {
+        this.untitled = untitled;
     }
 
     public String getTooltip() {

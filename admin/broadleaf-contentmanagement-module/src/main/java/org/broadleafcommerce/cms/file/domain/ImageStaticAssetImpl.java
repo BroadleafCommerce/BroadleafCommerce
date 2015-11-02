@@ -43,15 +43,15 @@ public class ImageStaticAssetImpl extends StaticAssetImpl implements ImageStatic
 
     @Column(name ="WIDTH")
     @AdminPresentation(friendlyName = "ImageStaticAssetImpl_Width",
-            order = Presentation.FieldOrder.LAST + 1000,
-            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            order = FieldOrder.LAST + 1000,
+            group = GroupName.File_Details,
             readOnly = true)
     protected Integer width;
 
     @Column(name ="HEIGHT")
     @AdminPresentation(friendlyName = "ImageStaticAssetImpl_Height",
-            order = Presentation.FieldOrder.LAST + 2000,
-            tab = Presentation.Tab.Name.File_Details, tabOrder = Presentation.Tab.Order.File_Details,
+            order = FieldOrder.LAST + 2000,
+            group = GroupName.File_Details,
             readOnly = true)
     protected Integer height;
 

@@ -108,7 +108,8 @@ public class ListGrid {
     public enum SelectType {
         SINGLE_SELECT,
         MULTI_SELECT,
-        SELECTIZE
+        SELECTIZE,
+        NONE
     }
 
     /* Filter Builder required Fields */
@@ -311,7 +312,7 @@ public class ListGrid {
     }
     
     public Boolean getClickable() {
-        return !"main".equals(listGridType);
+        return !"none".equals(selectType);
     }
     
     public Boolean getHideIdColumn() {

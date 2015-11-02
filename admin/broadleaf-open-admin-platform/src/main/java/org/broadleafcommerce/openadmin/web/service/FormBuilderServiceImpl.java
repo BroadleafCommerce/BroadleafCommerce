@@ -306,6 +306,8 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         boolean modalSingleSelectable = false;
         boolean modalMultiSelectable = false;
         boolean selectize = false;
+        boolean isMedia = false;
+
         String idProperty = "id";
         for (Property property : cmd.getProperties()) {
             if (property.getMetadata() instanceof BasicFieldMetadata &&
@@ -418,7 +420,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             keyMd.setFriendlyName("Key");
             Field hf = createHeaderField(p2, keyMd);
             headerFields.add(hf);
-            
+
             if (mmd.isSimpleValue()) {
                 Property valueProperty = cmd.getPMap().get("value");
                 BasicFieldMetadata valueMd = (BasicFieldMetadata) valueProperty.getMetadata();
@@ -455,6 +457,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                                     && !ArrayUtils.contains(getGridHiddenVisibilities(), md.getVisibility())) {
                                 hf = createHeaderField(p, md);
                                 headerFields.add(hf);
+
+                                // Is this a media listgrid
+                                if (hf.getFieldType().equals("ASSET_LOOKUP")) {
+                                    isMedia = true;
+                                }
                             }
                         }
                     }
@@ -525,6 +532,11 @@ public class FormBuilderServiceImpl implements FormBuilderService {
             listGrid.setSelectType(ListGrid.SelectType.MULTI_SELECT);
         }
         listGrid.getRowActions().add(DefaultListGridActions.REMOVE);
+
+        if (isMedia) {
+            listGrid.setListGridType(ListGrid.Type.ASSET_GRID);
+            listGrid.setSelectType(ListGrid.SelectType.NONE);
+        }
 
         return listGrid;
     }
