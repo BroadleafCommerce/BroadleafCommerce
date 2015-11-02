@@ -102,13 +102,15 @@ public class ListGrid {
         WORKFLOW,
         TREE,
         ASSET_GRID,
-        ASSET_GRID_FOLDER
+        ASSET_GRID_FOLDER,
+        MEDIA_GRID
     }
 
     public enum SelectType {
         SINGLE_SELECT,
         MULTI_SELECT,
-        SELECTIZE
+        SELECTIZE,
+        NONE
     }
 
     /* Filter Builder required Fields */
@@ -311,7 +313,7 @@ public class ListGrid {
     }
     
     public Boolean getClickable() {
-        return !"main".equals(listGridType);
+        return !"none".equals(selectType);
     }
     
     public Boolean getHideIdColumn() {
