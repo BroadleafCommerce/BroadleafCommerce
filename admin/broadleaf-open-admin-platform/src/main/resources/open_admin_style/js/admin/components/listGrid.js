@@ -153,7 +153,7 @@
                 fields[fieldName] = value;
             }
 
-            if ($tr.closest('.tree-listgrid-container')) {
+            if ($tr.closest('.tree-listgrid-container').length) {
                 fields['selectedRow'] = $tr;
             }
 
@@ -765,12 +765,30 @@ $(document).ready(function() {
             	    $actions.find('button').show();
             	    $actions.find('img.ajax-loader').hide();
                 } else {
-                    BLCAdmin.listGrid.replaceRelatedCollection($(data), {
-                        message: BLCAdmin.messages.saved + '!', 
-                        alertType: 'save-alert', 
-                        autoClose: 1000 
-                    });
-                    BLCAdmin.hideCurrentModal();
+
+                    var $assetGrid = $(data).find('.asset-grid-container');
+                    if ($assetGrid.length) {
+                        var $assetListGrid = $(data).find('.asset-listgrid');
+
+                        BLCAdmin.assetGrid.initialize($assetGrid);
+
+                        $('.asset-grid-container').replaceWith($assetGrid);
+                        $('.asset-listgrid').replaceWith($assetListGrid);
+
+                        $('.listgrid-container').each(function (index, container) {
+                            BLCAdmin.listGrid.initialize($(container));
+                        });
+                        BLCAdmin.hideCurrentModal();
+
+                    } else {
+                        BLCAdmin.hideCurrentModal();
+
+                        BLCAdmin.listGrid.replaceRelatedCollection($(data), {
+                            message: BLCAdmin.messages.saved + '!',
+                            alertType: 'save-alert',
+                            autoClose: 1000
+                        });
+                    }
                 }
             });
         }
