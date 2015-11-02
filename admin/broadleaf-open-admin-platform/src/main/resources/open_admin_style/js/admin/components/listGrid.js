@@ -174,21 +174,34 @@
             return selectedRowIds;
         },
         
-        updateRowActionButtons : function($listGridContainer) {
-            var numSelected = $listGridContainer.find('tr.selected').length;
-            if (numSelected) {
-                $listGridContainer.find('button.row-action').removeAttr('disabled');
-            } else {
-                $listGridContainer.find('button.row-action').attr('disabled', 'disabled');
-            }
-            
+        updateActionButtons : function($listGridContainer) {
             if (!$listGridContainer.find('tr.list-grid-no-results').length) {
                 $listGridContainer.find('button.row-action.all-capable').removeAttr('disabled');
             }
-            
-            if (numSelected > 1) {
-                $listGridContainer.find('button.row-action.single-action-only').attr('disabled', 'disabled');
+
+            var listGridId = $listGridContainer.find('.listgrid-body-wrapper table').attr('id');
+            var numSelected = $listGridContainer.find('tr.selected').length;
+            updateListGridActionsForContainer($listGridContainer.find('button.row-action'), numSelected);
+
+            var $modal = $listGridContainer.closest('.modal');
+            if ($modal.length && typeof listGridId !== 'undefined') {
+                var $modalActionContainer = $modal.find('.modal-footer .listgrid-modal-actions');
+                updateListGridActionsForContainer($modalActionContainer.find("button.row-action[data-listgridid='" + listGridId + "']"), numSelected);
             }
+
+            function updateListGridActionsForContainer($containerActions, numSelected) {
+                if (numSelected) {
+                    $containerActions.removeAttr('disabled');
+                } else {
+                    $containerActions.attr('disabled', 'disabled');
+                }
+
+                if (numSelected > 1) {
+                    $containerActions.filter('.single-action-only').attr('disabled', 'disabled');
+                }
+            }
+
+
         },
         
         showAlert : function($container, message, options) {
@@ -239,7 +252,7 @@
         },
         
         initialize : function($container) {
-            BLCAdmin.listGrid.updateRowActionButtons($container);
+            BLCAdmin.listGrid.updateActionButtons($container);
 
             if (BLCAdmin.listGrid.paginate) {
                 BLCAdmin.listGrid.paginate.initialize($container);
@@ -382,7 +395,7 @@ $(document).ready(function() {
 
         updateMultiSelectCheckbox($tbody, $listgridHeader)
         
-        BLCAdmin.listGrid.updateRowActionButtons($listGridContainer);
+        BLCAdmin.listGrid.updateActionButtons($listGridContainer);
     }
     $('body').on('listGrid-single_select-rowSelected', function(event, $target, link, fields, currentUrl) {
         inlineRowSelected(event, $target, link, fields, currentUrl, false);
@@ -402,7 +415,7 @@ $(document).ready(function() {
      * for the field that we are performing the to-one lookup on.
      */
     $('body').on('listGrid-to_one-rowSelected', function(event, $target, link, fields, currentUrl) {
-        $('div.additional-foreign-key-container').trigger('valueSelected', [fields, link, currentUrl]);
+        $('div.additional-foreign-key-container').trigger('valueSelected', [$target, fields, link, currentUrl]);
     });
     
     /**
@@ -461,7 +474,7 @@ $(document).ready(function() {
     $('body').on('click', '.to-one-lookup', function(event) {
         var $container = $(this).closest('div.additional-foreign-key-container');
         
-        $container.on('valueSelected', function(event, fields, link, currentUrl) {
+        $container.on('valueSelected', function(event, $target, fields, link, currentUrl) {
             var $this = $(this);
             var displayValueProp = $this.find('input.display-value-property').val();
             
@@ -690,8 +703,10 @@ $(document).ready(function() {
     });
 
     $('body').on('click', 'button.list-grid-single-select', function() {
-        var $container = $(this).closest('.listgrid-container');
-        var $table = $container.find('table');
+        var listGridId = $(this).data('listgridid');
+        var $modal = $(this).closest('.modal');
+        var $container = $modal.find('.listgrid-container');
+        var $table = $container.find('table#' + listGridId);
         var $selectedRow = $table.find('tr.selected');
         var listGridType = $table.data('listgridtype');
 
