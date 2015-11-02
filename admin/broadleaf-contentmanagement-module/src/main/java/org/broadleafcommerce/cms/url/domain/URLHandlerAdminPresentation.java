@@ -34,7 +34,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 groups = {
                         @AdminGroupPresentation(name = URLHandlerAdminPresentation.GroupName.General,
                                 order = URLHandlerAdminPresentation.GroupOrder.General,
-                                borderless = true),
+                                untitled = true),
                         @AdminGroupPresentation(name = URLHandlerAdminPresentation.GroupName.Redirect,
                                 order = URLHandlerAdminPresentation.GroupOrder.Redirect,
                                 column = 1)

@@ -126,8 +126,8 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
             group.setGroupOrder(Integer.valueOf(stringValue));
         } else if (groupOverride.property().equals(PropertyType.AdminGroupPresentation.COLUMN)) {
             group.setColumn(Integer.valueOf(stringValue));
-        } else if (groupOverride.property().equals(PropertyType.AdminGroupPresentation.BORDERLESS)) {
-            group.setBorderless(Boolean.valueOf(stringValue));
+        } else if (groupOverride.property().equals(PropertyType.AdminGroupPresentation.UNTITLED)) {
+            group.setUntitled(Boolean.valueOf(stringValue));
         } else if (groupOverride.property().equals(PropertyType.AdminGroupPresentation.COLLAPSED)) {
             group.setCollapsed(Boolean.valueOf(stringValue));
         } else if (groupOverride.property().equals(PropertyType.AdminGroupPresentation.TOOLTIP)) {
@@ -148,8 +148,8 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
             if (override.getOrder() != null) {
                 group.setGroupOrder(override.getOrder());
             }
-            if (override.getBorderless() != null) {
-                group.setBorderless(override.getBorderless());
+            if (override.getUntitled() != null) {
+                group.setUntitled(override.getUntitled());
             }
             if (override.getColumn() != null) {
                 group.setColumn(override.getColumn());
@@ -208,7 +208,7 @@ public class BasicEntityMetadataProvider extends EntityMetadataProviderAdapter {
         group.setGroupName(groupPresentation.name());
         group.setGroupOrder(groupPresentation.order());
         group.setColumn(groupPresentation.column());
-        group.setBorderless(groupPresentation.borderless());
+        group.setUntitled(groupPresentation.untitled());
         group.setTooltip(groupPresentation.tooltip());
         group.setCollapsed(groupPresentation.collapsed());
 

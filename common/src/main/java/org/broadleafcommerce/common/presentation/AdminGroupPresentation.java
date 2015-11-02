@@ -67,9 +67,9 @@ public @interface AdminGroupPresentation {
      *
      * This only applies to groups that are in the "main" column.
      *
-     * @return whether or not the group is borderless
+     * @return whether or not the group is untitled
      */
-    boolean borderless() default false;
+    boolean untitled() default false;
 
     /**
      * Optional - only required if you want to provide help text for this group

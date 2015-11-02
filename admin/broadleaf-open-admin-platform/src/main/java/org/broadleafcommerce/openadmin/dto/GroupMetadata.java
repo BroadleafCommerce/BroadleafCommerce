@@ -35,7 +35,7 @@ public class GroupMetadata implements Serializable {
     protected String groupName;
     protected Integer groupOrder;
     protected Integer column;
-    protected Boolean borderless;
+    protected Boolean untitled;
     protected String tooltip;
     protected Boolean collapsed;
 
@@ -63,12 +63,12 @@ public class GroupMetadata implements Serializable {
         this.column = column;
     }
 
-    public Boolean getBorderless() {
-        return borderless == null ? false : borderless;
+    public Boolean getUntitled() {
+        return untitled == null ? false : untitled;
     }
 
-    public void setBorderless(Boolean borderless) {
-        this.borderless = borderless;
+    public void setUntitled(Boolean untitled) {
+        this.untitled = untitled;
     }
 
     public String getTooltip() {
@@ -103,7 +103,7 @@ public class GroupMetadata implements Serializable {
         metadata.groupName = groupName;
         metadata.groupOrder = groupOrder;
         metadata.column = column;
-        metadata.borderless = borderless;
+        metadata.untitled = untitled;
         metadata.tooltip = tooltip;
         metadata.collapsed = collapsed;
 
@@ -143,7 +143,7 @@ public class GroupMetadata implements Serializable {
         if (column != null ? !column.equals(metadata.column) : metadata.column != null) {
             return false;
         }
-        if (borderless != null ? !borderless.equals(metadata.borderless) : metadata.borderless != null) {
+        if (untitled != null ? !untitled.equals(metadata.untitled) : metadata.untitled != null) {
             return false;
         }
         if (tooltip != null ? !tooltip.equals(metadata.tooltip) : metadata.tooltip != null) {
@@ -163,7 +163,7 @@ public class GroupMetadata implements Serializable {
         result = 31 * result + (groupName != null ? groupName.hashCode() : 0);
         result = 31 * result + (groupOrder != null ? groupOrder.hashCode() : 0);
         result = 31 * result + (column != null ? column.hashCode() : 0);
-        result = 31 * result + (borderless != null ? borderless.hashCode() : 0);
+        result = 31 * result + (untitled != null ? untitled.hashCode() : 0);
         result = 31 * result + (tooltip != null ? tooltip.hashCode() : 0);
         result = 31 * result + (collapsed != null ? collapsed.hashCode() : 0);
         return result;
