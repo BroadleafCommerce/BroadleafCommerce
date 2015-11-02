@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.Cache;
@@ -124,5 +126,18 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     public void setFulfillmentOption(FulfillmentOption fulfillmentOption) {
         this.fulfillmentOption = fulfillmentOption;
     }
-
+    
+    @Override
+    public CreateResponse<OrderMultishipOption> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<OrderMultishipOption> createResponse = context.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        OrderMultishipOption cloned = createResponse.getClone();
+        cloned.setAddress(address.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setFulfillmentOption(fulfillmentOption.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setOrder(order);
+        cloned.setOrderItem(orderItem.createOrRetrieveCopyInstance(context).getClone());
+        return  createResponse;
+    }
 }

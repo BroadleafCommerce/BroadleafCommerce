@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -759,6 +761,25 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
         result = prime * result + ((address == null) ? 0 : address.hashCode());
         result = prime * result + ((fulfillmentGroupItems == null) ? 0 : fulfillmentGroupItems.hashCode());
         return result;
+    }
+    
+    @Override
+    public CreateResponse<FulfillmentGroup> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<FulfillmentGroup> createResponse = context.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FulfillmentGroup cloned = createResponse.getClone();
+        cloned.setAddress(address.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setDeliveryInstruction(deliveryInstruction);
+        cloned.setFulfillmentOption(fulfillmentOption);
+        cloned.setFulfillmentPrice(new Money(fulfillmentPrice));
+        cloned.setIsShippingPriceTaxable(isShippingPriceTaxable);
+        cloned.setMerchandiseTotal(new Money(merchandiseTotal));
+        cloned.setOrder(order);
+        cloned.setPrimary(primary);
+        cloned.setType(getType());
+        return  createResponse;
     }
 
     @Override

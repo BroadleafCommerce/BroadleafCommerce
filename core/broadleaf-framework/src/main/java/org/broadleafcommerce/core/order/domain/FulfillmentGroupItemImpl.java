@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
@@ -297,6 +299,23 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         }
 
         return clonedFulfillmentGroupItem;
+    }
+    
+    @Override
+    public CreateResponse<FulfillmentGroupItem> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<FulfillmentGroupItem> createResponse = context.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        FulfillmentGroupItem cloned = createResponse.getClone();
+        cloned.setFulfillmentGroup(fulfillmentGroup.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setOrderItem(orderItem.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setProratedOrderAdjustmentAmount(new Money(proratedOrderAdjustment));
+        cloned.setQuantity(quantity);
+        cloned.setStatus(getStatus());
+        cloned.setTotalItemAmount(new Money(totalItemAmount));
+        cloned.setTotalItemTaxableAmount(new Money(totalItemTaxableAmount));
+        return  createResponse;
     }
 
     @Override

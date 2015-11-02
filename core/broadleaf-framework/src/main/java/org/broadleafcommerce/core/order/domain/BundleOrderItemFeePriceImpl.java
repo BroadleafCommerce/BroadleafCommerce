@@ -21,6 +21,8 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
@@ -202,6 +204,21 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((reportingCode == null) ? 0 : reportingCode.hashCode());
         return result;
+    }
+    
+    @Override
+    public CreateResponse<BundleOrderItemFeePrice> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<BundleOrderItemFeePrice> createResponse = context.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        BundleOrderItemFeePrice cloned = createResponse.getClone();
+        cloned.setBundleOrderItem((BundleOrderItem)bundleOrderItem.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setAmount(new Money(amount));
+        cloned.setName(name);
+        cloned.setReportingCode(reportingCode);
+        cloned.setTaxable(isTaxable);
+        return  createResponse;
     }
 
     @Override

@@ -19,6 +19,8 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.CreateResponse;
+import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -118,6 +120,20 @@ public class PersonalMessageImpl implements PersonalMessage {
     @Override
     public void setOccasion(String occasion) {
         this.occasion = occasion;
+    }
+    
+    @Override
+    public CreateResponse<PersonalMessage> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+        CreateResponse<PersonalMessage> createResponse = context.createOrRetrieveCopyInstance(context);
+        if (createResponse.isAlreadyPopulated()) {
+            return createResponse;
+        }
+        PersonalMessage cloned = createResponse.getClone();
+        cloned.setMessage(message);
+        cloned.setMessageFrom(messageFrom);
+        cloned.setMessageTo(messageTo);
+        cloned.setOccasion(occasion);
+        return  createResponse;
     }
 
     @Override

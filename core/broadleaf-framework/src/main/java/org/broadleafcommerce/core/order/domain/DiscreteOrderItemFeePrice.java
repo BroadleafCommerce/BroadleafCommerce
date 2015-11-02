@@ -19,11 +19,12 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.money.Money;
 
 import java.io.Serializable;
 
-public interface DiscreteOrderItemFeePrice extends Serializable {
+public interface DiscreteOrderItemFeePrice extends Serializable, MultiTenantCloneable<DiscreteOrderItemFeePrice> {
 
     public abstract Long getId();
 
