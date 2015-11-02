@@ -155,6 +155,23 @@ $(document).ready(function() {
                     var $selectizeWrapper = data.find('div.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
+                $('div.' + href + 'Tab fieldset.media-container').each(function() {
+                    var tableId = $(this).attr('id');
+                    tableId = tableId.replace(".", "\\.");
+                    var $container = data.find('#' + tableId);
+                    var $assetGrid = $($container).find('.asset-grid-container');
+                    var $assetListGrid = data.find('.asset-listgrid');
+
+                    BLCAdmin.assetGrid.initialize($assetGrid);
+
+                    $(this).find('.asset-grid-container').replaceWith($assetGrid);
+                    $(this).find('.asset-listgrid').replaceWith($assetListGrid);
+
+                    $(this).find('.listgrid-container').each(function (index, container) {
+                        BLCAdmin.listGrid.initialize($(container));
+                    });
+                });
+
                 hideTabSpinner($tab, $tabBody);
      		});
 
@@ -301,6 +318,54 @@ $(document).ready(function() {
                 $modal.find('img.ajax-loader').hide();
             });
         }
+        return false;
+    });
+
+    $('body').on('click', 'a.media-link', function(event) {
+        event.preventDefault();
+
+        var asset = $(this).closest('.asset-item').find('img');
+        var link = $(asset).attr('data-link');
+        //link += $(this).attr('data-urlpostfix');
+        link += $(this).attr('data-queryparams');
+
+        BLCAdmin.showLinkAsModal(link);
+    });
+
+    $('body').on('click', 'a.media-grid-remove', function() {
+        var $container = $(this).closest('.asset-listgrid-container');
+
+        var asset = $(this).parent().siblings('img');
+        var link = $(asset).attr('data-link');
+        link += $(this).attr('data-urlpostfix');
+        link += $(this).attr('data-queryparams');
+
+        var id = $(asset).data('rowid');
+        var $tr = $(this).closest('.select-group').find('.listgrid-container').find('tr[data-rowid=' + id + ']');
+        var rowFields = BLCAdmin.listGrid.getRowFields($tr);
+
+        BLC.ajax({
+            url: link,
+            data: rowFields,
+            type: "POST"
+        }, function(data) {
+            if (data.status == 'error') {
+                BLCAdmin.listGrid.showAlert($container, data.message);
+            } else {
+                var $assetGrid = $(data).find('.asset-grid-container');
+                var $assetListGrid = $(data).find('.asset-listgrid');
+
+                BLCAdmin.assetGrid.initialize($assetGrid);
+
+                $container.find('.asset-grid-container').replaceWith($assetGrid);
+                $container.find('.asset-listgrid').replaceWith($assetListGrid);
+
+                $container.find('.listgrid-container').each(function (index, container) {
+                    BLCAdmin.listGrid.initialize($(container));
+                });
+            }
+        });
+
         return false;
     });
 

@@ -145,6 +145,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
 
         ListGrid listGrid = formService.buildMainListGrid(drs, cmd, sectionKey, crumbs);
         listGrid.addRowAction(DefaultListGridActions.EDIT);
+        listGrid.setSelectType(ListGrid.SelectType.NONE);
         
         Field firstField = listGrid.getHeaderFields().iterator().next();
         if (requestParams.containsKey(firstField.getName())) {
