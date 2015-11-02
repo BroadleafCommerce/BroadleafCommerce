@@ -136,4 +136,14 @@ public interface GenericEntityDao {
     boolean idAssigned(Object object);
 
     EntityManager getEntityManager();
+
+    /**
+     * Returns a list of ids for entities that share the property value of the entity passed in
+     *
+     * @param instance
+     * @param propertyName
+     * @param value
+     * @return
+     */
+    List<Long> readOtherEntitiesWithPropertyValue(Serializable instance, String propertyName, String value);
 }
