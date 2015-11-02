@@ -23,6 +23,7 @@ import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.RequestDTOImpl;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,6 +94,7 @@ public class MvelHelperTest extends TestCase {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testRequestMapProperty() {
+        BroadleafRequestContext.setBroadleafRequestContext(new BroadleafRequestContext());
         RequestDTO dto = new RequestDTOImpl();
         dto.getProperties().put("blcSearchTerm", "hot");
 

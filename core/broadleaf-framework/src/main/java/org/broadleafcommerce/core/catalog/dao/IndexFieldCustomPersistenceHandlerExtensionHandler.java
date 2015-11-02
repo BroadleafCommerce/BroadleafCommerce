@@ -22,14 +22,14 @@ package org.broadleafcommerce.core.catalog.dao;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.core.search.domain.SearchField;
+import org.broadleafcommerce.core.search.domain.IndexField;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 
 /**
  * @author Chad Harchar (charchar)
  */
-public interface SearchFieldCustomPersistenceHandlerExtensionHandler extends ExtensionHandler {
+public interface IndexFieldCustomPersistenceHandlerExtensionHandler extends ExtensionHandler {
 
-    ExtensionResultStatusType addtoSearchableFields(PersistencePackage persistencePackage, SearchField searchField) throws ServiceException;
+    ExtensionResultStatusType addtoSearchableFields(PersistencePackage persistencePackage, IndexField searchField) throws ServiceException;
 
 }

@@ -26,10 +26,10 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
@@ -59,6 +59,8 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.search.dao.SearchFacetDao;
 import org.broadleafcommerce.core.search.domain.Field;
+import org.broadleafcommerce.core.search.domain.IndexField;
+import org.broadleafcommerce.core.search.domain.IndexFieldType;
 import org.broadleafcommerce.core.search.domain.RequiredFacet;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
@@ -191,46 +193,19 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType, String prefix) {
+    public String getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix) {
         return new StringBuilder()
                 .append(prefix)
-                .append(field.getAbbreviation()).append("_").append(searchableFieldType.getType())
+                .append(field.getField().getAbbreviation()).append("_").append(fieldType.getType())
                 .toString();
     }
 
     @Override
-    public String getPropertyNameForFieldFacet(Field field, String prefix, FieldType facetType) {
-        if (facetType == null) {
-            return null;
-        }
-
-        return new StringBuilder()
-                .append(prefix)
-                .append(field.getAbbreviation()).append("_").append(facetType.getType())
-                .toString();
-    }
-
-    @Override
-    public String getPropertyNameForFieldSearchable(Field field, FieldType searchableFieldType) {
+    public String getPropertyNameForIndexField(IndexField field, FieldType searchableFieldType) {
         List<String> prefixList = new ArrayList<String>();
-        searchExtensionManager.getProxy().buildPrefixListForSearchableField(field, searchableFieldType, prefixList);
+        searchExtensionManager.getProxy().buildPrefixListForIndexField(field, searchableFieldType, prefixList);
         String prefix = convertPrefixListToString(prefixList);
-        return getPropertyNameForFieldSearchable(field, searchableFieldType, prefix);
-    }
-
-    @Override
-    public String getPropertyNameForFieldFacet(Field field) {
-        SearchFacet searchFacet = searchFacetDao.readSearchFacetForField(field);
-        if (searchFacet == null || searchFacet.getFacetFieldType() == null) {
-            return null;
-        }
-
-        List<String> prefixList = new ArrayList<String>();
-
-        searchExtensionManager.getProxy().buildPrefixListForSearchableFacet(field, prefixList);
-        String prefix = convertPrefixListToString(prefixList);
-
-        return getPropertyNameForFieldFacet(field, prefix, FieldType.getInstance(searchFacet.getFacetFieldType()));
+        return getPropertyNameForIndexField(field, searchableFieldType, prefix);
     }
 
     protected String convertPrefixListToString(List<String> prefixList) {
@@ -664,7 +639,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<Field> fields) {
+    public void attachSortClause(SolrQuery query, SearchCriteria searchCriteria, String defaultSort, List<IndexField> fields) {
         Map<String, String> solrFieldKeyMap = getSolrFieldKeyMap(searchCriteria, fields);
 
         String sortQuery = searchCriteria.getSortQuery();
@@ -696,10 +671,12 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     }
 
     @Override
-    public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<Field> fields) {
+    public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<IndexField> fields) {
         Map<String, String> solrFieldKeyMap = new HashMap<String, String>();
-        for (Field field : fields) {
-            solrFieldKeyMap.put(field.getAbbreviation(), getPropertyNameForFieldFacet(field));
+        for (IndexField field : fields) {
+            for (IndexFieldType type : field.getFieldTypes()) {
+                solrFieldKeyMap.put(field.getField().getAbbreviation(), getPropertyNameForIndexField(field, type.getFieldType()));
+            }
         }
         return solrFieldKeyMap;
     }
@@ -711,7 +688,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
             @Override
             public String getKey(SearchFacetDTO facet) {
-                return getPropertyNameForFieldFacet(facet.getFacet().getField());
+                return getPropertyNameForIndexField(facet.getFacet().getFieldType().getIndexField(),
+                    FieldType.getInstance(facet.getFacet().getFacetFieldType()));
             }
         });
     }

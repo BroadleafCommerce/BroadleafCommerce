@@ -17,29 +17,19 @@
  * limitations under the License.
  * #L%
  */
-package org.broadleafcommerce.core.search.domain;
+package org.broadleafcommerce.core.catalog.dao;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
-import org.broadleafcommerce.core.search.domain.solr.FieldType;
-import java.io.Serializable;
+import org.broadleafcommerce.common.extension.ExtensionManager;
+import org.springframework.stereotype.Service;
 
 /**
- * This interface is used for representing a FieldType for a SearchField entity
- *
- * @author Nick Crum (ncrum)
+ * @author Chad Harchar (charchar)
  */
-public interface SearchFieldType extends Serializable, MultiTenantCloneable<SearchFieldType> {
+@Service("blIndexFieldCustomPersistenceHandlerExtensionManager")
+public class IndexFieldCustomPersistenceHandlerExtensionManager extends ExtensionManager<IndexFieldCustomPersistenceHandlerExtensionHandler> {
 
-    FieldType getSearchableFieldType();
+    public IndexFieldCustomPersistenceHandlerExtensionManager() {
+        super(IndexFieldCustomPersistenceHandlerExtensionHandler.class);
+    }
 
-    void setSearchableFieldType(FieldType searchableFieldType);
-
-    Long getId();
-
-    void setId(Long id);
-
-    SearchField getSearchField();
-
-    void setSearchField(SearchField searchField);
-;
 }
