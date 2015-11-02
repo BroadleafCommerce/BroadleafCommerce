@@ -78,8 +78,8 @@ public class DefaultListGridActions {
         .withDisplayText("Select")
         .withSingleActionOnly(true);
 
-    public static final ListGridAction TREE_SINGLE_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
-        .withButtonClass("tree-list-grid-single-select")
+    public static final ListGridAction TREE_LOOKUP_SELECT = new ListGridAction(ListGridAction.SINGLE_SELECT)
+        .withButtonClass("tree-list-grid-lookup-select")
         .withDisplayText("Select")
         .withSingleActionOnly(true);
 
