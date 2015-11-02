@@ -4,24 +4,25 @@
              data-overridden-url=*{fields['__${field.name}__'].attributes[overriddenUrl] == true}"
     th:with="overriddenUrl=*{fields['__${field.name}__'].attributes[overriddenUrl] == true}">
 
-    <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
-        <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
-    </label>
+    <div class="override-label">
+        <label th:for="*{fields['__${field.name}__'].value}" th:classappend="${field.required ? 'required' : ''}" >
+            <span th:text="#{${field.friendlyName}}"/><span th:substituteby="components/fieldTooltip" />
+        </label>
 
-    <a class="override-generated-url" href="#" th:text="'(' + #{Override_Generated_URL-__${overriddenUrl ? 'enabled' : 'disabled'}__} + ')'"
-        th:disabled="${field.readOnly}"
-        th:unless="*{fields['__${field.name}__'].attributes[isPath]}"
-        th:attr="data-enabled=${overriddenUrl},
+        <a class="override-generated-url" href="#" th:text="'(' + #{Override_Generated_URL-__${overriddenUrl ? 'enabled' : 'disabled'}__} + ')'"
+           th:disabled="${field.readOnly}"
+           th:unless="*{fields['__${field.name}__'].attributes[isPath]}"
+           th:attr="data-enabled=${overriddenUrl},
                  data-enabled-text=${'(__#{Override_Generated_URL-enabled}__)'},
                  data-disabled-text=${'(__#{Override_Generated_URL-disabled}__)'}" />
 
-    <a class="override-generated-url" href="#" th:text="'(' + #{Override_Generated_Path-__${overriddenUrl ? 'enabled' : 'disabled'}__} + ')'"
-        th:disabled="${field.readOnly}"
-        th:if="*{fields['__${field.name}__'].attributes[isPath]}"
-        th:attr="data-enabled=${overriddenUrl},
+        <a class="override-generated-url" href="#" th:text="'(' + #{Override_Generated_Path-__${overriddenUrl ? 'enabled' : 'disabled'}__} + ')'"
+           th:disabled="${field.readOnly}"
+           th:if="*{fields['__${field.name}__'].attributes[isPath]}"
+           th:attr="data-enabled=${overriddenUrl},
                  data-enabled-text=${'(__#{Override_Generated_Path-enabled}__)'},
                  data-disabled-text=${'(__#{Override_Generated_Path-disabled}__)'}" />
-    <br/>
+    </div>
 
     <input type="text" class="target-field"
         th:disabled="${field.readOnly}"

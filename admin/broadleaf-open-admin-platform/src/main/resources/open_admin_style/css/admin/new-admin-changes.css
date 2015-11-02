@@ -723,8 +723,12 @@ input[type="radio"].radio {
 }
 
 label {
-    display: inline-block;
+    display: block;
     margin-bottom: 0;
+}
+
+.override-label label {
+    display: inline-block;
 }
 
 label i.help-tip {
