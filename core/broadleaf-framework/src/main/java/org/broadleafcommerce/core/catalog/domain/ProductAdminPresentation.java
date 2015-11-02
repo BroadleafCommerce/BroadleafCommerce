@@ -34,7 +34,7 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
             groups = {
                 @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.General,
                     order = ProductAdminPresentation.GroupOrder.General,
-                    borderless = true),
+                    untitled = true),
                 @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Image,
                     order = ProductAdminPresentation.GroupOrder.Image,
                     column = 1),

@@ -31,7 +31,7 @@ import org.broadleafcommerce.common.presentation.AdminTabPresentation;
                     order = AdminRoleAdminPresentation.GroupOrder.Role),
                 @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.Permissions,
                     order = AdminRoleAdminPresentation.GroupOrder.Permissions,
-                    column = 1, borderless = true)
+                    column = 1, untitled = true)
             }
         )
     }

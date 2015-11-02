@@ -343,7 +343,7 @@ input[type="radio"].radio+label.radio-label.clr,
     line-height: 28px;
 }
 
-.borderlessGroup {
+.untitledGroup {
     border: 0;
     padding: 0;
 }
@@ -863,7 +863,7 @@ fieldset legend i.help-tip {
     }
 }
 
-.sidebar.borderlessGroup .titlebar{
+.sidebar.untitledGroup .titlebar{
     display: none;
 }
 
@@ -1049,7 +1049,7 @@ fieldset {
     margin: 10px 0 0 0;
 }
 
-fieldset:not(.borderlessGroup) {
+fieldset:not(.untitledGroup) {
     background-color: #FBFAF7;
 }
 
