@@ -1659,3 +1659,13 @@ div.uploadMessage {
     font-size: 12px;
     letter-spacing: .05em;
 }
+
+.content-collapsed {
+    display: none;
+}
+
+.collapser {
+    display: inline-block;
+    float: right;
+    margin-top: 3px;
+}
