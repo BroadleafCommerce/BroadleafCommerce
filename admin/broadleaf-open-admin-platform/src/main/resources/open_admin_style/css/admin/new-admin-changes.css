@@ -69,9 +69,9 @@
     left: 23px;
 }
 
-.app-content .content .section-content .main-content .listgrid-container {
-    padding: 20px;
-}
+/*.app-content .content .section-content .main-content .listgrid-container {*/
+    /*padding: 20px;*/
+/*}*/
 
 .hidden {
     display: none;
@@ -221,7 +221,6 @@ tr {
     -moz-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
     -webkit-box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
     box-shadow: rgba(0,0,0,0.1) 0px 2px 5px;
-    padding: 20px;
 }
 
 .app-content .content .sandbox-bar .sandbox-actions .button {
@@ -355,6 +354,10 @@ input[type="radio"].radio+label.radio-label.clr,
     z-index: 1039 !important;
 }
 
+.redactor-box {
+    border: 1px solid #D8D5D0;
+}
+
 .ajax-loader {
     display: none;
 }
@@ -385,10 +388,6 @@ div.action-popup img.ajax-loader {
 
 .mCS_no_scrollbar + .mCSB_scrollTools .mCSB_draggerContainer .mCSB_dragger {
     display: none;
-}
-
-.entityform-listgrid {
-    margin: 20px 0;
 }
 
 .fieldgroup-listgrid {
@@ -769,10 +768,10 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     vertical-align: top;
 }
 
-.app-content .sidebar .sidebar-content label {
+.app-content .fieldset-card .fieldset-card-content label {
     font-size: 12px;
     letter-spacing: .05em;
-    color: #B3B3B3;
+    color: #616161;
     font-weight: normal;
 }
 
@@ -863,20 +862,19 @@ fieldset legend i.help-tip {
     }
 }
 
-.sidebar.untitledGroup .titlebar{
+.fieldset-card.untitledGroup .titlebar{
     display: none;
 }
 
-.sidebar:first-child {
+.fieldset-card:first-child {
     margin-top: 22px;
 }
 
-.app-content .sidebar {
+.app-content .fieldset-card {
     margin-bottom: 15px;
 }
 
 .tabError {
-    padding: 15px;
     text-align: center;
     color: #DE3A2E;
 }
@@ -1249,7 +1247,7 @@ p.deployment-summary {
     padding: 10px 10px 8px 10px;
 }
 
-.sidebar .selectize-control.single .selectize-input {
+.fieldset-card .selectize-control.single .selectize-input {
     display: inline-block;
     background: white;
     width: 300px;
@@ -1345,14 +1343,14 @@ blockquote::before{
     min-width: 150px;
 }
 
-.sidebar-content .media-image {
+.fieldset-card-content .media-image {
     height: auto;
     width: 100%;
     max-width: 350px;
     object-fit: cover;
 }
 
-.sidebar-content .asset-selector-container {
+.fieldset-card-content .asset-selector-container {
     text-align: center;
 }
 
@@ -1361,7 +1359,7 @@ blockquote::before{
     display: inline-block;
 }
 
-.sidebar-content .media-image-container {
+.fieldset-card-content .media-image-container {
     width: 100%;
     max-width: 350px;
 }
@@ -1397,7 +1395,7 @@ blockquote::before{
     height: 50px;
 }
 
-/*.sidebar-content .media-image-container .media-actions button {*/
+/*.fieldset-card-content .media-image-container .media-actions button {*/
     /*width: 20%;*/
 /*}*/
 
@@ -1438,7 +1436,7 @@ blockquote::before{
     height: 150px;
 }
 
-.sidebar .media-image .thumbnail {
+.fieldset-card .media-image .thumbnail {
     height: auto;
 }
 

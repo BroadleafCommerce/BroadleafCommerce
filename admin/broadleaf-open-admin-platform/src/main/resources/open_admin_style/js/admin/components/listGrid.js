@@ -451,7 +451,12 @@ $(document).ready(function() {
      * submit the form directly.
      */
     $('body').on('listGrid-adorned-rowSelected', function(event, $target, link, fields, currentUrl) {
-        $(this).find('input#adornedTargetIdProperty').val(fields['id']);
+        var $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
+        if ($adornedTargetId.val() == fields['id']) {
+            $adornedTargetId.val('');
+        } else {
+            $adornedTargetId.val(fields['id']);
+        }
     });
     
     /**
@@ -727,6 +732,8 @@ $(document).ready(function() {
                 type: "POST",
                 data: $(this).serialize()
             }, function(data) {
+                BLCAdmin.entityForm.hideActionSpinner($form.closest('.modal').find('.entity-form-actions'));
+
                 //if there is a validation error, replace the current form that's there with this new one
                 var $newForm = $(data).find('.modal-body form');
                 if ($newForm[0]) {
