@@ -17,6 +17,10 @@
  * limitations under the License.
  * #L%
  */
+.content-yield h4.empty-main-list-grid {
+    text-align: center;
+}
+
 .app-content .fieldset-card .fieldset-card-content {
     padding: 15px 20px;
 }
