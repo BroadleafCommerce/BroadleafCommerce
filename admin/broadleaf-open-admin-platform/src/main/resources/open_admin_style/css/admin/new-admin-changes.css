@@ -17,6 +17,9 @@
  * limitations under the License.
  * #L%
  */
+.app-content .fieldset-card .fieldset-card-content {
+    padding: 15px 20px;
+}
 
 .listgrid-body-wrapper tbody tr td:first-child a:not(.workflow-icon),  tbody tr td:first-child a:not(.workflow-icon) {
     color: #809831;
@@ -395,7 +398,6 @@ div.action-popup img.ajax-loader {
 }
 
 .listgrid-toolbar {
-    margin-top: 10px;
     margin-bottom: 10px;
     display: inline-block;
 }
@@ -775,8 +777,11 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     font-weight: normal;
 }
 
-.app-content .field-group label span.label{
-    text-transform: uppercase;
+.app-content .field-group label span {
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:#B3B3B3;
 }
 
 .app-content .field-group label span.alert-wrapper{
@@ -1653,4 +1658,14 @@ div.uploadMessage {
 .override-generated-url {
     font-size: 12px;
     letter-spacing: .05em;
+}
+
+.content-collapsed {
+    display: none;
+}
+
+.collapser {
+    display: inline-block;
+    float: right;
+    margin-top: 3px;
 }

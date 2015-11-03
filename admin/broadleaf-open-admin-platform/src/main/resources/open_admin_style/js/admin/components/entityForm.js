@@ -369,6 +369,21 @@ $(document).ready(function() {
         return false;
     });
 
+    $('body').on('click', '.collapser a', function(event) {
+        event.preventDefault();
+
+        var content = $(this).closest('.fieldset-card').find('.fieldset-card-content');
+        if ($(this).hasClass('collapsed')) {
+            $(this).removeClass('collapsed').addClass('expanded');
+            $(this).find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
+            content.removeClass('content-collapsed');
+        } else {
+            $(this).removeClass('expanded').addClass('collapsed');
+            $(this).find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
+            content.addClass('content-collapsed');
+        }
+    });
+
     /**
      * Intercepts the enter keypress from the main entity name input and updates the entity title
      */

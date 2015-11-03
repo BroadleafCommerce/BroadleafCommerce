@@ -464,7 +464,12 @@ $(document).ready(function() {
      * show the form with the additional maintained fields.
      */
     $('body').on('listGrid-adorned_with_form-rowSelected', function(event, $target, link, fields, currentUrl) {
-        $(this).find('input#adornedTargetIdProperty').val(fields['id']);
+        var $adornedTargetId = $(this).find('input#adornedTargetIdProperty');
+        if ($adornedTargetId.val() == fields['id']) {
+            $adornedTargetId.val('');
+        } else {
+            $adornedTargetId.val(fields['id']);
+        }
     });
     
     /**
