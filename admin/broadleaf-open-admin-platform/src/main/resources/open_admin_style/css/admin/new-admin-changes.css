@@ -770,6 +770,10 @@ input[disabled], input[readonly], fieldset[disabled] input, textarea[disabled] {
     vertical-align: top;
 }
 
+.redactor-box {
+    margin-bottom: 0 !important;
+}
+
 .app-content .fieldset-card .fieldset-card-content label {
     font-size: 12px;
     letter-spacing: .05em;
