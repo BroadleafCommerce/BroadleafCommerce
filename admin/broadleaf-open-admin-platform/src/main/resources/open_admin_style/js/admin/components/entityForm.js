@@ -372,15 +372,21 @@ $(document).ready(function() {
     $('body').on('click', '.collapser a', function(event) {
         event.preventDefault();
 
-        var content = $(this).closest('.fieldset-card').find('.fieldset-card-content');
+        var $content = $(this).closest('.fieldset-card').find('.fieldset-card-content');
         if ($(this).hasClass('collapsed')) {
             $(this).removeClass('collapsed').addClass('expanded');
             $(this).find('i').removeClass('fa-angle-down').addClass('fa-angle-up');
-            content.removeClass('content-collapsed');
+            $content.removeClass('content-collapsed');
         } else {
             $(this).removeClass('expanded').addClass('collapsed');
             $(this).find('i').removeClass('fa-angle-up').addClass('fa-angle-down');
-            content.addClass('content-collapsed');
+            $content.addClass('content-collapsed');
+        }
+
+        var $fieldSetCard = $(this).closest('.fieldset-card.listgrid-container');
+        var $tbody = $fieldSetCard.find('.listgrid-body-wrapper tbody');
+        if ($tbody.length) {
+            BLCAdmin.listGrid.paginate.updateGridSize($tbody);
         }
     });
 

@@ -74,6 +74,15 @@
 
             BLCAdmin.listGrid.paginate.updateTableFooter($listGridContainer.find('tbody'));
 
+            var $fieldSetCard = $listGridContainer.closest('.fieldset-card.listgrid-container');
+            var totalRecords = $listGridContainer.find('.listgrid-body-wrapper table tbody').data('totalrecords');
+            if ($fieldSetCard.length && totalRecords !== 0) {
+                var $collapser = $fieldSetCard.find('.titlebar .collapser a');
+                if ($collapser.hasClass('collapsed')) {
+                    $collapser.click();
+                }
+            }
+
             $listGridContainer.trigger('blc-listgrid-replaced', $listGridContainer);
         },
 
