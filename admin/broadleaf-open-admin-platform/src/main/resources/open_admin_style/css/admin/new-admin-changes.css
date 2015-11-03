@@ -460,16 +460,16 @@ button:disabled {
     background-color: #F7EFDC;
 }
 
-.table-striped>tbody>tr.dirty:nth-of-type(even) {
+.table-striped>tbody>tr.dirty:nth-of-type(even):not(.selected) {
     background-color: #F7EFDC;
 }
 
-.table-striped>tbody>tr.dirty:nth-of-type(odd) {
+.table-striped>tbody>tr.dirty:nth-of-type(odd):not(.selected) {
     background-color: #F7EFDC;
 }
 
 .list-grid-table tbody tr.selected {
-    background-color: #F7EFDC;
+    background-color: #F7EFDC !important;
 }
 
 .list-grid-table .workflow-icon {
