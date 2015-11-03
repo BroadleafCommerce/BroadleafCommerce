@@ -1467,10 +1467,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
         }
         
         // Next, we must get the new list grid that represents this collection
-        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);
-        model.addAttribute("listGrid", listGrid);
-
         // We return the new list grid so that it can replace the currently visible one
+        ListGrid listGrid = getCollectionListGrid(mainMetadata, entity, collectionProperty, null, sectionKey, persistenceResponse, sectionCrumbs);
+
+        model.addAttribute("listGrid", listGrid);
+        model.addAttribute("currentUrl", request.getRequestURL().toString());
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
     }
