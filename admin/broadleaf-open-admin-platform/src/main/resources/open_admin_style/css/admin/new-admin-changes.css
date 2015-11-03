@@ -447,9 +447,24 @@ button:disabled {
     font-size: 12px;
 }
 
+.table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {
+    border-top: none;
+}
+
+.table thead>tr:not(:first-child)>th, .table tbody>tr:not(:first-child)>th, .table tfoot>tr:not(:first-child)>th,
+.table thead>tr:not(:first-child)>td, .table tbody>tr:not(:first-child)>td, .table tfoot>tr:not(:first-child)>td {
+    border-top: 1px solid #D4D2CF;
+}
+
 /* added to stop listgrid flicker */
-.table-striped>tbody>tr:nth-of-type(even) {
+.table-striped>tbody>tr:nth-of-type(odd) {
     background-color: #F9F7F3;
+    border-left: 1px solid #E4E3E2;
+}
+
+.table-striped>tbody>tr:nth-of-type(even) {
+    background-color: #F1EFEB;
+    border-left: 1px solid #E4E3E2;
 }
 
 .list-grid-table tbody tr:not(.list-grid-no-results):hover {
