@@ -235,7 +235,7 @@
                 <!--</td>-->
 
                 <td class="listgrid-row-actions" th:if="not ${inModal}" th:unless="${#lists.isEmpty(listGrid.activeRowActions) and (#lists.isEmpty(listGrid.activeToolbarActions))}">
-                    <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${action.actionId} != 'SPLIT'">
+                    <span class="workflow-action" th:each="action : ${listGrid.activeToolbarActions}" th:if="${listGrid.listGridType} == 'WORKFLOW' and ${action.actionId} != 'SPLIT'">
                         <a th:classappend="${action.buttonClass}"
                            href="#"
                            class="button button-action"
