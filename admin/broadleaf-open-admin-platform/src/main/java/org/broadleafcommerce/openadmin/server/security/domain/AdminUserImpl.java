@@ -114,9 +114,8 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
 
     @Column(name = "PASSWORD")
     @AdminPresentation(
-            friendlyName = "AdminUserImpl_Admin_Password", order = 6000,
-            excluded = true,
-            group = AdminUserAdminPresentation.GroupName.User,
+            friendlyName = "AdminUserImpl_Admin_Password",
+            group = AdminUserAdminPresentation.GroupName.User, order = 6000,
             fieldType = SupportedFieldType.PASSWORD,
             validationConfigurations = { @ValidationConfiguration(
                     validationImplementation = "org.broadleafcommerce.openadmin.server.service.persistence.validation.MatchesFieldValidator",
