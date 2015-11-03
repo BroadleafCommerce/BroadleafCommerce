@@ -145,17 +145,17 @@ $(document).ready(function() {
      			data: $form.serializeArray(),
      			complete: BLCAdmin.entityForm.hideActionSpinner
      		}, function(data) {
-     			$('div.' + href + 'Tab fieldset.listgrid-container div.listgrid-header-wrapper table.list-grid-table').each(function() {
+     			$('div.' + href + 'Tab .listgrid-container').find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
-                    var $tableWrapper = data.find('div.listgrid-header-wrapper:has(table#' + tableId + ')');
+                    var $tableWrapper = data.find('.listgrid-header-wrapper:has(table#' + tableId + ')');
      				BLCAdmin.listGrid.replaceRelatedCollection($tableWrapper);
      			});
-     			$('div.' + href + 'Tab div.selectize-wrapper').each(function() {
+     			$('div.' + href + 'Tab .selectize-wrapper').each(function() {
      				var tableId = $(this).attr('id');
-                    var $selectizeWrapper = data.find('div.selectize-wrapper#' + tableId);
+                    var $selectizeWrapper = data.find('.selectize-wrapper#' + tableId);
      				BLCAdmin.listGrid.replaceRelatedCollection($selectizeWrapper);
      			});
-                $('div.' + href + 'Tab fieldset.media-container').each(function() {
+                $('div.' + href + 'Tab .media-container').each(function() {
                     var tableId = $(this).attr('id');
                     tableId = tableId.replace(".", "\\.");
                     var $container = data.find('#' + tableId);

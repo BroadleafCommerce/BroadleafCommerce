@@ -213,8 +213,11 @@ public class Field {
     public Boolean getIsVisible() {
         String[] invisibleTypes = new String[] {
                 SupportedFieldType.ID.toString(),
+                SupportedFieldType.ID.toString().toLowerCase(),
                 SupportedFieldType.HIDDEN.toString(),
-                SupportedFieldType.FOREIGN_KEY.toString()
+                SupportedFieldType.HIDDEN.toString().toLowerCase(),
+                SupportedFieldType.FOREIGN_KEY.toString(),
+                SupportedFieldType.FOREIGN_KEY.toString().toLowerCase()
         };
         
         return isVisible == null ? !ArrayUtils.contains(invisibleTypes, fieldType) : isVisible;
