@@ -809,7 +809,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         cloned.setOrderNumber(orderNumber);
         cloned.setTotalTax(getTotalTax());
         cloned.setSubmitDate(submitDate);
-        cloned.setCustomer(customer.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setCustomer(customer);
         cloned.setStatus(getStatus());
         cloned.setTotalFulfillmentCharges(getTotalFulfillmentCharges());
         cloned.setSubTotal(getSubTotal());
