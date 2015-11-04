@@ -17,6 +17,15 @@
  * limitations under the License.
  * #L%
  */
+.app-content .content {
+    min-width: 912px;
+}
+
+.row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
 .content-yield h4.empty-main-list-grid {
     text-align: center;
 }
@@ -1179,14 +1188,25 @@ legend {
     transition: 0.1s;
 }
 
-.modal.xl {
-    width: 1100px;
-    margin-left: -550px;
+@media (min-width: 1100px) {
+    .modal.xl {
+        width: 1100px;
+        margin-left: -550px;
+    }
 }
 
-.modal.lg {
-    width: 1000px;
-    margin-left: -500px;
+@media (min-width: 1000px) and (max-width: 1100px) {
+    .modal.xl {
+        width: 1000px;
+        margin-left: -500px;
+    }
+}
+
+@media (min-width: 1000px) {
+    .modal.lg {
+        width: 1000px;
+        margin-left: -500px;
+    }
 }
 
 .modal.sm {
