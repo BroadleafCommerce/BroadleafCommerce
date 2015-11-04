@@ -1,11 +1,11 @@
-<div th:if="${isTreeListGrid != null and isTreeListGrid}" th:remove="tag">
-    <div th:include="components/treeListGrid" th:object="${treeListGrid}" th:remove="tag"></div>
+<div th:if="${treeListGrid}" th:remove="tag">
+    <div th:include="components/treeListGrid" th:object="${treeListGrid}" th:remove="tag" />
     <div th:include="components/listGridModalActions"
          th:each="column, iterStat : ${treeListGrid.treeListGridColumns}"
          th:if="${iterStat.index == 0}"
          th:with="listGrid=${column.listGrid}" th:remove="tag"></div>
 </div>
-<div th:unless="${isTreeListGrid != null and isTreeListGrid}" th:remove="tag">
+<div th:unless="${treeListGrid}" th:remove="tag">
     <div th:if="${isAssetGrid != null and isAssetGrid}" th:remove="tag">
         <div th:include="views/fullAssetGrid" th:remove="tag"></div>
         <div th:include="components/listGridModalActions" th:with="listGrid=${assetGrid.assetListGrid}" th:remove="tag"></div>
