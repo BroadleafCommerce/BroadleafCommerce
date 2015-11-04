@@ -21,6 +21,14 @@
     min-width: 912px;
 }
 
+.col8 {
+    width: 66.66666666666666%;
+}
+
+.col4 {
+    width: 33.33333333333333%;
+}
+
 .row {
     margin-right: -15px;
     margin-left: -15px;
