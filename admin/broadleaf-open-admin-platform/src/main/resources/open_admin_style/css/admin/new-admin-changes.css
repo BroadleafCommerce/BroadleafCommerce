@@ -707,7 +707,7 @@ button:disabled {
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
-    text-align: left;
+    text-align: right;
 }
 
 .close {
@@ -1106,6 +1106,7 @@ legend {
 
 .modal-body .actions {
     margin-top: 10px;
+    text-align: right
 }
 
 .selectize-control.selectize-adder {
